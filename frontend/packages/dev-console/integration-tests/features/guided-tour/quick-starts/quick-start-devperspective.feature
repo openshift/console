@@ -17,7 +17,7 @@ Feature: Build with guided documentation card in developer console
 
         @regression
         Scenario: Quick Starts page when no Quick Start has started: QS-03-TC02
-             When user clicks on the "View all quick starts" on Build with guided documentation card
+             When user selects QuickStarts from the help menu icon on the masthead
              Then user can see "Get started with a sample application", "Install Red Hat Developer Hub (RHDH) with a Helm Chart" and "Add health checks to your sample application" Quick Starts
               And user can see time taken to complete the tour on the card
 

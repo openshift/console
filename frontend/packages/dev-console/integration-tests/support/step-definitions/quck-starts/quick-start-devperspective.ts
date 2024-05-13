@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   addPagePO,
+  helpDropdownMenu,
   quickStartCard,
   quickStartLeaveModalPO,
   quickStartSidebarPO,
@@ -22,8 +23,9 @@ Then('user can see the "View all quick starts" on the card', () => {
   cy.get(addPagePO.viewAllQuickStarts).should('be.visible');
 });
 
-When('user clicks on the "View all quick starts" on Build with guided documentation card', () => {
-  cy.get(addPagePO.viewAllQuickStarts).should('be.visible').click();
+When('user selects QuickStarts from the help menu icon on the masthead', () => {
+  cy.get(helpDropdownMenu).should('be.visible').click();
+  cy.get('a[role="menuitem"]').contains('Quick Starts').click();
 });
 
 Then(
