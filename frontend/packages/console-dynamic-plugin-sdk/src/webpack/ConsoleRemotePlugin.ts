@@ -227,6 +227,7 @@ export type ConsoleRemotePluginOptions = Partial<{
      * If not specified, the following packages will be included:
      * - `@patternfly/react-core`
      * - `@patternfly/react-icons`
+     * - `@patternfly/react-table`
      */
     packageSpecs: Record<
       string,
@@ -291,6 +292,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? {
         '@patternfly/react-core': {},
         '@patternfly/react-icons': {},
+        '@patternfly/react-table': {},
       },
     ).reduce<Record<string, DynamicModuleMap>>(
       (acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => ({
