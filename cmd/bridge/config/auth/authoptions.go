@@ -11,7 +11,7 @@ import (
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
@@ -29,6 +29,7 @@ type AuthOptions struct {
 	ClientSecret         string
 	ClientSecretFilePath string
 	CAFilePath           string
+	OCLoginCommand       string
 
 	ExtraScopes flagutil.StringSliceFlag
 
@@ -43,10 +44,11 @@ type CompletedOptions struct {
 type completedOptions struct {
 	AuthType string
 
-	IssuerURL    *url.URL
-	ClientID     string
-	ClientSecret string
-	CAFilePath   string
+	IssuerURL      *url.URL
+	ClientID       string
+	ClientSecret   string
+	CAFilePath     string
+	OCLoginCommand string
 
 	ExtraScopes []string
 
@@ -65,6 +67,7 @@ func (c *AuthOptions) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.ClientSecret, "user-auth-oidc-client-secret", "", "The OIDC OAuth2 Client Secret.")
 	fs.StringVar(&c.ClientSecretFilePath, "user-auth-oidc-client-secret-file", "", "File containing the OIDC OAuth2 Client Secret.")
 	fs.StringVar(&c.CAFilePath, "user-auth-oidc-ca-file", "", "Path to a PEM file for the OIDC/OAuth2 issuer CA.")
+	fs.StringVar(&c.OCLoginCommand, "user-auth-oidc-oc-login-command", "", "External OIDC OC login command which will be displayed in the console 'Copy Login Command' dialog.")
 
 	fs.Var(&c.ExtraScopes, "user-auth-oidc-token-scopes", "Comma-separated list of extra scopes to request ID tokens with")
 
@@ -79,6 +82,7 @@ func (c *AuthOptions) ApplyConfig(config *serverconfig.Auth) {
 	serverconfig.SetIfUnset(&c.ClientSecretFilePath, config.ClientSecretFile)
 	serverconfig.SetIfUnset(&c.CAFilePath, config.OAuthEndpointCAFile)
 	serverconfig.SetIfUnset(&c.LogoutRedirect, config.LogoutRedirect)
+	serverconfig.SetIfUnset(&c.OCLoginCommand, config.OIDCOCLoginCommand)
 
 	if c.InactivityTimeoutSeconds == 0 {
 		c.InactivityTimeoutSeconds = config.InactivityTimeoutSeconds
@@ -111,6 +115,7 @@ func (c *AuthOptions) Complete() (*CompletedOptions, error) {
 		ExtraScopes:              c.ExtraScopes,
 		CAFilePath:               c.CAFilePath,
 		InactivityTimeoutSeconds: c.InactivityTimeoutSeconds,
+		OCLoginCommand:           c.OCLoginCommand,
 	}
 
 	if len(c.IssuerURL) > 0 {
@@ -174,6 +179,10 @@ func (c *AuthOptions) Validate() []error {
 			errs = append(errs, flags.NewInvalidFlagError("user-auth-oidc-token-scopes", "cannot be used with --user-auth=\"openshift\""))
 		}
 
+		if len(c.OCLoginCommand) != 0 {
+			errs = append(errs, flags.NewInvalidFlagError("user-auth-oidc-oc-login-command", "cannot be used with --user-auth=\"openshift\""))
+		}
+
 	case "oidc":
 		if len(c.IssuerURL) == 0 {
 			errs = append(errs, fmt.Errorf("--user-auth-oidc-issuer-url must be set if --user-auth=oidc"))
@@ -198,7 +207,6 @@ func (c *completedOptions) ApplyTo(
 	sessionConfig *session.CompletedOptions,
 ) error {
 	srv.InactivityTimeout = c.InactivityTimeoutSeconds
-	srv.LogoutRedirect = c.LogoutRedirectURL
 
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
@@ -234,7 +242,7 @@ func (c *completedOptions) getAuthenticator(
 		authLoginSuccessEndpoint = proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginSuccessEndpoint)
 		oidcClientSecret         = c.ClientSecret
 		// Abstraction leak required by NewAuthenticator. We only want the browser to send the auth token for paths starting with basePath/api.
-		cookiePath       = proxy.SingleJoiningSlash(baseURL.Path, "/api/")
+		cookiePath       = proxy.SingleJoiningSlash(baseURL.Path, "/api")
 		refererPath      = baseURL.String()
 		useSecureCookies = baseURL.Scheme == "https"
 	)
@@ -257,13 +265,14 @@ func (c *completedOptions) getAuthenticator(
 
 	// Config for logging into console.
 	oidcClientConfig := &auth.Config{
-		AuthSource:   authSource,
-		IssuerURL:    userAuthOIDCIssuerURL.String(),
-		IssuerCA:     c.CAFilePath,
-		ClientID:     c.ClientID,
-		ClientSecret: oidcClientSecret,
-		RedirectURL:  proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
-		Scope:        scopes,
+		AuthSource:     authSource,
+		IssuerURL:      userAuthOIDCIssuerURL.String(),
+		IssuerCA:       c.CAFilePath,
+		ClientID:       c.ClientID,
+		ClientSecret:   oidcClientSecret,
+		RedirectURL:    proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
+		Scope:          scopes,
+		OCLoginCommand: c.OCLoginCommand,
 
 		// Use the k8s CA file for OpenShift OAuth metadata discovery.
 		// This might be different than IssuerCA.
@@ -279,6 +288,10 @@ func (c *completedOptions) getAuthenticator(
 		CookieAuthenticationKey: sessionConfig.CookieAuthenticationKey,
 
 		K8sConfig: k8sClientConfig,
+	}
+
+	if c.LogoutRedirectURL != nil {
+		oidcClientConfig.LogoutRedirectOverride = c.LogoutRedirectURL.String()
 	}
 
 	authenticator, err := auth.NewAuthenticator(context.Background(), oidcClientConfig)

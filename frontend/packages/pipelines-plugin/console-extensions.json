@@ -254,17 +254,6 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
-        "group": "openshift-pipelines.org",
-        "version": "v1alpha1",
-        "kind": "ApprovalTask"
-      },
-      "flag": "OPENSHIFT_PIPELINE_APPROVAL_TASK"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
         "kind": "Pipeline"
@@ -1172,7 +1161,8 @@
       }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   },
   {
@@ -1297,7 +1287,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
-      "disallowed": ["CONSOLE_PIPELINE_PLUGIN"]
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
     }
   },
   {
@@ -1319,7 +1309,7 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
-      "disallowed": ["CONSOLE_PIPELINE_PLUGIN"]
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
     }
   }
 ]

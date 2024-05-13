@@ -21,10 +21,10 @@ const podMetricsQueries = {
     "pod:container_fs_usage_bytes:sum{pod='<%= name %>'}",
   ),
   [ResourceUtilizationQuery.NETWORK_IN]: _.template(
-    "(sum(irate(container_network_receive_bytes_total{pod='<%= name %>'}[5m])) by (pod, interface)) + on(pod,interface) group_left(network_name) (pod_network_name_info)",
+    "pod_interface_network:container_network_receive_bytes:irate5m{pod='<%= name %>'}",
   ),
   [ResourceUtilizationQuery.NETWORK_OUT]: _.template(
-    "(sum(irate(container_network_transmit_bytes_total{pod='<%= name %>'}[5m])) by (pod, interface)) + on(pod,interface) group_left(network_name) (pod_network_name_info)",
+    "pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='<%= name %>'}",
   ),
   [ResourceUtilizationQuery.QUOTA_LIMIT]: _.template(
     "sum by (pod, resource) (kube_pod_resource_limit{resource='<%= resource %>',pod='<%= name %>'})",

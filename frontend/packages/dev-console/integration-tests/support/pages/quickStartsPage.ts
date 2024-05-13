@@ -94,4 +94,17 @@ export const quickStartsPage = {
     cy.get(quickStartSidebarPO.quickStartSidebarBody).find(quickStartSidebarPO.startButton).click();
     closeQuickStart();
   },
+  finishFirstQuickStart: () => {
+    cy.get(addPagePO.buildWithGuidedDocumentationItems).first().click();
+    cy.get(quickStartSidebarPO.restartSideNoteAction).click();
+    cy.get('li[class*=nav-item]  h3').then(($elements) => {
+      const noOfsteps = $elements.length;
+      cy.get(quickStartSidebarPO.startButton).click();
+      for (let currentStep = 0; currentStep < noOfsteps; currentStep++) {
+        cy.get(quickStartSidebarPO.yesOptionCheckInput).click();
+        cy.get(quickStartSidebarPO.nextButton).click();
+      }
+      cy.get(quickStartSidebarPO.closeButton).click();
+    });
+  },
 };

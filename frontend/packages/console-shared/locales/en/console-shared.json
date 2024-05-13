@@ -199,6 +199,7 @@
   "All Namespaces": "All Namespaces",
   "Project": "Project",
   "Namespace": "Namespace",
+  "Enable Autoscale": "Enable Autoscale",
   "Increase the Pod count": "Increase the Pod count",
   "Decrease the Pod count": "Decrease the Pod count",
   "No Pods found for this resource.": "No Pods found for this resource.",

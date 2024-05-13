@@ -3,7 +3,7 @@ import { RouteTemplate } from '../utils/triggers';
 
 export type PipelineDetailsTabProps = {
   obj: PipelineKind;
-  customData: {
+  customData?: {
     templateNames: RouteTemplate[];
     queryPrefix: string;
     metricsLevel: string;

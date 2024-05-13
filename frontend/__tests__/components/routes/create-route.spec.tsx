@@ -72,7 +72,7 @@ describe('Create Route', () => {
         },
       },
       weight: 100,
-      alternateServices: [
+      alternateBackends: [
         {
           key: 'alternate-backend-2',
           name: 'service2',
@@ -97,7 +97,7 @@ describe('Create Route', () => {
         },
       },
       weight: 100,
-      alternateServices: [
+      alternateBackends: [
         {
           key: 'alternate-backend-2',
           name: 'service2',
@@ -123,7 +123,7 @@ describe('Create Route', () => {
         },
       },
       weight: 100,
-      alternateServices: [
+      alternateBackends: [
         {
           key: 'alternate-backend-2',
           name: 'service2',

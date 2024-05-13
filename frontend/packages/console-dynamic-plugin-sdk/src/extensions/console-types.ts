@@ -266,39 +266,14 @@ export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
   timeout?: number,
-  isEntireResponse?: boolean,
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
-  (
-    url: string,
-    method?: string,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
+  (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
   delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
-  post(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
-  put(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
-  patch(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
+  post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
 };
 
 export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
@@ -677,6 +652,10 @@ export type ResourceYAMLEditorProps = {
   initialResource: string | { [key: string]: any };
   header?: string;
   onSave?: (content: string) => void;
+  readOnly?: boolean;
+  create?: boolean;
+  onChange?: (content: string) => void;
+  hideHeader?: boolean;
 };
 
 export type ResourceEventStreamProps = {

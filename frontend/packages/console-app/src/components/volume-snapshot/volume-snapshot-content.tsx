@@ -169,7 +169,7 @@ const VolumeSnapshotContentPage: React.FC<VolumeSnapshotContentPageProps> = ({
       <ListPageHeader title={showTitle ? t(VolumeSnapshotContentModel.labelPluralKey) : undefined}>
         {canCreate && (
           <ListPageCreate groupVersionKind={resourceKind}>
-            {t('console-app~Create VolumeSnapshot')}
+            {t('console-app~Create VolumeSnapshotContent')}
           </ListPageCreate>
         )}
       </ListPageHeader>

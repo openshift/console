@@ -76,7 +76,7 @@ When('user clicks on the Add Trigger', () => {
 });
 
 When('user will click on the Subscriber dropdown on the modal', () => {
-  cy.get(topologyPO.graph.subscriber.dropdown).click();
+  cy.get(eventingPO.broker.sidebar.subscriberDropDown).click();
 });
 
 When('user selects the auto populated name of subscription', () => {

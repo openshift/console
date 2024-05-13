@@ -1203,13 +1203,12 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `method` | The HTTP method to use. Defaults to GET |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `isEntireResponse` | The flag to control whether to return the entire content of the response or response body. The default is the response body. |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
+A promise that resolves to the response as text or JSON object.
 
 
 ---
@@ -1230,13 +1229,12 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `url` | The URL to fetch |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `isEntireResponse` | The flag to control whether to return the entire content of the response or response body. The default is the response body. |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
+A promise that resolves to the response as text or JSON object.
 
 
 ---
@@ -1952,6 +1950,10 @@ A lazy loaded YAML editor for Kubernetes resources with hover help and completio
 | `initialResource` | YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render. |
 | `header` | Add a header on top of the YAML editor. |
 | `onSave` | Callback for the Save button. Passing it will override the default update performed on the resource by the editor. |
+| `readOnly` | Sets the YAML editor to read-only mode. |
+| `create` | Editor will be on creation mode. Create button will replace the Save and Cancel buttons. If no onSave method defined, the 'Create' button will trigger the creation of the defined resource. Default: false |
+| `onChange` | Callback triggered at any editor change. |
+| `hideHeader` | On creation mode the editor by default show an header that can be hided with this property |
 
 
 

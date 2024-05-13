@@ -81,9 +81,6 @@ export const createCustomTaskNode: NodeCreator<TaskNodeModelData> = createGeneri
   NodeType.CUSTOM_TASK_NODE,
 );
 
-export const createApprovalTaskNode: NodeCreator<TaskNodeModelData> = createGenericNode(
-  NodeType.APPROVAL_TASK_NODE,
-);
 export const createSpacerNode: NodeCreator<SpacerNodeModelData> = createGenericNode(
   NodeType.SPACER_NODE,
   0,
@@ -132,8 +129,6 @@ export const getNodeCreator = (type: NodeType): NodeCreator<PipelineRunAfterNode
       return createInvalidTaskListNode;
     case NodeType.CUSTOM_TASK_NODE:
       return createCustomTaskNode;
-    case NodeType.APPROVAL_TASK_NODE:
-      return createApprovalTaskNode;
     case NodeType.TASK_NODE:
     default:
       return createTaskNode;
@@ -490,10 +485,12 @@ export const getGraphDataModel = (
     }
     if (task?.when) {
       task.when.forEach(({ input, values }) => {
-        depsFromContextVariables.push(...extractDepsFromContextVariables(input));
-        values.forEach((whenValue) => {
-          depsFromContextVariables.push(...extractDepsFromContextVariables(whenValue));
-        });
+        if (values) {
+          depsFromContextVariables.push(...extractDepsFromContextVariables(input));
+          values.forEach((whenValue) => {
+            depsFromContextVariables.push(...extractDepsFromContextVariables(whenValue));
+          });
+        }
       });
     }
     const dependancies = _.uniq([...vertex.dependancyNames]);
@@ -522,11 +519,8 @@ export const getGraphDataModel = (
     const badgePadding = Object.keys(pipelineRun.spec)?.length > 0 ? DEFAULT_BADGE_WIDTH : 0;
     const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some((t) => t.name === task.name);
     const getNodeType = (taskKind: string) => {
-      if (taskKind === 'Task' || taskKind === 'ClusterTask') {
+      if (!taskKind || taskKind === 'Task' || taskKind === 'ClusterTask') {
         return NodeType.TASK_NODE;
-      }
-      if (taskKind === 'ApprovalTask') {
-        return NodeType.APPROVAL_TASK_NODE;
       }
       return NodeType.CUSTOM_TASK_NODE;
     };

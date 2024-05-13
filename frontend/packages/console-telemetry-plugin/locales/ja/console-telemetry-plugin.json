@@ -1,0 +1,20 @@
+{
+  "Telemetry": "Telemetry",
+  "Configure telemetry setting": "telemetry の設定",
+  "Opt-in": "オプトイン",
+  "Opt-in to send telemetry events.": "telemetry イベントの送信へのオプトイン。",
+  "Opt-out": "オプトアウト",
+  "Opt-out to send telemetry events.": "telemetry イベントの送信へのオプトアウト。",
+  "Enforce": "実施",
+  "Always send telemetry events.": "常に telemetry イベントを送信します。",
+  "Disabled": "無効",
+  "Disable the telemetry in the cluster.": "クラスターで telemetry を無効にします。",
+  "Select option": "オプションの選択",
+  "Analytics": "分析",
+  "As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.": "管理者は、分析用にサードパーティーサービスに転送可能な事前設定された Red Hat プロキシーに telemetryイベントを送信することを決定できます。",
+  "Accept": "同意",
+  "Send telemetry events.": "telemetry イベントを送信します。",
+  "Deny": "拒否",
+  "Do not send telemetry events.": "telemetry イベントを送信しないでください。",
+  "Select a option whether to send telemetry events or not.": "telemetry イベントを送信するかどうかのオプションを選択します。"
+}

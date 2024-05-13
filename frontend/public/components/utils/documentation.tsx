@@ -33,7 +33,7 @@ export const documentationURLs: documentationURLsType = {
     downstream:
       'html/monitoring/configuring-the-monitoring-stack#maintenance-and-support_configuring-the-monitoring-stack',
     upstream:
-      'monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring',
+      'observability/monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring',
   },
   networkPolicy: {
     downstream: 'html/networking/network-policy#about-network-policy',
@@ -84,6 +84,11 @@ export const documentationURLs: documentationURLsType = {
   deprecatedDeploymentConfig: {
     downstream: 'html/building_applications/deployments',
     upstream: 'applications/deployments/what-deployments-are.html',
+  },
+  admissionWebhookWarning: {
+    downstream: 'html/architecture/admission-plug-ins',
+    kube: `${KUBE_DOCS}/reference/access-authn-authz/extensible-admission-controllers/#response`,
+    upstream: 'architecture/index.html#about-admission-plug-ins',
   },
 };
 

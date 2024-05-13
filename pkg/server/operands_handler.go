@@ -10,7 +10,7 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/operator-framework/kubectl-operator/pkg/action"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )

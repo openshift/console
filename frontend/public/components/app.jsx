@@ -69,6 +69,7 @@ const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 import 'url-search-params-polyfill';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
+import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 
 initI18n();
 
@@ -300,12 +301,12 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   );
 
   React.useEffect(() => {
-    if (user.metadata?.uid || user.metadata?.name) {
+    if (user?.uid || user?.username) {
       fireTelemetryEvent('identify', { perspective, user });
     }
     // Only trigger identify event when the user identifier changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.metadata?.uid || user.metadata?.name, fireTelemetryEvent]);
+  }, [user?.uid || user?.username, fireTelemetryEvent]);
 
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
@@ -597,6 +598,7 @@ graphQLReady.onReady(() => {
           >
             <ToastProvider>
               <PollConsoleUpdates />
+              <AdmissionWebhookWarningNotifications />
               <AppRouter />
             </ToastProvider>
           </AppInitSDK>

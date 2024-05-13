@@ -219,11 +219,7 @@ export const pipelinesPage = {
   },
 
   verifyOptionInKebabMenu: (option: string) => {
-    cy.get('ul.pf-v5-c-dropdown__menu li button').each(($el) => {
-      if ($el.text().includes(option)) {
-        expect($el.text()).toMatch(option);
-      }
-    });
+    cy.byTestActionID(option).should('be.visible');
   },
 
   addTrigger: (gitProviderType: string = 'github-pullreq') => {
@@ -246,12 +242,12 @@ export const startPipelineInPipelinesPage = {
     cy.get(pipelinesPO.startPipeline.gitUrl).should('be.enabled').type(gitUrl);
   },
   verifyGitRepoUrlAndEnterGitUrl: (gitUrl: string) => {
-    cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
-      if ($btn.attr('disabled')) {
+    cy.get('.modal-content').then(($btn) => {
+      if ($btn.find(pipelinesPO.startPipeline.gitResourceDropdown).length !== 0) {
         startPipelineInPipelinesPage.enterGitUrl(gitUrl);
-      } else {
-        cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
-        startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+        // } else {
+        // cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
+        // startPipelineInPipelinesPage.enterGitUrl(gitUrl);
       }
     });
   },
@@ -277,14 +273,23 @@ export const startPipelineInPipelinesPage = {
     modal.shouldBeOpened();
     cy.get('form').within(() => {
       app.waitForLoad();
-      cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
-        if ($btn.attr('disabled')) {
-          cy.log('Pipeline resource is not available, so adding a new git resource');
-        } else {
-          cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
+      // cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
+      //   if ($btn.attr('disabled')) {
+      //     cy.log('Pipeline resource is not available, so adding a new git resource');
+      //   } else {
+      //     cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
+      //   }
+      //   startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+      //   startPipelineInPipelinesPage.enterRevision(revision);
+      // });
+      cy.get('.modal-content').then(($btn) => {
+        if ($btn.find(pipelinesPO.startPipeline.gitResourceDropdown).length !== 0) {
+          startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+          startPipelineInPipelinesPage.enterRevision(revision);
+          // } else {
+          // cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
+          // startPipelineInPipelinesPage.enterGitUrl(gitUrl);
         }
-        startPipelineInPipelinesPage.enterGitUrl(gitUrl);
-        startPipelineInPipelinesPage.enterRevision(revision);
       });
     });
   },

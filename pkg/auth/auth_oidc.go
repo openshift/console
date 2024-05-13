@@ -29,12 +29,13 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	getClient             func() *http.Client
-	issuerURL             string
-	clientID              string
-	cookiePath            string
-	secureCookies         bool
-	constructOAuth2Config oauth2ConfigConstructor
+	getClient              func() *http.Client
+	issuerURL              string
+	logoutRedirectOverride string
+	clientID               string
+	cookiePath             string
+	secureCookies          bool
+	constructOAuth2Config  oauth2ConfigConstructor
 }
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig) (*oidcAuth, error) {
@@ -61,12 +62,8 @@ func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStor
 }
 
 func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
-
-	ls, err := sessions.NewLoginState(o.verify, token)
+	ls, err := o.sessions.AddSession(w, r, o.verify, token)
 	if err != nil {
-		return nil, err
-	}
-	if err := o.sessions.AddSession(w, r, ls); err != nil {
 		return nil, err
 	}
 
@@ -91,7 +88,10 @@ func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r 
 		return session, nil
 	}
 
-	newTokens, err := oauthConfig.TokenSource(ctx, &oauth2.Token{RefreshToken: cookieRefreshToken}).Token()
+	newTokens, err := oauthConfig.TokenSource(
+		context.WithValue(ctx, oauth2.HTTPClient, o.getClient()), // supply our client with custom trust
+		&oauth2.Token{RefreshToken: cookieRefreshToken},
+	).Token()
 	if err != nil {
 		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
 	}
@@ -110,10 +110,7 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 }
 
 func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
-	// The returned login state can be nil even if err == nil.
-	if ls, _ := o.getLoginState(w, r); ls != nil {
-		o.sessions.DeleteSession(w, r, ls.SessionToken()) // TODO: could we just use the session token from the cookie instead of trying to retrieving the session first?
-	}
+	o.sessions.DeleteSession(w, r)
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
@@ -152,6 +149,22 @@ func (o *oidcAuth) Authenticate(w http.ResponseWriter, r *http.Request) (*User, 
 
 func (o *oidcAuth) GetSpecialURLs() SpecialAuthURLs {
 	return SpecialAuthURLs{}
+}
+
+func (o *oidcAuth) LogoutRedirectURL() string {
+	if len(o.logoutRedirectOverride) > 0 {
+		return o.logoutRedirectOverride
+	}
+
+	sessionEndpoints := struct {
+		// Get the RP-initiated logout endpoint (https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
+		EndSessionEndpoint string `json:"end_session_endpoint"`
+	}{}
+
+	provider := o.providerCache.GetItem()
+	provider.Claims(&sessionEndpoints)
+
+	return sessionEndpoints.EndSessionEndpoint
 }
 
 func (o *oidcAuth) oauth2Config() *oauth2.Config {

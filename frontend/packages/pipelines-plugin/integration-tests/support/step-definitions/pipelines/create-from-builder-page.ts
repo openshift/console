@@ -83,12 +83,9 @@ When('user adds another task {string} in series', (taskName: string) => {
   pipelineBuilderPage.selectSeriesTask(taskName);
 });
 
-When(
-  'user adds {string} resource with name {string} to the {string}',
-  (resourceType: string, resourceName: string) => {
-    pipelineBuilderPage.addResource(resourceName, resourceType);
-  },
-);
+When('user adds resource with name {string} to the {string}', (resourceName: string) => {
+  pipelineBuilderPage.addResource(resourceName);
+});
 
 When('user adds the parameter details like Name, Description and Default Value', () => {
   pipelineBuilderPage.addParameters('param-1', 'description', 'openshift/hello-openshift');

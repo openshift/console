@@ -67,7 +67,7 @@ Given(
       workloadName,
       resourceTypes.knativeService,
     );
-    topologyPage.rightClickOnGroup(workloadName);
+    topologyPage.rightClickOnKnativeNode(workloadName);
     topologyPage.selectContextMenuAction(`Edit ${workloadName}`);
     cy.get(domainPO.contentScroll).contains('Show advanced Routing options').click();
     cy.get(domainPO.domainMapping).clear().type(domain).should('have.value', domain);

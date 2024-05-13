@@ -114,7 +114,7 @@ When('user unchecks the labels option', () => {
 
 Then('user will not able to see the labels on workload', () => {
   cy.get(topologyPO.graph.nodeLabel).should('not.exist');
-  cy.get(topologyPO.graph.groupLabel).should('not.exist');
+  cy.get(topologyPO.graph.groupLabelText).should('not.exist');
 });
 
 Then('user will see deployment section is not visible', () => {

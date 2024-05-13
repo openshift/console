@@ -8,6 +8,7 @@ import {
 } from '../../../../test-data/pipeline-data';
 import { PipelineMetricsLevel } from '../../const';
 import * as hookUtils from '../../hooks';
+import { usePipelineMetricsLevel } from '../../utils/pipeline-operator';
 import { MetricsQueryPrefix } from '../pipeline-metrics-utils';
 import PipelineMetrics from '../PipelineMetrics';
 import PipelineMetricsEmptyState from '../PipelineMetricsEmptyState';
@@ -24,6 +25,12 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
 
+jest.mock('../../utils/pipeline-operator', () => ({
+  usePipelineMetricsLevel: jest.fn(),
+}));
+
+const mockUsePipelineMetricsLevel = usePipelineMetricsLevel as jest.Mock;
+
 const latestPipelineRunSpy = jest.spyOn(hookUtils, 'useLatestPipelineRun');
 
 const mockData = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
@@ -34,15 +41,14 @@ type PipelineMetricsProps = React.ComponentProps<typeof PipelineMetrics>;
 
 describe('Pipeline Metrics', () => {
   let PipelineMetricsProps: PipelineMetricsProps;
+  mockUsePipelineMetricsLevel.mockReturnValue({
+    queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+    metricsLevel: PipelineMetricsLevel.PIPELINERUN_TASKRUN_LEVEL,
+    hasUpdatePermission: true,
+  });
   beforeEach(() => {
     PipelineMetricsProps = {
       obj: pipeline,
-      customData: {
-        templateNames: [],
-        queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
-        metricsLevel: PipelineMetricsLevel.PIPELINERUN_TASKRUN_LEVEL,
-        hasUpdatePermission: true,
-      },
     };
   });
 
@@ -69,12 +75,12 @@ describe('Pipeline Metrics', () => {
 
   it('Should render only success ratio and number of pipeline runs charts if the metrics level is set to pipeline /task (default) level', () => {
     latestPipelineRunSpy.mockReturnValue(pipelineRun);
+    mockUsePipelineMetricsLevel.mockReturnValue({
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+      metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL,
+      hasUpdatePermission: true,
+    });
     const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
-    pipelineMetricsWrapper
-      .setProps({
-        customData: { metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL },
-      })
-      .update();
     expect(pipelineMetricsWrapper.find(PipelineMetricsEmptyState).exists()).toBe(false);
     expect(pipelineMetricsWrapper.find(Card)).toHaveLength(2);
 
@@ -89,75 +95,61 @@ describe('Pipeline Metrics', () => {
 
   it('Should contain quickstart link if the metrics level is set to pipeline /task (default) level', () => {
     latestPipelineRunSpy.mockReturnValue(pipelineRun);
+    mockUsePipelineMetricsLevel.mockReturnValue({
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+      metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL,
+      hasUpdatePermission: true,
+    });
     const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
-    pipelineMetricsWrapper
-      .setProps({
-        customData: {
-          metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL,
-          hasUpdatePermission: true,
-        },
-      })
-      .update();
 
     expect(pipelineMetricsWrapper.find(PipelineMetricsQuickstart).exists()).toBe(true);
   });
 
   it('Should contain quickstart link if the user has update permission', () => {
     latestPipelineRunSpy.mockReturnValue(pipelineRun);
+    mockUsePipelineMetricsLevel.mockReturnValue({
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+      metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL,
+      hasUpdatePermission: true,
+    });
     const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
-    pipelineMetricsWrapper
-      .setProps({
-        customData: {
-          metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL,
-          hasUpdatePermission: true,
-        },
-      })
-      .update();
 
     expect(pipelineMetricsWrapper.find(PipelineMetricsQuickstart).exists()).toBe(true);
   });
 
   it('Should not contain quickstart link if the user does not have update permission', () => {
     latestPipelineRunSpy.mockReturnValue(pipelineRun);
+    mockUsePipelineMetricsLevel.mockReturnValue({
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+      metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL,
+      hasUpdatePermission: false,
+    });
     const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
-    pipelineMetricsWrapper
-      .setProps({
-        customData: {
-          metricsLevel: PipelineMetricsLevel.PIPELINE_TASK_LEVEL,
-          hasUpdatePermission: false,
-        },
-      })
-      .update();
 
     expect(pipelineMetricsWrapper.find(PipelineMetricsQuickstart).exists()).toBe(false);
   });
 
   it('Should not contain quickstart link if the metrics level is set to pipelinerun /taskrun level', () => {
     latestPipelineRunSpy.mockReturnValue(pipelineRun);
+    mockUsePipelineMetricsLevel.mockReturnValue({
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+      metricsLevel: PipelineMetricsLevel.PIPELINERUN_TASKRUN_LEVEL,
+      hasUpdatePermission: true,
+    });
     const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
-    pipelineMetricsWrapper
-      .setProps({
-        customData: {
-          metricsLevel: PipelineMetricsLevel.PIPELINERUN_TASKRUN_LEVEL,
-          hasUpdatePermission: true,
-        },
-      })
-      .update();
 
     expect(pipelineMetricsWrapper.find(PipelineMetricsQuickstart).exists()).toBe(false);
   });
 
   it('Should render Pipeline Metrics Unsupported empty page', () => {
     latestPipelineRunSpy.mockReturnValue(pipelineRun);
+    mockUsePipelineMetricsLevel.mockReturnValue({
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+      metricsLevel: PipelineMetricsLevel.UNSUPPORTED_LEVEL,
+      hasUpdatePermission: true,
+    });
     const pipelineMetricsWrapper = shallow(<PipelineMetrics {...PipelineMetricsProps} />);
-    pipelineMetricsWrapper
-      .setProps({
-        customData: {
-          metricsLevel: PipelineMetricsLevel.UNSUPPORTED_LEVEL,
-          hasUpdatePermission: true,
-        },
-      })
-      .update();
+
     expect(pipelineMetricsWrapper.find(PipelineMetricsUnsupported).exists()).toBe(true);
   });
 });

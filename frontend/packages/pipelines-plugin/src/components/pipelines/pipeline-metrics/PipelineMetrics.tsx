@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { PipelineMetricsLevel } from '../const';
 import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
 import { useLatestPipelineRun } from '../hooks';
+import { usePipelineMetricsLevel } from '../utils/pipeline-operator';
 import { GraphData } from './pipeline-metrics-utils';
 import PipelineMetricsEmptyState from './PipelineMetricsEmptyState';
 import PipelineMetricsQuickstart from './PipelineMetricsQuickstart';
@@ -29,12 +30,12 @@ import PipelineSuccessRatioDonut from './PipelineSuccessRatioDonut';
 
 import './PipelineMetrics.scss';
 
-const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData }) => {
+const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj }) => {
   const {
     metadata: { name, namespace },
   } = obj;
-  const { queryPrefix, metricsLevel, hasUpdatePermission } = customData;
   const { t } = useTranslation();
+  const { queryPrefix, metricsLevel, hasUpdatePermission } = usePipelineMetricsLevel(namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
   const [interval, setInterval] = React.useState(parsePrometheusDuration('30s'));

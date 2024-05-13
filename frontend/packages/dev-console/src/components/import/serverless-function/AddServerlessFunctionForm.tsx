@@ -2,11 +2,12 @@ import * as React from 'react';
 import { Alert, Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGitService, GitProvider } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
+import { ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
@@ -26,6 +27,8 @@ import AppSection from '../app/AppSection';
 import GitSection from '../git/GitSection';
 import ServerlessFunctionStrategySection from './ServerlessFunctionStrategySection';
 
+import './AddServerlessFunctionForm.scss';
+
 type AddServerlessFunctionFormProps = {
   builderImages?: NormalizedBuilderImages;
   projects: WatchK8sResultsObject<K8sResourceKind[]>;
@@ -37,6 +40,9 @@ enum SupportedRuntime {
   typescript = 'nodejs',
   quarkus = 'java',
 }
+
+export const SERVERLESS_FUNCTION_DOCS_URL =
+  'https://docs.openshift.com/serverless/latest/functions/serverless-functions-getting-started.html';
 
 const AddServerlessFunctionForm: React.FC<
   FormikProps<FormikValues> & AddServerlessFunctionFormProps
@@ -147,10 +153,16 @@ const AddServerlessFunctionForm: React.FC<
                   title={t('devconsole~func.yaml is not present and builder strategy is not s2i')}
                 >
                   <p>
-                    {t(
-                      'devconsole~func.yaml must be present and builder strategy should be s2i to create a Serverless function',
-                    )}
+                    <Trans t={t} ns="devconsole">
+                      The Function cannot be built from this repository since it is not created with{' '}
+                      <code className="co-code">kn func create</code> command.
+                    </Trans>
                   </p>
+                  <ExternalLink
+                    additionalClassName="odc-func-form-link"
+                    href={SERVERLESS_FUNCTION_DOCS_URL}
+                    text={t('devconsole~Learn more')}
+                  />
                 </Alert>
               )}
           </FormBody>

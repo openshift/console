@@ -12,7 +12,7 @@ import (
 
 	"github.com/coreos/pkg/flagutil"
 	"gopkg.in/yaml.v2"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:

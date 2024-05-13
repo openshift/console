@@ -48,7 +48,7 @@ Then('user is able to see the context menu with actions Upgrade and Delete Helm 
 });
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
-  topologyPage.clickOnGroup(helmReleaseName);
+  topologyPage.clickOnHelmGroup(helmReleaseName);
   topologySidePane.verify();
 });
 
@@ -150,7 +150,7 @@ Then('user will see the Details, Resources, Release notes tabs', () => {
 });
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
-  topologyPage.clickOnGroup(helmReleaseName);
+  topologyPage.clickOnHelmGroup(helmReleaseName);
   topologySidePane.verify();
 });
 
