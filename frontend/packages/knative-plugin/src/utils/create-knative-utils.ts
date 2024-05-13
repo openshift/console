@@ -155,6 +155,16 @@ export const getKnativeServiceDepResource = (
                 ],
               }),
               imagePullPolicy: imgPullPolicy,
+              securityContext: {
+                allowPrivilegeEscalation: false,
+                capabilities: {
+                  drop: ['ALL'],
+                },
+                runAsNonRoot: true,
+                seccompProfile: {
+                  type: 'RuntimeDefault',
+                },
+              },
               env,
               resources: {
                 ...((cpuLimit || memoryLimit) && {
