@@ -146,9 +146,6 @@ const showDebugAction = (pod: PodKind, containerName: string) => {
     return false;
   }
   const containerStatus = pod?.status?.containerStatuses?.find((c) => c.name === containerName);
-  if (pod?.status?.phase === 'Succeeded') {
-    return false;
-  }
   if (pod?.metadata?.annotations?.['openshift.io/build.name']) {
     return false;
   }
