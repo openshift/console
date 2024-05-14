@@ -1,6 +1,7 @@
 package chartproxy
 
 import (
+	"sort"
 	"strings"
 
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -109,6 +110,10 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 						// Adding potential duplicates to the list
 						delKeys = append(delKeys, entry[0].Name+"--"+overwrites)
 					}
+
+					sort.Slice(entry, func(i, j int) bool {
+						return entry[i].Version < entry[j].Version
+					})
 
 					indexFile.Entries[key+"--"+helmRepo.Name] = entry
 				}
