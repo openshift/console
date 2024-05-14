@@ -49,7 +49,8 @@ export const app = {
 };
 
 export const sidePane = {
-  close: () => cy.get('button[aria-label="Close"]').click({ force: true }),
+  operatorClose: () => cy.get('button[aria-label="Close"]').click({ force: true }),
+  close: () => cy.byLegacyTestID('sidebar-close-button').click({ force: true }),
 };
 
 export const perspective = {
@@ -117,7 +118,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Builds: {
       cy.get(devNavigationMenuPO.builds).click();
-      detailsPage.titleShouldContain(pageTitle.Builds);
+      detailsPage.titleShouldContain(pageTitle.BuildConfigs);
       cy.testA11y('Builds Page in dev perspective');
       break;
     }

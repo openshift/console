@@ -106,8 +106,7 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.formView.sectionTitle).as('sectionTitle');
     cy.get('@sectionTitle').eq(0).should('contain.text', pipelineBuilderText.formView.Tasks);
     cy.get('@sectionTitle').eq(1).should('contain.text', pipelineBuilderText.formView.Parameters);
-    cy.get('@sectionTitle').eq(2).should('contain.text', pipelineBuilderText.formView.Resources);
-    cy.get('@sectionTitle').eq(3).should('contain.text', pipelineBuilderText.formView.Workspaces);
+    cy.get('@sectionTitle').eq(2).should('contain.text', pipelineBuilderText.formView.Workspaces);
   },
   clickCreateButton: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting

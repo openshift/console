@@ -8,6 +8,7 @@ Feature: Create the pipeline from builder page
 
         @smoke
         Scenario: user navigates to pipelines page from Add page on selecting Pipeline card: P-02-TC01
+            Given user is at Add page
              When user selects "Pipeline" card from add page
              Then user redirects to Pipeline Builder page
 
@@ -357,7 +358,7 @@ Feature: Create the pipeline from builder page
                   | pipeline_yaml                                | pipeline_name                 |
                   | testData/pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
 
-        //Issue with install tasks provided by ArtifactHub
+        # Issue with install tasks provided by ArtifactHub
         @regression @broken-test @odc-7246
         Scenario: Install task provided by ArtifactHub and add create a Pipeline: P-02-TC25
             Given user is at Pipeline Builder page
