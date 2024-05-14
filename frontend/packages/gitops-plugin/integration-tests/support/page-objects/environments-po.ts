@@ -1,5 +1,5 @@
 export const environmentsPO = {
-  noGitOpsUrlsFound: '.pf-v5-c-empty-state__body',
+  noGitOpsUrlsFound: '.loading-box.loading-box__loaded',
   argoCDLink:
     '[href="https://argocd-cluster-server-openshift-gitops.apps.rhamilto.devcluster.openshift.com"]',
 };
