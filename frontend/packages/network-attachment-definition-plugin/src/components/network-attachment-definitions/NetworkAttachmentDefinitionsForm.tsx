@@ -41,7 +41,7 @@ import {
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import {
   NET_ATTACH_DEF_HEADER_LABEL,
-  cnvBridgeNetworkType,
+  bridgeNetworkType,
   networkTypeParams,
   networkTypes,
   ovnKubernetesNetworkType,
@@ -73,7 +73,7 @@ const buildConfig = (
     console.error('Could not parse ipam.value JSON', e); // eslint-disable-line no-console
   }
 
-  if (networkType === cnvBridgeNetworkType) {
+  if (networkType === bridgeNetworkType) {
     config.bridge = _.get(typeParamsData, 'bridge.value', '');
     config.vlan = parseInt(typeParamsData?.vlanTagNum?.value, 10) || undefined;
     config.macspoofchk = _.get(typeParamsData, 'macspoofchk.value', true);
@@ -99,7 +99,7 @@ const buildConfig = (
 const getResourceName = (networkType, typeParamsData): string => {
   if (_.isEmpty(typeParamsData)) return null;
 
-  return networkType === cnvBridgeNetworkType
+  return networkType === bridgeNetworkType
     ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
 };
@@ -197,7 +197,7 @@ const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD, hasOVNK
   }
 
   if (!hasHyperConvergedCRD) {
-    delete types[cnvBridgeNetworkType];
+    delete types[bridgeNetworkType];
   }
 
   if (!hasOVNK8sNetwork) {
