@@ -34,6 +34,7 @@ import {
   UseResolvedExtensions,
   VirtualizedTableFC,
   UseActiveNamespace,
+  UseUserSettings,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -877,3 +878,23 @@ export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks
  */
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;
+
+/**
+ * Hook that provides a user setting value and a callback for setting the user setting value.
+ * @returns A tuple containing the user setting value, a setter callback, and a loaded boolean.
+ * @example
+ * ```tsx
+ * const Component: React.FC = (props) => {
+ *    const [state, setState, loaded] = useUserSettings(
+ *      'devconsole.addPage.showDetails',
+ *      true,
+ *      true,
+ *    );
+ *    return loaded ? (
+ *       <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+ *     ) : null;
+ * };
+ * ```
+ */
+export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
+  .useUserSettings;

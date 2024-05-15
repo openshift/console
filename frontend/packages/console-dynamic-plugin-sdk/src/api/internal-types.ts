@@ -276,12 +276,6 @@ export type UseDashboardResources = ({
   notificationAlerts: { alerts: Alert[]; loaded: boolean; loadError: Error };
 };
 
-export type UseUserSettings = <T>(
-  key: string,
-  defaultValue?: T,
-  sync?: boolean,
-) => [T, React.Dispatch<React.SetStateAction<T>>, boolean];
-
 export type QuickStartsLoaderProps = {
   children: (quickStarts: QuickStart[], loaded: boolean) => React.ReactNode;
 };
