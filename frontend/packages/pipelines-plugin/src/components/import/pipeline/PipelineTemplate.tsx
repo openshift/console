@@ -184,7 +184,6 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       } else {
         setFieldValue('pipeline.template', null);
         setFieldValue('pipeline.templateSelected', '');
-        setFieldValue('pipeline.enabled', false);
         setNoTemplateForRuntime(true);
       }
     };
