@@ -137,7 +137,7 @@ const config: Configuration = {
       },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
-        exclude: /node_modules\/(?!(bitbucket|ky)\/)/,
+        exclude: /node_modules\/(?!(bitbucket|ky|ini)\/)/,
         use: [
           { loader: 'cache-loader' },
           // Disable thread-loader in CI
