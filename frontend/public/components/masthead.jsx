@@ -81,7 +81,7 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
       </MastheadToggle>
       <MastheadMain>
         <MastheadBrand {...logoProps}>
-          <Brand src={details.logoImg} alt={details.productName} />
+          <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
