@@ -1,0 +1,4 @@
+{
+  "Unable to find repository": "No se puede encontrar el repositorio",
+  "Repository path {{path}} does not match expected name {{name}}": "La ruta del repositorio {{path}} no coincide con el nombre previsto {{name}}"
+}
