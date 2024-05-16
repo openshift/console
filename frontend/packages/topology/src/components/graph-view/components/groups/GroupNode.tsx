@@ -63,6 +63,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({
   typeIconClass,
   ...rest
 }) => {
+  const ref = React.useRef();
   const [filtered] = useSearchFilter(element.getLabel());
   const [textHover, textHoverRef] = useHover();
   const [iconSize, iconRef] = useSize([badge]);
@@ -124,23 +125,26 @@ const GroupNode: React.FC<GroupNodeProps> = ({
             badgeColor={badgeColor}
           />
           {title && (
-            <Tooltip
-              content={title}
-              position={TooltipPosition.top}
-              trigger="manual"
-              isVisible={textHover && shouldTruncate(title)}
-            >
-              <text
-                ref={textHoverRef}
-                className="odc-group-node__title"
-                x={LEFT_MARGIN + iconWidth + TEXT_MARGIN}
-                y={TOP_MARGIN + iconHeight}
-                textAnchor="start"
-                dy="-0.25em"
+            <g ref={textHoverRef}>
+              <Tooltip
+                content={title}
+                position={TooltipPosition.top}
+                trigger="manual"
+                isVisible={textHover && shouldTruncate(title, truncateOptions)}
+                triggerRef={ref}
               >
-                {truncateMiddle(title, truncateOptions)}
-              </text>
-            </Tooltip>
+                <text
+                  ref={ref}
+                  className="odc-group-node__title"
+                  x={LEFT_MARGIN + iconWidth + TEXT_MARGIN}
+                  y={TOP_MARGIN + iconHeight}
+                  textAnchor="start"
+                  dy="-0.25em"
+                >
+                  {truncateMiddle(title, truncateOptions)}
+                </text>
+              </Tooltip>
+            </g>
           )}
           {(children || groupResources || emptyValue) && (
             <g transform={`translate(${LEFT_MARGIN}, ${TOP_MARGIN + iconHeight})`}>
