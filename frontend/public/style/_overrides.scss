@@ -164,6 +164,11 @@ form.pf-c-form {
     z-index: calc(var(--pf-c-page__header--ZIndex) + 50);
   }
 
+  // Restore the max-height from PageHeader to maintain backwards compatibility
+  .pf-c-brand {
+    max-height: var(--pf-c-page__header-brand-link--c-brand--MaxHeight);
+  }
+
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing
   .pf-page__main-section--flex {
     display: flex;
