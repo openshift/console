@@ -447,6 +447,7 @@
   "Approval status": "批准状态",
   "ApprovalTasks": "ApprovalTasks",
   "An error occurred. Please try again": "发生错误。请再试一次",
+  "<0>{type === 'approve'\n          ? 'Are you sure you want to approve'\n          : 'Please provide a reason for not approving'} <2></2><3>{name}</3> in <6></6><7></7><8>{pipelineRunName}</8>?</0>": "<0>{type === 'approve'\n          ? 'Are you sure you want to approve'\n          : 'Please provide a reason for not approving'} <2></2><3>{name}</3> in <6></6><7></7><8>{pipelineRunName}</8>?</0>",
   "Reason": "原因",
   "Submit": "提交",
   "{{taskLabel}} details": "{{taskLabel}} 详情",
