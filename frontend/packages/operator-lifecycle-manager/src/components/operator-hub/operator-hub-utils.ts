@@ -43,3 +43,15 @@ export const isAzureWIFCluster = (
     auth?.spec?.serviceAccountIssuer !== ''
   );
 };
+
+export const isGCPWIFCluster = (
+  cloudcreds: CloudCredentialKind,
+  infra: InfrastructureKind,
+  auth: AuthenticationKind,
+) => {
+  return (
+    cloudcreds?.spec?.credentialsMode === 'Manual' &&
+    infra?.status?.platform === 'GCP' &&
+    auth?.spec?.serviceAccountIssuer !== ''
+  );
+};

@@ -31,7 +31,7 @@ import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../con
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { isAWSSTSCluster, isAzureWIFCluster } from './operator-hub-utils';
+import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
 import {
   OperatorHubItem,
   InstalledState,
@@ -441,6 +441,17 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
     ) {
       setTokenizedAuth('Azure');
+    }
+    if (
+      currentItem &&
+      isGCPWIFCluster(
+        currentItem.cloudCredentials,
+        currentItem.infrastructure,
+        currentItem.authentication,
+      ) &&
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
+    ) {
+      setTokenizedAuth('GCP');
     }
   }, [filteredItems]);
 
