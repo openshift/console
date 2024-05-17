@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import {
   DynamicRemotePlugin,
@@ -268,8 +269,6 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
 
   private readonly pkg = loadPluginPackageJSON();
 
-  private readonly sharedDynamicModuleMaps: Record<string, DynamicModuleMap>;
-
   constructor(options: ConsoleRemotePluginOptions = {}) {
     this.adaptedOptions = {
       pluginMetadata: options.pluginMetadata ?? this.pkg.consolePlugin,
@@ -287,24 +286,6 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
     if (this.adaptedOptions.validateSharedModules) {
       validateConsoleProvidedSharedModules(this.pkg).report();
     }
-
-    this.sharedDynamicModuleMaps = Object.entries(
-      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? {
-        '@patternfly/react-core': {},
-        '@patternfly/react-icons': {},
-        '@patternfly/react-table': {},
-      },
-    ).reduce<Record<string, DynamicModuleMap>>(
-      (acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => ({
-        ...acc,
-        [pkgName]: getDynamicModuleMap(
-          path.resolve(this.baseDir, 'node_modules', pkgName),
-          indexModule,
-          resolutionField,
-        ),
-      }),
-      {},
-    );
   }
 
   apply(compiler: webpack.Compiler) {
@@ -347,7 +328,37 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       }
     });
 
-    const allSharedDynamicModules = Object.entries(this.sharedDynamicModuleMaps).reduce<
+    const sharedDynamicModuleMaps: Record<string, DynamicModuleMap> = Object.entries(
+      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? {
+        '@patternfly/react-core': {},
+        '@patternfly/react-icons': {},
+        '@patternfly/react-table': {},
+      },
+    ).reduce<Record<string, DynamicModuleMap>>(
+      (acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => {
+        const pkgBasePath = path.resolve(this.baseDir, 'node_modules', pkgName);
+        const dynamicModulesFilePath = path.resolve(pkgBasePath, 'dist/dynamic-modules.json');
+        const dynamicModulesFileFound = fs.existsSync(dynamicModulesFilePath);
+
+        if (!dynamicModulesFileFound) {
+          logger.info(
+            `${path.relative(
+              this.baseDir,
+              dynamicModulesFilePath,
+            )} not found, using fallback dynamic module parser`,
+          );
+        }
+
+        acc[pkgName] = dynamicModulesFileFound
+          ? JSON.parse(fs.readFileSync(dynamicModulesFilePath, 'utf-8'))
+          : getDynamicModuleMap(pkgBasePath, indexModule, resolutionField);
+
+        return acc;
+      },
+      {},
+    );
+
+    const allSharedDynamicModules = Object.entries(sharedDynamicModuleMaps).reduce<
       WebpackSharedObject
     >(
       (acc, [moduleName, dynamicModuleMap]) => ({
@@ -424,7 +435,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
 
           if (!modifiedModules.includes(moduleRequest) && transformImports(moduleRequest)) {
             const loaderOptions: DynamicModuleImportLoaderOptions = {
-              dynamicModuleMaps: this.sharedDynamicModuleMaps,
+              dynamicModuleMaps: sharedDynamicModuleMaps,
               resourceMetadata: { jsx: /\.(jsx|tsx)$/.test(moduleRequest) },
             };
 
