@@ -628,6 +628,9 @@
         "falseValue": false,
         "defaultValue": false
       }
+    },
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
     }
   },
   {
@@ -1087,7 +1090,7 @@
         "kind": "MultiNetworkPolicy"
       }
     },
-    "flags": {"required": ["MULTI_NETWORK_POLICY_ENABLED"]}
+    "flags": { "required": ["MULTI_NETWORK_POLICY_ENABLED"] }
   },
   {
     "type": "console.navigation/resource-cluster",
