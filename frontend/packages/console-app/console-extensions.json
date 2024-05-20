@@ -635,6 +635,9 @@
         "falseValue": false,
         "defaultValue": false
       }
+    },
+    "flags": {
+      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
     }
   },
   {
