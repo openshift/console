@@ -447,6 +447,7 @@
   "Approval status": "승인 상태",
   "ApprovalTasks": "ApprovalTasks",
   "An error occurred. Please try again": "오류가 발생했습니다. 다시 시도하십시오",
+  "<0>{type === 'approve'\n          ? 'Are you sure you want to approve'\n          : 'Please provide a reason for not approving'} <2></2><3>{name}</3> in <6></6><7></7><8>{pipelineRunName}</8>?</0>": "<0>{type === 'approve'\n          ? 'Are you sure you want to approve'\n          : 'Please provide a reason for not approving'} <2></2><3>{name}</3> in <6></6><7></7><8>{pipelineRunName}</8>?</0>",
   "Reason": "이유",
   "Submit": "제출",
   "{{taskLabel}} details": "{{taskLabel}} 세부 정보",
