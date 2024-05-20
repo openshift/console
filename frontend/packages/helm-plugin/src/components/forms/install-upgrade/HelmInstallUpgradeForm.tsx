@@ -45,6 +45,8 @@ export interface HelmInstallUpgradeFormProps {
   chartError: Error;
   namespace: string;
   chartIndexEntry?: string;
+  annotatedName?: string;
+  providerName?: string;
 }
 
 const HelmInstallUpgradeForm: React.FC<
@@ -64,6 +66,8 @@ const HelmInstallUpgradeForm: React.FC<
   chartError,
   namespace,
   chartIndexEntry,
+  annotatedName,
+  providerName,
 }) => {
   const { t } = useTranslation();
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
@@ -158,6 +162,8 @@ const HelmInstallUpgradeForm: React.FC<
                 onVersionChange={onVersionChange}
                 namespace={namespace}
                 chartIndexEntry={chartIndexEntry}
+                annotatedName={annotatedName}
+                providerName={providerName}
               />
             </GridItem>
           </Grid>
