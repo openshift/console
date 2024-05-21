@@ -156,7 +156,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, _ *http.Request, token *oau
 		HttpOnly: true,
 		Path:     o.cookiePath,
 		Secure:   o.secureCookies,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	http.SetCookie(w, &cookie)
