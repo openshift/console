@@ -23,6 +23,7 @@ import (
 	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
 	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/devfile"
@@ -136,7 +137,7 @@ type Server struct {
 	AlertManagerTenancyProxyConfig      *proxy.Config
 	AlertManagerUserWorkloadHost        string
 	AlertManagerUserWorkloadProxyConfig *proxy.Config
-	Authenticator                       *auth.Authenticator
+	Authenticator                       auth.Authenticator
 	BaseURL                             *url.URL
 	Branding                            string
 	ClusterManagementProxyConfig        *proxy.Config
@@ -144,6 +145,7 @@ type Server struct {
 	CookieAuthenticationKey             []byte
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
+	CSRFVerifier                        *csrfverifier.CSRFVerifier
 	CustomLogoFile                      string
 	CustomProductName                   string
 	DevCatalogCategories                string
@@ -176,7 +178,6 @@ type Server struct {
 	QuickStarts                         string
 	ReleaseVersion                      string
 	ServiceClient                       *http.Client
-	StaticUser                          *auth.User
 	StatuspageID                        string
 	TectonicVersion                     string
 	Telemetry                           serverconfig.MultiKeyValue
@@ -202,10 +203,6 @@ func disableDirectoryListing(handler http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) authDisabled() bool {
-	return s.Authenticator == nil
-}
-
 func (s *Server) prometheusProxyEnabled() bool {
 	return s.ThanosProxyConfig != nil && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
 }
@@ -219,6 +216,10 @@ func (s *Server) gitopsProxyEnabled() bool {
 }
 
 func (s *Server) HTTPHandler() (http.Handler, error) {
+	if s.Authenticator == nil {
+		return s.NoAuthConfiguredHandler(), nil
+	}
+
 	internalProxiedK8SClient, err := kubernetes.NewForConfig(s.InternalProxiedK8SClientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to set up internal k8s client: %w", err)
@@ -272,39 +273,18 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}
 	}
 
+	authenticator := s.Authenticator
 	authHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return authMiddleware(s.Authenticator, h)
+		return authMiddleware(authenticator, s.CSRFVerifier, h)
 	}
 
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
-		return authMiddlewareWithUser(s.Authenticator, h)
+		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
-
-	if s.authDisabled() {
-		authHandler = func(h http.HandlerFunc) http.HandlerFunc {
-			return h
-		}
-		authHandlerWithUser = func(h HandlerWithUser) http.HandlerFunc {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				h(s.StaticUser, w, r)
-			})
-		}
-	}
-
-	authHandlerWithHeader := func(h http.HandlerFunc) http.HandlerFunc {
-		return authHandlerWithUser(func(u *auth.User, w http.ResponseWriter, r *http.Request) {
-			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", u.Token))
-			h(w, r)
-		})
-	}
-
-	if !s.authDisabled() {
-		handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
-		handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
-		handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
-		handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
-		// TODO: only add the following in case the auth type is openshift?
-	}
+	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
+	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
+	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
+	handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
 
 	handleFunc("/api/", notFoundHandler)
 
@@ -328,7 +308,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
-		authHandlerWithHeader(k8sProxy.ServeHTTP),
+		authHandler(k8sProxy.ServeHTTP),
 	))
 
 	handleFunc(devfileEndpoint, devfile.DevfileHandler)
@@ -384,17 +364,17 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 		handleThanosRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
-			authHandlerWithHeader(thanosProxy.ServeHTTP),
+			authHandler(thanosProxy.ServeHTTP),
 		)
 
 		handleThanosTenancyRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-			authHandlerWithHeader(thanosTenancyProxy.ServeHTTP),
+			authHandler(thanosTenancyProxy.ServeHTTP),
 		)
 
 		handleThanosTenancyForRulesRequest := http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
-			authHandlerWithHeader(thanosTenancyForRulesProxy.ServeHTTP))
+			authHandler(thanosTenancyForRulesProxy.ServeHTTP))
 
 		// global label, query, and query_range requests have to be proxied via thanos
 		handle(querySourcePath, handleThanosRequest)
@@ -430,17 +410,17 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 		handle(alertManagerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyAPIPath),
-			authHandlerWithHeader(alertManagerProxy.ServeHTTP),
+			authHandler(alertManagerProxy.ServeHTTP),
 		))
 
 		handle(alertManagerUserWorkloadProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerUserWorkloadProxyAPIPath),
-			authHandlerWithHeader(alertManagerUserWorkloadProxy.ServeHTTP),
+			authHandler(alertManagerUserWorkloadProxy.ServeHTTP),
 		))
 
 		handle(alertManagerTenancyProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerTenancyProxyAPIPath),
-			authHandlerWithHeader(alertManagerTenancyProxy.ServeHTTP),
+			authHandler(alertManagerTenancyProxy.ServeHTTP),
 		))
 	}
 
@@ -649,7 +629,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			authHandlerWithHeader(gitopsProxy.ServeHTTP),
+			authHandler(gitopsProxy.ServeHTTP),
 		))
 	}
 
@@ -685,12 +665,13 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	jsg := &jsGlobals{
 		ConsoleVersion:            version.Version,
-		AuthDisabled:              s.authDisabled(),
 		BasePath:                  s.BaseURL.Path,
 		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
 		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
 		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
 		LogoutURL:                 authLogoutEndpoint,
+		LogoutRedirect:            s.Authenticator.LogoutRedirectURL(),
+		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		Branding:                  s.Branding,
 		CustomProductName:         s.CustomProductName,
@@ -723,13 +704,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sMode:                   s.K8sMode,
 	}
 
-	if !s.authDisabled() {
-		jsg.LogoutRedirect = s.Authenticator.LogoutRedirectURL()
-
-		specialAuthURLs := s.Authenticator.GetSpecialURLs()
-		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
-	}
-
 	if s.prometheusProxyEnabled() {
 		jsg.PrometheusBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint)
 		jsg.PrometheusTenancyBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusTenancyProxyEndpoint)
@@ -740,9 +714,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		jsg.AlertmanagerUserWorkloadBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertmanagerUserWorkloadProxyEndpoint)
 	}
 
-	if !s.authDisabled() {
-		s.Authenticator.SetCSRFCookie(s.BaseURL.Path, &w)
-	}
+	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 
 	if s.CustomLogoFile != "" {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
@@ -792,5 +764,14 @@ func (s *Server) handleCopyLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
-	verifyCSRF(s.Authenticator, s.Authenticator.LogoutFunc).ServeHTTP(w, r)
+	s.CSRFVerifier.WithCSRFVerification(http.HandlerFunc(s.Authenticator.LogoutFunc)).ServeHTTP(w, r)
+}
+
+func (s *Server) NoAuthConfiguredHandler() http.Handler {
+	mux := http.NewServeMux()
+	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, "Please configure authentication to use the web console.")
+	}))
+	return securityHeadersMiddleware(mux)
 }
