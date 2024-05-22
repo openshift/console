@@ -72,39 +72,65 @@ const AddServerlessFunctionForm: React.FC<
     strategy === ServerlessBuildStrategyType.ServerlessFunction &&
     validated !== ValidatedOptions.default &&
     type !== GitProvider.INVALID;
+  const [helpText, setHelpText] = React.useState<string>('');
 
   React.useEffect(() => {
     if (url) {
       const gitService = getGitService(url, type, ref, dir, secretResource);
-      evaluateFunc(gitService)
-        .then((res) => {
-          if (res) {
-            setStatus({});
-            setFieldValue('build.env', res.values.builderEnvs);
-            setFieldValue('deployment.env', res.values.runtimeEnvs);
-            setFieldValue(
-              'image.selected',
-              notSupportedRuntime.indexOf(res.values.runtime) === -1
-                ? SupportedRuntime[res.values.runtime]
-                : res.values.runtime,
-            );
-            setFieldValue('import.showEditImportStrategy', true);
-            setFieldValue(
-              'image.tag',
-              builderImages?.[SupportedRuntime[res.values.runtime]]?.recentTag?.name ?? '',
-            );
-            if (builderImages[SupportedRuntime[res.values.runtime]] === undefined) {
-              setStatus({ errors: 'Builder Image is not present.' });
+      if (gitService) {
+        gitService
+          .isFuncYamlPresent()
+          // eslint-disable-next-line consistent-return
+          .then((isFuncYamlPresent) => {
+            if (!isFuncYamlPresent) {
+              setHelpText(t('devconsole~Unable to find func.yaml in the repository.'));
+              setStatus({ errors: 'func.yaml not present' });
+            } else {
+              return evaluateFunc(gitService);
             }
-          } else {
-            setStatus({ errors: 'Not evaluated' });
-          }
-        })
-        .catch((err) => {
-          setStatus({ errors: err });
-        });
+          })
+          .then((res) => {
+            if (res) {
+              setStatus({});
+              setFieldValue('build.env', res?.values?.builderEnvs);
+              setFieldValue('deployment.env', res?.values?.runtimeEnvs);
+              setFieldValue(
+                'image.selected',
+                notSupportedRuntime.indexOf(res?.values?.runtime) === -1
+                  ? SupportedRuntime[res?.values?.runtime]
+                  : res?.values?.runtime,
+              );
+              setFieldValue('import.showEditImportStrategy', true);
+              setFieldValue(
+                'image.tag',
+                builderImages?.[SupportedRuntime[res?.values?.runtime]]?.recentTag?.name ?? '',
+              );
+              if (res?.values?.builder && res?.values?.builder !== 's2i') {
+                setHelpText(
+                  t(
+                    'devconsole~Unsupported builder strategy detected. s2i is currently supported.',
+                  ),
+                );
+                setStatus({ errors: 'Builder strategy not supported' });
+              }
+              if (builderImages[SupportedRuntime[res?.values?.runtime]] === undefined) {
+                setHelpText(
+                  t('devconsole~Support for {{runtime}} is not yet available.', {
+                    runtime: res?.values?.runtime,
+                  }),
+                );
+                setStatus({ errors: 'Builder Image is not present' });
+              }
+            } else {
+              setStatus({ errors: 'Not evaluated' });
+            }
+          })
+          .catch((err) => {
+            setStatus({ errors: err });
+          });
+      }
     }
-  }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus]);
+  }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus, t]);
 
   React.useEffect(() => {
     if (image.selected && isPipelineEnabled) {
@@ -146,16 +172,18 @@ const AddServerlessFunctionForm: React.FC<
               </>
             )}
             {validated !== ValidatedOptions.default &&
+              validated !== ValidatedOptions.warning &&
               strategy !== ServerlessBuildStrategyType.ServerlessFunction && (
                 <Alert
                   variant="warning"
                   isInline
-                  title={t('devconsole~func.yaml is not present and builder strategy is not s2i')}
+                  title={t('devconsole~Serverless function cannot be created')}
                 >
-                  <p>
+                  {helpText}
+                  <p className="odc-func-form-helpText">
                     <Trans t={t} ns="devconsole">
-                      The Function cannot be built from this repository since it is not created with{' '}
-                      <code className="co-code">kn func create</code> command.
+                      <b>Tip:</b> Use the <code className="co-code">kn func create</code> command to
+                      create the serverless function.
                     </Trans>
                   </p>
                   <ExternalLink
