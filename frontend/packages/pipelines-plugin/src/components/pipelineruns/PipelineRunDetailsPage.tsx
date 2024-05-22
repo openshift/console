@@ -50,7 +50,6 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         },
         {
           href: 'logs',
-          path: 'logs/:name?',
           // t('pipelines-plugin~Logs')
           nameKey: 'pipelines-plugin~Logs',
           component: PipelineRunLogsWithActiveTask,
