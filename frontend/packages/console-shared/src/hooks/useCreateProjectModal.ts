@@ -1,9 +1,7 @@
 import * as React from 'react';
+import { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
-import {
-  CreateProjectModal,
-  CreateProjectModalProps,
-} from '../components/modals/CreateProjectModal';
+import { CreateProjectModal } from '../components/modals/CreateProjectModal';
 
 export const useCreateProjectModal: UseCreateProjectModal = () => {
   const launcher = useModal();

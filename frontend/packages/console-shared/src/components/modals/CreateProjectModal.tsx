@@ -6,6 +6,12 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
+import {
+  CreateProjectModal as CreateProjectModalExtension,
+  CreateProjectModalProps,
+  isCreateProjectModal,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk/src';
 import { setFlag } from '@console/internal/actions/features';
 import {
   documentationURLs,
@@ -16,11 +22,11 @@ import {
   LoadingInline,
 } from '@console/internal/components/utils';
 import { ProjectRequestModel } from '@console/internal/models';
-import { K8sResourceCommon, k8sCreate, referenceFor } from '@console/internal/module/k8s';
+import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
-export const CreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
+const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   closeModal,
   onSubmit,
 }) => {
@@ -223,6 +229,20 @@ export const CreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   );
 };
 
-export type CreateProjectModalProps = {
-  onSubmit?: (project: K8sResourceCommon) => void;
+export const CreateProjectModal: ModalComponent<CreateProjectModalProps> = (props) => {
+  // Get create project modal extensions
+  const [createProjectModalExtensions, resolved] = useResolvedExtensions<
+    CreateProjectModalExtension
+  >(isCreateProjectModal);
+
+  // resolve the modal component from the extensions, if at least one exists
+  const Component = createProjectModalExtensions?.[0]?.properties?.component;
+
+  // If extensions are not resolved yet, return null
+  if (!resolved) {
+    return null;
+  }
+
+  // If extension modal component exists, render it, else render default
+  return Component ? <Component {...props} /> : <DefaultCreateProjectModal {...props} />;
 };

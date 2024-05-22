@@ -32,3 +32,4 @@ export * from './topology';
 export * from './user-preferences';
 export * from './yaml-templates';
 export * from './node';
+export * from './create-project-modal';
