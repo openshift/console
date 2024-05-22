@@ -11,9 +11,10 @@ import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
 import { ResourceName } from './resource-icon';
 import { flagPending } from '../../reducers/features';
-import { createNamespaceModal, createProjectModal } from '../modals';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import { useTranslation, withTranslation } from 'react-i18next';
+import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
+import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 
 const getKey = (key, keyKind) => {
   return keyKind ? `${key}-${keyKind}` : key;
@@ -224,6 +225,8 @@ export const useProjectOrNamespaceModel = () => {
 /** @type {React.FC<{dataFilter?: (ns: any) => boolean, desc?: string, selectedKey?: string, fixed?: boolean, placeholder?: string, onChange?: (selectedKey: string, selectedKeyKind: string,  selectedResource?: K8sResourceKind) => void, id?: string, dataTest?: string}}>} */
 export const NsDropdown = (props) => {
   const { t } = useTranslation();
+  const createNamespaceModal = useCreateNamespaceModal();
+  const createProjectModal = useCreateProjectModal();
   const [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
   const [model, canCreate] = useProjectOrNamespaceModel();
 
@@ -243,7 +246,6 @@ export const NsDropdown = (props) => {
     switch (actionKey) {
       case 'Create_Namespace':
         createNamespaceModal({
-          blocking: true,
           onSubmit: (newNamespace) => {
             setSelectedKey(newNamespace.metadata.name);
             props.onChange?.(newNamespace.metadata.name, newNamespace.kind, newNamespace);
@@ -252,7 +254,6 @@ export const NsDropdown = (props) => {
         break;
       case 'Create_Project':
         createProjectModal({
-          blocking: true,
           onSubmit: (newProject) => {
             setSelectedKey(newProject.metadata.name);
             props.onChange?.(newProject.metadata.name, newProject.kind, newProject);

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { createNamespaceOrProjectModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FLAGS, useActiveNamespace, useFlag } from '@console/shared';
+import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import ProjectListPage, { ProjectListPageProps } from './ProjectListPage';
 
 type LazySubTitleRender = (openProjectModal: () => void) => React.ReactNode;
@@ -51,13 +51,14 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
   ...props
 }) => {
   const [, setActiveNamespace] = useActiveNamespace();
+  const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const openProjectModal = React.useCallback(() => {
     const handleSubmit = (project: K8sResourceKind) => {
       setActiveNamespace(project.metadata?.name);
       onCreate && onCreate(project);
     };
-    createNamespaceOrProjectModal({ blocking: true, onSubmit: handleSubmit });
-  }, [onCreate, setActiveNamespace]);
+    createNamespaceOrProjectModal({ onSubmit: handleSubmit });
+  }, [onCreate, setActiveNamespace, createNamespaceOrProjectModal]);
   return (
     <ProjectListPage {...props} title={title}>
       {children(openProjectModal)}
