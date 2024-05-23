@@ -234,7 +234,7 @@ export const watchK8sObject = (
   name: string,
   namespace: string,
   query: { [key: string]: string },
-  k8sType: K8sModel,
+  k8sModel: K8sModel,
   partialMetadata = false,
 ) => (dispatch, getState) => {
   if (id in REF_COUNTS) {
@@ -244,11 +244,6 @@ export const watchK8sObject = (
   const watch = dispatch(startWatchK8sObject(id));
   REF_COUNTS[id] = 1;
 
-  if (query.name) {
-    query.fieldSelector = `metadata.name=${query.name}`;
-    delete query.name;
-  }
-
   const requestOptions: RequestInit = partialMetadata
     ? {
         headers: partialObjectMetadataHeader,
@@ -256,7 +251,7 @@ export const watchK8sObject = (
     : {};
 
   const poller = () => {
-    k8sGet(k8sType, name, namespace, {}, requestOptions)
+    k8sGet(k8sModel, name, namespace, {}, requestOptions)
       .then(
         (o) => dispatch(modifyObject(id, o)),
         (e) => dispatch(errored(id, e)),
@@ -269,17 +264,30 @@ export const watchK8sObject = (
   POLLs[id] = window.setInterval(poller, 30 * 1000);
   poller();
 
-  if (!_.get(k8sType, 'verbs', ['watch']).includes('watch')) {
+  if (!_.get(k8sModel, 'verbs', ['watch']).includes('watch')) {
     // eslint-disable-next-line no-console
-    console.warn(`${getReferenceForModel(k8sType)} does not support watching`);
+    console.warn(`${getReferenceForModel(k8sModel)} does not support watching`);
     return _.noop;
+  }
+
+  // Validate that a namespace is provided when watching a singular namespaced object. Must happen
+  // on frontend since we use field selectors against the list endpoint to watch singular resources.
+  if (k8sModel.namespaced && query.name && !query.ns) {
+    // eslint-disable-next-line no-console
+    console.error('Namespace required to watch namespaced resource: ', k8sModel.kind, query.name);
+    return _.noop;
+  }
+
+  if (query.name) {
+    query.fieldSelector = `metadata.name=${query.name}`;
+    delete query.name;
   }
 
   const { subprotocols } = getImpersonate(getState()) || {};
 
-  WS[id] = k8sWatch(k8sType, query, { subprotocols }).onbulkmessage((events) =>
-    events.forEach((e) => dispatch(modifyObject(id, e.object))),
-  );
+  WS[id] = k8sWatch(k8sModel, query, {
+    subprotocols,
+  }).onbulkmessage((events) => events.forEach((e) => dispatch(modifyObject(id, e.object))));
   return watch;
 };
 
