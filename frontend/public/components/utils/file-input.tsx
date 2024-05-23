@@ -119,7 +119,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
                 data-test-id={
                   this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
                 }
-                className="pf-v5-c-form-control co-file-dropzone__textarea"
+                className="pf-v5-c-form-control pf-m-resize-both co-file-dropzone__textarea"
                 onChange={this.onDataChange}
                 value={this.props.inputFileData}
                 aria-label={this.props.label}
