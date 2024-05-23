@@ -433,3 +433,5 @@ func (c *Config) Complete() (*completedConfig, error) {
 func (a *OAuth2Authenticator) GetOCLoginCommand() string {
 	return a.ocLoginCommand
 }
+
+func (a *OAuth2Authenticator) IsStatic() bool { return false }

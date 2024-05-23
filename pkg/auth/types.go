@@ -16,6 +16,7 @@ type Authenticator interface {
 	GetOCLoginCommand() string
 	LogoutRedirectURL() string
 	GetSpecialURLs() SpecialAuthURLs
+	IsStatic() bool
 }
 
 type SpecialAuthURLs struct {

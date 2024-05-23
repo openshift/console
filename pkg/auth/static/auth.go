@@ -36,3 +36,4 @@ func (s *StaticAuthenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON,
 func (s *StaticAuthenticator) GetOCLoginCommand() string            { return "" }
 func (s *StaticAuthenticator) LogoutRedirectURL() string            { return "" }
 func (s *StaticAuthenticator) GetSpecialURLs() auth.SpecialAuthURLs { return auth.SpecialAuthURLs{} }
+func (s *StaticAuthenticator) IsStatic() bool                       { return true }
