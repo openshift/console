@@ -46,6 +46,18 @@ form.pf-v5-c-form {
   }
 }
 
+.co-catalog-page__grid {
+  // Get rid of weird stretching of catalog grid items
+  .pf-v5-c-card__header-main {
+    flex: unset;
+
+    // When images are too wide, scale them instead of squishing
+    img {
+      object-fit: contain;
+    }
+  }
+}
+
 .catalog-item-header-pf-icon {
   @include catalog-logo-background(var(--pf-v5-global--spacer--sm));
 }
