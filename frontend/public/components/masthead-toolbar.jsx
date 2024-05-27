@@ -423,7 +423,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     );
     const launchActions = getLaunchActions();
 
-    if (flagPending(openshiftFlag) || flagPending(authEnabledFlag) || !username) {
+    if (flagPending(openshiftFlag) || flagPending(authEnabledFlag)) {
       return null;
     }
 
@@ -512,7 +512,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     const userToggle = (
       <span className="pf-v5-c-dropdown__toggle">
         <span className="co-username" data-test="username">
-          {username}
+          {authEnabledFlag ? username : t('public~Auth disabled')}
         </span>
         <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
