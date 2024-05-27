@@ -18,6 +18,7 @@ func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, e
 	if uid != "" {
 		resourceIdentifier = uid
 	} else if username == "kube:admin" {
+		uid = "kubeadmin"
 		resourceIdentifier = "kubeadmin"
 	} else {
 		// to avoid issues when the username contains special characters like '@'

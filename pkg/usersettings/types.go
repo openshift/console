@@ -2,8 +2,6 @@ package usersettings
 
 const userSettingsLabel = "console.openshift.io/user-settings"
 const uidLabel = "console.openshift.io/user-settings-uid"
-const resourceIdentifierLabel = "console.openshift.io/user-settings-resource-identifier"
-const uidAnnotation = "console.openshift.io/user-settings-uid"
 const usernameAnnotation = "console.openshift.io/user-settings-username"
 
 type UserSettingMeta struct {
@@ -27,15 +25,13 @@ func (r *UserSettingMeta) getRoleBindingName() string {
 
 func (r *UserSettingMeta) getLabels() map[string]string {
 	return map[string]string{
-		userSettingsLabel:       "true",
-		uidLabel:                r.UID,
-		resourceIdentifierLabel: r.ResourceIdentifier,
+		userSettingsLabel: "true",
+		uidLabel:          r.UID,
 	}
 }
 
 func (r *UserSettingMeta) getAnnotations() map[string]string {
 	return map[string]string{
-		uidAnnotation:      r.UID,
 		usernameAnnotation: r.Username,
 	}
 }
