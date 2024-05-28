@@ -344,7 +344,7 @@ _Returns repository index file containing all entries from all configured reposi
 
   * **Code:** 200 <br />
   * JSON representation of [Index file](https://github.com/helm/helm/blob/master/pkg/repo/index.go#L79)
-  * Each entry key is appended with [source repo name](https://github.com/openshift/api/blob/master/helm/v1beta1/types_helm.go#L16).
+  * Each entry key is appended with [source repo name](https://github.com/openshift/api/blob/master/helm/v1beta1/types_helm_chart_repository.go#L16).
     Double dash (`--`) serves as the separate between the chart and repo name (e.g. `foo-chart--my-repo`)
 
 * **Error Response:**
@@ -518,4 +518,3 @@ _Verifies if a Helm chart is compliant with a certain set of independent checks 
 
   * **Code:** 502 BAD GATEWAY <br />
     **Content:** `{ error : "error message" }`
-
