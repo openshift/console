@@ -137,6 +137,7 @@ type Server struct {
 	AlertManagerTenancyProxyConfig      *proxy.Config
 	AlertManagerUserWorkloadHost        string
 	AlertManagerUserWorkloadProxyConfig *proxy.Config
+	AuthDisabled                        bool
 	Authenticator                       auth.Authenticator
 	BaseURL                             *url.URL
 	Branding                            string
@@ -664,6 +665,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsg := &jsGlobals{
+		AuthDisabled:              s.Authenticator.IsStatic(),
 		ConsoleVersion:            version.Version,
 		BasePath:                  s.BaseURL.Path,
 		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
