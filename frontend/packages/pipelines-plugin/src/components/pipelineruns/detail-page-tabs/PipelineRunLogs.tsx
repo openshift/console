@@ -4,7 +4,6 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation, withTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { PipelineRunModel } from '../../../models';
@@ -119,7 +118,8 @@ class PipelineRunLogsWithTranslation extends React.Component<
       PipelineRunModel,
       obj.metadata.name,
       obj.metadata.namespace,
-    )}/logs/`;
+    )}/logs`;
+
     return (
       <div className="odc-pipeline-run-logs">
         <div className="odc-pipeline-run-logs__tasklist" data-test-id="logs-tasklist">
@@ -135,12 +135,9 @@ class PipelineRunLogsWithTranslation extends React.Component<
                       className="odc-pipeline-run-logs__navitem"
                     >
                       <Link
-                        to={
-                          path +
-                            taskRunFromYaml?.[task]?.metadata?.labels?.[
-                              TektonResourceLabel.pipelineTask
-                            ] || '-'
-                        }
+                        to={`${path}?taskName=${taskRunFromYaml?.[task]?.metadata?.labels?.[
+                          TektonResourceLabel.pipelineTask
+                        ] || '-'}`}
                       >
                         <ColoredStatusIcon
                           status={pipelineRunFilterReducer(
@@ -199,17 +196,16 @@ class PipelineRunLogsWithTranslation extends React.Component<
 
 type PipelineRunLogsWithActiveTaskProps = {
   obj: PipelineRunKind;
-  params?: RouteComponentProps;
 };
 
 const PipelineRunLogs = withTranslation()(PipelineRunLogsWithTranslation);
 
 export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTaskProps> = ({
   obj,
-  params,
 }) => {
   const { t } = useTranslation();
-  const activeTask = _.get(params, 'match.params.name');
+  const searchParams = new URLSearchParams(window.location.search);
+  const activeTask = searchParams?.get('taskName');
   const [taskRuns, taskRunsLoaded] = useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name);
   return (
     <>
