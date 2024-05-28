@@ -199,6 +199,7 @@
   "All Namespaces": "Todos los espacios de nombres",
   "Project": "Proyecto",
   "Namespace": "Espacio de nombres",
+  "Enable Autoscale": "",
   "Increase the Pod count": "Aumentar el recuento de pods",
   "Decrease the Pod count": "Disminuir el recuento de pods",
   "No Pods found for this resource.": "No se encontraron pods para este recurso.",

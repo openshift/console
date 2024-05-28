@@ -199,6 +199,7 @@
   "All Namespaces": "모든 네임 스페이스",
   "Project": "프로젝트",
   "Namespace": "네임 스페이스",
+  "Enable Autoscale": "자동 스케일링 활성화",
   "Increase the Pod count": "Pod 수 늘리기",
   "Decrease the Pod count": "Pod 수 줄이기",
   "No Pods found for this resource.": "이 리소스에 대한 Pod가 없습니다.",
