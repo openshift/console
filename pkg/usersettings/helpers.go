@@ -12,12 +12,13 @@ import (
 
 func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, error) {
 	uid := userInfo.UID
-	name := userInfo.Username
-	resourceIdentifier := name
+	username := userInfo.Username
+	var resourceIdentifier string
 
 	if uid != "" {
-		resourceIdentifier = string(uid)
-	} else if name == "kube:admin" {
+		resourceIdentifier = uid
+	} else if username == "kube:admin" {
+		uid = "kubeadmin"
 		resourceIdentifier = "kubeadmin"
 	} else {
 		// to avoid issues when the username contains special characters like '@'
@@ -30,8 +31,8 @@ func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, e
 	}
 
 	return &UserSettingMeta{
-		Username:           name,
-		UID:                string(uid),
+		Username:           username,
+		UID:                uid,
 		ResourceIdentifier: resourceIdentifier,
 	}, nil
 }
@@ -43,7 +44,9 @@ func createRole(userSettingMeta *UserSettingMeta) *rbac.Role {
 			Kind:       "Role",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getRoleName(),
+			Name:        userSettingMeta.getRoleName(),
+			Labels:      userSettingMeta.getLabels(),
+			Annotations: userSettingMeta.getAnnotations(),
 		},
 		Rules: []rbac.PolicyRule{
 			{
@@ -75,7 +78,9 @@ func createRoleBinding(userSettingMeta *UserSettingMeta) *rbac.RoleBinding {
 			Kind:       "RoleBinding",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getRoleBindingName(),
+			Name:        userSettingMeta.getRoleBindingName(),
+			Labels:      userSettingMeta.getLabels(),
+			Annotations: userSettingMeta.getAnnotations(),
 		},
 		Subjects: []rbac.Subject{
 			{
@@ -99,7 +104,9 @@ func createConfigMap(userSettingMeta *UserSettingMeta) *core.ConfigMap {
 			Kind:       "ConfigMap",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getConfigMapName(),
+			Name:        userSettingMeta.getConfigMapName(),
+			Labels:      userSettingMeta.getLabels(),
+			Annotations: userSettingMeta.getAnnotations(),
 		},
 	}
 }
