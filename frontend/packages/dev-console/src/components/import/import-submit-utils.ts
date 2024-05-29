@@ -852,14 +852,27 @@ export const createOrUpdateResources = async (
   return responses;
 };
 
+const addSearchParamsToRelativeURL = (url: string, searchParams: URLSearchParams): string => {
+  const urlObj = new URL(url, 'thismessage:/'); // ITEF RFC 2557 section 5 (e)
+
+  urlObj.search = new URLSearchParams({
+    ...Object.fromEntries(urlObj.searchParams),
+    ...Object.fromEntries(searchParams),
+  }).toString();
+
+  return urlObj.toString().replace(urlObj.protocol, '');
+};
+
 export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  searchParamOverrides?: URLSearchParams,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
-  history.push(redirectURL);
+
+  history.push(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
 };
 
 export const isRouteAdvOptionsUsed = (

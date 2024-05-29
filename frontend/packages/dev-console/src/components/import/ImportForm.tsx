@@ -195,6 +195,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
             (resource.kind === knSvcModel.kind &&
               resource.apiVersion === `${knSvcModel.apiGroup}/${knSvcModel.apiVersion}`),
         );
+
+        const redirectSearchParams = new URLSearchParams();
+
         const route = resources.find((resource) => resource.kind === RouteModel.kind) as RouteKind;
         if (deployedResources.length > 0) {
           toastContext.addToast({
@@ -207,10 +210,12 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
             timeout: true,
             dismissible: true,
           });
+
+          redirectSearchParams.set('selectId', deployedResources[0].metadata.uid);
         }
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
-        handleRedirect(projectName, perspective, perspectiveExtensions);
+        handleRedirect(projectName, perspective, perspectiveExtensions, redirectSearchParams);
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
