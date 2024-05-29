@@ -1322,7 +1322,8 @@ export const SecretLoadingWrapper = withTranslation()(
       if (!secretTypeAbstraction) {
         return <LoadingBox />;
       }
-      const fixed = _.reduce(fixedKeys, (acc, k) => ({ ...acc, k: _.get(obj.data, k) }), {});
+      const fixed = fixedKeys?.reduce((acc, k) => ({ ...acc, [k]: obj.data?.[k] || '' }), {});
+
       return (
         <StatusBox {...obj}>
           <SecretFormWrapper
