@@ -76,13 +76,15 @@ const VirtualizedTable: VirtualizedTableFC = ({
   rowData,
   unfilteredData,
   mock = false,
+  sortColumnIndex,
+  sortDirection,
 }) => {
   const navigate = useNavigate();
   const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
   const [sortBy, setSortBy] = React.useState<{
     index: number;
     direction: SortByDirection;
-  }>({ index: columnShift, direction: SortByDirection.asc });
+  }>({ index: sortColumnIndex || columnShift, direction: sortDirection || SortByDirection.asc });
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
