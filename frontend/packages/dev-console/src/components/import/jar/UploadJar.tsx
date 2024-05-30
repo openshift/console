@@ -10,7 +10,6 @@ import {
   usePerspectives,
   usePostFormSubmitAction,
 } from '@console/shared/src';
-import { LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
@@ -86,7 +85,6 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
       .then((resp) => {
         postFormCallback(resp);
         toastCallback(resp);
-        sessionStorage.removeItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY);
         handleRedirect(
           projectName,
           perspective,

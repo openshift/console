@@ -22,10 +22,7 @@ import {
   useTelemetry,
 } from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
-import {
-  LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
-  UNASSIGNED_KEY,
-} from '@console/topology/src/const';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { getBaseInitialValues } from './form-initial-values';
@@ -218,8 +215,6 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         }
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
-
-        sessionStorage.removeItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY);
 
         handleRedirect(projectName, perspective, perspectiveExtensions, redirectSearchParams);
       })
