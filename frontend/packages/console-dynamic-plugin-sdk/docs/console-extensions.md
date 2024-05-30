@@ -812,7 +812,7 @@ This extension contributes a new perspective to the console which enables custom
 | `name` | `string` | no | The perspective display name. |
 | `icon` | `CodeRef<LazyComponent>` | no | The perspective display icon. |
 | `landingPageURL` | `CodeRef<(flags: { [key: string]: boolean; }, isFirstVisit: boolean) => string>` | no | The function to get perspective landing page URL. |
-| `importRedirectURL` | `CodeRef<(namespace: string) => string>` | no | The function to get redirect URL for import flow. |
+| `importRedirectURL` | `CodeRef<(namespace: string) => string>` | no | The function to get a relative redirect URL for import flow. |
 | `default` | `boolean` | yes | Whether the perspective is the default. There can only be one default. |
 | `defaultPins` | `ExtensionK8sModel[]` | yes | Default pinned resources on the nav |
 | `usePerspectiveDetection` | `CodeRef<() => [boolean, boolean]>` | yes | The hook to detect default perspective |
