@@ -13,6 +13,7 @@ import { healthChecksProbeInitialData } from '../health-checks/health-checks-pro
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
+import { filterDeployedResources } from './import-submit-utils';
 import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
@@ -181,8 +182,10 @@ const DeployImage: React.FC<Props> = ({
       });
 
     return resourceActions
-      .then(() => {
-        history.push(`/topology/ns/${projectName}`);
+      .then((res) => {
+        const selectId = filterDeployedResources(res)[0]?.metadata?.uid;
+
+        history.push(`/topology/ns/${projectName}${selectId ? `?selectId=${selectId}` : ''}`);
       })
       .catch((err) => {
         helpers.setStatus({ submitError: err.message });
