@@ -537,6 +537,8 @@ const MachineList: React.FC<MachineListProps> = (props) => {
 | `gridBreakPoint` | sizing of how to break up grid for responsiveness |
 | `onSelect` | (optional) function for handling select of table |
 | `rowData` | (optional) data specific to row |
+| `sortColumnIndex` | (optional) The index of the column to sort. The default is `0` |
+| `sortDirection` | (optional) The direction of the sort. The default is `SortByDirection.asc` |
 
 
 
