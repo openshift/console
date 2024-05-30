@@ -228,7 +228,7 @@ const CreateNamespaceModalWithTranslation_ = (props) => {
               <textarea
                 id="input-description"
                 name="description"
-                className="pf-v5-c-form-control"
+                className="pf-v5-c-form-control pf-m-resize-both"
                 onChange={(e) => setDescription(e.target.value)}
                 value={description || ''}
               />
