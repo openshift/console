@@ -10,10 +10,11 @@ import {
   usePerspectives,
   usePostFormSubmitAction,
 } from '@console/shared/src';
+import { LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
-import { handleRedirect } from '../import-submit-utils';
+import { filterDeployedResources, handleRedirect } from '../import-submit-utils';
 import { BaseFormData, Resources, UploadJarFormData } from '../import-types';
 import { createOrUpdateJarFile } from '../upload-jar-submit-utils';
 import { validationSchema } from '../upload-jar-validation-utils';
@@ -85,7 +86,15 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
       .then((resp) => {
         postFormCallback(resp);
         toastCallback(resp);
-        handleRedirect(projectName, perspective, perspectiveExtensions);
+        sessionStorage.removeItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY);
+        handleRedirect(
+          projectName,
+          perspective,
+          perspectiveExtensions,
+          new URLSearchParams({
+            selectId: filterDeployedResources(resp)[0]?.metadata?.uid,
+          }),
+        );
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });

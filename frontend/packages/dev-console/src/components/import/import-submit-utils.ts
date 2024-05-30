@@ -24,7 +24,10 @@ import {
   k8sUpdate,
   K8sVerb,
 } from '@console/internal/module/k8s';
-import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import {
+  ServiceModel as KnServiceModel,
+  ServiceModel as knSvcModel,
+} from '@console/knative-plugin';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
@@ -851,6 +854,15 @@ export const createOrUpdateResources = async (
 
   return responses;
 };
+
+export const filterDeployedResources = (resources: K8sResourceKind[]) =>
+  resources.filter(
+    (resource) =>
+      resource.kind === DeploymentModel.kind ||
+      resource.kind === DeploymentConfigModel.kind ||
+      (resource.kind === knSvcModel.kind &&
+        resource.apiVersion === `${knSvcModel.apiGroup}/${knSvcModel.apiVersion}`),
+  );
 
 const addSearchParamsToRelativeURL = (url: string, searchParams?: URLSearchParams): string => {
   const urlObj = new URL(url, 'thismessage:/'); // ITEF RFC 2557 section 5 (e)

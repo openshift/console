@@ -7,11 +7,10 @@ import { connect } from 'react-redux';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
-import { DeploymentConfigModel, DeploymentModel, RouteModel } from '@console/internal/models';
+import { RouteModel } from '@console/internal/models';
 import { RouteKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ServiceModel as knSvcModel } from '@console/knative-plugin/src';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { usePacInfo } from '@console/pipelines-plugin/src/components/repository/hooks/pac-hook';
@@ -30,7 +29,12 @@ import {
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { getBaseInitialValues } from './form-initial-values';
-import { createOrUpdateResources, getTelemetryImport, handleRedirect } from './import-submit-utils';
+import {
+  createOrUpdateResources,
+  filterDeployedResources,
+  getTelemetryImport,
+  handleRedirect,
+} from './import-submit-utils';
 import {
   GitImportFormData,
   FirehoseList,
@@ -191,13 +195,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
           });
         }
 
-        const deployedResources = resources.filter(
-          (resource) =>
-            resource.kind === DeploymentModel.kind ||
-            resource.kind === DeploymentConfigModel.kind ||
-            (resource.kind === knSvcModel.kind &&
-              resource.apiVersion === `${knSvcModel.apiGroup}/${knSvcModel.apiVersion}`),
-        );
+        const deployedResources = filterDeployedResources(resources);
 
         const redirectSearchParams = new URLSearchParams();
 
@@ -214,7 +212,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
             dismissible: true,
           });
 
-          redirectSearchParams.set('selectId', deployedResources[0].metadata.uid);
+          if (typeof deployedResources[0].metadata.uid === 'string') {
+            redirectSearchParams.set('selectId', deployedResources[0].metadata.uid);
+          }
         }
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
