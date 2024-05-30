@@ -872,7 +872,11 @@ export const handleRedirect = async (
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
 
-  history.push(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
+  if (searchParamOverrides) {
+    history.push(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
+  } else {
+    history.push(redirectURL);
+  }
 };
 
 export const isRouteAdvOptionsUsed = (
