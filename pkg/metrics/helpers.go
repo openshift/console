@@ -21,7 +21,8 @@ func FormatMetrics(cs ...prometheus.Collector) string {
 	registry.MustRegister(cs...)
 	mfs, _ := registry.Gather()
 	writer := &bytes.Buffer{}
-	enc := expfmt.NewEncoder(writer, expfmt.FmtText)
+	fmt := expfmt.NewFormat(expfmt.TypeTextPlain)
+	enc := expfmt.NewEncoder(writer, fmt)
 	for _, mf := range mfs {
 		enc.Encode(mf)
 	}
