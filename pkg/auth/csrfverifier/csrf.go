@@ -36,7 +36,7 @@ func (c *CSRFVerifier) SetCSRFCookie(path string, w http.ResponseWriter) {
 		HttpOnly: false,
 		Path:     path,
 		Secure:   c.secureCookies,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	http.SetCookie(w, &cookie)

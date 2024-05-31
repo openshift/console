@@ -32,7 +32,7 @@ func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath
 	clientStore := gorilla.NewCookieStore(authnKey, encryptKey)
 	clientStore.Options.Secure = secureCookies
 	clientStore.Options.HttpOnly = true
-	clientStore.Options.SameSite = http.SameSiteLaxMode
+	clientStore.Options.SameSite = http.SameSiteStrictMode
 	clientStore.Options.Path = cookiePath
 
 	return &CombinedSessionStore{
