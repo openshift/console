@@ -76,7 +76,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
           <span className="co-select-to-copy">{desiredVersion}</span>
           {canUpgrade && (
             <div>
-              <Link to="/settings/cluster?showVersions">
+              <Link to="/settings/cluster?showVersions" className="co-icon-space-l">
                 <BlueArrowCircleUpIcon className="co-icon-space-r" />
                 {t('public~Update cluster')}
               </Link>

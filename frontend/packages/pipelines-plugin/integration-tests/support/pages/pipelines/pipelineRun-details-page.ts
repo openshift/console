@@ -89,12 +89,14 @@ export const pipelineRunDetailsPage = {
     });
   },
   verifyDetailsFields: () => {
-    cy.get('.odc-pipeline-run-details__customDetails').within(() => {
-      cy.contains('dl dt', 'Repository').should('be.visible');
-      cy.contains('dl dt', 'Branch').should('be.visible');
-      cy.contains('dl dt', 'Commit id').should('be.visible');
-      cy.contains('dl dt', 'Event type').should('be.visible');
-    });
+    cy.get('.odc-pipeline-run-details__customDetails')
+      .scrollIntoView()
+      .within(() => {
+        cy.contains('dl>dt', 'Repository').should('be.visible');
+        cy.contains('dl>dt', 'Branch').should('be.visible');
+        cy.contains('dl>dt', 'Commit id').should('be.visible');
+        cy.contains('dl>dt', 'Event type').should('be.visible');
+      });
   },
   verifyPipelineRunColumns: () => {
     cy.get(pipelineRunDetailsPO.taskRuns.columnNames.name).should('be.visible');
@@ -161,8 +163,16 @@ export const pipelineRunsPage = {
   selectKebabMenu: (pipelineRunName: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('exist');
     cy.log(`user selects the kebab menu of pipeline : "${pipelineRunName}"`);
-    cy.get(pipelineRunsPO.pipelineRunsTable.pipelineRunName).then(() => {
-      cy.get('tbody tr').first().find('td:nth-child(7) button').click({ force: true });
+    cy.get(pipelineRunsPO.pipelineRunsTable.pipelineRunName).each(($el, index) => {
+      if ($el.text().includes(pipelineRunName)) {
+        cy.get('tbody tr')
+          .eq(index)
+          .within(() => {
+            cy.get(`button[data-test-id="kebab-button"]`)
+              .should('be.visible')
+              .click({ force: true });
+          });
+      }
     });
   },
   verifyVulnerabilities: (pipelineRunName: string) => {

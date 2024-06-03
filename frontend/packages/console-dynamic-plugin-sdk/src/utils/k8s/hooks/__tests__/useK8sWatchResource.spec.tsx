@@ -157,6 +157,7 @@ describe('useK8sWatchResource', () => {
     const initResource: WatchK8sResource = {
       kind: 'Pod',
       name: 'my-pod',
+      namespace: 'foo',
     };
     render(
       <Wrapper>
@@ -173,7 +174,7 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', undefined, {}, {}]);
+    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
     k8sGetMock.mockClear();
 
     await act(async () => jest.runAllTimers());
@@ -182,7 +183,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { fieldSelector: 'metadata.name=my-pod' },
+      { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
       { subprotocols: undefined },
     ]);
     k8sWatchMock.mockClear();
@@ -227,6 +228,7 @@ describe('useK8sWatchResource', () => {
     const initResource: WatchK8sResource = {
       kind: 'Pod',
       name: 'my-pod',
+      namespace: 'foo',
     };
     render(
       <Wrapper>
@@ -243,14 +245,14 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', undefined, {}, {}]);
+    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
     k8sGetMock.mockClear();
 
     // TODO: Unexpected watch call! The watch call was not triggered when watching a list
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { fieldSelector: 'metadata.name=my-pod' },
+      { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
       { subprotocols: undefined },
     ]);
     k8sWatchMock.mockClear();
@@ -347,6 +349,7 @@ describe('useK8sWatchResource', () => {
     const initResource: WatchK8sResource = {
       kind: 'Pod',
       name: 'my-pod',
+      namespace: 'foo',
     };
     render(
       <Wrapper>
@@ -368,7 +371,7 @@ describe('useK8sWatchResource', () => {
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', undefined, {}, {}]);
+    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
     k8sGetMock.mockClear();
 
     await act(async () => jest.runAllTimers());
@@ -377,7 +380,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
     expect(k8sWatchMock.mock.calls[0]).toEqual([
       PodModel,
-      { fieldSelector: 'metadata.name=my-pod' },
+      { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
       { subprotocols: undefined },
     ]);
     k8sWatchMock.mockClear();

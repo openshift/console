@@ -67,10 +67,11 @@
 65.  [useDeleteModal](#usedeletemodal)
 66.  [useLabelsModal](#uselabelsmodal)
 67.  [useActiveNamespace](#useactivenamespace)
-68. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-69. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-70. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-71. [DEPRECATED] [YAMLEditor](#yamleditor)
+68.  [useUserSettings](#useusersettings)
+69. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+70. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+71. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+72. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -2398,6 +2399,43 @@ const Component: React.FC = (props) => {
 ### Returns
 
 A tuple containing the current active namespace and setter callback.
+
+
+---
+
+## `useUserSettings`
+
+### Summary 
+
+Hook that provides a user setting value and a callback for setting the user setting value.
+
+
+
+### Example
+
+
+```tsx
+const Component: React.FC = (props) => {
+   const [state, setState, loaded] = useUserSettings(
+     'devconsole.addPage.showDetails',
+     true,
+     true,
+   );
+   return loaded ? (
+      <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+    ) : null;
+};
+```
+
+
+
+
+
+
+
+### Returns
+
+A tuple containing the user setting value, a setter callback, and a loaded boolean.
 
 
 ---

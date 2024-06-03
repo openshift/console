@@ -1,10 +1,9 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: new-pipeline-one
 spec:
   params: []
-  resources: []
   workspaces: []
   tasks:
     - name: ex-task-one

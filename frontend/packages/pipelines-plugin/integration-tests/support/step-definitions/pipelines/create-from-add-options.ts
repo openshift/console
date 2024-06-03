@@ -74,11 +74,6 @@ Given('user is on Import from Git form', () => {
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
-Then('Add pipeline section is displayed', () => {
-  gitPage.verifyPipelineCheckBox();
-  gitPage.clickCancel();
-});
-
 Given('pipeline {string} is executed for 5 times', (pipelineName: string) => {
   pipelinesPage.search(pipelineName);
   pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
@@ -94,8 +89,8 @@ Given('pipeline {string} is executed for 5 times', (pipelineName: string) => {
   cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('not.have.text', 'Running');
 });
 
-Then('Add pipeline checkbox is displayed', () => {
-  gitPage.verifyPipelineCheckBox();
+Then('Add pipeline option is displayed', () => {
+  gitPage.verifyPipelineOption();
   gitPage.clickCancel();
 });
 
@@ -107,11 +102,11 @@ When('user enters Name as {string} in General section of Dockerfile page', (name
   dockerfilePage.enterName(name);
 });
 
-When('user verifies Add Pipeline checkbox is checked in Pipelines section', () => {
-  gitPage.verifyPipelineCheckBoxChecked();
+When('user verifies Pipelines option is selected in Build Option', () => {
+  gitPage.selectAddPipeline();
 });
 
-When('user selects Add Pipeline checkbox in Pipelines section', () => {
+When('user selects Pipelines option in Build Option', () => {
   gitPage.selectAddPipeline();
 });
 
@@ -150,6 +145,7 @@ Given('user created workload {string} from add page with pipeline', (pipelineNam
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
   gitPage.verifyValidatedMessage('https://github.com/sclorg/nodejs-ex.git');
   gitPage.enterComponentName(pipelineName);
+  gitPage.selectResource('deployment');
   gitPage.selectAddPipeline();
   gitPage.clickCreate();
   topologyPage.verifyTopologyPage();
@@ -218,11 +214,13 @@ When('user selects {string} pipeline from the pipeline dropdown menu', (pipeline
 });
 
 When('user clicks on "Edit import strategy"', () => {
-  cy.get('.odc-import-strategy-section__edit-strategy-button').click();
+  cy.get('.odc-import-strategy-section__edit-strategy-button')
+    .should('be.visible')
+    .click({ force: true });
 });
 
 When('user selects Import Strategy as Dockerfile', () => {
-  cy.byTestID('import-strategy Dockerfile').click();
+  cy.byTestID('import-strategy-Dockerfile').click();
 });
 
 When('user enters Dockerfile path as {string}', (dockerfilePath: string) => {

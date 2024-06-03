@@ -734,6 +734,12 @@ export type UseValuesForNamespaceContext = () => {
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
 
+export type UseUserSettings = <T>(
+  key: string,
+  defaultValue?: T,
+  sync?: boolean,
+) => [T, React.Dispatch<React.SetStateAction<T>>, boolean];
+
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
 
 export type Taint = {

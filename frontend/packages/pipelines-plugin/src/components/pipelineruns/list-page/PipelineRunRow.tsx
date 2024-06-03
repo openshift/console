@@ -24,7 +24,7 @@ import { getPipelineRunStatus, pipelineRunDuration } from '../../../utils/pipeli
 import { chainsSignedAnnotation } from '../../pipelines/const';
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
-import PipelineRunStatus from '../status/PipelineRunStatus';
+import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
 import PipelineRunVulnerabilities from '../status/PipelineRunVulnerabilities';
 import { ResourceKebabWithUserLabel } from '../triggered-by';
 import { tableColumnClasses } from './pipelinerun-table';
@@ -33,8 +33,6 @@ const pipelinerunReference = referenceForModel(PipelineRunModel);
 
 type PLRStatusProps = {
   obj: PipelineRunKind;
-  taskRuns: TaskRunKind[];
-  taskRunsLoaded: boolean;
 };
 
 type PipelineRunRowWithoutTaskRunsProps = {
@@ -51,14 +49,12 @@ type PipelineRunRowWithTaskRunsProps = {
 const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
 const InFlightStoreForTaskRunsForPLR: { [key: string]: boolean } = {};
 
-const PLRStatus: React.FC<PLRStatusProps> = React.memo(({ obj, taskRuns, taskRunsLoaded }) => {
+const PLRStatus: React.FC<PLRStatusProps> = React.memo(({ obj }) => {
   return (
-    <PipelineRunStatus
+    <PipelineRunStatusContent
       status={pipelineRunFilterReducer(obj)}
       title={pipelineRunTitleFilterReducer(obj)}
       pipelineRun={obj}
-      taskRuns={taskRuns}
-      taskRunsLoaded={taskRunsLoaded}
     />
   );
 });
@@ -108,7 +104,7 @@ const PipelineRunRowTable = ({
         <PipelineRunVulnerabilities pipelineRun={obj} condensed />
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <PLRStatus obj={obj} taskRuns={PLRTaskRuns} taskRunsLoaded={taskRunsLoaded} />
+        <PLRStatus obj={obj} />
       </TableData>
       <TableData className={tableColumnClasses.taskStatus}>
         <LinkedPipelineRunTaskStatus
@@ -208,10 +204,7 @@ const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = Re
 const PipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj, customData }) => {
   const { operatorVersion } = customData;
   const plrStatus = pipelineRunStatus(obj);
-  if (
-    (plrStatus === ComputedStatus.Cancelled || plrStatus === ComputedStatus.Failed) &&
-    (obj?.status?.childReferences ?? []).length > 0
-  ) {
+  if (plrStatus === ComputedStatus.Cancelled && (obj?.status?.childReferences ?? []).length > 0) {
     return <PipelineRunRowWithTaskRuns obj={obj} operatorVersion={operatorVersion} />;
   }
   const taskRunStatusObj = getPipelineRunStatus(obj);

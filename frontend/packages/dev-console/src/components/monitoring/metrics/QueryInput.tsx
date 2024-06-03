@@ -220,7 +220,7 @@ export const QueryInput: React.FC<QueryInputProps> = ({ index }) => {
     <div className="query-browser__query pf-v5-c-dropdown">
       <textarea
         aria-label={placeholder}
-        className="pf-v5-c-form-control query-browser__query-input"
+        className="pf-v5-c-form-control pf-m-resize-both query-browser__query-input"
         onBlur={onBlur}
         onChange={onChange}
         onKeyDown={onKeyDown}

@@ -79,6 +79,7 @@ Given('pipeline {string} is present on Pipelines page', (pipelineName: string) =
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
   navigateTo(devNavigationMenu.Pipelines);
+  cy.get(pipelinesPO.pipelinesTab).click();
   pipelinesPage.search(pipelineName);
 });
 

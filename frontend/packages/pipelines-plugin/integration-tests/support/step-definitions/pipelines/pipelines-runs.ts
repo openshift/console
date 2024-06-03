@@ -369,12 +369,12 @@ When('user clicks Last Run value of the pipeline {string}', (pipelineName: strin
   pipelinesPage.selectPipelineRun(pipelineName);
 });
 
-Then('Start Pipeline modal displays with Git Resources, Advanced Options sections', () => {
+Then('Start Pipeline modal displays with Workspaces, Advanced Options sections', () => {
   startPipelineInPipelinesPage.verifySections();
 });
 
-Then('start button is disabled', () => {
-  cy.get(pipelinesPO.startPipeline.start).should('be.disabled');
+Then('start button is enabled', () => {
+  cy.get(pipelinesPO.startPipeline.start).should('be.enabled');
   modal.cancel();
 });
 

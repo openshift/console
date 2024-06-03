@@ -111,11 +111,11 @@ export const eventListener: TelemetryEventListener = async (
   eventType: string,
   properties?: any,
 ) => {
-  if (TELEMETRY_DISABLED || !apiKey) {
+  if (!apiKey) {
     if (TELEMETRY_DEBUG) {
       // eslint-disable-next-line no-console
       console.debug(
-        'console-telemetry-plugin: telemetry disabled - ignoring telemetry event:',
+        'console-telemetry-plugin: missing Segment API key - ignoring telemetry event:',
         eventType,
         properties,
       );

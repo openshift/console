@@ -4,7 +4,7 @@ Feature: Perform the actions on Pipelines page
 
         Background:
             Given user has created or selected namespace "aut-pipelines-nav"
-             And user is at pipelines page
+              And user is at pipelines page
 
         @regression @odc-7131
         Scenario: Remember last visited tab for the Pipeline page: P-12-TC01
@@ -19,6 +19,7 @@ Feature: Perform the actions on Pipelines page
               And user will redirects to Add Git Repository page
               And user enter the GitRepo URL "https://github.com/vikram-raj/hello-func"
               And user enters the name "git-hello-func"
+              And user enters git access token as "xxxxxx"
               And user clicks on add button
              Then user will be redirected to Git Repository added page
               And user clicks on close button

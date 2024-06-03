@@ -1,4 +1,4 @@
-package auth
+package oauth2
 
 import (
 	"context"
@@ -15,10 +15,11 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	oauthv1client "github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1"
 
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils/asynccache"
@@ -155,7 +156,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, _ *http.Request, token *oau
 		HttpOnly: true,
 		Path:     o.cookiePath,
 		Secure:   o.secureCookies,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	http.SetCookie(w, &cookie)
@@ -220,7 +221,7 @@ func (o *openShiftAuth) LogoutRedirectURL() string {
 	return o.logoutRedirectOverride
 }
 
-func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*User, error) {
+func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*auth.User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
@@ -232,12 +233,12 @@ func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*U
 		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", sessions.OpenshiftAccessTokenCookieName)
 	}
 
-	return &User{
+	return &auth.User{
 		Token: cookie.Value,
 	}, nil
 }
 
-func (o *openShiftAuth) GetSpecialURLs() SpecialAuthURLs {
+func (o *openShiftAuth) GetSpecialURLs() auth.SpecialAuthURLs {
 	discovery := o.getOIDCDiscovery()
 
 	// Special page on the integrated OAuth server for requesting a token.
@@ -245,7 +246,7 @@ func (o *openShiftAuth) GetSpecialURLs() SpecialAuthURLs {
 	requestTokenURL := proxy.SingleJoiningSlash(discovery.Token, "/request")
 	kubeAdminLogoutURL := proxy.SingleJoiningSlash(discovery.Issuer, "/logout")
 
-	return SpecialAuthURLs{
+	return auth.SpecialAuthURLs{
 		RequestToken:    requestTokenURL,
 		KubeAdminLogout: kubeAdminLogoutURL,
 	}
