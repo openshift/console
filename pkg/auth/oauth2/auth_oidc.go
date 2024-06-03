@@ -1,4 +1,4 @@
-package auth
+package oauth2
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
 
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/serverutils/asynccache"
 )
@@ -134,21 +135,21 @@ func (o *oidcAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*sessi
 	return ls, nil
 }
 
-func (o *oidcAuth) Authenticate(w http.ResponseWriter, r *http.Request) (*User, error) {
+func (o *oidcAuth) Authenticate(w http.ResponseWriter, r *http.Request) (*auth.User, error) {
 	ls, err := o.getLoginState(w, r)
 	if err != nil {
 		return nil, err
 	}
 
-	return &User{
+	return &auth.User{
 		ID:       ls.UserID(),
 		Username: ls.Username(),
 		Token:    ls.AccessToken(),
 	}, nil
 }
 
-func (o *oidcAuth) GetSpecialURLs() SpecialAuthURLs {
-	return SpecialAuthURLs{}
+func (o *oidcAuth) GetSpecialURLs() auth.SpecialAuthURLs {
+	return auth.SpecialAuthURLs{}
 }
 
 func (o *oidcAuth) LogoutRedirectURL() string {

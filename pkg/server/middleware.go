@@ -8,9 +8,8 @@ import (
 	"strings"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/serverutils"
-
-	"github.com/gorilla/websocket"
 
 	"k8s.io/klog/v2"
 )
@@ -19,59 +18,29 @@ type HandlerWithUser func(*auth.User, http.ResponseWriter, *http.Request)
 
 // Middleware generates a middleware wrapper for request hanlders.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
-func authMiddleware(authenticator *auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+func authMiddleware(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h http.HandlerFunc) http.HandlerFunc {
 	return authMiddlewareWithUser(
 		authenticator,
+		csrfVerifier,
 		func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		},
 	)
 }
 
-func authMiddlewareWithUser(authenticator *auth.Authenticator, h HandlerWithUser) http.HandlerFunc {
-	return verifyCSRF(authenticator, func(w http.ResponseWriter, r *http.Request) {
-		user, err := authenticator.Authenticate(w, r)
-		if err != nil {
-			klog.V(4).Infof("authentication failed: %v", err)
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-		h(user, w, r)
-	})
-}
-
-func verifyCSRF(authenticator *auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		safe := false
-		switch r.Method {
-		case
-			"GET",
-			"HEAD",
-			"OPTIONS",
-			"TRACE":
-			safe = true
-		}
-
-		wsUpgrade := websocket.IsWebSocketUpgrade(r)
-
-		if !safe || wsUpgrade {
-			if err := authenticator.VerifySourceOrigin(r); err != nil {
-				klog.Errorf("invalid source origin: %v", err)
-				w.WriteHeader(http.StatusForbidden)
+func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h HandlerWithUser) http.HandlerFunc {
+	return csrfVerifier.WithCSRFVerification(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			user, err := authenticator.Authenticate(w, r)
+			if err != nil {
+				klog.V(4).Infof("authentication failed: %v", err)
+				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
-		}
-
-		if !safe {
-			if err := authenticator.VerifyCSRFToken(r); err != nil {
-				klog.Errorf("invalid CSRFToken: %v", err)
-				w.WriteHeader(http.StatusForbidden)
-				return
-			}
-		}
-		h.ServeHTTP(w, r)
-	}
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+			h(user, w, r)
+		}),
+	)
 }
 
 func allowMethods(methods []string, h http.HandlerFunc) http.HandlerFunc {
