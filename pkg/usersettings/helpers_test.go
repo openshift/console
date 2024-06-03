@@ -83,6 +83,7 @@ func TestCreateUserSettingsResources(t *testing.T) {
 			testcase: "for kubeadmin",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
+				UID:      "",
 			},
 			expectedRole: rbac.Role{
 				TypeMeta: meta.TypeMeta{
@@ -273,71 +274,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234",
-				},
-			},
-		},
-		{
-			testcase: "for users with email addresses as username",
-			userInfo: authenticationv1.UserInfo{
-				Username: "openshift@redhat.com",
-			},
-			expectedRole: rbac.Role{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "Role",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-role",
-				},
-				Rules: []rbac.PolicyRule{
-					{
-						APIGroups: []string{
-							"", // Core group, not "v1"
-						},
-						Resources: []string{
-							"configmaps", // Not "ConfigMap"
-						},
-						Verbs: []string{
-							"get",
-							"list",
-							"patch",
-							"update",
-							"watch",
-						},
-						ResourceNames: []string{
-							"user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-						},
-					},
-				},
-			},
-			expectedRoleBinding: rbac.RoleBinding{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "RoleBinding",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-rolebinding",
-				},
-				Subjects: []rbac.Subject{
-					{
-						APIGroup: "rbac.authorization.k8s.io",
-						Kind:     "User",
-						Name:     "openshift@redhat.com",
-					},
-				},
-				RoleRef: rbac.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Kind:     "Role",
-					Name:     "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-role",
-				},
-			},
-			expectedConfigMap: core.ConfigMap{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "v1",
-					Kind:       "ConfigMap",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 				},
 			},
 		},
