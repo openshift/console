@@ -1324,7 +1324,7 @@
   "Create Pod": "创建 Pod",
   "Service monitor selector": "服务监控选择器",
   "Promethesuses": "Promethesuses",
-  "Duplicate {{kindLabel}}": "重复 {{kindLabel}}",
+  "Duplicate {{kindLabel}}": "重复{{kindLabel}}",
   "Edit {{kindLabel}} subject": "编辑{{kindLabel}}主题",
   "Delete {{label}} subject": "删除 {{label}} 主题",
   "Are you sure you want to delete subject {{name}} of type {{kind}}?": "确定要删除类型 {{kind}} 的主题 {{name}}？",
