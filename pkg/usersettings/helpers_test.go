@@ -83,7 +83,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 			testcase: "for kubeadmin",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
-				UID:      "",
 			},
 			expectedRole: rbac.Role{
 				TypeMeta: meta.TypeMeta{
@@ -92,15 +91,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-kubeadmin-role",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "",
-						resourceIdentifierLabel: "kubeadmin",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "",
-						usernameAnnotation: "kube:admin",
-					},
 				},
 				Rules: []rbac.PolicyRule{
 					{
@@ -130,15 +120,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-kubeadmin-rolebinding",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "",
-						resourceIdentifierLabel: "kubeadmin",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "",
-						usernameAnnotation: "kube:admin",
-					},
 				},
 				Subjects: []rbac.Subject{
 					{
@@ -160,15 +141,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-kubeadmin",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "",
-						resourceIdentifierLabel: "kubeadmin",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "",
-						usernameAnnotation: "kube:admin",
-					},
 				},
 			},
 		},
@@ -185,15 +157,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-role",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "1234",
-						resourceIdentifierLabel: "1234",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "1234",
-						usernameAnnotation: "kube:admin",
-					},
 				},
 				Rules: []rbac.PolicyRule{
 					{
@@ -223,15 +186,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-rolebinding",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "1234",
-						resourceIdentifierLabel: "1234",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "1234",
-						usernameAnnotation: "kube:admin",
-					},
 				},
 				Subjects: []rbac.Subject{
 					{
@@ -253,15 +207,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "1234",
-						resourceIdentifierLabel: "1234",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "1234",
-						usernameAnnotation: "kube:admin",
-					},
 				},
 			},
 		},
@@ -278,15 +223,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-role",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "1234",
-						resourceIdentifierLabel: "1234",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "1234",
-						usernameAnnotation: "developer",
-					},
 				},
 				Rules: []rbac.PolicyRule{
 					{
@@ -316,15 +252,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-rolebinding",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "1234",
-						resourceIdentifierLabel: "1234",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "1234",
-						usernameAnnotation: "developer",
-					},
 				},
 				Subjects: []rbac.Subject{
 					{
@@ -346,15 +273,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "1234",
-						resourceIdentifierLabel: "1234",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "1234",
-						usernameAnnotation: "developer",
-					},
 				},
 			},
 		},
@@ -370,15 +288,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-role",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "",
-						resourceIdentifierLabel: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "",
-						usernameAnnotation: "openshift@redhat.com",
-					},
 				},
 				Rules: []rbac.PolicyRule{
 					{
@@ -408,15 +317,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-rolebinding",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "",
-						resourceIdentifierLabel: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "",
-						usernameAnnotation: "openshift@redhat.com",
-					},
 				},
 				Subjects: []rbac.Subject{
 					{
@@ -438,15 +338,6 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				},
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-					Labels: map[string]string{
-						userSettingsLabel:       "true",
-						uidLabel:                "",
-						resourceIdentifierLabel: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-					},
-					Annotations: map[string]string{
-						uidAnnotation:      "",
-						usernameAnnotation: "openshift@redhat.com",
-					},
 				},
 			},
 		},
