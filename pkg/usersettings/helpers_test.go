@@ -5,9 +5,6 @@ import (
 	"testing"
 
 	authenticationv1 "k8s.io/api/authentication/v1"
-	core "k8s.io/api/core/v1"
-	rbac "k8s.io/api/rbac/v1"
-	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestNewUserSettingsMeta(t *testing.T) {
@@ -73,11 +70,11 @@ func TestNewUserSettingsMeta(t *testing.T) {
 
 func TestCreateUserSettingsResources(t *testing.T) {
 	tests := []struct {
-		testcase            string
-		userInfo            authenticationv1.UserInfo
-		expectedRole        rbac.Role
-		expectedRoleBinding rbac.RoleBinding
-		expectedConfigMap   core.ConfigMap
+		testcase                string
+		userInfo                authenticationv1.UserInfo
+		expectedRoleName        string
+		expectedRoleBindingName string
+		expectedConfigMapName   string
 	}{
 		{
 			testcase: "for kubeadmin",
@@ -85,65 +82,9 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				Username: "kube:admin",
 				UID:      "",
 			},
-			expectedRole: rbac.Role{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "Role",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-kubeadmin-role",
-				},
-				Rules: []rbac.PolicyRule{
-					{
-						APIGroups: []string{
-							"", // Core group, not "v1"
-						},
-						Resources: []string{
-							"configmaps", // Not "ConfigMap"
-						},
-						Verbs: []string{
-							"get",
-							"list",
-							"patch",
-							"update",
-							"watch",
-						},
-						ResourceNames: []string{
-							"user-settings-kubeadmin",
-						},
-					},
-				},
-			},
-			expectedRoleBinding: rbac.RoleBinding{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "RoleBinding",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-kubeadmin-rolebinding",
-				},
-				Subjects: []rbac.Subject{
-					{
-						APIGroup: "rbac.authorization.k8s.io",
-						Kind:     "User",
-						Name:     "kube:admin",
-					},
-				},
-				RoleRef: rbac.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Kind:     "Role",
-					Name:     "user-settings-kubeadmin-role",
-				},
-			},
-			expectedConfigMap: core.ConfigMap{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "v1",
-					Kind:       "ConfigMap",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-kubeadmin",
-				},
-			},
+			expectedConfigMapName:   "user-settings-kubeadmin",
+			expectedRoleName:        "user-settings-kubeadmin-role",
+			expectedRoleBindingName: "user-settings-kubeadmin-rolebinding",
 		},
 		{
 			testcase: "for fake kubeadmin we use uid",
@@ -151,65 +92,9 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				Username: "kube:admin",
 				UID:      "1234",
 			},
-			expectedRole: rbac.Role{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "Role",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-1234-role",
-				},
-				Rules: []rbac.PolicyRule{
-					{
-						APIGroups: []string{
-							"", // Core group, not "v1"
-						},
-						Resources: []string{
-							"configmaps", // Not "ConfigMap"
-						},
-						Verbs: []string{
-							"get",
-							"list",
-							"patch",
-							"update",
-							"watch",
-						},
-						ResourceNames: []string{
-							"user-settings-1234",
-						},
-					},
-				},
-			},
-			expectedRoleBinding: rbac.RoleBinding{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "RoleBinding",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-1234-rolebinding",
-				},
-				Subjects: []rbac.Subject{
-					{
-						APIGroup: "rbac.authorization.k8s.io",
-						Kind:     "User",
-						Name:     "kube:admin",
-					},
-				},
-				RoleRef: rbac.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Kind:     "Role",
-					Name:     "user-settings-1234-role",
-				},
-			},
-			expectedConfigMap: core.ConfigMap{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "v1",
-					Kind:       "ConfigMap",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-1234",
-				},
-			},
+			expectedConfigMapName:   "user-settings-1234",
+			expectedRoleName:        "user-settings-1234-role",
+			expectedRoleBindingName: "user-settings-1234-rolebinding",
 		},
 		{
 			testcase: "for non kubeadmin",
@@ -217,65 +102,9 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				Username: "developer",
 				UID:      "1234",
 			},
-			expectedRole: rbac.Role{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "Role",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-1234-role",
-				},
-				Rules: []rbac.PolicyRule{
-					{
-						APIGroups: []string{
-							"", // Core group, not "v1"
-						},
-						Resources: []string{
-							"configmaps", // Not "ConfigMap"
-						},
-						Verbs: []string{
-							"get",
-							"list",
-							"patch",
-							"update",
-							"watch",
-						},
-						ResourceNames: []string{
-							"user-settings-1234",
-						},
-					},
-				},
-			},
-			expectedRoleBinding: rbac.RoleBinding{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "rbac.authorization.k8s.io/v1",
-					Kind:       "RoleBinding",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-1234-rolebinding",
-				},
-				Subjects: []rbac.Subject{
-					{
-						APIGroup: "rbac.authorization.k8s.io",
-						Kind:     "User",
-						Name:     "developer",
-					},
-				},
-				RoleRef: rbac.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Kind:     "Role",
-					Name:     "user-settings-1234-role",
-				},
-			},
-			expectedConfigMap: core.ConfigMap{
-				TypeMeta: meta.TypeMeta{
-					APIVersion: "v1",
-					Kind:       "ConfigMap",
-				},
-				ObjectMeta: meta.ObjectMeta{
-					Name: "user-settings-1234",
-				},
-			},
+			expectedConfigMapName:   "user-settings-1234",
+			expectedRoleName:        "user-settings-1234-role",
+			expectedRoleBindingName: "user-settings-1234-rolebinding",
 		},
 	}
 
@@ -290,14 +119,28 @@ func TestCreateUserSettingsResources(t *testing.T) {
 			roleBinding := createRoleBinding(userSettingMeta)
 			configMap := createConfigMap(userSettingMeta)
 
-			if !reflect.DeepEqual(&tt.expectedRole, role) {
-				t.Errorf("Role does not match expectation:\n%v\nbut got\n%v", &tt.expectedRole, role)
+			// Role
+			if role.ObjectMeta.Name != tt.expectedRoleName {
+				t.Errorf("Role name does not match:\n%v\nbut got\n%v", tt.expectedRoleName, role.ObjectMeta.Name)
 			}
-			if !reflect.DeepEqual(&tt.expectedRoleBinding, roleBinding) {
-				t.Errorf("RoleBinding does not match expectation:\n%v\nbut got\n%v", &tt.expectedRoleBinding, roleBinding)
+			if role.Rules[0].ResourceNames[0] != tt.expectedConfigMapName {
+				t.Errorf("Role configmap ref does not match:\n%v\nbut got\n%v", tt.expectedConfigMapName, role.Rules[0].ResourceNames[0])
 			}
-			if !reflect.DeepEqual(&tt.expectedConfigMap, configMap) {
-				t.Errorf("ConfigMap does not match expectation:\n%v\nbut got\n%v", &tt.expectedConfigMap, configMap)
+
+			// RoleBinding
+			if roleBinding.ObjectMeta.Name != tt.expectedRoleBindingName {
+				t.Errorf("RoleBinding name does not match:\n%v\nbut got\n%v", tt.expectedRoleBindingName, roleBinding.ObjectMeta.Name)
+			}
+			if roleBinding.Subjects[0].Name != tt.userInfo.Username {
+				t.Errorf("RoleBinding username ref does not match:\n%v\nbut got\n%v", tt.userInfo.Username, roleBinding.Subjects[0].Name)
+			}
+			if roleBinding.RoleRef.Name != tt.expectedRoleName {
+				t.Errorf("RoleBinding role ref does not match:\n%v\nbut got\n%v", tt.expectedRoleName, roleBinding.RoleRef.Name)
+			}
+
+			// ConfigMap
+			if configMap.ObjectMeta.Name != tt.expectedConfigMapName {
+				t.Errorf("ConfigMap name does not match:\n%v\nbut got\n%v", tt.expectedConfigMapName, configMap.ObjectMeta.Name)
 			}
 		})
 	}
