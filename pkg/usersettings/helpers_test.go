@@ -18,7 +18,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 		expectedData  *UserSettingMeta
 	}{
 		{
-			testcase: "returns kubeadmin for kube:admin",
+			testcase: "returns -kubeadmin for kube:admin",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
 				UID:      "",
@@ -26,12 +26,12 @@ func TestNewUserSettingsMeta(t *testing.T) {
 			expectedError: nil,
 			expectedData: &UserSettingMeta{
 				Username:           "kube:admin",
-				UID:                "kubeadmin",
+				UID:                "",
 				ResourceIdentifier: "kubeadmin",
 			},
 		},
 		{
-			testcase: "returns kubeadmin for fake kube:admin with uid",
+			testcase: "returns -kubeadmin for fake kube:admin with uid",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
 				UID:      "1234",
@@ -93,10 +93,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-kubeadmin-role",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "kubeadmin",
+						userSettingsLabel:       "true",
+						uidLabel:                "",
+						resourceIdentifierLabel: "kubeadmin",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "",
 						usernameAnnotation: "kube:admin",
 					},
 				},
@@ -129,10 +131,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-kubeadmin-rolebinding",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "kubeadmin",
+						userSettingsLabel:       "true",
+						uidLabel:                "",
+						resourceIdentifierLabel: "kubeadmin",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "",
 						usernameAnnotation: "kube:admin",
 					},
 				},
@@ -157,10 +161,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-kubeadmin",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "kubeadmin",
+						userSettingsLabel:       "true",
+						uidLabel:                "",
+						resourceIdentifierLabel: "kubeadmin",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "",
 						usernameAnnotation: "kube:admin",
 					},
 				},
@@ -180,10 +186,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-role",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "1234",
+						userSettingsLabel:       "true",
+						uidLabel:                "1234",
+						resourceIdentifierLabel: "1234",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "1234",
 						usernameAnnotation: "kube:admin",
 					},
 				},
@@ -216,10 +224,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-rolebinding",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "1234",
+						userSettingsLabel:       "true",
+						uidLabel:                "1234",
+						resourceIdentifierLabel: "1234",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "1234",
 						usernameAnnotation: "kube:admin",
 					},
 				},
@@ -244,10 +254,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "1234",
+						userSettingsLabel:       "true",
+						uidLabel:                "1234",
+						resourceIdentifierLabel: "1234",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "1234",
 						usernameAnnotation: "kube:admin",
 					},
 				},
@@ -267,10 +279,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-role",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "1234",
+						userSettingsLabel:       "true",
+						uidLabel:                "1234",
+						resourceIdentifierLabel: "1234",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "1234",
 						usernameAnnotation: "developer",
 					},
 				},
@@ -303,10 +317,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234-rolebinding",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "1234",
+						userSettingsLabel:       "true",
+						uidLabel:                "1234",
+						resourceIdentifierLabel: "1234",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "1234",
 						usernameAnnotation: "developer",
 					},
 				},
@@ -331,10 +347,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-1234",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "1234",
+						userSettingsLabel:       "true",
+						uidLabel:                "1234",
+						resourceIdentifierLabel: "1234",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "1234",
 						usernameAnnotation: "developer",
 					},
 				},
@@ -353,10 +371,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-role",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "",
+						userSettingsLabel:       "true",
+						uidLabel:                "",
+						resourceIdentifierLabel: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "",
 						usernameAnnotation: "openshift@redhat.com",
 					},
 				},
@@ -389,10 +409,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-rolebinding",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "",
+						userSettingsLabel:       "true",
+						uidLabel:                "",
+						resourceIdentifierLabel: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "",
 						usernameAnnotation: "openshift@redhat.com",
 					},
 				},
@@ -417,10 +439,12 @@ func TestCreateUserSettingsResources(t *testing.T) {
 				ObjectMeta: meta.ObjectMeta{
 					Name: "user-settings-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 					Labels: map[string]string{
-						userSettingsLabel: "true",
-						uidLabel:          "",
+						userSettingsLabel:       "true",
+						uidLabel:                "",
+						resourceIdentifierLabel: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
 					},
 					Annotations: map[string]string{
+						uidAnnotation:      "",
 						usernameAnnotation: "openshift@redhat.com",
 					},
 				},
