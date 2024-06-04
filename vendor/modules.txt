@@ -373,9 +373,10 @@ github.com/gorilla/websocket
 github.com/gosuri/uitable
 github.com/gosuri/uitable/util/strutil
 github.com/gosuri/uitable/util/wordwrap
-# github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
+# github.com/graph-gophers/graphql-go v1.3.0
 ## explicit; go 1.13
 github.com/graph-gophers/graphql-go
+github.com/graph-gophers/graphql-go/decode
 github.com/graph-gophers/graphql-go/errors
 github.com/graph-gophers/graphql-go/internal/common
 github.com/graph-gophers/graphql-go/internal/exec
@@ -389,6 +390,7 @@ github.com/graph-gophers/graphql-go/introspection
 github.com/graph-gophers/graphql-go/log
 github.com/graph-gophers/graphql-go/relay
 github.com/graph-gophers/graphql-go/trace
+github.com/graph-gophers/graphql-go/types
 # github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7
 ## explicit
 github.com/gregjones/httpcache
