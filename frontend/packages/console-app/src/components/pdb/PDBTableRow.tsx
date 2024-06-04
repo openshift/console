@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RowProps } from '@console/dynamic-plugin-sdk';
+import { RowProps, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { TableData } from '@console/internal/components/factory/Table/VirtualizedTable';
 import {
   Kebab,
@@ -14,6 +15,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { PodDisruptionBudgetModel } from '../../models';
 import { tableColumnInfo } from './pdb-table-columns';
 import { PodDisruptionBudgetKind } from './types';
+import { isDisruptionViolated } from './utils/get-pdb-resources';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common];
@@ -23,6 +25,7 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
   activeColumnIDs,
 }) => {
   const { t } = useTranslation();
+  const isPDBViolated = isDisruptionViolated(obj);
   return (
     <>
       <TableData {...tableColumnInfo[0]} activeColumnIDs={activeColumnIDs}>
@@ -46,7 +49,14 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
           : `${t('console-app~Max unavailable')} ${obj.spec.maxUnavailable}`}
       </TableData>
       <TableData {...tableColumnInfo[4]} activeColumnIDs={activeColumnIDs}>
-        {obj.status.disruptionsAllowed}
+        <>
+          {obj.status.disruptionsAllowed}{' '}
+          {isPDBViolated && (
+            <Tooltip content={t('console-app~Disruption not allowed')}>
+              <YellowExclamationTriangleIcon />
+            </Tooltip>
+          )}
+        </>
       </TableData>
       <TableData {...tableColumnInfo[5]} activeColumnIDs={activeColumnIDs}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
