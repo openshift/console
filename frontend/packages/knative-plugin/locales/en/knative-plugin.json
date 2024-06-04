@@ -2,7 +2,6 @@
   "Functions": "Functions",
   "Event Source": "Event Source",
   "Create an Event source to register interest in a class of events from a particular system": "Create an Event source to register interest in a class of events from a particular system",
-  "Import from git": "Import from git",
   "Create and deploy stateless, Serverless functions": "Create and deploy stateless, Serverless functions",
   "Samples": "Samples",
   "Build from pre-built function sample code": "Build from pre-built function sample code",

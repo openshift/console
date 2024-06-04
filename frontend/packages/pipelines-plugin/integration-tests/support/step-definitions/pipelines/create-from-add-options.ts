@@ -28,7 +28,7 @@ When('user clicks Import From Git card on the Add page', () => {
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
 });
 
-Then('user will be redirected to Import from git form', () => {
+Then('user will be redirected to Import from Git form', () => {
   detailsPage.titleShouldContain('Import from Git');
 });
 

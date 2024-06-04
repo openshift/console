@@ -2,7 +2,6 @@
   "Functions": "Funciones",
   "Event Source": "Fuente del evento",
   "Create an Event source to register interest in a class of events from a particular system": "Cree una fuente de eventos para registrar interés en una clase de eventos de un sistema en particular",
-  "Import from git": "Importar desde git",
   "Create and deploy stateless, Serverless functions": "Cree e implemente funciones sin estado y sin servidor",
   "Samples": "Muestras",
   "Build from pre-built function sample code": "Compilación a partir de código de muestra de función prediseñada",
