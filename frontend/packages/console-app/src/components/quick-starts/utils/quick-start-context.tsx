@@ -143,10 +143,6 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
           updatedStatus = QuickStartStatus.COMPLETE;
         }
 
-        if (taskStatus === QuickStartTaskStatus.VISITED) {
-          updatedTaskStatus = QuickStartTaskStatus.REVIEW;
-        }
-
         if (taskNumber < totalTasks && !updatedTaskStatus) {
           updatedTaskNumber = taskNumber + 1;
         }
