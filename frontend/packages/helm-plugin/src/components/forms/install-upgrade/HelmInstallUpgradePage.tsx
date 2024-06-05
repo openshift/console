@@ -13,6 +13,7 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../../../catalog/utils/const';
 import {
   HelmActionType,
   HelmChart,
@@ -229,6 +230,8 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   if (!chartData && !chartError) {
     return <LoadingBox />;
   }
+  const annotatedName = chartData?.metadata?.annotations?.[CHART_NAME_ANNOTATION] ?? '';
+  const providerName = chartData?.metadata?.annotations?.[PROVIDER_NAME_ANNOTATION] ?? '';
 
   const chartMetaDescription = <HelmChartMetaDescription chart={chartData} />;
 
@@ -253,6 +256,8 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             chartError={chartError}
             namespace={namespace}
             chartIndexEntry={indexEntry}
+            annotatedName={annotatedName}
+            providerName={providerName}
           />
         )}
       </Formik>
