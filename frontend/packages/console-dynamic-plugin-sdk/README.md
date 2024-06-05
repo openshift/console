@@ -75,7 +75,7 @@ Console.
 | 4.13.x            | 4.x                 |                                       |
 | 4.12.x            | 4.x                 |                                       |
 
-Refer to [PatternFly Upgrade Notes](./upgrade-PatternFly.md) containing links to PatternFly documentation.
+Refer to [PatternFly Upgrade Notes][console-pf-upgrade-notes] containing links to PatternFly documentation.
 
 ## Shared modules
 
@@ -109,14 +109,22 @@ This section documents notable changes in the Console provided shared modules ac
 
 #### Console 4.14.x
 
-- Added `react-router-dom-v5-compat` to allow plugins to migrate to React Router v6. Check the
+- Added `react-router-dom-v5-compat` module to allow plugins to migrate to React Router v6. Check the
   [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
   (section "Migration Strategy" and beyond) for details.
 
 #### Console 4.15.x
 
 - The Console application now uses React Router v6 code internally. Plugins that only target OpenShift
-  Console 4.15 or later should fully upgrade to React Router v6 via `react-router-dom-v5-compat`.
+  Console 4.15 or later should fully upgrade to React Router v6 via `react-router-dom-v5-compat` module.
+
+#### Console 4.16.x
+
+- Removed `react-helmet` module.
+- All Console provided PatternFly 4.x shared modules are deprecated and will be removed in the future.
+  See [PatternFly Upgrade Notes][console-pf-upgrade-notes] for details on upgrading to PatternFly 5.
+- All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
+  Plugins should upgrade to React Router v6 via `react-router-dom-v5-compat` module.
 
 ### PatternFly dynamic modules
 
@@ -412,8 +420,16 @@ configs or choose other options.
 
 The list of shared modules planned for deprecation:
 
-- `react-helmet`
+- Console provided PatternFly 4.x shared modules
+  - `@patternfly/react-core`
+  - `@patternfly/react-table`
+  - `@patternfly/quickstarts`
+
+- Console provided React Router v5 shared modules
+  - `react-router`
+  - `react-router-dom`
 
 [console-doc-extensions]: ./docs/console-extensions.md
 [console-doc-api]: ./docs/api.md
 [console-doc-feature-page]: https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md
+[console-pf-upgrade-notes]: ./upgrade-PatternFly.md
