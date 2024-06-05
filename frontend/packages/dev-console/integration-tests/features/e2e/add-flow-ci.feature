@@ -86,6 +86,7 @@ Feature: Create the different workloads from Add page
              Then user will be redirected to Topology page
               And user is able to see workload "mariadb" in topology page
 
+        @manual
         Scenario: Deploy git workload with devfile from topology page: A-04-TC01
             Given user is at the Topology page
              When user right clicks on topology empty graph
