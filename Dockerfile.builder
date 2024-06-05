@@ -8,9 +8,7 @@
 # You can test the image using `./builder-run.sh`. For instance:
 #   $ ./builder-run.sh ./build-backend.sh
 
-FROM golang:1.20-bullseye
-
-MAINTAINER Ed Rooth - CoreOS
+FROM golang:1.22-bullseye
 
 ### For golang testing stuff
 RUN go install github.com/jstemmer/go-junit-report@latest
