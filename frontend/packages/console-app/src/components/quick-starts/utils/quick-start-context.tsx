@@ -7,7 +7,6 @@ import {
   QuickStartStatus,
   QuickStartTaskStatus,
   getTaskStatusKey,
-  QUICKSTART_TASKS_INITIAL_STATES,
 } from '@patternfly/quickstarts';
 import Pseudo from 'i18next-pseudo';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +119,6 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
         const quickStart = qs[activeQuickStartID];
         const status = quickStart?.status;
         const taskNumber = quickStart?.taskNumber;
-        const taskStatus = quickStart[getTaskStatusKey(taskNumber)];
 
         let updatedStatus;
         let updatedTaskNumber;
@@ -132,11 +130,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
             type: 'start',
           });
           updatedStatus = QuickStartStatus.IN_PROGRESS;
-        } else if (
-          status === QuickStartStatus.IN_PROGRESS &&
-          !QUICKSTART_TASKS_INITIAL_STATES.includes(taskStatus) &&
-          taskNumber === totalTasks - 1
-        ) {
+        } else if (status === QuickStartStatus.IN_PROGRESS && taskNumber === totalTasks - 1) {
           fireTelemetryEvent('Quick Start Completed', {
             id: activeQuickStartID,
           });
