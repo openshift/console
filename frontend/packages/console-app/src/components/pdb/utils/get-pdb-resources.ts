@@ -25,7 +25,7 @@ export const isDisruptionViolated = (pdb: PodDisruptionBudgetKind): boolean => {
       condition.type === 'DisruptionAllowed' &&
       condition.status === K8sResourceConditionStatus.False,
   );
-  return !!disruptionNotAllowedCondition;
+  return !!disruptionNotAllowedCondition && status?.expectedPods > 0;
 };
 
 export const checkPodDisruptionBudgets = (pdbArray: PodDisruptionBudgetKind[]) => {

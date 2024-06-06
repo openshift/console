@@ -51,7 +51,7 @@ export const PDBAlert: React.FC<PDBAlertProps> = ({ namespace }) => {
         <Label color="orange" icon={<YellowExclamationTriangleIcon />}>
           <Link to={getRedirectLink()} data-test="pdb-warning" onClick={onWarningLinkClick}>
             <Trans t={t} ns="console-app" count={pdbCount}>
-              {{ count: pdbCount }} PodDisruptionBudget violated.
+              {{ count: pdbCount }} PodDisruptionBudget violated
             </Trans>
           </Link>
         </Label>

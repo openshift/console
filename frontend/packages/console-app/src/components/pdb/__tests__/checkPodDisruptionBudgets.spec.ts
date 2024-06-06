@@ -11,6 +11,7 @@ describe('checkPodDisruptionBudgets', () => {
         status: {
           currentHealthy: 3,
           desiredHealthy: 0,
+          expectedPods: 4,
           conditions: [
             {
               type: 'DisruptionAllowed',
@@ -57,6 +58,7 @@ describe('checkPodDisruptionBudgets', () => {
         status: {
           currentHealthy: 3,
           desiredHealthy: 0,
+          expectedPods: 4,
           conditions: [
             {
               type: 'DisruptionAllowed',
@@ -76,6 +78,7 @@ describe('checkPodDisruptionBudgets', () => {
         status: {
           currentHealthy: 3,
           desiredHealthy: 0,
+          expectedPods: 4,
           conditions: [
             {
               type: 'DisruptionAllowed',
@@ -103,6 +106,7 @@ describe('checkPodDisruptionBudgets', () => {
         status: {
           currentHealthy: 3,
           desiredHealthy: 0,
+          expectedPods: 2,
           conditions: [
             {
               type: 'DisruptionAllowed',
@@ -122,6 +126,7 @@ describe('checkPodDisruptionBudgets', () => {
         status: {
           currentHealthy: 3,
           desiredHealthy: 0,
+          expectedPods: 2,
           conditions: [
             {
               type: 'DisruptionAllowed',
@@ -142,6 +147,100 @@ describe('checkPodDisruptionBudgets', () => {
 
   it('should handle when no PodDisruptionBudget is created in namespace', () => {
     const result = checkPodDisruptionBudgets([]);
+    expect(result).toEqual({ count: 0 });
+  });
+
+  it('should return count as 0 when expectedPods value is 0', () => {
+    const pdbArray = [
+      {
+        spec: {
+          selector: {},
+        },
+        status: {
+          currentHealthy: 3,
+          desiredHealthy: 0,
+          expectedPods: 0,
+          conditions: [
+            {
+              type: 'DisruptionAllowed',
+              status: K8sResourceConditionStatus.False,
+              reason: 'InsufficientPods',
+            },
+          ],
+        },
+        metadata: {
+          name: 'pdb1',
+        },
+      },
+      {
+        spec: {
+          selector: {},
+        },
+        status: {
+          currentHealthy: 3,
+          desiredHealthy: 0,
+          expectedPods: 0,
+          conditions: [
+            {
+              type: 'DisruptionAllowed',
+              status: K8sResourceConditionStatus.False,
+              reason: 'InsufficientPods',
+            },
+          ],
+        },
+        metadata: {
+          name: 'pdb2',
+        },
+      },
+    ];
+
+    const result = checkPodDisruptionBudgets(pdbArray);
+    expect(result).toEqual({ count: 0 });
+  });
+
+  it('should return count as 0 when expectedPods value is not defined', () => {
+    const pdbArray = [
+      {
+        spec: {
+          selector: {},
+        },
+        status: {
+          currentHealthy: 3,
+          desiredHealthy: 0,
+          conditions: [
+            {
+              type: 'DisruptionAllowed',
+              status: K8sResourceConditionStatus.False,
+              reason: 'InsufficientPods',
+            },
+          ],
+        },
+        metadata: {
+          name: 'pdb1',
+        },
+      },
+      {
+        spec: {
+          selector: {},
+        },
+        status: {
+          currentHealthy: 3,
+          desiredHealthy: 0,
+          conditions: [
+            {
+              type: 'DisruptionAllowed',
+              status: K8sResourceConditionStatus.False,
+              reason: 'InsufficientPods',
+            },
+          ],
+        },
+        metadata: {
+          name: 'pdb2',
+        },
+      },
+    ];
+
+    const result = checkPodDisruptionBudgets(pdbArray);
     expect(result).toEqual({ count: 0 });
   });
 });

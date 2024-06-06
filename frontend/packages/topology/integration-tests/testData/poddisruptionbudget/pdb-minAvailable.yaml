@@ -1,31 +1,29 @@
-apiVersion: v1
-kind: Pod
+apiVersion: policy/v1 
+kind: PodDisruptionBudget
 metadata:
-  name: example
-  labels:
-    app: test-pdb
+  name: my-pdb-1
 spec:
-  securityContext:
-    runAsNonRoot: true
-    seccompProfile:
-      type: RuntimeDefault
-  containers:
-    - name: httpd
-      image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest'
-      ports:
-        - containerPort: 8080
-      securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
+  minAvailable: 1
+  selector:  
+    matchLabels:
+      app: label-not-matched
 ---
 apiVersion: policy/v1 
 kind: PodDisruptionBudget
 metadata:
-  name: my-pdb
+  name: my-pdb-2
 spec:
   minAvailable: 100%
   selector:  
     matchLabels:
-      app: test-pdb
+      app: ex-node-js
+---
+apiVersion: policy/v1 
+kind: PodDisruptionBudget
+metadata:
+  name: my-pdb-3
+spec:
+  maxUnavailable: 0%
+  selector:  
+    matchLabels:
+      app: ex-node-js

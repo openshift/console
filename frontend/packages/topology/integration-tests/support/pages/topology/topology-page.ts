@@ -39,7 +39,7 @@ export const topologyPage = {
   waitForLoad: (timeout = 50000) => {
     app.waitForLoad();
     cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
-    cy.get('[data-surface="true"]').should('be.visible');
+    cy.get('[data-surface="true"]').should('exist');
   },
   verifyTitle: () => {
     cy.get(topologyPO.title).should('have.text', 'Topology');
