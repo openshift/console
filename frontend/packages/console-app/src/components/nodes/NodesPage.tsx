@@ -444,6 +444,9 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
   obj: csr,
   activeColumnIDs,
 }) => {
+  const csrObj = _.omit(csr, ['metadata.originalName']);
+  csrObj.metadata.name = csr.metadata.originalName;
+
   return (
     <>
       <TableData
@@ -459,7 +462,7 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
         activeColumnIDs={activeColumnIDs}
       >
         <ClientCSRStatus
-          csr={{ ...csr, metadata: { ...csr.metadata, name: csr.metadata.originalName } }}
+          csr={{ ...csrObj, metadata: { ...csrObj.metadata, name: csr.metadata.originalName } }}
           title="Discovered"
         />
       </TableData>
