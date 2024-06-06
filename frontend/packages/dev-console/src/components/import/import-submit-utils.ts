@@ -859,8 +859,8 @@ export const filterDeployedResources = (resources: K8sResourceKind[]) =>
     (resource) =>
       resource.kind === DeploymentModel.kind ||
       resource.kind === DeploymentConfigModel.kind ||
-      (resource.kind === knSvcModel.kind &&
-        resource.apiVersion === `${knSvcModel.apiGroup}/${knSvcModel.apiVersion}`),
+      (resource.kind === KnServiceModel.kind &&
+        resource.apiVersion === `${KnServiceModel.apiGroup}/${KnServiceModel.apiVersion}`),
   );
 
 const addSearchParamsToRelativeURL = (url: string, searchParams?: URLSearchParams): string => {
