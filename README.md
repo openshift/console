@@ -268,22 +268,23 @@ This will launch the Cypress Test Runner UI in the `console` package, where you 
 
 #### Execute Cypress in different packages
 
-An alternate way to execute cypress tests is via [test-cypress.sh](test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
+An alternate way to execute cypress tests is via [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
 
 ```
-console>./test-cypress.sh
+console/frontend > ./integration-tests/test-cypress.sh
+
 Runs Cypress tests in Test Runner or headless mode
 Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]
   '-p <package>' may be 'console, 'olm' or 'devconsole'
   '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified.
   '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner
 Examples:
-  test-cypress.sh                                       // displays this help text
-  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
-  test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
-  test-cypress.sh -h true                               // runs all packages in headless mode
-  test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
-  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
+  ./integration-tests/test-cypress.sh                                       // displays this help text
+  ./integration-tests/test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
+  ./integration-tests/test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
+  ./integration-tests/test-cypress.sh -h true                               // runs all packages in headless mode
+  ./integration-tests/test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
+  ./integration-tests/test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
 ```
 
 When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
@@ -298,9 +299,9 @@ The end-to-end tests run against pull requests using [ci-operator](https://githu
 The tests are defined in [this manifest](https://github.com/openshift/release/blob/master/ci-operator/jobs/openshift/console/openshift-console-master-presubmits.yaml)
 in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
 
-CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [test-cypress.sh](test-cypress.sh).
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
 
-[test-cypress.sh](test-cypress.sh) runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
+`test-cypress.sh` runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
 
 `test-cypress.sh -h true`
 

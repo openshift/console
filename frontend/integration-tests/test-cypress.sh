@@ -1,10 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd frontend
+
+ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
+SCREENSHOTS_DIR=gui_test_screenshots
+
+# https://ci-operator-configresolver-ui-ci.apps.ci.l2s4.p1.openshiftapps.com/help#env
+OPENSHIFT_CI=${OPENSHIFT_CI:=false}
+
+if [ "$(basename "$(pwd)")" != "frontend" ]; then
+  echo "This script must be run from the frontend folder"
+  exit 1
+fi
+
+# Disable color codes in Cypress since they do not render well CI test logs.
+# https://docs.cypress.io/guides/guides/continuous-integration.html#Colors
+if [ "$OPENSHIFT_CI" = true ]; then
+  export NO_COLOR=1
+fi
 
 if [ ! -d node_modules ]; then
   yarn install
 fi
+
+function copyArtifacts {
+  if [ -d "$ARTIFACT_DIR" ] && [ -d "$SCREENSHOTS_DIR" ]; then
+    echo "Copying artifacts from $(pwd)..."
+    cp -r "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
+  fi
+}
+trap copyArtifacts EXIT
 
 function generateReport {
   yarn run cypress-postreport
