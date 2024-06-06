@@ -24,9 +24,7 @@ import {
   k8sUpdate,
   K8sVerb,
 } from '@console/internal/module/k8s';
-import {
-  ServiceModel as KnServiceModel,
-} from '@console/knative-plugin';
+import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
@@ -863,7 +861,10 @@ export const filterDeployedResources = (resources: K8sResourceKind[]) =>
         resource.apiVersion === `${KnServiceModel.apiGroup}/${KnServiceModel.apiVersion}`),
   );
 
-const addSearchParamsToRelativeURL = (url: string, searchParams?: URLSearchParams): string => {
+export const addSearchParamsToRelativeURL = (
+  url: string,
+  searchParams?: URLSearchParams,
+): string => {
   const urlObj = new URL(url, 'thismessage:/'); // ITEF RFC 2557 section 5 (e)
 
   urlObj.search = new URLSearchParams({
