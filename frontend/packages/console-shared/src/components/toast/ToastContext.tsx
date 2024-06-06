@@ -25,6 +25,8 @@ export type ToastOptions = {
     // The data test id
     dataTest?: string;
   }[];
+  // The data test id
+  dataTest?: string;
   // If `true`, displays a close button.
   dismissible?: boolean;
   // If set to true, the time out is 8000 milliseconds.

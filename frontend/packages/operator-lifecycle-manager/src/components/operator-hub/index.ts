@@ -25,8 +25,8 @@ export enum InfraFeatures {
   Proxy = 'Proxy-aware',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   'proxy-aware' = 'Proxy-aware',
-  FipsMode = 'FIPS Mode',
-  fips = 'FIPS Mode',
+  FipsMode = 'Designed for FIPS',
+  fips = 'Designed for FIPS',
   tlsProfiles = 'Configurable TLS ciphers',
   cnf = 'Cloud-Native Network Function',
   cni = 'Container Network Interface',

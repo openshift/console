@@ -48,7 +48,7 @@ Feature: Perform the actions on Pipelines page
         Scenario: Kebab menu options of pipeline with atleast one pipeline run in Pipelines page: P-06-TC04
             Given pipeline run is displayed for "pipelines-yyy" with resource
              When user clicks kebab menu for the pipeline "pipelines-yyy"
-             Then user will see "Start Last Run" under Kebab menu
+             Then user will see "Start last run" under Kebab menu
 
 
         @regression

@@ -25,7 +25,6 @@ declare interface Window {
     customProductName: string;
     documentationBaseURL: string;
     kubeAPIServerURL: string;
-    kubeAdminLogoutURL: string;
     loadTestFactor: number;
     loginErrorURL: string;
     loginSuccessURL: string;

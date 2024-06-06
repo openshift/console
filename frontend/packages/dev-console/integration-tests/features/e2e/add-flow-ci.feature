@@ -137,3 +137,17 @@ Feature: Create the different workloads from Add page
                   | card_name | form_header               | workload_name |
                   | Httpd     | Create Sample application | httpd-sample  |
                   | Basic Go  | Import from Git           | go-basic      |
+
+        @regression
+        Scenario: Quick Starts page when no Quick Start has started: QS-03-TC02
+             When user selects QuickStarts from the help menu icon on the masthead
+             Then user can see "Get started with a sample application", "Install Red Hat Developer Hub (RHDH) with a Helm Chart" and "Add health checks to your sample application" Quick Starts
+              And user can see time taken to complete the tour on the card
+
+
+        @regression
+        Scenario: Quick Starts page when Quick Start has completed: QS-03-TC03
+            Given user is at Quick Starts catalog page
+              And user has completed "Get started with a sample application" Quick Start
+             Then user can see time taken to complete the "Get started with a sample application" tour on the card
+              And user can see Complete label on "Get started with a sample application" card

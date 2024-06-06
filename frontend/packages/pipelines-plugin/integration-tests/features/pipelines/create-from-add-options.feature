@@ -4,6 +4,7 @@ Feature: Create Pipeline from Add Options
 
         Background:
             Given user has created or selected namespace "aut-pipelines"
+              And user is at Add page
 
 
         @smoke
@@ -12,7 +13,7 @@ Feature: Create Pipeline from Add Options
              When user enters Git Repo URL as "<git_url>"
               And user enters Name as "<pipeline_name>" in General section
               And user selects resource type as "<resource>"
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<pipeline_name>" in topology page
@@ -33,7 +34,7 @@ Feature: Create Pipeline from Add Options
              When user enters Git Repo URL as "<git_url>"
               And user enters Name as "<pipeline_name>" in General section
               And user selects resource type as "Knative"
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<pipeline_name>" in topology page
@@ -80,7 +81,7 @@ Feature: Create Pipeline from Add Options
               And user selects Import Strategy as Dockerfile
               And user enters Dockerfile path as "<dockerfile_path>"
               And user enters Name as "<pipeline_name>" in General section of Dockerfile page
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<pipeline_name>" in topology page
@@ -96,7 +97,7 @@ Feature: Create Pipeline from Add Options
              When user searches builder image "node" in developer catalog
               And user creates the application with the selected builder image
               And user enters Git Repo url in builder image as "<git_url>"
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user clicks Create button on Create Source-to-Image application
              Then user will be redirected to Topology page
               And user is able to see workload "<name>" in topology page
@@ -111,7 +112,7 @@ Feature: Create Pipeline from Add Options
         Scenario Outline: Add Pipeline option display in git workload for builder image: P-01-TC08
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
-             Then Add pipeline checkbox is displayed
+             Then Add pipeline option is displayed
 
         Examples:
                   | git_url                                        |
@@ -131,7 +132,7 @@ Feature: Create Pipeline from Add Options
               And user selects Show advanced Git options
               And user clears Context dir field
               And user enters Context dir as "<dir_name>"
-             Then Add pipeline checkbox is displayed
+             Then Add pipeline option is displayed
 
         Examples:
                   | git_url                                                   | dir_name |
@@ -160,7 +161,7 @@ Feature: Create Pipeline from Add Options
              When user enters Git Repo url in builder image as "<git_url>"
               And user enters Name as "<application_name>" in General section
               And user selects resource type as "<resource>"
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user selects "<pipeline_name>" pipeline from the pipeline dropdown menu
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
@@ -179,7 +180,7 @@ Feature: Create Pipeline from Add Options
              When user enters Git Repo url in builder image as "<git_url>"
               And user enters Name as "<application_name>" in General section
               And user selects resource type as "<resource>"
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user selects "<custom_pipeline_name>" pipeline from the pipeline dropdown menu
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
@@ -196,7 +197,7 @@ Feature: Create Pipeline from Add Options
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
               And user enters Name as "<workload_name>" in General section
-              And user verifies Add Pipeline checkbox is checked in Pipelines section
+              And user verifies Pipelines option is selected in Build Option
               And user enters secret as "github-secret"
               And user clicks the Generate Webhook Secret to generate Webhook secret
               And user clicks Create button on Add page to see workload "<workload_name>" in topology page
@@ -211,4 +212,4 @@ Feature: Create Pipeline from Add Options
         Examples:
                   | git_url                                | workload_name      |
                   | https://github.com/Lucifergene/oc-pipe | openshift-pac-repo |
-                  
+

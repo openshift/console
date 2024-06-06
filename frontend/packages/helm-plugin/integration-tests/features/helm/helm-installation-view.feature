@@ -8,10 +8,11 @@ Feature: Helm Chart Installation View
 
 
         # This test is broken because now there is only on version of nodejs chart.
-        @regression @broken-test
+        @regression
         Scenario: Grouping of Helm multiple chart versions together in developer catalog: HR-04-TC01
             Given user is at Add page
              When user selects "Helm Chart" card from add page
+              And user clicks on "open-shift-helm-charts" chart repository
               And user searches and selects "Nodejs" card from catalog page
               And user clicks on the Create button on side bar
               And user clicks on the chart versions dropdown menu
@@ -45,4 +46,4 @@ Feature: Helm Chart Installation View
              When user selects "Helm Chart" card from add page
               And user searches and selects "Httpd Imagestreams" card from catalog page
               And user clicks on the Create button on side bar
-             Then user should see message "Helm release is not configurable since the Helm Chart doesn't define any values." 
+             Then user should see message "Helm release is not configurable since the Helm Chart doesn't define any values."

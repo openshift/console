@@ -7,6 +7,7 @@ import (
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 
+	"github.com/openshift/console/cmd/bridge/config/flagvalues"
 	"github.com/openshift/console/pkg/serverconfig"
 )
 
@@ -41,11 +42,11 @@ func (opts *SessionOptions) ApplyConfig(config *serverconfig.Session) {
 	serverconfig.SetIfUnset(&opts.CookieAuthenticationKeyPath, config.CookieAuthenticationKeyFile)
 }
 
-func (opts *SessionOptions) Validate(userAuthType string) []error {
+func (opts *SessionOptions) Validate(userAuthType flagvalues.AuthType) []error {
 	var errs []error
 
 	switch userAuthType {
-	case "oidc":
+	case flagvalues.AuthTypeOIDC:
 		if opts.CookieEncryptionKeyPath == "" || opts.CookieAuthenticationKeyPath == "" {
 			errs = append(errs, fmt.Errorf("cookie-encryption-key-file and cookie-authentication-key-file must be set when --user-auth is 'oidc'"))
 		}
@@ -58,7 +59,7 @@ func (opts *SessionOptions) Validate(userAuthType string) []error {
 	return errs
 }
 
-func (opts *SessionOptions) Complete(userAuthType string) (*CompletedOptions, error) {
+func (opts *SessionOptions) Complete(userAuthType flagvalues.AuthType) (*CompletedOptions, error) {
 	if errs := opts.Validate(userAuthType); len(errs) > 0 {
 		return nil, utilerrors.NewAggregate(errs)
 	}

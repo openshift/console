@@ -17,6 +17,14 @@ describe('Masthead', () => {
     cy.visit('/');
   });
 
+  describe('Logo', () => {
+    it('should be restricted to a max-height of 60px', () => {
+      cy.byTestID('brand-image').should('be.visible');
+      cy.byTestID('brand-image').should('have.css', 'max-height', '60px');
+      cy.byTestID('brand-image').invoke('height').should('be.lte', 60);
+    });
+  });
+
   describe('User dropdown', () => {
     it('should render the correct copy login command link', () => {
       cy.window().then((win: any) => {

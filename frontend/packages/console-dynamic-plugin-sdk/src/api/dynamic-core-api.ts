@@ -34,6 +34,7 @@ import {
   UseResolvedExtensions,
   VirtualizedTableFC,
   UseActiveNamespace,
+  UseUserSettings,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -94,6 +95,8 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/int
  * @param {TableGridBreakpoint} [gridBreakPoint] - sizing of how to break up grid for responsiveness
  * @param {function} [onSelect] - (optional) function for handling select of table
  * @param {R} [rowData] - (optional) data specific to row
+ * @param {number} [sortColumnIndex] - (optional) The index of the column to sort. The default is `0`
+ * @param {SortByDirection.asc | SortByDirection.desc} [sortDirection] - (optional) The direction of the sort. The default is `SortByDirection.asc` 
  * @example
  * ```ts
  * const MachineList: React.FC<MachineListProps> = (props) => {
@@ -877,3 +880,23 @@ export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks
  */
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;
+
+/**
+ * Hook that provides a user setting value and a callback for setting the user setting value.
+ * @returns A tuple containing the user setting value, a setter callback, and a loaded boolean.
+ * @example
+ * ```tsx
+ * const Component: React.FC = (props) => {
+ *    const [state, setState, loaded] = useUserSettings(
+ *      'devconsole.addPage.showDetails',
+ *      true,
+ *      true,
+ *    );
+ *    return loaded ? (
+ *       <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+ *     ) : null;
+ * };
+ * ```
+ */
+export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
+  .useUserSettings;

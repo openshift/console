@@ -1,7 +1,7 @@
 {
-  "No network attachment definitions found": "No network attachment definitions found",
-  "Create network attachment definition": "Create network attachment definition",
-  "Learn how to use network attachment definitions": "Learn how to use network attachment definitions",
+  "No {{label}} found": "No {{label}} found",
+  "Create {{label}}": "Create {{label}}",
+  "Learn how to use {{label}}": "Learn how to use {{label}}",
   "NetworkAttachmentDefinition details": "NetworkAttachmentDefinition details",
   "Type": "Type",
   "Details": "Details",
@@ -14,6 +14,7 @@
   "Network Type": "Network Type",
   "Edit YAML": "Edit YAML",
   "Networks are not project-bound. Using the same name creates a shared NAD.": "Networks are not project-bound. Using the same name creates a shared NAD.",
+  "Create network attachment definition": "Create network attachment definition",
   "Name": "Name",
   "Description": "Description",
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.",

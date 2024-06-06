@@ -79,6 +79,7 @@ Given('pipeline {string} is present on Pipelines page', (pipelineName: string) =
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
   navigateTo(devNavigationMenu.Pipelines);
+  cy.get(pipelinesPO.pipelinesTab).click();
   pipelinesPage.search(pipelineName);
 });
 
@@ -207,8 +208,8 @@ Then('Name field will be disabled', () => {
 });
 
 Then('Add Parameters, Add Resources, Task should be displayed', () => {
-  cy.get(pipelineBuilderPO.add).eq(0).should('be.enabled');
-  cy.get(pipelineBuilderPO.add).eq(1).should('be.enabled');
+  cy.get(pipelineBuilderPO.formView.addResourcesLink).eq(0).should('be.enabled');
+  cy.get(pipelineBuilderPO.formView.addResourcesLink).eq(1).should('be.enabled');
   cy.get(pipelineBuilderPO.formView.task).should('be.visible');
 });
 

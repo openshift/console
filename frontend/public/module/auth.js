@@ -71,7 +71,6 @@ export const authSvc = {
       window.location.assign(redirect);
       return;
     }
-
     // If we're on the login error page, this means there was a problem with the last
     // authentication attempt. Show the error from the previous attempt instead of redirecting
     // login again. This is necessary because login may not be available (e.g. if the OAuth
@@ -82,31 +81,20 @@ export const authSvc = {
     }
   },
 
-  // Avoid logging out multiple times if concurrent requests return unauthorized.
-  logout: _.once((next) => {
+  logout: _.once((next, isKubeAdmin = false) => {
     setNext(next);
     clearLocalStorage(clearLocalStorageKeys);
     coFetch(logoutURL, { method: 'POST' })
       // eslint-disable-next-line no-console
       .catch((e) => console.error('Error logging out', e))
-      .then(() => authSvc.logoutRedirect(next));
-  }),
-
-  // Extra steps are needed if this is OpenShift to delete the user's access
-  // token and logout the kube:admin user.
-  logoutOpenShift: (isKubeAdmin = false) => {
-    clearLocalStorage(clearLocalStorageKeys);
-    coFetch('/api/openshift/delete-token', { method: 'POST' })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error deleting token', e))
       .then(() => {
         if (isKubeAdmin) {
           authSvc.logoutKubeAdmin();
         } else {
-          authSvc.logoutRedirect();
+          authSvc.logoutRedirect(next);
         }
       });
-  },
+  }),
 
   // The kube:admin user has a special logout flow. The OAuth server has a
   // session cookie that must be cleared by POSTing to the kube:admin logout

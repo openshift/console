@@ -11,7 +11,6 @@ import {
   SpacerNode,
   DefaultTaskGroup,
 } from '@patternfly/react-topology';
-import ApprovalTaskNode from './ApprovalTaskNode';
 import BuilderFinallyNode from './BuilderFinallyNode';
 import BuilderNode from './BuilderNode';
 import { NodeType, PipelineLayout } from './const';
@@ -70,8 +69,6 @@ export const dagreViewerComponentFactory: ComponentFactory = (kind: ModelKind, t
           return PipelineTaskNode;
         case NodeType.CUSTOM_TASK_NODE:
           return CustomTaskNode;
-        case NodeType.APPROVAL_TASK_NODE:
-          return ApprovalTaskNode;
         case NodeType.FINALLY_GROUP:
           return DefaultTaskGroup;
         case NodeType.SPACER_NODE:

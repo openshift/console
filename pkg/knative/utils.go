@@ -6,7 +6,7 @@ import (
 
 	"github.com/openshift/console/pkg/serverutils"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // EventSourceFilter shall filter partial metadata from knative event sources CRDs before propagating

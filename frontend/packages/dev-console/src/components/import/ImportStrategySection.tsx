@@ -60,7 +60,9 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
       [ImportStrategy.DEVFILE]: t('devconsole~The Devfile at {{filePath}} is recommended.', {
         filePath: devfile?.devfilePath,
       }),
-      [ImportStrategy.SERVERLESS_FUNCTION]: t('devconsole~The func.yaml file is recommended.'),
+      [ImportStrategy.SERVERLESS_FUNCTION]: t(
+        'devconsole~The Serverless function strategy is recommended.',
+      ),
       [ImportStrategy.DOCKERFILE]: t('devconsole~The Dockerfile at {{filePath}} is recommended.', {
         filePath: docker?.dockerfilePath,
       }),

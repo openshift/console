@@ -175,7 +175,7 @@ export const createRoute = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels, ...routeLabels },
-      defaultAnnotations,
+      annotations: defaultAnnotations,
     },
     spec: {
       to: {

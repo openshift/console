@@ -53,3 +53,4 @@ export const pagePO = {
   breadcrumb: '[aria-label="Breadcrumb"]',
 };
 export const resourceRow = '[data-test-rows="resource-row"]';
+export const helpDropdownMenu = '[data-test="help-dropdown-toggle"]';

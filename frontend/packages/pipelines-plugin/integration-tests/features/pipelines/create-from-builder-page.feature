@@ -8,6 +8,7 @@ Feature: Create the pipeline from builder page
 
         @smoke
         Scenario: user navigates to pipelines page from Add page on selecting Pipeline card: P-02-TC01
+            Given user is at Add page
              When user selects "Pipeline" card from add page
              Then user redirects to Pipeline Builder page
 
@@ -72,23 +73,20 @@ Feature: Create the pipeline from builder page
 
     @un-verified
     #test data required
-        Scenario Outline: Create pipeline with "<resource_type>" as resource type from pipeline builder page: P-02-TC06
+        Scenario Outline: Create pipeline resource from pipeline builder page: P-02-TC06
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
               And user clicks on Add task
               And user searches "<cluster_task_name>" in quick search bar
               And user clicks on "Add" in "<cluster_task_name>" task
-              And user adds "<resource_type>" resource with name "<resource_name>" to the "<cluster_task_name>"
+              And user adds resource with name "<resource_name>" to the "<cluster_task_name>"
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
 
         Examples:
-            #For git and image resource apply ../../testData/pipelines-workspaces/demo-optional-resources.yaml
-                  | pipeline_name | cluster_task_name | resource_type | resource_name |
-                  | p-git         | openshift-client  | Git           | git repo      |
-                  | p-img         | buildah           | Image         | image repo    |
-    # | p-storage     | task-storage           | Storage       | storage repo  |
-    # | p-cluster     | task-cluster           | Cluster       | cluster repo  |
+                  | pipeline_name | cluster_task_name | resource_name |
+                  | p-git         | openshift-client  | git repo      |
+                  | p-img         | buildah           | image repo    |
 
 
         @regression
@@ -360,7 +358,7 @@ Feature: Create the pipeline from builder page
                   | pipeline_yaml                                | pipeline_name                 |
                   | testData/pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
 
-        //Issue with install tasks provided by ArtifactHub
+        # Issue with install tasks provided by ArtifactHub
         @regression @broken-test @odc-7246
         Scenario: Install task provided by ArtifactHub and add create a Pipeline: P-02-TC25
             Given user is at Pipeline Builder page

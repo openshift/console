@@ -542,7 +542,7 @@
   "Aggregation level must be a number": "集約レベルは数字でなければなりません",
   "Get started": "スタート",
   "Skip tour": "ツアーをスキップ",
-  "Okay, got it!": "Okay, got it!",
+  "Okay, got it!": "了解しました!",
   "Guided tour": "ガイド付きツアー",
   "Step {{stepNumber, number}}/{{totalSteps, number}}": "ステップ {{stepNumber, number}}/{{totalSteps, number}}",
   "guided tour {{step, number}}": "ガイド付きツアー {{step, number}}",

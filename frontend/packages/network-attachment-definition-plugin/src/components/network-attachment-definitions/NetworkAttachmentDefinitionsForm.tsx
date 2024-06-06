@@ -35,13 +35,14 @@ import {
 } from '@console/internal/module/k8s';
 import {
   RedExclamationCircleIcon,
+  useActiveNamespace,
   validateDNS1123SubdomainValue,
   ValidationErrorType,
 } from '@console/shared';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import {
   NET_ATTACH_DEF_HEADER_LABEL,
-  cnvBridgeNetworkType,
+  bridgeNetworkType,
   networkTypeParams,
   networkTypes,
   ovnKubernetesNetworkType,
@@ -73,7 +74,7 @@ const buildConfig = (
     console.error('Could not parse ipam.value JSON', e); // eslint-disable-line no-console
   }
 
-  if (networkType === cnvBridgeNetworkType) {
+  if (networkType === bridgeNetworkType) {
     config.bridge = _.get(typeParamsData, 'bridge.value', '');
     config.vlan = parseInt(typeParamsData?.vlanTagNum?.value, 10) || undefined;
     config.macspoofchk = _.get(typeParamsData, 'macspoofchk.value', true);
@@ -99,7 +100,7 @@ const buildConfig = (
 const getResourceName = (networkType, typeParamsData): string => {
   if (_.isEmpty(typeParamsData)) return null;
 
-  return networkType === cnvBridgeNetworkType
+  return networkType === bridgeNetworkType
     ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
 };
@@ -197,7 +198,7 @@ const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD, hasOVNK
   }
 
   if (!hasHyperConvergedCRD) {
-    delete types[cnvBridgeNetworkType];
+    delete types[bridgeNetworkType];
   }
 
   if (!hasOVNK8sNetwork) {
@@ -243,8 +244,8 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   // t('kubevirt-plugin~Network Type')
   // t('kubevirt-plugin~Edit YAML')
   // t('kubevirt-plugin~Networks are not project-bound. Using the same name creates a shared NAD.')
-  const { loaded, match, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = props;
-  const namespace = _.get(match, 'params.ns', 'default');
+  const { loaded, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = props;
+  const [activeNamespace] = useActiveNamespace();
   const sriovNetNodePoliciesData = _.get(resources, 'sriovnetworknodepolicies.data', []);
 
   const { t } = useTranslation();
@@ -296,7 +297,9 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         <div className="co-m-pane__name">{NET_ATTACH_DEF_HEADER_LABEL}</div>
         <div className="co-m-pane__heading-link">
           <Link
-            to={`/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new`}
+            to={`/k8s/ns/${activeNamespace}/${referenceForModel(
+              NetworkAttachmentDefinitionModel,
+            )}/~new`}
             id="yaml-link"
             replace
           >
@@ -328,7 +331,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             placeholder={name}
             id="network-attachment-definition-name"
             onChange={(_event, value) =>
-              handleNameChange(value, namespace, fieldErrors, setName, setFieldErrors)
+              handleNameChange(value, activeNamespace, fieldErrors, setName, setFieldErrors)
             }
             value={name}
           />
@@ -406,7 +409,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
                   name,
                   networkType,
                   typeParamsData,
-                  namespace,
+                  activeNamespace,
                   setError,
                   setLoading,
                 )

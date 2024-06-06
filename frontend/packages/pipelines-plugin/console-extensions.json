@@ -254,17 +254,6 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
-        "group": "openshift-pipelines.org",
-        "version": "v1alpha1",
-        "kind": "ApprovalTask"
-      },
-      "flag": "OPENSHIFT_PIPELINE_APPROVAL_TASK"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
         "kind": "Pipeline"
@@ -503,35 +492,6 @@
     },
     "flags": {
       "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS"]
-    }
-  },
-  {
-    "type": "console.resource/details-item",
-    "properties": {
-      "id": "approval-task-description",
-      "model": {
-        "group": "openshift-pipelines.org",
-        "version": "v1alpha1",
-        "kind": "ApprovalTask"
-      },
-      "component": { "$codeRef": "tasksComponent.TaskDescriptionSection" },
-      "sortWeight": 1,
-      "column": "right"
-    }
-  },
-  {
-    "type": "console.resource/details-item",
-    "properties": {
-      "id": "approval-task-approvers",
-      "model": {
-        "group": "openshift-pipelines.org",
-        "version": "v1alpha1",
-        "kind": "ApprovalTask"
-      },
-      "component": { "$codeRef": "tasksComponent.ApproverListSection" },
-      "title": "%pipelines-plugin~Approvers%",
-      "sortWeight": 1,
-      "column": "right"
     }
   },
   {

@@ -54,10 +54,7 @@ export const getPipelineTaskLinks = (pipeline: PipelineKind): PipelineTaskLinks 
             }
           : {
               resourceKind: task.taskRef?.kind,
-              name:
-                task.taskRef?.kind === 'ApprovalTask'
-                  ? i18next.t('pipelines-plugin~Approval Task')
-                  : i18next.t('pipelines-plugin~Custom Task'),
+              name: i18next.t('pipelines-plugin~Custom Task'),
               qualifier: task.name,
               disableLink: true,
             }

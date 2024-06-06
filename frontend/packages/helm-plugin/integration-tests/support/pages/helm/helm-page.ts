@@ -141,8 +141,8 @@ export const helmPage = {
   clearAllFilter: () => {
     // eslint-disable-next-line promise/catch-or-return
     cy.get(helmPO.filterToolBar).then((body) => {
-      if (body.find(helmPO.clearAllFilter).length >= 0) {
-        cy.get(helmPO.clearAllFilter).eq(1).click();
+      if (body.find(`button`).text().includes('Clear all filters')) {
+        cy.get('[data-test="filter-toolbar"] button').contains('Clear all filters').click();
       }
     });
   },

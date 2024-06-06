@@ -9,6 +9,15 @@
     "type": "console.telemetry/listener",
     "properties": {
       "listener": {
+        "$codeRef": "telemetryListeners.debug"
+      }
+    },
+    "flags": { "required": ["TELEMETRY_DEBUG"] }
+  },
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
         "$codeRef": "telemetryListeners.usage"
       }
     },

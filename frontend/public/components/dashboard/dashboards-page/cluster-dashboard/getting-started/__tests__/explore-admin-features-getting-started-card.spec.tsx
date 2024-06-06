@@ -35,15 +35,13 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
     expect(wrapper.find(GettingStartedCard).props().title).toEqual(
       'Explore new features and capabilities',
     );
-    expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      {
-        id: 'openshift-ai',
-        title: 'OpenShift AI',
-        description: 'Build, deploy, and manage AI-enabled applications.',
-        href:
-          '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
-      },
-    ]);
+    expect(wrapper.find(GettingStartedCard).props().links).toContainEqual({
+      id: 'openshift-ai',
+      title: 'OpenShift AI',
+      description: 'Build, deploy, and manage AI-enabled applications.',
+      href:
+        '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
+    });
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
       title: "See what's new in OpenShift 4.16",

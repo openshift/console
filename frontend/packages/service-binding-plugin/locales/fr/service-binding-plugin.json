@@ -1,0 +1,15 @@
+{
+  "ServiceBinding": "Liaison de service",
+  "ServiceBindings": "Liaisons de service",
+  "ServiceBinding details": "Détails de la liaison de service",
+  "Conditions": "Conditions",
+  "Status": "Statut",
+  "Label Selector": "Sélecteur d’étiquette",
+  "Application": "Application",
+  "Services": "Services",
+  "Connected": "Connecté",
+  "Error": "Erreur",
+  "Name": "Nom",
+  "Namespace": "Espace de noms",
+  "Created": "Créé"
+}

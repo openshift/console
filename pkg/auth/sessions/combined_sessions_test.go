@@ -575,7 +575,9 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 
 			gotCookies := map[string]*http.Cookie{}
 			for _, c := range testWriter.Result().Cookies() {
-				gotCookies[c.Name] = c
+				if c.MaxAge == -1 {
+					gotCookies[c.Name] = c
+				}
 			}
 
 			for _, cookieName := range tt.wantCookieTimeouts {

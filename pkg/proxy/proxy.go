@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 var websocketPingInterval = 30 * time.Second
@@ -113,7 +113,7 @@ func CopyRequestHeaders(originalRequest, newRequest *http.Request) {
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	if klog.V(3) {
+	if klog.V(3).Enabled() {
 		klog.Infof("PROXY: %#q\n", SingleJoiningSlash(p.config.Endpoint.String(), r.URL.Path))
 	}
 

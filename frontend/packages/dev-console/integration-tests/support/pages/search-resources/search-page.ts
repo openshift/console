@@ -5,7 +5,7 @@ import { navigateToAdminMenu } from '../app';
 
 const dataTestIdPref: string = 'data-test-id';
 
-function performResourceSearching(resourceName: string) {
+export function performResourceSearching(resourceName: string) {
   cy.get('div').contains('Resources').click();
   cy.get('input[placeholder="Select Resource"]').clear().type(resourceName);
   cy.get(`input[id$=${resourceName}]`).click();

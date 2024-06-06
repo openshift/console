@@ -207,6 +207,7 @@ const ApplicationGroupExpanded: React.FunctionComponent<ApplicationGroupExpanded
       {showLabel && (
         <NodeLabel
           className={styles.topologyGroupLabel}
+          data-test={`group-label-text`}
           x={labelLocation.current[0]}
           y={labelLocation.current[1] + hullPadding(labelLocation.current) + 24}
           paddingX={8}

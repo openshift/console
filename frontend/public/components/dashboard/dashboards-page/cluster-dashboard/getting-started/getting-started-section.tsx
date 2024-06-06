@@ -38,6 +38,8 @@ export const GettingStartedSection: React.FC = () => {
         <QuickStartGettingStartedCard
           featured={[
             // All part of the console-operator:
+            // - Impersonate a user
+            'user-impersonation',
             // - Monitor your sample application
             'monitor-sampleapp',
             // - Install the Red Hat Developer Hub (RHDH) operator (and create a RHDH instance)

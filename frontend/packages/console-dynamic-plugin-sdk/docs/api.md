@@ -67,10 +67,11 @@
 65.  [useDeleteModal](#usedeletemodal)
 66.  [useLabelsModal](#uselabelsmodal)
 67.  [useActiveNamespace](#useactivenamespace)
-68. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-69. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-70. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-71. [DEPRECATED] [YAMLEditor](#yamleditor)
+68.  [useUserSettings](#useusersettings)
+69. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+70. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+71. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+72. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -536,6 +537,8 @@ const MachineList: React.FC<MachineListProps> = (props) => {
 | `gridBreakPoint` | sizing of how to break up grid for responsiveness |
 | `onSelect` | (optional) function for handling select of table |
 | `rowData` | (optional) data specific to row |
+| `sortColumnIndex` | (optional) The index of the column to sort. The default is `0` |
+| `sortDirection` | (optional) The direction of the sort. The default is `SortByDirection.asc` |
 
 
 
@@ -1203,13 +1206,12 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `method` | The HTTP method to use. Defaults to GET |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `isEntireResponse` | The flag to control whether to return the entire content of the response or response body. The default is the response body. |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
+A promise that resolves to the response as text or JSON object.
 
 
 ---
@@ -1230,13 +1232,12 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 | `url` | The URL to fetch |
 | `options` | The options to pass to fetch |
 | `timeout` | The timeout in milliseconds |
-| `isEntireResponse` | The flag to control whether to return the entire content of the response or response body. The default is the response body. |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text, response JSON object or entire content of the HTTP response.
+A promise that resolves to the response as text or JSON object.
 
 
 ---
@@ -2400,6 +2401,43 @@ const Component: React.FC = (props) => {
 ### Returns
 
 A tuple containing the current active namespace and setter callback.
+
+
+---
+
+## `useUserSettings`
+
+### Summary 
+
+Hook that provides a user setting value and a callback for setting the user setting value.
+
+
+
+### Example
+
+
+```tsx
+const Component: React.FC = (props) => {
+   const [state, setState, loaded] = useUserSettings(
+     'devconsole.addPage.showDetails',
+     true,
+     true,
+   );
+   return loaded ? (
+      <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+    ) : null;
+};
+```
+
+
+
+
+
+
+
+### Returns
+
+A tuple containing the user setting value, a setter callback, and a loaded boolean.
 
 
 ---

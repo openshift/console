@@ -26,7 +26,7 @@ const deleteChartRepositoryFromDetailsPage = (name: string, type: string) => {
   cy.byLegacyTestID('kebab-button').click();
   cy.byTestActionID(`Delete ${type}`).click();
   createForm.clickConfirm();
-  cy.byTestID('no-repositories-found').should('be.visible');
+  cy.get('[class~="loading-box"] h4').contains('No repositories found'); // should('have.value', 'No repositories found');
 };
 
 Given('user is at developer perspective', () => {
@@ -59,7 +59,7 @@ When('user searches and selects {string} card from catalog page', (cardName: str
 });
 
 Then('Create Helm Release page is displayed', () => {
-  cy.get('h1.pf-v5-c-title').should('have.text', pageTitle.CreateHelmRelease);
+  cy.get('[data-test="form-title"]').should('have.text', pageTitle.CreateHelmRelease);
 });
 
 Then('release name displays as {string}', (name: string) => {
@@ -220,6 +220,10 @@ Then(
 
 Then('user clicks on {string} repository', (repoName: string) => {
   helmDetailsPage.clickHelmChartRepository(repoName);
+});
+
+Then('user clicks on {string} chart repository', (repoName: string) => {
+  helmDetailsPage.selectHelmChartRepository(repoName);
 });
 
 Then('Repositories breadcrumbs is visible', () => {

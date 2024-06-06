@@ -7,7 +7,8 @@ export const helmPO = {
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   revisionHistoryTab: '[data-test-id="horizontal-link-Revision history"]',
   releaseNotesTab: '[data-test-id="horizontal-link-Release notes"]',
-  filterDropdown: '[data-test-id="filter-dropdown-toggle"] button',
+  filterDropdown: '[data-test-id="filter-dropdown-toggle"] button[aria-label="Options menu"]',
+  filterDropdownDialog: '[class$="menu-group"]',
   filterDropdownItem: '.co-filter-dropdown-item__name',
   filter: {
     pendingInstall: '[data-test-row-filter="pending-install"]',

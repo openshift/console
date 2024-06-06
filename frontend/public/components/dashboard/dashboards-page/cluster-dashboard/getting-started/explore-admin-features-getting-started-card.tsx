@@ -43,6 +43,12 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
         href:
           '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
       },
+      {
+        id: 'new-translations',
+        title: t('public~French and Spanish now available'),
+        description: t('public~Console language options now include French and Spanish.'),
+        href: '/user-preferences/language',
+      },
     ],
     [t],
   );
@@ -50,7 +56,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   React.useEffect(() => {
     const addLinkIfLightSpeedIsAvailable = async () => {
       if (await getLightSpeedAvailability()) {
-        links.push({
+        links.splice(1, 1, {
           id: 'lightspeed',
           title: t('public~OpenShift LightSpeed'),
           description: t('public~Your personal AI helper.'),

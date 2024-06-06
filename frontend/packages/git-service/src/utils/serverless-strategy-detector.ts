@@ -2,7 +2,6 @@ import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { BaseService } from '../services/base-service';
 
 type FuncData = {
-  isBuilderS2I: boolean;
   values: {
     builder?: string;
     runtime?: string;
@@ -16,7 +15,6 @@ export const evaluateFunc = async (gitService: BaseService): Promise<FuncData> =
 
   if (!isFuncYamlPresent) {
     return {
-      isBuilderS2I: false,
       values: {},
     };
   }
@@ -26,16 +24,20 @@ export const evaluateFunc = async (gitService: BaseService): Promise<FuncData> =
   try {
     const funcJSON = safeYAMLToJS(resourceContent);
 
-    const isBuilderS2I = funcJSON?.build?.builder === 's2i';
     const builder = funcJSON?.build?.builder;
     const builderEnvs = funcJSON?.build?.buildEnvs;
     const runtime = funcJSON?.runtime;
     const runtimeEnvs = funcJSON?.run?.envs;
-
-    return { isBuilderS2I, values: { builder, runtime, builderEnvs, runtimeEnvs } };
+    return {
+      values: {
+        builder,
+        runtime,
+        builderEnvs,
+        runtimeEnvs,
+      },
+    };
   } catch {
     return {
-      isBuilderS2I: false,
       values: {},
     };
   }
@@ -50,7 +52,9 @@ export const isServerlessFxRepository = async (
   if (isFuncYamlPresent && isServerlessEnabled) {
     const content = await gitService.getFuncYamlContent();
     const funcJSON = safeYAMLToJS(content);
-    return funcJSON?.build?.builder === 's2i';
+    if (!funcJSON?.build?.builder || funcJSON?.build?.builder === 's2i') {
+      return true;
+    }
   }
   return false;
 };

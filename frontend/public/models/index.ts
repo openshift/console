@@ -1296,3 +1296,20 @@ export const AuthenticationModel: K8sKind = {
   plural: 'authentications',
   abbr: 'AU',
 };
+
+export const MultiNetworkPolicyModel: K8sKind = {
+  abbr: 'MNP',
+  apiGroup: 'k8s.cni.cncf.io',
+  apiVersion: 'v1beta1',
+  id: 'multinetworkpolicy',
+  kind: 'MultiNetworkPolicy',
+  label: 'multi-networkpolicy',
+  // t('public~MultiNetworkPolicy')
+  labelKey: 'public~MultiNetworkPolicy',
+  labelPlural: 'MultiNetworkPolicies',
+  // t('MultiNetworkPolicies')
+  labelPluralKey: 'public~MultiNetworkPolicies',
+  namespaced: true,
+  plural: 'multi-networkpolicies',
+  crd: true,
+};

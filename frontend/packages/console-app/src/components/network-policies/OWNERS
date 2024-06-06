@@ -2,5 +2,19 @@ reviewers:
   - jotak
   - mariomac
   - OlivierCazade
+  - vojtechszocs
+  - pcbailey
+  - yaacov
+  - metalice
+  - avivtur
+  - hstastna
+  - upalatucci
 approvers:
   - jotak
+  - yaacov
+  - pcbailey
+  - metalice
+  - avivtur
+  - hstastna
+  - upalatucci
+  - vojtechszocs

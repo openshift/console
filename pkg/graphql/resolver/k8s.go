@@ -10,7 +10,7 @@ import (
 
 	authn "k8s.io/api/authentication/v1"
 	authz "k8s.io/api/authorization/v1"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/proxy"
 )

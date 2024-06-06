@@ -17,11 +17,7 @@ import {
   SecondaryButtonAction,
   useFlag,
 } from '@console/shared';
-import {
-  FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK,
-  FLAG_OPENSHIFT_PIPELINE_AS_CODE,
-  FLAG_OPENSHIFT_PIPELINE_CONDITION,
-} from '../../const';
+import { FLAG_OPENSHIFT_PIPELINE_AS_CODE, FLAG_OPENSHIFT_PIPELINE_CONDITION } from '../../const';
 import { PipelineModel, ConditionModel, PipelineRunModel, RepositoryModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { PAC_SECRET_NAME } from '../pac/const';
@@ -29,13 +25,11 @@ import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
 import { PIPELINE_NAMESPACE } from '../pipelines/const';
 import PipelinesList from '../pipelines/list-page/PipelinesList';
 import RepositoriesList from '../repository/list-page/RepositoriesList';
-import ApprovalTasksListPage from '../tasks/approval-tasks/ApprovalTasksListPage';
 
 const PipelinesListPage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
-  const isApprovalTaskEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK);
   const isConditionsEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_CONDITION);
   const badge = usePipelineTechPreviewBadge(namespace);
   const [hasCreateAccess, hasCreateAccessLoading] = useAccessReview({
@@ -102,17 +96,6 @@ const PipelinesListPage: React.FC = () => {
             // t(RepositoryModel.labelPluralKey)
             nameKey: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
-            pageData: { showTitle, hideBadge, canCreate },
-          },
-        ]
-      : []),
-    ...(isApprovalTaskEnabled
-      ? [
-          {
-            href: 'approvals',
-            // t(RepositoryModel.labelPluralKey)
-            nameKey: `${t('pipelines-plugin~Approvals')}`,
-            component: ApprovalTasksListPage,
             pageData: { showTitle, hideBadge, canCreate },
           },
         ]

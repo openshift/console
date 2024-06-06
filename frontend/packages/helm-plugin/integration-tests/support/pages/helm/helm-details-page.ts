@@ -60,6 +60,8 @@ export const helmDetailsPage = {
     cy.byLegacyTestID('dropdown-menu').contains(createMenuOption).click();
   },
   clickHelmChartRepository: (repoName: string) => cy.byLegacyTestID(repoName).click(),
+  selectHelmChartRepository: (repoName: string) =>
+    cy.byTestID(`chartRepositoryTitle-${repoName}`).click(),
   clickCreateHelmRelease: () => {
     cy.byLegacyTestID('dropdown-button').click();
     cy.byLegacyTestID('dropdown-menu').contains('Helm Release').click();

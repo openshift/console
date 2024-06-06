@@ -684,7 +684,7 @@ const PodMetrics: React.FC<PodMetricsProps> = ({ obj }) => {
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
                 namespace={obj.metadata.namespace}
-                query={`(sum(irate(container_network_receive_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) (pod_network_name_info)`}
+                query={`pod_interface_network:container_network_receive_bytes:irate5m{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}`}
                 description={getNetworkName}
               />
             </CardBody>
@@ -700,7 +700,7 @@ const PodMetrics: React.FC<PodMetricsProps> = ({ obj }) => {
                 ariaChartLinkLabel={t('public~View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
                 namespace={obj.metadata.namespace}
-                query={`(sum(irate(container_network_transmit_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) (pod_network_name_info)`}
+                query={`pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}`}
                 description={getNetworkName}
               />
             </CardBody>
@@ -811,6 +811,8 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
   const { t } = useTranslation();
+  const moreThanOnePodIPs = pod.status?.podIPs?.length > 1;
+  const moreThanOneHostIPs = pod.status?.hostIPs?.length > 1;
   return (
     <dl className="co-m-pane__details">
       <dt>{t('public~Status')}</dt>
@@ -829,8 +831,24 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
           ? t('public~{{count}} second', { count: pod.spec.activeDeadlineSeconds })
           : t('public~Not configured')}
       </DetailsItem>
-      <DetailsItem label={t('public~Pod IP')} obj={pod} path="status.podIP" />
-      <DetailsItem label={t('public~Host IP')} obj={pod} path="status.hostIP" />
+      <DetailsItem
+        label={moreThanOnePodIPs ? t('public~Pod IPs') : t('public~Pod IP')}
+        obj={pod}
+        path={moreThanOnePodIPs ? 'status.podIPs' : 'status.podIP'}
+      >
+        {moreThanOnePodIPs
+          ? pod.status.podIPs.map((podIP) => podIP.ip).join(', ')
+          : pod.status.podIP}
+      </DetailsItem>
+      <DetailsItem
+        label={moreThanOneHostIPs ? t('public~Host IPs') : t('public~Host IP')}
+        obj={pod}
+        path={moreThanOneHostIPs ? 'status.hostIPs' : 'status.hostIP'}
+      >
+        {moreThanOneHostIPs
+          ? pod.status.hostIPs.map((hostIP) => hostIP.ip).join(', ')
+          : pod.status.hostIP}
+      </DetailsItem>
       <DetailsItem label={t('public~Node')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName} />
       </DetailsItem>

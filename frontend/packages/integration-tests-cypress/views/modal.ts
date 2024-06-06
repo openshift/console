@@ -2,7 +2,7 @@ import { submitButton } from './form';
 
 export const modal = {
   shouldBeOpened: () => {
-    cy.byLegacyTestID('modal-cancel-action', 20000).scrollIntoView();
+    cy.byLegacyTestID('modal-cancel-action', { timeout: 20000 }).scrollIntoView();
     cy.byLegacyTestID('modal-cancel-action').should('be.visible');
   },
   shouldBeClosed: () => cy.byLegacyTestID('modal-cancel-action').should('not.exist'),

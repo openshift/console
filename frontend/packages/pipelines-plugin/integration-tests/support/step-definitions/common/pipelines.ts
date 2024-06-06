@@ -35,6 +35,7 @@ Given('pipeline run is displayed for {string} with resource', (pipelineName: str
   startPipelineInPipelinesPage.clickStart();
   pipelineRunDetailsPage.verifyTitle();
   navigateTo(devNavigationMenu.Pipelines);
+  cy.get(pipelinesPO.pipelinesTab).click();
   pipelinesPage.search(pipelineName);
   cy.get(pipelinesPO.pipelinesTable.pipelineRunIcon).should('be.visible');
 });

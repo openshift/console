@@ -13,7 +13,10 @@ declare global {
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
       ): Chainable<Element>;
       byTestActionID(selector: string): Chainable<JQuery<HTMLElement>>;
-      byLegacyTestID(selector: string, timeout?: number): Chainable<JQuery<HTMLElement>>;
+      byLegacyTestID(
+        selector: string,
+        options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
+      ): Chainable<JQuery<HTMLElement>>;
       byButtonText(selector: string): Chainable<JQuery<HTMLElement>>;
       byDataID(selector: string): Chainable<JQuery<HTMLElement>>;
       byTestSelector(
@@ -45,9 +48,12 @@ Cypress.Commands.add('byTestActionID', (selector: string) =>
 );
 
 // deprecated!  new IDs should use 'data-test', ie. `cy.byTestID(...)`
-Cypress.Commands.add('byLegacyTestID', (selector: string, timeout?: number) => {
-  cy.get(`[data-test-id="${selector}"]`, { timeout });
-});
+Cypress.Commands.add(
+  'byLegacyTestID',
+  (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) => {
+    cy.get(`[data-test-id="${selector}"]`, options);
+  },
+);
 
 Cypress.Commands.add('byButtonText', (selector: string) => {
   cy.get('button[type="button"]').contains(`${selector}`);

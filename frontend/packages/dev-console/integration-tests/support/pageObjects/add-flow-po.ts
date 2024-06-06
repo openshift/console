@@ -42,7 +42,8 @@ export const gitPO = {
   },
   pipeline: {
     infoMessage: '[aria-label="Info Alert"]',
-    addPipeline: '#form-checkbox-pipeline-enabled-field',
+    buildDropdown: '[id="form-select-input-build-option-field"]',
+    addPipeline: '[id="select-option-build.option-PIPELINES"]',
     pipelineDropdown: '#form-dropdown-pipeline-templateSelected-field',
   },
   resourcesDropdown: '#form-select-input-resources-field',

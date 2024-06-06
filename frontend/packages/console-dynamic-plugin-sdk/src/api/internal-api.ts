@@ -16,7 +16,6 @@ import {
   VirtualizedGridProps,
   LazyActionMenuProps,
   UseDashboardResources,
-  UseUserSettings,
   QuickStartsLoaderProps,
   UseURLPoll,
   UseLastNamespace,
@@ -60,8 +59,6 @@ export const useUtilizationDuration: UseUtilizationDuration = require('@console/
 export const ServicesList = require('@console/internal/components/service').ServicesList;
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
   .useDashboardResources;
-export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
-  .useUserSettings;
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
   .useURLPoll;
 export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')

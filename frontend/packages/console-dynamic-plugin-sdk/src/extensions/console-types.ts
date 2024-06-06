@@ -266,39 +266,14 @@ export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
   timeout?: number,
-  isEntireResponse?: boolean,
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
-  (
-    url: string,
-    method?: string,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
+  (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
   delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
-  post(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
-  put(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
-  patch(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
+  post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
 };
 
 export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
@@ -345,6 +320,8 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
   gridBreakPoint?: TableGridBreakpoint;
   rowData?: R;
   mock?: boolean;
+  sortColumnIndex?: number;
+  sortDirection?: SortByDirection;
 };
 
 export type VirtualizedTableFC = <D, R extends any = {}>(
@@ -758,6 +735,12 @@ export type UseValuesForNamespaceContext = () => {
 };
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
+
+export type UseUserSettings = <T>(
+  key: string,
+  defaultValue?: T,
+  sync?: boolean,
+) => [T, React.Dispatch<React.SetStateAction<T>>, boolean];
 
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
 

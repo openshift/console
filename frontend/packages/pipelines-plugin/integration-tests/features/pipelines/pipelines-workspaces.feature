@@ -7,7 +7,8 @@ Feature: Workspaces
               And user is at pipelines page
 
 
-        @smoke
+        @smoke @broken-test
+        # Sidebar do not have samples present https://issues.redhat.com/browse/SRVKP-3199
         Scenario: Create the pipeline with workspace from yaml view: P-10-TC01
             Given user is at Edit Yaml page
              When user fills the yaml editor with sample "s2i-build-and-deploy-pipeline-using-workspace"

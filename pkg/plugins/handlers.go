@@ -11,7 +11,7 @@ import (
 	"path"
 	"strings"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverconfig"

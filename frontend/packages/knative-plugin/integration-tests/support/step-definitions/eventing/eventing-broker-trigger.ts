@@ -11,6 +11,7 @@ import {
 import { createBroker } from '@console/dev-console/integration-tests/support/pages/functions/createBroker';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import { eventingPO } from '../../pageObjects/global-po';
 
 Given('user has created knative service {string}', (knativeServiceName: string) => {
   createGitWorkloadIfNotExistsOnTopologyPage(
@@ -37,7 +38,7 @@ When('user clicks on the Add Trigger', () => {
 });
 
 When('user will click on the Subscriber dropdown on the modal', () => {
-  cy.get(topologyPO.graph.subscriber.dropdown).click();
+  cy.get(eventingPO.broker.sidebar.subscriberDropDown).click();
 });
 
 Then(
@@ -48,7 +49,7 @@ Then(
 );
 
 When('user selects the auto populated name of subscription', () => {
-  cy.get(topologyPO.graph.subscriber.filter).should('be.visible');
+  cy.get(eventingPO.broker.sidebar.subscriberDropDown).should('be.visible');
 });
 
 When('user selects the Subscriber {string}', (subscriberName: string) => {
@@ -75,7 +76,7 @@ Given('user has already added the trigger', () => {
 
 When('user right clicks on the Trigger to open the context menu', () => {
   cy.get(topologyPO.graph.triggerLink).within(() => {
-    cy.get(topologyPO.graph.triggerEdgeLink).trigger('contextmenu', { force: true });
+    cy.get(topologyPO.graph.triggerEdgeLink).eq(1).trigger('contextmenu', { force: true });
   });
 });
 

@@ -9,7 +9,7 @@ Feature: Applications managed by GitOps
 
         @smoke
         Scenario: No GitOps Manifest URLs found: GO-01-TC01
-             When user navigates to Environments page
+             Given user navigates to Environments page
              Then user will see the message No GitOps manifest URLs found
 
         @regression @manual

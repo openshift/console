@@ -42,7 +42,7 @@ When('user clicks on Create button on Create Serverless function', () => {
   cy.byLegacyTestID('submit-button').click();
 });
 
-When('user selects Add Pipeline checkbox in Pipelines section', () => {
+When('user selects Pipelines option in Build Option', () => {
   gitPage.selectAddPipeline();
 });
 

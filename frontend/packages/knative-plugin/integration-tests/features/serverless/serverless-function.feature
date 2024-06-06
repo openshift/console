@@ -86,7 +86,7 @@ Feature: Creation and Visualisation of serverless fuctions
               And user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
               And user enters Name as "<workload_name>"
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user clicks Create button on Add page
              Then user is able to see workload "<workload_name>" in topology page
               And user clicks on the Knative Service workload "<workload_name>"
@@ -106,7 +106,7 @@ Feature: Creation and Visualisation of serverless fuctions
               And user is able to see builder image version dropdown
               And user is able to see the runtime details
               And user enters Name as "<workload_name>"
-              And user selects Add Pipeline checkbox in Pipelines section
+              And user selects Pipelines option in Build Option
               And user clicks on Create button on Create Serverless function
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page

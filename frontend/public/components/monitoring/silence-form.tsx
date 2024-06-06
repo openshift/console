@@ -273,7 +273,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <DatetimeTextInput
                     data-test="silence-from"
                     isRequired
-                    onChange={(v: string) => setStartsAt(v)}
+                    onChange={(_event, value: string) => setStartsAt(value)}
                     value={startsAt}
                   />
                 )}
@@ -299,7 +299,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <DatetimeTextInput
                     data-test="silence-until"
                     isRequired
-                    onChange={(v: string) => setEndsAt(v)}
+                    onChange={(_event, value: string) => setEndsAt(value)}
                     value={endsAt}
                   />
                 ) : (

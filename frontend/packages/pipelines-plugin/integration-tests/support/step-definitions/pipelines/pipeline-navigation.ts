@@ -14,6 +14,10 @@ When('user navigates to Builds page', () => {
   navigateTo(devNavigationMenu.Builds);
 });
 
+When('user enters git access token as {string}', (token: string) => {
+  cy.get('[id="form-input-webhook-token-field"]').clear().type(token).should('have.value', token);
+});
+
 Then('user will be redirected to the repositories page', () => {
   cy.get('.co-m-horizontal-nav__menu-item.co-m-horizontal-nav-item--active > a').should(
     'have.text',

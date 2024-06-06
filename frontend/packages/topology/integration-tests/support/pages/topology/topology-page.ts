@@ -58,7 +58,7 @@ export const topologyPage = {
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
-    cy.get('h3.pf-v5-c-title.pf-m-lg').should('contain.text', text),
+    cy.get('h3[class*="empty-state__title-text"]').should('contain.text', text),
   verifyWorkLoads: () => cy.get(topologyPO.graph.workloads).should('be.visible'),
   search: (name: string) => {
     topologyHelper.search(name);
@@ -167,10 +167,6 @@ export const topologyPage = {
         break;
     }
   },
-  filterByResource: (resourceName: string) => {
-    cy.get(topologyPO.graph.filterDropdown).contains('Filter by Resource').click();
-    cy.get(`[id$="${resourceName}"]`).check();
-  },
   verifyPipelineRunStatus: (status: string) =>
     cy
       .get('li.list-group-item.pipeline-overview')
@@ -209,7 +205,7 @@ export const topologyPage = {
     return cy.get(`a[href="/k8s/ns/aut/builds/${nodeName}-1/logs"]`);
   },
   componentNode: (nodeName: string) => {
-    return cy.get('g.pf-topology__node__label > text').contains(nodeName);
+    return cy.get('g[class$=topology__node__label] > text').contains(nodeName);
   },
   componentNodeClick: (nodeName: string, options?: { timeout: number }) => {
     topologyHelper.search(nodeName);
@@ -222,14 +218,14 @@ export const topologyPage = {
   },
   getEventSource: (eventSource: string) => {
     return cy
-      .get('[data-type="event-source"] g.pf-topology__node__label > text')
+      .get('[data-type="event-source"] g[class$=topology__node__label] > text')
       .contains(eventSource);
   },
   getRevisionNode: (serviceName: string) => {
-    cy.get('[data-type="knative-revision"] g.pf-topology__node__label > text')
+    cy.get('[data-type="knative-revision"] g[class$=topology__node__label] > text')
       .contains(serviceName.substring(0, 6))
       .should('be.visible');
-    return cy.get('[data-type="knative-revision"] ellipse.pf-topology__node__background');
+    return cy.get('[data-type="knative-revision"] ellipse');
   },
   verifyContextMenuOptions: (...options: string[]) => {
     cy.get('#popper-container li[role="menuitem"]').each(($el) => {
@@ -251,7 +247,7 @@ export const topologyPage = {
     return cy.get(topologyPO.graph.knativeNodeLabel).should('be.visible').contains(nodeName);
   },
   getGroup: (groupName: string) => {
-    return cy.get(topologyPO.graph.groupLabel).should('be.visible').contains(groupName);
+    return cy.get(topologyPO.graph.groupLabelText).should('be.visible').contains(groupName);
   },
   getDeploymentNode: (nodeName: string) => {
     return cy
@@ -280,6 +276,20 @@ export const topologyPage = {
   },
   clickOnGroup: (groupName: string) => {
     topologyPage.getGroup(groupName).click({ force: true });
+  },
+  clickOnKnativeGroup: (knativeGroupName: string) => {
+    return cy
+      .get(topologyPO.graph.knativeLabelText)
+      .should('be.visible')
+      .contains(knativeGroupName)
+      .click({ force: true });
+  },
+  clickOnHelmGroup: (groupName: string) => {
+    return cy
+      .get(topologyPO.graph.helmGroupLabelText)
+      .should('be.visible')
+      .contains(groupName)
+      .click({ force: true });
   },
   clickOnDeploymentNode: (nodeName: string) => {
     topologyPage.getDeploymentNode(nodeName).click();
@@ -315,13 +325,13 @@ export const topologyPage = {
   getHelmRelease: (helmReleaseName: string) => {
     return cy
       .get('[data-type="helm-release"]')
-      .find(topologyPO.graph.groupLabel)
+      .find(topologyPO.graph.selectNodeLabel)
       .contains(helmReleaseName);
   },
   getKnativeService: (serviceName: string) => {
     return cy
       .get('[data-type="knative-service"]')
-      .find(topologyPO.graph.groupLabel)
+      .find(topologyPO.graph.knativeNodeLabel)
       .contains(serviceName);
   },
   getKnativeRevision: (serviceName: string) => {
@@ -414,13 +424,11 @@ export const topologyPage = {
     cy.get('button[data-test-id="start-build-action"]').should('be.visible').click({ force: true });
   },
   verifyNodeAlert: (nodeName: string) => {
-    cy.get('[data-type="workload"]').find('.pf-topology__node.pf-m-warning').contains(nodeName);
+    cy.get('[data-type="workload"]').find('[class*= warning]').contains(nodeName);
   },
   verifyListNodeAlert: (nodeName: string) => {
-    cy.get('.odc-topology-list-view__label-cell')
-      .contains(nodeName)
-      .parent()
-      .find('div.odc-topology-list-view__alert-cell')
+    cy.get(`[data-test="row-${nodeName}"]`)
+      .find('div .odc-topology-list-view__alert-cell')
       .contains('Alerts:');
   },
   clickMaxZoomOut: () => {

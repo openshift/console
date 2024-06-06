@@ -1,0 +1,20 @@
+{
+  "Telemetry": "Telemetry",
+  "Configure telemetry setting": "配置遥测设置",
+  "Opt-in": "选择使用",
+  "Opt-in to send telemetry events.": "选择发送遥测事件。",
+  "Opt-out": "选择不使用",
+  "Opt-out to send telemetry events.": "选择不发送遥测事件。",
+  "Enforce": "强制",
+  "Always send telemetry events.": "始终发送遥测事件。",
+  "Disabled": "禁用",
+  "Disable the telemetry in the cluster.": "在集群中禁用遥测。",
+  "Select option": "选择选项",
+  "Analytics": "分析",
+  "As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.": "作为管理员，您可以配置将遥测事件发送到一个预先配置的红帽代理，该代理可以将数据转发到第三方服务进行分析。",
+  "Accept": "接受",
+  "Send telemetry events.": "发送遥测事件。",
+  "Deny": "拒绝",
+  "Do not send telemetry events.": "不发送遥测事件。",
+  "Select a option whether to send telemetry events or not.": "选择是否发送遥测事件的选项。"
+}

@@ -1,5 +1,6 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { MultiNetworkPolicyModel } from '@console/internal/models';
 import {
   NetworkPolicyKind,
   NetworkPolicyPort as K8SPort,
@@ -11,10 +12,11 @@ import {
 
 export interface NetworkPolicy {
   name: string;
-  namespace: string;
+  namespace?: string;
   podSelector: string[][];
   ingress: NetworkPolicyRules;
   egress: NetworkPolicyRules;
+  policyFor?: string[];
 }
 
 export interface NetworkPolicyRules {
@@ -48,6 +50,7 @@ export type NetworkPolicyPort = {
 
 const networkPolicyTypeIngress = 'Ingress';
 const networkPolicyTypeEgress = 'Egress';
+const POLICY_FOR_LABEL = 'k8s.v1.cni.cncf.io/policy-for';
 
 interface ConversionError {
   kind: 'invalid' | 'unsupported';
@@ -140,12 +143,17 @@ const ruleToK8s = (rule: NetworkPolicyRule, direction: 'ingress' | 'egress'): Ru
   return res;
 };
 
-export const networkPolicyToK8sResource = (from: NetworkPolicy): NetworkPolicyKind => {
+export const networkPolicyToK8sResource = (
+  from: NetworkPolicy,
+  isMulti = false,
+): NetworkPolicyKind => {
   const podSelector = selectorToK8s(from.podSelector);
   const policyTypes: string[] = [];
   const res: NetworkPolicyKind = {
-    kind: 'NetworkPolicy',
-    apiVersion: 'networking.k8s.io/v1',
+    kind: isMulti ? MultiNetworkPolicyModel.kind : 'NetworkPolicy',
+    apiVersion: isMulti
+      ? `${MultiNetworkPolicyModel.apiGroup}/${MultiNetworkPolicyModel.apiVersion}`
+      : 'networking.k8s.io/v1',
     metadata: {
       name: from.name,
       namespace: from.namespace,
@@ -168,6 +176,11 @@ export const networkPolicyToK8sResource = (from: NetworkPolicy): NetworkPolicyKi
   } else if (from.egress.rules.length > 0) {
     policyTypes.push(networkPolicyTypeEgress);
     res.spec.egress = from.egress.rules.map((r) => ruleToK8s(r, 'egress'));
+  }
+  if (from.policyFor) {
+    if (!res.metadata) res.metadata = {};
+
+    res.metadata.annotations = { [POLICY_FOR_LABEL]: from.policyFor.join(',') };
   }
   return res;
 };
@@ -434,6 +447,9 @@ export const networkPolicyFromK8sResource = (
   if (isError(egressRules)) {
     return egressRules;
   }
+  const policyFor = from?.metadata?.annotations?.[POLICY_FOR_LABEL]?.split(',')?.map((nad) =>
+    nad.trim(),
+  );
 
   return {
     name: from.metadata.name || '',
@@ -441,5 +457,6 @@ export const networkPolicyFromK8sResource = (
     podSelector,
     ingress: ingressRules,
     egress: egressRules,
+    policyFor,
   };
 };

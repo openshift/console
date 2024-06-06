@@ -16,7 +16,7 @@ Feature: Triggers
              Then Git provider type field is enabled
               And user should be able to see "Hide variables" link with variables section
               And variables section displayed with message "The following variables can be used in the Parameters or when created new Resources."
-              And Add button is disabled
+              And Add button is enabled
 
 
         @smoke
@@ -24,8 +24,6 @@ Feature: Triggers
             Given user has created pipeline "<pipeline_name>" with git resources
              When user selects "Add Trigger" from the kebab menu for "<pipeline_name>"
               And user selects the "github-pullreq" from Git Provider Type field
-              And user enters git url as "https://github.com/sclorg/nodejs-ex.git" in add trigger modal
-              And user enters revision as "master" in add trigger modal
               And user clicks on Add button present in Add Trigger modal
              Then pipelines page is displayed
               And "Remove Trigger" is displayed in kebab menu for "<pipeline_name>"
@@ -86,7 +84,7 @@ Feature: Triggers
              When user selects "Remove Trigger" from the kebab menu for "<pipeline_name>"
              Then modal is displayed with header message "Remove Trigger"
               And trigger template dropdown displayed with help text Select Trigger Template
-              And Remove button will be disabled
+              And Remove button will be enabled
 
         Examples:
                   | pipeline_name |

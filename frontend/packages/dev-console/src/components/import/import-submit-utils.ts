@@ -278,7 +278,6 @@ export const createOrUpdateBuildConfig = (
         git: {
           uri: repository,
           ref,
-          type: 'Git',
         },
         ...(secretName ? { sourceSecret: { name: secretName } } : {}),
       },

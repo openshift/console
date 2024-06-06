@@ -48,12 +48,14 @@ export const StatusItem: React.FC<StatusItemProps> = ({
       <div className="co-status-card__alert-item-text">
         <div className="co-status-card__alert-item-message">
           {name && <span className="co-status-card__alert-item-header">{name}</span>}
-          <div
-            className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary"
-            data-test="timestamp"
-          >
-            {timestamp && <Timestamp simple timestamp={timestamp} />}
-          </div>
+          {timestamp && (
+            <div
+              className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary"
+              data-test="timestamp"
+            >
+              <Timestamp simple timestamp={timestamp} />
+            </div>
+          )}
           <span className="co-status-card__health-item-text co-break-word">{message}</span>
           {documentationLink && (
             <ExternalLink

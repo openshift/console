@@ -369,12 +369,12 @@ When('user clicks Last Run value of the pipeline {string}', (pipelineName: strin
   pipelinesPage.selectPipelineRun(pipelineName);
 });
 
-Then('Start Pipeline modal displays with Git Resources, Advanced Options sections', () => {
+Then('Start Pipeline modal displays with Workspaces, Advanced Options sections', () => {
   startPipelineInPipelinesPage.verifySections();
 });
 
-Then('start button is disabled', () => {
-  cy.get(pipelinesPO.startPipeline.start).should('be.disabled');
+Then('start button is enabled', () => {
+  cy.get(pipelinesPO.startPipeline.start).should('be.enabled');
   modal.cancel();
 });
 
@@ -541,7 +541,7 @@ When('user goes to failed pipeline run of pipeline {string}', (pipelineName: str
 });
 
 When('user opens pipeline run details', () => {
-  cy.get('.pf-v5-c-breadcrumb').should('include.text', 'PipelineRun details');
+  cy.get('[aria-label="Breadcrumb"] li').eq(1).should('include.text', 'PipelineRun details');
 });
 
 Then('user can see status as Failure', () => {

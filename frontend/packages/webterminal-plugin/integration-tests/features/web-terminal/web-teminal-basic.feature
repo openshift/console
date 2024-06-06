@@ -8,20 +8,23 @@ Feature: Web Terminal
               And user has logged in as basic user
               And user has created or selected namespace "aut-terminal-basic"
 
-        @regression @to-do
+        @regression
         Scenario: Open existing Web Terminal instance: WT-01-TC01
              When user clicks on the Web Terminal icon on the Masthead
+              And user clicks advanced option for Timeout
+              And user sets timeout to 1 Minute
+              And user clicks on Start button
              Then user will see the terminal window
               And user close current Web Terminal session
 
-        @regression @to-do
+        @regression
         Scenario: Web Terminal in new tab: WT-01-TC02
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
               And user clicks on Open Terminal in new tab button on the terminal window
              Then user will see the terminal window opened in new tab
 
-        @regression @to-do
+        @regression
         Scenario: Web Terminal is stopped by inactivity: WT-01-TC03
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead

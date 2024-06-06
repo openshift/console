@@ -181,7 +181,7 @@ When(
   'user selects {string} context menu option of knative service {string}',
   (option: string, knativeServiceName: string) => {
     cy.get(topologyPO.graph.fitToScreen).click();
-    topologyPage.rightClickOnGroup(knativeServiceName);
+    topologyPage.rightClickOnKnativeNode(knativeServiceName);
     topologyPage.selectContextMenuAction(option);
   },
 );
@@ -193,7 +193,7 @@ When('user clicks Add button on the Edit Annotations modal', () => {
 Given(
   'number of annotations present in topology side bar for {string} service',
   (serviceName: string) => {
-    topologyPage.clickOnGroup(serviceName);
+    topologyPage.clickOnKnativeGroup(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {
@@ -229,7 +229,7 @@ When('user selects another revision from Revision drop down', () => {
 Then(
   'user will see the label {string} in {string} service side bar details',
   (label: string, serviceName: string) => {
-    topologyPage.clickOnGroup(serviceName);
+    topologyPage.clickOnKnativeGroup(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     topologySidePane.verifyLabel(label);
@@ -239,7 +239,7 @@ Then(
 Then(
   'user will not see the label {string} in {string} service side bar details',
   (label: string, serviceName: string) => {
-    topologyPage.clickOnGroup(serviceName);
+    topologyPage.clickOnKnativeGroup(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     cy.byTestID('label-list').find('a').should('be.visible');
@@ -250,7 +250,7 @@ Then(
 Given(
   'label {string} is added to the knative service {string}',
   (labelName: string, knativeServiceName: string) => {
-    topologyPage.rightClickOnGroup(knativeServiceName);
+    topologyPage.rightClickOnKnativeNode(knativeServiceName);
     topologyPage.selectContextMenuAction(nodeActions.EditLabels);
     modal.shouldBeOpened();
     editLabels.enterLabel(labelName);
@@ -261,7 +261,7 @@ Given(
 Then(
   'number of Annotations increased for {string} service in topology side bar details',
   (serviceName: string) => {
-    topologyPage.clickOnGroup(serviceName);
+    topologyPage.clickOnKnativeGroup(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {
@@ -276,7 +276,7 @@ Then(
 Then(
   'number of Annotations display as {string} in {string} service side bar details',
   (numOfAnnotations: string, serviceName: string) => {
-    topologyPage.clickOnGroup(serviceName);
+    topologyPage.clickOnKnativeGroup(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     topologySidePane.verifyNumberOfAnnotations(numOfAnnotations);
@@ -369,7 +369,7 @@ When(
 Then(
   'number of Annotations decreased for {string} service in topology side bar details',
   (serviceName: string) => {
-    topologyPage.clickOnGroup(serviceName);
+    topologyPage.clickOnKnativeGroup(serviceName);
     topologySidePane.verify();
     topologySidePane.selectTab('Details');
     cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {

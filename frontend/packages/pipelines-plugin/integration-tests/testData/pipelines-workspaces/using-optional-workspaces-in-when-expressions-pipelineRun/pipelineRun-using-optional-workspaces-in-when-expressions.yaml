@@ -1,13 +1,14 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   generateName: optional-workspace-when-
 spec:
-  serviceAccountName: 'default'
   workspaces:
   - name: message-of-the-day
     configMap:
       name: test-motd
+  taskRunTemplate:
+    serviceAccountName: 'default'
   pipelineSpec:
     workspaces:
     - name: message-of-the-day

@@ -46,6 +46,7 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
     container.stdin = true;
     container.stdinOnce = true;
     container.tty = true;
+    delete container?.args;
     delete container?.readinessProbe;
     delete container?.livenessProbe;
   });

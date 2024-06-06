@@ -2,14 +2,6 @@ apiVersion: v1
 entries:
   aks-helloworld--sample-repo-1:
     - apiVersion: v1
-      created: "2020-03-30T16:27:13.4350608-05:00"
-      description: A Helm chart for Kubernetes
-      digest: a9bc374461e31cb1429021a898ef83d0a650783033f3bc121ed536ad99301bbc
-      name: aks-helloworld
-      urls:
-        - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.1.tgz
-      version: 0.1.1
-    - apiVersion: v1
       created: "2020-03-30T16:27:13.433497-05:00"
       description: A Helm chart for Kubernetes
       digest: f4eb20e7116b24c4825861e6ff6f4303bbe83bcee4a7b2b6ea9fe6929852f34d
@@ -17,15 +9,15 @@ entries:
       urls:
         - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.0.tgz
       version: 0.1.0
-  azure-vote--sample-repo-1:
     - apiVersion: v1
-      created: "2020-03-30T16:27:13.4454224-05:00"
+      created: "2020-03-30T16:27:13.4350608-05:00"
       description: A Helm chart for Kubernetes
-      digest: ac7698878230b11c766c0fcbfce36e7a1c8ab4ab18d55eae9e6551217042c164
-      name: azure-vote
+      digest: a9bc374461e31cb1429021a898ef83d0a650783033f3bc121ed536ad99301bbc
+      name: aks-helloworld
       urls:
-        - https://azure-samples.github.io/helm-charts/azure-vote-0.1.1.tgz
+        - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.1.tgz
       version: 0.1.1
+  azure-vote--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4436157-05:00"
       description: A Helm chart for Kubernetes
@@ -34,6 +26,14 @@ entries:
       urls:
         - https://azure-samples.github.io/helm-charts/azure-vote-0.1.0.tgz
       version: 0.1.0
+    - apiVersion: v1
+      created: "2020-03-30T16:27:13.4454224-05:00"
+      description: A Helm chart for Kubernetes
+      digest: ac7698878230b11c766c0fcbfce36e7a1c8ab4ab18d55eae9e6551217042c164
+      name: azure-vote
+      urls:
+        - https://azure-samples.github.io/helm-charts/azure-vote-0.1.1.tgz
+      version: 0.1.1
   azure-vote-osba--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4518442-05:00"
@@ -350,16 +350,6 @@ entries:
   nodejs-ex-k--sample-repo-2:
     - apiVersion: v2
       appVersion: 1.16.0
-      created: "2020-07-15T16:32:34.700484147+05:30"
-      description: A Helm chart for Kubernetes
-      digest: 9f8eca455f8379baddd6ab61bd5517373514bb99bedbbddffb98ad88ac9841cc
-      name: nodejs-ex-k
-      type: application
-      urls:
-        - https://redhat-developer.github.com/redhat-helm-charts/charts/nodejs-ex-k-0.2.0.tgz
-      version: 0.2.0
-    - apiVersion: v2
-      appVersion: 1.16.0
       created: "2020-07-15T16:32:34.698385506+05:30"
       description: A Helm chart for Kubernetes
       digest: 64b36fee719567e2aae8cb6186ba02a56dc62a90df71af7f90cc1d9d2cd1fb25
@@ -368,5 +358,14 @@ entries:
       urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/nodejs-ex-k-0.1.1.tgz
       version: 0.1.1
-
-generated: "2020-03-30T16:27:13.4275217-05:00"
+    - apiVersion: v2
+      appVersion: 1.16.0
+      created: "2020-07-15T16:32:34.700484147+05:30"
+      description: A Helm chart for Kubernetes
+      digest: 9f8eca455f8379baddd6ab61bd5517373514bb99bedbbddffb98ad88ac9841cc
+      name: nodejs-ex-k
+      type: application
+      urls:
+        - https://redhat-developer.github.com/redhat-helm-charts/charts/nodejs-ex-k-0.2.0.tgz
+      version: 0.2.0
+generated: "2024-05-14T17:12:49Z"
