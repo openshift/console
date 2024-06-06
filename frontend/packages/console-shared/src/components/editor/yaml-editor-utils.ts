@@ -218,7 +218,7 @@ export const enableYAMLValidation = (
   const tryFolding = () => {
     const document = createDocument(getModel());
     if (!initialFoldingTriggered && document.getText() !== '') {
-      fold(editor, getModel(), true);
+      setTimeout(() => fold(editor, getModel(), true));
       initialFoldingTriggered = true;
     }
   };
