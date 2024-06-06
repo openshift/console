@@ -32,7 +32,7 @@ const ResourceSidebarWrapper: React.FC<{
     >
       <div className="co-m-pane__body co-p-has-sidebar__sidebar-body">
         <CloseButton
-          additionalClassName="co-close-button--float-right co-p-has-sidebar__close-button"
+          additionalClassName="co-p-has-sidebar__close-button"
           ariaLabel={t('public~Close')}
           onClick={toggleSidebar}
         />

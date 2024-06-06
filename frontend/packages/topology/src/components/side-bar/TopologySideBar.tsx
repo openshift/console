@@ -41,7 +41,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ children, onClose }) 
             <CloseButton
               onClick={onClose}
               dataTestID="sidebar-close-button"
-              additionalClassName="co-close-button--float-right co-sidebar-dismiss__close-button"
+              additionalClassName="co-sidebar-dismiss__close-button"
             />
           </div>
           {children}

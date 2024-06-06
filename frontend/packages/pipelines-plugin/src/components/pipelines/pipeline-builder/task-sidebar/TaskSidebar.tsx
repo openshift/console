@@ -75,7 +75,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
         <CloseButton
           onClick={onClose}
           dataTestID="sidebar-close-button"
-          additionalClassName="co-close-button--float-right co-sidebar-dismiss__close-button"
+          additionalClassName="co-sidebar-dismiss__close-button"
         />
       </StackItem>
       <StackItem className="opp-task-sidebar__header">
