@@ -26,7 +26,6 @@ import {
 } from '@console/internal/module/k8s';
 import {
   ServiceModel as KnServiceModel,
-  ServiceModel as knSvcModel,
 } from '@console/knative-plugin';
 import {
   getDomainMappingRequests,
