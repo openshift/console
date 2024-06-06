@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { CloseButton as CloseButtonPF } from '@patternfly/react-component-groups';
+import './CloseButton.scss';
 
 type CloseButtonProps = {
   additionalClassName?: string;
