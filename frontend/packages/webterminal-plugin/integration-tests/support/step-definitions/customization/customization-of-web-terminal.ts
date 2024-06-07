@@ -19,12 +19,6 @@ Given('user has installed Web Terminal operator', () => {
 });
 
 Given('user has logged in as admin user', () => {
-  cy.logout();
-  cy.login(
-    Cypress.env('KUBEADMIN_IDP'),
-    Cypress.env('KUBEADMIN_USERNAME'),
-    Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'),
-  ); // make sure we are logged in as kubeadmin
   perspective.switchTo(switchPerspective.Administrator);
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
 });
