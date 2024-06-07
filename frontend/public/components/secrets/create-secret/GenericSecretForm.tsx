@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
@@ -10,7 +9,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { containsNonPrintableCharacters } from '../../utils/file-input';
 import { KeyValueEntryFormState, KeyValueEntryForm } from '.';
 
-export class GenericSecretFormWithTranslation extends React.Component<
+class GenericSecretFormWithTranslation extends React.Component<
   GenericSecretFormProps & WithT,
   GenericSecretFormState
 > {

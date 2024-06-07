@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { Dropdown } from '../../utils';
 import { SecretType, BasicAuthSubform, SSHAuthSubform } from '.';
 
-export class SourceSecretFormWithTranslation extends React.Component<
+class SourceSecretFormWithTranslation extends React.Component<
   SourceSecretFormProps & WithT,
   SourceSecretFormState
 > {

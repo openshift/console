@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { SecretTypeAbstraction, SecretFormWrapper, secretFormExplanation } from '.';

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
@@ -9,7 +8,7 @@ import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-ci
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { AUTHS_KEY, ConfigEntryForm } from '.';
 
-export class CreateConfigSubformWithTranslation extends React.Component<
+class CreateConfigSubformWithTranslation extends React.Component<
   CreateConfigSubformProps & WithT,
   CreateConfigSubformState
 > {

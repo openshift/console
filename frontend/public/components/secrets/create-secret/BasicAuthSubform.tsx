@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 
-export class BasicAuthSubformWithTranslation extends React.Component<
+class BasicAuthSubformWithTranslation extends React.Component<
   BasicAuthSubformProps & WithT,
   BasicAuthSubformState
 > {

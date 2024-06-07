@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import i18next, { TFunction } from 'i18next';
 import { WebHookSecretKey } from '../../secret';

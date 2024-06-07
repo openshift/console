@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { DroppableFileInput } from '.';
 
-export class UploadConfigSubformWithTranslation extends React.Component<
+class UploadConfigSubformWithTranslation extends React.Component<
   UploadConfigSubformProps & WithT,
   UploadConfigSubformState
 > {

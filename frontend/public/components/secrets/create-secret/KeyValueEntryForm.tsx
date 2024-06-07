@@ -1,15 +1,7 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
-import { AsyncComponent } from '../../utils/async';
 import { WithT } from 'i18next';
-
-export const DroppableFileInput = (props) => (
-  <AsyncComponent
-    loader={() => import('../../utils/file-input').then((c) => c.DroppableFileInput)}
-    {...props}
-  />
-);
+import { DroppableFileInput } from '.';
 
 export class KeyValueEntryFormWithTranslation extends React.Component<
   KeyValueEntryFormProps & WithT,

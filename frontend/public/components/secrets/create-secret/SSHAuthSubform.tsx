@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { DroppableFileInput } from '.';
 
-export class SSHAuthSubformWithTranslation extends React.Component<
+class SSHAuthSubformWithTranslation extends React.Component<
   SSHAuthSubformProps & WithT,
   SSHAuthSubformState
 > {

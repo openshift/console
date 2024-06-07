@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { generateSecret } from '.';
 
-export class WebHookSecretFormWithTranslation extends React.Component<
+class WebHookSecretFormWithTranslation extends React.Component<
   WebHookSecretFormProps & WithT,
   WebHookSecretFormState
 > {
