@@ -102,7 +102,6 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
               e.stopPropagation();
               close(e);
             }}
-            additionalClassName="co-close-button--float-right"
           />
         )}
       </Text>
