@@ -32,7 +32,7 @@
   "Volume Mode": "Modo de volumen",
   "File System Type": "Tipo de sistema de archivos",
   "Disk Size": "Tamaño del disco",
-  "Min": "Mín.",
+  "Min": "Min",
   "Please enter a positive Integer": "Ingrese un número entero positivo",
   "Please enter a value less than or equal to max disk size": "Ingrese un valor menor o igual al tamaño máximo del disco",
   "Max": "Máx.",

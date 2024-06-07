@@ -1,7 +1,7 @@
 {
-  "No network attachment definitions found": "没有找到网络附加定义",
-  "Create network attachment definition": "创建网络附加定义",
-  "Learn how to use network attachment definitions": "了解如何使用网络附加定义",
+  "No {{label}} found": "没有找到 {{label}}",
+  "Create {{label}}": "创建{{label}}",
+  "Learn how to use {{label}}": "了解如何使用 {{label}}",
   "NetworkAttachmentDefinition details": "网络附加定义详情",
   "Type": "类型",
   "Details": "详情",
@@ -14,6 +14,7 @@
   "Network Type": "网络类型",
   "Edit YAML": "编辑 YAML",
   "Networks are not project-bound. Using the same name creates a shared NAD.": "网络不是与项目绑定的。使用相同的名称会创建一个共享的 NAD。",
+  "Create network attachment definition": "创建网络附加定义",
   "Name": "名称",
   "Description": "描述",
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "<0>OpenShift Virtualization Operator</0> 或 <3>SR-IOV Network Operator</3> 需要在集群中安装，以便选择网络类型。",

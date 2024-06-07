@@ -98,7 +98,7 @@
   "Create Event Source": "Crear fuente de evento",
   "Support": "Soporte",
   "Create Event Sink": "Crear sumidero de eventos",
-  "Tech Preview": "Vista previa tecnológica",
+  "Tech Preview": "Vista previa de tecnología",
   "Community": "Comunidad",
   "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.": "Nota: Es posible que algunos campos no estén representados en esta vista de formulario. Seleccione \"Vista YAML\" para obtener control total.",
   "Broker cannot be created": "No se puede crear el corredor",
