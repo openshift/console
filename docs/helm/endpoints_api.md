@@ -46,7 +46,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-  * JSON encoded [Release structure](https://github.com/helm/helm/blob/master/pkg/release/release.go#L22)
+  * JSON encoded [Release structure](https://github.com/helm/helm/blob/main/pkg/release/release.go#L22)
 
 * **Error Response:**
 
@@ -76,7 +76,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-  * JSON encoded array of [Release structure](https://github.com/helm/helm/blob/master/pkg/release/release.go#L22)
+  * JSON encoded array of [Release structure](https://github.com/helm/helm/blob/main/pkg/release/release.go#L22)
 
 * **Error Response:**
 
@@ -122,7 +122,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-  * JSON encoded [Release structure](https://github.com/helm/helm/blob/master/pkg/release/release.go#L22)
+  * JSON encoded [Release structure](https://github.com/helm/helm/blob/main/pkg/release/release.go#L22)
 
 * **Error Response:**
 
@@ -198,7 +198,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-  * JSON encoded [Release structure](https://github.com/helm/helm/blob/master/pkg/release/release.go#L22)
+  * JSON encoded [Release structure](https://github.com/helm/helm/blob/main/pkg/release/release.go#L22)
 
 * **Error Response:**
 
@@ -243,7 +243,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-  * JSON encoded [Release structure](https://github.com/helm/helm/blob/master/pkg/release/release.go#L22)
+  * JSON encoded [Release structure](https://github.com/helm/helm/blob/main/pkg/release/release.go#L22)
 
 * **Error Response:**
 
@@ -316,7 +316,7 @@ _Returns all chart details for the given chart URL_
 * **Success Response:**
 
   * **Code:** 200 <br />
-  * JSON representation of [Chart structure](https://github.com/helm/helm/blob/master/pkg/chart/chart.go#L31)
+  * JSON representation of [Chart structure](https://github.com/helm/helm/blob/main/pkg/chart/chart.go#L31)
 
 * **Error Response:**
 
@@ -343,8 +343,8 @@ _Returns repository index file containing all entries from all configured reposi
 * **Success Response:**
 
   * **Code:** 200 <br />
-  * JSON representation of [Index file](https://github.com/helm/helm/blob/master/pkg/repo/index.go#L79)
-  * Each entry key is appended with [source repo name](https://github.com/openshift/api/blob/master/helm/v1beta1/types_helm.go#L16).
+  * JSON representation of [Index file](https://github.com/helm/helm/blob/main/pkg/repo/index.go#L79)
+  * Each entry key is appended with [source repo name](https://github.com/openshift/api/blob/master/helm/v1beta1/types_helm_chart_repository.go#L16).
     Double dash (`--`) serves as the separate between the chart and repo name (e.g. `foo-chart--my-repo`)
 
 * **Error Response:**
@@ -518,4 +518,3 @@ _Verifies if a Helm chart is compliant with a certain set of independent checks 
 
   * **Code:** 502 BAD GATEWAY <br />
     **Content:** `{ error : "error message" }`
-

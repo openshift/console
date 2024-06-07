@@ -8,7 +8,7 @@ Openshift console by default lists Helm charts from [RedHat Helm chart repositor
 
 ### Replace Default with 3rd-party Repository
 
-Instances of [`HelmChartRepository` CRD](https://github.com/openshift/api/blob/master/helm/v1beta1/0000_10-helm-chart-repository.crd.yaml) 
+Instances of [`HelmChartRepository` CRD](https://github.com/openshift/api/blob/master/helm/v1beta1/zz_generated.crd-manifests/00_helmchartrepositories.crd.yaml)
 capture the details required for accessing a Helm chart repository.
 
 
@@ -41,8 +41,8 @@ EOF
 
 #### Configure CA certificates
 
-If accessing chart repository requires usage of a custom CA certificate, its content (PEM encoded) needs be 
-stored under key `ca-bundle.crt` within the configmap in `openshift-config` namespace. The configmap name 
+If accessing chart repository requires usage of a custom CA certificate, its content (PEM encoded) needs be
+stored under key `ca-bundle.crt` within the configmap in `openshift-config` namespace. The configmap name
 is referred in `spec.connectionConfig.ca.name` field.
 
 ```yaml
@@ -54,14 +54,14 @@ spec:
 ```
 
 
-Configmaps can be added through UI: 
+Configmaps can be added through UI:
 
 ![](ca-certifcate-configmap.png)
 
 or from CLI:
 
 ```shell script
-kubectl create configmap helm-ca-cert \ 
+kubectl create configmap helm-ca-cert \
   --from-file=ca-bundle.crt=/path/to/certs/ca.crt \
   -n openshift-config
 ```
@@ -69,10 +69,10 @@ kubectl create configmap helm-ca-cert \
 
 #### Configure Client TLS Configurations
 
-Similarly, client certificate and key can be provided for cases when the repo requires them. 
+Similarly, client certificate and key can be provided for cases when the repo requires them.
 These should be in pem encoded format and stored under key `tls.crt` and `tls.key` respectively,
 within a `secret` in `openshift-config` namespace. The secret name is referred in `spec.connectionConfig.tlsClientConfig.name`
-field.   
+field.
 
 ```yaml
 spec:
@@ -106,7 +106,7 @@ spec:
   disabled: true
 ```
 
-By adding `disabled` flag in the CR, we are disabling helm chart listing from `https://my-private-repo.foo.local` repository. 
+By adding `disabled` flag in the CR, we are disabling helm chart listing from `https://my-private-repo.foo.local` repository.
 
 ### Multiple Chart Repository Support
 
@@ -183,7 +183,7 @@ metadata:
 subjects:
   - kind: Group
     apiGroup: rbac.authorization.k8s.io
-    name: 'system:authenticated' 
+    name: 'system:authenticated'
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -193,4 +193,4 @@ EOF
 
 Applying carefully crafted roles, an admin can really fine tune
 access to declared repos, even achieve different views for
-appropriate user groups, etc. 
+appropriate user groups, etc.
