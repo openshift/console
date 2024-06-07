@@ -21,4 +21,3 @@
 - [ ] Chrome
 - [ ] Firefox
 - [ ] Safari
-- [ ] Edge
