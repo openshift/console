@@ -29,6 +29,7 @@ Feature: Upload JAR file
               And user selects resource type as "<resource_type>"
               And user clicks create button
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "sample-upload-app"
               And user can see a toast notification of JAR file uploading with link to build logs
               And user can see "<resource_type>" "<name>" in application "sample-upload-app" is created in topology
 
@@ -48,6 +49,7 @@ Feature: Upload JAR file
               And user selects resource type as "<resource_type>"
               And user clicks create button
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "sample-upload-app"
               And user can see a toast notification of JAR file uploading with link to build logs
               And user can see "<resource_type>" "<name>" in application "sample-upload-app" is created in topology
 
@@ -69,6 +71,7 @@ Feature: Upload JAR file
               And user fills the Startup Probe details
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "sample-upload-app"
 
 
         @regression @to-do
@@ -80,6 +83,7 @@ Feature: Upload JAR file
               And user unselects the advanced option Create a route to the application
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "sample-upload-app"
               And public url is not created for node "sample-yaml-upload" in the workload sidebar
 
 
@@ -95,6 +99,7 @@ Feature: Upload JAR file
               And user selects default Target Port
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "sample-upload-app"
               And the route of application "sample-yaml-upload" contains "home" in the Routes section of the workload sidebar
 
 
@@ -110,7 +115,7 @@ Feature: Upload JAR file
               And user enters Value as "value" in Environment Variables Runtime only section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-
+              And user will see sidebar in topology page with title "sample-upload-app"
 
         @regression @to-do
         Scenario: Upload JAR file with advanced option "Resource Limits": A-10-TC08
@@ -125,7 +130,7 @@ Feature: Upload JAR file
               And user enters Memory Limit as "300" in Memory section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-
+              And user will see sidebar in topology page with title "sample-upload-app"
 
         @regression @to-do
         Scenario: Upload JAR file with advanced option "Scaling": A-10-TC09
@@ -137,7 +142,7 @@ Feature: Upload JAR file
               And user enters number of replicas as "5" in Replicas section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-
+              And user will see sidebar in topology page with title "sample-upload-app"
 
         @regression @to-do
         Scenario: Upload JAR file with advanced option "Labels": A-10-TC10
@@ -149,4 +154,5 @@ Feature: Upload JAR file
               And user enters label as "app=frontend"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "sample-upload-app"
               And verify the label "app=frontend" in side bar of application node "sample-yaml-upload"
