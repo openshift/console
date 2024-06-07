@@ -12,7 +12,7 @@ Feature: Custom Domain Mapping Support
 
         @smoke
         Scenario Outline: Create knative workload from From Git card and add domain mapping to knative service: KN-07-TC01
-            Given user is at Import from git page
+            Given user is at Import from Git page
              When user enters Git Repo url as "<git_url>"
               And user enters Name as "<workload_name>"
               And user selects resource type as "Serverless Deployment"

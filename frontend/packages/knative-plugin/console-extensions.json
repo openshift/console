@@ -562,7 +562,7 @@
       "id": "create-serverless-function",
       "groupId": "serverless-function",
       "href": "/serverless-function/ns/:namespace",
-      "label": "%knative-plugin~Import from git%",
+      "label": "%knative-plugin~Import from Git%",
       "description": "%knative-plugin~Create and deploy stateless, Serverless functions%",
       "icon": { "$codeRef": "icons.gitIconElement" },
       "accessReview": [

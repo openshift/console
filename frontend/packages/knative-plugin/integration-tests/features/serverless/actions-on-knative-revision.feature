@@ -10,7 +10,7 @@ Feature: Perform actions on knative revision
         @pre-condition
         Scenario Outline: Create knative workload from From Git card on Add page: KN-05-TC04
             Given user is at Add page
-              And user is at Import from git page
+              And user is at Import from Git page
              When user enters Git Repo url as "<git_url>"
               And user enters Name as "<workload_name>"
               And user selects resource type as "Serverless Deployment"
@@ -124,4 +124,3 @@ Feature: Perform actions on knative revision
             Given knative service "nodejs-ex-git-1" with multiple revisions
              When user selects "Delete Revision" option from knative revision context menu of knative service "nodejs-ex-git-1"
              Then modal with "Delete Revision?" appears
-
