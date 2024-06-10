@@ -1,4 +1,4 @@
-package auth
+package asynccache
 
 import (
 	"context"
@@ -8,6 +8,11 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/klog"
+)
+
+var ( // make these variable so that we can change them in unit tests
+	initializationRetryInterval = 5 * time.Second
+	initializationTimeout       = 5 * time.Minute
 )
 
 type cachingFuncType[T any] func(ctx context.Context) (T, error)
@@ -27,12 +32,41 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 		cachingFunc:  cachingFunc,
 	}
 
-	item, err := cachingFunc(ctx)
+	err := wait.PollUntilContextTimeout(
+		ctx,
+		initializationRetryInterval,
+		initializationTimeout,
+		true,
+		func(pollingCtx context.Context) (bool, error) {
+			itemChan := make(chan *T, 1)
+			errChan := make(chan error, 1)
+
+			go func() {
+				item, err := cachingFunc(ctx)
+				if err != nil {
+					errChan <- err
+					return
+				}
+				itemChan <- &item
+
+			}()
+
+			select {
+			case <-pollingCtx.Done(): // either a global context cancel or polling timeout
+				return false, nil // leave the error reporting to the polling mechanism
+			case item := <-itemChan:
+				c.cachedItem = *item
+				return true, nil
+			case err := <-errChan:
+				klog.V(4).Infof("failed to setup an async cache (retrying in %v) - caching func returned error: %v", initializationRetryInterval, err)
+				return false, nil
+			}
+		},
+	)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup an async cache - caching func returned error: %w", err)
 	}
-
-	c.cachedItem = item
 
 	return c, nil
 }
