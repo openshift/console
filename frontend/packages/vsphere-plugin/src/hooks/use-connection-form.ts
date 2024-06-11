@@ -3,7 +3,6 @@ import { K8sModel, k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { useConnectionFormContext } from '../components/ConnectionFormContext';
 import { ConnectionFormContextSetters } from '../components/types';
 import { decodeBase64, parseKeyValue } from '../components/utils';
-import { FAILURE_DOMAIN_NAME } from '../constants';
 import { ConfigMap, Infrastructure, Secret } from '../resources';
 import { useConnectionModels } from './use-connection-models';
 
@@ -64,9 +63,10 @@ export const initialLoad = async (
     });
 
     const domain = infrastructure?.spec?.platformSpec?.vsphere?.failureDomains?.find(
-      (d) => d.name === FAILURE_DOMAIN_NAME,
+      (d) => d.server === server,
     );
-    vCenterCluster = domain?.topology?.networks?.[0] || '';
+    const computeCluster = domain?.topology?.computeCluster?.split('/');
+    vCenterCluster = (computeCluster?.length && computeCluster[computeCluster.length - 1]) || '';
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Failed to fetch infrastructure resource', e);
