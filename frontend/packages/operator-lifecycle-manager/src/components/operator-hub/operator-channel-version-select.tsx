@@ -4,10 +4,13 @@ import {
   Select as SelectDeprecated,
   SelectOption as SelectOptionDeprecated,
 } from '@patternfly/react-core/deprecated';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { setQueryArgument } from '@console/internal/components/utils';
 import { alphanumericCompare } from '@console/shared';
 import { PackageManifestKind } from '../../types';
+import { DeprecatedOperatorWarningIcon } from '../deprecated-operator-warnings/deprecated-operator-warnings';
+import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 
 export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
   packageManifest,
@@ -19,20 +22,26 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
   const { channels = [] } = packageManifest.status;
   const [isChannelSelectOpen, setIsChannelSelectOpen] = React.useState(false);
   const onToggleChannel = () => setIsChannelSelectOpen(!isChannelSelectOpen);
-
+  const { setDeprecatedChannel } = useDeprecatedOperatorWarnings();
   channels.sort((a, b) => -alphanumericCompare(a.name, b.name));
 
   const channelSelectOptions = channels.map((ch) => (
     <SelectOptionDeprecated key={ch.name} id={ch.name} value={ch.name}>
-      {ch.name}
+      {ch.name} {ch?.deprecation && <DeprecatedOperatorWarningIcon deprecation={ch?.deprecation} />}
     </SelectOptionDeprecated>
   ));
 
   React.useEffect(() => {
     setQueryArgument('channel', selectedUpdateChannel);
-  }, [selectedUpdateChannel]);
+    setDeprecatedChannel(
+      _.pick(
+        channels.find((f) => f.deprecation && f.name === selectedUpdateChannel),
+        'deprecation',
+      ),
+    );
+  }, [selectedUpdateChannel, channels, setDeprecatedChannel]);
 
-  const handleChannelSelection = (ch, newSelected: string) => {
+  const handleChannelSelection = (_c, newSelected: string) => {
     setUpdateChannel(newSelected);
     setIsChannelSelectOpen(false);
     setUpdateVersion('');
@@ -69,6 +78,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
   showVersionAlert = false,
 }) => {
   const { t } = useTranslation();
+  const { setDeprecatedVersion } = useDeprecatedOperatorWarnings();
   const [isVersionSelectOpen, setIsVersionSelectOpen] = React.useState(false);
   const [defaultVersionForChannel, setDefaultVersionForChannel] = React.useState('');
   const { channels = [] } = packageManifest.status;
@@ -86,19 +96,25 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
   // Return all versions associated with selectedUpdateChannel
   const selectedChannelVersions = channels.find((ch) => ch.name === selectedUpdateChannel).entries;
 
-  const handleVersionSelection = (versions, newSelection) => {
+  const handleVersionSelection = (_v, newSelection) => {
     setUpdateVersion(newSelection);
     setIsVersionSelectOpen(false);
   };
   const versionSelectOptions = selectedChannelVersions.map((v) => (
     <SelectOptionDeprecated key={v.version} id={v.version} value={v.version}>
-      {v.version}
+      {v.version} {v?.deprecation && <DeprecatedOperatorWarningIcon deprecation={v?.deprecation} />}
     </SelectOptionDeprecated>
   ));
 
   React.useEffect(() => {
     setQueryArgument('version', selectedUpdateVersion);
-  }, [selectedUpdateVersion]);
+    setDeprecatedVersion(
+      _.pick(
+        selectedChannelVersions.find((f) => f.deprecation && f.version === selectedUpdateVersion),
+        'deprecation',
+      ),
+    );
+  }, [selectedUpdateVersion, selectedChannelVersions, setDeprecatedVersion]);
 
   return (
     <>

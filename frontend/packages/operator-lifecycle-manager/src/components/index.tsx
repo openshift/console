@@ -12,7 +12,6 @@ import {
   apiVersionCompare,
 } from '@console/internal/module/k8s';
 import { PackageManifestModel } from '../models';
-import * as operatorLogo from '../operator.svg';
 import {
   APIServiceDefinition,
   ClusterServiceVersionIcon,
@@ -100,45 +99,6 @@ export const iconFor = (pkg: PackageManifestKind) => {
       ),
     },
   });
-};
-
-export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps> = (props) => {
-  const { icon, displayName, provider, version } = props;
-  const { t } = useTranslation();
-
-  const imgSrc: string = _.isString(icon)
-    ? icon
-    : _.isEmpty(icon)
-    ? operatorLogo
-    : `data:${icon.mediatype};base64,${icon.base64data}`;
-
-  return (
-    <div className="co-clusterserviceversion-logo">
-      <div className="co-clusterserviceversion-logo__icon">
-        <span className="co-catalog-item-icon__bg">
-          <img
-            className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
-            src={imgSrc}
-            alt={displayName}
-            aria-hidden
-          />
-        </span>
-      </div>
-      <div className="co-clusterserviceversion-logo__name">
-        <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">
-          {displayName}
-        </h1>
-        {provider && (
-          <span className="co-clusterserviceversion-logo__name__provider text-muted">
-            {t('olm~{{version}} provided by {{provider}}', {
-              version: version || '',
-              provider: _.get(provider, 'name', provider),
-            })}
-          </span>
-        )}
-      </div>
-    </div>
-  );
 };
 
 export const providedAPIForReference = (csv, reference) => {
@@ -263,7 +223,6 @@ export type InstallPlanReviewProps = {
   installPlan: ClusterServiceVersionKind | InstallPlanKind;
 };
 
-ClusterServiceVersionLogo.displayName = 'ClusterServiceVersionLogo';
 OperatorsWithManualApproval.displayName = 'OperatorsWithManualApproval';
 NamespaceIncludesManualApproval.displayName = 'NamespaceIncludesManualApproval';
 InstallPlanReview.displayName = 'InstallPlanReview';
