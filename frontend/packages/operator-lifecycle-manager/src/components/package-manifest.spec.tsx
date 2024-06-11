@@ -5,12 +5,12 @@ import { RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { testPackageManifest, testCatalogSource } from '../../mocks';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
+import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import {
   PackageManifestTableRow,
   PackageManifestTableHeader,
   PackageManifestTableHeaderWithCatalogSource,
 } from './package-manifest';
-import { ClusterServiceVersionLogo } from '.';
 
 describe(PackageManifestTableHeader.displayName, () => {
   it('renders column header for package name', () => {
