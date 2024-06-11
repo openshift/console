@@ -35,6 +35,7 @@ import {
 } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
+import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import {
   ClusterServiceVersionDetailsPage,
   ClusterServiceVersionDetails,
@@ -48,11 +49,7 @@ import {
   ClusterServiceVersionList,
 } from './clusterserviceversion';
 import { SubscriptionUpdates, SubscriptionDetails } from './subscription';
-import {
-  ClusterServiceVersionLogo,
-  ClusterServiceVersionLogoProps,
-  referenceForProvidedAPI,
-} from '.';
+import { ClusterServiceVersionLogoProps, referenceForProvidedAPI } from '.';
 
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
   useK8sModel: () => [testModel],
