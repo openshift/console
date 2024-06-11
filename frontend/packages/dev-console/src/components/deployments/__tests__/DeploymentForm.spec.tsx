@@ -149,7 +149,9 @@ describe('EditDeploymentForm', () => {
     fireEvent.click(saveButton);
 
     expect(saveButton.hasAttribute('disabled')).toBeTruthy();
-    expect(screen.queryByTestId('loading-indicator')).not.toBeNull();
+    expect(
+      screen.queryByTestId('submit-button').querySelector('[aria-valuetext="Loading"]'),
+    ).not.toBeNull();
     await waitFor(() => {
       expect(handleSubmit).toHaveBeenCalledTimes(1);
     });
