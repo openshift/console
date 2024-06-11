@@ -13,8 +13,11 @@ import (
 	"os"
 	"strings"
 
+	"sigs.k8s.io/controller-runtime/pkg/log"
+
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
+	"github.com/openshift/console/cmd/bridge/httpserver"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -61,6 +64,7 @@ const (
 func main() {
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	klog.InitFlags(fs)
+	log.SetLogger(klog.NewKlogr())
 	defer klog.Flush()
 
 	authOptions := authopts.NewAuthOptions()
@@ -69,10 +73,11 @@ func main() {
 	sessionOptions := session.NewSessionOptions()
 	sessionOptions.AddFlags(fs)
 
+	consoleServer := httpserver.NewServer(fs)
+	redirectServer := httpserver.NewRedirectServer(fs)
+
 	// Define commandline / env / config options
 	fs.String("config", "", "The YAML config file.")
-
-	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
@@ -90,11 +95,8 @@ func main() {
 
 	fK8sModeOffClusterGitOps := fs.String("k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
 
-	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
 	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
-	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
-	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 
 	_ = fs.String("kubectl-client-id", "", "DEPRECATED: setting this does not do anything.")
@@ -558,56 +560,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
-	flags.FatalIfFailed(err)
-
-	switch listenURL.Scheme {
-	case "http":
-	case "https":
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
-	default:
-		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
-	}
-
 	consoleHandler, err := srv.HTTPHandler()
 	if err != nil {
 		klog.Errorf("failed to set up the console's HTTP handler: %v", err)
 		os.Exit(1)
 	}
-	httpsrv := &http.Server{
-		Addr:    listenURL.Host,
-		Handler: consoleHandler,
-		// Disable HTTP/2, which breaks WebSockets.
-		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
-		TLSConfig:    oscrypto.SecureTLSConfig(&tls.Config{}),
-	}
+	go func() {
+		err := redirectServer.Serve(baseURL.Scheme, baseURL.Host)
+		if err != nil {
+			klog.Fatalf("redirect server error: %v", err)
+		}
+	}()
 
-	if *fRedirectPort != 0 {
-		go func() {
-			// Listen on passed port number to be redirected to the console
-			redirectServer := http.NewServeMux()
-			redirectServer.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-				redirectURL := &url.URL{
-					Scheme:   srv.BaseURL.Scheme,
-					Host:     srv.BaseURL.Host,
-					RawQuery: req.URL.RawQuery,
-					Path:     req.URL.Path,
-				}
-				http.Redirect(res, req, redirectURL.String(), http.StatusMovedPermanently)
-			})
-			redirectPort := fmt.Sprintf(":%d", *fRedirectPort)
-			klog.Infof("Listening on %q for custom hostname redirect...", redirectPort)
-			klog.Fatal(http.ListenAndServe(redirectPort, redirectServer))
-		}()
-	}
-
-	klog.Infof("Binding to %s...", httpsrv.Addr)
-	if listenURL.Scheme == "https" {
-		klog.Info("using TLS")
-		klog.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
-	} else {
-		klog.Info("not using TLS")
-		klog.Fatal(httpsrv.ListenAndServe())
+	if err := consoleServer.Serve(consoleHandler); err != nil {
+		klog.Fatalf("console server error: %v", err)
 	}
 }
