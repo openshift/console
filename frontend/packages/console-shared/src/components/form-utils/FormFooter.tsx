@@ -66,6 +66,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               {...(handleSubmit && { onClick: handleSubmit })}
               variant={ButtonVariant.primary}
               isDisabled={disableSubmit}
+              isLoading={isSubmitting}
               data-test-id="submit-button"
               data-test="save-changes"
             >
