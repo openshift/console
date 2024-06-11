@@ -57,6 +57,7 @@ export const gitPO = {
     routing: {
       hostname: '#form-input-route-hostname-field',
       path: '#form-input-route-path-field',
+      targetPortDropdown: '#form-select-input-route-unknownTargetPort-field',
       targetPort: 'input[placeholder="8080"]',
       secureRoute: 'input#form-checkbox-route-secure-field',
       tlsTermination: 'button#form-dropdown-route-tls-termination-field',

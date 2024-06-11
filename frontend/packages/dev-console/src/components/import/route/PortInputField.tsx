@@ -16,8 +16,10 @@ const PortInputField: React.FC<PortInputFieldProps> = ({ defaultPort }) => {
       image: { ports },
     },
   } = useFormikContext<DeployImageFormData | GitImportFormData | UploadJarFormData>();
-  const portOptions: SelectInputOption[] = ports.map((port) => ({
-    value: port.containerPort.toString(),
+  const portOptions: SelectInputOption[] = Array.from(
+    new Set(ports.map((port) => port.containerPort.toString())),
+  ).map((value) => ({
+    value,
     disabled: false,
   }));
   const placeholderPort = ports[0]?.containerPort || defaultPort;

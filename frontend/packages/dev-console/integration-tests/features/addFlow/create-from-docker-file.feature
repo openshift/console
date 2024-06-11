@@ -43,3 +43,15 @@ Feature: Create Application from Docker file
               And user selects "Deployment" in Resource type section
               And user clicks Cancel button on Add page
              Then user will be redirected to Add page
+
+
+        @regression @odc-7614
+        Scenario: Create workload from Dockerfile and verify the Exposed Port in the Target Port section: A-05-TC04
+            Given user is on Import from Git form
+             When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"
+              And user enters Name as "dockerfile-5000" in Docker file page
+              And user selects "Deployment" in Resource type section
+              And user selects "5000" in Target Port section
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "dockerfile-5000" in topology page

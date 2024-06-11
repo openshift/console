@@ -20,6 +20,10 @@ When('user selects {string} in Resource type section', (resourceType: string) =>
   gitPage.selectResource(resourceType);
 });
 
+When('user selects {string} in Target Port section', (targetPort: string) => {
+  gitPage.selectTargetPortForRoutingWithPort(targetPort);
+});
+
 When('user clicks Cancel button on Add page', () => {
   gitPage.clickCancel();
 });
