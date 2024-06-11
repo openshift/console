@@ -69,6 +69,7 @@ export const init = () => {
         'metal3-plugin',
         'notification-drawer',
         'olm',
+        'olm-v1',
         'pipelines-plugin',
         'shipwright-plugin',
         'public',

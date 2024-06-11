@@ -1,0 +1,9 @@
+{
+  "name": "@console/operator-lifecycle-manager-v1",
+  "version": "0.0.0-fixed",
+  "description": "A management framework for extending Kubernetes with Operators",
+  "private": true,
+  "consolePlugin": {
+    "entry": "src/plugin.tsx"
+  }
+}
