@@ -41,7 +41,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
       ref={footerElementRef}
     >
       <ButtonBar
-        inProgress={isSubmitting}
+        inProgress={isSubmitting && hideSubmit}
         errorMessage={errorMessage}
         successMessage={successMessage}
       >
