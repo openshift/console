@@ -313,13 +313,9 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
               );
             },
           )}
-          <ButtonBar
-            className="co-instantiate-template-form__button-bar"
-            errorMessage={error}
-            inProgress={inProgress}
-          >
+          <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={error}>
             <ActionGroup className="pf-v5-c-form">
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" isLoading={inProgress}>
                 {t('public~Create')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>

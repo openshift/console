@@ -149,9 +149,7 @@ describe('EditDeploymentForm', () => {
     fireEvent.click(saveButton);
 
     expect(saveButton.hasAttribute('disabled')).toBeTruthy();
-    expect(
-      screen.queryByTestId('submit-button').querySelector('[aria-valuetext="Loading"]'),
-    ).not.toBeNull();
+    expect(saveButton.querySelector('.pf-v5-c-button__progress')).not.toBeNull();
     await waitFor(() => {
       expect(handleSubmit).toHaveBeenCalledTimes(1);
     });
