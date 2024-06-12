@@ -8,7 +8,7 @@
 # You can test the image using `./builder-run.sh`. For instance:
 #   $ ./builder-run.sh ./build-backend.sh
 
-FROM golang:1.21-bullseye
+FROM golang:1.20-bullseye
 
 MAINTAINER Ed Rooth - CoreOS
 

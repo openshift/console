@@ -1,6 +1,6 @@
 module github.com/openshift/console
 
-go 1.21
+go 1.20
 
 require (
 	github.com/cloudevents/sdk-go/v2 v2.15.2
