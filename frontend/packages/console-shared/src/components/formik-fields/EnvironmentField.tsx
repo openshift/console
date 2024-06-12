@@ -50,13 +50,19 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
     [props.name, setFieldValue],
   );
 
+  const [updatedEnv, setUpdatedEnv] = React.useState(false);
+
   React.useEffect(() => {
     if (values.formReloadCount) {
       setNameValue(environmentVariables);
     }
-    // this effect only handles reload, so we disable dep on environmentVariables
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values.formReloadCount]);
+
+    // reset name values when envs are loaded from file, only once
+    if (!updatedEnv && (environmentVariables[0][0] || environmentVariables[0][1])) {
+      setNameValue(environmentVariables);
+      setUpdatedEnv(true);
+    }
+  }, [values.formReloadCount, environmentVariables, updatedEnv]);
 
   React.useEffect(() => {
     Promise.all([k8sGet(ConfigMapModel, null, namespace), k8sGet(SecretModel, null, namespace)])
