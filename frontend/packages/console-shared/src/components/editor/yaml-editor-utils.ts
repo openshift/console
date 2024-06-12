@@ -177,6 +177,7 @@ export const fold = (editor, model, resetMouseLocation: boolean): void => {
   }
 };
 
+// TODO: These functions are not part of React Component LifeCycle, will need refactoring
 export const enableYAMLValidation = (
   editor,
   monaco,
