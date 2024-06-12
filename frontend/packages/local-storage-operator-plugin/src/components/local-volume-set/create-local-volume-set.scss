@@ -49,3 +49,13 @@
     margin: 0;
   }
 }
+
+.lso-disk-type__alert {
+  &.pf-v5-c-alert {
+    --pf-v5-c-alert--BoxShadow: 0;
+  }
+
+  :where(.pf-v5-theme-dark) & {
+    background-color: var(--pf-v5-c-alert--m-inline--m-plain--BackgroundColor);
+  }
+}
