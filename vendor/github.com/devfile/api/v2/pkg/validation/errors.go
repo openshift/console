@@ -128,7 +128,7 @@ func (e *InvalidComponentError) Error() string {
 	return fmt.Sprintf("the component %q is invalid - %s", e.componentName, e.reason)
 }
 
-//MissingProjectRemoteError returns an error if the git remotes object under a project is empty
+// MissingProjectRemoteError returns an error if the git remotes object under a project is empty
 type MissingProjectRemoteError struct {
 	projectName string
 }
@@ -137,7 +137,7 @@ func (e *MissingProjectRemoteError) Error() string {
 	return fmt.Sprintf("project %s should have at least one remote", e.projectName)
 }
 
-//MissingRemoteError returns an error if the git remotes object is empty
+// MissingRemoteError returns an error if the git remotes object is empty
 type MissingRemoteError struct {
 	objectType string
 	objectName string
@@ -147,7 +147,7 @@ func (e *MissingRemoteError) Error() string {
 	return fmt.Sprintf("%s %s should have at least one remote", e.objectType, e.objectName)
 }
 
-//MultipleRemoteError returns an error if multiple git remotes are specified. There can only be one remote.
+// MultipleRemoteError returns an error if multiple git remotes are specified. There can only be one remote.
 type MultipleRemoteError struct {
 	objectType string
 	objectName string
@@ -157,7 +157,7 @@ func (e *MultipleRemoteError) Error() string {
 	return fmt.Sprintf("%s %s should have one remote only", e.objectType, e.objectName)
 }
 
-//MissingProjectCheckoutFromRemoteError returns an error if there are multiple git remotes but the checkoutFrom remote has not been specified
+// MissingProjectCheckoutFromRemoteError returns an error if there are multiple git remotes but the checkoutFrom remote has not been specified
 type MissingProjectCheckoutFromRemoteError struct {
 	projectName string
 }
@@ -166,7 +166,7 @@ func (e *MissingProjectCheckoutFromRemoteError) Error() string {
 	return fmt.Sprintf("project %s has more than one remote defined, but has no checkoutfrom remote defined", e.projectName)
 }
 
-//InvalidProjectCheckoutRemoteError returns an error if there is an unmatched, checkoutFrom remote specified
+// InvalidProjectCheckoutRemoteError returns an error if there is an unmatched, checkoutFrom remote specified
 type InvalidProjectCheckoutRemoteError struct {
 	objectType     string
 	objectName     string
@@ -186,7 +186,7 @@ const (
 	CpuRequest    ResourceRequirementType = "cpuRequest"
 )
 
-//ParsingResourceRequirementError returns an error if failed to parse a resource requirement
+// ParsingResourceRequirementError returns an error if failed to parse a resource requirement
 type ParsingResourceRequirementError struct {
 	resource ResourceRequirementType
 	cmpName  string
@@ -197,7 +197,7 @@ func (e *ParsingResourceRequirementError) Error() string {
 	return fmt.Sprintf("error parsing %s requirement for component %s: %s", e.resource, e.cmpName, e.errMsg)
 }
 
-//InvalidResourceRequestError returns an error if resource limit < resource requested
+// InvalidResourceRequestError returns an error if resource limit < resource requested
 type InvalidResourceRequestError struct {
 	cmpName string
 	errMsg  string
@@ -214,7 +214,7 @@ const (
 	ServiceAnnotation    AnnotationType = "service"
 )
 
-//AnnotationConflictError returns an error if an annotation has been declared with conflict values
+// AnnotationConflictError returns an error if an annotation has been declared with conflict values
 type AnnotationConflictError struct {
 	annotationName string
 	annotationType AnnotationType
