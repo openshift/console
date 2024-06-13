@@ -70,7 +70,6 @@ func (o *oidcAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.T
 		return nil, err
 	}
 
-	o.sessions.PruneSessions()
 	return ls, nil
 }
 
@@ -134,7 +133,7 @@ func (o *oidcAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*sessi
 		return nil, fmt.Errorf("failed to retrieve login state: %v", err)
 	}
 
-	if ls == nil || ls.IsExpired() {
+	if ls == nil || ls.ShouldRotate() {
 		if refreshToken := o.sessions.GetCookieRefreshToken(r); refreshToken != "" {
 			return o.refreshSession(r.Context(), w, r, o.oauth2Config(), refreshToken)
 		}
