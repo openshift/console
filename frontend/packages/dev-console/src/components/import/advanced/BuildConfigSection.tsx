@@ -64,7 +64,9 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({
           label={t('devconsole~Launch the first build when the build configuration is created')}
         />
       )}
-      {envsLoaded ? (
+      {(
+        selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? build.loaded : envsLoaded
+      ) ? (
         <EnvironmentField
           name="build.env"
           label={t('devconsole~Environment variables (build and runtime)')}

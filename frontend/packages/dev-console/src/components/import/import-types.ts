@@ -239,6 +239,7 @@ export interface BuildData {
   strategy: string;
   source?: { type: string };
   option?: BuildOptions;
+  loaded?: boolean;
 }
 
 export interface DetectedStrategyFormData extends DetectedStrategy {
