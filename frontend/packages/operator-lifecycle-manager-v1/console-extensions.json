@@ -1,0 +1,39 @@
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "catalogd.operatorframework.io",
+        "version": "v1alpha1",
+        "kind": "Catalog"
+      },
+      "flag": "CONSOLE_OLM_V1"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "ecosystem",
+      "perspective": "admin",
+      "name": "%olm-v1~Ecosystem%",
+      "insertAfter": "usermanagement"
+    },
+    "flags": {
+      "required": ["CONSOLE_OLM_V1"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "id": "installed-extensions",
+      "section": "ecosystem",
+      "name": "%olm-v1~Installed Extensions%",
+      "model": {
+        "kind": "ClusterExtension",
+        "version": "v1alpha1",
+        "group": "olm.operatorframework.io"
+      },
+      "startsWith": ["olm.operatorframework.io"]
+    }
+  }
+]
