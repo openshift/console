@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Red Hat, Inc.
+// Copyright Red Hat
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -597,7 +597,7 @@ func getRouteSpec(routeParams RouteSpecParams) *routev1.RouteSpec {
 func getPVCSpec(quantity resource.Quantity) *corev1.PersistentVolumeClaimSpec {
 
 	pvcSpec := &corev1.PersistentVolumeClaimSpec{
-		Resources: corev1.ResourceRequirements{
+		Resources: corev1.VolumeResourceRequirements{
 			Requests: corev1.ResourceList{
 				corev1.ResourceStorage: quantity,
 			},

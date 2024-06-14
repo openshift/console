@@ -20,7 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -49,9 +48,11 @@ const (
 	DevfilePNGLogoMediaType = "image/png"
 	DevfileArchiveMediaType = "application/x-tar"
 
-	OwnersFile                 = "OWNERS"
-	registryLibrary            = "registry-library" //constant to indicate that function is called by the library
-	httpRequestResponseTimeout = 30 * time.Second   // httpRequestTimeout configures timeout of all HTTP requests
+	OwnersFile                                  = "OWNERS"
+	registryLibrary                             = "registry-library" //constant to indicate that function is called by the library
+	httpRequestResponseTimeout                  = 30 * time.Second   // httpRequestTimeout configures timeout of all HTTP requests
+	DeprecatedFilterTrue       DeprecatedFilter = "true"
+	DeprecatedFilterFalse      DeprecatedFilter = "false"
 )
 
 var (
@@ -65,6 +66,9 @@ type Registry struct {
 	registryContents []indexSchema.Schema
 	err              error
 }
+
+// DeprecatedFilter to manage the deprecated filter values
+type DeprecatedFilter string
 
 // TelemetryData structure to pass in client telemetry information
 // The User and Locale fields should be passed in by clients if telemetry opt-in is enabled
@@ -104,6 +108,10 @@ type RegistryFilter struct {
 	// only major version and minor version are required. e.g. 2.1, 2.2 ect. service version should not be provided.
 	// will only be applied if `NewIndexSchema=true`
 	MaxSchemaVersion string
+	// Deprecated is set to filter devfile index for stacks having the "Deprecated" tag inside their default set of tags
+	// or not. the only acceptable values are "true"/"false". in case the value is "true" it will only include only
+	// deprecated stacks, if is "false" only non deprecated. will only be applied if `NewIndexSchema=true`
+	Deprecated DeprecatedFilter
 }
 
 // GetRegistryIndex returns the list of index schema structured stacks and/or samples from a specified devfile registry.
@@ -153,13 +161,17 @@ func GetRegistryIndex(registryURL string, options RegistryOptions, devfileTypes 
 				q.Add("arch", arch)
 			}
 		}
-
-		if options.NewIndexSchema && (options.Filter.MaxSchemaVersion != "" || options.Filter.MinSchemaVersion != "") {
-			if options.Filter.MinSchemaVersion != "" {
-				q.Add("minSchemaVersion", options.Filter.MinSchemaVersion)
+		if options.NewIndexSchema {
+			if options.Filter.MaxSchemaVersion != "" || options.Filter.MinSchemaVersion != "" {
+				if options.Filter.MinSchemaVersion != "" {
+					q.Add("minSchemaVersion", options.Filter.MinSchemaVersion)
+				}
+				if options.Filter.MaxSchemaVersion != "" {
+					q.Add("maxSchemaVersion", options.Filter.MaxSchemaVersion)
+				}
 			}
-			if options.Filter.MaxSchemaVersion != "" {
-				q.Add("maxSchemaVersion", options.Filter.MaxSchemaVersion)
+			if options.Filter.Deprecated == DeprecatedFilterTrue || options.Filter.Deprecated == DeprecatedFilterFalse {
+				q.Add("deprecated", string(options.Filter.Deprecated))
 			}
 		}
 		urlObj.RawQuery = q.Encode()
@@ -179,7 +191,7 @@ func GetRegistryIndex(registryURL string, options RegistryOptions, devfileTypes 
 	if err != nil {
 		return nil, err
 	}
-	bytes, err := ioutil.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -454,7 +466,7 @@ func DownloadStarterProjectAsBytes(registryURL string, stack string, starterProj
 	}
 
 	// Return downloaded starter project as bytes or error if unsuccessful.
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }
 
 // IsStarterProjectExists checks if starter project exists for a given stack
