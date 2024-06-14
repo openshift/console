@@ -1,23 +1,26 @@
-@e2e
+@e2e @smoke
 Feature: OpenShift Serverless Operator E2E
               As a user, I should be able to perform end to end scenarios related to OpenShift Serverless Operator
 
 
         Background:
-            Given user is at developer perspective
-              And user installed OpenShift Serverless Operator
-              And user has selected namespace "aut-serverless-e2e"
+            Given user has created or selected namespace "aut-serverless-e2e"
+              And user has installed OpenShift Serverless Operator
+              And user is at developer perspective
 
 
-        @to-do
-        Scenario: Create knative work load from Import From Git card on Add page: EE-02-TC01
-            Given user is on "Import from Git" form page
-             When user enters Git Repo url as "https://github.com/gajanan-more/knative-demo"
-              And user enters name as "knative-demo"
-              And user selects "Knative Service" as resource type
-              And user clicks Create button
+        Scenario: Create knative workload from Import From Git card on Add page: EE-02-TC01
+            Given user is at Add page
+              And user is at Import from Git form
+             When user enters Git Repo URL as "https://github.com/logonoff/oc-node-func-with-env"
+              And user enters Name as "node-knative"
+              And user clicks "Show advanced Build option" link in Advanced Options section
+              And user clicks "Show advanced Deployment option" link in Advanced Options section
+             Then the environment variable "MY_BUILD_KEY" has value "tests" in the advanced options of the Build section in the Import from Git page
+             Then the environment variable "MY_API_KEY" has value "{{ env:API_KEY }}" in the advanced options of the Deployment section in the Import from Git page
+              And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user is able to see workload "knative-demo" in topology page list view
+              And user is able to see workload "node-knative" in topology page list view
 
 
         @to-do

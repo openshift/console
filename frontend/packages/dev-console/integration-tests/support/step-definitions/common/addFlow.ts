@@ -120,6 +120,20 @@ And(
   },
 );
 
+Then(
+  'the environment variable {string} has value {string} in the advanced options of the Build section in the Import from Git page',
+  (envKey: string, envVal: string) => {
+    gitPage.verifyBuildConfigEnv(envKey, envVal);
+  },
+);
+
+Then(
+  'the environment variable {string} has value {string} in the advanced options of the Deployment section in the Import from Git page',
+  (envKey: string, envVal: string) => {
+    gitPage.verifyDeploymentEnv(envKey, envVal);
+  },
+);
+
 Given('user has installed Gitops primer Operator', () => {
   verifyAndInstallGitopsPrimerOperator();
 });
