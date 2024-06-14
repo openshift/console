@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src';
+import { LoadingBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { CheckboxField, EnvironmentField } from '@console/shared';
 import { Resources } from '../import-types';
@@ -22,6 +24,8 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
     values: {
       resources,
       deployment: { env },
+      serverless: { funcLoaded },
+      import: { selectedStrategy },
     },
   } = useFormikContext<FormikValues>();
   const deploymentConfigObj = resource || {
@@ -43,12 +47,16 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
           label={t('devconsole~Auto deploy when deployment configuration changes')}
         />
       )}
-      <EnvironmentField
-        name="deployment.env"
-        label={t('devconsole~Environment variables (runtime only)')}
-        envs={env}
-        obj={deploymentConfigObj}
-      />
+      {(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded : true) ? (
+        <EnvironmentField
+          name="deployment.env"
+          label={t('devconsole~Environment variables (runtime only)')}
+          envs={env}
+          obj={deploymentConfigObj}
+        />
+      ) : (
+        <LoadingBox />
+      )}
     </FormSection>
   );
 };
