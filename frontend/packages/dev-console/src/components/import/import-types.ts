@@ -239,7 +239,6 @@ export interface BuildData {
   strategy: string;
   source?: { type: string };
   option?: BuildOptions;
-  loaded?: boolean;
 }
 
 export interface DetectedStrategyFormData extends DetectedStrategy {
@@ -269,6 +268,7 @@ export interface DeploymentData {
 export interface ServerlessData {
   scaling: ServerlessScaling;
   domainMapping?: string[];
+  funcLoaded?: boolean;
 }
 
 export interface ServerlessScaling {

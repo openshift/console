@@ -24,6 +24,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({
   const {
     values: {
       build,
+      serverless: { funcLoaded },
       image: { selected: selectedImage, tag: selectedTag },
       import: { selectedStrategy },
     },
@@ -64,9 +65,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({
           label={t('devconsole~Launch the first build when the build configuration is created')}
         />
       )}
-      {(
-        selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? build.loaded : envsLoaded
-      ) ? (
+      {(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded : envsLoaded) ? (
         <EnvironmentField
           name="build.env"
           label={t('devconsole~Environment variables (build and runtime)')}

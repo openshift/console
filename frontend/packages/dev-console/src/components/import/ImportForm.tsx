@@ -116,7 +116,6 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     },
     build: {
       ...initialBaseValues.build,
-      loaded: false,
       triggers: {
         webhook: true,
         image: true,

@@ -60,7 +60,7 @@ const ServerlessFunctionSection = ({ builderImages }) => {
         })
         .finally(() => {
           setLoaded(true);
-          setFieldValue('build.loaded', true);
+          setFieldValue('serverless.funcLoaded', true);
         });
   }, [
     setFieldValue,
