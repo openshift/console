@@ -13,6 +13,7 @@ import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circ
 import { Visualization, isNode } from '@patternfly/react-topology';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import PDBAlert from '@console/app/src/components/pdb/PDBAlert';
 import { ResourceQuotaAlert } from '@console/dev-console/src/components/resource-quota/ResourceQuotaAlert';
 import { ExternalLink, setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -202,6 +203,9 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
         >
           <ToolbarItem>
             <ServiceBindingWarningForTopology namespace={namespace} />
+          </ToolbarItem>
+          <ToolbarItem>
+            <PDBAlert namespace={namespace} />
           </ToolbarItem>
           <ToolbarItem
             className={

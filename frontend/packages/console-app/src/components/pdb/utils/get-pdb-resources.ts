@@ -1,5 +1,10 @@
-import { LabelSelector, K8sPodControllerKind, PodKind } from '@console/internal/module/k8s';
-import { PodDisruptionBudgetKind } from '../types';
+import {
+  LabelSelector,
+  K8sPodControllerKind,
+  PodKind,
+  K8sResourceConditionStatus,
+} from '@console/internal/module/k8s';
+import { PDBCondition, PodDisruptionBudgetKind } from '../types';
 
 export const getPDBResource = (
   pdbResources: PodDisruptionBudgetKind[],
@@ -10,3 +15,31 @@ export const getPDBResource = (
       resource?.spec?.template?.metadata?.labels || resource?.metadata?.labels || {},
     ),
   );
+
+export const isDisruptionViolated = (pdb: PodDisruptionBudgetKind): boolean => {
+  const { status } = pdb;
+  const conditions = status?.conditions;
+
+  const disruptionNotAllowedCondition = conditions?.find(
+    (condition: PDBCondition) =>
+      condition.type === 'DisruptionAllowed' &&
+      condition.status === K8sResourceConditionStatus.False,
+  );
+  return !!disruptionNotAllowedCondition && status?.expectedPods > 0;
+};
+
+export const checkPodDisruptionBudgets = (pdbArray: PodDisruptionBudgetKind[]) => {
+  let count = 0;
+  let name = null;
+
+  pdbArray.forEach((pdb) => {
+    const isDisruptionViolatedForPDB = isDisruptionViolated(pdb);
+    if (isDisruptionViolatedForPDB) {
+      count++;
+      if (count === 1) {
+        name = pdb.metadata.name;
+      }
+    }
+  });
+  return count === 1 ? { count, name } : { count };
+};
