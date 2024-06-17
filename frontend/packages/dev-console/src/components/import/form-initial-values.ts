@@ -44,7 +44,6 @@ export const getBaseInitialValues = (
         concurrencyutilization: '',
       },
       domainMapping: [],
-      funcLoaded: false,
     },
     route: {
       disable: false,

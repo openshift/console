@@ -24,9 +24,8 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({
   const {
     values: {
       build,
-      serverless: { funcLoaded },
       image: { selected: selectedImage, tag: selectedTag },
-      import: { selectedStrategy },
+      import: { selectedStrategy, funcLoaded },
     },
   } = useFormikContext<FormikValues>();
   const buildConfigObj = resource || {

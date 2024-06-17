@@ -24,8 +24,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
     values: {
       resources,
       deployment: { env },
-      serverless: { funcLoaded },
-      import: { selectedStrategy },
+      import: { selectedStrategy, funcLoaded },
     },
   } = useFormikContext<FormikValues>();
   const deploymentConfigObj = resource || {
@@ -47,7 +46,12 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
           label={t('devconsole~Auto deploy when deployment configuration changes')}
         />
       )}
-      {(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded : true) ? (
+      {(
+        typeof selectedStrategy === 'undefined' ||
+        selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION
+          ? funcLoaded
+          : true
+      ) ? (
         <EnvironmentField
           name="deployment.env"
           label={t('devconsole~Environment variables (runtime only)')}
