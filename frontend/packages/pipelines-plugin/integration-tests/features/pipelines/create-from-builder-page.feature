@@ -359,13 +359,14 @@ Feature: Create the pipeline from builder page
                   | testData/pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
 
         # Issue with install tasks provided by ArtifactHub
-        @regression @broken-test @odc-7246
+        @regression @odc-7246
         Scenario: Install task provided by ArtifactHub and add create a Pipeline: P-02-TC25
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pl-task-from-artifacthub"
               And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
               And user selects "git-clone" from Artifacthub
+              And user waits for "1" seconds  # TODO look into why this is needed
               And user clicks on Add button
               And user selects the "git-clone" node
               And user adds the git url in the url Parameter in cluster task sidebar
