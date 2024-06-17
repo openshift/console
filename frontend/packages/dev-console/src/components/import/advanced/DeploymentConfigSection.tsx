@@ -46,12 +46,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
           label={t('devconsole~Auto deploy when deployment configuration changes')}
         />
       )}
-      {(
-        typeof selectedStrategy === 'undefined' ||
-        selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION
-          ? funcLoaded
-          : true
-      ) ? (
+      {(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded : true) ? (
         <EnvironmentField
           name="deployment.env"
           label={t('devconsole~Environment variables (runtime only)')}
