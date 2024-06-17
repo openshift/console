@@ -1,15 +1,26 @@
 import * as React from 'react';
-import { Popover, Modal, ModalVariant, Button, Alert } from '@patternfly/react-core';
+import {
+  Popover,
+  Modal,
+  ModalVariant,
+  Button,
+  Alert,
+  Select,
+  SelectOption,
+  SelectList,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import {
-  Dropdown,
   SelectorInput,
   resourceObjPath,
   LoadingInline,
+  // Dropdown,
 } from '@console/internal/components/utils';
 import { NamespaceModel, NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
@@ -98,10 +109,49 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
       });
   };
 
-  const defaultNetworkPolicies = {
-    [allow]: t('console-shared~No restrictions'),
-    [deny]: t('console-shared~Deny all inbound traffic'),
+  const defaultNetworkPolicies = [
+    {
+      key: 'allow',
+      value: t('console-shared~No restrictions'),
+    },
+    {
+      key: 'deny',
+      value: t('console-shared~Deny all inbound traffic'),
+    },
+  ];
+
+  const selectOptions = defaultNetworkPolicies.map((option) => (
+    <SelectOption key={option.key} value={option.value}>
+      {option.value}
+    </SelectOption>
+  ));
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const defaultNetworkPolicy = defaultNetworkPolicies[0].value;
+  const [selected, setSelected] = React.useState<string>(defaultNetworkPolicy);
+
+  const onToggleClick = () => {
+    setIsOpen(!isOpen);
   };
+
+  const onSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | undefined,
+    value: string | number | undefined,
+  ) => {
+    setIsOpen(!isOpen);
+    setSelected(value as string);
+    if (value === defaultNetworkPolicy) {
+      setNetworkPolicy(allow);
+    } else {
+      setNetworkPolicy(deny);
+    }
+  };
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+      {selected}
+    </MenuToggle>
+  );
 
   const popoverText = () => {
     const nameFormat = t(
@@ -191,13 +241,17 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
             {t('console-shared~Default network policy')}
           </label>
           <div className="modal-body__field ">
-            <Dropdown
-              selectedKey={networkPolicy}
-              items={defaultNetworkPolicies}
-              dropDownClassName="dropdown--full-width"
+            <Select
               id="dropdown-selectbox"
-              onChange={(value) => setNetworkPolicy(value)}
-            />
+              isOpen={isOpen}
+              selected={selected}
+              onSelect={onSelect}
+              onOpenChange={() => setIsOpen(isOpen)}
+              toggle={toggle}
+              shouldFocusToggleOnSelect
+            >
+              <SelectList>{selectOptions}</SelectList>
+            </Select>
           </div>
         </div>
         {errorMessage && (
