@@ -659,3 +659,7 @@ When('user selects {string} from Artifacthub', (taskName: string) => {
     .should('have.text', 'ArtifactHub')
     .click();
 });
+
+And('user waits for {string} seconds', (seconds: string) => {
+  cy.wait(parseInt(seconds, 10) * 1000);
+});
