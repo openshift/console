@@ -515,7 +515,7 @@ class CreateRouteWithTranslation extends React.Component<
                       id="certificate"
                       label={t('public~Certificate')}
                       inputFieldHelpText={t(
-                        'public~The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                        'public~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                       )}
                     />
                   </div>
@@ -526,7 +526,7 @@ class CreateRouteWithTranslation extends React.Component<
                       id="private-key"
                       label={t('public~Private key')}
                       inputFieldHelpText={t(
-                        'public~The PEM format key. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                        'public~The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                       )}
                     />
                   </div>
@@ -537,7 +537,7 @@ class CreateRouteWithTranslation extends React.Component<
                       id="ca-certificate"
                       label={t('public~CA certificate')}
                       inputFieldHelpText={t(
-                        'public~The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                        'public~The PEM format CA certificate chain. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                       )}
                     />
                   </div>
