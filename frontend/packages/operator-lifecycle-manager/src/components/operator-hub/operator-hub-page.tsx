@@ -48,6 +48,7 @@ import {
   getCatalogSourceDisplayName,
   isAWSSTSCluster,
   isAzureWIFCluster,
+  isGCPWIFCluster,
 } from './operator-hub-utils';
 import {
   OperatorHubItem,
@@ -196,7 +197,6 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             { key: InfraFeatures.cni, value: cni },
             { key: InfraFeatures.csi, value: csi },
             { key: InfraFeatures.tlsProfiles, value: tlsProfiles },
-            { key: InfraFeatures.tokenAuthGCP, value: tokenAuthGCP },
           ];
 
           // override old with new
@@ -211,6 +211,8 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
 
           if (tokenAuthAWS === 'true' && isAWSSTSCluster(cloudCredential, infra, auth)) {
             infrastructureFeatures.push(InfraFeatures.TokenAuth);
+          } else if (tokenAuthGCP === 'true' && isGCPWIFCluster(cloudCredential, infra, auth)) {
+            infrastructureFeatures.push(InfraFeatures.tokenAuthGCP);
           } else if (tokenAuthAzure === 'true' && isAzureWIFCluster(cloudCredential, infra, auth)) {
             infrastructureFeatures.push(InfraFeatures.TokenAuth);
           }
