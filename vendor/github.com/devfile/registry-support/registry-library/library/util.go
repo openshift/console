@@ -113,7 +113,7 @@ func decompress(targetDir string, tarFile string, excludeFiles []string) error {
 			continue
 		}
 
-		target := path.Join(targetDir, filepath.Clean(header.Name))
+		target := CleanFilepath(targetDir, header.Name)
 		switch header.Typeflag {
 		case tar.TypeDir:
 			err = os.MkdirAll(target, os.FileMode(header.Mode))
@@ -191,4 +191,11 @@ func getHTTPClient(options RegistryOptions) *http.Client {
 		},
 		Timeout: overriddenTimeout,
 	}
+}
+
+// Cleans a child path to ensure that there is no escaping from the parent directory with the use of ../ escape methods
+// Ensures that the child path is always contained and absolutely pathed from the parent
+func CleanFilepath(parent string, child string) string {
+	target := path.Join(parent, filepath.Clean("/"+child))
+	return target
 }

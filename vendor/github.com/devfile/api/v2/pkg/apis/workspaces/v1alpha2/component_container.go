@@ -105,7 +105,7 @@ type Container struct {
 	DedicatedPod *bool `json:"dedicatedPod,omitempty"`
 }
 
-//GetMountSources returns the value of the boolean property.  If it's unset, the default value is true for all component types except plugins and components that set `dedicatedPod` to true.
+// GetMountSources returns the value of the boolean property.  If it's unset, the default value is true for all component types except plugins and components that set `dedicatedPod` to true.
 func (in *Container) GetMountSources() bool {
 	if in.MountSources != nil {
 		return *in.MountSources
