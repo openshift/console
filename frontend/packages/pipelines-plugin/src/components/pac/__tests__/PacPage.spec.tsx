@@ -15,7 +15,7 @@ import PacPage from '../PacPage';
 var mockNavigate = jest.fn();
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
   useNavigate: () => mockNavigate,

@@ -5,7 +5,7 @@ import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import CatalogController from '../CatalogController';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useLocation: () => {
     return 'path';
   },

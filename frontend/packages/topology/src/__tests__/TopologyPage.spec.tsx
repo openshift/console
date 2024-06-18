@@ -13,7 +13,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 jest.mock('react', () => {
-  const ActualReact = require.requireActual('react');
+  const ActualReact = jest.requireActual('react');
   return {
     ...ActualReact,
     useContext: () => jest.fn(),
@@ -21,7 +21,7 @@ jest.mock('react', () => {
 });
 
 jest.mock('react-redux', () => {
-  const ActualReactRedux = require.requireActual('react-redux');
+  const ActualReactRedux = jest.requireActual('react-redux');
   return {
     ...ActualReactRedux,
     useSelector: jest.fn(),
@@ -32,7 +32,7 @@ jest.mock('react-redux', () => {
 let mockViewParam = '';
 
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = jest.requireActual('@console/shared');
   return {
     ...ActualShared,
     useQueryParams: jest.fn(),
@@ -45,7 +45,7 @@ jest.mock('../user-preferences/usePreferredTopologyView', () => ({
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 

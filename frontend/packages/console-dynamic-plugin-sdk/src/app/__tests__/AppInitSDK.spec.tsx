@@ -9,7 +9,7 @@ import * as apiDiscovery from '../k8s/api-discovery/api-discovery';
 import * as hooks from '../useReduxStore';
 
 jest.mock('react-redux', () => {
-  const ActualReactRedux = require.requireActual('react-redux');
+  const ActualReactRedux = jest.requireActual('react-redux');
   return {
     ...ActualReactRedux,
     useStore: jest.fn(),
