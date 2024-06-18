@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define, tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { Helmet } from 'react-helmet';

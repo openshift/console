@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { TopConsumerMetric } from '../../../constants/virt-overview/top-consumers-card/top-consumer-metric';
 import { TopConsumerCard } from './TopConsumerCard';
 

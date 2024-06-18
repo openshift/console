@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
   Button,

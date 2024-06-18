@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DropdownMenu as DropdownMenuDeprecated } from '@patternfly/react-core/deprecated';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { history, KebabItem, KebabOption } from '@console/internal/components/utils';
 import './PopupKebabMenu.scss';

@@ -10,7 +10,7 @@ import {
   TableBody as TableBodyDeprecated,
   TableProps as PfTableProps,
 } from '@patternfly/react-table/deprecated';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
   AutoSizer,

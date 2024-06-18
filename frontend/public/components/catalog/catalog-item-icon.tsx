@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 import { TemplateKind, PartialObjectMetadata } from '../../module/k8s';
 import * as threeScaleImg from '../../imgs/logos/3scale.svg';

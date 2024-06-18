@@ -25,7 +25,7 @@ import {
   SelectVariant as SelectVariantDeprecated,
 } from '@patternfly/react-core/deprecated';
 import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import { createNamespaceOrProjectModal } from '@console/internal/components/modals';

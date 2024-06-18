@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import {

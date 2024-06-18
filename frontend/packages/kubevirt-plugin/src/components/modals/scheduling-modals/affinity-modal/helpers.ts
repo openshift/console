@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { Kebab } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useField } from 'formik';
 import { RedExclamationCircleIcon } from '../status';
 import { RadioGroupFieldProps } from './field-types';

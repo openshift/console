@@ -7,7 +7,7 @@ import { WithTranslation, withTranslation } from 'react-i18next';
 
 import { Firehose, LoadingInline, Dropdown, ResourceName, ResourceIcon } from '.';
 import { isDefaultClass } from '../storage-class';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 /* Component StorageClassDropdown - creates a dropdown list of storage classes */
 
