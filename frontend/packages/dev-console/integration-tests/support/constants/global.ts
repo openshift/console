@@ -53,6 +53,14 @@ export enum operators {
   Jaeger = 'Red Hat OpenShift distributed tracing platform',
 }
 
+export enum operatorNamespaces {
+  PipelinesOperator = 'openshift-operators',
+}
+
+export enum operatorSubscriptions {
+  PipelinesOperator = 'openshift-pipelines-operator',
+}
+
 export enum authenticationType {
   BasicAuthentication = 'Basic Authentication',
   SSHKey = 'SSHKey',

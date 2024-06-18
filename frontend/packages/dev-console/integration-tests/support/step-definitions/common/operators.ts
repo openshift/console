@@ -1,6 +1,6 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 import { operators } from '../../constants';
-import { verifyAndInstallOperator } from '../../pages';
+import { installPipelinesOperatorUsingCLI, verifyAndInstallOperator } from '../../pages';
 import { verifyAndInstallWebTerminalOperator } from '../../pages/functions/installOperatorOnCluster';
 
 Given('user has installed Web Terminal operator', () => {
@@ -12,7 +12,7 @@ Given('user has installed OpenShift Serverless Operator', () => {
 });
 
 Given('user has installed OpenShift Pipelines Operator', () => {
-  verifyAndInstallOperator(operators.PipelinesOperator);
+  installPipelinesOperatorUsingCLI();
 });
 
 Given(
