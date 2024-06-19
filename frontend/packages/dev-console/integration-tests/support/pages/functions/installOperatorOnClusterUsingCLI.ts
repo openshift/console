@@ -4,23 +4,23 @@ export const checkPipelineOperatorStatus = (retries: number = 5) => {
   const namespace = operatorNamespaces.PipelinesOperator;
   const resourceName = operatorSubscriptions.PipelinesOperator;
   if (retries === 0) {
-    cy.log('Failed to install Pipelines Operator - Pod timeout');
+    throw new Error('Failed to install Pipelines Operator - Pod timeout');
+  } else {
+    cy.exec(
+      `oc wait --for=condition=ready pod -l app=${resourceName} -n ${namespace} --timeout=300s`,
+      {
+        failOnNonZeroExit: false,
+      },
+    ).then(function (result) {
+      if (result.stdout.includes('condition met')) {
+        cy.log(`Success: ${result.stdout}`);
+      } else {
+        cy.log(result.stderr);
+        cy.wait(30000);
+        checkPipelineOperatorStatus(retries - 1);
+      }
+    });
   }
-
-  cy.exec(
-    `oc wait --for=condition=ready pod -l app=${resourceName} -n ${namespace} --timeout=300s`,
-    {
-      failOnNonZeroExit: false,
-    },
-  ).then(function (result) {
-    if (result.stdout.includes('condition met')) {
-      cy.log(`Success: ${result.stdout}`);
-    } else {
-      cy.log(result.stderr);
-      cy.wait(30000);
-      checkPipelineOperatorStatus(retries - 1);
-    }
-  });
 };
 
 export const performPostInstallationSteps = (operator: operators): void => {
@@ -40,7 +40,7 @@ export const checkOperatorStatus = (operator: operators) => {
       checkPipelineOperatorStatus();
       break;
     default:
-      cy.log('Invalid Operator');
+      throw new Error('Invalid Operator');
   }
 };
 
@@ -52,13 +52,17 @@ export const installOperatorUsingCLI = (operator: operators) => {
         '../../pipelines-plugin/integration-tests/testData/pipelinesOperatorSubscription.yaml';
       break;
     default:
-      cy.log('Invalid Operator');
+      throw new Error('Invalid Operator');
   }
 
   cy.exec(`oc apply -f ${yamlFile}`, {
     failOnNonZeroExit: false,
   }).then(function (result) {
-    cy.log(result.stdout || result.stderr);
+    if (result.stderr) {
+      throw new Error(result.stderr);
+    } else {
+      cy.log(result.stdout);
+    }
   });
 
   performPostInstallationSteps(operator);
@@ -76,7 +80,7 @@ export const checkSubscriptionStatus = (operator: operators) => {
       subscriptionName = operatorSubscriptions.PipelinesOperator;
       break;
     default:
-      cy.log('Invalid Operator');
+      throw new Error('Invalid Operator');
   }
 
   cy.exec(
