@@ -7,6 +7,7 @@ import { Flatten } from '@console/internal/components/factory/list-page';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { toTitleCase } from '@console/shared';
+import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../catalog/utils/const';
 import {
   HelmRelease,
   HelmChart,
@@ -128,6 +129,8 @@ export const getChartEntriesByName = (
   chartName: string,
   chartRepoName?: string,
   chartRepositories?: K8sResourceKind[],
+  annotatedName?: string,
+  providerName?: string,
 ): HelmChartMetaData[] => {
   if (chartName && chartRepoName) {
     const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
@@ -145,7 +148,13 @@ export const getChartEntriesByName = (
       const repoName = key.split('--').pop();
       const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, repoName);
       charts.forEach((chart: HelmChartMetaData) => {
-        if (chart.name === chartName) {
+        if (
+          chart.name === chartName ||
+          (annotatedName &&
+            providerName &&
+            chart?.annotations?.[CHART_NAME_ANNOTATION] === annotatedName &&
+            chart?.annotations?.[PROVIDER_NAME_ANNOTATION] === providerName)
+        ) {
           acc.push({ ...chart, repoName: chartRepositoryTitle });
         }
       });
