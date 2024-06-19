@@ -3,16 +3,20 @@ import { Icon, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService, ImportStrategy } from '@console/git-service/src';
+import { DockerFileParser, getGitService, ImportStrategy } from '@console/git-service/src';
 import { InputField } from '@console/shared';
+import { GitImportFormData } from '../import-types';
 import FormSection from '../section/FormSection';
 
 const DockerSection: React.FC = () => {
   const { t } = useTranslation();
-  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<
+    FormikValues & GitImportFormData
+  >();
   const {
     import: { showEditImportStrategy, strategies, recommendedStrategy },
     git: { url, type, ref, dir, secretResource },
+    image: { ports },
     docker,
     formType,
   } = values;
@@ -65,6 +69,21 @@ const DockerSection: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);
+
+  React.useEffect(() => {
+    const gitService =
+      url && getGitService(url, type, ref, dir, secretResource, null, docker.dockerfilePath);
+    gitService &&
+      gitService.getDockerfileContent().then((dockerfileContent) => {
+        if (dockerfileContent) {
+          const parser = new DockerFileParser(dockerfileContent);
+          const port = parser.getContainerPort();
+          port &&
+            setFieldValue('image.ports', [...ports, { containerPort: port, protocol: 'TCP' }]);
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docker.dockerfilePath, url]);
 
   return (
     <FormSection>
