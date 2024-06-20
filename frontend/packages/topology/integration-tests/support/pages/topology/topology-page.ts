@@ -16,6 +16,11 @@ import { gitPage } from '@console/dev-console/integration-tests/support/pages/ad
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
+  verifyOrOpenSidebar: (nodeName: string) => {
+    if (!cy.get(topologyPO.sidePane.dialog)) {
+      topologyPage.componentNode(nodeName).click({ force: true });
+    }
+  },
   verifyUserIsInGraphView: () => {
     cy.byLegacyTestID('topology-view-shortcuts').should('be.visible');
     // eslint-disable-next-line promise/catch-or-return

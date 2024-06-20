@@ -29,6 +29,7 @@ Feature: Create Application from Devfile
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "node-example" in topology page
+              And user will see sidebar in topology page with title "node-example"
 
 
         @regression @broken-test

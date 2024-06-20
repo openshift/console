@@ -40,9 +40,9 @@ Feature: Create Application from git form
               And user selects resource type as "Deployment Config"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user will see sidebar in topology page with title "dancer-ex-git-2"
               And user can see toast notification saying "DeploymentConfig" created successfully
               And user can see the created workload "dancer-ex-git-2" is linked to existing application "nodejs-ex-git-app"
+              And user will see sidebar in topology page with title "dancer-ex-git-2"
 
 
         @regression
@@ -150,8 +150,8 @@ Feature: Create Application from git form
               And user enters label as "app=frontend"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user will see sidebar in topology page with title "git-labels"
               And verify the label "app=frontend" in side bar of application node "git-labels"
+              And user will see sidebar in topology page with title "git-labels"
 
 
         @regression

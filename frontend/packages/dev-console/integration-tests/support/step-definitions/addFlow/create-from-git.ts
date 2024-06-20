@@ -137,8 +137,7 @@ When('user enters Value as {string} in Environment Variables section', (envValue
 });
 
 Then('build does not get started for {string}', (nodeName: string) => {
-  topologyPage.componentNode(nodeName).click({ force: true });
-  topologySidePane.verify();
+  topologyPage.verifyOrOpenSidebar(nodeName);
   cy.get('div.build-overview li.list-group-item > span').should(
     'contain.text',
     'No Builds found for this Build Config.',
@@ -205,7 +204,7 @@ Then('user can see the toast notification containg the route value {string}', (m
 
 Then('public url is not created for node {string} in the workload sidebar', (nodeName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
-  topologyPage.componentNode(nodeName).click({ force: true });
+  topologyPage.verifyOrOpenSidebar(nodeName);
   topologySidePane.selectTab('Resources');
   topologySidePane.verifySection('Routes');
   cy.get('[role="dialog"] h2')
@@ -218,7 +217,7 @@ Then(
   'the route of application {string} contains {string} in the Routes section of the workload sidebar',
   (nodeName: string, routeName: string) => {
     topologyPage.verifyWorkloadInTopologyPage(nodeName);
-    topologyPage.componentNode(nodeName).click({ force: true });
+    topologyPage.verifyOrOpenSidebar(nodeName);
     topologySidePane.selectTab('Resources');
     topologySidePane.verifySection('Routes');
     // cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
@@ -229,7 +228,7 @@ Then(
 Then(
   'verify the label {string} in side bar of application node {string}',
   (labelName: string, nodeName: string) => {
-    topologyPage.componentNode(nodeName).click({ force: true });
+    topologyPage.verifyOrOpenSidebar(nodeName);
     topologySidePane.selectTab('Details');
     topologySidePane.verifyLabel(labelName);
     topologySidePane.close();
