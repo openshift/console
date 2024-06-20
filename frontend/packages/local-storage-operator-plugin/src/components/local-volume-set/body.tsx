@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {
+  Alert,
+  AlertVariant,
   FormGroup,
   TextInput,
   Radio,
@@ -9,7 +11,7 @@ import {
   TextVariants,
   Tooltip,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, TFunction } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { Dropdown } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
@@ -21,10 +23,32 @@ import {
   diskSizeUnitOptions,
   fsTypeDropdownItems,
   deviceTypeDropdownItems,
+  DiskType,
 } from '../../constants';
 import { NodesTable } from '../tables/nodes-table';
 import { State, Action } from './state';
 import './create-local-volume-set.scss';
+
+const getDiskTypeValidationError = (state: State, t: TFunction) => {
+  let validationError: { title: string; variant: AlertVariant };
+
+  if (state.diskType === DiskType.All)
+    validationError = {
+      title: t(
+        'lso-plugin~All disk type may include HDD disks. Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.',
+      ),
+      variant: AlertVariant.info,
+    };
+  if (state.diskType === DiskType.HDD)
+    validationError = {
+      title: t(
+        'lso-plugin~Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.',
+      ),
+      variant: AlertVariant.info,
+    };
+
+  return validationError;
+};
 
 export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   dispatch,
@@ -62,6 +86,8 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
       dispatch({ type: 'setIsValidDiskSize', value: true });
     }
   }, [dispatch, validMinDiskSize, validMaxDiskSize, validMaxDiskLimit, invalidMinGreaterThanMax]);
+
+  const diskTypeValidationError = getDiskTypeValidationError(state, t);
 
   return (
     <>
@@ -151,8 +177,16 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           items={diskDropdownOptions}
           title={diskDropdownOptions[state.diskType]}
           selectedKey={state.diskType}
-          onChange={(type: string) => dispatch({ type: 'setDiskType', value: type })}
+          onChange={(type: DiskType) => dispatch({ type: 'setDiskType', value: type })}
         />
+        {!!diskTypeValidationError && (
+          <Alert
+            className="pf-v5-u-mt-md lso-disk-type__alert"
+            variant={diskTypeValidationError.variant || AlertVariant.danger}
+            title={diskTypeValidationError.title}
+            isPlain
+          />
+        )}
       </FormGroup>
       <ExpandableSection
         toggleText={t('lso-plugin~Advanced')}

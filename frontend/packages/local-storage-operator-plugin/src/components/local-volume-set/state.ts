@@ -1,11 +1,11 @@
 import { NodeKind } from 'public/module/k8s';
-import { diskModeDropdownItems } from '../../constants';
+import { diskModeDropdownItems, DiskType } from '../../constants';
 
 export const initialState = {
   volumeSetName: '',
   storageClassName: '',
   isValidDiskSize: true,
-  diskType: 'All',
+  diskType: DiskType.All,
   diskMode: diskModeDropdownItems.BLOCK,
   deviceType: [],
   fsType: '',
@@ -22,7 +22,7 @@ export type State = {
   volumeSetName: string;
   storageClassName: string;
   isValidDiskSize: boolean;
-  diskType: string;
+  diskType: DiskType;
   diskMode: string;
   fsType: string;
   deviceType: string[];
@@ -39,7 +39,7 @@ export type Action =
   | { type: 'setVolumeSetName'; name: string }
   | { type: 'setStorageClassName'; name: string }
   | { type: 'setIsValidDiskSize'; value: boolean }
-  | { type: 'setDiskType'; value: string }
+  | { type: 'setDiskType'; value: DiskType }
   | { type: 'setDiskMode'; value: string }
   | { type: 'setFsType'; value: string }
   | { type: 'setMaxDiskLimit'; value: string }
