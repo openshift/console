@@ -15,6 +15,8 @@ import {
   HelperTextItem,
   HelperText,
   FormHelperText,
+  FormAlert,
+  Alert,
 } from '@patternfly/react-core';
 import {
   Dropdown as DropdownDeprecated,
@@ -35,7 +37,7 @@ import { FieldLevelHelp } from '@console/internal/components/utils/field-level-h
 import { k8sCreate } from '@console/internal/module/k8s';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityRequirementPopover from './AvailabilityRequirementPopover';
-import { pdbToK8sResource, initialValuesFromK8sResource, patchPDB } from './pdb-models';
+import { pdbToK8sResource, initialValuesFromK8sResource, patchPDB, FormValues } from './pdb-models';
 import { PodDisruptionBudgetKind } from './types';
 
 const getSelectedRequirement = (requirement: string, items: RequirementItems): string => {
@@ -48,10 +50,24 @@ const getSelectedRequirement = (requirement: string, items: RequirementItems): s
   return i18next.t('console-app~Requirement');
 };
 
+function checkAvailabilityRequirementValue(formValues: FormValues, replicasCount: number) {
+  const { maxUnavailable, minAvailable } = formValues;
+  const minAvailableToStr = String(minAvailable);
+
+  if (minAvailableToStr.includes('%')) {
+    return parseInt(minAvailableToStr.slice(0, -1), 10) >= 100;
+  }
+
+  return (
+    parseInt(String(maxUnavailable), 10) === 0 || parseInt(minAvailableToStr, 10) >= replicasCount
+  );
+}
+
 const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   formData,
   onChange,
   existingResource,
+  replicasCount,
 }) => {
   const { t } = useTranslation();
   const initialFormValues = initialValuesFromK8sResource(formData);
@@ -241,7 +257,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                   name="availability requirement value"
                   isDisabled={isDisabled}
                   validated={
-                    formValues.maxUnavailable === '0'
+                    checkAvailabilityRequirementValue(formValues, replicasCount)
                       ? ValidatedOptions.warning
                       : ValidatedOptions.default
                   }
@@ -249,17 +265,20 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
               </SplitItem>
             </Split>
           </StackItem>
-          {formValues.maxUnavailable === '0' && (
+          {checkAvailabilityRequirementValue(formValues, replicasCount) && (
             <StackItem>
-              <FormHelperText>
-                <HelperText>
-                  <HelperTextItem variant="warning">
-                    {t(
-                      'console-app~The value of maxUnavailable = 0 might not protect your pods from disruption',
-                    )}
-                  </HelperTextItem>
-                </HelperText>
-              </FormHelperText>
+              <FormAlert>
+                <Alert
+                  variant="warning"
+                  title={t('console-app~Availability requirement value warning')}
+                  aria-live="polite"
+                  isInline
+                >
+                  {t(
+                    'console-app~A maxUnavailable of 0% or 0 or a minAvailable of 100% or greater than or equal to the number of replicas is permitted but can block nodes from being drained.',
+                  )}
+                </Alert>
+              </FormAlert>
             </StackItem>
           )}
           <StackItem>
@@ -292,6 +311,7 @@ type PodDisruptionBudgetFormProps = {
   onChange: (newFormData: PodDisruptionBudgetKind) => void;
   selector: MatchLabels;
   existingResource: PodDisruptionBudgetKind;
+  replicasCount: number;
 };
 
 type RequirementItems = {
