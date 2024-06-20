@@ -206,7 +206,6 @@
   "This will create a PersistentVolumeClaim.": "그러면 영구 볼륨 클레임이 생성됩니다.",
   "Hide VolumeClaimTemplate options": "볼륨 클레임 템플릿 옵션 숨기기",
   "Show VolumeClaimTemplate options": "볼륨 클레임 템플릿 옵션 표시",
-  "Access Mode": "액세스 모드",
   "Size": "크기",
   "Desired storage capacity": "원하는 스토리지 용량",
   "Volume Mode": "볼륨 모드",

@@ -206,7 +206,6 @@
   "This will create a PersistentVolumeClaim.": "Cette opération va créer une revendication de volume persistant.",
   "Hide VolumeClaimTemplate options": "Masquer les options du modèle de revendication du volume",
   "Show VolumeClaimTemplate options": "Afficher les options du modèle de revendication du volume",
-  "Access Mode": "Mode d’accès",
   "Size": "Taille",
   "Desired storage capacity": "Capacité de stockage souhaitée",
   "Volume Mode": "Mode Volume",
