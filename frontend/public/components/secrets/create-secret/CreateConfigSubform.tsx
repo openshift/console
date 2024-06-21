@@ -6,7 +6,7 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { AUTHS_KEY, ConfigEntryForm } from '.';
+import { AUTHS_KEY, PullSecretCredentialEntry } from '.';
 
 class CreateConfigSubformWithTranslation extends React.Component<
   CreateConfigSubformProps & WithT,
@@ -130,7 +130,12 @@ class CreateConfigSubformWithTranslation extends React.Component<
               </Button>
             </div>
           )}
-          <ConfigEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
+          <PullSecretCredentialEntry
+            id={index}
+            entry={entryData.entry}
+            onChange={this.onDataChanged}
+            uid={entryData.uid}
+          />
         </div>
       );
     });
