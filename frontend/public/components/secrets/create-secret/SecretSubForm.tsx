@@ -8,16 +8,6 @@ import {
   SecretType,
 } from '.';
 
-type SecretSubFormProps = {
-  typeAbstraction: SecretTypeAbstraction;
-  onChange: (param: any) => void;
-  onError: (param: any) => void;
-  onFormDisable: (param: boolean) => void;
-  stringData: { [key: string]: string };
-  secretType: SecretType;
-  isCreate: boolean;
-};
-
 export const SecretSubForm: React.FC<SecretSubFormProps> = ({ typeAbstraction, ...props }) => {
   switch (typeAbstraction) {
     case SecretTypeAbstraction.source:
@@ -29,4 +19,14 @@ export const SecretSubForm: React.FC<SecretSubFormProps> = ({ typeAbstraction, .
     default:
       return <GenericSecretForm {...props} />;
   }
+};
+
+type SecretSubFormProps = {
+  typeAbstraction: SecretTypeAbstraction;
+  onChange: (param: any) => void;
+  onError: (param: any) => void;
+  onFormDisable: (param: boolean) => void;
+  stringData: { [key: string]: string };
+  secretType: SecretType;
+  isCreate: boolean;
 };
