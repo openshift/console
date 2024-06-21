@@ -485,7 +485,7 @@ export type PerspectiveType = string;
 
 export type UseActivePerspective = () => [
   PerspectiveType,
-  React.Dispatch<React.SetStateAction<PerspectiveType>>,
+  (perspective: string, next?: string) => void,
 ];
 
 export type QueryParams = {

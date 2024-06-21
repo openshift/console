@@ -8,13 +8,7 @@ import {
   useLocation,
   matchRoutes,
 } from 'react-router-dom-v5-compat';
-
-import {
-  useActivePerspective,
-  Perspective,
-  RoutePage as DynamicRoutePage,
-  isRoutePage as isDynamicRoutePage,
-} from '@console/dynamic-plugin-sdk';
+import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
@@ -34,11 +28,8 @@ import {
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
-
-//PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { RoutePage, isRoutePage, useExtensions, LoadedExtension } from '@console/plugin-sdk';
-
+import { usePluginRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import CreateResource from './create-resource';
 import { TelemetryNotifier } from './global-telemetry-notifications';
 
@@ -130,146 +121,6 @@ const DefaultPage = connectToFlags(
   FLAGS.MONITORING,
 )(DefaultPage_);
 
-const LazyDynamicRoute: React.FC<{ component: any }> = ({ component }) => {
-  const LazyComponent = React.useMemo(
-    () =>
-      React.lazy(async () => {
-        const Component = await component();
-        // TODO do not wrap as `default` when we support module code refs
-        return { default: Component };
-      }),
-    [component],
-  );
-  return <LazyComponent />;
-};
-
-const getPluginPageRoutes = (
-  activePerspective: string,
-  setActivePerspective: (perspective: string) => void,
-  routePages: RoutePage[],
-  dynamicRoutePages: LoadedExtension<DynamicRoutePage>[],
-) => {
-  const activeRoutes = [];
-  const inactiveRoutes = [];
-
-  routePages
-    .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
-    .forEach((r) => {
-      const copiedProperties = Object.assign({}, r.properties);
-      delete copiedProperties.path;
-
-      if (r.properties.loader) {
-        // if path is a string
-        if (typeof r.properties.path === 'string') {
-          activeRoutes.push(
-            <Route
-              {...copiedProperties}
-              path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
-              key={Array.from(r.properties.path).join(',')}
-              element={<AsyncComponent loader={r.properties.loader} />}
-            />,
-          );
-        }
-        // if path is an array
-        else if (Array.isArray(r.properties.path)) {
-          r.properties.path.forEach((p) => {
-            activeRoutes.push(
-              <Route
-                {...copiedProperties}
-                path={`${p}${r.properties.exact ? '' : '/*'}`}
-                key={Array.from(p).join(',')}
-                element={<AsyncComponent loader={r.properties.loader} />}
-              />,
-            );
-          });
-        }
-      } else if (typeof r.properties.path === 'string') {
-        activeRoutes.push(
-          <Route
-            {...copiedProperties}
-            path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
-            key={Array.from(r.properties.path).join(',')}
-          />,
-        );
-      } else if (Array.isArray(r.properties.path)) {
-        r.properties.path.forEach((p) => {
-          activeRoutes.push(
-            <Route
-              {...copiedProperties}
-              path={`${p}${r.properties.exact ? '' : '/*'}`}
-              key={Array.from(p).join(',')}
-            />,
-          );
-        });
-      }
-    });
-
-  dynamicRoutePages
-    .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
-    .forEach((r) => {
-      if (typeof r.properties.path === 'string') {
-        activeRoutes.push(
-          <Route
-            path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
-            key={r.uid}
-            element={<LazyDynamicRoute component={r.properties.component} />}
-          />,
-        );
-      } else if (Array.isArray(r.properties.path)) {
-        r.properties.path.forEach((p) => {
-          activeRoutes.push(
-            <Route
-              path={`${p}${r.properties.exact ? '' : '/*'}`}
-              key={r.uid}
-              element={<LazyDynamicRoute component={r.properties.component} />}
-            />,
-          );
-        });
-      }
-    });
-
-  [...routePages, ...dynamicRoutePages]
-    .filter((r) => r.properties.perspective && r.properties.perspective !== activePerspective)
-    .forEach((r) => {
-      const copiedProperties = Object.assign({}, r.properties);
-      delete copiedProperties.path;
-
-      if (typeof r.properties.path === 'string') {
-        const key = Array.from(r.properties.path).concat([r.properties.perspective]).join(',');
-        inactiveRoutes.push(
-          <Route
-            {...copiedProperties}
-            path={`${r.properties.path}${r.properties.exact ? '' : '/*'}`}
-            key={key}
-            element={() => {
-              React.useEffect(() => setActivePerspective(r.properties.perspective));
-              return null;
-            }}
-          />,
-        );
-      }
-      // if path is an array
-      else if (Array.isArray(r.properties.path)) {
-        r.properties.path.forEach((p) => {
-          const key = Array.from(p).concat([r.properties.perspective]).join(',');
-          inactiveRoutes.push(
-            <Route
-              {...copiedProperties}
-              path={`${p}${r.properties.exact ? '' : '/*'}`}
-              key={key}
-              element={() => {
-                React.useEffect(() => setActivePerspective(r.properties.perspective));
-                return null;
-              }}
-            />,
-          );
-        });
-      }
-    });
-
-  return [activeRoutes, inactiveRoutes];
-};
-
 // REDIRECT ROUTES FOR REACT-ROUTER-V6
 const StatusProjectsRedirect = () => {
   const { ns } = useParams();
@@ -297,22 +148,9 @@ const HorizontalPodRedirect = () => {
 };
 
 const AppContents: React.FC<{}> = () => {
-  const [activePerspective, setActivePerspective] = useActivePerspective();
-  const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
-  const dynamicRoutePages = useExtensions<DynamicRoutePage>(isDynamicRoutePage);
   const [, allPluginsProcessed] = useDynamicPluginInfo();
   const location = useLocation();
-
-  const [pluginPageRoutes, inactivePluginPageRoutes] = React.useMemo(
-    () =>
-      getPluginPageRoutes(
-        activePerspective,
-        setActivePerspective,
-        routePageExtensions,
-        dynamicRoutePages,
-      ),
-    [activePerspective, setActivePerspective, routePageExtensions, dynamicRoutePages],
-  );
+  const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
 
   const contentRouter = (
     <Routes>

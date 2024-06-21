@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { usePerspectives } from '@console/shared/src';
 import DetectPerspective from '../DetectPerspective';
 import PerspectiveDetector from '../PerspectiveDetector';
@@ -14,13 +15,20 @@ jest.mock('../useValuesForPerspectiveContext', () => ({
 jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
 }));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  useLocation: jest.fn(),
+}));
+
 const useValuesForPerspectiveContextMock = useValuesForPerspectiveContext as jest.Mock;
 const usePerspectivesMock = usePerspectives as jest.Mock;
+const useLocationMock = useLocation as jest.Mock;
 
 describe('DetectPerspective', () => {
   beforeEach(() => {
     useValuesForPerspectiveContextMock.mockClear();
     usePerspectivesMock.mockClear();
+    useLocationMock.mockClear();
   });
   it('should render children if there is an activePerspective', () => {
     useValuesForPerspectiveContextMock.mockReturnValue(['dev', () => {}, true]);
