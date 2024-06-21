@@ -17,9 +17,13 @@ import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
   verifyOrOpenSidebar: (nodeName: string) => {
-    if (!cy.get(topologyPO.sidePane.dialog)) {
-      topologyPage.componentNode(nodeName).click({ force: true });
-    }
+    cy.get(topologyPO.sidePane.dialog).then((dialog) => {
+      if (dialog.length !== 0) {
+        topologyPage.componentNode(nodeName).click({ force: true });
+      } else {
+        cy.log(`Sidebar is already open`);
+      }
+    });
   },
   verifyUserIsInGraphView: () => {
     cy.byLegacyTestID('topology-view-shortcuts').should('be.visible');
