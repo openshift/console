@@ -104,8 +104,8 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
           ),
         ),
       );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     setClearItems(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, setRecentSelected]);
 
   const onClear = () => {
