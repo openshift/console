@@ -2,10 +2,6 @@ import * as React from 'react';
 import { SecretTypeAbstraction } from '.';
 import { useTranslation } from 'react-i18next';
 
-type SecretFormDescriptionProps = {
-  typeAbstraction: SecretTypeAbstraction;
-};
-
 export const SecretFormDescription: React.FC<SecretFormDescriptionProps> = ({
   typeAbstraction,
 }) => {
@@ -30,4 +26,8 @@ export const SecretFormDescription: React.FC<SecretFormDescriptionProps> = ({
     default:
       return null;
   }
+};
+
+type SecretFormDescriptionProps = {
+  typeAbstraction: SecretTypeAbstraction;
 };
