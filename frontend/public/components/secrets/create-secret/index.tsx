@@ -2,7 +2,7 @@ export * from './utils';
 export * from './const';
 export * from './SecretFormWrapper';
 export * from './PullSecretForm';
-export * from './ConfigEntryForm';
+export * from './PullSecretCredentialEntry';
 export * from './CreateConfigSubform';
 export * from './UploadConfigSubform';
 export * from './WebHookSecretForm';
