@@ -15,13 +15,7 @@ import {
   ServerlessBuildStrategyType,
   ServiceModel as ksvcModel,
 } from '@console/knative-plugin';
-import {
-  InputField,
-  DropdownField,
-  useFormikValidationFix,
-  useDebounceCallback,
-  useFlag,
-} from '@console/shared';
+import { InputField, useFormikValidationFix, useDebounceCallback, useFlag } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isGitImportSource } from '../../../types/samples';
 import {
@@ -31,10 +25,11 @@ import {
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
 import { getSample, getGitImportSample } from '../../../utils/samples';
-import { GitData, GitReadableTypes, DetectedStrategyFormData } from '../import-types';
+import { GitData, DetectedStrategyFormData } from '../import-types';
 import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
 import AdvancedGitOptions from './AdvancedGitOptions';
+import GitTypeSelector from './GitTypeSelector';
 import SampleRepo from './SampleRepo';
 
 export type GitSectionFormData = {
@@ -477,7 +472,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         }
         case RepoStatus.GitTypeNotDetected: {
           return t(
-            'devconsole~URL is valid but a git type could not be identified. Please select a git type from the git type dropdown below',
+            'devconsole~URL is valid but a git type could not be identified. Please select a git type from the options below',
           );
         }
         case RepoStatus.PrivateRepo: {
@@ -646,15 +641,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       )}
       {values.git.showGitType && (
         <>
-          <DropdownField
-            name={`${fieldPrefix}git.type`}
-            label={t('devconsole~Git type')}
-            items={GitReadableTypes}
-            title={GitReadableTypes[values.git.type]}
-            fullWidth
-            required
-            dataTest="git-type"
-          />
+          <GitTypeSelector fieldPrefix={fieldPrefix} />
           {values.git.type === GitProvider.UNSURE && (
             <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>
               {t('devconsole~We failed to detect the Git type.')}

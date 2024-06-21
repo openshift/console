@@ -4,8 +4,8 @@ Feature: Create Application from git form
 
         Background:
             Given user is at developer perspective
-              And user is at Add page
               And user has created or selected namespace "aut-addflow-git"
+              And user is at Add page
 
 
         # @smoke
@@ -261,3 +261,19 @@ Feature: Create Application from git form
               And user clicks on Edit import strategy
               And user enters Devfile Path as "devfile1"
              Then user see message "Devfile not detected"
+
+
+        @regression @odc-7613
+        Scenario: Create a git workload when Git Type is not auto-detected: A-06-TC20
+            Given user is at Import from Git form
+             When user enters Git Repo URL as "https://open-bitbucket.nrao.edu/projects/PIPE/repos/pipeline/browse"
+              And user selects Git Type as "Bitbucket"
+              And user clicks on Edit import strategy
+              And user selects Import Strategy as Builder Image
+              And user selects "python" builder image
+              And user enters Application name as "bitbucket-app"
+              And user enters Name as "bitbucket"
+              And user selects "Deployment" in Resource type section
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "bitbucket" in topology page

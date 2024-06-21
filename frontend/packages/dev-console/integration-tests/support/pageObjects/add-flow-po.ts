@@ -40,6 +40,16 @@ export const gitPO = {
     builderImageVersion: '#form-dropdown-image-tag-field',
     unableToDetectBuilderImage: '[aria-label="Warning Alert"]',
   },
+  builderImages: {
+    nodejs: '[data-test="card nodejs"]',
+    java: '[data-test="card java"]',
+    go: '[data-test="card go"]',
+    python: '[data-test="card python"]',
+    php: '[data-test="card php"]',
+    ruby: '[data-test="card ruby"]',
+    perl: '[data-test="card perl"]',
+    dotNet: '[data-test="card dotnet"]',
+  },
   pipeline: {
     infoMessage: '[aria-label="Info Alert"]',
     buildDropdown: '[id="form-select-input-build-option-field"]',
@@ -51,6 +61,13 @@ export const gitPO = {
     deployment: '#select-option-resources-kubernetes',
     deploymentConfig: '#select-option-resources-openshift',
     knative: '#select-option-resources-knative',
+  },
+  gitType: {
+    gitea: '#git-type-gitea',
+    github: '#git-type-github',
+    gitlab: '#git-type-gitlab',
+    bitbucket: '#git-type-bitbucket',
+    other: '#git-type-other',
   },
   advancedOptions: {
     createRoute: '#form-checkbox-route-create-field',

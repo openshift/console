@@ -152,6 +152,52 @@ export const gitPage = {
     }
     cy.log(`Resource type "${resource}" is selected`);
   },
+  selectGitType: (gitType: string) => {
+    switch (gitType) {
+      case 'GitHub':
+        cy.get(gitPO.gitType.github).scrollIntoView().click();
+        break;
+      case 'GitLab':
+        cy.get(gitPO.gitType.gitlab).scrollIntoView().click();
+        break;
+      case 'Bitbucket':
+        cy.get(gitPO.gitType.bitbucket).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Git type is not available');
+        break;
+    }
+    cy.wait(10000);
+    cy.log(`Git type "${gitType}" is selected`);
+  },
+  selectBuilderImage: (builderImage: string) => {
+    switch (builderImage) {
+      case builderImages.NodeJs:
+        cy.get(gitPO.builderImages.nodejs).scrollIntoView().click();
+        break;
+      case builderImages.PHP:
+        cy.get(gitPO.builderImages.php).scrollIntoView().click();
+        break;
+      case builderImages.Python:
+        cy.get(gitPO.builderImages.python).scrollIntoView().click();
+        break;
+      case builderImages.Ruby:
+        cy.get(gitPO.builderImages.ruby).scrollIntoView().click();
+        break;
+      case builderImages.Go:
+        cy.get(gitPO.builderImages.go).scrollIntoView().click();
+        break;
+      case builderImages.Java:
+        cy.get(gitPO.builderImages.java).scrollIntoView().click();
+        break;
+      case builderImages.Perl:
+        cy.get(gitPO.builderImages.perl).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Builder image is not available');
+        break;
+    }
+  },
   enterSecret: (secret: string) => {
     cy.get('#form-input-pac-repository-webhook-token-field').clear().type(secret);
   },

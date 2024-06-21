@@ -284,6 +284,7 @@ export interface ServerlessScaling {
 export const GitReadableTypes = {
   [GitProvider.GITHUB]: 'GitHub',
   [GitProvider.GITLAB]: 'GitLab',
+  [GitProvider.GITEA]: 'Gitea',
   [GitProvider.BITBUCKET]: 'Bitbucket',
   [GitProvider.UNSURE]: 'Other',
 };
