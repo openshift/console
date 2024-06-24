@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import { Link } from 'react-router-dom-v5-compat';
 
 import { coFetchJSON } from '../../co-fetch';

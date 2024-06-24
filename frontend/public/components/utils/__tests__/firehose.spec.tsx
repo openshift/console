@@ -19,7 +19,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
   k8sGet: jest.fn(),
 }));
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
-  ...require.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s'),
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s'),
   k8sWatch: jest.fn(),
 }));
 const k8sListMock = k8sList as jest.Mock;

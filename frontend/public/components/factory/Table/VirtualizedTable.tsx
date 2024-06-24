@@ -5,7 +5,7 @@ import {
   Table as PfTable,
   TableHeader as TableHeaderDeprecated,
 } from '@patternfly/react-table/deprecated';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { VirtualizedTableFC, TableColumn, TableDataProps } from '@console/dynamic-plugin-sdk';

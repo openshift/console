@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text } from '@patternfly/react-core';
 import { sortable, IRow } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';

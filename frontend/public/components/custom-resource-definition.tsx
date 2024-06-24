@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { sortable, SortByDirection, TableVariant } from '@patternfly/react-table';
 import {
   Table as PFTable,

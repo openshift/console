@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { Alert } from '@patternfly/react-core';

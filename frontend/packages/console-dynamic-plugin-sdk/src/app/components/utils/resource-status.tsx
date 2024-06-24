@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Badge } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import './resource-status.scss';
 
 type ResourceStatusProps = {

@@ -10,7 +10,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons/dist/esm/icons/help-icon';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { Dropdown } from '@console/internal/components/utils';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 import './result-tab-row.scss';
 

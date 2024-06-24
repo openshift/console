@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { ActionGroup, Button, Divider } from '@patternfly/react-core';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';

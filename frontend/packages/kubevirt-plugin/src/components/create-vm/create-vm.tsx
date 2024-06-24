@@ -6,7 +6,7 @@ import {
   WizardContextType as WizardContextTypeDeprecated,
 } from '@patternfly/react-core/deprecated';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';

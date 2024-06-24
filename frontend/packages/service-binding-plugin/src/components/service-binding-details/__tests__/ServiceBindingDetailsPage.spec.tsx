@@ -15,47 +15,47 @@ import { ServiceBindingModel } from '../../../models';
 import ServiceBindingDetailsPage from '../ServiceBindingDetailsPage';
 
 jest.mock('@console/plugin-sdk', () => ({
-  ...require.requireActual('@console/plugin-sdk'),
+  ...jest.requireActual('@console/plugin-sdk'),
   useExtensions: () => [],
   useResolvedExtensions: () => [[]],
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   Link: 'Link',
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
   useRoutes: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/error/error-boundary', () => ({
-  ...require.requireActual('@console/shared/src/components/error/error-boundary'),
+  ...jest.requireActual('@console/shared/src/components/error/error-boundary'),
   withFallback: (children) => children,
 }));
 
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
-  ...require.requireActual('@console/shared/src/hooks/useK8sModel'),
+  ...jest.requireActual('@console/shared/src/hooks/useK8sModel'),
   useK8sModel: jest.fn(),
 }));
 
 jest.mock('@console/internal/module/k8s/k8s-models', () => ({
-  ...require.requireActual('@console/internal/module/k8s/k8s-models'),
+  ...jest.requireActual('@console/internal/module/k8s/k8s-models'),
   modelFor: jest.fn(),
 }));
 
 jest.mock('@console/internal/module/k8s', () => ({
-  ...require.requireActual('@console/internal/module/k8s'),
+  ...jest.requireActual('@console/internal/module/k8s'),
   useModelFinder: jest.fn(() => ({
     findModel: jest.fn(),
   })),
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
-  ...require.requireActual('@console/internal/components/utils/rbac'),
+  ...jest.requireActual('@console/internal/components/utils/rbac'),
   useAccessReview: () => true,
 }));
 
@@ -64,12 +64,12 @@ jest.mock('@console/internal/components/utils/timestamp', () => ({
 }));
 
 jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...require.requireActual('@console/internal/components/utils/firehose'),
+  ...jest.requireActual('@console/internal/components/utils/firehose'),
   Firehose: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/actions', () => ({
-  ...require.requireActual('@console/shared/src/components/actions'),
+  ...jest.requireActual('@console/shared/src/components/actions'),
   ActionServiceProvider: () => null,
 }));
 

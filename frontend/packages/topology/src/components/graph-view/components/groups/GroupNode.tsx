@@ -13,7 +13,7 @@ import {
   WithContextMenuProps,
   useAnchor,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import {
   truncateMiddle,
   shouldTruncate,

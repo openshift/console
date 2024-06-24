@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavGroup, NavList } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   useActivePerspective,

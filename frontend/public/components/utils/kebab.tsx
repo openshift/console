@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';

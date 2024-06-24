@@ -1,6 +1,6 @@
 /* eslint-disable tsdoc/syntax */
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { Button, Divider, Flex, FlexItem, ToggleGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 

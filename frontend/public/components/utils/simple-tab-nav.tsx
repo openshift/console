@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { withTranslation } from 'react-i18next';
 

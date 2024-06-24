@@ -4,12 +4,12 @@ import '@testing-library/jest-dom';
 import { GettingStartedGrid } from '../GettingStartedGrid';
 
 jest.mock('react', () => ({
-  ...require.requireActual('react'),
+  ...jest.requireActual('react'),
   // Set useLayoutEffect to useEffect to solve react warning
   // "useLayoutEffect does nothing on the server, ..." while
   // running this test. useLayoutEffect was used internally by
   // the PatternFly Popover component which is used here.
-  useLayoutEffect: require.requireActual('react').useEffect,
+  useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
 describe('GettingStartedCard', () => {

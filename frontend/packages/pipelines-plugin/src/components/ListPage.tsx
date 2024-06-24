@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 // eslint-disable-next-line no-restricted-imports
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
