@@ -25,6 +25,17 @@ Then('git url {string} gets Validated', (gitUrl: string) => {
   gitPage.verifyValidatedMessage(gitUrl);
 });
 
+When('user selects Git Type as {string}', (gitType: string) => {
+  gitPage.selectGitType(gitType);
+});
+
+When('user selects Import Strategy as Builder Image', () => {
+  cy.byTestID('import-strategy-Builder Image').click();
+});
+
+When('user selects {string} builder image', (builderImage: string) => {
+  gitPage.selectBuilderImage(builderImage);
+});
 Then('builder image is detected', () => {
   gitPage.verifyBuilderImageDetectedMessage();
 });
