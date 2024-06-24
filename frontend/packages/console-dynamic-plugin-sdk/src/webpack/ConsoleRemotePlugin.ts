@@ -345,11 +345,9 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
           .map((p) => path.resolve(p, pkgName))
           .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
 
-        if (basePath) {
-          acc[pkgName] = getDynamicModuleMap(basePath, indexModule, resolutionField);
-        }
-
-        return acc;
+        return basePath
+          ? { ...acc, [pkgName]: getDynamicModuleMap(basePath, indexModule, resolutionField) }
+          : acc;
       },
       {},
     );
