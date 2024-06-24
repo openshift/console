@@ -1,4 +1,4 @@
-// t('kubevirt-plugin~Create network attachment definition')
+// t('network-attachment-definition-plugin~Create network attachment definition')
 export const NET_ATTACH_DEF_HEADER_LABEL = 'Create network attachment definition';
 
 export const ELEMENT_TYPES = {
@@ -25,15 +25,15 @@ export enum NetworkTypes {
   'CNV-Bridge' = 'CNV Linux bridge',
 }
 
-// t('kubevirt-plugin~Resource name')
-// t('kubevirt-plugin~VLAN tag number')
-// t('kubevirt-plugin~IP address management')
-// t('kubevirt-plugin~Bridge name')
-// t('kubevirt-plugin~MAC spoof check')
-// t('kubevirt-plugin~Bridge mapping')
-// t('kubevirt-plugin~Physical network name. A bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.')
-// t('kubevirt-plugin~MTU')
-// t('kubevirt-plugin~VLAN')
+// t('network-attachment-definition-plugin~Resource name')
+// t('network-attachment-definition-plugin~VLAN tag number')
+// t('network-attachment-definition-plugin~IP address management')
+// t('network-attachment-definition-plugin~Bridge name')
+// t('network-attachment-definition-plugin~MAC spoof check')
+// t('network-attachment-definition-plugin~Bridge mapping')
+// t('network-attachment-definition-plugin~Physical network name. Bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.')
+// t('network-attachment-definition-plugin~MTU')
+// t('network-attachment-definition-plugin~VLAN')
 
 export const networkTypeParams: NetworkTypeParamsList = {
   sriov: {
@@ -76,7 +76,7 @@ export const networkTypeParams: NetworkTypeParamsList = {
       type: ELEMENT_TYPES.TEXT,
       required: true,
       hintText:
-        'Physical network name. A bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.',
+        'Physical network name. Bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.',
     },
     mtu: {
       name: 'MTU',
