@@ -1,6 +1,4 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
@@ -32,7 +30,7 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, lang: string)
 const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
 
 export const Timestamp = (props: TimestampProps) => {
-  const now = useSelector(nowStateToProps);
+  const { now } = useSelector(nowStateToProps);
 
   // Workaround for Date&Time values are not showing in supported languages onchange of language selector.
   const lang = getLastLanguage();

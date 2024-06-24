@@ -9,8 +9,6 @@ import {
   useCallback,
 } from 'react';
 import { pick, union, isEqual } from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';

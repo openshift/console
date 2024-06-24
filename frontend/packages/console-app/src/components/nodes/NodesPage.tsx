@@ -3,9 +3,6 @@ import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import { ListPageBody } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
@@ -42,6 +39,7 @@ import {
   CertificateSigningRequestKind,
   referenceFor,
 } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
 import {
   getName,
   getUID,
@@ -241,7 +239,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
   rowData,
 }) => {
   const { t } = useTranslation();
-  const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'node']));
+  const metrics = useSelector<RootState, NodeMetrics>(({ UI }) => UI.getIn(['metrics', 'node']));
   const nodeName = getName(node);
   const nodeUID = getUID(node);
   const usedMem = metrics?.usedMemory?.[nodeName];

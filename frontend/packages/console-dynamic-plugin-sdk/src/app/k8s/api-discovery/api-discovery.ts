@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { plural } from 'pluralize';
-import { Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 import { DiscoveryResources, K8sModel } from '../../../api/common-types';
 import { consoleFetchJSON } from '../../../utils/fetch/console-fetch';
 import { k8sBasePath } from '../../../utils/k8s/k8s';

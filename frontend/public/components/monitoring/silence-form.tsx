@@ -16,8 +16,6 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector } from 'react-redux';
 
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
@@ -144,7 +142,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
 
   React.useEffect(() => {
     if (_.isEmpty(createdBy)) {
-      setCreatedBy(user?.metadata?.name);
+      setCreatedBy(user?.username ?? '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -481,7 +479,7 @@ export const EditSilence = () => {
 
   const [namespace] = useActiveNamespace();
 
-  const silences: Silences = useSelector(({ observe }: RootState) =>
+  const silences = useSelector<RootState, Silences>(({ observe }) =>
     observe.get(namespace ? 'devSilences' : 'silences'),
   );
 

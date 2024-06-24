@@ -4,5 +4,7 @@
  * Provides core APIs, types and utilities used by dynamic plugins at runtime.
  */
 
+/// <reference path="../../../@types/console/index.d.ts" />
+
 export * from './extensions';
 export * from './api/core-api';

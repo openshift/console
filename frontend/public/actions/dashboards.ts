@@ -1,5 +1,5 @@
 import { action, ActionType as Action } from 'typesafe-actions';
-import { Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
 
 import { coFetchJSON } from '../co-fetch';
 import { k8sBasePath } from '../module/k8s/k8s';

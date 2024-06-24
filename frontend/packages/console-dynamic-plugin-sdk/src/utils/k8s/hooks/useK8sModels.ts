@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
+import { RootState } from '@console/internal/redux';
+import { K8sState } from '../../../app';
 import { UseK8sModels } from '../../../extensions/console-types';
 
 /**
@@ -16,6 +16,6 @@ import { UseK8sModels } from '../../../extensions/console-types';
  * ```
  */
 export const useK8sModels: UseK8sModels = () => [
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'models']))?.toJS() ?? {},
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
+  useSelector<RootState, K8sState>(({ k8s }) => k8s.getIn(['RESOURCES', 'models']))?.toJS() ?? {},
+  useSelector<RootState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
 ];

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Alert, Label, Skeleton } from '@patternfly/react-core';
 import { NotificationEntry, NotificationTypes } from '@console/patternfly';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
@@ -174,13 +172,16 @@ const useGetServiceLevel = (
   loadingSecret: boolean;
   loadingServiceLevel: boolean;
 } => {
-  const {
-    level,
-    daysRemaining,
-    clusterID,
-    trialDateEnd,
-    hasSecretAccess,
-  } = useSelector(({ UI }: RootState) => UI.get('serviceLevel'));
+  const { level, daysRemaining, clusterID, trialDateEnd, hasSecretAccess } = useSelector<
+    RootState,
+    {
+      level: string;
+      daysRemaining: number | null;
+      clusterID: string;
+      trialDateEnd: string;
+      hasSecretAccess: boolean;
+    }
+  >(({ UI }) => UI.get('serviceLevel'));
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 
   React.useEffect(() => {

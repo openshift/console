@@ -1,7 +1,4 @@
 import * as _ from 'lodash';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSelector } from 'react-redux';
 import { userStateToProps } from '@console/internal/reducers/ui';
 
