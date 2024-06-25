@@ -119,22 +119,6 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
   },
 });
 
-// Remove after the "Remove kubevirt-plugin code" task is done
-export const getAccessModeRadios = () => [
-  {
-    value: 'ReadWriteOnce',
-    title: i18next.t('public~Single user (RWO)'),
-  },
-  {
-    value: 'ReadWriteMany',
-    title: i18next.t('public~Shared access (RWX)'),
-  },
-  {
-    value: 'ReadOnlyMany',
-    title: i18next.t('public~Read only (ROX)'),
-  },
-];
-
 export const getAccessModeOptions = () => [
   {
     value: 'ReadWriteOnce',
