@@ -122,12 +122,6 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.testA11y('Builds Page in dev perspective');
       break;
     }
-    case devNavigationMenu.ShipwrightBuilds: {
-      cy.get(devNavigationMenuPO.builds).click();
-      detailsPage.titleShouldContain(pageTitle.Builds);
-      cy.testA11y('Builds Page in dev perspective for Shipwright Builds');
-      break;
-    }
     case devNavigationMenu.Pipelines: {
       cy.get(devNavigationMenuPO.pipelines, { timeout: 80000 }).click();
       detailsPage.titleShouldContain(pageTitle.Pipelines);

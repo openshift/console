@@ -1,12 +1,18 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page, AsyncComponent } from '@console/internal/components/utils';
-import { useFlag, MenuActions, MultiTabListPage, getBadgeFromType } from '@console/shared';
+import {
+  useFlag,
+  MenuActions,
+  MultiTabListPage,
+  getBadgeFromType,
+  useUserSettings,
+} from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
+import { LAST_BUILD_PAGE_TAB_STORAGE_KEY } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
@@ -20,10 +26,13 @@ const BuildsTabListPage: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
   const title = t('devconsole~Builds');
-  const activePerspective = useActivePerspective()[0];
   const namespace = params.ns;
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
+  const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
+    LAST_BUILD_PAGE_TAB_STORAGE_KEY,
+    'shipwright-builds',
+  );
 
   const resourceListPages = useResourceListPages();
   const extraProps = {
@@ -66,13 +75,25 @@ const BuildsTabListPage: React.FC = () => {
 
   const shipwrightBuildEnabled = SHIPWRIGHT_BUILD || SHIPWRIGHT_BUILD_V1ALPHA1;
 
-  /* Redirect to Shipwright Builds tab if Shipwright Build is enabled */
+  /* Redirect to last visited tab */
   React.useEffect(() => {
-    if (namespace && activePerspective === 'dev' && shipwrightBuildEnabled) {
-      navigate(`/builds/ns/${namespace}/shipwright-builds`, { replace: true });
+    if (preferredTabLoaded && namespace) {
+      if (preferredTab === 'shipwright-builds' && shipwrightBuildEnabled) {
+        navigate(`/builds/ns/${namespace}/shipwright-builds`, { replace: true });
+      } else {
+        navigate(`/builds/ns/${namespace}`, { replace: true });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shipwrightBuildEnabled, namespace]);
+  }, [namespace, preferredTabLoaded]);
+
+  React.useEffect(() => {
+    // update the preferred tab
+    if (preferredTabLoaded && namespace) {
+      setPreferredTab(params['*'] === 'shipwright-builds' ? 'shipwright-builds' : 'buildconfigs');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [namespace, params, preferredTabLoaded]);
 
   const shipwrightKind = SHIPWRIGHT_BUILD
     ? 'shipwright.io~v1beta1~Build'
