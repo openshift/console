@@ -177,6 +177,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
       isDisabled={submitDisabled}
       type="submit"
       variant={submitDanger ? 'danger' : 'primary'}
+      isLoading={inProgress}
     >
       {submitText || t('public~Submit')}
     </Button>
@@ -190,7 +191,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
 
   return (
     <ModalFooter
-      inProgress={inProgress}
+      inProgress={false}
       errorMessage={errorMessage}
       message={message}
       className={className}
