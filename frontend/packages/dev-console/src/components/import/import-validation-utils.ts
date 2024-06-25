@@ -64,6 +64,9 @@ export const detectGitType = (url: string): GitProvider => {
   if (hasDomain(url, 'gitlab.com')) {
     return GitProvider.GITLAB;
   }
+  if (hasDomain(url, 'gitea.com') || url.includes('gitea')) {
+    return GitProvider.GITEA;
+  }
   // Not a known URL
   return GitProvider.UNSURE;
 };

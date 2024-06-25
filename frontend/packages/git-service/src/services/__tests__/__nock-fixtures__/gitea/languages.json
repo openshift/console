@@ -1,0 +1,38 @@
+[
+    {
+        "scope": "https://gitea.com:443",
+        "method": "GET",
+        "path": "/api/v1/repos/redhat-openshift/devconsole-git/languages",
+        "body": "",
+        "status": 200,
+        "response": {
+            "Go": 180975,
+            "Makefile": 24232,
+            "Shell": 2674,
+            "Ruby": 1409,
+            "Dockerfile": 129
+        },
+        "rawHeaders": [
+            "Date",
+            "Sat, 01 Jun 2024 14:45:06 GMT",
+            "Content-Type",
+            "application/json;charset=utf-8",
+            "Content-Length",
+            "73",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Cache-Control",
+            "max-age=0, private, must-revalidate, no-transform",
+            "Server",
+            "Caddy",
+            "Vary",
+            "Origin",
+            "X-Content-Type-Options",
+            "nosniff",
+            "X-Frame-Options",
+            "SAMEORIGIN"
+        ]
+    }
+]

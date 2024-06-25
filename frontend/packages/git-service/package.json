@@ -7,7 +7,8 @@
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/git-service/src/**\",\"!**/__tests__/**\"]'",
     "lint": "yarn --cwd ../.. eslint packages/git-service",
-    "test": "yarn --cwd ../.. test packages/git-service"
+    "test": "yarn --cwd ../.. test packages/git-service",
+    "generate-types": "openapi-typescript openapi/gitea.yaml --output src/types/generated/gitea.d.ts"
   },
   "dependencies": {
     "@octokit/rest": "^16.30.1",
@@ -17,6 +18,7 @@
     "parse-bitbucket-url": "^0.3.0"
   },
   "devDependencies": {
-    "nock": "^11.4.0"
+    "nock": "^11.4.0",
+    "openapi-typescript": "5.4.2"
   }
 }

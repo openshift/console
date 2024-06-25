@@ -1,12 +1,17 @@
 import * as React from 'react';
 
-const GiteaIcon: React.FC<React.HTMLProps<SVGElement>> = ({ style }): React.ReactElement => {
+type GiteaIconProps = {
+  style?: React.CSSProperties;
+  topology?: boolean;
+};
+
+const GiteaIcon: React.FC<GiteaIconProps> = ({ style, topology }): React.ReactElement => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 20 650 450"
+      viewBox={topology ? '0 20 650 587' : '0 20 650 450'}
       fill="currentColor"
-      aria-labelledby="icon-title-110"
+      aria-hidden="true"
       role="img"
       width="1em"
       height="1em"
