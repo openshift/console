@@ -185,7 +185,7 @@ export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (pr
           </Trans>
         )}
       </ModalBody>
-      <ModalFooter inProgress={false} errorMessage={errMessage}>
+      <ModalFooter errorMessage={errMessage}>
         <Flex justifyContent={{ default: 'justifyContentFlexEnd' }}>
           <FlexItem>
             <Button

@@ -73,7 +73,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
           </tbody>
         </table>
       </ModalBody>
-      <ModalFooter inProgress={false}>
+      <ModalFooter>
         <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
           <Button
             type="button"
