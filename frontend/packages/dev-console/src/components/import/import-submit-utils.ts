@@ -852,14 +852,43 @@ export const createOrUpdateResources = async (
   return responses;
 };
 
+export const filterDeployedResources = (resources: K8sResourceKind[]) =>
+  resources.filter(
+    (resource) =>
+      resource.kind === DeploymentModel.kind ||
+      resource.kind === DeploymentConfigModel.kind ||
+      (resource.kind === KnServiceModel.kind &&
+        resource.apiVersion === `${KnServiceModel.apiGroup}/${KnServiceModel.apiVersion}`),
+  );
+
+export const addSearchParamsToRelativeURL = (
+  url: string,
+  searchParams?: URLSearchParams,
+): string => {
+  const urlObj = new URL(url, 'thismessage:/'); // ITEF RFC 2557 section 5 (e)
+
+  urlObj.search = new URLSearchParams({
+    ...Object.fromEntries(urlObj.searchParams),
+    ...(searchParams ? Object.fromEntries(searchParams) : {}),
+  }).toString();
+
+  return urlObj.toString().replace(urlObj.protocol, '');
+};
+
 export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  searchParamOverrides?: URLSearchParams,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
-  history.push(redirectURL);
+
+  if (searchParamOverrides) {
+    history.push(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
+  } else {
+    history.push(redirectURL);
+  }
 };
 
 export const isRouteAdvOptionsUsed = (
