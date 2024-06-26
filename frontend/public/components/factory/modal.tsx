@@ -115,9 +115,19 @@ export const ModalBody: React.FC<ModalBodyProps> = ({ children }) => (
   </div>
 );
 
-export const ModalFooter: React.FC<ModalFooterProps> = ({ message, errorMessage, children }) => {
+export const ModalFooter: React.FC<ModalFooterProps> = ({
+  message,
+  errorMessage,
+  inProgress,
+  children,
+}) => {
   return (
-    <ButtonBar className="modal-footer" errorMessage={errorMessage} infoMessage={message}>
+    <ButtonBar
+      className="modal-footer"
+      errorMessage={errorMessage}
+      infoMessage={message}
+      inProgress={inProgress}
+    >
       {children}
     </ButtonBar>
   );
@@ -180,7 +190,12 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
   );
 
   return (
-    <ModalFooter errorMessage={errorMessage} message={message} className={className}>
+    <ModalFooter
+      inProgress={false}
+      errorMessage={errorMessage}
+      message={message}
+      className={className}
+    >
       <ActionGroup
         className={classNames(
           { 'pf-v5-c-form__actions--right': buttonAlignment === 'right' },
@@ -237,13 +252,17 @@ export type ModalBodyProps = {
 export type ModalFooterProps = {
   message?: string;
   errorMessage?: React.ReactNode;
+  inProgress: boolean;
   className?: string;
 };
 
-export type ModalSubmitFooterProps = ModalFooterProps & {
+export type ModalSubmitFooterProps = {
+  message?: string;
+  errorMessage?: string;
   inProgress: boolean;
   cancel: (e: React.SyntheticEvent<any, Event>) => void;
   cancelText?: React.ReactNode;
+  className?: string;
   resetText?: React.ReactNode;
   reset?: (e: React.SyntheticEvent<any, Event>) => void;
   submitText: React.ReactNode;

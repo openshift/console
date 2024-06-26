@@ -22,7 +22,7 @@ export const ModalErrorContent = withHandlePromise<ErrorModalProps>((props) => {
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> {titleText}
       </ModalTitle>
       <ModalBody>{error}</ModalBody>
-      <ModalFooter errorMessage="">
+      <ModalFooter inProgress={false} errorMessage="">
         <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
           <Button type="button" variant="primary" onClick={cancel}>
             {t('public~OK')}
