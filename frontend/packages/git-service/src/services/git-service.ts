@@ -3,6 +3,7 @@ import { SecretKind } from '@console/internal/module/k8s';
 import { GitSource, GitProvider, SecretType as GitSecretType } from '../types';
 import { BaseService } from './base-service';
 import { BitbucketService } from './bitbucket-service';
+import { GiteaService } from './gitea-service';
 import { GithubService } from './github-service';
 import { GitlabService } from './gitlab-service';
 
@@ -46,6 +47,8 @@ export function getGitService(
       return new BitbucketService(gitSource);
     case GitProvider.GITLAB:
       return new GitlabService(gitSource);
+    case GitProvider.GITEA:
+      return new GiteaService(gitSource);
     default:
       return null;
   }

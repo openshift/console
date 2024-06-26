@@ -252,6 +252,8 @@ export const createOrUpdateBuildConfig = (
     },
   };
 
+  const excludedGitTypesForTriggers = [GitProvider.UNSURE, GitProvider.GITEA];
+
   const buildConfigName =
     verb === 'update' && !_.isEmpty(originalBuildConfig)
       ? originalBuildConfig.metadata.labels[NAME_LABEL]
@@ -292,7 +294,9 @@ export const createOrUpdateBuildConfig = (
             secretReference: { name: `${name}-generic-webhook-secret` },
           },
         },
-        ...(triggers.webhook && gitType !== GitProvider.UNSURE ? [webhookTriggerData] : []),
+        ...(triggers.webhook && !excludedGitTypesForTriggers.includes(gitType)
+          ? [webhookTriggerData]
+          : []),
         ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
         ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
       ],

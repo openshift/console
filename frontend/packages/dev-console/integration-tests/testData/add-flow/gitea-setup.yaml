@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitea
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gitea-service-account
+  namespace: gitea
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gitea-cluster-role
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - '*'
+    resources:
+      - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gitea-cluster-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: gitea-service-account
+    namespace: gitea
+roleRef:
+  kind: ClusterRole
+  name: gitea-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitea-install-job
+  namespace: gitea
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: gitea-service-account
+      containers:
+        - name: gitea-installer
+          image: ghcr.io/lucifergene/gitea-installer-openshift:main
