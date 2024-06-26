@@ -9,7 +9,7 @@ import {
   CreateConfigSubform,
   UploadConfigSubform,
 } from '.';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export const PullSecretForm: React.FC<PullSecretFormProps> = ({
   onChange,
@@ -19,49 +19,37 @@ export const PullSecretForm: React.FC<PullSecretFormProps> = ({
   secretType,
   isCreate,
 }) => {
-  const [parsedStringData, setParsedStringData] = useState<ParsedStringData>({});
   const [authType, setAuthType] = useState<string>('credentials');
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const data = isCreate ? { '.dockerconfigjson': '{}' } : stringData;
-    let parsedData;
+  const pullSecretData = React.useMemo<PullSecretData>(() => {
     try {
-      parsedData = _.mapValues(data, JSON.parse);
+      const key = getImageSecretKey(secretType);
+      const jsonContent = stringData[key] ?? '{}';
+      return JSON.parse(jsonContent);
     } catch (err) {
       onError(`Error parsing secret's data: ${err.message}`);
-      parsedData = { '.dockerconfigjson': {} };
+      return {};
     }
-    setParsedStringData(parsedData);
-  }, [isCreate, stringData, onError]);
+  }, [stringData, secretType]);
 
   const onDataChanged = useCallback(
-    (secretData: StringData) => {
+    (secretData: PullSecretData) => {
       if (!_.isError(secretData)) {
         onFormDisable(false);
       }
       const newDataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
-      setParsedStringData({ [newDataKey]: secretData });
       onChange({
-        stringData: _.mapValues({ [newDataKey]: secretData }, JSON.stringify),
+        stringData: { [newDataKey]: JSON.stringify(secretData) },
       });
     },
     [onFormDisable, onchange],
-  );
-
-  const handleFormDisable = useCallback(
-    (disable: boolean) => {
-      onFormDisable(disable);
-    },
-    [onFormDisable],
   );
 
   const authTypes = {
     credentials: t('public~Image registry credentials'),
     'config-file': t('public~Upload configuration file'),
   };
-  const dataKey = getImageSecretKey(secretType);
-  const data = _.get(parsedStringData, dataKey);
 
   return (
     <>
@@ -82,31 +70,41 @@ export const PullSecretForm: React.FC<PullSecretFormProps> = ({
         </div>
       )}
       {authType === 'credentials' ? (
-        <CreateConfigSubform onChange={onDataChanged} stringData={data} />
+        <CreateConfigSubform
+          onChange={onDataChanged}
+          stringData={pullSecretData} /*pullSecretData*/
+        />
       ) : (
         <UploadConfigSubform
           onChange={onDataChanged}
-          stringData={data}
-          onDisable={handleFormDisable}
+          stringData={pullSecretData} // pullSecretData
+          onDisable={onFormDisable}
         />
       )}
     </>
   );
 };
 
-type StringData = {
-  [key: string]: string;
+type DockerConfigData = {
+  [url: string]: {
+    username: string;
+    password: string;
+    email: string;
+    auth: string;
+  };
 };
 
-type ParsedStringData = {
-  [key: string]: StringData;
+type DockerConfigJSONData = {
+  auths: DockerConfigData;
 };
+
+type PullSecretData = DockerConfigData | DockerConfigJSONData;
 
 type PullSecretFormProps = {
   onChange: (data: any) => void;
   onError: (message: string) => void;
   onFormDisable: (disable: boolean) => void;
-  stringData: StringData;
+  stringData: { [key: string]: string };
   secretType: SecretType;
   isCreate: boolean;
 };
