@@ -86,7 +86,7 @@ export const documentationURLs: documentationURLsType = {
     upstream: 'applications/deployments/what-deployments-are.html',
   },
   admissionWebhookWarning: {
-    downstream: 'html/architecture/admission-plug-ins',
+    downstream: 'html/architecture/admission-plug-ins#admission-plug-ins-about_admission-plug-ins',
     kube: `${KUBE_DOCS}/reference/access-authn-authz/extensible-admission-controllers/#response`,
     upstream: 'architecture/index.html#about-admission-plug-ins',
   },
