@@ -11,6 +11,7 @@ import { dateTimeFormatter, fromNow } from './components/utils/datetime';
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
+const language = params.get('lng');
 
 let resolvedLoading;
 
@@ -20,7 +21,9 @@ export const loading = new Promise((resolve) => {
 
 export const init = () => {
   i18n
-    .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
+    .use(
+      new Pseudo({ enabled: pseudolocalizationEnabled, languageToPseudo: language, wrapped: true }),
+    )
     // fetch json files
     // learn more: https://github.com/i18next/i18next-http-backend
     .use(httpBackend)

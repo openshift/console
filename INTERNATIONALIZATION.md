@@ -47,7 +47,7 @@ Good: t('public~Hello, it is now {{date}}', { date: new Date() })
 ```
 
 * `aria-label`, `aria-placeholder`, `aria-roledescription`, and `aria-valuetext` should be internationalized.
-* Use the query parameter `?pseudolocalization=true&lng=en` to see pseudolocalization on strings you've marked for internationalization.
+* Use the query parameter `?pseudolocalization=true&lng=en-US` to see pseudolocalization on strings you've marked for internationalization.  *Note:* if `en-US` is not your browser's first preferred language, change that value to match the language that is.
     * Pseudolocalization adds brackets around the text and makes it longer so you can test components with different text lengths.
 * Make sure there are no missing key warnings in your browser's developer tools - missing keys will trigger errors in integration tests. The warning will show up as an error in the JavaScript console.
 * When displaying a resource kind, you can hard-code it directly in the internationalized text or use the predefined label on the model for the kind.
