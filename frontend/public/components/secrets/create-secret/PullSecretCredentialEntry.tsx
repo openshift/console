@@ -1,51 +1,24 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Base64 } from 'js-base64';
-import { useEffect, useState } from 'react';
 
 export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps> = ({
   id,
-  uid,
-  entry,
+  address,
+  email,
+  password,
+  username,
   onChange,
 }) => {
   const { t } = useTranslation();
-  const [state, setState] = useState<PullSecretCredentialEntryState>({
-    address: entry?.address ?? '',
-    username: entry?.username ?? '',
-    password: entry?.password ?? '',
-    email: entry?.email ?? '',
-    auth: entry?.auth ?? '',
-    uid: uid ?? '',
-  });
 
-  useEffect(() => {
-    onChange(state, id);
-  }, [state, id, onChange]);
+  const updateEntry = (name, value) =>
+    onChange({ address, username, password, email, [name]: value }, id);
 
-  const handleChange = (field: keyof PullSecretCredentialEntryState) => (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = event.currentTarget.value;
-    setState((prevState) => {
-      const newState = {
-        ...prevState,
-        [field]: value,
-      };
-      if (field === 'username' || field === 'password') {
-        newState.auth = Base64.encode(`${newState.username}:${newState.password}`);
-      }
-      return newState;
-    });
-  };
+  const handleBlurEvent = (e: React.SyntheticEvent<HTMLInputElement>) =>
+    updateEntry(e.currentTarget.name, e.currentTarget.value.trim());
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value } = event.currentTarget;
-    setState((prevState) => ({
-      ...prevState,
-      [name]: value.trim(),
-    }));
-  };
+  const handleChangeEvent = (e: React.SyntheticEvent<HTMLInputElement>) =>
+    updateEntry(e.currentTarget.name, e.currentTarget.value);
 
   return (
     <div className="co-m-pane__body-group" data-test-id="create-image-secret-form">
@@ -60,9 +33,9 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
             aria-describedby={`${id}-address-help`}
             type="text"
             name="address"
-            onChange={handleChange('address')}
-            value={state.address}
-            onBlur={handleBlur}
+            onChange={handleChangeEvent}
+            value={address}
+            onBlur={handleBlurEvent}
             data-test="image-secret-address"
             required
           />
@@ -81,9 +54,9 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
             id={`${id}-username`}
             type="text"
             name="username"
-            onChange={handleChange('username')}
-            value={state.username}
-            onBlur={handleBlur}
+            onChange={handleChangeEvent}
+            value={username}
+            onBlur={handleBlurEvent}
             data-test="image-secret-username"
             required
           />
@@ -99,9 +72,9 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
             id={`${id}-password`}
             type="password"
             name="password"
-            onChange={handleChange('password')}
-            value={state.password}
-            onBlur={handleBlur}
+            onChange={handleChangeEvent}
+            value={password}
+            onBlur={handleBlurEvent}
             data-test="image-secret-password"
             required
           />
@@ -117,9 +90,9 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
             id={`${id}-email`}
             type="text"
             name="email"
-            onChange={handleChange('email')}
-            value={state.email}
-            onBlur={handleBlur}
+            onChange={handleChangeEvent}
+            value={email}
+            onBlur={handleBlurEvent}
             data-test="image-secret-email"
           />
         </div>
@@ -128,26 +101,11 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
   );
 };
 
-type CredentialEntry = {
-  address?: string;
-  username?: string;
-  password?: string;
-  email?: string;
-  auth?: string;
-};
-
 type PullSecretCredentialEntryProps = {
   id: number;
-  uid: string;
-  entry: CredentialEntry;
-  onChange: (state: PullSecretCredentialEntryState, id: number) => void;
-};
-
-type PullSecretCredentialEntryState = {
   address: string;
-  username: string;
-  password: string;
   email: string;
-  auth: string;
-  uid: string;
+  password: string;
+  username: string;
+  onChange: (updatedEntry, entryIndex: number) => void;
 };
