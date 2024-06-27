@@ -48,7 +48,7 @@ const PipelineClusterOptions: React.FC<PipelineClusterOptionsProps> = ({ prefixN
         name={`${prefixName}.secrets.cadata`}
         label={t('pipelines-plugin~Cadata')}
         helpText={t(
-          'pipelines-plugin~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+          'pipelines-plugin~The PEM format certificate. Upload file by dragging and dropping, selecting it, or pasting from the clipboard.',
         )}
         required
       />

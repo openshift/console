@@ -310,7 +310,7 @@
   "Insecure": "Insecure",
   "Indicate server should be accessed without verifying the TLS certificate.": "Indicate server should be accessed without verifying the TLS certificate.",
   "Cadata": "Cadata",
-  "The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.": "The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.",
+  "The PEM format certificate. Upload file by dragging and dropping, selecting it, or pasting from the clipboard.": "The PEM format certificate. Upload file by dragging and dropping, selecting it, or pasting from the clipboard.",
   "Token": "Token",
   "Upload file by dragging & dropping, selecting it, or pasting from the clipboard.": "Upload file by dragging & dropping, selecting it, or pasting from the clipboard.",
   "Please provide Git URL.": "Please provide Git URL.",

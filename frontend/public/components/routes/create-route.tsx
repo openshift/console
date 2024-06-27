@@ -515,7 +515,7 @@ class CreateRouteWithTranslation extends React.Component<
                       id="certificate"
                       label={t('public~Certificate')}
                       inputFieldHelpText={t(
-                        'public~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                        'public~The PEM format certificate. Upload file by dragging and dropping, selecting it, or pasting from the clipboard.',
                       )}
                     />
                   </div>

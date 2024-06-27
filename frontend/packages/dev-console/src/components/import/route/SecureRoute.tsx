@@ -93,7 +93,7 @@ const SecureRoute: React.FC = () => {
                 name="route.tls.certificate"
                 label={t('devconsole~Certificate')}
                 helpText={t(
-                  'devconsole~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                  'devconsole~The PEM format certificate. Upload file by dragging and dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               <DroppableFileInputField
