@@ -47,22 +47,33 @@ const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
   ...pkg.dependencies,
 });
 
+const getPluginSDKPackageDependencies = () =>
+  loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').dependencies;
+
 const getPatternFlyStyles = (baseDir: string) =>
   glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
 
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-const getWebpackSharedModules = () =>
-  sharedPluginModules.reduce<WebpackSharedObject>((acc, moduleName) => {
+const getWebpackSharedModules = () => {
+  const sdkPkgDeps = getPluginSDKPackageDependencies();
+
+  return sharedPluginModules.reduce<WebpackSharedObject>((acc, moduleName) => {
     const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
+    const providedVersionRange = sdkPkgDeps[moduleName];
     const moduleConfig: WebpackSharedConfig = { singleton };
 
     if (!allowFallback) {
       moduleConfig.import = false;
     }
 
+    if (semver.validRange(providedVersionRange)) {
+      moduleConfig.requiredVersion = providedVersionRange;
+    }
+
     acc[moduleName] = moduleConfig;
     return acc;
   }, {});
+};
 
 const getWebpackSharedDynamicModules = (
   pkg: ConsolePluginPackageJSON,
@@ -109,8 +120,8 @@ export const validateConsoleExtensionsFileSchema = (
 };
 
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
-  const sdkPkg = loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk');
   const pluginDeps = getPackageDependencies(pkg);
+  const sdkPkgDeps = getPluginSDKPackageDependencies();
   const result = new ValidationResult('package.json');
 
   sharedPluginModules.forEach((moduleName) => {
@@ -122,7 +133,7 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
       return;
     }
 
-    const providedVersionRange = sdkPkg.dependencies[moduleName];
+    const providedVersionRange = sdkPkgDeps[moduleName];
     const consumedVersion = getVendorPackageVersion(moduleName);
 
     if (semver.validRange(providedVersionRange) && semver.valid(consumedVersion)) {
@@ -368,10 +379,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
         exposedModules,
       },
       extensions,
-      sharedModules: {
-        ...getWebpackSharedModules(),
-        ...allSharedDynamicModules,
-      },
+      sharedModules: { ...getWebpackSharedModules(), ...allSharedDynamicModules },
       entryCallbackSettings: {
         name: 'loadPluginEntry',
         pluginID: `${name}@${version}`,
