@@ -83,6 +83,7 @@ class CreateConfigSubformWithTranslation extends React.Component<
         const updatedEntryData = {
           uid: secretEntriesArray[entryIndex].uid,
           entry: updatedEntry,
+          auth: Base64.encode(`${updatedEntry.username}:${updatedEntry.password}`),
         };
         secretEntriesArray[entryIndex] = updatedEntryData;
         return {
@@ -115,8 +116,10 @@ class CreateConfigSubformWithTranslation extends React.Component<
   render() {
     const { t } = this.props;
     const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
+      const { uid, entry } = entryData ?? {};
+      const { address, email, password, username } = entry ?? {};
       return (
-        <div className="co-add-remove-form__entry" key={entryData.uid}>
+        <div className="co-add-remove-form__entry" key={uid}>
           {_.size(this.state.secretEntriesArray) > 1 && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
@@ -132,9 +135,11 @@ class CreateConfigSubformWithTranslation extends React.Component<
           )}
           <PullSecretCredentialEntry
             id={index}
-            entry={entryData.entry}
+            address={address}
+            email={email}
+            password={password}
+            username={username}
             onChange={this.onDataChanged}
-            uid={entryData.uid}
           />
         </div>
       );
