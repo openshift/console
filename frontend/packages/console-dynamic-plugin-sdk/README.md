@@ -47,10 +47,12 @@ compatible versions of distributable SDK packages to versions of the OpenShift C
 
 | Console Version   | SDK Package                                     | Last Package Version |
 | ----------------- | ----------------------------------------------- | -------------------- |
-| 4.16.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
+| 4.17.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
+| 4.16.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.3.0                |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.0                |
 | 4.15.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.0                |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.2                |
 | 4.14.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
 | 4.13.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
@@ -340,6 +342,9 @@ Open the Console in your web browser and inspect the value of `window.SERVER_FLA
 list of dynamic plugins the Console loads at runtime. For local development, this should only
 include plugin(s) listed via `-plugins` Bridge argument.
 
+Console development builds also allow you to interact with the `PluginStore` object that manages
+all plugins and their extensions directly in your web browser via `window.pluginStore`.
+
 ### Using local Console plugin SDK code
 
 If you need to make modifications to Console dynamic plugin SDK code and reflect them in your
@@ -411,6 +416,14 @@ yarn publish dist/<pkg> --no-git-tag-version --new-version <version>
 ```
 
 If the given package doesn't exist in npm registry, add `--access public` to `yarn publish` command.
+
+If the newly published version is lesser than the latest published version in terms of semver rules
+(e.g. hotfix release 1.0.2 for an older minor version stream 1.0.x), make sure that the `latest` dist-tag
+still applies to the appropriate package version:
+
+```sh
+npm dist-tag add <package-name>@<version> latest
+```
 
 ## Future Deprecations in Shared Plugin Dependencies
 
