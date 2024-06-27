@@ -155,23 +155,6 @@
       }
     }
   },
-
-  {
-    "type": "console.global-config",
-    "properties": {
-      "id": "oauth-config",
-      "name": "oauth-config",
-      "model": {
-        "group": "config.openshift.io",
-        "version": "v1",
-        "kind": "OAuth"
-      },
-      "namespace": ""
-    },
-    "flags": {
-      "required": ["OPENSHIFT_OAUTH_API"]
-    }
-  },
   {
     "type": "console.page/resource/details",
     "properties": {
@@ -1087,7 +1070,7 @@
         "kind": "MultiNetworkPolicy"
       }
     },
-    "flags": {"required": ["MULTI_NETWORK_POLICY_ENABLED"]}
+    "flags": { "required": ["MULTI_NETWORK_POLICY_ENABLED"] }
   },
   {
     "type": "console.navigation/resource-cluster",
