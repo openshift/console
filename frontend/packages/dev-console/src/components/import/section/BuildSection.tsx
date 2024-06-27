@@ -4,7 +4,7 @@ import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getGitService } from '@console/git-service/src';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
-import { useFlag } from '@console/shared/src';
+import { useDebounceCallback, useFlag } from '@console/shared/src';
 import { AppResources } from '../../edit-application/edit-application-types';
 import BuildConfigSection from '../advanced/BuildConfigSection';
 import { BuildOptions } from '../import-types';
@@ -23,7 +23,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
   const { setFieldValue } = useFormikContext<FormikValues>();
 
   /* Auto-select Pipelines as Build option for PAC Repositories */
-  React.useEffect(() => {
+  const autoSelectPipelines = useDebounceCallback(() => {
     const { git, formType } = values || {};
 
     if (formType !== 'edit' && git?.url) {
@@ -42,6 +42,10 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
       };
       gitService && checkTektonFolder();
     }
+  }, 2000);
+
+  React.useEffect(() => {
+    autoSelectPipelines();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values?.git?.url, isRepositoryEnabled, setFieldValue]);
 
