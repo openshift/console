@@ -28,6 +28,7 @@ import {
 } from '@console/pipelines-plugin/src/const';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { getLimitsDataFromResource } from '@console/shared/src';
+import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
@@ -38,6 +39,7 @@ import {
   GitReadableTypes,
   ServerlessData,
   BuildOptions,
+  BuildData,
 } from '../import/import-types';
 import {
   detectGitType,
@@ -166,6 +168,20 @@ const getGitDataFromPipeline = (pipeline: PipelineKind) => {
   };
 };
 
+const getGitDataFromShipwrightBuild = (shipwrightBuild: K8sResourceKind) => {
+  const url = shipwrightBuild?.spec?.source?.git?.url ?? '';
+  const gitData = {
+    url,
+    type: detectGitType(url),
+    ref: _.get(shipwrightBuild, 'spec.source.git.revision', ''),
+    dir: _.get(shipwrightBuild, 'spec.source.contextDir', ''),
+    showGitType: false,
+    secret: _.get(shipwrightBuild, 'spec.source.git.cloneSecret', ''),
+    isUrlValidating: false,
+  };
+  return gitData;
+};
+
 export const getKsvcRouteData = (resource: K8sResourceKind) => {
   const { metadata, spec } = resource;
   const containers = spec?.template?.spec?.containers ?? [];
@@ -233,9 +249,16 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
   return routeData;
 };
 
-const getBuildOption = (buildConfig: K8sResourceKind, pipeline: PipelineKind) => {
+const getBuildOption = (
+  buildConfig: K8sResourceKind,
+  shipwrightBuild: K8sResourceKind,
+  pipeline: PipelineKind,
+) => {
   if (buildConfig) {
     return BuildOptions.BUILDS;
+  }
+  if (shipwrightBuild) {
+    return BuildOptions.SHIPWRIGHT_BUILD;
   }
   if (pipeline) {
     return BuildOptions.PIPELINES;
@@ -245,24 +268,50 @@ const getBuildOption = (buildConfig: K8sResourceKind, pipeline: PipelineKind) =>
 
 export const getBuildData = (
   buildConfig: K8sResourceKind,
+  shipwrightBuild: K8sResourceKind,
   pipeline: PipelineKind,
   gitType: string,
 ) => {
-  const buildStrategyType = _.get(buildConfig, 'spec.strategy.type', '');
+  const buildOption = getBuildOption(buildConfig, shipwrightBuild, pipeline);
+  let buildStrategyType: BuildStrategyType | string;
+  let shipwrightClusterBuildStrategyType: ClusterBuildStrategy;
   let buildStrategyData;
-  switch (buildStrategyType) {
-    case BuildStrategyType.Source:
-      buildStrategyData = _.get(buildConfig, 'spec.strategy.sourceStrategy');
-      break;
-    case BuildStrategyType.Docker:
-      buildStrategyData = _.get(buildConfig, 'spec.strategy.dockerStrategy');
-      break;
-    default:
-      buildStrategyData = { env: [] };
+
+  if (buildOption === BuildOptions.BUILDS) {
+    buildStrategyType = _.get(buildConfig, 'spec.strategy.type', '');
+  } else if (buildOption === BuildOptions.SHIPWRIGHT_BUILD) {
+    shipwrightClusterBuildStrategyType = _.get(shipwrightBuild, 'spec.strategy.name', '');
+    switch (shipwrightClusterBuildStrategyType) {
+      case ClusterBuildStrategy.BUILDAH:
+        buildStrategyType = BuildStrategyType.Docker;
+        break;
+      case ClusterBuildStrategy.S2I:
+        buildStrategyType = BuildStrategyType.Source;
+        break;
+      default:
+        buildStrategyType = '';
+    }
   }
+
+  if (buildOption === BuildOptions.BUILDS) {
+    switch (buildStrategyType) {
+      case BuildStrategyType.Source:
+        buildStrategyData = _.get(buildConfig, 'spec.strategy.sourceStrategy');
+        break;
+      case BuildStrategyType.Docker:
+        buildStrategyData = _.get(buildConfig, 'spec.strategy.dockerStrategy');
+        break;
+      default:
+        buildStrategyData = { env: [] };
+    }
+  } else if (buildOption === BuildOptions.SHIPWRIGHT_BUILD) {
+    buildStrategyData = _.get(shipwrightBuild, 'spec');
+  }
+
   const triggers = _.get(buildConfig, 'spec.triggers');
-  const buildData = {
-    env: buildStrategyData.env || [],
+
+  const buildData: BuildData = {
+    env: buildStrategyData?.env || [],
     triggers: {
       webhook: checkIfTriggerExists(triggers, GitReadableTypes[gitType]),
       image: checkIfTriggerExists(triggers, 'ImageChange'),
@@ -272,7 +321,8 @@ export const getBuildData = (
       buildStrategyType ||
       (isDockerPipeline(pipeline) ? BuildStrategyType.Docker : BuildStrategyType.Source),
     source: { type: getBuildSourceType(buildConfig) },
-    option: getBuildOption(buildConfig, pipeline),
+    option: buildOption,
+    clusterBuildStrategy: shipwrightClusterBuildStrategyType,
   };
   return buildData;
 };
@@ -434,15 +484,18 @@ export const getIconInitialValues = (editAppResource: K8sResourceKind) => {
 
 export const getGitAndDockerfileInitialValues = (
   buildConfig: K8sResourceKind,
+  shipwrightBuild: K8sResourceKind,
   pipeline: PipelineKind,
 ) => {
-  if (_.isEmpty(buildConfig) && _.isEmpty(pipeline)) {
+  if (_.isEmpty(buildConfig) && _.isEmpty(shipwrightBuild) && _.isEmpty(pipeline)) {
     return {};
   }
 
   const currentImage = _.split(buildConfig?.spec?.strategy?.sourceStrategy?.from?.name ?? '', ':');
   const git = !_.isEmpty(buildConfig)
     ? getGitDataFromBuildConfig(buildConfig)
+    : !_.isEmpty(shipwrightBuild)
+    ? getGitDataFromShipwrightBuild(shipwrightBuild)
     : getGitDataFromPipeline(pipeline);
   const initialValues = {
     git,
@@ -461,7 +514,7 @@ export const getGitAndDockerfileInitialValues = (
       isRecommending: false,
       couldNotRecommend: false,
     },
-    build: getBuildData(buildConfig, pipeline, git.type),
+    build: getBuildData(buildConfig, shipwrightBuild, pipeline, git.type),
   };
   return initialValues;
 };
@@ -580,6 +633,7 @@ export const getInitialValues = (
   const editAppResourceData = appResources.editAppResource?.data;
   const routeData = appResources.route?.data;
   const buildConfigData = appResources.buildConfig?.data;
+  const shipwrightBuildData = appResources.shipwrightBuild?.data;
   const pipelineData = appResources.pipeline?.data;
 
   const commonValues = getCommonInitialValues(
@@ -589,7 +643,11 @@ export const getInitialValues = (
     appName,
     namespace,
   );
-  const gitDockerValues = getGitAndDockerfileInitialValues(buildConfigData, pipelineData);
+  const gitDockerValues = getGitAndDockerfileInitialValues(
+    buildConfigData,
+    shipwrightBuildData,
+    pipelineData,
+  );
   let fileUploadValues = {};
   let iconValues = {};
   let externalImageValues = {};

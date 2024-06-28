@@ -5,8 +5,8 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import DeployImageForm from '../DeployImageForm';
-import { DeploySection } from '../DeploySection';
 import ImageSearchSection from '../image-search/ImageSearchSection';
+import { DeploySection } from '../section/deploy-section/DeploySection';
 import IconSection from '../section/IconSection';
 
 let deployImageFormProps: React.ComponentProps<typeof DeployImageForm>;

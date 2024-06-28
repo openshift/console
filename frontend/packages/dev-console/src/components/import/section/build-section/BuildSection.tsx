@@ -2,23 +2,29 @@ import * as React from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService } from '@console/git-service/src';
+import { ImportStrategy, getGitService } from '@console/git-service/src';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
 import { useDebounceCallback, useFlag } from '@console/shared/src';
-import { AppResources } from '../../edit-application/edit-application-types';
-import BuildConfigSection from '../advanced/BuildConfigSection';
-import { BuildOptions } from '../import-types';
+import {
+  isPreferredStrategyAvailable,
+  useClusterBuildStrategy,
+} from '../../../../utils/shipwright-build-hook';
+import { AppResources } from '../../../edit-application/edit-application-types';
+import BuildConfigSection from '../../advanced/BuildConfigSection';
+import { BuildOptions, GitImportFormData } from '../../import-types';
+import FormSection from '../FormSection';
 import { BuildOption } from './BuildOptions';
-import FormSection from './FormSection';
+import { BuildStrategySelector } from './BuildStrategySelector';
 
 type BuildSectionProps = {
-  values: FormikValues;
+  values: FormikValues & GitImportFormData;
   appResources?: AppResources;
 };
 
 export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+  const [strategy] = useClusterBuildStrategy();
 
   const { setFieldValue } = useFormikContext<FormikValues>();
 
@@ -63,12 +69,33 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
       setFieldValue('pipeline.enabled', false);
       setFieldValue('pac.pipelineEnabled', false);
     }
-  }, [setFieldValue, values.pipeline?.enabled, values.build.option, values.formType]);
+  }, [setFieldValue, values.pipeline?.enabled, values.build?.option, values.formType]);
+
+  /** NOTE: Shipwright Builds are not supported with Devfile Import Strategy currently and if required ClusterBuildStrategy for the ImportType is not available */
+  React.useEffect(() => {
+    if (
+      values?.import?.selectedStrategy?.type === ImportStrategy.DEVFILE ||
+      !isPreferredStrategyAvailable(values?.import?.selectedStrategy?.type, strategy)
+    ) {
+      setFieldValue('build.option', BuildOptions.BUILDS);
+    } else {
+      setFieldValue('build.option', BuildOptions.SHIPWRIGHT_BUILD);
+    }
+  }, [setFieldValue, values?.import?.selectedStrategy?.type, strategy]);
 
   return (
     <FormSection title={t('devconsole~Build')}>
-      <BuildOption isDisabled={values?.formType === 'edit'} />
+      <BuildOption
+        isDisabled={values?.formType === 'edit'}
+        importStrategy={values?.import?.selectedStrategy?.type}
+      />
 
+      {values.build?.option === BuildOptions.SHIPWRIGHT_BUILD && (
+        <BuildStrategySelector
+          importStrategy={values?.import?.selectedStrategy?.type}
+          formType={values?.formType}
+        />
+      )}
       {values.isi || values.pipeline?.enabled ? null : (
         <ExpandableSection toggleText={t('devconsole~Show advanced Build option')}>
           <BuildConfigSection
