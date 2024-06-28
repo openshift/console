@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import { WebHookSecretKey } from '../../secret';
 import { SecretTypeAbstraction, SecretType } from '.';
+import { useTranslation } from 'react-i18next';
 
 export const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
   switch (typeAbstraction) {
@@ -65,5 +66,40 @@ export const getImageSecretKey = (secretType: SecretType): string => {
       return '.dockerconfigjson';
     default:
       return secretType;
+  }
+};
+
+export const useSecretTitle = (
+  isCreate: boolean,
+  typeAbstraction: SecretTypeAbstraction,
+): string => {
+  const { t } = useTranslation();
+  switch (typeAbstraction) {
+    case SecretTypeAbstraction.generic:
+      return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
+    case SecretTypeAbstraction.image:
+      return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
+    default:
+      return isCreate
+        ? t('public~Create {{secretType}} secret', { secretType: typeAbstraction })
+        : t('public~Edit {{secretType}} secret', { secretType: typeAbstraction });
+  }
+};
+
+export const useSecretDescription = (typeAbstraction: SecretTypeAbstraction): string => {
+  const { t } = useTranslation();
+  switch (typeAbstraction) {
+    case SecretTypeAbstraction.generic:
+      return t(
+        'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+      );
+    case SecretTypeAbstraction.source:
+      return t('public~Source secrets let you authenticate against a Git server.');
+    case SecretTypeAbstraction.image:
+      return t('public~Image pull secrets let you authenticate against a private image registry.');
+    case SecretTypeAbstraction.webhook:
+      return t('public~Webhook secrets let you authenticate a webhook trigger.');
+    default:
+      return null;
   }
 };

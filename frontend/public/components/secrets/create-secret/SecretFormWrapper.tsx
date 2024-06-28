@@ -14,8 +14,8 @@ import {
   toDefaultSecretType,
   determineSecretType,
   SecretSubForm,
-  SecretFormTitle,
-  SecretFormDescription,
+  useSecretTitle,
+  useSecretDescription,
 } from '.';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
@@ -47,7 +47,8 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   );
   const [base64StringData, setBase64StringData] = React.useState({});
   const [disableForm, setDisableForm] = React.useState(false);
-
+  const title = useSecretTitle(isCreate, secretTypeAbstraction);
+  const helptext = useSecretDescription(secretTypeAbstraction);
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
 
   const onDataChanged = (secretsData) => {
@@ -147,8 +148,6 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     );
   };
 
-  const title = <SecretFormTitle isCreate={isCreate} typeAbstraction={secretTypeAbstraction} />;
-  const helptext = <SecretFormDescription typeAbstraction={secretTypeAbstraction} />;
   return modal ? (
     <form className="co-create-secret-form modal-content" onSubmit={save}>
       <ModalTitle>{title}</ModalTitle>
