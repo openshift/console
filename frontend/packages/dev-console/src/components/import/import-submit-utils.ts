@@ -47,6 +47,8 @@ import {
 import { LimitsData } from '@console/shared/src/types';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { BUILD_OUTPUT_IMAGESTREAM_URL } from '@console/shipwright-plugin/src/const';
+import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { RUNTIME_LABEL } from '../../const';
 import {
@@ -184,6 +186,105 @@ export const createWebhookSecret = (
   };
 
   return k8sCreate(SecretModel, webhookSecret, dryRun ? dryRunOpt : {});
+};
+
+export const createOrUpdateShipwrightBuild = (
+  formData: GitImportFormData,
+  imageStream: K8sResourceKind,
+  dryRun: boolean,
+  originalShipwrightBuild?: K8sResourceKind,
+  verb: K8sVerb = 'create',
+  generatedImageStreamName: string = '',
+) => {
+  const {
+    name,
+    project: { name: namespace },
+    application: { name: applicationName },
+    git: { url: repository, ref = 'master', dir: contextDir, secret: secretName },
+    docker: { dockerfilePath },
+    image: { tag: selectedTag, imageEnv },
+    build: { env, strategy: buildStrategy, clusterBuildStrategy },
+    labels: userLabels,
+  } = formData;
+  const NAME_LABEL = 'app.kubernetes.io/name';
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const imageStreamRepository = imageStream && imageStream.status?.dockerImageRepository;
+
+  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
+  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
+
+  const imageEnvKeys = imageEnv ? Object.keys(imageEnv) : [];
+  const customEnvs = imageEnvKeys
+    .filter((k) => !!imageEnv[k])
+    .map((k) => ({ name: k, value: imageEnv[k] }));
+  const buildEnvs = env.filter((buildEnv) => !imageEnvKeys.includes(buildEnv.name));
+
+  let shipwrightParamsObj = [];
+  // eslint-disable-next-line default-case
+  switch (buildStrategy) {
+    case BuildStrategyType.Docker:
+      shipwrightParamsObj = [
+        {
+          name: 'dockerfile',
+          value: dockerfilePath,
+        },
+      ];
+      break;
+    case BuildStrategyType.Source:
+      shipwrightParamsObj = [
+        {
+          name: 'builder-image',
+          value: `${imageStreamRepository}:${selectedTag}`,
+        },
+      ];
+      break;
+  }
+
+  const shipwrightBuildName =
+    verb === 'update' && !_.isEmpty(originalShipwrightBuild)
+      ? originalShipwrightBuild.metadata.labels[NAME_LABEL]
+      : name;
+
+  const newShipwrightBuild = {
+    apiVersion: 'shipwright.io/v1beta1',
+    kind: 'Build',
+    metadata: {
+      name: generatedImageStreamName || shipwrightBuildName,
+      namespace,
+      labels: { ...defaultLabels, ...userLabels, [NAME_LABEL]: shipwrightBuildName },
+      annotations: defaultAnnotations,
+    },
+    spec: {
+      source: {
+        type: 'Git',
+        git: {
+          url: repository,
+          revision: ref,
+          ...(secretName ? { cloneSecret: secretName } : {}),
+        },
+        contextDir,
+      },
+      env: [...customEnvs, ...buildEnvs],
+      strategy: {
+        name: clusterBuildStrategy,
+        kind: 'ClusterBuildStrategy',
+      },
+      paramValues: shipwrightParamsObj,
+      output: {
+        image: `${BUILD_OUTPUT_IMAGESTREAM_URL}/${namespace}/${
+          generatedImageStreamName || shipwrightBuildName
+        }:latest`,
+      },
+    },
+  };
+
+  const shipwrightBuild = mergeData(originalShipwrightBuild, newShipwrightBuild);
+  if (verb === 'update') {
+    shipwrightBuild.metadata.name = originalShipwrightBuild.metadata.name;
+  }
+  return verb === 'update'
+    ? k8sUpdate(ShipwrightBuildModel, shipwrightBuild)
+    : k8sCreate(ShipwrightBuildModel, newShipwrightBuild, dryRun ? dryRunOpt : {});
 };
 
 export const createOrUpdateBuildConfig = (
@@ -747,6 +848,17 @@ export const createOrUpdateResources = async (
         imageStream,
         dryRun,
         appResources?.buildConfig?.data,
+        generatedImageStreamName ? 'create' : verb,
+        generatedImageStreamName,
+      ),
+    );
+  } else if (buildOption === BuildOptions.SHIPWRIGHT_BUILD) {
+    responses.push(
+      await createOrUpdateShipwrightBuild(
+        formData,
+        imageStream,
+        dryRun,
+        appResources?.shipwrightBuild?.data,
         generatedImageStreamName ? 'create' : verb,
         generatedImageStreamName,
       ),

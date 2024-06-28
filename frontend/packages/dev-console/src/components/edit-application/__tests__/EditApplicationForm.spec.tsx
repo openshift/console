@@ -8,6 +8,7 @@ import BuilderSection from '../../import/builder/BuilderSection';
 import DockerSection from '../../import/git/DockerSection';
 import GitSection from '../../import/git/GitSection';
 import ImageSearchSection from '../../import/image-search/ImageSearchSection';
+import { GitImportFormData } from '../../import/import-types';
 import JarSection from '../../import/jar/section/JarSection';
 import IconSection from '../../import/section/IconSection';
 import { ApplicationFlowType } from '../edit-application-utils';
@@ -16,6 +17,8 @@ import EditApplicationForm from '../EditApplicationForm';
 describe('EditApplicationForm', () => {
   const componentProps = {
     ...formikFormProps,
+    values: {} as GitImportFormData,
+    initialValues: {} as GitImportFormData,
     appResources: {},
   };
 
@@ -32,7 +35,13 @@ describe('EditApplicationForm', () => {
       <EditApplicationForm
         {...componentProps}
         flowType={ApplicationFlowType.Dockerfile}
-        values={{ build: { strategy: 'Docker' } }}
+        values={
+          {
+            build: {
+              strategy: 'Docker',
+            },
+          } as GitImportFormData
+        }
       />,
     );
     expect(wrapper.find(GitSection).exists()).toBe(true);
@@ -64,7 +73,13 @@ describe('EditApplicationForm', () => {
       <EditApplicationForm
         {...componentProps}
         flowType={ApplicationFlowType.Dockerfile}
-        values={{ build: { strategy: 'Docker' } }}
+        values={
+          {
+            build: {
+              strategy: 'Docker',
+            },
+          } as GitImportFormData
+        }
       />,
     );
     expect(wrapper.find(ImageSearchSection).exists()).toBe(false);
@@ -88,7 +103,13 @@ describe('EditApplicationForm', () => {
       <EditApplicationForm
         {...componentProps}
         flowType={ApplicationFlowType.Dockerfile}
-        values={{ build: { strategy: 'Docker' } }}
+        values={
+          {
+            build: {
+              strategy: 'Docker',
+            },
+          } as GitImportFormData
+        }
       />,
     );
     expect(wrapper.find(BuilderSection).exists()).toBe(false);
@@ -99,7 +120,13 @@ describe('EditApplicationForm', () => {
       <EditApplicationForm
         {...componentProps}
         flowType={ApplicationFlowType.Dockerfile}
-        values={{ build: { strategy: 'Docker' } }}
+        values={
+          {
+            build: {
+              strategy: 'Docker',
+            },
+          } as GitImportFormData
+        }
       />,
     );
     expect(wrapper.find(DockerSection).exists()).toBe(true);
@@ -122,7 +149,13 @@ describe('EditApplicationForm', () => {
       <EditApplicationForm
         {...componentProps}
         flowType={ApplicationFlowType.Dockerfile}
-        values={{ build: { strategy: 'Docker' } }}
+        values={
+          {
+            build: {
+              strategy: 'Docker',
+            },
+          } as GitImportFormData
+        }
       />,
     );
     expect(wrapper.find(AppSection).exists()).toBe(true);

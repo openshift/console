@@ -13,8 +13,8 @@ import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
-import { DeploySection } from '../DeploySection';
 import ImageSearchSection from '../image-search/ImageSearchSection';
+import { DeploySection } from '../section/deploy-section/DeploySection';
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...require.requireActual('react-router-dom-v5-compat'),

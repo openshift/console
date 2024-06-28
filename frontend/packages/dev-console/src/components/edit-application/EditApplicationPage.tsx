@@ -12,6 +12,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditApplicationComponent from './EditApplicationComponent';
@@ -70,6 +71,13 @@ const EditApplicationPage: React.FunctionComponent = () => {
       },
       buildConfig: {
         kind: 'BuildConfig',
+        isList: true,
+        namespace,
+        name: nameLabel,
+        optional: true,
+      },
+      shipwrightBuild: {
+        kind: referenceForModel(ShipwrightBuildModel),
         isList: true,
         namespace,
         name: nameLabel,
