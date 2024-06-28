@@ -1,46 +1,56 @@
 import { operatorNamespaces, operatorSubscriptions, operators } from '../../constants/global';
-
-export const checkPipelineOperatorStatus = (retries: number = 5) => {
-  const namespace = operatorNamespaces.PipelinesOperator;
-  const resourceName = operatorSubscriptions.PipelinesOperator;
-  if (retries === 0) {
-    throw new Error('Failed to install Pipelines Operator - Pod timeout');
-  } else {
-    cy.exec(
-      `oc wait --for=condition=ready pod -l app=${resourceName} -n ${namespace} --timeout=300s`,
-      {
-        failOnNonZeroExit: false,
-      },
-    ).then(function (result) {
-      if (result.stdout.includes('condition met')) {
-        cy.log(`Success: ${result.stdout}`);
-      } else {
-        cy.log(result.stderr);
-        cy.wait(30000);
-        checkPipelineOperatorStatus(retries - 1);
-      }
-    });
-  }
-};
-
-export const performPostInstallationSteps = (operator: operators): void => {
-  switch (operator) {
-    case operators.PipelinesOperator:
-      cy.log(`Performing Pipelines post-installation steps`);
-      checkPipelineOperatorStatus();
-      break;
-    default:
-      cy.log(`Nothing to do in post-installation steps`);
-  }
-};
+import {
+  checkPipelineOperatorStatus,
+  checkKnativeOperatorStatus,
+  checkShipwrightOperatorStatus,
+  checkWebterminalOperatorStatus,
+} from './checkOperatorStatus';
+import {
+  createKnativeEventingUsingCLI,
+  createKnativeKafkaUsingCLI,
+  createKnativeServingUsingCLI,
+} from './knativeSubscriptions';
+import { createShipwrightBuildUsingCLI } from './shipwrightSubscriptions';
 
 export const checkOperatorStatus = (operator: operators) => {
   switch (operator) {
     case operators.PipelinesOperator:
       checkPipelineOperatorStatus();
       break;
+    case operators.ServerlessOperator:
+      checkKnativeOperatorStatus();
+      break;
+    case operators.ShipwrightOperator:
+      checkShipwrightOperatorStatus();
+      break;
+    case operators.WebTerminalOperator:
+      checkWebterminalOperatorStatus();
+      break;
     default:
       throw new Error('Invalid Operator');
+  }
+};
+
+export const performPostInstallationSteps = (operator: operators): void => {
+  cy.log(`Performing ${operator} post-installation steps`);
+  switch (operator) {
+    case operators.PipelinesOperator:
+      cy.log(`Performing Pipelines post-installation steps`);
+      checkPipelineOperatorStatus();
+      break;
+    case operators.ServerlessOperator:
+      cy.log(`Performing Serverless post installation steps`);
+      createKnativeServingUsingCLI();
+      createKnativeEventingUsingCLI();
+      createKnativeKafkaUsingCLI();
+      break;
+    case operators.ShipwrightOperator:
+      checkOperatorStatus(operators.ShipwrightOperator);
+      checkOperatorStatus(operators.PipelinesOperator);
+      createShipwrightBuildUsingCLI();
+      break;
+    default:
+      cy.log(`Nothing to do in post-installation steps`);
   }
 };
 
@@ -50,6 +60,18 @@ export const installOperatorUsingCLI = (operator: operators) => {
     case operators.PipelinesOperator:
       yamlFile =
         '../../pipelines-plugin/integration-tests/testData/pipelinesOperatorSubscription.yaml';
+      break;
+    case operators.ServerlessOperator:
+      yamlFile =
+        '../../knative-plugin/integration-tests/testData/serverlessOperatorSubscription.yaml';
+      break;
+    case operators.ShipwrightOperator:
+      yamlFile =
+        '../../shipwright-plugin/integration-tests/testData/shipwrightOperatorSubscription.yaml';
+      break;
+    case operators.WebTerminalOperator:
+      yamlFile =
+        '../../webterminal-plugin/integration-tests/testData/webterminalOperatorSubscription.yaml';
       break;
     default:
       throw new Error('Invalid Operator');
@@ -79,6 +101,18 @@ export const checkSubscriptionStatus = (operator: operators) => {
       namespace = operatorNamespaces.PipelinesOperator;
       subscriptionName = operatorSubscriptions.PipelinesOperator;
       break;
+    case operators.ServerlessOperator:
+      namespace = operatorNamespaces.ServerlessOperator;
+      subscriptionName = operatorSubscriptions.ServerlessOperator;
+      break;
+    case operators.ShipwrightOperator:
+      namespace = operatorNamespaces.ShipwrightOperator;
+      subscriptionName = operatorSubscriptions.ShipwrightOperator;
+      break;
+    case operators.WebTerminalOperator:
+      namespace = operatorNamespaces.WebTerminalOperator;
+      subscriptionName = operatorSubscriptions.WebTerminalOperator;
+      break;
     default:
       throw new Error('Invalid Operator');
   }
@@ -105,4 +139,16 @@ export const verifyAndInstallOperatorUsingCLI = (operator: operators) => {
 
 export const installPipelinesOperatorUsingCLI = () => {
   verifyAndInstallOperatorUsingCLI(operators.PipelinesOperator);
+};
+
+export const installKnativeOperatorUsingCLI = () => {
+  verifyAndInstallOperatorUsingCLI(operators.ServerlessOperator);
+};
+
+export const installShipwrightOperatorUsingCLI = () => {
+  verifyAndInstallOperatorUsingCLI(operators.ShipwrightOperator);
+};
+
+export const installWebterminalOperatorUsingCLI = () => {
+  verifyAndInstallOperatorUsingCLI(operators.WebTerminalOperator);
 };

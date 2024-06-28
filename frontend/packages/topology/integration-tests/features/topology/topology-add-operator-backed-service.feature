@@ -13,7 +13,7 @@ Feature: Create Operator backed service in topology page
               And user is at Topology page
 
 
-        @regression @manual
+        @regression
         Scenario: Create Operator Backed serivce using visual connector from existing workload: T-04-TC01
             Given user has created workload "hello-openshift"
              When user drags connector from "hello-openshift" workload
