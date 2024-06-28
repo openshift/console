@@ -147,7 +147,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     );
   };
 
-  const title = <SecretFormTitle isCreate={isCreate} typeAbstraction={secretTypeAbstraction} />;
+  const title = SecretFormTitle({ isCreate, typeAbstraction: secretTypeAbstraction });
   const helptext = <SecretFormDescription typeAbstraction={secretTypeAbstraction} />;
   return modal ? (
     <form className="co-create-secret-form modal-content" onSubmit={save}>

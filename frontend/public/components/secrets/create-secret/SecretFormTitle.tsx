@@ -6,21 +6,13 @@ export const SecretFormTitle: React.FC<SecretFormTitleProps> = ({ isCreate, type
   const { t } = useTranslation();
   switch (typeAbstraction) {
     case SecretTypeAbstraction.generic:
-      return (
-        <>{isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret')}</>
-      );
+      return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
     case SecretTypeAbstraction.image:
-      return (
-        <>{isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret')}</>
-      );
+      return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
     default:
-      return (
-        <>
-          {isCreate
-            ? t('public~Create {{secretType}} secret', { secretType: typeAbstraction })
-            : t('public~Edit {{secretType}} secret', { secretType: typeAbstraction })}
-        </>
-      );
+      return isCreate
+        ? t('public~Create {{secretType}} secret', { secretType: typeAbstraction })
+        : t('public~Edit {{secretType}} secret', { secretType: typeAbstraction });
   }
 };
 
