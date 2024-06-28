@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel } from '@console/internal/models';
+import store from '@console/internal/redux';
 import NamespaceMenuToggle from '@console/shared/src/components/namespace/NamespaceMenuToggle';
 import NamespaceDropdown from '../NamespaceDropdown';
 import { usePreferredNamespace } from '../usePreferredNamespace';
@@ -33,7 +35,7 @@ const mockK8sWatchResource = useK8sWatchResource as jest.Mock;
 const mockUsePreferredNamespace = usePreferredNamespace as jest.Mock;
 
 describe('NamespaceDropdown', () => {
-  let wrapper: ShallowWrapper;
+  let wrapper: ReactWrapper;
   const preferredNamespace: string = mockNamespaces[1].metadata.name;
 
   afterEach(() => {
@@ -44,7 +46,11 @@ describe('NamespaceDropdown', () => {
     mockProjectOrNamespaceModel.mockReturnValue([NamespaceModel, true]);
     mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
     mockUsePreferredNamespace.mockReturnValue(['', jest.fn(), false]);
-    wrapper = shallow(<NamespaceDropdown />);
+    wrapper = mount(
+      <Provider store={store}>
+        <NamespaceDropdown />
+      </Provider>,
+    );
     expect(
       wrapper.find('[data-test="dropdown skeleton console.preferredNamespace"]').exists(),
     ).toBeTruthy();
@@ -54,7 +60,11 @@ describe('NamespaceDropdown', () => {
     mockProjectOrNamespaceModel.mockReturnValue([NamespaceModel, true]);
     mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
     mockUsePreferredNamespace.mockReturnValue([preferredNamespace, jest.fn(), true]);
-    wrapper = shallow(<NamespaceDropdown />);
+    wrapper = mount(
+      <Provider store={store}>
+        <NamespaceDropdown />
+      </Provider>,
+    );
     expect(wrapper.find('[data-test="dropdown console.preferredNamespace"]').exists()).toBeTruthy();
     expect(wrapper.find(NamespaceMenuToggle).props().title).toEqual(preferredNamespace);
   });
@@ -63,7 +73,11 @@ describe('NamespaceDropdown', () => {
     mockProjectOrNamespaceModel.mockReturnValue([NamespaceModel, true]);
     mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
     mockUsePreferredNamespace.mockReturnValue([undefined, jest.fn(), true]);
-    wrapper = shallow(<NamespaceDropdown />);
+    wrapper = mount(
+      <Provider store={store}>
+        <NamespaceDropdown />
+      </Provider>,
+    );
     expect(wrapper.find('[data-test="dropdown console.preferredNamespace"]').exists()).toBeTruthy();
     expect(wrapper.find(NamespaceMenuToggle).props().title).toEqual('Last viewed');
   });

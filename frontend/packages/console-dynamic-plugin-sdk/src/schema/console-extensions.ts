@@ -10,6 +10,7 @@ import {
 } from '../extensions/cluster-overview';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import { ContextProvider } from '../extensions/context-providers';
+import { CreateProjectModal } from '../extensions/create-project-modal';
 import { CreateResource } from '../extensions/create-resource';
 import { CustomExtension } from '../extensions/custom';
 import {
@@ -139,7 +140,8 @@ export type SupportedExtension =
   | ProjectOverviewUtilizationItem
   | ProjectOverviewInventoryItem
   | StorageClassProvisioner
-  | DetailsItem;
+  | DetailsItem
+  | CreateProjectModal;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

@@ -24,21 +24,6 @@ export const confirmModal = (props) =>
     m.confirmModal(props),
   );
 
-export const createNamespaceOrProjectModal = (props) =>
-  import('./create-namespace-modal' /* webpackChunkName: "create-namespace-modal" */).then((m) =>
-    m.createNamespaceOrProjectModal(props),
-  );
-
-export const createNamespaceModal = (props) =>
-  import('./create-namespace-modal' /* webpackChunkName: "create-namespace-modal" */).then((m) =>
-    m.createNamespaceModal(props),
-  );
-
-export const createProjectModal = (props) =>
-  import('./create-namespace-modal' /* webpackChunkName: "create-namespace-modal" */).then((m) =>
-    m.createProjectModal(props),
-  );
-
 export const deleteNamespaceModal = (props) =>
   import('./delete-namespace-modal' /* webpackChunkName: "delete-namespace-modal" */).then((m) =>
     m.deleteNamespaceModal(props),

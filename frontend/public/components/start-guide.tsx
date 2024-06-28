@@ -12,14 +12,15 @@ import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ProjectModel } from '../models';
-import { createNamespaceOrProjectModal } from './modals';
 import { K8sResourceKind } from '../module/k8s/types';
+import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
   ({ canCreate = true, createProjectMessage }: OpenShiftGettingStartedProps) => {
     const { t } = useTranslation();
     const [, setActiveNamespace] = useActiveNamespace();
     const [perspective] = useActivePerspective();
+    const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
 
     return (
       <>
@@ -60,7 +61,6 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
             variant="link"
             onClick={() =>
               createNamespaceOrProjectModal({
-                blocking: true,
                 onSubmit:
                   perspective !== 'admin'
                     ? (project: K8sResourceKind) => {
