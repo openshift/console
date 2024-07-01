@@ -52,7 +52,7 @@ export const TriggerTestData: TriggerTestData = {
 };
 export const EventlistenerTestData: EventListenerTestData = {
   [EventlistenerTypes.BINDINGS_TEMPLATE_REF]: {
-    apiVersion: 'triggers.tekton.dev/v1alpha1',
+    apiVersion: 'triggers.tekton.dev/v1beta1',
     kind: 'EventListener',
     metadata: {
       name: 'el-listener-ref',
@@ -63,7 +63,7 @@ export const EventlistenerTestData: EventListenerTestData = {
     },
   },
   [EventlistenerTypes.BINDINGS_TEMPLATE_NAME]: {
-    apiVersion: 'triggers.tekton.dev/v1alpha1',
+    apiVersion: 'triggers.tekton.dev/v1beta1',
     kind: 'EventListener',
     metadata: {
       name: 'el-listener-name',
@@ -75,7 +75,7 @@ export const EventlistenerTestData: EventListenerTestData = {
   },
 
   [EventlistenerTypes.TRIGGER_REF]: {
-    apiVersion: 'triggers.tekton.dev/v1alpha1',
+    apiVersion: 'triggers.tekton.dev/v1beta1',
     kind: 'EventListener',
     metadata: {
       name: 'vote-app',
