@@ -140,13 +140,14 @@ Feature: Perform actions on knative service and revision
              When user selects "Delete Revision" from context menu
              Then modal with alert description "Update the traffic distribution among the remaining Revisions" appears
 
-
         Scenario: Delete service: KN-02-TC16
             Given user has created or selected namespace "knative-ci"
              When user selects "Delete Service" context menu option of knative service "kn-service"
               And user clicks Delete button on Delete Service modal
              Then "kn-service" service should not be displayed in project
 
+
+        @manual
         Scenario Outline: Create serverless function using Create Serverless function form with Builder Images: SF-01-TC06
             Given user has created or selected namespace "knative-ci"
               And user is at Add page
