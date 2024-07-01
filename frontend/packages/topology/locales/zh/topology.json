@@ -150,7 +150,7 @@
   "Find by label...": "按标签查找......",
   "Find by name...": "按名称查找......",
   "Find by name": "按名称查找",
-  "Search results may appear outside of the visible area. <2>Click here</2> to fit to the screen.": "搜索结果可能会出现在可见区域之外，</2>点这里 <2>来匹配屏幕。",
+  "Search results may appear outside of the visible area. <2>Click here</2> to fit to the screen.": "搜索结果可能会出现在可见区域之外，<2>点这里</2>来匹配屏幕。",
   "Kiali": "Kiali",
   "Create Service Binding": "创建服务绑定",
   "Operator groupings": "Operator 组",
