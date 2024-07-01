@@ -7,13 +7,13 @@ export const ELEMENT_TYPES = {
   TEXTAREA: 'textarea',
 };
 
-export const cnvBridgeNetworkType = 'cnv-bridge';
+export const cnvBridgeNetworkType = 'bridge';
 export const ovnKubernetesNetworkType = 'ovn-k8s-cni-overlay';
 export const ovnKubernetesSecondaryLocalnet = 'ovn-k8s-cni-overlay-localnet';
 
 export const networkTypes = {
   sriov: 'SR-IOV',
-  [cnvBridgeNetworkType]: 'CNV Linux bridge',
+  [cnvBridgeNetworkType]: 'Linux bridge',
   [ovnKubernetesNetworkType]: 'OVN Kubernetes L2 overlay network',
   [ovnKubernetesSecondaryLocalnet]: 'OVN Kubernetes secondary localnet network',
 };
