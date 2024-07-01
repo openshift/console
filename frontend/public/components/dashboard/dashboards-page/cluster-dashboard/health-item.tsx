@@ -301,15 +301,19 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
         popupTitle={subsystem.popupTitle}
         popupClassname={subsystem.popupClassname}
         popupKeepOnOutsideClick={subsystem.popupKeepOnOutsideClick}
-      >
-        {subsystem.popupComponent && (
-          <AsyncComponent
-            loader={subsystem.popupComponent}
-            responses={queryResults}
-            k8sResult={k8sResult}
-          />
-        )}
-      </HealthItem>
+        popupBodyContent={
+          subsystem.popupComponent
+            ? (hide) => (
+                <AsyncComponent
+                  loader={subsystem.popupComponent}
+                  responses={queryResults}
+                  k8sResult={k8sResult}
+                  hide={hide}
+                />
+              )
+            : undefined
+        }
+      />
     );
   },
 );
