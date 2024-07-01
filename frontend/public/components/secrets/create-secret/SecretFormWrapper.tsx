@@ -13,8 +13,9 @@ import {
   SecretTypeAbstraction,
   toDefaultSecretType,
   determineSecretType,
-  secretFormFactory,
-  secretDisplayType,
+  SecretSubForm,
+  useSecretTitle,
+  useSecretDescription,
 } from '.';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
@@ -46,7 +47,8 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   );
   const [base64StringData, setBase64StringData] = React.useState({});
   const [disableForm, setDisableForm] = React.useState(false);
-
+  const title = useSecretTitle(isCreate, secretTypeAbstraction);
+  const helptext = useSecretDescription(secretTypeAbstraction);
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
 
   const onDataChanged = (secretsData) => {
@@ -108,7 +110,6 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
 
   const renderBody = () => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const SubForm = secretFormFactory(props.secretTypeAbstraction);
 
     return (
       <>
@@ -134,7 +135,8 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
             </div>
           </div>
         </fieldset>
-        <SubForm
+        <SecretSubForm
+          typeAbstraction={props.secretTypeAbstraction}
           onChange={onDataChanged}
           onError={onError}
           onFormDisable={(disable) => setDisableForm(disable)}
@@ -145,8 +147,6 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       </>
     );
   };
-
-  const title = secretDisplayType(isCreate, secretTypeAbstraction, t);
 
   return modal ? (
     <form className="co-create-secret-form modal-content" onSubmit={save}>
@@ -164,7 +164,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PageHeading title={title} helpText={props.explanation} />
+      <PageHeading title={title} helpText={helptext} />
       <div className="co-m-pane__body">
         <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
           {renderBody()}
@@ -198,7 +198,6 @@ type BaseEditSecretProps_ = {
   modal?: boolean;
   secretTypeAbstraction?: SecretTypeAbstraction;
   saveButtonText?: string;
-  explanation?: string;
   onCancel?: () => void;
   onSave?: (name: string) => void;
 };

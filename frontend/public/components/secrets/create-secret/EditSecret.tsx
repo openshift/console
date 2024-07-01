@@ -5,12 +5,7 @@ import { WithT } from 'i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { K8sResourceKind } from '../../../module/k8s';
 import { Firehose, LoadingBox, StatusBox } from '../../utils';
-import {
-  SecretTypeAbstraction,
-  toTypeAbstraction,
-  SecretFormWrapper,
-  secretFormExplanation,
-} from '.';
+import { SecretTypeAbstraction, toTypeAbstraction, SecretFormWrapper } from '.';
 
 export const SecretLoadingWrapper = withTranslation()(
   class SecretLoadingWrapper extends React.Component<
@@ -45,7 +40,6 @@ export const SecretLoadingWrapper = withTranslation()(
             secretTypeAbstraction={secretTypeAbstraction}
             obj={obj.data}
             fixed={fixed}
-            explanation={secretFormExplanation(secretTypeAbstraction)}
           />
         </StatusBox>
       );
