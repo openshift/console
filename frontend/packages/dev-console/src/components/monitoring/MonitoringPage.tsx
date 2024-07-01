@@ -14,7 +14,6 @@ import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageT
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import { MonitoringSilencesPage } from './alerts/monitoring-silences';
-import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
 import MonitoringEvents from './events/MonitoringEvents';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 
@@ -51,12 +50,6 @@ export const PageContents: React.FC = () => {
     },
     ...(prometheousRulesAccess
       ? [
-          {
-            href: 'alerts',
-            // t('devconsole~Alerts')
-            nameKey: 'devconsole~Alerts',
-            component: ConnectedMonitoringAlerts,
-          },
           {
             href: 'silences',
             // t('devconsole~Silences')
