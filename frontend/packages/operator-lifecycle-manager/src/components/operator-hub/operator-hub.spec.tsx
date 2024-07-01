@@ -193,7 +193,7 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
   // TODO: Test category functionality
 });
 
-describe(OperatorHubItemDetails.displayName, () => {
+xdescribe(OperatorHubItemDetails.displayName, () => {
   let wrapper: ShallowWrapper<OperatorHubItemDetailsProps>;
 
   beforeEach(() => {

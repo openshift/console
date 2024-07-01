@@ -23,7 +23,8 @@ import { MatchExpression, referenceForModel } from '@console/internal/module/k8s
 import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
-import { ClusterServiceVersionLogo, visibilityLabel, iconFor, defaultChannelFor } from './index';
+import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
+import { visibilityLabel, iconFor, defaultChannelFor } from './index';
 
 const tableColumnClasses = [
   '',

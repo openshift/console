@@ -246,9 +246,11 @@ export type PackageManifestKind = {
       name: string;
     };
     packageName: string;
+    deprecation?: { message: string };
     channels: {
       name: string;
       currentCSV: string;
+      deprecation?: { message: string };
       currentCSVDesc: {
         annotations?: any;
         description?: string;
@@ -269,6 +271,7 @@ export type PackageManifestKind = {
       entries?: {
         name: string;
         version: string;
+        deprecation?: { message: string };
       }[];
     }[];
     defaultChannel: string;
@@ -288,3 +291,9 @@ export type OperatorGroupKind = {
     lastUpdated: string;
   };
 } & K8sResourceKind;
+
+export type DeprecatedOperatorWarning = {
+  deprecation?: {
+    message: string;
+  };
+};
