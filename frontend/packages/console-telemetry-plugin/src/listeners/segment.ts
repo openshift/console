@@ -122,7 +122,7 @@ export const eventListener: TelemetryEventListener = async (
     case 'identify':
       {
         const { user, ...otherProperties } = properties;
-        const id = user?.metadata?.name;
+        const id = user?.username;
         if (id) {
           // Use SHA1 hash algorithm to anonymize the user
           const anonymousIdBuffer = await crypto.subtle.digest(
