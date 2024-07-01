@@ -479,7 +479,7 @@ const BaseEditRoleBinding = (props) => {
 
   // constructor/didmount
   React.useEffect(() => {
-    const obj = _.defaultsDeep({}, fixed, existingData, {
+    const obj = _.defaultsDeep({}, _.omit(fixed, 'subjectRef'), existingData, {
       apiVersion: 'rbac.authorization.k8s.io/v1',
       kind: 'RoleBinding',
       metadata: {
