@@ -8,7 +8,10 @@ import {
   SecretType,
 } from '.';
 
-export const SecretSubForm: React.FC<SecretSubFormProps> = ({ typeAbstraction, ...props }) => {
+export const SecretSubForm: React.FC<WithTypeAbstraction<SecretSubFormProps>> = ({
+  typeAbstraction,
+  ...props
+}) => {
   switch (typeAbstraction) {
     case SecretTypeAbstraction.source:
       return <SourceSecretForm {...props} />;
@@ -21,12 +24,16 @@ export const SecretSubForm: React.FC<SecretSubFormProps> = ({ typeAbstraction, .
   }
 };
 
-type SecretSubFormProps = {
+type WithTypeAbstraction<T> = T & {
   typeAbstraction: SecretTypeAbstraction;
-  onChange: (param: any) => void;
-  onError: (param: any) => void;
-  onFormDisable: (param: boolean) => void;
-  stringData: { [key: string]: string };
+};
+export type SecretSubFormProps = {
+  onChange: (stringData: SecretStringData) => void;
+  onError: (error: any) => void;
+  onFormDisable: (disable: boolean) => void;
+  stringData: SecretStringData;
   secretType: SecretType;
   isCreate: boolean;
 };
+
+type SecretStringData = { [key: string]: string };
