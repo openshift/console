@@ -47,6 +47,7 @@ describe(`${crd} CRD`, () => {
     ({ name: instanceName, dropdownMenuName, dropdownToggle, menuLinkLocation, menuLinkText }) => {
       it(`creates, displays, and deletes a new ${crd} ${dropdownMenuName} instance`, () => {
         cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
+        listPage.isCreateButtonVisible();
         listPage.rows.shouldBeLoaded();
         listPage.rows.clickKebabAction(crd, 'View instances');
         listPage.titleShouldHaveText(crd);

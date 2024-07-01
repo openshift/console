@@ -96,6 +96,7 @@ describe('CustomResourceDefinitions', () => {
         });
       });
       cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);
+      listPage.isCreateButtonVisible();
       listPage.rows.shouldBeLoaded();
       listPage.rows.clickKebabAction(`CRD${testName}`, 'View instances');
       listPage.clickCreateYAMLbutton();
@@ -108,6 +109,7 @@ describe('CustomResourceDefinitions', () => {
         });
       });
       cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);
+      listPage.isCreateButtonVisible();
       listPage.rows.shouldBeLoaded();
       listPage.rows.clickKebabAction(`CRD${testName}`, 'Delete CustomResourceDefinition');
       cy.resourceShouldBeDeleted(testName, 'CustomResourceDefinition', `CRD${testName}`);
