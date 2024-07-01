@@ -3,15 +3,14 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '../../utils';
 import {
-  SecretType,
   getImageSecretKey,
   AUTHS_KEY,
   CreateConfigSubform,
   UploadConfigSubform,
+  SecretSubFormProps,
 } from '.';
-import { useCallback, useState } from 'react';
 
-export const PullSecretForm: React.FC<PullSecretFormProps> = ({
+export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,
   onError,
   onFormDisable,
@@ -19,7 +18,7 @@ export const PullSecretForm: React.FC<PullSecretFormProps> = ({
   secretType,
   isCreate,
 }) => {
-  const [authType, setAuthType] = useState<string>('credentials');
+  const [authType, setAuthType] = React.useState('credentials');
   const { t } = useTranslation();
 
   const pullSecretData = React.useMemo<PullSecretData>(() => {
@@ -33,14 +32,14 @@ export const PullSecretForm: React.FC<PullSecretFormProps> = ({
     }
   }, [stringData, secretType]);
 
-  const onDataChanged = useCallback(
+  const onDataChanged = React.useCallback(
     (secretData: PullSecretData) => {
       if (!_.isError(secretData)) {
         onFormDisable(false);
       }
       const newDataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
       onChange({
-        stringData: { [newDataKey]: JSON.stringify(secretData) },
+        [newDataKey]: JSON.stringify(secretData),
       });
     },
     [onFormDisable, onchange],
@@ -96,12 +95,3 @@ type DockerConfigJSONData = {
 };
 
 type PullSecretData = DockerConfigData | DockerConfigJSONData;
-
-type PullSecretFormProps = {
-  onChange: (data: any) => void;
-  onError: (message: string) => void;
-  onFormDisable: (disable: boolean) => void;
-  stringData: { [key: string]: string };
-  secretType: SecretType;
-  isCreate: boolean;
-};
