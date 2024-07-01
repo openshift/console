@@ -536,7 +536,7 @@
   "Your progress will be saved.": "您的进度将被保存。",
   "Copy to clipboard": "复制到剪贴板",
   "Successfully copied to clipboard!": "成功复制到剪贴板！",
-  "No {{label}} found": "没有找到{{label}}",
+  "No {{label}} found": "没有找到 {{label}}",
   "Not found": "没有找到",
   "No quota": "没有配额",
   "Zone and zones parameters must not be used at the same time": "Zone 和 zones 参数不能同时使用",
