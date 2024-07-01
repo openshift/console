@@ -4,12 +4,17 @@ import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { useAccessReview } from '@console/internal/components/utils';
+import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
 import { CLUSTER_PIPELINE_NS, FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { SelectInputField, SelectInputOption, useFlag } from '@console/shared';
-import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../const';
-import { BuildOptions, ReadableBuildOptions } from '../import-types';
+import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../../const';
+import {
+  isPreferredStrategyAvailable,
+  useClusterBuildStrategy,
+  useShipwrightBuilds,
+} from '../../../../utils/shipwright-build-hook';
+import { BuildOptions, ReadableBuildOptions } from '../../import-types';
 
 const usePipelineAccessReview = (): boolean => {
   const canListPipelines = useAccessReview({
@@ -29,10 +34,12 @@ const usePipelineAccessReview = (): boolean => {
   return canListPipelines && canCreatePipelines;
 };
 
-export const BuildOption = ({ isDisabled }) => {
+export const BuildOption = ({ isDisabled, importStrategy }) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isBuildV1Enabled = useFlag(FLAG_OPENSHIFT_BUILDCONFIG);
+  const isShipwrightBuildsEnabled = useShipwrightBuilds();
+  const [strategy, strategyLoaded] = useClusterBuildStrategy();
   const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
   const hasCreatePipelineAccess = usePipelineAccessReview();
 
@@ -51,6 +58,16 @@ export const BuildOption = ({ isDisabled }) => {
       });
     }
 
+    if (isShipwrightBuildsEnabled && isPreferredStrategyAvailable(importStrategy, strategy)) {
+      options.push({
+        label: t(ReadableBuildOptions[BuildOptions.SHIPWRIGHT_BUILD]),
+        value: BuildOptions.SHIPWRIGHT_BUILD,
+        description: t(
+          'devconsole~Builds is an extensible build framework based on the Shipwright project, which you can use to build container images on an OpenShift Container Platform cluster.',
+        ),
+      });
+    }
+
     if (isPipelineEnabled && hasCreatePipelineAccess) {
       options.push({
         label: t(ReadableBuildOptions[BuildOptions.PIPELINES]),
@@ -62,7 +79,15 @@ export const BuildOption = ({ isDisabled }) => {
     }
 
     return options;
-  }, [isBuildV1Enabled, isPipelineEnabled, hasCreatePipelineAccess, t]);
+  }, [
+    isBuildV1Enabled,
+    isShipwrightBuildsEnabled,
+    isPipelineEnabled,
+    hasCreatePipelineAccess,
+    strategy,
+    importStrategy,
+    t,
+  ]);
 
   const onChange = React.useCallback(
     (selection: string) => {
@@ -72,7 +97,7 @@ export const BuildOption = ({ isDisabled }) => {
     [setFieldValue, fieldName, t],
   );
 
-  return (
+  return strategyLoaded ? (
     <SelectInputField
       name={fieldName}
       label={t('devconsole~Build Option')}
@@ -91,5 +116,7 @@ export const BuildOption = ({ isDisabled }) => {
       hideClearButton
       toggleOnSelection
     />
+  ) : (
+    <LoadingInline />
   );
 };

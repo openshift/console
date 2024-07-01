@@ -10,6 +10,7 @@ type AppResources = {
   service?: WatchK8sResultsObject<K8sResourceKind>;
   route?: WatchK8sResultsObject<K8sResourceKind>;
   buildConfig?: WatchK8sResultsObject<K8sResourceKind[]>;
+  shipwrightBuild?: WatchK8sResultsObject<K8sResourceKind[]>;
   pipeline?: WatchK8sResultsObject<PipelineKind[]>;
   imageStream?: WatchK8sResultsObject<K8sResourceKind[]>;
   imageStreams?: WatchK8sResultsObject<K8sResourceKind[]>;
@@ -61,6 +62,7 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
         ...resources,
         pipeline: getAssociatedResource(resources.pipeline) as WatchK8sResultsObject<PipelineKind>,
         buildConfig: getAssociatedResource(resources.buildConfig),
+        shipwrightBuild: getAssociatedResource(resources.shipwrightBuild),
         imageStream: getAssociatedImageStream(resources.imageStream),
       }}
     />

@@ -6,6 +6,7 @@ export interface AppResources {
   service?: FirehoseResult<K8sResourceKind>;
   route?: FirehoseResult<K8sResourceKind>;
   buildConfig?: FirehoseResult<K8sResourceKind>;
+  shipwrightBuild?: FirehoseResult<K8sResourceKind>;
   pipeline?: FirehoseResult<PipelineKind>;
   imageStream?: FirehoseResult<K8sResourceKind[]>;
   editAppResource?: FirehoseResult<K8sResourceKind>;
