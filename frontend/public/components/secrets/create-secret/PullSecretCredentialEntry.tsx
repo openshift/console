@@ -11,7 +11,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
 }) => {
   const { t } = useTranslation();
 
-  const updateEntry = (name, value) =>
+  const updateEntry = (name: string, value: string): void =>
     onChange({ address, username, password, email, [name]: value }, id);
 
   const handleBlurEvent = (e: React.SyntheticEvent<HTMLInputElement>) =>
