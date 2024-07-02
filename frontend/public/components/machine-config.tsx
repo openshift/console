@@ -4,11 +4,25 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import {
+  Button,
+  ButtonVariant,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Flex,
+  Popover,
+  Text,
+  TextContent,
+} from '@patternfly/react-core';
+import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
+  CopyToClipboard,
   Kebab,
   navFactory,
   ResourceKebab,
@@ -34,16 +48,59 @@ const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj, t }) 
 
 const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
+  const files = obj.spec.config?.storage?.files;
 
   return (
-    <div className="co-m-pane__body">
-      <SectionHeading text={t('public~MachineConfig details')} />
-      <div className="row">
-        <div className="col-md-6">
-          <MachineConfigSummary obj={obj} t={t} />
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('public~MachineConfig details')} />
+        <div className="row">
+          <div className="col-md-6">
+            <MachineConfigSummary obj={obj} t={t} />
+          </div>
         </div>
       </div>
-    </div>
+      {files && (
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('public~Configuration files')} />
+          {files.map((file, i) => (
+            <div className="pf-v5-u-mb-xl" key={file.path}>
+              <Flex columnGap={{ default: 'columnGapNone' }} className="pf-v5-u-mb-md">
+                <TextContent>
+                  <Text data-test={`config-file-path-${i}`}>{file.path}</Text>
+                </TextContent>
+                <Popover
+                  headerContent={t('public~Properties')}
+                  bodyContent={
+                    <DescriptionList isHorizontal isFluid>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>{t('public~Mode')}</DescriptionListTerm>
+                        <DescriptionListDescription>{file.mode}</DescriptionListDescription>
+                        <DescriptionListTerm>{t('public~Overwrite')}</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {file.overwrite.toString()}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                    </DescriptionList>
+                  }
+                >
+                  <Button
+                    variant={ButtonVariant.plain}
+                    aria-label={'public~Info'}
+                    className="pf-v5-u-ml-sm pf-v5-u-p-0"
+                  >
+                    <BlueInfoCircleIcon />
+                  </Button>
+                </Popover>
+              </Flex>
+              <CopyToClipboard
+                value={decodeURIComponent(file.contents.source).replace(/^(data:,)/, '')}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 
