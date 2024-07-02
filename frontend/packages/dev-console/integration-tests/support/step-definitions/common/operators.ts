@@ -1,6 +1,10 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 import { operators } from '../../constants';
-import { installPipelinesOperatorUsingCLI, verifyAndInstallOperator } from '../../pages';
+import {
+  installPipelinesOperatorUsingCLI,
+  installShipwrightOperatorUsingCLI,
+  verifyAndInstallOperator,
+} from '../../pages';
 import { verifyAndInstallWebTerminalOperator } from '../../pages/functions/installOperatorOnCluster';
 
 Given('user has installed Web Terminal operator', () => {
@@ -29,7 +33,7 @@ Given('user has installed Quay Container Security Operator', () => {
 });
 
 Given('user has installed Shipwright Operator', () => {
-  verifyAndInstallOperator(operators.ShipwrightOperator);
+  installShipwrightOperatorUsingCLI();
 });
 
 Given('user with basic rights has installed Web Terminal operator', () => {
