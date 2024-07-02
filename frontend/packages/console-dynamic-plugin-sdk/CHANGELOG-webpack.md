@@ -3,6 +3,11 @@
 Refer to [Console dynamic plugins README][README] for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
 
+## 1.1.1 - 2024-07-02
+
+- Patch dynamic module parser to exclude PatternFly "next" modules ([OCPBUGS-31901], [#13832])
+- Ensure `requiredVersion` is set for Console provided shared modules ([OCPBUGS-34683], [#13893])
+
 ## 1.1.0 - 2024-04-03
 
 - Remove `react-helmet` from Console provided shared modules ([OCPBUGS-30824], [#13687])
@@ -28,10 +33,14 @@ version and PatternFly version compatibility.
 [CONSOLE-3853]: https://issues.redhat.com/browse/CONSOLE-3853
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
+[OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
 [OCPBUGS-33642]: https://issues.redhat.com/browse/OCPBUGS-33642
+[OCPBUGS-34683]: https://issues.redhat.com/browse/OCPBUGS-34683
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
 [#13657]: https://github.com/openshift/console/pull/13657
 [#13687]: https://github.com/openshift/console/pull/13687
+[#13832]: https://github.com/openshift/console/pull/13832
 [#13849]: https://github.com/openshift/console/pull/13849
+[#13893]: https://github.com/openshift/console/pull/13893
