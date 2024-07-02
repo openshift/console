@@ -120,6 +120,7 @@ export const getCorePackage: GetPackageDefinition = (
     ...commonFiles,
     ...docFiles,
     ...getReferencedAssets('dist/core'),
+    'CHANGELOG-core.md': 'CHANGELOG.md',
   },
 });
 
@@ -175,5 +176,6 @@ export const getWebpackPackage: GetPackageDefinition = (
   filesToCopy: {
     ...commonFiles,
     'generated/schema': 'schema',
+    'CHANGELOG-webpack.md': 'CHANGELOG.md',
   },
 });
