@@ -1,27 +1,8 @@
 import { operatorNamespaces, operatorSubscriptions, operators } from '../../constants/global';
-
-export const checkPipelineOperatorStatus = (retries: number = 5) => {
-  const namespace = operatorNamespaces.PipelinesOperator;
-  const resourceName = operatorSubscriptions.PipelinesOperator;
-  if (retries === 0) {
-    throw new Error('Failed to install Pipelines Operator - Pod timeout');
-  } else {
-    cy.exec(
-      `oc wait --for=condition=ready pod -l app=${resourceName} -n ${namespace} --timeout=300s`,
-      {
-        failOnNonZeroExit: false,
-      },
-    ).then(function (result) {
-      if (result.stdout.includes('condition met')) {
-        cy.log(`Success: ${result.stdout}`);
-      } else {
-        cy.log(result.stderr);
-        cy.wait(30000);
-        checkPipelineOperatorStatus(retries - 1);
-      }
-    });
-  }
-};
+import {
+  checkPipelineOperatorStatus,
+  checkRedHatIntegrationCamelKOperatorStatus,
+} from './checkOperatorStatus';
 
 export const performPostInstallationSteps = (operator: operators): void => {
   switch (operator) {
@@ -39,6 +20,9 @@ export const checkOperatorStatus = (operator: operators) => {
     case operators.PipelinesOperator:
       checkPipelineOperatorStatus();
       break;
+    case operators.RedHatIntegrationCamelK:
+      checkRedHatIntegrationCamelKOperatorStatus();
+      break;
     default:
       throw new Error('Invalid Operator');
   }
@@ -50,6 +34,10 @@ export const installOperatorUsingCLI = (operator: operators) => {
     case operators.PipelinesOperator:
       yamlFile =
         '../../pipelines-plugin/integration-tests/testData/pipelinesOperatorSubscription.yaml';
+      break;
+    case operators.RedHatIntegrationCamelK:
+      yamlFile =
+        '../../knative-plugin/integration-tests/testData/redhatCamelkOperatorSubscription.yaml';
       break;
     default:
       throw new Error('Invalid Operator');
@@ -79,6 +67,10 @@ export const checkSubscriptionStatus = (operator: operators) => {
       namespace = operatorNamespaces.PipelinesOperator;
       subscriptionName = operatorSubscriptions.PipelinesOperator;
       break;
+    case operators.RedHatIntegrationCamelK:
+      namespace = operatorNamespaces.RedHatIntegrationCamelK;
+      subscriptionName = operatorSubscriptions.RedHatIntegrationCamelK;
+      break;
     default:
       throw new Error('Invalid Operator');
   }
@@ -105,4 +97,8 @@ export const verifyAndInstallOperatorUsingCLI = (operator: operators) => {
 
 export const installPipelinesOperatorUsingCLI = () => {
   verifyAndInstallOperatorUsingCLI(operators.PipelinesOperator);
+};
+
+export const installRedHatIntegrationCamelKOperatorUsingCLI = () => {
+  verifyAndInstallOperatorUsingCLI(operators.RedHatIntegrationCamelK);
 };
