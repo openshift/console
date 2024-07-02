@@ -6,14 +6,14 @@ import {
 } from '@console/dev-console/integration-tests/support/constants';
 import {
   app,
+  installWebterminalOperatorUsingCLI,
   navigateTo,
   perspective,
-  verifyAndInstallWebTerminalOperator,
 } from '@console/dev-console/integration-tests/support/pages';
 import { webTerminalConfiguration } from '../../pages/functions/webTerminalConfiguration';
 
 Given('user has installed Web Terminal operator', () => {
-  verifyAndInstallWebTerminalOperator();
+  installWebterminalOperatorUsingCLI();
   cy.reload();
   app.waitForDocumentLoad();
 });

@@ -19,10 +19,10 @@ import {
   topologyPage,
   createGitWorkloadIfNotExistsOnTopologyPage,
   createEventSourcePage,
-  verifyAndInstallKnativeOperator,
   createChannel,
   verifyAndInstallOperator,
   app,
+  installKnativeOperatorUsingCLI,
 } from '@console/dev-console/integration-tests/support/pages';
 import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 import { userLoginPage } from '../../pages/dev-perspective/common';
@@ -159,7 +159,7 @@ Then('modal with {string} appears', (header: string) => {
 });
 
 Given('user has installed OpenShift Serverless Operator', () => {
-  verifyAndInstallKnativeOperator();
+  installKnativeOperatorUsingCLI();
 });
 
 Given('user has created channel {string}', (channelName: string) => {
