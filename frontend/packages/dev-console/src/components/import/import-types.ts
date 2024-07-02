@@ -248,6 +248,7 @@ export interface DetectedStrategyFormData extends DetectedStrategy {
 
 export interface ImportStrategyData {
   loaded?: boolean;
+  funcLoaded?: boolean;
   loadError?: string;
   strategies?: DetectedStrategy[];
   recommendedStrategy?: DetectedStrategyFormData;
@@ -268,6 +269,7 @@ export interface DeploymentData {
 export interface ServerlessData {
   scaling: ServerlessScaling;
   domainMapping?: string[];
+  funcLoaded?: boolean;
 }
 
 export interface ServerlessScaling {
