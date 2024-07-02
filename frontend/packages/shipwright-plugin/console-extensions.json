@@ -110,75 +110,25 @@
     }
   },
   {
-    "type": "console.navigation/resource-ns",
+    "type": "console.navigation/href",
     "properties": {
-      "perspective": "admin",
+      "id": "shipwright-tablistpage",
       "section": "builds",
-      "id": "shipwright-builds",
-      "name": "%shipwright-plugin~Shipwright Builds%",
-      "model": {
-        "group": "shipwright.io",
-        "version": "v1alpha1",
-        "kind": "Build"
-      }
-    },
-    "flags": {
-      "required": ["SHIPWRIGHT_BUILD_V1ALPHA1"],
-      "disallowed": ["SHIPWRIGHT_BUILD"]
+      "perspective": "admin",
+      "prefixNamespaced": true,
+      "href": "/shipwright.io",
+      "name": "%shipwright-plugin~Shipwright%"
     }
   },
   {
-    "type": "console.navigation/resource-ns",
+    "type": "console.page/route",
     "properties": {
+      "exact": false,
+      "path": ["/k8s/all-namespaces/shipwright.io", "/k8s/ns/:ns/shipwright.io"],
       "perspective": "admin",
-      "section": "builds",
-      "id": "shipwright-buildruns",
-      "insertAfter": "shipwright-buildruns",
-      "name": "%shipwright-plugin~Shipwright BuildRuns%",
-      "model": {
-        "group": "shipwright.io",
-        "version": "v1alpha1",
-        "kind": "BuildRun"
+      "component": {
+        "$codeRef": "pages.ShipwrightTabListPage"
       }
-    },
-    "flags": {
-      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
-      "disallowed": ["SHIPWRIGHT_BUILDRUN"]
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "builds",
-      "id": "shipwright-builds",
-      "name": "%shipwright-plugin~Shipwright Builds%",
-      "model": {
-        "group": "shipwright.io",
-        "version": "v1beta1",
-        "kind": "Build"
-      }
-    },
-    "flags": {
-      "required": ["SHIPWRIGHT_BUILD"]
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "builds",
-      "id": "shipwright-buildruns",
-      "insertAfter": "shipwright-buildruns",
-      "name": "%shipwright-plugin~Shipwright BuildRuns%",
-      "model": {
-        "group": "shipwright.io",
-        "version": "v1beta1",
-        "kind": "BuildRun"
-      }
-    },
-    "flags": {
-      "required": ["SHIPWRIGHT_BUILDRUN"]
     }
   },
   {
