@@ -2,7 +2,7 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { devNavigationMenu } from '../../constants';
 import { deploymentStrategyFormP0, eventSourcePO, pagePO } from '../../pageObjects';
-import { createForm, navigateTo } from '../../pages';
+import { createForm, navigateTo, topologyPage, topologySidePane } from '../../pages';
 
 Given('user is at Deployments page', () => {
   navigateTo(devNavigationMenu.Deployments);
@@ -51,4 +51,27 @@ When('user selects ImageStream with id {string}', (imageStreamId: string) => {
   cy.get(deploymentStrategyFormP0.images.tagDropdown).click();
   cy.get(deploymentStrategyFormP0.images.selectTagLatest).click();
   cy.get(eventSourcePO.createPingSource.name).scrollIntoView();
+});
+
+When('user select auto deploy checkbox', () => {
+  cy.get('#form-checkbox-formData-triggers-image-field').should('not.be.checked');
+  cy.get('#form-checkbox-formData-triggers-image-field').check();
+});
+
+When('user clicks on Save', () => {
+  cy.byLegacyTestID('submit-button').click();
+});
+
+Then('user sees auto deploy option is checked', () => {
+  cy.get('#form-checkbox-formData-triggers-image-field').should('be.checked');
+});
+
+When('user clicks on the workload {string} to open the sidebar', (nodeName: string) => {
+  topologyPage.clickOnNode(nodeName);
+  topologySidePane.verify();
+});
+
+When('user clicks Edit Deployment from the action menu', () => {
+  cy.byLegacyTestID('actions-menu-button').click();
+  cy.byTestActionID('Edit Deployment').click();
 });
