@@ -16,13 +16,13 @@ import {
   navigateTo,
   perspective,
   projectNameSpace,
-  verifyAndInstallKnativeOperator,
   app,
+  installKnativeOperatorUsingCLI,
 } from '@console/dev-console/integration-tests/support/pages';
 import { userLoginPage } from '../../pages/functions/common';
 
 Given('user has installed OpenShift Serverless Operator', () => {
-  verifyAndInstallKnativeOperator();
+  installKnativeOperatorUsingCLI();
 });
 
 Given('user has logged in as a basic user', () => {

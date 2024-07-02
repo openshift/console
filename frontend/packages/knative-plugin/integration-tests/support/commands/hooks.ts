@@ -1,11 +1,10 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
-import { verifyAndInstallKnativeOperator } from '@console/dev-console/integration-tests/support/pages';
+import { installKnativeOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
   cy.login();
   cy.document().its('readyState').should('eq', 'complete');
-  verifyAndInstallKnativeOperator();
-
+  installKnativeOperatorUsingCLI();
   //  To ignore the resizeObserverLoopErrors on CI, adding below code
   const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
   /* eslint-disable consistent-return */
