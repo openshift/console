@@ -23,7 +23,7 @@ When('user has created shipwright builds', () => {
 });
 
 When('user navigates to Builds in Developer perspective', () => {
-  navigateTo(devNavigationMenu.Builds);
+  navigateTo(devNavigationMenu.ShipwrightBuilds);
 });
 
 When('user switches to Administrative perspective', () => {
@@ -39,7 +39,7 @@ Then('user will see {string} tab', (tab: string) => {
 });
 
 Given('user is on Builds navigation in Developer perspective', () => {
-  navigateTo(devNavigationMenu.Builds);
+  navigateTo(devNavigationMenu.ShipwrightBuilds);
 });
 
 Then('user will see {string}, {string} and {string} in Filter list', (el1, el2, el3: string) => {
@@ -72,7 +72,7 @@ Then('user will see events steaming', () => {
 });
 
 Given('user is at Shipwright Builds details page for build {string}', (buildName: string) => {
-  navigateTo(devNavigationMenu.Builds);
+  navigateTo(devNavigationMenu.ShipwrightBuilds);
   cy.get(buildPO.shipwrightBuild.shipwrightBuildsTab).should('be.visible').click();
   cy.get(`[data-test-id='${buildName}'][href*='Build/${buildName}']`).should('be.visible').click();
   cy.get('[aria-label="Breadcrumb"]').should('contain', 'Build details');
@@ -111,8 +111,7 @@ Then(
 );
 
 Given('user is at Shipwright Builds run page {string}', (buildName: string) => {
-  navigateTo(devNavigationMenu.Builds);
-  cy.get(buildPO.shipwrightBuild.shipwrightBuildsTab).should('be.visible').click();
+  navigateTo(devNavigationMenu.ShipwrightBuilds);
   cy.get(`[data-test-id='${buildName}'][href*='Build/${buildName}']`).should('be.visible').click();
   cy.get(buildPO.shipwrightBuild.shipwrightBuildRunsTab).should('be.visible').click();
 });

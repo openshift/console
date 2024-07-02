@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page, AsyncComponent } from '@console/internal/components/utils';
 import { useFlag, MenuActions, MultiTabListPage, getBadgeFromType } from '@console/shared';
@@ -17,7 +18,9 @@ import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateP
 const BuildsTabListPage: React.FC = () => {
   const { t } = useTranslation();
   const params = useParams();
+  const navigate = useNavigate();
   const title = t('devconsole~Builds');
+  const activePerspective = useActivePerspective()[0];
   const namespace = params.ns;
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
@@ -62,6 +65,15 @@ const BuildsTabListPage: React.FC = () => {
   const SHIPWRIGHT_BUILD_V1ALPHA1 = useFlag('SHIPWRIGHT_BUILD_V1ALPHA1');
 
   const shipwrightBuildEnabled = SHIPWRIGHT_BUILD || SHIPWRIGHT_BUILD_V1ALPHA1;
+
+  /* Redirect to Shipwright Builds tab if Shipwright Build is enabled */
+  React.useEffect(() => {
+    if (namespace && activePerspective === 'dev' && shipwrightBuildEnabled) {
+      navigate(`/builds/ns/${namespace}/shipwright-builds`, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shipwrightBuildEnabled, namespace]);
+
   const shipwrightKind = SHIPWRIGHT_BUILD
     ? 'shipwright.io~v1beta1~Build'
     : 'shipwright.io~v1alpha1~Build';
