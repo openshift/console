@@ -229,7 +229,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			c.SecureCookies,
 			c.CookiePath,
 		)
-		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig)
+		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig, a.metrics)
 		if err != nil {
 			return nil, err
 		}
