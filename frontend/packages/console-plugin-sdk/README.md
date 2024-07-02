@@ -105,11 +105,9 @@ provide their own list.
 
 ```yaml
 reviewers:
-  - christianvogt
   - spadgett
   - vojtechszocs
 approvers:
-  - christianvogt
   - spadgett
   - vojtechszocs
 labels:
