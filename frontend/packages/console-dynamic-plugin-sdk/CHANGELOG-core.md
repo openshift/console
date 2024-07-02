@@ -3,6 +3,12 @@
 Refer to [Console dynamic plugins README][README] for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
 
+## 1.4.0 - 2024-07-02
+
+- Expose `useUserSettings` hook ([OCPBUGS-33567], [#13843])
+- Add `sortColumnIndex` and `sortDirection` props to `VirtualizedTable` component ([OCPBUGS-33539], [#13916])
+- Document Console 4.16 shared module changes ([OCPBUGS-34538], [CONSOLE-3662], [CONSOLE-4097], [#13900])
+
 ## 1.3.0 - 2024-04-09
 
 - Add new props to `ResourceYAMLEditor` component ([OCPBUGS-31703], [#13722])
@@ -15,7 +21,7 @@ version and PatternFly version compatibility.
 ## 1.1.0 - 2024-03-19
 
 - Add search filter functionality to `ListPageFilter` component ([OCPBUGS-30077], [#13233])
-- Improve dynamic plugin SDK documentation and add PatternFly upgrade notes ([CONSOLE-3883], [#13637])
+- Improve plugin SDK documentation and add PatternFly upgrade notes ([CONSOLE-3883], [#13637])
 
 ## 1.0.0 - 2024-02-09
 
@@ -27,14 +33,19 @@ version and PatternFly version compatibility.
 - Add new extension type `console.node/status` ([CONSOLE-3899], [#13493])
 
 [README]: ./README.md
+[CONSOLE-3662]: https://issues.redhat.com/browse/CONSOLE-3662
 [CONSOLE-3693]: https://issues.redhat.com/browse/CONSOLE-3693
 [CONSOLE-3695]: https://issues.redhat.com/browse/CONSOLE-3695
 [CONSOLE-3883]: https://issues.redhat.com/browse/CONSOLE-3883
 [CONSOLE-3899]: https://issues.redhat.com/browse/CONSOLE-3899
 [CONSOLE-3949]: https://issues.redhat.com/browse/CONSOLE-3949
+[CONSOLE-4097]: https://issues.redhat.com/browse/CONSOLE-4097
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
 [OCPBUGS-31703]: https://issues.redhat.com/browse/OCPBUGS-31703
+[OCPBUGS-33539]: https://issues.redhat.com/browse/OCPBUGS-33539
+[OCPBUGS-33567]: https://issues.redhat.com/browse/OCPBUGS-33567
+[OCPBUGS-34538]: https://issues.redhat.com/browse/OCPBUGS-34538
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -45,3 +56,6 @@ version and PatternFly version compatibility.
 [#13637]: https://github.com/openshift/console/pull/13637
 [#13694]: https://github.com/openshift/console/pull/13694
 [#13722]: https://github.com/openshift/console/pull/13722
+[#13843]: https://github.com/openshift/console/pull/13843
+[#13900]: https://github.com/openshift/console/pull/13900
+[#13916]: https://github.com/openshift/console/pull/13916
