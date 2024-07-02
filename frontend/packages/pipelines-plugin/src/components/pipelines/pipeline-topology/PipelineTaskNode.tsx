@@ -29,6 +29,7 @@ import {
 } from '../detail-page-tabs/pipeline-details/pipeline-step-utils';
 import { PipelineVisualizationStepList } from '../detail-page-tabs/pipeline-details/PipelineVisualizationStepList';
 import { NodeType } from './const';
+import { getTooltipContent } from './utils';
 
 import './PipelineTaskNode.scss';
 
@@ -73,8 +74,8 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const isSkipped = !!(
     computedTask &&
     data.pipelineRun?.status?.skippedTasks?.some(
-      (t) => t.name === data.task.name,
-      (t) => t.name === computedTask.name,
+      (skippedTask) => skippedTask.name === data.task.name,
+      (skippedTask) => skippedTask.name === computedTask.name,
     )
   );
 
@@ -119,6 +120,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   }, [data]);
 
   const hasTaskIcon = !!(data.taskIconClass || data.taskIcon);
+  const tooltipContent = getTooltipContent(data.task?.status?.reason);
   const whenDecorator = data.whenStatus ? (
     <WhenDecorator
       element={element}
@@ -128,6 +130,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
           ? DEFAULT_WHEN_OFFSET + (element.getBounds().height - 4) * 0.75
           : DEFAULT_WHEN_OFFSET
       }
+      toolTip={tooltipContent}
     />
   ) : null;
 
@@ -175,8 +178,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     >
       <g data-test={`task ${element.getLabel()}`} className={classes} ref={hoverRef}>
         <Tooltip
-          position="bottom"
-          enableFlip={false}
+          enableFlip
           triggerRef={taskRef}
           content={
             <PipelineVisualizationStepList
