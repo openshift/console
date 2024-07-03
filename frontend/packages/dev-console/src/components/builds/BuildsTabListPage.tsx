@@ -23,10 +23,9 @@ import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateP
  */
 const BuildsTabListPage: React.FC = () => {
   const { t } = useTranslation();
-  const params = useParams();
+  const { ns: namespace, '*': currentTab } = useParams();
   const navigate = useNavigate();
   const title = t('devconsole~Builds');
-  const namespace = params.ns;
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
   const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
@@ -90,10 +89,9 @@ const BuildsTabListPage: React.FC = () => {
   React.useEffect(() => {
     // update the preferred tab
     if (preferredTabLoaded && namespace) {
-      setPreferredTab(params['*'] === 'shipwright-builds' ? 'shipwright-builds' : 'buildconfigs');
+      setPreferredTab(currentTab === 'shipwright-builds' ? 'shipwright-builds' : 'buildconfigs');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace, params, preferredTabLoaded]);
+  }, [namespace, currentTab, preferredTabLoaded, setPreferredTab]);
 
   const shipwrightKind = SHIPWRIGHT_BUILD
     ? 'shipwright.io~v1beta1~Build'
