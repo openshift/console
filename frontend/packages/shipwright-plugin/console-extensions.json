@@ -103,10 +103,43 @@
     "properties": {
       "model": {
         "group": "shipwright.io",
-        "version": "v1beta1",
-        "kind": "BuildRun"
+        "version": "v1alpha1",
+        "kind": "BuildStrategy"
       },
-      "flag": "SHIPWRIGHT_BUILDRUN"
+      "flag": "SHIPWRIGHT_BUILDSTRATEGY_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildStrategy"
+      },
+      "flag": "SHIPWRIGHT_BUILDSTRATEGY"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "flag": "SHIPWRIGHT_CLUSTERBUILDSTRATEGY_V1ALPHA1"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "flag": "SHIPWRIGHT_CLUSTERBUILDSTRATEGY"
     }
   },
   {
@@ -118,6 +151,55 @@
       "prefixNamespaced": true,
       "href": "/shipwright.io",
       "name": "%shipwright-plugin~Shipwright%"
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD"],
+      "disallowed": ["SHIPWRIGHT_BUILD_V1ALPHA1"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "shipwright-tablistpage-2",
+      "section": "builds",
+      "perspective": "admin",
+      "prefixNamespaced": true,
+      "href": "/shipwright.io",
+      "name": "%shipwright-plugin~Shipwright%"
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILD_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILD"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "shipwright-tablistpage-3",
+      "section": "builds",
+      "perspective": "admin",
+      "prefixNamespaced": true,
+      "href": "/shipwright.io",
+      "name": "%shipwright-plugin~Shipwright%"
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1", "SHIPWRIGHT_BUILD", "SHIPWRIGHT_BUILD_V1ALPHA1"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "shipwright-tablistpage-4",
+      "section": "builds",
+      "perspective": "admin",
+      "prefixNamespaced": true,
+      "href": "/shipwright.io",
+      "name": "%shipwright-plugin~Shipwright%"
+    },
+    "flags": {
+      "required": ["SHIPWRIGHT_BUILDRUN_V1ALPHA1"],
+      "disallowed": ["SHIPWRIGHT_BUILDRUN", "SHIPWRIGHT_BUILD", "SHIPWRIGHT_BUILD_V1ALPHA1"]
     }
   },
   {

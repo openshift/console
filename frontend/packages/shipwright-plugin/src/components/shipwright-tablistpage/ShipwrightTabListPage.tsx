@@ -1,140 +1,182 @@
 import * as React from 'react';
-import { Badge } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate, useParams } from 'react-router-dom-v5-compat';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuActions, MultiTabListPage, useUserSettings } from '@console/shared';
-import { LAST_SHIPWRIGHT_PAGE_TAB_STORAGE_KEY } from '../../const';
+import { MenuActions, MultiTabListPage } from '@console/shared';
+import { K8sModel } from 'packages/console-dynamic-plugin-sdk/src';
 import {
-  BuildModelV1Alpha1,
-  BuildRunModelV1Alpha1,
-  ClusterBuildStrategyModel,
-  BuildStrategyModel,
   BuildModel,
+  BuildModelV1Alpha1,
   BuildRunModel,
+  BuildRunModelV1Alpha1,
+  BuildStrategyModel,
+  BuildStrategyModelV1Alpha1,
+  ClusterBuildStrategyModel,
+  ClusterBuildStrategyModelV1Alpha1,
 } from '../../models';
 import BuildListPage from '../build-list/BuildListPage';
 import BuildRunListPage from '../buildrun-list/BuildRunListPage';
 
-const buildListPage: Page = {
-  href: 'build',
+const commonPageProps = {
+  showTitle: false,
+  canCreate: false,
+  hideBadge: true,
+};
+
+const buildListTab: Page = {
+  href: 'builds',
   component: BuildListPage,
-  nameKey: 'shipwright-plugin~Shipwright Builds',
+  nameKey: 'shipwright-plugin~Builds',
+  pageData: commonPageProps,
 };
 
-const buildRunListPage: Page = {
-  href: 'buildrun',
+const buildRunListTab: Page = {
+  href: 'build-runs',
   component: BuildRunListPage,
-  nameKey: 'shipwright-plugin~Shipwright BuildRuns',
+  nameKey: 'shipwright-plugin~BuildRuns',
+  pageData: commonPageProps,
 };
 
-const clusterBuildStrategyPage: Page = {
-  href: 'clusterbuildstrategy',
-  component: DefaultPage,
-  nameKey: ClusterBuildStrategyModel.labelPluralKey,
-  pageData: {
-    kind: referenceForModel(ClusterBuildStrategyModel),
-    autoFocus: true,
-    showTitle: false,
-    canCreate: false,
-    hideBadge: true,
-  },
+const buildStrategyTab = (model: K8sModel): Page => {
+  return {
+    href: 'build-strategies',
+    component: DefaultPage,
+    nameKey: 'shipwright-plugin~BuildStrategies',
+    pageData: {
+      ...commonPageProps,
+      kind: referenceForModel(model),
+    },
+  };
 };
 
-const BuildStrategyPage: Page = {
-  href: 'buildstrategy',
-  component: DefaultPage,
-  nameKey: BuildStrategyModel.labelPluralKey,
-  pageData: {
-    kind: referenceForModel(BuildStrategyModel),
-    autoFocus: true,
-    showTitle: false,
-    canCreate: false,
-    hideBadge: true,
-  },
+const clusterBuildStrategyTab = (model: K8sModel): Page => {
+  return {
+    href: 'cluster-build-strategies',
+    component: DefaultPage,
+    nameKey: 'shipwright-plugin~ClusterBuildStrategies',
+    pageData: {
+      ...commonPageProps,
+      kind: referenceForModel(model),
+    },
+  };
+};
+
+/**
+ * Given two flags that determine the presence of a CRD, return the K8sModel of the CRD that is enabled, or null if neither are enabled.
+ */
+const useDetermineModelVersion = (
+  model: K8sModel,
+  modelV1Alpha1: K8sModel,
+  modelFlag: string,
+  modelV1Alpha1Flag: string,
+) => {
+  const V1ALPHA1_FLAG = useFlag(modelV1Alpha1Flag);
+  const V1BETA1_FLAG = useFlag(modelFlag);
+
+  if (!V1ALPHA1_FLAG && !V1BETA1_FLAG) {
+    return null;
+  }
+
+  return V1BETA1_FLAG ? model : modelV1Alpha1;
 };
 
 const ShipwrightTabListPage: React.FC = () => {
   const { t } = useTranslation();
-  const menuActions: MenuActions = {};
-  const pages: Page[] = [];
-  const navigate = useNavigate();
   const { '*': currentTab } = useParams();
-  const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
-    LAST_SHIPWRIGHT_PAGE_TAB_STORAGE_KEY,
-    'build',
+  const navigate = useNavigate();
+
+  const buildModel = useDetermineModelVersion(
+    BuildModel,
+    BuildModelV1Alpha1,
+    'SHIPWRIGHT_BUILD',
+    'SHIPWRIGHT_BUILD_V1ALPHA1',
+  );
+  const buildRunModel = useDetermineModelVersion(
+    BuildRunModel,
+    BuildRunModelV1Alpha1,
+    'SHIPWRIGHT_BUILDRUN',
+    'SHIPWRIGHT_BUILDRUN_V1ALPHA1',
+  );
+  const buildStrategyModel = useDetermineModelVersion(
+    BuildStrategyModel,
+    BuildStrategyModelV1Alpha1,
+    'SHIPWRIGHT_BUILDSTRATEGY',
+    'SHIPWRIGHT_BUILDSTRATEGY_V1ALPHA1',
+  );
+  const clusterBuildStrategyModel = useDetermineModelVersion(
+    ClusterBuildStrategyModel,
+    ClusterBuildStrategyModelV1Alpha1,
+    'SHIPWRIGHT_CLUSTERBUILDSTRATEGY',
+    'SHIPWRIGHT_CLUSTERBUILDSTRATEGY_V1ALPHA1',
   );
 
-  /* Redirect to last visited tab */
-  React.useEffect(() => {
-    if (preferredTabLoaded && currentTab === '') {
-      navigate(preferredTab);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [preferredTabLoaded]);
+  /* Use feature flags to determine which pages to show */
+  const pages: Page[] = [];
+  const menuActions: MenuActions = {};
 
-  React.useEffect(() => {
-    // update the preferred tab
-    if (preferredTabLoaded && pages.some((page) => page.href === currentTab)) {
-      setPreferredTab(currentTab);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTab, preferredTabLoaded]);
-
-  if (useFlag('SHIPWRIGHT_BUILD')) {
+  if (buildModel) {
+    pages.push(buildListTab);
     menuActions.build = {
-      model: BuildModel,
+      model: buildModel,
       label: t('shipwright-plugin~Build'),
     };
-    pages.includes(buildListPage) || pages.push(buildListPage);
   }
 
-  if (useFlag('SHIPWRIGHT_BUILD_V1ALPHA1')) {
-    menuActions.build = {
-      model: BuildModelV1Alpha1,
-      label: t('shipwright-plugin~Build'),
-    };
-    pages.includes(buildListPage) || pages.push(buildListPage);
-  }
-
-  if (useFlag('SHIPWRIGHT_BUILDRUN')) {
-    menuActions.buildrun = {
-      model: BuildRunModel,
+  if (buildRunModel) {
+    pages.push(buildRunListTab);
+    menuActions.buildRun = {
+      model: buildRunModel,
       label: t('shipwright-plugin~BuildRun'),
     };
-    pages.includes(buildRunListPage) || pages.push(buildRunListPage);
   }
 
-  if (useFlag('SHIPWRIGHT_BUILDRUN_V1ALPHA1')) {
-    menuActions.buildrun = {
-      model: BuildRunModelV1Alpha1,
-      label: t('shipwright-plugin~BuildRun'),
+  if (buildStrategyModel) {
+    pages.push(buildStrategyTab(buildStrategyModel));
+    menuActions.buildStrategy = {
+      model: buildStrategyModel,
+      label: t('shipwright-plugin~BuildStrategy'),
     };
-    pages.includes(buildRunListPage) || pages.push(buildRunListPage);
   }
 
-  menuActions.buildstrategy = {
-    model: ClusterBuildStrategyModel,
-    label: t('shipwright-plugin~BuildStrategy'),
-  };
+  if (clusterBuildStrategyModel) {
+    pages.push(clusterBuildStrategyTab(clusterBuildStrategyModel));
+    menuActions.clusterBuildStrategy = {
+      model: clusterBuildStrategyModel,
+      label: t('shipwright-plugin~ClusterBuildStrategy'),
+    };
+  }
 
-  pages.push(BuildStrategyPage);
+  /* Do not show empty page when no tab is selected */
+  React.useEffect(() => {
+    if (currentTab !== '') {
+      return;
+    }
 
-  menuActions.clusterbuildstrategy = {
-    model: ClusterBuildStrategyModel,
-    label: t('shipwright-plugin~ClusterBuildStrategy'),
-  };
-
-  pages.push(clusterBuildStrategyPage);
+    if (buildModel) {
+      navigate('builds');
+    } else if (buildRunModel) {
+      navigate('build-runs');
+    } else if (buildStrategyModel) {
+      navigate('build-strategies');
+    } else if (clusterBuildStrategyModel) {
+      navigate('cluster-build-strategies');
+    }
+  }, [
+    currentTab,
+    navigate,
+    buildModel,
+    buildRunModel,
+    buildStrategyModel,
+    clusterBuildStrategyModel,
+  ]);
 
   return (
     <MultiTabListPage
       title={t('shipwright-plugin~Shipwright')}
       pages={pages}
-      badge={<Badge isRead>i am still working on it</Badge>}
       menuActions={menuActions}
       telemetryPrefix="Shipwright"
     />

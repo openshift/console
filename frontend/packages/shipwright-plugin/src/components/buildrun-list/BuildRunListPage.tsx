@@ -37,7 +37,6 @@ const BuildRunListPage: React.FC<BuildRunListPageProps> = (props) => {
 
   return (
     <ListPage
-      showTitle={false}
       title={t('shipwright-plugin~BuildRuns')}
       kind={
         useFlag('SHIPWRIGHT_BUILDRUN')
@@ -46,7 +45,7 @@ const BuildRunListPage: React.FC<BuildRunListPageProps> = (props) => {
       }
       ListComponent={BuildRunTable}
       rowFilters={filters}
-      canCreate={false}
+      canCreate
       {...props}
     />
   );
