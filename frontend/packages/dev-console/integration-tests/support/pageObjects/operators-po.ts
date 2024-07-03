@@ -72,7 +72,7 @@ export const operatorsPO = {
     uninstall: '[data-test-id="operator-uninstall-btn"]',
   },
   alertDialog: '[role="dialog"]',
-  warningAlert: '[aria-label="Warning Alert"]',
+  warningAlert: 'div.pf-m-warning.co-alert',
   uninstallPopup: {
     uninstall: '#confirm-action',
   },

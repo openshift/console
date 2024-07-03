@@ -250,6 +250,9 @@ export const verifyAndInstallWebTerminalOperator = () => {
     );
     cy.contains('Succeeded', { timeout: 300000 });
     performPostInstallationSteps(operators.WebTerminalOperator);
+    operatorsPage.navigateToInstallOperatorsPage();
+    operatorsPage.searchOperatorInInstallPage('Web Terminal');
+    cy.contains('span[data-test="status-text"]', 'Succeeded');
   };
 
   cy.get('body').then(($e1) => {
