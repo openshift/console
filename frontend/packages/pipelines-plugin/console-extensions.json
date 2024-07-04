@@ -498,6 +498,14 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
+      "path": ["/k8s/ns/:ns/tekton.dev~v1beta1~PipelineRun/:plrName/logs/:taskName"],
+      "component": { "$codeRef": "pipelinesComponent.LogURLRedirect" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
       "path": "/k8s/ns/:ns/tekton.dev~v1beta1~Pipeline/:pipelineName/builder",
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderEditPage"
