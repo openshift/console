@@ -3,6 +3,7 @@ import { SelectVariant } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src/types';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
 import { CLUSTER_PIPELINE_NS, FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
@@ -15,6 +16,11 @@ import {
   useShipwrightBuilds,
 } from '../../../../utils/shipwright-build-hook';
 import { BuildOptions, ReadableBuildOptions } from '../../import-types';
+
+type BuildOptionProps = {
+  isDisabled: boolean;
+  importStrategy: ImportStrategy;
+};
 
 const usePipelineAccessReview = (): boolean => {
   const canListPipelines = useAccessReview({
@@ -34,7 +40,7 @@ const usePipelineAccessReview = (): boolean => {
   return canListPipelines && canCreatePipelines;
 };
 
-export const BuildOption = ({ isDisabled, importStrategy }) => {
+export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isBuildV1Enabled = useFlag(FLAG_OPENSHIFT_BUILDCONFIG);
@@ -48,22 +54,22 @@ export const BuildOption = ({ isDisabled, importStrategy }) => {
   const selectInputOptions = React.useMemo(() => {
     const options: SelectInputOption[] = [];
 
-    if (isBuildV1Enabled) {
-      options.push({
-        label: t(ReadableBuildOptions[BuildOptions.BUILDS]),
-        value: BuildOptions.BUILDS,
-        description: t(
-          'devconsole~Builds are a core concept in OpenShift Container Platform. A build describes a process for transforming source code into a runnable image.',
-        ),
-      });
-    }
-
     if (isShipwrightBuildsEnabled && isPreferredStrategyAvailable(importStrategy, strategy)) {
       options.push({
         label: t(ReadableBuildOptions[BuildOptions.SHIPWRIGHT_BUILD]),
         value: BuildOptions.SHIPWRIGHT_BUILD,
         description: t(
-          'devconsole~Builds is an extensible build framework based on the Shipwright project, which you can use to build container images on an OpenShift Container Platform cluster.',
+          'devconsole~Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
+        ),
+      });
+    }
+
+    if (isBuildV1Enabled) {
+      options.push({
+        label: t(ReadableBuildOptions[BuildOptions.BUILDS]),
+        value: BuildOptions.BUILDS,
+        description: t(
+          'devconsole~Build configuration describes build definitions used for transforming source code into a runnable container image.',
         ),
       });
     }
@@ -73,7 +79,7 @@ export const BuildOption = ({ isDisabled, importStrategy }) => {
         label: t(ReadableBuildOptions[BuildOptions.PIPELINES]),
         value: BuildOptions.PIPELINES,
         description: t(
-          'devconsole~Pipeline support is added via Red Hat OpenShift Pipelines Operator or Tekton Operator. A pipeline describes a process for transforming source code into a runnable image.',
+          'devconsole~Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
         ),
       });
     }
@@ -100,7 +106,7 @@ export const BuildOption = ({ isDisabled, importStrategy }) => {
   return strategyLoaded ? (
     <SelectInputField
       name={fieldName}
-      label={t('devconsole~Build Option')}
+      label={t('devconsole~Build option')}
       options={selectInputOptions}
       variant={SelectVariant.single}
       onChange={onChange}
@@ -109,7 +115,7 @@ export const BuildOption = ({ isDisabled, importStrategy }) => {
       helpText={
         <p className="pf-c-form__helper-text">
           <Trans t={t} ns="devconsole">
-            Build Option to use for building the application.
+            Build option to use for transforming source code into a runnable container image.
           </Trans>
         </p>
       }

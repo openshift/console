@@ -10,6 +10,7 @@ metadata:
   namespace: build-examples
   labels:
     app.kubernetes.io/part-of: sw-buildah-deployment-app
+    app.kubernetes.io/instance: sw-buildah-deployment-app
   annotations:
     alpha.image.policy.openshift.io/resolve-names: '*'
     app.openshift.io/route-disabled: 'false'
@@ -39,6 +40,7 @@ metadata:
   namespace: build-examples
   labels:
     app.kubernetes.io/part-of: sw-buildah-deployment-app
+    app.kubernetes.io/instance: sw-buildah-deployment-app
   annotations:
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/shipwright-io/sample-go'
@@ -65,6 +67,7 @@ metadata:
   name: buildah-cbs-example
   labels:
     app.kubernetes.io/part-of: sw-buildah-deployment-app
+    app.kubernetes.io/instance: sw-buildah-deployment-app
 spec:
   build:
     name: buildah-cbs-example

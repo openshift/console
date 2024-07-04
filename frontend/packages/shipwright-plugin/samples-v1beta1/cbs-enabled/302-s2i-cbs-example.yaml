@@ -10,6 +10,7 @@ metadata:
   namespace: build-examples
   labels:
     app.kubernetes.io/part-of: sw-s2i-deployment-app
+    app.kubernetes.io/instance: sw-s2i-deployment-app
   annotations:
     alpha.image.policy.openshift.io/resolve-names: '*'
     app.openshift.io/route-disabled: 'false'
@@ -39,6 +40,7 @@ metadata:
   namespace: build-examples
   labels:
     app.kubernetes.io/part-of: sw-s2i-deployment-app
+    app.kubernetes.io/instance: sw-s2i-deployment-app
   annotations:
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/nodeshift-blog-examples/react-web-app'
@@ -65,6 +67,7 @@ metadata:
   name: s2i-cbs-example
   labels:
     app.kubernetes.io/part-of: sw-s2i-deployment-app
+    app.kubernetes.io/instance: sw-s2i-deployment-app
 spec:
   build:
     name: s2i-cbs-example

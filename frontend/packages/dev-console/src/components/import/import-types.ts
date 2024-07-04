@@ -329,10 +329,11 @@ export const ReadableResourcesNames: Record<Resources, string> = {
 };
 
 export const ReadableBuildOptions: Record<BuildOptions, string> = {
-  [BuildOptions.BUILDS]: 'devconsole~Builds',
+  [BuildOptions.BUILDS]: 'devconsole~BuildConfig',
   // t('devconsole~Builds for OpenShift (Shipwright)')
   [BuildOptions.SHIPWRIGHT_BUILD]: 'devconsole~Builds for OpenShift (Shipwright)',
-  [BuildOptions.PIPELINES]: 'pipelines-plugin~Pipelines',
+  // t('devconsole~Build using pipelines')
+  [BuildOptions.PIPELINES]: 'pipelines-plugin~Build using pipelines',
   [BuildOptions.DISABLED]: 'devconsole~Disabled',
 };
 

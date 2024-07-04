@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useFormikContext } from 'formik';
-import { EnvironmentField, CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/shared';
 import BuildConfigSection from '../BuildConfigSection';
 
 let BuildConfigSectionProps: React.ComponentProps<typeof BuildConfigSection>;
@@ -36,17 +36,6 @@ jest.mock('../../builder/builderImageHooks', () => ({
 }));
 
 describe('BuildConfigSection', () => {
-  beforeEach(() => {
-    BuildConfigSectionProps = {
-      namespace: 'my-app',
-    };
-  });
-
-  it('should render EnvironmentField', () => {
-    const wrapper = shallow(<BuildConfigSection {...BuildConfigSectionProps} />);
-    expect(wrapper.find(EnvironmentField).exists()).toBe(true);
-  });
-
   it('should render CheckboxField if triggers are there', () => {
     const wrapper = shallow(<BuildConfigSection {...BuildConfigSectionProps} />);
     expect(wrapper.find(CheckboxField).exists()).toBe(true);

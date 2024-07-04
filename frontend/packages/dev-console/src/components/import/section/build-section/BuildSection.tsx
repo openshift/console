@@ -3,14 +3,17 @@ import { ExpandableSection } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy, getGitService } from '@console/git-service/src';
+import { getStrategyType } from '@console/internal/components/build';
+import { LoadingBox } from '@console/internal/components/utils';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
-import { useDebounceCallback, useFlag } from '@console/shared/src';
+import { EnvironmentField, useDebounceCallback, useFlag } from '@console/shared/src';
 import {
   isPreferredStrategyAvailable,
   useClusterBuildStrategy,
 } from '../../../../utils/shipwright-build-hook';
 import { AppResources } from '../../../edit-application/edit-application-types';
 import BuildConfigSection from '../../advanced/BuildConfigSection';
+import { useBuilderImageEnvironments } from '../../builder/builderImageHooks';
 import { BuildOptions, GitImportFormData } from '../../import-types';
 import FormSection from '../FormSection';
 import { BuildOption } from './BuildOptions';
@@ -23,10 +26,56 @@ type BuildSectionProps = {
 
 export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
+  const {
+    project: { name: namespace },
+    build: { option: buildOption, env: buildEnv },
+    image: { selected: selectedImage, tag: selectedTag },
+    import: { selectedStrategy },
+  } = values;
+  const { setFieldValue } = useFormikContext<FormikValues>();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const [strategy] = useClusterBuildStrategy();
 
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const [environments, envsLoaded] = useBuilderImageEnvironments(selectedImage, selectedTag);
+
+  const envs = React.useMemo(() => {
+    if (selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION) {
+      return buildEnv;
+    }
+
+    if (buildOption === BuildOptions.BUILDS) {
+      const strategyType = getStrategyType(appResources?.buildConfig?.data?.spec?.strategy?.type);
+      const buildConfigObj = appResources?.buildConfig?.data || {
+        metadata: {
+          namespace,
+        },
+      };
+      return (buildConfigObj.spec?.strategy?.[strategyType]?.env || []).filter(
+        (e) => !environments.some((env) => env.key === e.name),
+      );
+    }
+
+    if (buildOption === BuildOptions.SHIPWRIGHT_BUILD) {
+      const swBuildObj = appResources?.shipwrightBuild?.data || {
+        metadata: {
+          namespace,
+        },
+      };
+      return (swBuildObj.spec?.env || []).filter(
+        (e) => !environments.some((env) => env.key === e.name),
+      );
+    }
+
+    return [];
+  }, [
+    appResources?.buildConfig?.data,
+    appResources?.shipwrightBuild?.data,
+    buildEnv,
+    buildOption,
+    environments,
+    namespace,
+    selectedStrategy.type,
+  ]);
 
   /* Auto-select Pipelines as Build option for PAC Repositories */
   const autoSelectPipelines = useDebounceCallback(() => {
@@ -92,17 +141,25 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
 
       {values.build?.option === BuildOptions.SHIPWRIGHT_BUILD && (
         <BuildStrategySelector
-          importStrategy={values?.import?.selectedStrategy?.type}
           formType={values?.formType}
+          importStrategy={values?.import?.selectedStrategy?.type}
         />
       )}
       {values.isi || values.pipeline?.enabled ? null : (
         <ExpandableSection toggleText={t('devconsole~Show advanced Build option')}>
-          <BuildConfigSection
-            namespace={values.project.name}
-            resource={appResources?.buildConfig?.data}
-            showHeader={false}
-          />
+          {values.build?.option === BuildOptions.BUILDS && (
+            <BuildConfigSection showHeader={false} />
+          )}
+          {envsLoaded ? (
+            <EnvironmentField
+              name="build.env"
+              label={t('devconsole~Environment variables (build and runtime)')}
+              obj={{ metadata: { namespace } }}
+              envs={envs}
+            />
+          ) : (
+            <LoadingBox />
+          )}
         </ExpandableSection>
       )}
     </FormSection>
