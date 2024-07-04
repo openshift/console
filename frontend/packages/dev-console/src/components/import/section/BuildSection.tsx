@@ -46,7 +46,6 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
 
   React.useEffect(() => {
     autoSelectPipelines();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values?.git?.url, isRepositoryEnabled, setFieldValue, autoSelectPipelines]);
 
   React.useEffect(() => {
