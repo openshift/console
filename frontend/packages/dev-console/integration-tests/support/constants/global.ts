@@ -55,10 +55,12 @@ export enum operators {
 
 export enum operatorNamespaces {
   PipelinesOperator = 'openshift-operators',
+  ServerlessOperator = 'openshift-serverless',
 }
 
 export enum operatorSubscriptions {
   PipelinesOperator = 'openshift-pipelines-operator',
+  ServerlessOperator = 'serverless-operator',
 }
 
 export enum authenticationType {
