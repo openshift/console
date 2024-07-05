@@ -13,16 +13,18 @@ type VolumeMode = 'Filesystem' | 'Block';
 export const initialAccessModes: AccessMode[] = ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
 export const initialVolumeModes: VolumeMode[] = ['Filesystem', 'Block'];
 
+type PartialMatch = { partialMatch?: boolean };
 type ModeMapping = {
   [volumeMode in VolumeMode]?: AccessMode[];
 };
+type AccessModeMapping = ModeMapping & PartialMatch;
 
 type ProvisionerAccessModeMapping = {
-  [provisioner: string]: ModeMapping;
+  [provisioner: string]: AccessModeMapping;
 };
 
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
-export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = {
+export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze({
   'kubernetes.io/no-provisioner': {
     Filesystem: ['ReadWriteOnce'],
     Block: ['ReadWriteOnce'],
@@ -100,14 +102,16 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = {
     Filesystem: ['ReadWriteOnce'],
     Block: ['ReadWriteOnce'],
   },
-  'openshift-storage.cephfs.csi.ceph.com': {
+  'cephfs.csi.ceph.com': {
     Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    partialMatch: true,
   },
-  'openshift-storage.rbd.csi.ceph.com': {
+  'rbd.csi.ceph.com': {
     Filesystem: ['ReadWriteOnce', 'ReadOnlyMany'],
     Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    partialMatch: true,
   },
-};
+});
 
 export const getAccessModeRadios = () => [
   {
@@ -141,9 +145,19 @@ export const dropdownUnits = {
   Ti: 'TiB',
 };
 
-const getProvisionerAccessModeMapping = (provisioner: string): ModeMapping => {
-  return provisionerAccessModeMapping[provisioner] || {};
-};
+export const getProvisionerModeMapping = (provisioner: string): ModeMapping =>
+  _.omit(
+    _.find(provisionerAccessModeMapping, (value: AccessModeMapping, key: string) => {
+      if (value?.partialMatch && provisioner?.includes(key)) {
+        return true;
+      }
+      if (key === provisioner) {
+        return true;
+      }
+      return false;
+    }) || {},
+    'partialMatch',
+  );
 
 export const getAccessModeForProvisioner = (
   provisioner: string,
@@ -151,7 +165,7 @@ export const getAccessModeForProvisioner = (
   volumeMode?: string,
 ): AccessMode[] => {
   let accessModes: AccessMode[];
-  const modeMapping: ModeMapping = getProvisionerAccessModeMapping(provisioner);
+  const modeMapping: ModeMapping = getProvisionerModeMapping(provisioner);
 
   if (!_.isEmpty(modeMapping)) {
     accessModes = volumeMode
@@ -174,7 +188,7 @@ export const getVolumeModeForProvisioner = (
   provisioner: string,
   accessMode: string,
 ): VolumeMode[] => {
-  const modeMapping: ModeMapping = getProvisionerAccessModeMapping(provisioner);
+  const modeMapping: ModeMapping = getProvisionerModeMapping(provisioner);
 
   if (!_.isEmpty(modeMapping)) {
     return accessMode
