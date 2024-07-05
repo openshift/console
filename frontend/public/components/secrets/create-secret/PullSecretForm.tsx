@@ -95,4 +95,4 @@ type DockerConfigJSONData = {
   auths: DockerConfigData;
 };
 
-type PullSecretData = DockerConfigData | DockerConfigJSONData;
+export type PullSecretData = DockerConfigData | DockerConfigJSONData;
