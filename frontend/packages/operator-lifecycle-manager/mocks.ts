@@ -30,8 +30,8 @@ const prefixedCapabilities = new Set([
 ]);
 
 export const testConditionsDescriptor = {
-  path: 'testCondtions',
-  displayName: 'Test Condtions',
+  path: 'testConditions',
+  displayName: 'Test Conditions',
   description: '',
   'x-descriptors': [StatusCapability.conditions],
 };
