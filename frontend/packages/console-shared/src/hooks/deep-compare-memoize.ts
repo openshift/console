@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 
-export const useDeepCompareMemoize = <T = any>(value: T, strinfigy?: boolean): T => {
+export const useDeepCompareMemoize = <T = any>(value: T, stringify?: boolean): T => {
   const ref = React.useRef<T>();
 
   if (
-    strinfigy
+    stringify
       ? JSON.stringify(value) !== JSON.stringify(ref.current)
       : !_.isEqual(value, ref.current)
   ) {
