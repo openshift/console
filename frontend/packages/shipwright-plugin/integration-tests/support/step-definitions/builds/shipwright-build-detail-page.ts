@@ -48,8 +48,12 @@ Then('user will see {string}, {string} and {string} in Filter list', (el1, el2, 
   cy.get(buildPO.filterList).should('contain', el1).and('contain', el2).and('contain', el3);
 });
 
-When('user clicks on {string} tab', (tab: string) => {
+When('user clicks on {string} tab in the Developer perspective', (tab: string) => {
   cy.byLegacyTestID(`horizontal-link-${tab}`).should('be.visible').click();
+});
+
+When('user clicks on {string} tab in the Administrator perspective', (tab: string) => {
+  cy.byTestID(`nav`).contains(tab).should('be.visible').click();
 });
 
 When('user clicks on Event tab', () => {
@@ -95,6 +99,14 @@ When(
       .and('contain', el5);
   },
 );
+
+Then('user will see {string} horizontal link tab', (tab: string) => {
+  cy.get(`[data-test-id='horizontal-link-${tab}']`).should('be.visible');
+});
+
+When('user cliks on {string} horizontal link tab', (tab: string) => {
+  cy.get(`[data-test-id='horizontal-link-${tab}']`).should('be.visible').click();
+});
 
 When('user clicks on build run {string}', (buildRun: string) => {
   cy.byLegacyTestID(`${buildRun}`).click();

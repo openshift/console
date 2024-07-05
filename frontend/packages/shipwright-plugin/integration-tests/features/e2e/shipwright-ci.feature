@@ -6,7 +6,6 @@ Feature: Shipwright build details page
             Given user has installed Shipwright Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
-              And user is at Add page
               And user has created shipwright builds
 
         @smoke
@@ -17,11 +16,14 @@ Feature: Shipwright build details page
 
 
         @smoke
-        Scenario: Shipwright build page in admin perspective: SWB-01-TC02
+        Scenario: Shipwright page in admin perspective: SWB-01-TC02
              When user switches to Administrative perspective
               And user clicks on Builds navigation in Administrative perspective
-             Then user will see "Shipwright Builds" tab
-             Then user will see "Shipwright BuildRuns" tab
+              And user clicks on "Shipwright" tab in the Administrator perspective
+             Then user will see "Builds" horizontal link tab
+              And user will see "BuildRuns" horizontal link tab
+              And user will see "BuildStrategies" horizontal link tab
+              And user will see "ClusterBuildStrategies" horizontal link tab
 
 
         @regression
@@ -42,7 +44,7 @@ Feature: Shipwright build details page
         @regression
         Scenario: Filter in Shipwright build runs page: SWB-01-TC05
             Given user is at Shipwright Builds details page for build "buildpack-nodejs-build-heroku"
-             When user clicks on "BuildRuns" tab
+             When user clicks on "BuildRuns" tab in the Developer perspective
               And user clicks on Filter
              Then user will see "Pending", "Running", "Succeeded", "Failed" and "Unknown" options
 
@@ -50,7 +52,7 @@ Feature: Shipwright build details page
         @regression
         Scenario: Shipwright build runs details page: SWB-01-TC06
             Given user is at Shipwright Builds details page for build "buildpack-nodejs-build-heroku"
-             When user clicks on "BuildRuns" tab
+             When user clicks on "BuildRuns" tab in the Developer perspective
               And user clicks on build run "buildpack-nodejs-build-heroku-1"
              Then user will see "BuildRun details" section
               And user will see "Conditions" section
@@ -60,7 +62,7 @@ Feature: Shipwright build details page
         @regression
         Scenario: Event tab in build details page: SWB-01-TC07
             Given user is at Shipwright Builds details page for build "buildpack-nodejs-build-heroku"
-             When user clicks on "BuildRuns" tab
+             When user clicks on "BuildRuns" tab in the Developer perspective
               And user clicks on build run "buildpack-nodejs-build-heroku-1"
               And user clicks on Event tab
              Then user will see events steaming
