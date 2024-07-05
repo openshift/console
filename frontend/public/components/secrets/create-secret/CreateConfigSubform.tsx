@@ -1,45 +1,51 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { withTranslation } from 'react-i18next';
-import { WithT } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { AUTHS_KEY, PullSecretCredentialEntry } from '.';
+import { AUTHS_KEY, PullSecretCredentialEntry, PullSecretData } from '.';
+import { useEffect, useState } from 'react';
 
-class CreateConfigSubformWithTranslation extends React.Component<
-  CreateConfigSubformProps & WithT,
-  CreateConfigSubformState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      // If user creates a new image secret by filling out the form a 'kubernetes.io/dockerconfigjson' secret will be created.
-      isDockerconfigjson: _.isEmpty(this.props.stringData) || !!this.props.stringData[AUTHS_KEY],
-      secretEntriesArray: this.imageSecretObjectToArray(
-        this.props.stringData?.[AUTHS_KEY] || this.props.stringData,
-      ),
-      hasDuplicate: false,
-    };
-    this.onDataChanged = this.onDataChanged.bind(this);
-  }
-  newImageSecretEntry() {
-    return {
-      entry: {
-        address: '',
-        username: '',
-        password: '',
-        email: '',
-        auth: '',
-      },
-      uid: _.uniqueId(),
-    };
-  }
-  imageSecretObjectToArray(imageSecretObject) {
+type Entry = {
+  address: string;
+  username: string;
+  password: string;
+  email: string;
+  auth: string;
+};
+
+type SecretEntry = {
+  entry: Entry;
+  uid: string;
+};
+
+type CreateConfigSubformProps = {
+  onChange: (secretData: PullSecretData) => void;
+  stringData: PullSecretData;
+};
+
+export const CreateConfigSubform: React.FC<CreateConfigSubformProps> = ({
+  onChange,
+  stringData,
+}) => {
+  const { t } = useTranslation();
+  const isDockerconfigjson = _.isEmpty(stringData) || !!stringData[AUTHS_KEY];
+  const newImageSecretEntry = (): SecretEntry => ({
+    entry: {
+      address: '',
+      username: '',
+      password: '',
+      email: '',
+      auth: '',
+    },
+    uid: _.uniqueId(),
+  });
+  const imageSecretObjectToArray = (imageSecretObject): SecretEntry[] => {
     const imageSecretArray = [];
     if (_.isEmpty(imageSecretObject)) {
-      return _.concat(imageSecretArray, this.newImageSecretEntry());
+      return _.concat(imageSecretArray, newImageSecretEntry());
     }
     _.each(imageSecretObject, (v, k) => {
       // Decode and parse 'auth' in case 'username' and 'password' are not part of the secret.
@@ -57,8 +63,8 @@ class CreateConfigSubformWithTranslation extends React.Component<
       });
     });
     return imageSecretArray;
-  }
-  imageSecretArrayToObject(imageSecretArray) {
+  };
+  const imageSecretArrayToObject = (imageSecretArray: SecretEntry[]) => {
     const imageSecretsObject = {};
     _.each(imageSecretArray, (value) => {
       imageSecretsObject[value.entry.address] = _.pick(value.entry, [
@@ -69,61 +75,48 @@ class CreateConfigSubformWithTranslation extends React.Component<
       ]);
     });
     return imageSecretsObject;
-  }
-  propagateEntryChange(secretEntriesArray) {
-    const imageSecretObject = this.imageSecretArrayToObject(secretEntriesArray);
-    this.props.onChange(
-      this.state.isDockerconfigjson ? { [AUTHS_KEY]: imageSecretObject } : imageSecretObject,
-    );
-  }
-  onDataChanged(updatedEntry, entryIndex: number) {
-    this.setState(
-      (state: CreateConfigSubformState) => {
-        const secretEntriesArray = [...state.secretEntriesArray];
-        const updatedEntryData = {
-          uid: secretEntriesArray[entryIndex].uid,
-          entry: updatedEntry,
-          auth: Base64.encode(`${updatedEntry.username}:${updatedEntry.password}`),
-        };
-        secretEntriesArray[entryIndex] = updatedEntryData;
-        return {
-          secretEntriesArray,
-        };
-      },
-      () => this.propagateEntryChange(this.state.secretEntriesArray),
-    );
-  }
-  removeEntry(entryIndex: number) {
-    this.setState(
-      (state: CreateConfigSubformState) => {
-        const secretEntriesArray = [...state.secretEntriesArray];
-        secretEntriesArray.splice(entryIndex, 1);
-        return { secretEntriesArray };
-      },
-      () => this.propagateEntryChange(this.state.secretEntriesArray),
-    );
-  }
-  addEntry() {
-    this.setState(
-      {
-        secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newImageSecretEntry()),
-      },
-      () => {
-        this.propagateEntryChange(this.state.secretEntriesArray);
-      },
-    );
-  }
-  render() {
-    const { t } = this.props;
-    const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
-      const { uid, entry } = entryData ?? {};
-      const { address, email, password, username } = entry ?? {};
-      return (
-        <div className="co-add-remove-form__entry" key={uid}>
-          {_.size(this.state.secretEntriesArray) > 1 && (
+  };
+
+  const [secretEntriesArray, setSecretEntriesArray] = useState(
+    imageSecretObjectToArray(stringData?.[AUTHS_KEY] || stringData),
+  );
+  const propogateEntryChange = (secretEntries: SecretEntry[]) => {
+    const imageSecretObject = imageSecretArrayToObject(secretEntries);
+    onChange(isDockerconfigjson ? { [AUTHS_KEY]: imageSecretObject } : imageSecretObject);
+  };
+
+  useEffect(() => {
+    propogateEntryChange(secretEntriesArray);
+  }, [secretEntriesArray]);
+
+  const onDataChanged = (updatedEntry: Entry, entryIndex: number) => {
+    const updatedEntryData = {
+      uid: secretEntriesArray[entryIndex].uid,
+      entry: updatedEntry,
+    };
+    const updatedSecretEntriesArray = [...secretEntriesArray];
+    updatedSecretEntriesArray[entryIndex] = updatedEntryData;
+    setSecretEntriesArray(updatedSecretEntriesArray);
+  };
+
+  const removeEntry = (entryIndex: number) => {
+    const updatedSecretEntriesArray = [...secretEntriesArray];
+    updatedSecretEntriesArray.splice(entryIndex, 1);
+    setSecretEntriesArray(updatedSecretEntriesArray);
+  };
+
+  const addEntry = () => {
+    setSecretEntriesArray(_.concat(secretEntriesArray, newImageSecretEntry()));
+  };
+
+  return (
+    <>
+      {secretEntriesArray.map((entryData, index) => (
+        <div className="co-add-remove-form__entry" key={entryData.uid}>
+          {secretEntriesArray.length > 1 && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
-                onClick={() => this.removeEntry(index)}
+                onClick={() => removeEntry(index)}
                 type="button"
                 variant="link"
                 data-test="remove-entry-button"
@@ -135,53 +128,24 @@ class CreateConfigSubformWithTranslation extends React.Component<
           )}
           <PullSecretCredentialEntry
             id={index}
-            address={address}
-            email={email}
-            password={password}
-            username={username}
-            onChange={this.onDataChanged}
+            address={entryData.entry.address}
+            email={entryData.entry.email}
+            password={entryData.entry.password}
+            username={entryData.entry.username}
+            onChange={onDataChanged}
           />
         </div>
-      );
-    });
-    return (
-      <>
-        {secretEntriesList}
-        <Button
-          className="co-create-secret-form__link--add-entry pf-m-link--align-left"
-          onClick={() => this.addEntry()}
-          type="button"
-          variant="link"
-          data-test="add-credentials-button"
-        >
-          <PlusCircleIcon className="co-icon-space-r" />
-          {t('public~Add credentials')}
-        </Button>
-      </>
-    );
-  }
-}
-
-export const CreateConfigSubform = withTranslation()(CreateConfigSubformWithTranslation);
-
-type CreateConfigSubformState = {
-  isDockerconfigjson: boolean;
-  hasDuplicate: boolean;
-  secretEntriesArray: {
-    entry: {
-      address: string;
-      username: string;
-      password: string;
-      email: string;
-      auth: string;
-    };
-    uid: string;
-  }[];
-};
-
-type CreateConfigSubformProps = {
-  onChange: Function;
-  stringData: {
-    [key: string]: any;
-  };
+      ))}
+      <Button
+        className="co-create-secret-form__link--add-entry pf-m-link--align-left"
+        onClick={addEntry}
+        type="button"
+        variant="link"
+        data-test="add-credentials-button"
+      >
+        <PlusCircleIcon className="co-icon-space-r" />
+        {t('public~Add credentials')}
+      </Button>
+    </>
+  );
 };
