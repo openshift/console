@@ -21,7 +21,9 @@ const RepositoryPipelineRunListPage: React.FC<RepositoryPipelineRunListPageProps
       kind={referenceForModel(PipelineRunModel)}
       namespace={obj.metadata.namespace}
       selector={{
-        matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: obj.metadata.name },
+        matchLabels: {
+          [RepositoryLabels[RepositoryFields.REPOSITORY]]: obj.metadata.name,
+        },
       }}
       ListComponent={RunList}
       rowFilters={runFilters(t)}

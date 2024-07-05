@@ -38,30 +38,30 @@ export const getGitProviderIcon = (url: string) => {
 };
 
 export const getLabelValue = (branchName: string): string => {
-  if (branchName.startsWith('refs/heads/') || branchName.startsWith('refs-heads-')) {
+  if (branchName?.startsWith('refs/heads/') || branchName?.startsWith('refs-heads-')) {
     return 'pipelines-plugin~Branch';
   }
 
-  if (branchName.startsWith('refs/tags/') || branchName.startsWith('refs-tags-')) {
+  if (branchName?.startsWith('refs/tags/') || branchName?.startsWith('refs-tags-')) {
     return 'pipelines-plugin~Tag';
   }
   return 'pipelines-plugin~Branch';
 };
 
 export const sanitizeBranchName = (branchName: string): string => {
-  if (branchName.startsWith('refs/heads/')) {
+  if (branchName?.startsWith('refs/heads/')) {
     return branchName.replace('refs/heads/', '');
   }
 
-  if (branchName.startsWith('refs-heads-')) {
+  if (branchName?.startsWith('refs-heads-')) {
     return branchName.replace('refs-heads-', '');
   }
 
-  if (branchName.startsWith('refs/tags/')) {
+  if (branchName?.startsWith('refs/tags/')) {
     return branchName.replace('refs/tags/', '');
   }
 
-  if (branchName.startsWith('refs-tags-')) {
+  if (branchName?.startsWith('refs-tags-')) {
     return branchName.replace('refs-tags-', '');
   }
   return branchName;
