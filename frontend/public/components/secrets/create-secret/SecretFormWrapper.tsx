@@ -39,33 +39,33 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
 
   const [secret, setSecret] = React.useState(initialSecret);
   const [inProgress, setInProgress] = React.useState(false);
-  const [error, setError] = React.useState();
+  const [error, setError] = React.useState('');
   const [stringData, setStringData] = React.useState<SecretStringData>(
     _.mapValues(_.get(props.obj, 'data'), (value) => {
+      if (ITOB.isBinary(null, Buffer.from(value, 'base64'))) {
+        return null;
+      }
       return value ? Base64.decode(value) : '';
     }),
   );
-  const [base64StringData, setBase64StringData] = React.useState<SecretData>({});
+  const [base64StringData, setBase64StringData] = React.useState<SecretData>(
+    props?.obj?.data ?? {},
+  );
   const [disableForm, setDisableForm] = React.useState(false);
   const title = useSecretTitle(isCreate, secretTypeAbstraction);
   const helptext = useSecretDescription(secretTypeAbstraction);
 
-  const stringDataHasBinary = React.useMemo(
-    () => Object.values(stringData).some((v) => ITOB.isBinary(null, Buffer.from(v ?? ''))),
-    [stringData],
-  );
-  const base64DataHasBinary = React.useMemo(
+  const hasBinary = React.useMemo(
     () =>
-      Object.values(base64StringData).some((v) => ITOB.isBinary(null, Buffer.from(v, 'base64'))),
+      Object.entries(base64StringData).some(([k, v]) => ITOB.isBinary(k, Buffer.from(v, 'base64'))),
     [base64StringData],
   );
 
-  React.useEffect(() => {
-    if (stringDataHasBinary || base64DataHasBinary) {
-      setError(t('Secret contains binary data which is unsupported on this page.'));
-      setDisableForm(true);
-    }
-  }, [stringDataHasBinary, base64DataHasBinary, t]);
+  const errorMessage = hasBinary
+    ? t('Secret contains binary data which is unsupported on this page.')
+    : error;
+
+  const disabled = disableForm || hasBinary;
 
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
 
@@ -154,6 +154,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           onError={onError}
           onFormDisable={setDisableForm}
           stringData={stringData}
+          base64StringData={base64StringData}
           secretType={secret.type}
           isCreate={isCreate}
         />
@@ -166,10 +167,10 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       <ModalTitle>{title}</ModalTitle>
       <ModalBody>{renderBody()}</ModalBody>
       <ModalSubmitFooter
-        errorMessage={error || ''}
+        errorMessage={errorMessage || ''}
         inProgress={inProgress}
         submitText={t('public~Create')}
-        submitDisabled={disableForm}
+        submitDisabled={disabled}
         cancel={onCancel || cancel}
       />
     </form>
@@ -182,13 +183,13 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       <div className="co-m-pane__body">
         <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
           {renderBody()}
-          <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form" disabled={disableForm}>
+          <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
+            <ActionGroup className="pf-v5-c-form" disabled={disabled}>
               <Button
-                disabled={disableForm}
+                disabled={disabled}
+                isDisabled={disabled}
                 type="submit"
                 data-test="save-changes"
-                isDisabled={disableForm}
                 variant="primary"
                 id="save-changes"
               >
@@ -205,9 +206,9 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   );
 };
 
-type Base64EncodedString = string;
-type SecretStringData = { [key: string]: string };
-type SecretData = { [key: string]: Base64EncodedString };
+export type Base64EncodedString = string;
+export type SecretStringData = { [key: string]: string };
+export type SecretData = { [key: string]: Base64EncodedString };
 
 type BaseEditSecretProps_ = {
   obj?: K8sResourceKind;
