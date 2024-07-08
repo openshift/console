@@ -3,6 +3,7 @@ import { operators } from '../../constants';
 import {
   installKnativeOperatorUsingCLI,
   installPipelinesOperatorUsingCLI,
+  installShipwrightOperatorUsingCLI,
   verifyAndInstallOperator,
 } from '../../pages';
 import { verifyAndInstallWebTerminalOperator } from '../../pages/functions/installOperatorOnCluster';
@@ -33,7 +34,7 @@ Given('user has installed Quay Container Security Operator', () => {
 });
 
 Given('user has installed Shipwright Operator', () => {
-  verifyAndInstallOperator(operators.ShipwrightOperator);
+  installShipwrightOperatorUsingCLI();
 });
 
 Given('user with basic rights has installed Web Terminal operator', () => {

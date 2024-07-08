@@ -3,8 +3,7 @@ Feature: Shipwright build in topolgy
               As a user, I want check my Shipwright Build in topology.
 
         Background:
-            Given user has installed OpenShift Pipelines Operator
-              And user has installed Shipwright Operator
+            Given user has installed Shipwright Operator
               And user has installed OpenShift Serverless Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
