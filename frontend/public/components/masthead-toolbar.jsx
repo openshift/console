@@ -53,6 +53,8 @@ import { FeedbackModal } from '@patternfly/react-user-feedback';
 import { useFeedbackLocal } from './feedback-local';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 
+const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
+
 const defaultHelpLinks = [
   {
     // t('public~Learning Portal')
@@ -536,7 +538,21 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     );
   };
 
+  React.useEffect(() => {
+    if (window.SERVER_FLAGS.statuspageID) {
+      fetch(`https://${window.SERVER_FLAGS.statuspageID}.statuspage.io/api/v2/summary.json`, {
+        headers: { Accept: 'application/json' },
+      })
+        .then((response) => response.json())
+        .then((newStatusPageData) => setStatusPageData(newStatusPageData));
+    }
+  }, [setStatusPageData]);
+
+  const setLastConsoleActivityTimestamp = () =>
+    localStorage.setItem(LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY, Date.now().toString());
+
   const resetInactivityTimeout = React.useCallback(() => {
+    setLastConsoleActivityTimestamp();
     clearTimeout(userInactivityTimeout.current);
     userInactivityTimeout.current = setTimeout(() => {
       if (openshiftFlag) {
@@ -548,24 +564,23 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   }, [openshiftFlag, isKubeAdmin]);
 
   React.useEffect(() => {
-    if (window.SERVER_FLAGS.statuspageID) {
-      fetch(`https://${window.SERVER_FLAGS.statuspageID}.statuspage.io/api/v2/summary.json`, {
-        headers: { Accept: 'application/json' },
-      })
-        .then((response) => response.json())
-        .then((newStatusPageData) => setStatusPageData(newStatusPageData));
-    }
-  }, [setStatusPageData]);
-
-  React.useEffect(() => {
+    const onStorageChange = (e) => {
+      const { key, oldValue, newValue } = e;
+      if (key === LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY && oldValue < newValue) {
+        resetInactivityTimeout();
+      }
+    };
     // Ignore inactivity-timeout if set to less then 300 seconds
     const inactivityTimeoutEnabled = window.SERVER_FLAGS.inactivityTimeout >= 300;
     if (inactivityTimeoutEnabled) {
+      setLastConsoleActivityTimestamp();
+      window.addEventListener('storage', onStorageChange);
       window.addEventListener('click', _.throttle(resetInactivityTimeout, 500));
       window.addEventListener('keydown', _.throttle(resetInactivityTimeout, 500));
       resetInactivityTimeout();
     }
     return () => {
+      window.removeEventListener('storage', onStorageChange);
       window.removeEventListener('click', resetInactivityTimeout);
       window.removeEventListener('keydown', resetInactivityTimeout);
       clearTimeout(userInactivityTimeout.current);
