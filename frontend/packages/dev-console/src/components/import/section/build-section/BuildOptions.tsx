@@ -22,7 +22,7 @@ type BuildOptionProps = {
   importStrategy: ImportStrategy;
 };
 
-const usePipelineAccessReview = (): boolean => {
+export const usePipelineAccessReview = (): boolean => {
   const canListPipelines = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,

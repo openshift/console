@@ -333,7 +333,7 @@ export const ReadableBuildOptions: Record<BuildOptions, string> = {
   // t('devconsole~Builds for OpenShift (Shipwright)')
   [BuildOptions.SHIPWRIGHT_BUILD]: 'devconsole~Builds for OpenShift (Shipwright)',
   // t('devconsole~Build using pipelines')
-  [BuildOptions.PIPELINES]: 'pipelines-plugin~Build using pipelines',
+  [BuildOptions.PIPELINES]: 'devconsole~Build using pipelines',
   [BuildOptions.DISABLED]: 'devconsole~Disabled',
 };
 
