@@ -43,6 +43,7 @@ import {
 } from '@console/internal/module/k8s';
 import { usePostFormSubmitAction } from '@console/shared';
 import { ProvidedAPI } from '../../types';
+import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import {
   NodeAffinity,
   PodAffinity,
@@ -51,7 +52,6 @@ import {
 } from '../descriptors/spec/affinity';
 import { ResourceRequirements } from '../descriptors/spec/resource-requirements';
 import { Descriptor, SpecCapability, StatusCapability } from '../descriptors/types';
-import { ClusterServiceVersionLogo } from '../index';
 import { OperandFormProps } from './operand-form';
 
 /*
