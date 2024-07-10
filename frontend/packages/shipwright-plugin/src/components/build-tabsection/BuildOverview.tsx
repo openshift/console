@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Alert, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -11,8 +11,9 @@ import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { OverviewItem, useFlag } from '@console/shared';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
 import { BuildModel, BuildModelV1Alpha1, BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
-import { Build, BuildRun } from '../../types';
+import { Build, BuildRun, ComputedBuildRunStatus } from '../../types';
 import { byCreationTime, isV1Alpha1Resource } from '../../utils';
+import { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import BuildRunItem from './BuildRunItem';
 import StartBuildButton from './StartBuildButton';
 import TriggerLastBuildButton from './TriggerLastBuildButton';
@@ -45,6 +46,22 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
     );
   });
 
+  const waitingForFirstBuild: boolean = buildRunsforResource?.every((buildRun: BuildRun) => {
+    const buildRunStatus = getBuildRunStatus(buildRun);
+    return (
+      buildRunStatus !== ComputedBuildRunStatus.SUCCEEDED &&
+      buildRunStatus !== ComputedBuildRunStatus.FAILED
+    );
+  });
+
+  const podAlert = (
+    <Alert isInline variant="info" title={t('public~Waiting for the build')}>
+      {t(
+        'shipwright-plugin~Waiting for the first Shipwright build to run successfully. You may temporarily see "ImagePullBackOff" and "ErrImagePull" errors in the Pods Section while waiting.',
+      )}
+    </Alert>
+  );
+
   if (!buildsForResource || !buildsForResource.length) {
     return null;
   }
@@ -67,6 +84,8 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
           </Link>
         )}
       </SidebarSectionHeading>
+
+      {waitingForFirstBuild && podAlert}
 
       {buildsForResource.map((build) => {
         const buildRunsforBuild = buildRuns
@@ -107,6 +126,7 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
                 </FlexItem>
               </Flex>
             </li>
+
             {buildRunsforBuild.length > 0 &&
               buildRunsforBuild
                 .slice(0, MAX_VISIBLE)
