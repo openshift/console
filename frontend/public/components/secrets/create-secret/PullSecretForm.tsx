@@ -39,7 +39,10 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
       }
       const newDataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
       onChange({
-        [newDataKey]: JSON.stringify(secretData),
+        stringData: {
+          [newDataKey]: JSON.stringify(secretData),
+        },
+        base64StringData: {},
       });
     },
     [onFormDisable, onchange],
