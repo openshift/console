@@ -1,3 +1,7 @@
+import * as React from 'react';
+import SubnetsHelperText from '../components/SubnetHelperText/SubnetHelperText';
+import { validateIPOrSubnets, validateSubnets } from '../utils/utils';
+
 // t('network-attachment-definition-plugin~Create network attachment definition')
 export const NET_ATTACH_DEF_HEADER_LABEL = 'Create network attachment definition';
 
@@ -86,6 +90,27 @@ export const networkTypeParams: NetworkTypeParamsList = {
       name: 'VLAN',
       type: ELEMENT_TYPES.TEXT,
     },
+    subnets: {
+      name: 'Subnets',
+      type: ELEMENT_TYPES.TEXT,
+      validation: (params) => validateSubnets(params?.subnets?.value),
+      techPreview: true,
+      hintText: <SubnetsHelperText />,
+    },
+    excludeSubnets: {
+      name: 'Exclude subnets',
+      type: ELEMENT_TYPES.TEXT,
+      validation: (params) => validateIPOrSubnets(params?.excludeSubnets?.value),
+    },
+  },
+  [ovnKubernetesNetworkType]: {
+    subnets: {
+      name: 'Subnets',
+      type: ELEMENT_TYPES.TEXT,
+      validation: (params) => validateSubnets(params?.subnets?.value),
+      techPreview: true,
+      hintText: <SubnetsHelperText />,
+    },
   },
 };
 
@@ -101,7 +126,8 @@ export type NetworkTypeParameter = {
   name: string;
   required?: boolean;
   type: string;
-  hintText?: string;
+  hintText?: React.ReactNode;
+  techPreview?: boolean;
   initValue?: any;
   values?: { [key: string]: string };
   validation?: (params: {

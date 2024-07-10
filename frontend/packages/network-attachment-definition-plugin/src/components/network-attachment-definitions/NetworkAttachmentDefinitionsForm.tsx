@@ -47,7 +47,7 @@ import {
   networkTypes,
   ovnKubernetesNetworkType,
   ovnKubernetesSecondaryLocalnet,
-} from '../../constants';
+} from '../../constants/constants';
 import {
   NetworkAttachmentDefinitionAnnotations,
   NetworkAttachmentDefinitionConfig,
@@ -85,6 +85,7 @@ const buildConfig = (
   } else if (networkType === ovnKubernetesNetworkType) {
     config.topology = 'layer2';
     config.netAttachDefName = `${namespace}/${name}`;
+    config.subnets = _.get(typeParamsData, 'subnets.value');
   } else if (networkType === ovnKubernetesSecondaryLocalnet) {
     config.cniVersion = '0.4.0';
     config.name = _.get(typeParamsData, 'bridgeMapping.value', '');
@@ -93,6 +94,8 @@ const buildConfig = (
     config.vlanID = parseInt(typeParamsData?.vlanID?.value, 10) || undefined;
     config.mtu = parseInt(typeParamsData?.mtu?.value, 10) || undefined;
     config.netAttachDefName = `${namespace}/${name}`;
+    config.subnets = _.get(typeParamsData, 'subnets.value');
+    config.excludeSubnets = _.get(typeParamsData, 'excludeSubnets.value');
   }
   return config;
 };

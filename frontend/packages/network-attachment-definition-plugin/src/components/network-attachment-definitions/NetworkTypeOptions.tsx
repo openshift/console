@@ -14,7 +14,8 @@ import * as classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { Dropdown } from '@console/internal/components/utils';
-import { ELEMENT_TYPES, networkTypeParams, NetworkTypeParams } from '../../constants';
+import { ELEMENT_TYPES, networkTypeParams, NetworkTypeParams } from '../../constants/constants';
+import TechPreview from '../TechPreview/TechPreview';
 
 const handleTypeParamChange = (
   paramKey,
@@ -69,6 +70,7 @@ const NetworkTypeOptions = (props) => {
     const typeParamsDataValidationMsg = typeParamsData?.[key]?.validationMsg;
     const { type, name } = parameter;
     const value = typeParamsDataValue ?? parameter?.initValue;
+    const isHintText = typeof parameter?.hintText === 'string';
 
     let children;
     switch (type) {
@@ -176,12 +178,13 @@ const NetworkTypeOptions = (props) => {
               id={`network-type-params-${key}-label`}
             >
               {name}{' '}
-              {parameter?.hintText && (
+              {isHintText && (
                 <Popover bodyContent={parameter.hintText} position={PopoverPosition.right}>
                   <HelpIcon className="network-type-options--help-icon" />
                 </Popover>
               )}
             </label>
+            {parameter?.techPreview && <TechPreview />}
             <TextInput
               type="text"
               value={value}
@@ -197,8 +200,12 @@ const NetworkTypeOptions = (props) => {
               }
               id={`network-type-params-${key}-text`}
             />
-            {typeParamsDataValidationMsg && (
-              <div className="text-secondary">{typeParamsDataValidationMsg}</div>
+            {!isHintText && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="default">{parameter?.hintText}</HelperTextItem>
+                </HelperText>
+              </FormHelperText>
             )}
           </div>
         );
