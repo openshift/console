@@ -379,7 +379,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
         <div>
           <DeprecatedOperatorWarningBadge
             className="pf-v5-u-mt-xs"
-            deprecation={item?.obj?.status?.deprecation}
+            deprecation={item.obj.status.deprecation}
           />
         </div>
       )}
@@ -573,7 +573,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       {detailsItem?.obj?.status?.deprecation && (
         <DeprecatedOperatorWarningBadge
           className="pf-v5-u-ml-sm"
-          deprecation={detailsItem?.obj?.status?.deprecation}
+          deprecation={detailsItem.obj.status.deprecation}
         />
       )}
     </>

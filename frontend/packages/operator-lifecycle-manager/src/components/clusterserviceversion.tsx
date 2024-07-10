@@ -107,6 +107,12 @@ import { isCopiedCSV, isStandaloneCSV } from '../utils/clusterserviceversions';
 import { useClusterServiceVersion } from '../utils/useClusterServiceVersion';
 import { useClusterServiceVersionPath } from '../utils/useClusterServiceVersionPath';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
+import {
+  DeprecatedOperatorWarningBadge,
+  DeprecatedOperatorWarningAlert,
+  findDeprecatedOperatorByType,
+  DeprecatedOperatorType,
+} from './deprecated-operator-warnings/deprecated-operator-warnings';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
 import { operatorGroupFor, operatorNamespaceFor, targetNamespacesFor } from './operator-group';
@@ -377,6 +383,10 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     const route = useClusterServiceVersionPath(obj);
     const providedAPIs = providedAPIsForCSV(obj);
     const csvPlugins = getClusterServiceVersionPlugins(obj?.metadata?.annotations);
+    const deprecatedPackage = findDeprecatedOperatorByType(
+      subscription,
+      DeprecatedOperatorType.PackageDeprecated,
+    );
 
     return (
       <>
@@ -422,6 +432,12 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
             )}
           </div>
           {csvPlugins.length > 0 && <ConsolePluginStatus csv={obj} csvPlugins={csvPlugins} />}
+          {deprecatedPackage.deprecation && (
+            <DeprecatedOperatorWarningBadge
+              className="pf-v5-u-mt-xs"
+              deprecation={deprecatedPackage.deprecation}
+            />
+          )}
         </TableData>
 
         {/* Last Updated */}
@@ -996,6 +1012,18 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
 
   const csvPlugins = getClusterServiceVersionPlugins(metadata?.annotations);
   const permissions = _.uniqBy(spec?.install?.spec?.permissions, 'serviceAccountName');
+  const deprecatedPackage = findDeprecatedOperatorByType(
+    subscription,
+    DeprecatedOperatorType.PackageDeprecated,
+  );
+  const deprecatedChannel = findDeprecatedOperatorByType(
+    subscription,
+    DeprecatedOperatorType.ChannelDeprecated,
+  );
+  const deprecatedVersion = findDeprecatedOperatorByType(
+    subscription,
+    DeprecatedOperatorType.BundleDeprecated,
+  );
 
   return (
     <>
@@ -1035,6 +1063,16 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 <InitializationResourceAlert
                   initializationResource={initializationResource}
                   csv={props.obj}
+                />
+              )}
+              {(deprecatedPackage.deprecation ||
+                deprecatedChannel.deprecation ||
+                deprecatedVersion.deprecation) && (
+                <DeprecatedOperatorWarningAlert
+                  deprecatedPackage={deprecatedPackage}
+                  deprecatedChannel={deprecatedChannel}
+                  deprecatedVersion={deprecatedVersion}
+                  dismissible
                 />
               )}
               <SectionHeading text={t('olm~Provided APIs')} />
@@ -1260,6 +1298,11 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
     [subscription],
   );
 
+  const deprecatedPackage = findDeprecatedOperatorByType(
+    subscription,
+    DeprecatedOperatorType.PackageDeprecated,
+  );
+
   const pagesFor = React.useCallback((obj: ClusterServiceVersionKind) => {
     const providedAPIs = providedAPIsForCSV(obj);
     return [
@@ -1323,6 +1366,7 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
           icon={obj?.spec?.icon?.[0]}
           provider={obj?.spec?.provider}
           version={obj?.spec?.version}
+          deprecation={deprecatedPackage.deprecation}
         />
       )}
       namespace={params.ns}
