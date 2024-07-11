@@ -9,24 +9,6 @@ import { AUTHS_KEY } from './const';
 import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
 import { PullSecretData } from '.';
 
-type Entry = {
-  address: string;
-  username: string;
-  password: string;
-  email: string;
-  auth: string;
-};
-
-type SecretEntry = {
-  entry: Entry;
-  uid: string;
-};
-
-type CreateConfigSubformProps = {
-  onChange: (secretData: PullSecretData) => void;
-  stringData: PullSecretData;
-};
-
 export const CreateConfigSubform: React.FC<CreateConfigSubformProps> = ({
   onChange,
   stringData,
@@ -153,4 +135,22 @@ export const CreateConfigSubform: React.FC<CreateConfigSubformProps> = ({
       </Button>
     </>
   );
+};
+
+type Entry = {
+  address: string;
+  username: string;
+  password: string;
+  email: string;
+  auth: string;
+};
+
+type SecretEntry = {
+  entry: Entry;
+  uid: string;
+};
+
+type CreateConfigSubformProps = {
+  onChange: (secretData: PullSecretData) => void;
+  stringData: PullSecretData;
 };
