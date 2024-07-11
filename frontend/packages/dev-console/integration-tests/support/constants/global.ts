@@ -5,6 +5,7 @@ export enum devNavigationMenu {
   Topology = 'Topology',
   Observe = 'Observe',
   Builds = 'Builds',
+  BuildConfigs = 'BuildConfigs',
   Search = 'Search',
   Helm = 'Helm',
   Project = 'Project',
@@ -56,11 +57,13 @@ export enum operators {
 export enum operatorNamespaces {
   PipelinesOperator = 'openshift-operators',
   ServerlessOperator = 'openshift-serverless',
+  ShipwrightOperator = 'openshift-operators',
 }
 
 export enum operatorSubscriptions {
   PipelinesOperator = 'openshift-pipelines-operator',
   ServerlessOperator = 'serverless-operator',
+  ShipwrightOperator = 'shipwright-operator',
 }
 
 export enum authenticationType {

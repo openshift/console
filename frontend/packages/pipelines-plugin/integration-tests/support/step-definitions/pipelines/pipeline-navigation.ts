@@ -11,7 +11,7 @@ When('user navigates to Repositories page', () => {
 });
 
 When('user navigates to Builds page', () => {
-  navigateTo(devNavigationMenu.Builds);
+  navigateTo(devNavigationMenu.BuildConfigs);
 });
 
 When('user enters git access token as {string}', (token: string) => {
