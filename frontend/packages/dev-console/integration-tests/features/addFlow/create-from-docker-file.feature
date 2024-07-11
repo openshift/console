@@ -29,6 +29,7 @@ Feature: Create Application from Docker file
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<name>" in topology page
+              And user will see sidebar in topology page with title "<name>"
 
         Examples:
                   | resource_type     | name         |

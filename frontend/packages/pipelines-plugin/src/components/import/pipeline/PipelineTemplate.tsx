@@ -9,7 +9,7 @@ import {
   ReadableResourcesNames,
 } from '@console/dev-console/src/components/import/import-types';
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
-import { getGitService } from '@console/git-service/src';
+import { GitProvider, getGitService } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import {
@@ -90,8 +90,12 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
 
   const handlePipelineTypeChange = React.useCallback(async () => {
     const gitService = url && getGitService(url, type, ref, dir, secretResource);
+    const disallowedPacGitTypes = [GitProvider.GITEA];
     const isPacRepository =
-      gitService && isRepositoryEnabled && (await gitService.isTektonFolderPresent());
+      gitService &&
+      !disallowedPacGitTypes.includes(type) &&
+      isRepositoryEnabled &&
+      (await gitService.isTektonFolderPresent());
     if (isPacRepository) {
       setIsPacRepo(true);
       setFieldValue('pipeline.enabled', true);

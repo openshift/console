@@ -1,16 +1,15 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
-import { operators } from '@console/dev-console/integration-tests/support/constants';
 import {
   createGitWorkloadIfNotExistsOnTopologyPage,
+  installKnativeOperatorUsingCLI,
   projectNameSpace,
   topologyHelper,
   topologyPage,
-  verifyAndInstallOperator,
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyAddOptionsPO } from '../../page-objects/topology-add-options-po';
 
 Given('user has installed OpenShift Serverless Operator', () => {
-  verifyAndInstallOperator(operators.ServerlessOperator);
+  installKnativeOperatorUsingCLI();
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {

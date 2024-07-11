@@ -29,4 +29,5 @@ export enum RepoStatus {
   InvalidGitTypeSelected,
   PrivateRepo,
   ResourceNotFound,
+  GiteaRepoUnreachable,
 }

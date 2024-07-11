@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { BaseService } from '../services/base-service';
 
@@ -22,7 +23,7 @@ export const evaluateFunc = async (gitService: BaseService): Promise<FuncData> =
   const resourceContent = await gitService.getFuncYamlContent();
 
   try {
-    const funcJSON = safeYAMLToJS(resourceContent);
+    const funcJSON = !_.isString(resourceContent) ? resourceContent : safeYAMLToJS(resourceContent);
 
     const builder = funcJSON?.build?.builder;
     const builderEnvs = funcJSON?.build?.buildEnvs;

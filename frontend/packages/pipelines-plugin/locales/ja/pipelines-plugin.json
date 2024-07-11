@@ -206,7 +206,6 @@
   "This will create a PersistentVolumeClaim.": "これにより、PersistentVolumeClaim が作成されます。",
   "Hide VolumeClaimTemplate options": "VolumeClaimTemplate オプションの非表示",
   "Show VolumeClaimTemplate options": "VolumeClaimTemplate オプションの表示",
-  "Access Mode": "アクセスモード",
   "Size": "サイズ",
   "Desired storage capacity": "必要なストレージ容量",
   "Volume Mode": "ボリュームモード",

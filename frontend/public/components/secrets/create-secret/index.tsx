@@ -14,3 +14,4 @@ export * from './KeyValueEntryForm';
 export * from './EditSecret';
 export * from './CreateSecret';
 export * from './DropableFileInput';
+export * from './SecretSubForm';

@@ -106,6 +106,7 @@ import {
 import { isCopiedCSV, isStandaloneCSV } from '../utils/clusterserviceversions';
 import { useClusterServiceVersion } from '../utils/useClusterServiceVersion';
 import { useClusterServiceVersionPath } from '../utils/useClusterServiceVersionPath';
+import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
 import { operatorGroupFor, operatorNamespaceFor, targetNamespacesFor } from './operator-group';
@@ -117,7 +118,7 @@ import {
   UpgradeApprovalLink,
   catalogSourceForSubscription,
 } from './subscription';
-import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV } from './index';
+import { referenceForProvidedAPI, providedAPIsForCSV } from './index';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj): obj is ClusterServiceVersionKind =>

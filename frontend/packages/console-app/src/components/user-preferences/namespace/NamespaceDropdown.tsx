@@ -14,7 +14,6 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
-import { createNamespaceOrProjectModal } from '@console/internal/components/modals';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
@@ -27,6 +26,7 @@ import {
   NoResults,
 } from '@console/shared/src/components/namespace/NamespaceDropdown';
 import NamespaceMenuToggle from '@console/shared/src/components/namespace/NamespaceMenuToggle';
+import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
   PREFERRED_NAMESPACE_USER_SETTING_KEY,
@@ -42,6 +42,7 @@ type OptionItem = {
 const NamespaceDropdown: React.FC = () => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
+  const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const [model, canCreate] = useProjectOrNamespaceModel() as [K8sKind, boolean];
   const isProject: boolean = model?.kind === ProjectModel.kind;
   const [options, optionsLoaded, optionsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -88,7 +89,6 @@ const NamespaceDropdown: React.FC = () => {
 
   const onCreateNamespace = React.useCallback(() => {
     createNamespaceOrProjectModal({
-      blocking: true,
       onSubmit: (newProject) => {
         setPreferredNamespace(newProject.metadata.name);
         fireTelemetryEvent('User Preference Changed', {
@@ -96,9 +96,8 @@ const NamespaceDropdown: React.FC = () => {
           value: newProject.metadata.name,
         });
       },
-      isOpenShift: isProject,
     });
-  }, [fireTelemetryEvent, setPreferredNamespace, isProject]);
+  }, [fireTelemetryEvent, setPreferredNamespace, createNamespaceOrProjectModal]);
 
   const loadErrorDescription: string = isProject
     ? t('console-app~Projects failed to load. Check your connection and reload the page.')

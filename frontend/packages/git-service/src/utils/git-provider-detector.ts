@@ -18,6 +18,11 @@ const GitProviderList: GitProviderType[] = [
     domain: 'gitlab.com',
   },
   {
+    name: 'Gitea',
+    type: GitProvider.GITEA,
+    domain: 'gitea.com',
+  },
+  {
     name: 'Bitbucket',
     type: GitProvider.BITBUCKET,
     domain: 'bitbucket.org',

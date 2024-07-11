@@ -13,7 +13,7 @@ import { usePostFormSubmitAction } from '@console/shared';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
-import { ClusterServiceVersionLogo } from '../index';
+import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import { getUISchema } from './utils';
 
 export const OperandForm: React.FC<OperandFormProps> = ({

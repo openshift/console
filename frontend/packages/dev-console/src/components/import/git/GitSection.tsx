@@ -488,6 +488,12 @@ const GitSection: React.FC<GitSectionProps> = ({
             'devconsole~The selected git type might not be valid or the repository is private. Please try selecting another git type or enter a source Secret in advanced Git options',
           );
         }
+        /* Special case for Gitea as it throws 404 for all kinds of negatives */
+        case RepoStatus.GiteaRepoUnreachable: {
+          return t(
+            'devconsole~The Gitea repository is unreachable. The repository might be private or does not exist',
+          );
+        }
         default: {
           return t('devconsole~URL is valid but cannot be reached');
         }

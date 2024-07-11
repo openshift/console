@@ -42,6 +42,7 @@ Feature: Create Application from git form
              Then user will be redirected to Topology page
               And user can see toast notification saying "DeploymentConfig" created successfully
               And user can see the created workload "dancer-ex-git-2" is linked to existing application "nodejs-ex-git-app"
+              And user will see sidebar in topology page with title "dancer-ex-git-2"
 
 
         @regression
@@ -61,6 +62,7 @@ Feature: Create Application from git form
               And user unselects the advanced option Create a route to the application
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "name-no-route"
               And public url is not created for node "name-no-route" in the workload sidebar
 
 
@@ -76,6 +78,7 @@ Feature: Create Application from git form
               And user selects default Target Port
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "git-route"
               And user can see the toast notification containg the route value "home"
               And the route of application "git-route" contains "home" in the Routes section of the workload sidebar
               And user is able to see label "route=testRoute1" in Route details page for deployment "git-route"
@@ -94,6 +97,7 @@ Feature: Create Application from git form
               And user enters Value as "value" in Environment Variables section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "git-build"
               And build does not get started for "git-build"
 
 
@@ -108,6 +112,7 @@ Feature: Create Application from git form
               And user enters Value as "value" in Environment Variables Runtime only section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "git-deploy"
 
 
         @regression
@@ -122,6 +127,7 @@ Feature: Create Application from git form
               And user enters Memory Limit as "300" in Memory section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "git-resource"
 
 # Marked below test as broken due to issue https://issues.redhat.com/browse/OCPBUGS-30205
         @regression @broken-test
@@ -145,6 +151,7 @@ Feature: Create Application from git form
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And verify the label "app=frontend" in side bar of application node "git-labels"
+              And user will see sidebar in topology page with title "git-labels"
 
 
         @regression
@@ -158,6 +165,7 @@ Feature: Create Application from git form
               And user fills the Startup Probe details
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
+              And user will see sidebar in topology page with title "git-healthchecks"
 
 
         # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing

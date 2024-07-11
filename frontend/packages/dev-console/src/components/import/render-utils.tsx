@@ -6,6 +6,7 @@ import { GitlabIcon } from '@patternfly/react-icons/dist/esm/icons/gitlab-icon';
 import { TFunction } from 'i18next';
 import { GitProvider } from '@console/git-service/src';
 import CheIcon from './CheIcon';
+import GiteaIcon from './GiteaIcon';
 import { detectGitType } from './import-validation-utils';
 
 export const routeDecoratorIcon = (
@@ -34,6 +35,8 @@ export const routeDecoratorIcon = (
       );
     case GitProvider.GITLAB:
       return <GitlabIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
+    case GitProvider.GITEA:
+      return <GiteaIcon style={{ fontSize: radius }} topology />;
     default:
       return <GitAltIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
   }

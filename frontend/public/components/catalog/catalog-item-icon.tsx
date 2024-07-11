@@ -34,6 +34,7 @@ import * as freebsdImg from '../../imgs/logos/freebsd.svg';
 import * as gitImg from '../../imgs/logos/git.svg';
 import * as githubImg from '../../imgs/logos/github.svg';
 import * as gitlabImg from '../../imgs/logos/gitlab.svg';
+import * as giteaImg from '../../imgs/logos/gitea.svg';
 import * as glassfishImg from '../../imgs/logos/glassfish.svg';
 import * as goLangImg from '../../imgs/logos/golang.svg';
 import * as grailsImg from '../../imgs/logos/grails.svg';
@@ -133,6 +134,7 @@ const logos = new Map<string, any>()
   .set('icon-git', gitImg)
   .set('icon-github', githubImg)
   .set('icon-gitlab', gitlabImg)
+  .set('icon-gitea', giteaImg)
   .set('icon-glassfish', glassfishImg)
   .set('icon-go-gopher', goLangImg)
   .set('icon-golang', goLangImg)

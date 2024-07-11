@@ -23,6 +23,7 @@ When('user has created shipwright builds', () => {
 });
 
 When('user navigates to Builds in Developer perspective', () => {
+  cy.reload();
   navigateTo(devNavigationMenu.Builds);
 });
 

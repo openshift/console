@@ -55,6 +55,9 @@ const getFullGitURL = (gitUrl: GitUrlParse.GitUrl, branch?: string) => {
   if (gitUrl.resource.includes('gitlab')) {
     return `${baseUrl}/-/tree/${branch}`;
   }
+  if (gitUrl.resource.includes('gitea')) {
+    return `${baseUrl}/src/branch/${branch}`;
+  }
   // Branch names containing '/' do not work with bitbucket src URLs
   // https://jira.atlassian.com/browse/BCLOUD-9969
   if (gitUrl.resource.includes('bitbucket') && !branch.includes('/')) {

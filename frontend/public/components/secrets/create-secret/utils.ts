@@ -1,50 +1,7 @@
 import * as _ from 'lodash-es';
-import i18next, { TFunction } from 'i18next';
 import { WebHookSecretKey } from '../../secret';
-import {
-  SecretTypeAbstraction,
-  SecretType,
-  SourceSecretForm,
-  ImageSecretForm,
-  WebHookSecretForm,
-  GenericSecretForm,
-} from '.';
-
-export const secretDisplayType = (
-  isCreate: boolean,
-  abstraction: SecretTypeAbstraction,
-  t: TFunction,
-) => {
-  switch (abstraction) {
-    case 'generic':
-      return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
-    case 'image':
-      return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
-    default:
-      return isCreate
-        ? t('public~Create {{secretType}} secret', { secretType: abstraction })
-        : t('public~Edit {{secretType}} secret', { secretType: abstraction });
-  }
-};
-
-export const secretFormExplanation = (typeAbstraction: SecretTypeAbstraction) => {
-  switch (typeAbstraction) {
-    case SecretTypeAbstraction.generic:
-      return i18next.t(
-        'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
-      );
-    case SecretTypeAbstraction.source:
-      return i18next.t('public~Source secrets let you authenticate against a Git server.');
-    case SecretTypeAbstraction.image:
-      return i18next.t(
-        'public~Image pull secrets let you authenticate against a private image registry.',
-      );
-    case SecretTypeAbstraction.webhook:
-      return i18next.t('public~Webhook secrets let you authenticate a webhook trigger.');
-    default:
-      throw new Error('public~Non-existent abstraction in switch: abstraction');
-  }
-};
+import { SecretTypeAbstraction, SecretType } from '.';
+import { useTranslation } from 'react-i18next';
 
 export const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
   switch (typeAbstraction) {
@@ -57,8 +14,8 @@ export const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): Sec
   }
 };
 
-export const toTypeAbstraction = (obj): SecretTypeAbstraction => {
-  const { data, type } = obj;
+export const toTypeAbstraction = (secret): SecretTypeAbstraction => {
+  const { data, type } = secret;
   switch (type) {
     case SecretType.basicAuth:
     case SecretType.sshAuth:
@@ -74,7 +31,7 @@ export const toTypeAbstraction = (obj): SecretTypeAbstraction => {
   }
 };
 
-export const generateSecret = () => {
+export const generateSecret = (): string => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   const s4 = () =>
     Math.floor((1 + Math.random()) * 0x10000)
@@ -101,19 +58,6 @@ export const determineSecretType = (stringData): SecretType => {
   return SecretType.opaque;
 };
 
-export const secretFormFactory = (secretType: SecretTypeAbstraction) => {
-  switch (secretType) {
-    case SecretTypeAbstraction.source:
-      return SourceSecretForm;
-    case SecretTypeAbstraction.image:
-      return ImageSecretForm;
-    case SecretTypeAbstraction.webhook:
-      return WebHookSecretForm;
-    default:
-      return GenericSecretForm;
-  }
-};
-
 export const getImageSecretKey = (secretType: SecretType): string => {
   switch (secretType) {
     case SecretType.dockercfg:
@@ -122,5 +66,40 @@ export const getImageSecretKey = (secretType: SecretType): string => {
       return '.dockerconfigjson';
     default:
       return secretType;
+  }
+};
+
+export const useSecretTitle = (
+  isCreate: boolean,
+  typeAbstraction: SecretTypeAbstraction,
+): string => {
+  const { t } = useTranslation();
+  switch (typeAbstraction) {
+    case SecretTypeAbstraction.generic:
+      return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
+    case SecretTypeAbstraction.image:
+      return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
+    default:
+      return isCreate
+        ? t('public~Create {{secretType}} secret', { secretType: typeAbstraction })
+        : t('public~Edit {{secretType}} secret', { secretType: typeAbstraction });
+  }
+};
+
+export const useSecretDescription = (typeAbstraction: SecretTypeAbstraction): string => {
+  const { t } = useTranslation();
+  switch (typeAbstraction) {
+    case SecretTypeAbstraction.generic:
+      return t(
+        'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+      );
+    case SecretTypeAbstraction.source:
+      return t('public~Source secrets let you authenticate against a Git server.');
+    case SecretTypeAbstraction.image:
+      return t('public~Image pull secrets let you authenticate against a private image registry.');
+    case SecretTypeAbstraction.webhook:
+      return t('public~Webhook secrets let you authenticate a webhook trigger.');
+    default:
+      return null;
   }
 };

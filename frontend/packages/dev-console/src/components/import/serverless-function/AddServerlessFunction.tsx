@@ -23,7 +23,11 @@ import {
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
-import { createOrUpdateResources, handleRedirect } from '../import-submit-utils';
+import {
+  createOrUpdateResources,
+  handleRedirect,
+  filterDeployedResources,
+} from '../import-submit-utils';
 import { BaseFormData, BuildOptions, Resources } from '../import-types';
 import { validationSchema } from '../import-validation-utils';
 import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalingDefaultValues';
@@ -160,8 +164,15 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
       .catch(() => {});
     fireTelemetryEvent('Serverless Function being created');
     return resourceActions
-      .then(() => {
-        handleRedirect(projectName, perspective, perspectiveExtensions);
+      .then((res) => {
+        const selectId = filterDeployedResources(res)[0]?.metadata?.uid || undefined;
+
+        handleRedirect(
+          projectName,
+          perspective,
+          perspectiveExtensions,
+          new URLSearchParams({ selectId }),
+        );
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
