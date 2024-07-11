@@ -224,8 +224,9 @@ describe(OperandDetails.displayName, () => {
 
   beforeEach(() => {
     resourceDefinition = {
-      plural: testCRD.metadata.name.split('.')[0],
+      plural: testModel.plural,
       annotations: testCRD.metadata.annotations,
+      apiVersion: testModel.apiVersion,
     };
     wrapper = shallow(
       <OperandDetails.WrappedComponent
