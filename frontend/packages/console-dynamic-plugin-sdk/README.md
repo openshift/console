@@ -342,8 +342,8 @@ Open the Console in your web browser and inspect the value of `window.SERVER_FLA
 list of dynamic plugins the Console loads at runtime. For local development, this should only
 include plugin(s) listed via `-plugins` Bridge argument.
 
-Console development builds also allow you to interact with the `PluginStore` object that manages
-all plugins and their extensions directly in your web browser via `window.pluginStore`.
+Console development builds allow you to interact with the `PluginStore` object that manages
+all plugins and their extensions directly in your web browser with `window.pluginStore`.
 
 ### Using local Console plugin SDK code
 
@@ -418,7 +418,7 @@ yarn publish dist/<pkg> --no-git-tag-version --new-version <version>
 If the given package doesn't exist in npm registry, add `--access public` to `yarn publish` command.
 
 If the newly published version is lesser than the latest published version in terms of semver rules
-(e.g. hotfix release 1.0.2 for an older minor version stream 1.0.x), make sure that the `latest` dist-tag
+(e.g. hotfix release 1.0.2 for an older minor version stream 1.0.x), ensure the `latest` dist-tag
 still applies to the appropriate package version:
 
 ```sh
