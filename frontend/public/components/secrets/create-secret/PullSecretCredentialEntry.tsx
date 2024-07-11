@@ -12,7 +12,8 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
 }) => {
   const { t } = useTranslation();
 
-  const updateEntry = (name: string, value: string): void =>
+  const updateEntry = (name: string, value: string): void => {
+    const auth = username && password ? Base64.encode(`${username}:${password}`) : '';
     onChange(
       {
         address,
@@ -20,10 +21,11 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         password,
         email,
         [name]: value,
-        auth: Base64.encode(`${username}:${password}`),
+        ...(auth ? { auth } : {}),
       },
       id,
     );
+  };
 
   const handleBlurEvent = (e: React.SyntheticEvent<HTMLInputElement>) =>
     updateEntry(e.currentTarget.name, e.currentTarget.value.trim());
