@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom-v5-compat';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MenuActions, MultiTabListPage } from '@console/shared';
-import { K8sModel } from 'packages/console-dynamic-plugin-sdk/src';
 import {
   BuildModel,
   BuildModelV1Alpha1,
@@ -17,6 +16,7 @@ import {
   ClusterBuildStrategyModel,
   ClusterBuildStrategyModelV1Alpha1,
 } from '../../models';
+import { useDetermineModelVersion } from '../../utils';
 import BuildListPage from '../build-list/BuildListPage';
 import BuildRunListPage from '../buildrun-list/BuildRunListPage';
 
@@ -62,25 +62,6 @@ const clusterBuildStrategyTab = (model: K8sModel): Page => {
       kind: referenceForModel(model),
     },
   };
-};
-
-/**
- * Given two flags that determine the presence of a CRD, return the K8sModel of the CRD that is enabled, or null if neither are enabled.
- */
-const useDetermineModelVersion = (
-  model: K8sModel,
-  modelV1Alpha1: K8sModel,
-  modelFlag: string,
-  modelV1Alpha1Flag: string,
-) => {
-  const V1ALPHA1_FLAG = useFlag(modelV1Alpha1Flag);
-  const V1BETA1_FLAG = useFlag(modelFlag);
-
-  if (!V1ALPHA1_FLAG && !V1BETA1_FLAG) {
-    return null;
-  }
-
-  return V1BETA1_FLAG ? model : modelV1Alpha1;
 };
 
 const ShipwrightTabListPage: React.FC = () => {

@@ -104,7 +104,7 @@ Then('user will see {string} horizontal link tab', (tab: string) => {
   cy.get(`[data-test-id='horizontal-link-${tab}']`).should('be.visible');
 });
 
-When('user cliks on {string} horizontal link tab', (tab: string) => {
+When('user clicks on {string} horizontal link tab', (tab: string) => {
   cy.get(`[data-test-id='horizontal-link-${tab}']`).should('be.visible').click();
 });
 

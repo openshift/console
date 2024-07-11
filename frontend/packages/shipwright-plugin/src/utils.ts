@@ -1,5 +1,7 @@
 import { IBuild as IBuildV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/Build';
 import { IBuildRun as IBuildRunV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildRun';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { K8sResourceCondition, K8sResourceKind } from '@console/internal/module/k8s';
 import { getBuildRunStatus } from './components/buildrun-status/BuildRunStatus';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from './const';
@@ -96,4 +98,23 @@ export const getBuildNameFromBuildRun = (buildRun: BuildRun) => {
     return buildRun.spec?.buildRef?.name;
   }
   return buildRun.spec?.build?.name;
+};
+
+/**
+ * Given two flags that determine the presence of a CRD, return the K8sModel of the CRD that is enabled, or null if neither are enabled.
+ */
+export const useDetermineModelVersion = (
+  model: K8sModel,
+  modelV1Alpha1: K8sModel,
+  modelFlag: string,
+  modelV1Alpha1Flag: string,
+) => {
+  const V1ALPHA1_FLAG = useFlag(modelV1Alpha1Flag);
+  const V1BETA1_FLAG = useFlag(modelFlag);
+
+  if (!V1ALPHA1_FLAG && !V1BETA1_FLAG) {
+    return null;
+  }
+
+  return V1BETA1_FLAG ? model : modelV1Alpha1;
 };

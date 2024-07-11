@@ -62,7 +62,6 @@
   "BuildStrategy": "BuildStrategy",
   "ClusterBuildStrategy": "ClusterBuildStrategy",
   "ClusterBuildStrategies": "ClusterBuildStrategies",
-  "BuildStrategy": "BuildStrategy",
   "BuildStrategies": "BuildStrategies",
   "Buildah": "Buildah",
   "Source-to-Image": "Source-to-Image"
