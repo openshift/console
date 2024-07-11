@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Base64 } from 'js-base64';
 
 export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps> = ({
   id,
@@ -12,7 +13,17 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
   const { t } = useTranslation();
 
   const updateEntry = (name: string, value: string): void =>
-    onChange({ address, username, password, email, [name]: value }, id);
+    onChange(
+      {
+        address,
+        username,
+        password,
+        email,
+        [name]: value,
+        auth: Base64.encode(`${username}:${password}`),
+      },
+      id,
+    );
 
   const handleBlurEvent = (e: React.SyntheticEvent<HTMLInputElement>) =>
     updateEntry(e.currentTarget.name, e.currentTarget.value.trim());
