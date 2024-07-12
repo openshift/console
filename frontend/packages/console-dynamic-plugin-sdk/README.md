@@ -417,7 +417,7 @@ yarn publish dist/<pkg> --no-git-tag-version --new-version <version>
 
 If the given package doesn't exist in npm registry, add `--access public` to `yarn publish` command.
 
-If the newly published version is lesser than the latest published version in terms of semver rules
+If the newly published version comes before the latest published version in terms of semver rules
 (e.g. hotfix release 1.0.2 for an older minor version stream 1.0.x), ensure the `latest` dist-tag
 still applies to the appropriate package version:
 
