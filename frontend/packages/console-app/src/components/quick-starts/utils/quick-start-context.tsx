@@ -1,7 +1,5 @@
 import * as React from 'react';
 import {
-  QuickStartContext,
-  QuickStartContextProvider,
   QuickStartContextValues,
   getDefaultQuickStartState,
   QuickStartStatus,
@@ -20,8 +18,7 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';
 
-export { QuickStartContext };
-export { QuickStartContextProvider };
+export { QuickStartContext, QuickStartContextProvider } from '@patternfly/quickstarts';
 
 export const getProcessedResourceBundle = (resourceBundle, lng) => {
   const params = new URLSearchParams(window.location.search);

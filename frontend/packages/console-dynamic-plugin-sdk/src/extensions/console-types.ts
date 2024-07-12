@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
+import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { LocationDescriptor } from 'history';
 import MonacoEditor from 'react-monaco-editor/lib/editor';
 import {
@@ -741,6 +742,8 @@ export type UseUserSettings = <T>(
   defaultValue?: T,
   sync?: boolean,
 ) => [T, React.Dispatch<React.SetStateAction<T>>, boolean];
+
+export type UseQuickStartContext = () => QuickStartContextValues;
 
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
 
