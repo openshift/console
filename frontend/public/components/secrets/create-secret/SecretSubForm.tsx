@@ -2,18 +2,21 @@ import * as React from 'react';
 import {
   SourceSecretForm,
   SecretTypeAbstraction,
-  ImageSecretForm,
+  PullSecretForm,
   WebHookSecretForm,
   GenericSecretForm,
   SecretType,
 } from '.';
 
-export const SecretSubForm: React.FC<SecretSubFormProps> = ({ typeAbstraction, ...props }) => {
+export const SecretSubForm: React.FC<WithTypeAbstraction<SecretSubFormProps>> = ({
+  typeAbstraction,
+  ...props
+}) => {
   switch (typeAbstraction) {
     case SecretTypeAbstraction.source:
       return <SourceSecretForm {...props} />;
     case SecretTypeAbstraction.image:
-      return <ImageSecretForm {...props} />;
+      return <PullSecretForm {...props} />;
     case SecretTypeAbstraction.webhook:
       return <WebHookSecretForm {...props} />;
     default:
@@ -21,12 +24,17 @@ export const SecretSubForm: React.FC<SecretSubFormProps> = ({ typeAbstraction, .
   }
 };
 
-type SecretSubFormProps = {
+type WithTypeAbstraction<T> = T & {
   typeAbstraction: SecretTypeAbstraction;
-  onChange: (param: any) => void;
-  onError: (param: any) => void;
-  onFormDisable: (param: boolean) => void;
-  stringData: { [key: string]: string };
+};
+export type SecretSubFormProps = {
+  onChange: (stringData: SecretChangeData) => void;
+  onError: (error: any) => void;
+  onFormDisable: (disable: boolean) => void;
+  stringData: SecretStringData;
   secretType: SecretType;
   isCreate: boolean;
 };
+
+type SecretChangeData = { stringData: SecretStringData; base64StringData: SecretStringData };
+type SecretStringData = { [key: string]: string };
