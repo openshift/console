@@ -5,6 +5,7 @@ export enum devNavigationMenu {
   Topology = 'Topology',
   Observe = 'Observe',
   Builds = 'Builds',
+  ShipwrightBuilds = 'Shipwright Builds',
   BuildConfigs = 'BuildConfigs',
   Search = 'Search',
   Helm = 'Helm',

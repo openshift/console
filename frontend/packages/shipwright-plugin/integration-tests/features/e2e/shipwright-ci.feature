@@ -9,11 +9,9 @@ Feature: Shipwright build details page
               And user is at Add page
               And user has created shipwright builds
 
-
         @smoke
-        Scenario: Shipwright build page in dev perspective: SWB-01-TC01
+        Scenario: Shipwright tab should be default on first open if the operator is installed (ODC-7623): SWB-01-TC01
              When user navigates to Builds in Developer perspective
-              And user clicks on "Shipwright Builds" tab
              Then user will see Shipwright Builds
               And user will see "Succeeded", "Failed" and "Unknown" in Filter list
 
@@ -29,7 +27,6 @@ Feature: Shipwright build details page
         @regression
         Scenario: Shipwright build details page: SWB-01-TC03
             Given user is on Builds navigation in Developer perspective
-             When user clicks on "Shipwright Builds" tab
               And user clicks on "buildpack-nodejs-build-heroku" build
              Then user will see "Strategy", "Source URL" and "Output image"
               And user will see "Status" section

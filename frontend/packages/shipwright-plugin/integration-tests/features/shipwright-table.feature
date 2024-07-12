@@ -25,7 +25,7 @@ Feature: Shipwright builds table view
         @smoke
         Scenario: Upon clicking name of a Build, it should go to appropriate Build details page: SWB-03-TC02
             Given user is at Builds page
-             When user clicks on "Shipwright Builds" tab
+             Then user will see Shipwright Builds
               And user clicks on "buildpack-nodejs-build-heroku" build
              Then user will see "buildpack-nodejs-build-heroku" Build details page
 
@@ -33,6 +33,6 @@ Feature: Shipwright builds table view
         @smoke
         Scenario: Upon clicking name of a BuildRun, it should go to appropriate BuildRun details page: SWB-03-TC03
             Given user is at Builds page
-             When user clicks on "Shipwright Builds" tab
+             Then user will see Shipwright Builds
               And user clicks on last run of "buildpack-nodejs-build-heroku" build
              Then user will see "buildpack-nodejs-build-heroku" BuildRun details page
