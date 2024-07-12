@@ -5,7 +5,7 @@
   "Compatibility Issue Message": "호환성 문제 메시지",
   "Error Encountered": "오류 발생",
   "Cluster URL not available": "클러스터 URL을 사용할 수 없습니다.",
-  "{{message}}": "{{message}}",
+  "{{message}}": "({{message}})",
   "Commit message not available": "커밋 메시지를 사용할 수 없음",
   "by {{author}}": "{{author}} 별",
   "Commit author not available": "커밋 작성자를 사용할 수 없음",

@@ -21,7 +21,7 @@
   "Enter your API token from <2>https://console.redhat.com</2>, so we can check what services you have access to based on your subscription.": "Ingrese su token API de <2> https://consola.redhat.com</2> para que podamos verificar a qué servicios tiene acceso según su suscripción.",
   "API Token": "Token API",
   "Connect": "Conectar",
-  "Reset": "Restablecer",
+  "Reset": "Reiniciar",
   "To make sure the instance exists and that you&lsquo;re authorized to access it, you can see your Kafka instances at <2>https://console.redhat.com.</2> To discover more managed services, go to the <6>managed services catalog.</6>": "Para asegurarse de que la instancia exista y de que esté autorizado a acceder a ella, puede ver sus instancias de Kafka en <2>https://console.redhat.com.</2> Para descubrir más servicios administrados, vaya al <6>Catálogo de servicios administrados.</6>",
   "Could not connect to Kafka instances": "No se pudo conectar a instancias de Kafka",
   "All available Kafka instances are connected to this project": "Todas las instancias de Kafka disponibles están conectadas a este proyecto.",

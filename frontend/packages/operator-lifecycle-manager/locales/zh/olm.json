@@ -210,7 +210,7 @@
   "Create by completing the form. Default values may be provided by the Operator authors.": "通过填写表单创建。默认值可由 Operator 作者提供。",
   "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "手动输入 YAML 或 JSON 定义进行创建，或者将文件拖放到编辑器中。",
   "Create {{item}}": "创建{{item}}",
-  "Limits": "限值",
+  "Limits": "限制",
   "Requests": "请求",
   "Select {{item}}": "选择 {{item}}",
   "Add {{item}}": "添加 {{item}}",

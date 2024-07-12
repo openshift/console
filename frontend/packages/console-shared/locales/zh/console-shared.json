@@ -89,7 +89,7 @@
   "Error loading - {{placeholder}}": "错误加载 - {{placeholder}}",
   "Value": "值",
   "Resource requirements": "资源要求",
-  "Limits": "限值",
+  "Limits": "限制",
   "Requests": "请求",
   "Update strategy": "更新策略",
   "Node affinity": "节点关联性",

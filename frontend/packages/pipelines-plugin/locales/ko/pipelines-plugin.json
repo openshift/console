@@ -439,7 +439,7 @@
   "CustomRun": "CustomRun",
   "CustomRuns": "CustomRuns",
   "TektonConfig": "TektonConfig",
-  "TektonConfigs": "TektonConfigs",
+  "TektonConfigs": "tektonconfigs",
   "TektonHub": "TektonHub",
   "TektonHubs": "TektonHubs",
   "TektonResult": "TektonResult",
