@@ -32,7 +32,7 @@ describe('Monitoring Page ', () => {
 
   it('should render all Tabs of Monitoring page for selected project', () => {
     spyUseAccessReview.mockReturnValue(true);
-    const expectedTabs: string[] = ['Dashboards', 'Metrics', 'Alerts', 'Silences', 'Events'];
+    const expectedTabs: string[] = ['Dashboards', 'Metrics', 'Silences', 'Events'];
 
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'test-proj',
@@ -48,7 +48,7 @@ describe('Monitoring Page ', () => {
     expect(actualTabs).toEqual(expectedTabs);
   });
 
-  it('should not render the Alerts tab if user has no access to get prometheousRule resource', () => {
+  it('should not render the Silences tab if user has no access to get prometheousRule resource', () => {
     spyUseAccessReview.mockReturnValue(false);
     const expectedTabs: string[] = ['Dashboards', 'Metrics', 'Events'];
     jest.spyOn(Router, 'useParams').mockReturnValue({
