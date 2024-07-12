@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { QuickStart, QuickStartContext, QuickStartContextValues } from '@patternfly/quickstarts';
+import { QuickStart } from '@patternfly/quickstarts';
 import { TextList, TextListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 
 export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogItem[] => {
-  const { setActiveQuickStart } = React.useContext<QuickStartContextValues>(QuickStartContext);
+  const { setActiveQuickStart } = useQuickStartContext();
   const { t } = useTranslation();
   return React.useMemo(
     () =>
