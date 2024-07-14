@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '../../utils';
-import { SecretType, BasicAuthSubform, SSHAuthSubform, SecretSubFormProps } from '.';
+import {
+  SecretType,
+  BasicAuthSubform,
+  SSHAuthSubform,
+  SecretSubFormProps,
+  SecretChangeData,
+  SecretStringData,
+} from '.';
 
 export const SourceSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,
@@ -41,4 +48,9 @@ export const SourceSecretForm: React.FC<SecretSubFormProps> = ({
       )}
     </>
   );
+};
+
+export type SourceSecretSubformProps = {
+  onChange: (stringData: SecretChangeData) => void;
+  stringData: SecretStringData;
 };
