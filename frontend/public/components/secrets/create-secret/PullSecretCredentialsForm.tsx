@@ -9,7 +9,7 @@ import { AUTHS_KEY } from './const';
 import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
 import { PullSecretData } from '.';
 
-export const CreateConfigSubform: React.FC<CreateConfigSubformProps> = ({
+export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
   onChange,
   stringData,
 }) => {
@@ -150,7 +150,7 @@ type SecretEntry = {
   uid: string;
 };
 
-type CreateConfigSubformProps = {
+type PullSecretCredentialsFormProps = {
   onChange: (secretData: PullSecretData) => void;
   stringData: PullSecretData;
 };

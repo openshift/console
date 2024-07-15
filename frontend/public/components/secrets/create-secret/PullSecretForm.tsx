@@ -2,11 +2,13 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '../../utils';
-import { SecretSubFormProps } from './types';
-import { getImageSecretKey } from './utils';
-import { AUTHS_KEY } from './const';
-import { CreateConfigSubform } from './CreateConfigSubform';
-import { UploadConfigSubform } from './UploadConfigSubform';
+import {
+  getImageSecretKey,
+  AUTHS_KEY,
+  PullSecretCredentialsForm,
+  UploadConfigSubform,
+  SecretSubFormProps,
+} from '.';
 
 export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,
@@ -70,7 +72,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
         </div>
       )}
       {authType === 'credentials' ? (
-        <CreateConfigSubform onChange={onDataChanged} stringData={pullSecretData} />
+        <PullSecretCredentialsForm onChange={onDataChanged} stringData={pullSecretData} />
       ) : (
         <UploadConfigSubform
           onChange={onDataChanged}
