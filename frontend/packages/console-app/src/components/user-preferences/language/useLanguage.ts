@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { QuickStartContext, QuickStartContextValues } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
+import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 import { getProcessedResourceBundle } from '../../quick-starts/utils/quick-start-context';
 import { LAST_LANGUAGE_LOCAL_STORAGE_KEY } from './const';
 import { getLastLanguage } from './getLastLanguage';
 
 export const useLanguage = (preferredLanguage: string, preferredLanguageLoaded: boolean) => {
   const { i18n } = useTranslation();
-  const { setResourceBundle } = React.useContext<QuickStartContextValues>(QuickStartContext);
+  const { setResourceBundle } = useQuickStartContext();
 
   React.useEffect(() => {
     const onLanguageChange = (lng: string) => {

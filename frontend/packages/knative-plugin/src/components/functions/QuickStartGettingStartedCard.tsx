@@ -3,8 +3,6 @@ import {
   AllQuickStartStates,
   QuickStart,
   QuickStartStatus,
-  QuickStartContext,
-  QuickStartContextValues,
   getQuickStartStatus,
 } from '@patternfly/quickstarts';
 import { RouteIcon } from '@patternfly/react-icons';
@@ -14,6 +12,7 @@ import {
   GettingStartedCard,
   GettingStartedLink,
 } from '@console/shared/src/components/getting-started';
+import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 
 interface QuickStartGettingStartedCardProps {
   featured?: string[];
@@ -61,9 +60,7 @@ export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCard
   filter,
 }) => {
   const { t } = useTranslation();
-  const { allQuickStartStates, setActiveQuickStart } = React.useContext<QuickStartContextValues>(
-    QuickStartContext,
-  );
+  const { allQuickStartStates, setActiveQuickStart } = useQuickStartContext();
 
   return (
     <QuickStartsLoader>
