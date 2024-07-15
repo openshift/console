@@ -4,7 +4,7 @@ export * from './SecretFormWrapper';
 export * from './PullSecretForm';
 export * from './PullSecretCredentialEntry';
 export * from './PullSecretCredentialsForm';
-export * from './UploadConfigSubform';
+export * from './PullSecretUploadForm';
 export * from './WebHookSecretForm';
 export * from './SourceSecretForm';
 export * from './BasicAuthSubform';

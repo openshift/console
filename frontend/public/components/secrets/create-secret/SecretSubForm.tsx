@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   SourceSecretForm,
   SecretTypeAbstraction,
-  ImageSecretForm,
+  PullSecretForm,
   WebHookSecretForm,
   GenericSecretForm,
   SecretType,
@@ -16,7 +16,7 @@ export const SecretSubForm: React.FC<WithTypeAbstraction<SecretSubFormProps>> = 
     case SecretTypeAbstraction.source:
       return <SourceSecretForm {...props} />;
     case SecretTypeAbstraction.image:
-      return <ImageSecretForm {...props} />;
+      return <PullSecretForm {...props} />;
     case SecretTypeAbstraction.webhook:
       return <WebHookSecretForm {...props} />;
     default:

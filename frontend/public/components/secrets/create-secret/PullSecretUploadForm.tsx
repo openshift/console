@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DroppableFileInput, PullSecretData } from '.';
 
-export const UploadConfigSubform: React.FC<UploadConfigSubformProps> = ({
+export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   onChange,
   onDisable,
   stringData,
@@ -47,7 +47,7 @@ export const UploadConfigSubform: React.FC<UploadConfigSubformProps> = ({
   );
 };
 
-type UploadConfigSubformProps = {
+type PullSecretUploadFormProps = {
   onChange: (secretData: PullSecretData) => void;
   onDisable: (disable: boolean) => void;
   stringData: PullSecretData;
