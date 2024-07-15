@@ -7,7 +7,7 @@ import {
   SecretType,
   BasicAuthSubform,
   SSHAuthSubform,
-  CreateConfigSubform,
+  PullSecretCredentialsForm,
   PullSecretData,
 } from '@console/internal/components/secrets/create-secret';
 import { ButtonBar } from '@console/internal/components/utils';
@@ -33,7 +33,7 @@ const renderSecretForm = (
       );
     case SecretType.dockerconfigjson:
       return (
-        <CreateConfigSubform
+        <PullSecretCredentialsForm
           onChange={onDataChanged}
           stringData={stringData[SecretType.dockerconfigjson]}
         />
