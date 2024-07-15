@@ -8,7 +8,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { AUTHS_KEY, PullSecretCredentialEntry, PullSecretData } from '.';
 import { useEffect, useState } from 'react';
 
-export const CreateConfigSubform: React.FC<CreateConfigSubformProps> = ({
+export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
   onChange,
   stringData,
 }) => {
@@ -145,7 +145,7 @@ type SecretEntry = {
   uid: string;
 };
 
-type CreateConfigSubformProps = {
+type PullSecretCredentialsFormProps = {
   onChange: (secretData: PullSecretData) => void;
   stringData: PullSecretData;
 };

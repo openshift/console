@@ -5,7 +5,7 @@ import { Dropdown } from '../../utils';
 import {
   getImageSecretKey,
   AUTHS_KEY,
-  CreateConfigSubform,
+  PullSecretCredentialsForm,
   UploadConfigSubform,
   SecretSubFormProps,
 } from '.';
@@ -72,7 +72,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
         </div>
       )}
       {authType === 'credentials' ? (
-        <CreateConfigSubform onChange={onDataChanged} stringData={pullSecretData} />
+        <PullSecretCredentialsForm onChange={onDataChanged} stringData={pullSecretData} />
       ) : (
         <UploadConfigSubform
           onChange={onDataChanged}
