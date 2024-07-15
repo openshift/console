@@ -43,8 +43,8 @@ const TriggerBindingSection: React.FC = () => {
         />
         {bindingVars && (
           <ExpandableSection
-            toggleTextExpanded="Hide variables"
-            toggleTextCollapsed="Show variables"
+            toggleTextExpanded={t('pipelines-plugin~Hide variables')}
+            toggleTextCollapsed={t('pipelines-plugin~Show variables')}
           >
             <div className="odc-trigger-binding-section__variable-container">
               <p className="odc-trigger-binding-section__variable-descriptor">
