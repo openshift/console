@@ -3,7 +3,7 @@ export * from './const';
 export * from './SecretFormWrapper';
 export * from './PullSecretForm';
 export * from './PullSecretCredentialEntry';
-export * from './CreateConfigSubform';
+export * from './PullSecretCredentialsForm';
 export * from './UploadConfigSubform';
 export * from './WebHookSecretForm';
 export * from './SourceSecretForm';
