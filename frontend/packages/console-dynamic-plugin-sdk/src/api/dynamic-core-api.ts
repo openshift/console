@@ -903,7 +903,7 @@ export const useUserSettings: UseUserSettings = require('@console/shared/src/hoo
   .useUserSettings;
 
 /**
- * Hook that provides the current quick start context values. This allows plugin to interop with Console
+ * Hook that provides the current quick start context values. This allows plugins to interop with Console
  * quick start functionality.
  * @returns Quick start context values object.
  * @example

@@ -68,10 +68,11 @@
 66.  [useLabelsModal](#uselabelsmodal)
 67.  [useActiveNamespace](#useactivenamespace)
 68.  [useUserSettings](#useusersettings)
-69. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-70. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-71. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-72. [DEPRECATED] [YAMLEditor](#yamleditor)
+69.  [useQuickStartContext](#usequickstartcontext)
+70. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+71. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+72. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+73. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -2438,6 +2439,40 @@ const Component: React.FC = (props) => {
 ### Returns
 
 A tuple containing the user setting value, a setter callback, and a loaded boolean.
+
+
+---
+
+## `useQuickStartContext`
+
+### Summary 
+
+Hook that provides the current quick start context values. This allows plugins to interop with Console<br/>quick start functionality.
+
+
+
+### Example
+
+
+```tsx
+const OpenQuickStartButton = ({ quickStartId }) => {
+   const { setActiveQuickStart } = useQuickStartContext();
+   const onClick = React.useCallback(() => {
+       setActiveQuickStart(quickStartId);
+   }, [quickStartId]);
+   return <button onClick={onClick}>{t('Open Quick Start')}</button>
+};
+```
+
+
+
+
+
+
+
+### Returns
+
+Quick start context values object.
 
 
 ---
