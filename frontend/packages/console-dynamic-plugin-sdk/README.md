@@ -338,12 +338,13 @@ provide the same content:
 - http://localhost:9000/api/plugins/foo-plugin/plugin-manifest.json
 - http://localhost:9001/plugin-manifest.json
 
-Open the Console in your web browser and inspect the value of `window.SERVER_FLAGS.consolePlugins` to see the
-list of dynamic plugins the Console loads at runtime. For local development, this should only
+Open the Console in your web browser and inspect the value of `window.SERVER_FLAGS.consolePlugins` to
+see the list of dynamic plugins the Console loads at runtime. For local development, this should only
 include plugin(s) listed via `-plugins` Bridge argument.
 
-Console development builds allow you to interact with the `PluginStore` object that manages
-all plugins and their extensions directly in your web browser with `window.pluginStore`.
+Console development builds allow you to interact with the `PluginStore` object that manages all
+plugins and their extensions directly in your web browser with `window.pluginStore`. Please note
+that this is _not_ a public API and is meant only for debugging local Console development builds.
 
 ### Using local Console plugin SDK code
 
