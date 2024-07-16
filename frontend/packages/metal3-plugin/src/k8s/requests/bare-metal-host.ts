@@ -33,7 +33,7 @@ export const restartHost = (host: BareMetalHostKind) =>
       path: '/metadata/annotations',
       value: {
         ...host.metadata.annotations,
-        'reboot.metal3.io': 'UI', // value is irrelevant
+        'reboot.metal3.io': '',
       },
     },
   ]);
