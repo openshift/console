@@ -9,10 +9,7 @@ import {
   AlertingRulesSourceExtension,
   isAlertingRulesSource,
 } from '@console/dynamic-plugin-sdk';
-import {
-  AlertsDetailsPage,
-  AlertRulesDetailsPage,
-} from '@console/internal/components/monitoring/alerting';
+import { AlertRulesDetailsPage } from '@console/internal/components/monitoring/alerting';
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
@@ -62,7 +59,6 @@ const MonitoringAlertsDetailsPage: React.FC = () => {
       hideApplications
       onNamespaceChange={handleNamespaceChange}
     >
-      {location.pathname.includes('alerts') && <AlertsDetailsPage />}
       {location.pathname.includes('rules') && <AlertRulesDetailsPage />}
     </NamespacedPage>
   );
