@@ -5,8 +5,8 @@ import { Dropdown } from '../../utils';
 import {
   getImageSecretKey,
   AUTHS_KEY,
-  CreateConfigSubform,
-  UploadConfigSubform,
+  PullSecretCredentialsForm,
+  PullSecretUploadForm,
   SecretSubFormProps,
 } from '.';
 
@@ -72,9 +72,9 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
         </div>
       )}
       {authType === 'credentials' ? (
-        <CreateConfigSubform onChange={onDataChanged} stringData={pullSecretData} />
+        <PullSecretCredentialsForm onChange={onDataChanged} stringData={pullSecretData} />
       ) : (
-        <UploadConfigSubform
+        <PullSecretUploadForm
           onChange={onDataChanged}
           stringData={pullSecretData}
           onDisable={onFormDisable}
@@ -97,4 +97,4 @@ type DockerConfigJSONData = {
   auths: DockerConfigData;
 };
 
-type PullSecretData = DockerConfigData | DockerConfigJSONData;
+export type PullSecretData = DockerConfigData | DockerConfigJSONData;
