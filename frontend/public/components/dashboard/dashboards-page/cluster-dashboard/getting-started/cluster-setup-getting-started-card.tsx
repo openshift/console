@@ -11,7 +11,7 @@ import {
 
 import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
-import { documentationURLs, getDocumentationURL } from '../../../../utils';
+import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils';
 
 export const ClusterSetupGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ export const ClusterSetupGettingStartedCard: React.FC = () => {
       titleColor={'var(--co-global--palette--blue-400)'}
       description={t('public~Finish setting up your cluster with recommended configurations.')}
       links={links}
-      moreLink={moreLink}
+      moreLink={!isManaged() && moreLink}
     />
   );
 };
