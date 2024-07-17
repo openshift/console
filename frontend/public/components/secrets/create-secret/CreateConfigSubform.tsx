@@ -6,7 +6,7 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { AUTHS_KEY, ConfigEntryForm } from '.';
+import { AUTHS_KEY, PullSecretCredentialEntry } from '.';
 
 class CreateConfigSubformWithTranslation extends React.Component<
   CreateConfigSubformProps & WithT,
@@ -83,6 +83,7 @@ class CreateConfigSubformWithTranslation extends React.Component<
         const updatedEntryData = {
           uid: secretEntriesArray[entryIndex].uid,
           entry: updatedEntry,
+          auth: Base64.encode(`${updatedEntry.username}:${updatedEntry.password}`),
         };
         secretEntriesArray[entryIndex] = updatedEntryData;
         return {
@@ -115,8 +116,10 @@ class CreateConfigSubformWithTranslation extends React.Component<
   render() {
     const { t } = this.props;
     const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
+      const { uid, entry } = entryData ?? {};
+      const { address, email, password, username } = entry ?? {};
       return (
-        <div className="co-add-remove-form__entry" key={entryData.uid}>
+        <div className="co-add-remove-form__entry" key={uid}>
           {_.size(this.state.secretEntriesArray) > 1 && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
@@ -130,7 +133,14 @@ class CreateConfigSubformWithTranslation extends React.Component<
               </Button>
             </div>
           )}
-          <ConfigEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
+          <PullSecretCredentialEntry
+            id={index}
+            address={address}
+            email={email}
+            password={password}
+            username={username}
+            onChange={this.onDataChanged}
+          />
         </div>
       );
     });
