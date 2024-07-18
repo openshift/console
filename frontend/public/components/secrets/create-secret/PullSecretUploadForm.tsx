@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DroppableFileInput, PullSecretData } from '.';
@@ -6,21 +5,26 @@ import { DroppableFileInput, PullSecretData } from '.';
 export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   onChange,
   onDisable,
-  stringData,
+  pullSecretData,
 }) => {
   const { t } = useTranslation();
-  const [configFile, setConfigFile] = React.useState<string>(
-    _.isEmpty(stringData) ? '' : JSON.stringify(stringData),
+  const configFile = React.useMemo<string>(
+    () => (pullSecretData ? JSON.stringify(pullSecretData) : ''),
+    [pullSecretData],
   );
   const [parseError, setParseError] = React.useState<boolean>(false);
 
   const onFileChange = React.useCallback(
     (fileData: string) => {
-      const parsedData = _.attempt(JSON.parse, fileData);
-      setConfigFile(fileData);
-      setParseError(_.isError(parsedData));
-      onChange(parsedData);
-      onDisable(_.isError(parsedData));
+      try {
+        const newPullSecret = JSON.parse(fileData);
+        onChange(newPullSecret);
+        setParseError(false);
+        onDisable(false);
+      } catch (e) {
+        setParseError(true);
+        onDisable(true);
+      }
     },
     [onChange, onDisable],
   );
@@ -50,5 +54,5 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
 type PullSecretUploadFormProps = {
   onChange: (secretData: PullSecretData) => void;
   onDisable: (disable: boolean) => void;
-  stringData: PullSecretData;
+  pullSecretData: PullSecretData;
 };

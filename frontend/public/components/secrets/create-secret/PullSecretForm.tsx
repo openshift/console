@@ -76,7 +76,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
       ) : (
         <PullSecretUploadForm
           onChange={onDataChanged}
-          stringData={pullSecretData}
+          pullSecretData={pullSecretData}
           onDisable={onFormDisable}
         />
       )}
