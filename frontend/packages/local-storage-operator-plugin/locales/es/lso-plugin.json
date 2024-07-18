@@ -33,7 +33,7 @@
   "File System Type": "Tipo de sistema de archivos",
   "Disk Size": "Tamaño del disco",
   "Min": "Min",
-  "Please enter a positive Integer": "Ingrese un número entero positivo",
+  "Please enter a positive Integer": "Por favor ingrese un número entero positivo",
   "Please enter a value less than or equal to max disk size": "Ingrese un valor menor o igual al tamaño máximo del disco",
   "Max": "Máx.",
   "Please enter a value greater than or equal to min disk size": "Ingrese un valor mayor o igual al tamaño mínimo del disco",
@@ -50,6 +50,6 @@
   "{{nodeCount, number}} node_one": "{{nodeCount, number}} nodo",
   "{{nodeCount, number}} node_other": "{{nodeCount, number}} nodos",
   "selected": "seleccionado",
-  "SSD / NVMe": "SSD/NVMe",
+  "SSD / NVMe": "SSD / NVMe",
   "HDD": "HDD"
 }

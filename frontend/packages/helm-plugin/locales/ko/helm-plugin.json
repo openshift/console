@@ -61,7 +61,7 @@
   "Invalid YAML - {{err}}": "잘못된 YAML - {{err}}",
   "{{hcr}} has been created": "{{hcr}} 생성됨",
   "Unknown error submitting": "알 수 없는 오류 제출",
-  "Edit ProjectHelmChartRepository": "Edit ProjectHelmChartRepository",
+  "Edit ProjectHelmChartRepository": "프로젝트 Helm 차트 리포지토리 편집",
   "Create ProjectHelmChartRepository": "프로젝트 Helm 차트 리포지토리 만들기",
   "Create Helm Chart Repository": "Helm 차트 리포지토리 만들기",
   "Update helm chart repository in the namespace.": "네임스페이스에서 helm 차트 리포지터리를 업데이트합니다.",

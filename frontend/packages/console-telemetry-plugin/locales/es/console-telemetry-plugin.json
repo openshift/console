@@ -7,7 +7,7 @@
   "Opt-out to send telemetry events.": "Cancele la suscripción al envío de eventos de telemetría.",
   "Enforce": "Aplicar",
   "Always send telemetry events.": "Envíe siempre eventos de telemetría.",
-  "Disabled": "Deshabilitado",
+  "Disabled": "Desactivado",
   "Disable the telemetry in the cluster.": "Deshabilite la telemetría en el clúster.",
   "Select option": "Seleccionar opción",
   "Analytics": "Análisis",
