@@ -2,10 +2,10 @@ import * as React from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import { FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { AppResources } from '../edit-application/edit-application-types';
-import DeploymentConfigSection from './advanced/DeploymentConfigSection';
-import FormSection from './section/FormSection';
-import ResourceSection from './section/ResourceSection';
+import { AppResources } from '../../../edit-application/edit-application-types';
+import DeploymentConfigSection from '../../advanced/DeploymentConfigSection';
+import FormSection from '../FormSection';
+import ResourceSection from '../ResourceSection';
 
 type DeploySectionProps = {
   values: FormikValues;

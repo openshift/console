@@ -1,0 +1,75 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: build-examples
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s2i-cbs-example
+  namespace: build-examples
+  labels:
+    app.kubernetes.io/part-of: sw-s2i-deployment-app
+    app.kubernetes.io/instance: sw-s2i-deployment-app
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    app.openshift.io/route-disabled: 'false'
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/nodeshift-blog-examples/react-web-app'
+    deployment.kubernetes.io/revision: '1'
+    openshift.io/generated-by: OpenShiftWebConsole
+spec:
+  selector:
+    matchLabels:
+      app: s2i-cbs-example
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: s2i-cbs-example
+    spec:
+      containers:
+        - name: container
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/build-examples/s2i-cbs-example:latest
+---
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  name: s2i-cbs-example
+  namespace: build-examples
+  labels:
+    app.kubernetes.io/part-of: sw-s2i-deployment-app
+    app.kubernetes.io/instance: sw-s2i-deployment-app
+  annotations:
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/nodeshift-blog-examples/react-web-app'
+    openshift.io/generated-by: OpenShiftWebConsole
+spec:
+  source:
+    type: Git
+    git:
+      url: https://github.com/nodeshift-blog-examples/react-web-app
+    contextDir: /
+  strategy:
+    name: source-to-image
+    kind: ClusterBuildStrategy
+  paramValues:
+    - name: builder-image
+      value: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:20-ubi8
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/build-examples/s2i-cbs-example:latest
+---
+apiVersion: shipwright.io/v1beta1
+kind: BuildRun
+metadata:
+  namespace: build-examples
+  name: s2i-cbs-example
+  labels:
+    app.kubernetes.io/part-of: sw-s2i-deployment-app
+    app.kubernetes.io/instance: sw-s2i-deployment-app
+spec:
+  build:
+    name: s2i-cbs-example
+---
+

@@ -31,3 +31,18 @@ export enum ComputedBuildRunStatus {
   FAILED = 'Failed',
   UNKNOWN = 'Unknown',
 }
+
+/** WARNING: The enum values corresponds to the `metadata.name` of the ClusterBuildStrategy CRs */
+export enum ClusterBuildStrategy {
+  BUILDAH = 'buildah',
+  S2I = 'source-to-image',
+  UNKNOWN = 'unknown',
+}
+
+export const ReadableClusterBuildStrategies: Record<ClusterBuildStrategy, string> = {
+  // t('shipwright-plugin~Buildah')
+  [ClusterBuildStrategy.BUILDAH]: `shipwright-plugin~Buildah`,
+  // t('shipwright-plugin~Source-to-Image')
+  [ClusterBuildStrategy.S2I]: `shipwright-plugin~Source-to-Image`,
+  [ClusterBuildStrategy.UNKNOWN]: `shipwright-plugin~Unknown`,
+};

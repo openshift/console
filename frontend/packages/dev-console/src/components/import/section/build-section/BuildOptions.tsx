@@ -3,15 +3,26 @@ import { SelectVariant } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { ImportStrategy } from '@console/git-service/src/types';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { useAccessReview } from '@console/internal/components/utils';
+import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
 import { CLUSTER_PIPELINE_NS, FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { SelectInputField, SelectInputOption, useFlag } from '@console/shared';
-import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../const';
-import { BuildOptions, ReadableBuildOptions } from '../import-types';
+import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../../const';
+import {
+  isPreferredStrategyAvailable,
+  useClusterBuildStrategy,
+  useShipwrightBuilds,
+} from '../../../../utils/shipwright-build-hook';
+import { BuildOptions, ReadableBuildOptions } from '../../import-types';
 
-const usePipelineAccessReview = (): boolean => {
+type BuildOptionProps = {
+  isDisabled: boolean;
+  importStrategy: ImportStrategy;
+};
+
+export const usePipelineAccessReview = (): boolean => {
   const canListPipelines = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
@@ -29,10 +40,12 @@ const usePipelineAccessReview = (): boolean => {
   return canListPipelines && canCreatePipelines;
 };
 
-export const BuildOption = ({ isDisabled }) => {
+export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isBuildV1Enabled = useFlag(FLAG_OPENSHIFT_BUILDCONFIG);
+  const isShipwrightBuildsEnabled = useShipwrightBuilds();
+  const [strategy, strategyLoaded] = useClusterBuildStrategy();
   const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
   const hasCreatePipelineAccess = usePipelineAccessReview();
 
@@ -41,12 +54,22 @@ export const BuildOption = ({ isDisabled }) => {
   const selectInputOptions = React.useMemo(() => {
     const options: SelectInputOption[] = [];
 
+    if (isShipwrightBuildsEnabled && isPreferredStrategyAvailable(importStrategy, strategy)) {
+      options.push({
+        label: t(ReadableBuildOptions[BuildOptions.SHIPWRIGHT_BUILD]),
+        value: BuildOptions.SHIPWRIGHT_BUILD,
+        description: t(
+          'devconsole~Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
+        ),
+      });
+    }
+
     if (isBuildV1Enabled) {
       options.push({
         label: t(ReadableBuildOptions[BuildOptions.BUILDS]),
         value: BuildOptions.BUILDS,
         description: t(
-          'devconsole~Builds are a core concept in OpenShift Container Platform. A build describes a process for transforming source code into a runnable image.',
+          'devconsole~Build configuration describes build definitions used for transforming source code into a runnable container image.',
         ),
       });
     }
@@ -56,13 +79,21 @@ export const BuildOption = ({ isDisabled }) => {
         label: t(ReadableBuildOptions[BuildOptions.PIPELINES]),
         value: BuildOptions.PIPELINES,
         description: t(
-          'devconsole~Pipeline support is added via Red Hat OpenShift Pipelines Operator or Tekton Operator. A pipeline describes a process for transforming source code into a runnable image.',
+          'devconsole~Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
         ),
       });
     }
 
     return options;
-  }, [isBuildV1Enabled, isPipelineEnabled, hasCreatePipelineAccess, t]);
+  }, [
+    isBuildV1Enabled,
+    isShipwrightBuildsEnabled,
+    isPipelineEnabled,
+    hasCreatePipelineAccess,
+    strategy,
+    importStrategy,
+    t,
+  ]);
 
   const onChange = React.useCallback(
     (selection: string) => {
@@ -72,10 +103,10 @@ export const BuildOption = ({ isDisabled }) => {
     [setFieldValue, fieldName, t],
   );
 
-  return (
+  return strategyLoaded ? (
     <SelectInputField
       name={fieldName}
-      label={t('devconsole~Build Option')}
+      label={t('devconsole~Build option')}
       options={selectInputOptions}
       variant={SelectVariant.single}
       onChange={onChange}
@@ -84,12 +115,14 @@ export const BuildOption = ({ isDisabled }) => {
       helpText={
         <p className="pf-c-form__helper-text">
           <Trans t={t} ns="devconsole">
-            Build Option to use for building the application.
+            Build option to use for transforming source code into a runnable container image.
           </Trans>
         </p>
       }
       hideClearButton
       toggleOnSelection
     />
+  ) : (
+    <LoadingInline />
   );
 };

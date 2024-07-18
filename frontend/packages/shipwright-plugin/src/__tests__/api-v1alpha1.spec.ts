@@ -59,7 +59,6 @@ describe('startBuild', () => {
         generateName: 'build-with-labels-',
         labels: {
           'build.shipwright.io/name': 'build-with-labels',
-          'app.kubernetes.io/part-of': 'buildpack-nodejs-build',
         },
       },
       spec: {
@@ -232,7 +231,6 @@ describe('rerunBuildRun', () => {
         generateName: 'buildrun-with-labels-',
         labels: {
           'build.shipwright.io/name': 'build-with-labels',
-          'app.kubernetes.io/part-of': 'buildpack-nodejs-build',
         },
       },
       spec: {

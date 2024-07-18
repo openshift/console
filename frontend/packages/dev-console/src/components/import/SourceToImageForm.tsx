@@ -7,12 +7,14 @@ import { FormBody, FormFooter } from '@console/shared/src/components/form-utils'
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import BuilderSection from './builder/BuilderSection';
-import { DeploySection } from './DeploySection';
 import GitSection from './git/GitSection';
-import { BuildOptions, SourceToImageFormProps } from './import-types';
-import { BuildSection } from './section/BuildSection';
+import { BuildOptions, GitImportFormData, SourceToImageFormProps } from './import-types';
+import { BuildSection } from './section/build-section/BuildSection';
+import { DeploySection } from './section/deploy-section/DeploySection';
 
-const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormProps> = ({
+const SourceToImageForm: React.FC<
+  FormikProps<FormikValues & GitImportFormData> & SourceToImageFormProps
+> = ({
   values,
   errors,
   handleSubmit,
