@@ -27,6 +27,7 @@ import {
   getProviderValue,
   keywordCompare,
   OperatorHubTileViewProps,
+  OperatorHubTile,
 } from './operator-hub-items';
 import { OperatorHubList, OperatorHubListProps } from './operator-hub-page';
 
@@ -217,5 +218,32 @@ describe(OperatorHubItemDetails.displayName, () => {
     const markdown = wrapper.find(MarkdownView);
 
     expect(markdown.exists()).toBe(true);
+  });
+});
+
+describe(OperatorHubTile.displayName, () => {
+  const wrapper: ReactWrapper<OperatorHubItemDetailsProps> = mount(
+    <OperatorHubTile
+      updateChannel={''}
+      item={operatorHubTileViewPagePropsWithDummy.items[0]}
+      onClick={null}
+    />,
+    {
+      wrappingComponent: ({ children }) => (
+        <MemoryRouter>
+          <Provider store={store}>{children}</Provider>
+        </MemoryRouter>
+      ),
+    },
+  );
+
+  it('renders amq-streams tile with correct deprecation package props', () => {
+    const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
+    const amqTileProps = wrapper.find<any>(CatalogTile);
+    const vendorAndDeprecated = amqTileProps.at(0).props();
+    const deprecationProps = vendorAndDeprecated.vendor.props.children[1];
+    expect(deprecationProps.props.children.props.deprecation.message).toEqual(
+      amqPackageManifest.status.deprecation.message,
+    );
   });
 });

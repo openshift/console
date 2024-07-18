@@ -361,7 +361,7 @@ const setURLParams = (params) => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
-const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
+export const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
   const { t } = useTranslation();
   if (!item) {
     return null;
