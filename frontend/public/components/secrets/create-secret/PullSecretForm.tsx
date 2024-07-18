@@ -72,7 +72,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
         </div>
       )}
       {authType === 'credentials' ? (
-        <PullSecretCredentialsForm onChange={onDataChanged} stringData={pullSecretData} />
+        <PullSecretCredentialsForm onChange={onDataChanged} pullSecretData={pullSecretData} />
       ) : (
         <UploadConfigSubform
           onChange={onDataChanged}

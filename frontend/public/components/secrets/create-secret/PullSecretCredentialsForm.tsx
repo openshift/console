@@ -10,21 +10,19 @@ import { useEffect, useState } from 'react';
 
 export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
   onChange,
-  stringData,
+  pullSecretData,
 }) => {
   const { t } = useTranslation();
-  const isDockerconfigjson = _.isEmpty(stringData) || !!stringData[AUTHS_KEY];
-  const newImageSecretEntry = (): SecretEntry => ({
-    entry: {
-      address: '',
-      username: '',
-      password: '',
-      email: '',
-      auth: '',
-    },
+  const isDockerconfigjson = _.isEmpty(pullSecretData) || !!pullSecretData[AUTHS_KEY];
+  const newImageSecretEntry = (): PullSecretCredential => ({
+    address: '',
+    username: '',
+    password: '',
+    email: '',
+    auth: '',
     uid: _.uniqueId(),
   });
-  const imageSecretObjectToArray = (imageSecretObject): SecretEntry[] => {
+  const imageSecretObjectToArray = (imageSecretObject): PullSecretCredential[] => {
     const imageSecretArray = [];
     if (_.isEmpty(imageSecretObject)) {
       return _.concat(imageSecretArray, newImageSecretEntry());
@@ -34,35 +32,28 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
       const decodedAuth = Base64.decode(_.get(v, 'auth', ''));
       const parsedAuth = _.isEmpty(decodedAuth) ? _.fill(Array(2), '') : _.split(decodedAuth, ':');
       imageSecretArray.push({
-        entry: {
-          address: k,
-          username: _.get(v, 'username', parsedAuth[0]),
-          password: _.get(v, 'password', parsedAuth[1]),
-          email: _.get(v, 'email', ''),
-          auth: _.get(v, 'auth', ''),
-        },
+        address: k,
+        username: _.get(v, 'username', parsedAuth[0]),
+        password: _.get(v, 'password', parsedAuth[1]),
+        email: _.get(v, 'email', ''),
+        auth: _.get(v, 'auth', ''),
         uid: _.get(v, 'uid', _.uniqueId()),
       });
     });
     return imageSecretArray;
   };
-  const imageSecretArrayToObject = (imageSecretArray: SecretEntry[]) => {
+  const imageSecretArrayToObject = (imageSecretArray: PullSecretCredential[]) => {
     const imageSecretsObject = {};
     _.each(imageSecretArray, (value) => {
-      imageSecretsObject[value.entry.address] = _.pick(value.entry, [
-        'username',
-        'password',
-        'auth',
-        'email',
-      ]);
+      imageSecretsObject[value.address] = _.pick(value, ['username', 'password', 'auth', 'email']);
     });
     return imageSecretsObject;
   };
 
   const [secretEntriesArray, setSecretEntriesArray] = useState(
-    imageSecretObjectToArray(stringData?.[AUTHS_KEY] || stringData),
+    imageSecretObjectToArray(pullSecretData?.[AUTHS_KEY] || pullSecretData),
   );
-  const propogateEntryChange = (secretEntries: SecretEntry[]) => {
+  const propogateEntryChange = (secretEntries: PullSecretCredential[]) => {
     const imageSecretObject = imageSecretArrayToObject(secretEntries);
     onChange(isDockerconfigjson ? { [AUTHS_KEY]: imageSecretObject } : imageSecretObject);
   };
@@ -71,10 +62,10 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
     propogateEntryChange(secretEntriesArray);
   }, [secretEntriesArray]);
 
-  const onDataChanged = (updatedEntry: Entry, entryIndex: number) => {
+  const onDataChanged = (updatedEntry, entryIndex: number) => {
     const updatedEntryData = {
       uid: secretEntriesArray[entryIndex].uid,
-      entry: updatedEntry,
+      ...updatedEntry,
     };
     const updatedSecretEntriesArray = [...secretEntriesArray];
     updatedSecretEntriesArray[entryIndex] = updatedEntryData;
@@ -110,10 +101,10 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
           )}
           <PullSecretCredentialEntry
             id={index}
-            address={entryData.entry.address}
-            email={entryData.entry.email}
-            password={entryData.entry.password}
-            username={entryData.entry.username}
+            address={entryData.address}
+            email={entryData.email}
+            password={entryData.password}
+            username={entryData.username}
             onChange={onDataChanged}
           />
         </div>
@@ -132,20 +123,16 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   );
 };
 
-type Entry = {
+type PullSecretCredential = {
   address: string;
   username: string;
   password: string;
   email: string;
   auth: string;
-};
-
-type SecretEntry = {
-  entry: Entry;
   uid: string;
 };
 
 type PullSecretCredentialsFormProps = {
   onChange: (secretData: PullSecretData) => void;
-  stringData: PullSecretData;
+  pullSecretData: PullSecretData;
 };
