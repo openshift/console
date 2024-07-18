@@ -1645,6 +1645,7 @@
   "Single user (RWO)": "Single user (RWO)",
   "Shared access (RWX)": "Shared access (RWX)",
   "Read only (ROX)": "Read only (ROX)",
+  "Read write once pod (RWOP)": "Read write once pod (RWOP)",
   "Block": "Block",
   "TemplateInstances": "TemplateInstances",
   "TemplateInstance details": "TemplateInstance details",
