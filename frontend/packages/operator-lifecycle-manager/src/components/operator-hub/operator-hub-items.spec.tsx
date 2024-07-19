@@ -1,4 +1,28 @@
-import { determineCategories } from './operator-hub-items';
+import * as React from 'react';
+import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
+import { mount, ReactWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+// import { Router } from 'react-router-dom-v5-compat';
+import { history } from '@console/internal/components/utils';
+import store from '@console/internal/redux';
+import {
+  operatorHubListPageProps,
+  // operatorHubTileViewPageProps,
+  operatorHubTileViewPagePropsWithDummy,
+  // mockFilterStrings,
+  // mockProviderStrings,
+  // operatorHubDetailsProps,
+  // itemWithLongDescription,
+  // filterCounts,
+} from '../../../mocks';
+import { OperatorHubItemDetailsProps } from './operator-hub-item-details';
+import {
+  determineCategories,
+  OperatorHubTile,
+  OperatorHubTileView,
+  OperatorHubTileViewProps,
+} from './operator-hub-items';
 import { OperatorHubItem } from './index';
 
 describe('determineCategories', () => {
@@ -104,5 +128,49 @@ describe('determineCategories', () => {
       },
     };
     expect(actualCategories).toEqual(expectedCategories);
+  });
+});
+
+describe(OperatorHubTile.displayName, () => {
+  const wrapper: ReactWrapper<OperatorHubItemDetailsProps> = mount(
+    <OperatorHubTile
+      updateChannel={''}
+      item={operatorHubTileViewPagePropsWithDummy.items[0]}
+      onClick={null}
+    />,
+  );
+
+  it('renders amq-streams tile with correct deprecation package props', () => {
+    const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
+    const amqTileProps = wrapper.find<any>(CatalogTile);
+    const vendorAndDeprecated = amqTileProps.at(0).props();
+    const deprecationProps = vendorAndDeprecated.vendor.props.children[1];
+    expect(deprecationProps.props.children.props.deprecation.message).toEqual(
+      amqPackageManifest.status.deprecation.message,
+    );
+  });
+});
+
+describe(OperatorHubTile.displayName, () => {
+  const wrapper: ReactWrapper<OperatorHubTileViewProps> = mount(
+    <OperatorHubTileView items={operatorHubTileViewPagePropsWithDummy.items} />,
+    {
+      wrappingComponent: ({ children }) => (
+        <MemoryRouter history={history}>
+          <Provider store={store}>{children}</Provider>
+        </MemoryRouter>
+      ),
+    },
+  );
+
+  it('renders amq-streams tile with correct deprecation package props', () => {
+    const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
+    const amqTileProps = wrapper.find<any>(CatalogItemHeader);
+    const vendorAndDeprecated = amqTileProps.at(0).props();
+    const deprecationProps = vendorAndDeprecated.title.props.children[1];
+    // / console.log("deprecationProps", deprecationProps)
+    expect(deprecationProps.props.children.props.deprecation.message).toEqual(
+      amqPackageManifest.status.deprecation.message,
+    );
   });
 });
