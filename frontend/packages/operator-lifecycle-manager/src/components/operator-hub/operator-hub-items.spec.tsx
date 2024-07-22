@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
+// //import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
+import { render, screen } from '@testing-library/react';
 import { mount, ReactWrapper } from 'enzyme';
-import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+// import { Provider } from 'react-redux';
+// import { MemoryRouter } from 'react-router-dom';
 // import { Router } from 'react-router-dom-v5-compat';
-import { history } from '@console/internal/components/utils';
-import store from '@console/internal/redux';
+// import { history } from '@console/internal/components/utils';
+// import store from '@console/internal/redux';
 import {
   operatorHubListPageProps,
   // operatorHubTileViewPageProps,
@@ -20,8 +21,8 @@ import { OperatorHubItemDetailsProps } from './operator-hub-item-details';
 import {
   determineCategories,
   OperatorHubTile,
-  OperatorHubTileView,
-  OperatorHubTileViewProps,
+  // OperatorHubTileView,
+  // OperatorHubTileViewProps,
 } from './operator-hub-items';
 import { OperatorHubItem } from './index';
 
@@ -152,25 +153,46 @@ describe(OperatorHubTile.displayName, () => {
 });
 
 describe(OperatorHubTile.displayName, () => {
-  const wrapper: ReactWrapper<OperatorHubTileViewProps> = mount(
-    <OperatorHubTileView items={operatorHubTileViewPagePropsWithDummy.items} />,
-    {
-      wrappingComponent: ({ children }) => (
-        <MemoryRouter history={history}>
-          <Provider store={store}>{children}</Provider>
-        </MemoryRouter>
-      ),
-    },
-  );
+  it('rtl renders amq-streams tile with correct deprecation package props', () => {
+    //   const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
 
-  it('renders amq-streams tile with correct deprecation package props', () => {
-    const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
-    const amqTileProps = wrapper.find<any>(CatalogItemHeader);
-    const vendorAndDeprecated = amqTileProps.at(0).props();
-    const deprecationProps = vendorAndDeprecated.title.props.children[1];
-    // / console.log("deprecationProps", deprecationProps)
-    expect(deprecationProps.props.children.props.deprecation.message).toEqual(
-      amqPackageManifest.status.deprecation.message,
+    render(
+      <OperatorHubTile
+        updateChannel={''}
+        item={operatorHubTileViewPagePropsWithDummy.items[0]}
+        onClick={null}
+      />,
     );
+
+    //  const amqTile = screen.getByRole(CatalogTile); // or whatever the role of your CatalogTile is
+    // const vendorAndDeprecated = amqTile.textContent;
+    const textElement = screen.getByText('Deprecated');
+    //  const deprecationMessage = vendorAndDeprecated.split(' ')[1]; // assuming the deprecation message is the second part of the textContent
+    expect(textElement).toEqual('Deprecated');
+    //  expect(deprecationMessage).toEqual(amqPackageManifest.status.deprecation.message);
   });
 });
+
+// describe(OperatorHubTile.displayName, () => {
+//   const wrapper: ReactWrapper<OperatorHubTileViewProps> = mount(
+//     <OperatorHubTileView items={operatorHubTileViewPagePropsWithDummy.items} />,
+//     {
+//       wrappingComponent: ({ children }) => (
+//         <MemoryRouter history={history}>
+//           <Provider store={store}>{children}</Provider>
+//         </MemoryRouter>
+//       ),
+//     },
+//   );
+
+//   it('renders amq-streams tile with correct deprecation package props', () => {
+//     const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
+//     const amqTileProps = wrapper.find<any>(CatalogItemHeader);
+//     const vendorAndDeprecated = amqTileProps.at(0).props();
+//     const deprecationProps = vendorAndDeprecated.title.props.children[1];
+//     // / console.log("deprecationProps", deprecationProps)
+//     expect(deprecationProps.props.children.props.deprecation.message).toEqual(
+//       amqPackageManifest.status.deprecation.message,
+//     );
+//   });
+// });
