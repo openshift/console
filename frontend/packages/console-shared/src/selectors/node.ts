@@ -1,68 +1,56 @@
-import * as _ from 'lodash';
-import { NodeKind } from '@console/internal/module/k8s';
-import { NodeAddress, NodeCondition } from '../types';
+import {
+  NodeAddress,
+  NodeKind,
+  Taint,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
 
-export const getNodeRoles = (node: NodeKind): string[] => {
-  const labels = _.get(node, 'metadata.labels');
-  return _.reduce(
-    labels,
-    (acc: string[], v: string, k: string) => {
-      if (k.startsWith(NODE_ROLE_PREFIX)) {
-        acc.push(k.slice(NODE_ROLE_PREFIX.length));
-      }
-      return acc;
-    },
-    [],
-  );
-};
+export const getNodeRoles = (node: NodeKind): string[] =>
+  Object.keys(node?.metadata?.labels ?? {}).reduce<string[]>((acc, k) => {
+    if (k.startsWith(NODE_ROLE_PREFIX)) {
+      acc.push(k.slice(NODE_ROLE_PREFIX.length));
+    }
+    return acc;
+  }, []);
 
 export const getNodeRole = (node: NodeKind): string =>
   getNodeRoles(node).includes('control-plane') ? 'control-plane' : 'worker';
 
-export const getNodeRoleMatch = (node: NodeKind, role: string): boolean => {
-  const roles = getNodeRoles(node);
+export const getNodeRoleMatch = (node: NodeKind, role: string): boolean =>
+  getNodeRoles(node).filter((elem) => elem === role).length > 0;
 
-  return roles.filter((elem) => elem === role).length > 0;
-};
+export const getNodeAddresses = (node: NodeKind): NodeAddress[] => node?.status?.addresses ?? [];
 
-export const getNodeAddresses = (node: NodeKind): NodeAddress[] =>
-  _.get(node, 'status.addresses', []);
-
-type NodeMachineAndNamespace = {
-  name: string;
-  namespace: string;
-};
-export const getNodeMachineNameAndNamespace = (node: NodeKind): NodeMachineAndNamespace => {
-  const machine = _.get(node, 'metadata.annotations["machine.openshift.io/machine"]', '/');
+export const getNodeMachineNameAndNamespace = (node: NodeKind): [string, string] => {
+  const machine = node?.metadata?.annotations?.['machine.openshift.io/machine'] ?? '/';
   const [namespace, name] = machine.split('/');
-  return { namespace, name };
+  return [name, namespace];
 };
 
 export const getNodeMachineName = (node: NodeKind): string =>
-  getNodeMachineNameAndNamespace(node).name;
+  getNodeMachineNameAndNamespace(node)[0];
 
-export const isNodeUnschedulable = (node: NodeKind): boolean =>
-  _.get(node, 'spec.unschedulable', false);
+export const isNodeUnschedulable = (node: NodeKind): boolean => node?.spec?.unschedulable ?? false;
 
 export const isNodeReady = (node: NodeKind): boolean => {
-  const conditions = _.get(node, 'status.conditions', []);
-  const readyState = _.find(conditions, { type: 'Ready' }) as NodeCondition;
-
-  return readyState && readyState.status === 'True';
+  return (
+    node?.status?.conditions?.some?.(({ type, status }) => type === 'Ready' && status === 'True') ??
+    false
+  );
 };
 
-export const getNodeCPUCapacity = (node: NodeKind): string => _.get(node.status, 'capacity.cpu');
+export const getNodeCPUCapacity = (node: NodeKind): string => node?.status?.capacity?.cpu ?? '';
 
 export const getNodeAllocatableMemory = (node: NodeKind): string =>
-  _.get(node.status, 'allocatable.memory');
+  node?.status?.allocatable?.memory ?? '';
 
-export const getNodeTaints = (node: NodeKind) => node?.spec?.taints;
+export const getNodeTaints = (node: NodeKind): Taint[] => node?.spec?.taints;
 
-export const isWindowsNode = (node) =>
+export const isWindowsNode = (node): boolean =>
   node?.metadata?.labels?.['node.openshift.io/os_id'] === 'Windows' ||
   node?.metadata?.labels?.['corev1.LabelOSStable'] === 'windows';
 
-export const getNodeUptime = (node: NodeKind) =>
-  _.find(node?.status?.conditions, { type: 'Ready', status: 'True' })?.lastTransitionTime;
+export const getNodeUptime = (node: NodeKind): string =>
+  node?.status?.conditions?.find(({ type, status }) => type === 'Ready' && status === 'True')
+    ?.lastTransitionTime;
