@@ -9,7 +9,7 @@ import {
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
-import { networkTypes } from '../../constants';
+import { networkTypes } from '../../constants/constants';
 import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';
 

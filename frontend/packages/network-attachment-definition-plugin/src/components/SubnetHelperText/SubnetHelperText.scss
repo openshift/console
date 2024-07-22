@@ -1,0 +1,11 @@
+.kv-subnets-container {
+  &__info-icon {
+    color: var(--pf-v5-global--info-color--100);
+    margin-right: var(--pf-v5-global--spacer--sm);
+  }
+
+  &__helper-text {
+    font-weight: bolder;
+    color: var(--pf-v5-global--link--Color);
+  }
+}

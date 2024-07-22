@@ -30,6 +30,8 @@ export type NetworkAttachmentDefinitionConfig = {
   preserveDefaultVlan?: boolean;
   vlanID?: number;
   mtu?: number;
+  subnets?: string;
+  excludeSubnets?: string;
 };
 
 // The config is a JSON object with the NetworkAttachmentDefinitionConfig type stored as a string
