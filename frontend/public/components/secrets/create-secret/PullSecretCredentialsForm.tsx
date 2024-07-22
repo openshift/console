@@ -5,9 +5,7 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { AUTHS_KEY } from './const';
-import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
-import { PullSecretData } from '.';
+import { AUTHS_KEY, PullSecretCredentialEntry, PullSecretData } from '.';
 
 export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
   onChange,
@@ -43,7 +41,7 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
     });
     return imageSecretArray;
   };
-  const imageSecretArrayToObject = (imageSecretArray: PullSecretCredential[]) => {
+  const PullSecretCrentialArrayToPullSecretData = (imageSecretArray: PullSecretCredential[]) => {
     const imageSecretsObject = {};
     _.each(imageSecretArray, (value) => {
       imageSecretsObject[value.address] = _.pick(value, ['username', 'password', 'auth', 'email']);
@@ -51,40 +49,34 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
     return imageSecretsObject;
   };
 
-  const [secretEntriesArray, setSecretEntriesArray] = React.useState(
-    pullSecretDataToPullSecretCrentialArray(pullSecretData?.[AUTHS_KEY] || pullSecretData),
-  );
+  const secretEntriesArray = React.useMemo<PullSecretCredential[]>(() => {
+    return pullSecretDataToPullSecretCrentialArray(pullSecretData?.[AUTHS_KEY] || pullSecretData);
+  }, [pullSecretData]);
 
-  const propogateEntryChange = React.useCallback(
-    (secretEntries) => {
-      const imageSecretObject = imageSecretArrayToObject(secretEntries);
-      onChange(isDockerconfigjson ? { [AUTHS_KEY]: imageSecretObject } : imageSecretObject);
-    },
-    [isDockerconfigjson, onChange],
-  );
+  const onEntriesChanged = (secretEntries: PullSecretCredential[]) => {
+    const imageSecretObject = PullSecretCrentialArrayToPullSecretData(secretEntries);
+    onChange(isDockerconfigjson ? { [AUTHS_KEY]: imageSecretObject } : imageSecretObject);
+  };
 
-  React.useEffect(() => {
-    propogateEntryChange(secretEntriesArray);
-  }, [secretEntriesArray, propogateEntryChange]);
-
-  const onDataChanged = (updatedEntry, entryIndex: number) => {
+  const updateEntry = (updatedEntry, entryIndex: number) => {
     const updatedEntryData = {
       uid: secretEntriesArray[entryIndex].uid,
       ...updatedEntry,
     };
     const updatedSecretEntriesArray = [...secretEntriesArray];
     updatedSecretEntriesArray[entryIndex] = updatedEntryData;
-    setSecretEntriesArray(updatedSecretEntriesArray);
+    onEntriesChanged(updatedSecretEntriesArray);
   };
 
   const removeEntry = (entryIndex: number) => {
     const updatedSecretEntriesArray = [...secretEntriesArray];
     updatedSecretEntriesArray.splice(entryIndex, 1);
-    setSecretEntriesArray(updatedSecretEntriesArray);
+    onEntriesChanged(updatedSecretEntriesArray);
   };
 
   const addEntry = () => {
-    setSecretEntriesArray(_.concat(secretEntriesArray, newImageSecretEntry()));
+    const updatedSecretsEntriesArray = _.concat(secretEntriesArray, newImageSecretEntry());
+    onEntriesChanged(updatedSecretsEntriesArray);
   };
 
   return (
@@ -110,7 +102,7 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
             email={entryData.email}
             password={entryData.password}
             username={entryData.username}
-            onChange={onDataChanged}
+            onChange={updateEntry}
           />
         </div>
       ))}
