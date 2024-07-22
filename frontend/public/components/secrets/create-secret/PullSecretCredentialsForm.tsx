@@ -22,7 +22,7 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
     auth: '',
     uid: _.uniqueId(),
   });
-  const imageSecretObjectToArray = (imageSecretObject): PullSecretCredential[] => {
+  const pullSecretDataToPullSecretCrentialArray = (imageSecretObject): PullSecretCredential[] => {
     const imageSecretArray = [];
     if (_.isEmpty(imageSecretObject)) {
       return _.concat(imageSecretArray, newImageSecretEntry());
@@ -51,7 +51,7 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   };
 
   const [secretEntriesArray, setSecretEntriesArray] = useState(
-    imageSecretObjectToArray(pullSecretData?.[AUTHS_KEY] || pullSecretData),
+    pullSecretDataToPullSecretCrentialArray(pullSecretData?.[AUTHS_KEY] || pullSecretData),
   );
   const propogateEntryChange = (secretEntries: PullSecretCredential[]) => {
     const imageSecretObject = imageSecretArrayToObject(secretEntries);
