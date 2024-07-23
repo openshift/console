@@ -220,6 +220,8 @@
   "Webhook": "Webhook",
   "Select your Git provider type to be associated with the Trigger.": "Select your Git provider type to be associated with the Trigger.",
   "Git provider type": "Git provider type",
+  "Hide variables": "Hide variables",
+  "Show variables": "Show variables",
   "The following variables can be used in the Parameters or when created new Resources.": "The following variables can be used in the Parameters or when created new Resources.",
   "Use this format when you reference variables in this form: ": "Use this format when you reference variables in this form: ",
   "Select {{label}}": "Select {{label}}",
