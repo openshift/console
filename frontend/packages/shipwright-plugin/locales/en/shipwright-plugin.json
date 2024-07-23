@@ -37,7 +37,6 @@
   "Last run status": "Last run status",
   "Last run time": "Last run time",
   "Last run duration": "Last run duration",
-  "Waiting for the first Shipwright build to run successfully. You may temporarily see \"ImagePullBackOff\" and \"ErrImagePull\" errors in the Pods Section while waiting.": "Waiting for the first Shipwright build to run successfully. You may temporarily see \"ImagePullBackOff\" and \"ErrImagePull\" errors in the Pods Section while waiting.",
   "View all {{buildLength}}": "View all {{buildLength}}",
   "View logs": "View logs",
   "Start Build": "Start Build",
