@@ -73,10 +73,12 @@ const HPADetailsForm: React.FC = () => {
             <NumberSpinnerField
               label={t('devconsole~Minimum Pods')}
               name={`${name}.spec.minReplicas`}
+              setOutputAsIntegerFlag
             />
             <NumberSpinnerField
               label={t('devconsole~Maximum Pods')}
               name={`${name}.spec.maxReplicas`}
+              setOutputAsIntegerFlag
             />
             <HPAUtilizationField
               disabled={cpuUtilization}
