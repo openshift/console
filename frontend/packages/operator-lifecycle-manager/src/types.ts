@@ -294,6 +294,6 @@ export type OperatorGroupKind = {
 
 export type DeprecatedOperatorWarning = {
   deprecation?: {
-    message: string;
+    message?: string;
   };
 };

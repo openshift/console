@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
 import * as operatorLogo from '../operator.svg';
 import { ClusterServiceVersionIcon } from '../types';
 import { DeprecatedOperatorWarningBadge } from './deprecated-operator-warnings/deprecated-operator-warnings';
@@ -51,5 +52,4 @@ export type ClusterServiceVersionLogoProps = {
   icon: ClusterServiceVersionIcon | string;
   provider: { name: string } | string;
   version?: string;
-  deprecation?: { message: string };
-};
+} & DeprecatedOperatorWarning;

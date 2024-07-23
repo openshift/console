@@ -12,6 +12,7 @@ import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/m
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 import { SubscriptionKind, PackageManifestKind } from '../../types';
+import { DeprecatedOperatorWarningIcon } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 
 export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> = ({
   cancel,
@@ -61,12 +62,18 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
                 checked={selectedChannel === channel.name}
                 title={channel.name}
                 subTitle={
-                  <ResourceLink
-                    linkTo={false}
-                    name={channel.currentCSV}
-                    title={channel.currentCSV}
-                    kind={referenceForModel(ClusterServiceVersionModel)}
-                  />
+                  <span>
+                    <ResourceLink
+                      linkTo={false}
+                      name={channel.currentCSV}
+                      title={channel.currentCSV}
+                      kind={referenceForModel(ClusterServiceVersionModel)}
+                    >
+                      {channel?.deprecation ? (
+                        <DeprecatedOperatorWarningIcon deprecation={channel?.deprecation} />
+                      ) : null}
+                    </ResourceLink>
+                  </span>
                 }
               />
             </div>
