@@ -53,18 +53,21 @@ export enum operators {
   AMQStreams = 'AMQ Streams',
   RHOAS = 'RHOAS',
   Jaeger = 'Red Hat OpenShift distributed tracing platform',
+  BuildsForOpenshiftOperator = 'builds for Red Hat OpenShift Operator',
 }
 
 export enum operatorNamespaces {
   PipelinesOperator = 'openshift-operators',
   ServerlessOperator = 'openshift-serverless',
   ShipwrightOperator = 'openshift-operators',
+  BuildsForOpenshiftOperator = 'openshift-operators',
 }
 
 export enum operatorSubscriptions {
   PipelinesOperator = 'openshift-pipelines-operator',
   ServerlessOperator = 'serverless-operator',
   ShipwrightOperator = 'shipwright-operator',
+  BuildsForOpenshiftOperator = 'openshift-builds-operator',
 }
 
 export enum authenticationType {

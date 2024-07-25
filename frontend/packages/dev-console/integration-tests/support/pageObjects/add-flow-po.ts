@@ -56,6 +56,17 @@ export const gitPO = {
     addPipeline: '[id="select-option-build.option-PIPELINES"]',
     pipelineDropdown: '#form-dropdown-pipeline-templateSelected-field',
   },
+  buildsDropdown: '#form-select-input-build-option-field',
+  buildOptions: {
+    buildsForOpenshift: '[id="select-option-build.option-SHIPWRIGHT_BUILD"]',
+    buildConfig: '[id="select-option-build.option-BUILDS"]',
+    buildUsingPipelines: '[id="select-option-build.option-PIPELINES"]',
+  },
+  cbsDropdown: '#form-select-input-build-clusterBuildStrategy-field',
+  clusterBuildStrategies: {
+    buildah: '[id="select-option-build.clusterBuildStrategy-buildah"]',
+    s2i: '[id="select-option-build.clusterBuildStrategy-source-to-image"]',
+  },
   resourcesDropdown: '#form-select-input-resources-field',
   resources: {
     deployment: '#select-option-resources-kubernetes',

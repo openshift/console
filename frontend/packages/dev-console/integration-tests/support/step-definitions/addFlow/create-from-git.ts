@@ -56,6 +56,10 @@ Then('user can see toast notification saying {string} created successfully', (me
   gitPage.notificationVerify(message);
 });
 
+When('user selects Build option as {string} in Build section', (buildOption: string) => {
+  gitPage.selectBuildOption(buildOption);
+});
+
 When('user selects resource type as {string}', (resourceType: string) => {
   gitPage.selectResource(resourceType);
 });
