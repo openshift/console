@@ -11,7 +11,7 @@ export enum DefaultCatalogSource {
   CommunityOperators = 'community-operators',
 }
 
-export enum DefaultCatalogSourceDisplayName {
+export enum PackageSource {
   RedHatOperators = 'Red Hat',
   RedHatMarketplace = 'Marketplace',
   CertifiedOperators = 'Certified',

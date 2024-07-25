@@ -45,28 +45,28 @@ export enum ValidSubscriptionValue {
 }
 
 export type OperatorHubItem = {
-  obj: PackageManifestKind;
-  name: string;
-  kind: string;
-  uid: string;
+  authentication: AuthenticationKind;
+  catalogSource: string;
+  catalogSourceNamespace: string;
+  categories: string[];
+  cloudCredentials: CloudCredentialKind;
+  createdAt?: string;
+  description: string;
+  infraFeatures: InfraFeatures[];
+  infrastructure: InfrastructureKind;
   installed: boolean;
   installState?: InstalledState;
-  subscription?: SubscriptionKind;
-  provider: string;
+  kind: string;
   longDescription: string;
-  description: string;
-  createdAt?: string;
+  name: string;
+  obj: PackageManifestKind;
+  provider: string;
+  source?: string;
+  subscription?: SubscriptionKind;
   tags: string[];
-  categories: string[];
-  catalogSource: string;
-  catalogSourceDisplayName?: string;
-  catalogSourceNamespace: string;
-  [key: string]: any;
+  uid: string;
   validSubscription: string[];
-  infraFeatures: InfraFeatures[];
-  cloudCredentials: CloudCredentialKind;
-  infrastructure: InfrastructureKind;
-  authentication: AuthenticationKind;
+  [key: string]: any;
 };
 
 export enum OperatorHubCSVAnnotationKey {

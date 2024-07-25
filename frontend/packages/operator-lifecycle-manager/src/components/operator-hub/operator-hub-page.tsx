@@ -45,7 +45,7 @@ import {
 import { subscriptionFor } from '../operator-group';
 import { OperatorHubTileView } from './operator-hub-items';
 import {
-  getCatalogSourceDisplayName,
+  getPackageSource,
   isAWSSTSCluster,
   isAzureWIFCluster,
   isGCPWIFCluster,
@@ -251,7 +251,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
               .split(',')
               .map((category) => category.trim()),
             catalogSource: pkg.status.catalogSource,
-            catalogSourceDisplayName: getCatalogSourceDisplayName(pkg),
+            source: getPackageSource(pkg),
             catalogSourceNamespace: pkg.status.catalogSourceNamespace,
             certifiedLevel,
             healthIndex,

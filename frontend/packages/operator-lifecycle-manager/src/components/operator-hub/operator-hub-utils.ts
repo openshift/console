@@ -3,21 +3,19 @@ import {
   InfrastructureKind,
   AuthenticationKind,
 } from '@console/internal/module/k8s';
-import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
+import { DefaultCatalogSource, PackageSource } from '../../const';
 import { PackageManifestKind } from '../../types';
 
-export const defaultCatalogSourceDisplayNameMap = {
-  [DefaultCatalogSource.RedHatOperators]: DefaultCatalogSourceDisplayName.RedHatOperators,
-  [DefaultCatalogSource.RedHatMarketPlace]: DefaultCatalogSourceDisplayName.RedHatMarketplace,
-  [DefaultCatalogSource.CertifiedOperators]: DefaultCatalogSourceDisplayName.CertifiedOperators,
-  [DefaultCatalogSource.CommunityOperators]: DefaultCatalogSourceDisplayName.CommunityOperators,
+export const defaultPackageSourceMap = {
+  [DefaultCatalogSource.RedHatOperators]: PackageSource.RedHatOperators,
+  [DefaultCatalogSource.RedHatMarketPlace]: PackageSource.RedHatMarketplace,
+  [DefaultCatalogSource.CertifiedOperators]: PackageSource.CertifiedOperators,
+  [DefaultCatalogSource.CommunityOperators]: PackageSource.CommunityOperators,
 };
 
-export const getCatalogSourceDisplayName = (packageManifest: PackageManifestKind): string => {
-  const { catalogSource, catalogSourceDisplayName } = packageManifest.status;
-  return (
-    defaultCatalogSourceDisplayNameMap?.[catalogSource] || catalogSourceDisplayName || catalogSource
-  );
+export const getPackageSource = (packageManifest: PackageManifestKind): string => {
+  const { catalogSource, catalogSourceDisplayName } = packageManifest?.status ?? {};
+  return defaultPackageSourceMap?.[catalogSource] || catalogSourceDisplayName || catalogSource;
 };
 
 export const isAWSSTSCluster = (

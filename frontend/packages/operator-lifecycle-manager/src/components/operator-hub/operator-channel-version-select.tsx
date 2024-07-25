@@ -19,7 +19,7 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
   setUpdateVersion,
 }) => {
   const { t } = useTranslation();
-  const { channels = [] } = packageManifest.status;
+  const channels = React.useMemo(() => packageManifest?.status.channels ?? [], [packageManifest]);
   const [isChannelSelectOpen, setIsChannelSelectOpen] = React.useState(false);
   const onToggleChannel = () => setIsChannelSelectOpen(!isChannelSelectOpen);
   const { setDeprecatedChannel } = useDeprecatedOperatorWarnings();
@@ -54,8 +54,9 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
         aria-label={t('olm~Select a channel')}
         onToggle={onToggleChannel}
         isOpen={isChannelSelectOpen}
-        selections={selectedUpdateChannel}
+        selections={selectedUpdateChannel || '-'}
         onSelect={handleChannelSelection}
+        isDisabled={!packageManifest}
       >
         {channelSelectOptions}
       </SelectDeprecated>
@@ -81,11 +82,11 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
   const { setDeprecatedVersion } = useDeprecatedOperatorWarnings();
   const [isVersionSelectOpen, setIsVersionSelectOpen] = React.useState(false);
   const [defaultVersionForChannel, setDefaultVersionForChannel] = React.useState('');
-  const { channels = [] } = packageManifest.status;
+  const { channels = [] } = packageManifest?.status ?? {};
 
   React.useEffect(() => {
     setDefaultVersionForChannel(
-      channels.find((ch) => ch.name === selectedUpdateChannel).currentCSVDesc.version,
+      channels.find((ch) => ch.name === selectedUpdateChannel)?.currentCSVDesc?.version ?? '-',
     );
   }, [channels, selectedUpdateChannel]);
 
@@ -94,7 +95,10 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
   const selectedUpdateVersion = updateVersion || defaultVersionForChannel;
 
   // Return all versions associated with selectedUpdateChannel
-  const selectedChannelVersions = channels.find((ch) => ch.name === selectedUpdateChannel).entries;
+  const selectedChannelVersions = React.useMemo(
+    () => channels.find((ch) => ch.name === selectedUpdateChannel)?.entries ?? [],
+    [channels, selectedUpdateChannel],
+  );
 
   const handleVersionSelection = (_v, newSelection) => {
     setUpdateVersion(newSelection);
@@ -125,6 +129,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
         isOpen={isVersionSelectOpen}
         selections={selectedUpdateVersion}
         onSelect={handleVersionSelection}
+        isDisabled={!packageManifest}
       >
         {versionSelectOptions}
       </SelectDeprecated>

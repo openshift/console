@@ -33,7 +33,7 @@ export const operatorsPO = {
     knativeApacheCamelKOperatorCard:
       '[data-test="knative-camel-operator-community-operators-openshift-marketplace"]',
     apacheKafkaOperatorCard: '[data-test^="amq-streams-redhat-operators"]',
-    redHatSourceType: '[data-test-group-name="catalogSourceDisplayName"] [title="Red Hat"]',
+    redHatSourceType: '[data-test-group-name="source"] [title="Red Hat"]',
     redHatCodeReadyWorkspacesCard:
       '[data-test^="codeready-workspaces-redhat-operators-openshift-marketplace"]',
     gitopsPrimer: '[data-test="gitops-primer-community-operators-openshift-marketplace"]',
