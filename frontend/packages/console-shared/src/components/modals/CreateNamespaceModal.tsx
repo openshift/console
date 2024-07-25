@@ -5,25 +5,18 @@ import {
   ModalVariant,
   Button,
   Alert,
-  Select,
   SelectOption,
   SelectList,
-  MenuToggle,
-  MenuToggleElement,
 } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
-import {
-  SelectorInput,
-  resourceObjPath,
-  LoadingInline,
-  // Dropdown,
-} from '@console/internal/components/utils';
+import { SelectorInput, resourceObjPath, LoadingInline } from '@console/internal/components/utils';
 import { NamespaceModel, NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
+import { Select, SelectToggle } from '@console/shared/src/components/select';
 
 const allow = 'allow';
 const deny = 'deny';
@@ -126,19 +119,15 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
     </SelectOption>
   ));
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const defaultNetworkPolicy = defaultNetworkPolicies[0].value;
   const [selected, setSelected] = React.useState<string>(defaultNetworkPolicy);
-
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
-  };
 
   const onSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined,
   ) => {
-    setIsOpen(!isOpen);
+    setIsSelectOpen(!isSelectOpen);
     setSelected(value as string);
     if (value === defaultNetworkPolicy) {
       setNetworkPolicy(allow);
@@ -146,12 +135,6 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
       setNetworkPolicy(deny);
     }
   };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-      {selected}
-    </MenuToggle>
-  );
 
   const popoverText = () => {
     const nameFormat = t(
@@ -243,11 +226,18 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
           <div className="modal-body__field ">
             <Select
               id="dropdown-selectbox"
-              isOpen={isOpen}
+              isOpen={isSelectOpen}
               selected={selected}
               onSelect={onSelect}
-              onOpenChange={() => setIsOpen(isOpen)}
-              toggle={toggle}
+              toggle={
+                <SelectToggle
+                  id="dropdown-selectbox"
+                  onClick={() => setIsSelectOpen(!isSelectOpen)}
+                >
+                  {selected}
+                </SelectToggle>
+              }
+              onOpenChange={(onOpenChange) => setIsSelectOpen(onOpenChange)}
               shouldFocusToggleOnSelect
             >
               <SelectList>{selectOptions}</SelectList>
