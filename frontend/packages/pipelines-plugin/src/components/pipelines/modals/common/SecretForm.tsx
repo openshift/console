@@ -7,8 +7,9 @@ import {
   SecretType,
   BasicAuthSubform,
   SSHAuthSubform,
-  PullSecretCredentialsForm,
-  PullSecretData,
+  PullSecretForm,
+  SecretStringData,
+  SecretChangeData,
 } from '@console/internal/components/secrets/create-secret';
 import { ButtonBar } from '@console/internal/components/utils';
 import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
@@ -17,10 +18,8 @@ import './SecretForm.scss';
 
 const renderSecretForm = (
   type: SecretType,
-  stringData: {
-    [key: string]: any;
-  },
-  onDataChanged: (value: PullSecretData) => void,
+  stringData: { [key: string]: SecretStringData },
+  onDataChanged: (value: SecretChangeData) => void,
 ) => {
   switch (type) {
     case SecretType.basicAuth:
@@ -33,7 +32,7 @@ const renderSecretForm = (
       );
     case SecretType.dockerconfigjson:
       return (
-        <PullSecretCredentialsForm
+        <PullSecretForm
           onChange={onDataChanged}
           stringData={stringData[SecretType.dockerconfigjson]}
         />
@@ -135,7 +134,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
     }
   };
 
-  const onDataChanged = (value: PullSecretData) => {
+  const onDataChanged = (value: SecretChangeData) => {
     setStringData((prevState) => {
       setValues(values.type, { ...prevState, [values.type]: value });
       return { ...prevState, [values.type]: value };
