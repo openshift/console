@@ -145,7 +145,7 @@ type GenericSecretFormProps = {
   stringData: {
     [key: string]: string;
   };
-  isCreate: boolean;
+  isCreate?: boolean;
 };
 
 type GenericSecretFormState = {

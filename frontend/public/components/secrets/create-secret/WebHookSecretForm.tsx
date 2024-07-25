@@ -77,9 +77,9 @@ type WebHookSecretFormState = {
 
 type WebHookSecretFormProps = {
   onChange: Function;
-  onError: Function;
-  onFormDisable: Function;
-  secretType: string;
+  onError?: Function;
+  onFormDisable?: Function;
+  secretType?: string;
   stringData: {
     [key: string]: string;
   };
