@@ -3,13 +3,19 @@ import {
   checkPipelineOperatorStatus,
   checkKnativeOperatorStatus,
   checkShipwrightOperatorStatus,
+  checkBuildsForOpenshiftOperatorStatus,
 } from './checkOperatorStatus';
 import {
   createKnativeEventingUsingCLI,
   createKnativeKafkaUsingCLI,
   createKnativeServingUsingCLI,
 } from './knativeSubscriptions';
-import { createShipwrightBuildUsingCLI } from './shipwrightSubscriptions';
+import {
+  checkShipwrightBuildStatus,
+  createBuildsForOpenshiftBuildUsingCLI,
+  createClusterBuildStrategiesUsingCLI,
+  createShipwrightBuildUsingCLI,
+} from './shipwrightSubscriptions';
 
 export const checkOperatorStatus = (operator: operators) => {
   switch (operator) {
@@ -21,6 +27,9 @@ export const checkOperatorStatus = (operator: operators) => {
       break;
     case operators.ShipwrightOperator:
       checkShipwrightOperatorStatus();
+      break;
+    case operators.BuildsForOpenshiftOperator:
+      checkBuildsForOpenshiftOperatorStatus();
       break;
     default:
       throw new Error('Invalid Operator');
@@ -46,6 +55,14 @@ export const performPostInstallationSteps = (operator: operators): void => {
       checkOperatorStatus(operators.PipelinesOperator);
       createShipwrightBuildUsingCLI();
       break;
+    case operators.BuildsForOpenshiftOperator:
+      cy.log(`Performing Builds for Openshift post-installation steps`);
+      checkOperatorStatus(operators.BuildsForOpenshiftOperator);
+      checkOperatorStatus(operators.PipelinesOperator);
+      createBuildsForOpenshiftBuildUsingCLI();
+      checkShipwrightBuildStatus();
+      createClusterBuildStrategiesUsingCLI();
+      break;
     default:
       cy.log(`Nothing to do in post-installation steps`);
   }
@@ -65,6 +82,10 @@ export const installOperatorUsingCLI = (operator: operators) => {
     case operators.ShipwrightOperator:
       yamlFile =
         '../../shipwright-plugin/integration-tests/testData/shipwrightOperatorSubscription.yaml';
+      break;
+    case operators.BuildsForOpenshiftOperator:
+      yamlFile =
+        '../../shipwright-plugin/integration-tests/testData/buildsForOpenshiftOperatorInstallation/buildsSubscription.yaml';
       break;
     default:
       throw new Error('Invalid Operator');
@@ -102,6 +123,10 @@ export const checkSubscriptionStatus = (operator: operators) => {
       namespace = operatorNamespaces.ShipwrightOperator;
       subscriptionName = operatorSubscriptions.ShipwrightOperator;
       break;
+    case operators.BuildsForOpenshiftOperator:
+      namespace = operatorNamespaces.BuildsForOpenshiftOperator;
+      subscriptionName = operatorSubscriptions.BuildsForOpenshiftOperator;
+      break;
     default:
       throw new Error('Invalid Operator');
   }
@@ -136,4 +161,8 @@ export const installKnativeOperatorUsingCLI = () => {
 
 export const installShipwrightOperatorUsingCLI = () => {
   verifyAndInstallOperatorUsingCLI(operators.ShipwrightOperator);
+};
+
+export const installBuildsForOpenshiftOperatorUsingCLI = () => {
+  verifyAndInstallOperatorUsingCLI(operators.BuildsForOpenshiftOperator);
 };

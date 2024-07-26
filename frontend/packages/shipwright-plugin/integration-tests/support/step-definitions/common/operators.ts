@@ -1,5 +1,6 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 import {
+  installBuildsForOpenshiftOperatorUsingCLI,
   installKnativeOperatorUsingCLI,
   installPipelinesOperatorUsingCLI,
   installShipwrightOperatorUsingCLI,
@@ -15,4 +16,8 @@ Given('user has installed OpenShift Serverless Operator', () => {
 
 Given('user has installed Shipwright Operator', () => {
   installShipwrightOperatorUsingCLI();
+});
+
+Given('user has installed the Builds for Openshift Operator', () => {
+  installBuildsForOpenshiftOperatorUsingCLI();
 });

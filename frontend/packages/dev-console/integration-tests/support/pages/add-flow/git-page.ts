@@ -129,6 +129,42 @@ export const gitPage = {
   },
   verifyNodeName: (componentName: string) =>
     cy.get(gitPO.nodeName).should('have.value', componentName),
+  selectBuildOption: (buildOption: string) => {
+    cy.get(gitPO.buildsDropdown).scrollIntoView().click();
+    switch (buildOption) {
+      case 'Builds for Openshift':
+      case 'Shipwright':
+        cy.get(gitPO.buildOptions.buildsForOpenshift).scrollIntoView().click();
+        break;
+      case 'BuildConfig':
+      case 'Builds':
+        cy.get(gitPO.buildOptions.buildConfig).scrollIntoView().click();
+        break;
+      case 'Build using pipelines':
+      case 'Pipelines':
+        cy.get(gitPO.buildOptions.buildUsingPipelines).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Build option is not available');
+    }
+    cy.log(`Build option "${buildOption}" is selected`);
+  },
+  selectClusterBuildStrategy: (clusterBuildStrategy: string) => {
+    cy.get(gitPO.cbsDropdown).scrollIntoView().click();
+    switch (clusterBuildStrategy) {
+      case 'buildah':
+      case 'Buildah':
+        cy.get(gitPO.clusterBuildStrategies.buildah).scrollIntoView().click();
+        break;
+      case 'S2I':
+      case 'Source-to-Image':
+        cy.get(gitPO.clusterBuildStrategies.s2i).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Cluster Build Strategy is not available');
+    }
+    cy.log(`Cluster Build Strategy "${clusterBuildStrategy}" is selected`);
+  },
   selectResource: (resource: string = 'deployment') => {
     cy.get(gitPO.resourcesDropdown).scrollIntoView().click();
     switch (resource) {
@@ -148,7 +184,6 @@ export const gitPage = {
         break;
       default:
         throw new Error('Resource option is not available');
-        break;
     }
     cy.log(`Resource type "${resource}" is selected`);
   },
