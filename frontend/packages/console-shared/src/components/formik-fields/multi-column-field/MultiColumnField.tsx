@@ -31,6 +31,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   disableDeleteRow,
   tooltipDeleteRow,
   disableAddRow,
+  hideAddRow,
   tooltipAddRow,
   spans,
   complexFields,
@@ -84,6 +85,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
             {!isReadOnly && (
               <MultiColumnFieldFooter
                 disableAddRow={disableAddRow}
+                hideAddRow={hideAddRow}
                 tooltipAddRow={tooltipAddRow}
                 addLabel={addLabel}
                 onAdd={() => push(emptyValues)}

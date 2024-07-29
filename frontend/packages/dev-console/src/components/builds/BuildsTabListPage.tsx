@@ -113,7 +113,7 @@ const BuildsTabListPage: React.FC = () => {
   if (namespace && shipwrightBuildComponent) {
     menuActions.shipwrightBuild = {
       label: t('devconsole~Shipwright Build'),
-      onSelection: () => `/k8s/ns/${namespace}/${shipwrightKind}/~new`,
+      onSelection: () => `/k8s/ns/${namespace}/${shipwrightKind}/~new/form`,
     };
     pages.push({
       href: 'shipwright-builds',
