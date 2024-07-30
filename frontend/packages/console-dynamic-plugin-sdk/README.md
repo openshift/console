@@ -31,6 +31,18 @@ provided by Console to its dynamic plugins.
 _[OpenShift Console Dynamic Plugins feature page][console-doc-feature-page]_ - A high-level overview of
 dynamic plugins in relation to OLM operators and cluster administration.
 
+## Plugin project references
+
+If you're new to dynamic plugins, we suggest to clone the [Console plugin template][console-plugin-template]
+repo and try to build and run it using a [local Console Bridge server](#local-plugin-development).
+
+You can also take a look at [Console demo plugin][console-demo-plugin] located in the Console repo,
+however note that this plugin is primarily meant for testing the current Console plugin SDK features.
+
+Here is a list of real world dynamic plugins that may serve as a reference point:
+
+- [CronTab plugin](https://github.com/openshift/console-crontab-plugin)
+
 ## Distributable SDK package overview
 
 | Package Name | Description |
@@ -447,3 +459,5 @@ The list of shared modules planned for deprecation:
 [console-doc-api]: ./docs/api.md
 [console-doc-feature-page]: https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md
 [console-pf-upgrade-notes]: ./upgrade-PatternFly.md
+[console-plugin-template]: https://github.com/openshift/console-plugin-template
+[console-demo-plugin]: ../../../dynamic-demo-plugin/README.md
