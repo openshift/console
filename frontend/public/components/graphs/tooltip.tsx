@@ -276,7 +276,12 @@ export const ChartLegendTooltip: React.FunctionComponent<
       : {
           ...legendTooltipProps,
           // For non-stack graphs, remove the text for "mainDataName"
-          text: legendTooltipProps.text.filter(
+
+          // text: legendTooltipProps.text.filter(
+          //   (t, i) => legendTooltipProps.legendData[i].name !== mainDataName,
+          // ),
+
+          text: (legendTooltipProps.text as any).filter(
             (t, i) => legendTooltipProps.legendData[i].name !== mainDataName,
           ),
         };

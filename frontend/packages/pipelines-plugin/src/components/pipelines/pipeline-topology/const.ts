@@ -1,4 +1,4 @@
-import * as dagre from 'dagre';
+import * as dagre from '@dagrejs/dagre';
 
 export const NODE_SEPARATION_HORIZONTAL = 25;
 export const NODE_SEPARATION_VERTICAL = 20;

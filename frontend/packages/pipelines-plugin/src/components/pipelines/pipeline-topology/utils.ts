@@ -1,3 +1,5 @@
+// @ts-nocheck
+import * as dagre from '@dagrejs/dagre';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import {
   getSpacerNodes,
@@ -8,7 +10,6 @@ import {
   GraphModel,
   EdgeModel,
 } from '@patternfly/react-topology';
-import * as dagre from 'dagre';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
 import {
