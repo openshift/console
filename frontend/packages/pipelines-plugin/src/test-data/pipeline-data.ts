@@ -3227,8 +3227,10 @@ export const PipeLineRunWithRepoMetadata: Record<string, PipelineRunKind> = {
     metadata: {
       name: 'pipeline-with-repo',
       labels: {
-        'pipelinesascode.tekton.dev/branch': 'main',
         'pipelinesascode.tekton.dev/url-repository': 'demoapp',
+      },
+      annotations: {
+        'pipelinesascode.tekton.dev/branch': 'main',
       },
       namespace: 'test',
     },
@@ -3253,6 +3255,8 @@ export const PipeLineRunWithRepoMetadata: Record<string, PipelineRunKind> = {
       name: 'pipeline-with-repo',
       labels: {
         'pipelinesascode.tekton.dev/repository': 'repo1',
+      },
+      annotations: {
         'pipelinesascode.tekton.dev/branch': 'main',
       },
       namespace: 'test',
