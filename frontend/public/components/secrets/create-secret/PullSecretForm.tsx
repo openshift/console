@@ -6,7 +6,7 @@ import {
   getImageSecretKey,
   AUTHS_KEY,
   PullSecretCredentialsForm,
-  UploadConfigSubform,
+  PullSecretUploadForm,
   SecretSubFormProps,
 } from '.';
 
@@ -73,7 +73,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
           onError={onError}
         />
       ) : (
-        <UploadConfigSubform
+        <PullSecretUploadForm
           onChange={onDataChanged}
           stringData={stringSecretData}
           onDisable={onFormDisable}
