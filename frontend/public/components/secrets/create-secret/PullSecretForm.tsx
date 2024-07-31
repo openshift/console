@@ -21,15 +21,10 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   const [authType, setAuthType] = React.useState('credentials');
   const { t } = useTranslation();
 
-  const pullSecretData = React.useMemo<PullSecretData>(() => {
-    try {
-      const key = getImageSecretKey(secretType);
-      const jsonContent = stringData[key] ?? '{}';
-      return JSON.parse(jsonContent);
-    } catch (err) {
-      onError(`Error parsing secret's data: ${err.message}`);
-      return {};
-    }
+  const stringSecretData = React.useMemo<string>(() => {
+    const key = getImageSecretKey(secretType);
+    const jsonContent = stringData[key] ?? '{}';
+    return jsonContent;
   }, [stringData, secretType]);
 
   const onDataChanged = React.useCallback(
@@ -72,11 +67,15 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
         </div>
       )}
       {authType === 'credentials' ? (
-        <PullSecretCredentialsForm onChange={onDataChanged} pullSecretData={pullSecretData} />
+        <PullSecretCredentialsForm
+          onChange={onDataChanged}
+          stringData={stringSecretData}
+          onError={onError}
+        />
       ) : (
         <UploadConfigSubform
           onChange={onDataChanged}
-          stringData={pullSecretData}
+          stringData={stringSecretData}
           onDisable={onFormDisable}
         />
       )}
@@ -84,17 +83,17 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   );
 };
 
-type DockerConfigData = {
-  [url: string]: {
-    username: string;
-    password: string;
-    email: string;
-    auth: string;
-  };
+export type DockerConfigData = {
+  [url: string]: DockerConfigCredential;
 };
 
 type DockerConfigJSONData = {
   auths: DockerConfigData;
 };
-
+export type DockerConfigCredential = {
+  username: string;
+  password: string;
+  email: string;
+  auth: string;
+};
 export type PullSecretData = DockerConfigData | DockerConfigJSONData;

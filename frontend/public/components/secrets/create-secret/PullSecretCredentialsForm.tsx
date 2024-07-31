@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { AUTHS_KEY, PullSecretCredentialEntry, PullSecretData } from '.';
-import { usePullCredentialsFormSecretEntries } from './usePullCredentialsFormSecretEntries';
+import { PullSecretCredentialEntry, PullSecretData } from '.';
+import { usePullSecretCredentialEntries } from './usePullSecretCredentialEntries';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
   address: '',
@@ -18,48 +18,38 @@ const newImageSecretEntry = (): PullSecretCredential => ({
 
 export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
   onChange,
-  pullSecretData,
+  stringData,
+  onError,
 }) => {
   const { t } = useTranslation();
-  const [secretEntriesArray, setSecretEntriesArray] = usePullCredentialsFormSecretEntries(
-    pullSecretData?.[AUTHS_KEY] || pullSecretData,
-    onChange,
-  );
+  const [entries, setEntries] = usePullSecretCredentialEntries(stringData, onChange, onError);
 
   const onEntriesChanged = (secretEntries: PullSecretCredential[]) => {
-    setSecretEntriesArray(secretEntries);
+    setEntries(secretEntries);
   };
 
   const updateEntry = (updatedEntry, entryIndex: number) => {
-    const updatedSecretEntriesArray = secretEntriesArray.map((entry, index) => {
-      if (index === entryIndex) {
-        return {
-          uid: entry.uid,
-          ...updatedEntry,
-        };
-      }
-      return entry;
-    });
-    onEntriesChanged(updatedSecretEntriesArray);
-  };
-
-  const removeEntry = (entryIndex: number) => {
-    const updatedSecretEntriesArray = secretEntriesArray.filter(
-      (value, index) => index !== entryIndex,
+    const updatedSecretEntriesArray = entries.map((entry, index) =>
+      index === entryIndex ? { uid: entry.uid, ...updatedEntry } : entry,
     );
     onEntriesChanged(updatedSecretEntriesArray);
   };
 
+  const removeEntry = (entryIndex: number) => {
+    const updatedSecretEntriesArray = entries.filter((value, index) => index !== entryIndex);
+    onEntriesChanged(updatedSecretEntriesArray);
+  };
+
   const addEntry = () => {
-    const updatedSecretsEntriesArray = [...secretEntriesArray, newImageSecretEntry()];
+    const updatedSecretsEntriesArray = [...entries, newImageSecretEntry()];
     onEntriesChanged(updatedSecretsEntriesArray);
   };
 
   return (
     <>
-      {secretEntriesArray.map(({ uid, address, email, username, password }, index) => (
+      {entries.map(({ uid, address, email, username, password }, index) => (
         <div className="co-add-remove-form__entry" key={uid}>
-          {secretEntriesArray.length > 1 && (
+          {entries.length > 1 && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
                 onClick={() => removeEntry(index)}
@@ -107,5 +97,6 @@ export type PullSecretCredential = {
 
 type PullSecretCredentialsFormProps = {
   onChange: (secretData: PullSecretData) => void;
-  pullSecretData: PullSecretData;
+  stringData: string;
+  onError: (error: any) => void;
 };
