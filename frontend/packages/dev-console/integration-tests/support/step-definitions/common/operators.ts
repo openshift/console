@@ -1,15 +1,15 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 import { operators } from '../../constants';
 import {
-  installKnativeOperatorUsingCLI,
   installPipelinesOperatorUsingCLI,
+  installKnativeOperatorUsingCLI,
   installShipwrightOperatorUsingCLI,
   verifyAndInstallOperator,
+  installWebterminalOperatorUsingCLI,
 } from '../../pages';
-import { verifyAndInstallWebTerminalOperator } from '../../pages/functions/installOperatorOnCluster';
 
 Given('user has installed Web Terminal operator', () => {
-  verifyAndInstallWebTerminalOperator();
+  installWebterminalOperatorUsingCLI();
 });
 
 Given('user has installed OpenShift Serverless Operator', () => {
@@ -38,5 +38,5 @@ Given('user has installed Shipwright Operator', () => {
 });
 
 Given('user with basic rights has installed Web Terminal operator', () => {
-  verifyAndInstallWebTerminalOperator();
+  installWebterminalOperatorUsingCLI();
 });
