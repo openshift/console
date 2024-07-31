@@ -1,76 +1,56 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
-import { withTranslation } from 'react-i18next';
-import { WithT } from 'i18next';
-import { DroppableFileInput } from '.';
+import { useTranslation } from 'react-i18next';
+import { DroppableFileInput, PullSecretData } from '.';
 
-class UploadConfigSubformWithTranslation extends React.Component<
-  UploadConfigSubformProps & WithT,
-  UploadConfigSubformState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      configFile: _.isEmpty(this.props.stringData) ? '' : JSON.stringify(this.props.stringData),
-      parseError: false,
-    };
-    this.changeData = this.changeData.bind(this);
-    this.onFileChange = this.onFileChange.bind(this);
-  }
-  changeData(event) {
-    this.updateState(_.attempt(JSON.parse, event.target.value), event.target.value);
-  }
-  onFileChange(fileData) {
-    this.updateState(_.attempt(JSON.parse, fileData), fileData);
-  }
-  updateState(parsedData, stringData) {
-    this.setState(
-      {
-        configFile: stringData,
-        parseError: _.isError(parsedData),
-      },
-      () => {
-        this.props.onChange(parsedData);
-        this.props.onDisable(this.state.parseError);
-      },
-    );
-  }
-  render() {
-    const { t } = this.props;
-    return (
-      <>
-        <DroppableFileInput
-          onChange={this.onFileChange}
-          inputFileData={this.state.configFile}
-          id="docker-config"
-          label={t('public~Configuration file')}
-          inputFieldHelpText={t('public~Upload a .dockercfg or .docker/config.json file.')}
-          textareaFieldHelpText={t(
-            'public~File with credentials and other configuration for connecting to a secured image registry.',
-          )}
-          isRequired={true}
-        />
-        {this.state.parseError && (
-          <div className="co-create-secret-warning">
-            {t('public~Configuration file should be in JSON format.')}
-          </div>
+export const UploadConfigSubform: React.FC<PullSecretUploadFormProps> = ({
+  onChange,
+  onDisable,
+  stringData,
+}) => {
+  const { t } = useTranslation();
+  const [configFile, setConfigFile] = React.useState<string>(stringData ? stringData : '');
+  const [parseError, setParseError] = React.useState<boolean>(false);
+
+  const onFileChange = React.useCallback(
+    (fileData: string) => {
+      try {
+        setConfigFile(fileData);
+        const newPullSecret = JSON.parse(fileData);
+        onChange(newPullSecret);
+        setParseError(false);
+        onDisable(false);
+      } catch (e) {
+        setParseError(true);
+        onDisable(true);
+      }
+    },
+    [onChange, onDisable],
+  );
+
+  return (
+    <>
+      <DroppableFileInput
+        onChange={onFileChange}
+        inputFileData={configFile}
+        id="docker-config"
+        label={t('public~Configuration file')}
+        inputFieldHelpText={t('public~Upload a .dockercfg or .docker/config.json file.')}
+        textareaFieldHelpText={t(
+          'public~File with credentials and other configuration for connecting to a secured image registry.',
         )}
-      </>
-    );
-  }
-}
-
-export const UploadConfigSubform = withTranslation()(UploadConfigSubformWithTranslation);
-
-type UploadConfigSubformState = {
-  parseError: boolean;
-  configFile: string;
+        isRequired={true}
+      />
+      {parseError && (
+        <div className="co-create-secret-warning">
+          {t('public~Configuration file should be in JSON format.')}
+        </div>
+      )}
+    </>
+  );
 };
 
-type UploadConfigSubformProps = {
-  onChange: Function;
-  onDisable: Function;
-  stringData: {
-    [key: string]: Object;
-  };
+type PullSecretUploadFormProps = {
+  onChange: (secretData: PullSecretData) => void;
+  onDisable: (disable: boolean) => void;
+  stringData: string;
 };
