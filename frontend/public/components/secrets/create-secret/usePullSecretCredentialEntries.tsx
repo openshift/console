@@ -53,6 +53,7 @@ export const usePullSecretCredentialEntries = (
   try {
     dockerConfigData = JSON.parse(stringData);
   } catch (err) {
+    dockerConfigData = {};
     onError(`Error parsing secret's data: ${err.message}`);
   }
   const initialEntries = dockerConfigDataToPullSecretCredentials(dockerConfigData);
