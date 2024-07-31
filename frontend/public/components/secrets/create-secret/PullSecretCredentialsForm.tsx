@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { PullSecretCredentialEntry, PullSecretData } from '.';
+import { PullSecretCredentialEntry, PullSecretData, SecretStringData, SecretType } from '.';
 import { usePullSecretCredentialEntries } from './usePullSecretCredentialEntries';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
@@ -20,29 +20,31 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   onChange,
   stringData,
   onError,
+  secretType,
 }) => {
   const { t } = useTranslation();
-  const [entries, setEntries] = usePullSecretCredentialEntries(stringData, onChange, onError);
-
-  const onEntriesChanged = (secretEntries: PullSecretCredential[]) => {
-    setEntries(secretEntries);
-  };
+  const [entries, setEntries] = usePullSecretCredentialEntries(
+    stringData,
+    onChange,
+    onError,
+    secretType,
+  );
 
   const updateEntry = (updatedEntry, entryIndex: number) => {
     const updatedSecretEntriesArray = entries.map((entry, index) =>
       index === entryIndex ? { uid: entry.uid, ...updatedEntry } : entry,
     );
-    onEntriesChanged(updatedSecretEntriesArray);
+    setEntries(updatedSecretEntriesArray);
   };
 
   const removeEntry = (entryIndex: number) => {
     const updatedSecretEntriesArray = entries.filter((value, index) => index !== entryIndex);
-    onEntriesChanged(updatedSecretEntriesArray);
+    setEntries(updatedSecretEntriesArray);
   };
 
   const addEntry = () => {
     const updatedSecretsEntriesArray = [...entries, newImageSecretEntry()];
-    onEntriesChanged(updatedSecretsEntriesArray);
+    setEntries(updatedSecretsEntriesArray);
   };
 
   return (
@@ -97,6 +99,7 @@ export type PullSecretCredential = {
 
 type PullSecretCredentialsFormProps = {
   onChange: (secretData: PullSecretData) => void;
-  stringData: string;
+  stringData: SecretStringData;
   onError: (error: any) => void;
+  secretType: SecretType;
 };
