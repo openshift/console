@@ -12,8 +12,83 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
+	olmv1 "github.com/operator-framework/operator-lifecycle-manager/pkg/package-server/apis/operators/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+type PackageManifestHandler struct {
+	APIServerURL string
+	Client       *http.Client
+}
+
+func (o *PackageManifestHandler) GetConfig() (*rest.Config, error) {
+	config := &rest.Config{
+		Host:      o.APIServerURL,
+		Transport: o.Client.Transport,
+	}
+	return config, nil
+}
+
+func (o *PackageManifestHandler) PackageManifestGetHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
+		return
+	}
+
+	query := r.URL.Query()
+	operatorName := query.Get("name")
+	operatorNamespace := query.Get("namespace")
+	if len(operatorName) < 1 || len(operatorNamespace) < 1 {
+		errMsg := fmt.Sprintf("Failed to get operator name or namespace from the request URL: %q", r.URL.String())
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	scheme, err := action.NewScheme()
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get new scheme for operator client: %v", err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
+		return
+	}
+	config, err := o.GetConfig()
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get new config for operator client: %v", err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
+		return
+	}
+	client, err := client.New(config, client.Options{
+		Scheme: scheme,
+	})
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get new client for listing operands: %v", err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
+		return
+	}
+	packageManifest := olmv1.PackageManifest{}
+	err = client.Get(context.TODO(), types.NamespacedName{Name: operatorName, Namespace: operatorNamespace}, &packageManifest)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to get operator: %v", err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(packageManifest)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to marshal %q operator response: %v", operatorName, err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
+		return
+	}
+	w.Write(resp)
+}
 
 type OperandsListHandler struct {
 	APIServerURL string

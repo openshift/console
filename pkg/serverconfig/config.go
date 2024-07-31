@@ -327,6 +327,15 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 			fs.Set("perspectives", string(perspectives))
 		}
 	}
+
+	if customization.Capabilities != nil {
+		capabilities, err := json.Marshal(customization.Capabilities)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.perspectives field: %v", err)
+		} else {
+			fs.Set("capabilities", string(capabilities))
+		}
+	}
 }
 
 func isAlreadySet(fs *flag.FlagSet, name string) bool {

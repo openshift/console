@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"runtime"
@@ -13,6 +14,7 @@ import (
 	"os"
 	"strings"
 
+	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/flags"
@@ -133,6 +135,7 @@ func main() {
 	fAddPage := fs.String("add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
 	fProjectAccessClusterRoles := fs.String("project-access-cluster-roles", "", "The list of Cluster Roles assignable for the project access page. (JSON as string)")
 	fPerspectives := fs.String("perspectives", "", "Allow enabling/disabling of perspectives in the console. (JSON as string)")
+	fCapabilities := fs.String("capabilities", "", "Allow enabling/disabling of capabilities in the console. (JSON as string)")
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
@@ -244,6 +247,14 @@ func main() {
 		}
 	}
 
+	capabilities := []operatorv1.Capability{}
+	if *fCapabilities != "" {
+		err = json.Unmarshal([]byte(*fCapabilities), &capabilities)
+		if err != nil {
+			klog.Fatalf("Error unmarshaling capabilities JSON: %v", err)
+		}
+	}
+
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
@@ -276,6 +287,7 @@ func main() {
 		NodeOperatingSystems:         nodeOperatingSystems,
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
+		Capabilities:                 capabilities,
 	}
 
 	completedAuthnOptions, err := authOptions.Complete()
