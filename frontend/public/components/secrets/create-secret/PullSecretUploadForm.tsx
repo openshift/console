@@ -1,14 +1,23 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DroppableFileInput, PullSecretData } from '.';
+import {
+  DroppableFileInput,
+  getImageSecretKey,
+  PullSecretData,
+  SecretStringData,
+  SecretType,
+} from '.';
 
 export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   onChange,
   onDisable,
   stringData,
+  secretType,
 }) => {
   const { t } = useTranslation();
-  const [configFile, setConfigFile] = React.useState<string>(stringData ? stringData : '');
+  const key = getImageSecretKey(secretType);
+  const jsonContent = stringData[key] ?? '{}';
+  const [configFile, setConfigFile] = React.useState<string>(jsonContent ? jsonContent : '');
   const [parseError, setParseError] = React.useState<boolean>(false);
 
   const onFileChange = React.useCallback(
@@ -52,5 +61,6 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
 type PullSecretUploadFormProps = {
   onChange: (secretData: PullSecretData) => void;
   onDisable: (disable: boolean) => void;
-  stringData: string;
+  stringData: SecretStringData;
+  secretType: SecretType;
 };

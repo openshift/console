@@ -3,6 +3,7 @@ import { DockerConfigCredential, DockerConfigData, PullSecretData } from './Pull
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
 import { PullSecretCredential } from './PullSecretCredentialsForm';
+import { getImageSecretKey, SecretStringData, SecretType } from '.';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
   address: '',
@@ -45,18 +46,22 @@ const pullSecretCredentialsToDockerConfigData = (
   );
 
 export const usePullSecretCredentialEntries = (
-  stringData: string,
+  stringData: SecretStringData,
   onChange: (changeData: PullSecretData) => void,
   onError: (error: any) => void,
-): any => {
-  let dockerConfigData;
-  try {
-    dockerConfigData = JSON.parse(stringData);
-  } catch (err) {
-    dockerConfigData = {};
-    onError(`Error parsing secret's data: ${err.message}`);
-  }
-  const initialEntries = dockerConfigDataToPullSecretCredentials(dockerConfigData);
+  secretType: SecretType,
+): [PullSecretCredential[], React.Dispatch<React.SetStateAction<PullSecretCredential[]>>] => {
+  const initialEntries = React.useMemo(() => {
+    try {
+      const key = getImageSecretKey(secretType);
+      const jsonContent = stringData[key] ?? '{}';
+      const dockerConfigData = JSON.parse(jsonContent);
+      return dockerConfigDataToPullSecretCredentials(dockerConfigData?.auths || dockerConfigData);
+    } catch (err) {
+      onError(`Error parsing pull secret: ${err.message}`);
+      return [];
+    }
+  }, [stringData]);
   const [entries, setEntries] = React.useState(initialEntries);
 
   React.useEffect(() => {
