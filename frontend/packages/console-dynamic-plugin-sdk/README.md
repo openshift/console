@@ -34,14 +34,20 @@ dynamic plugins in relation to OLM operators and cluster administration.
 ## Plugin project references
 
 If you're new to dynamic plugins, we suggest to clone the [Console plugin template][console-plugin-template]
-repo and try to build and run it using a [local Console Bridge server](#local-plugin-development).
+repo and follow its instructions on setting up a local plugin development environment. We recommend running
+the Console application via container image to avoid having to build Console locally.
 
-You can also take a look at [Console demo plugin][console-demo-plugin] located in the Console repo,
-however note that this plugin is primarily meant for testing the current Console plugin SDK features.
+The [CronTab plugin](https://github.com/openshift/console-crontab-plugin) is a sample plugin that uses the
+`CronTab` Custom Resource Definition (CRD) from
+[Kubernetes documentation](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
+and implements basic CRD operations such as creating, editing and deleting.
 
-Here is a list of real world dynamic plugins that may serve as a reference point:
+The [Console demo plugin][console-demo-plugin] located in the Console repo is primarily meant for testing
+the current Console plugin SDK features.
 
-- [CronTab plugin](https://github.com/openshift/console-crontab-plugin)
+Here is a list of real world dynamic plugins that may serve as a further reference point:
+
+- [KubeVirt plugin](https://github.com/kubevirt-ui/kubevirt-plugin)
 
 ## Distributable SDK package overview
 
