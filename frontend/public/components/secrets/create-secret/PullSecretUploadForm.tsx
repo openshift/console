@@ -16,8 +16,8 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const key = getImageSecretKey(secretType);
-  const jsonContent = stringData[key] ?? '{}';
-  const [configFile, setConfigFile] = React.useState<string>(jsonContent ? jsonContent : '');
+  const configContent = stringData[key] ?? '';
+  const [configFile, setConfigFile] = React.useState<string>(configContent);
   const [parseError, setParseError] = React.useState<boolean>(false);
 
   const onFileChange = React.useCallback(
