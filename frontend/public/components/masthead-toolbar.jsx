@@ -51,6 +51,7 @@ import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import { useFeedbackLocal } from './feedback-local';
+import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
@@ -190,6 +191,8 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         return 1;
       case 'Customer Applications':
         return 2;
+      case 'Troubleshooting':
+        return 3;
       case '':
         return 9; // Items w/o sections go last
       default:
@@ -198,6 +201,9 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   };
 
   const getLaunchActions = () => {
+    const isTroubleshootingPanelEnabled = Array.isArray(window.SERVER_FLAGS.consolePlugins)
+      ? window.SERVER_FLAGS.consolePlugins.includes('troubleshooting-panel-console-plugin')
+      : false;
     const launcherItems = getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
 
     const sections = [];
@@ -231,6 +237,28 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               fireTelemetryEvent('Launcher Menu Accessed', {
                 id: 'Red Hat Hybrid Cloud Console',
                 name: 'Red Hat Hybrid Cloud Console',
+              });
+            },
+          },
+        ],
+      });
+    }
+
+    // This should be removed when the extension to add items to the masthead is implemented: https://issues.redhat.com/browse/OU-488
+    if (isTroubleshootingPanelEnabled) {
+      sections.push({
+        name: t('public~Troubleshooting'),
+        isSection: true,
+        actions: [
+          {
+            label: t('public~Signal Correlation'),
+            component: 'button',
+            callback: (e) => {
+              e.preventDefault();
+              dispatch(reduxAction('openTroubleshootingPanel'));
+              fireTelemetryEvent('Launcher Menu Accessed', {
+                id: 'Signal Correlation',
+                name: 'Signal Correlation',
               });
             },
           },
