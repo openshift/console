@@ -241,7 +241,7 @@ type HealthChecksItemProps = {
 
 export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAlert }) => {
   const { obj, setHealthCheck } = React.useContext(NodeDashboardContext);
-  const { name, namespace } = getNodeMachineNameAndNamespace(obj);
+  const [name, namespace] = getNodeMachineNameAndNamespace(obj);
   const { t } = useTranslation();
   const machine = useK8sWatchResource<MachineKind>(
     name && namespace

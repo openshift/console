@@ -771,6 +771,11 @@ export type NodeCondition = {
   lastHeartbeatTime?: string;
 } & K8sResourceCondition;
 
+export type NodeAddress = {
+  type: string;
+  address: string;
+};
+
 export type NodeKind = {
   spec: {
     taints?: Taint[];
@@ -778,6 +783,9 @@ export type NodeKind = {
   };
   status?: {
     capacity?: {
+      [key: string]: string;
+    };
+    allocatable?: {
       [key: string]: string;
     };
     conditions?: NodeCondition[];
@@ -789,6 +797,7 @@ export type NodeKind = {
     nodeInfo?: {
       operatingSystem: string;
     };
+    addresses?: NodeAddress[];
   };
 } & K8sResourceCommon;
 

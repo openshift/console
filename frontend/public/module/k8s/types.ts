@@ -1,6 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
-import { NodeAddress } from '@console/shared';
 import {
+  NodeAddress,
   ObjectReference,
   ObjectMetadata,
   K8sResourceCommon,

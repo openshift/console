@@ -266,7 +266,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
       ? `${humanizeBinaryBytes(usedStrg).string} / ${humanizeBinaryBytes(totalStrg).string}`
       : '-';
   const pods = metrics?.pods?.[nodeName] ?? '-';
-  const machine = getNodeMachineNameAndNamespace(node);
+  const [machineName, machineNamespace] = getNodeMachineNameAndNamespace(node);
   const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const labels = getLabels(node);
   const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
@@ -349,15 +349,15 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         id={nodeColumnInfo.machine.id}
         activeColumnIDs={activeColumnIDs}
       >
-        {machine.name && machine.namespace ? (
+        {machineName && machineNamespace ? (
           <ResourceLink
             groupVersionKind={{
               kind: MachineModel.kind,
               version: MachineModel.apiVersion,
               group: MachineModel.apiGroup,
             }}
-            name={machine.name}
-            namespace={machine.namespace}
+            name={machineName}
+            namespace={machineNamespace}
           />
         ) : (
           '-'
