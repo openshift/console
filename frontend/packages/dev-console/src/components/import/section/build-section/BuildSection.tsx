@@ -107,6 +107,12 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     if (values?.formType === 'edit' && values?.pipeline?.enabled) {
       setFieldValue('build.option', BuildOptions.PIPELINES);
     }
+    if (values?.formType === 'edit' && values.build.option === BuildOptions.BUILDS) {
+      setFieldValue('build.option', BuildOptions.BUILDS);
+    }
+    if (values?.formType === 'edit' && values.build.option === BuildOptions.SHIPWRIGHT_BUILD) {
+      setFieldValue('build.option', BuildOptions.SHIPWRIGHT_BUILD);
+    }
   }, [values, setFieldValue]);
 
   React.useEffect(() => {
@@ -122,15 +128,17 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
 
   /** NOTE: Shipwright Builds are not supported with Devfile Import Strategy currently and if required ClusterBuildStrategy for the ImportType is not available */
   React.useEffect(() => {
-    if (
-      values?.import?.selectedStrategy?.type === ImportStrategy.DEVFILE ||
-      !isPreferredStrategyAvailable(values?.import?.selectedStrategy?.type, strategy)
-    ) {
-      setFieldValue('build.option', BuildOptions.BUILDS);
-    } else {
-      setFieldValue('build.option', BuildOptions.SHIPWRIGHT_BUILD);
+    if (values?.formType !== 'edit') {
+      if (
+        values?.import?.selectedStrategy?.type === ImportStrategy.DEVFILE ||
+        !isPreferredStrategyAvailable(values?.import?.selectedStrategy?.type, strategy)
+      ) {
+        setFieldValue('build.option', BuildOptions.BUILDS);
+      } else {
+        setFieldValue('build.option', BuildOptions.SHIPWRIGHT_BUILD);
+      }
     }
-  }, [setFieldValue, values?.import?.selectedStrategy?.type, strategy]);
+  }, [setFieldValue, values?.import?.selectedStrategy?.type, strategy, values?.formType]);
 
   return (
     <FormSection title={t('devconsole~Build')}>

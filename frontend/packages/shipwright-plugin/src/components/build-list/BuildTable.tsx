@@ -181,7 +181,7 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
     }),
     [buildRuns, buildRunsLoaded, buildRunsLoadError],
   );
-  const buildResource = props.data.map((sBuild) => {
+  const buildResource = props.data?.map((sBuild) => {
     sBuild.latestBuild =
       data.buildRuns.latestByBuildName[`${sBuild.metadata.name}-${sBuild.metadata.namespace}`];
     return sBuild;
