@@ -59,6 +59,9 @@ Here is a list of real world dynamic plugins that may serve as a further referen
 | `mce` (MultiCluster Engine for Kubernetes) | https://github.com/stolostron/console/tree/main/frontend/plugins/mce |
 | `ossmconsole` (OpenShift Service Mesh) | https://github.com/kiali/openshift-servicemesh-plugin |
 
+There's also the [Cat Facts Operator](https://github.com/RyanMillerC/cat-facts-operator) which serves
+as a reference point for writing an OLM operator that ships with its own Console dynamic plugin.
+
 ## Distributable SDK package overview
 
 | Package Name | Description |
