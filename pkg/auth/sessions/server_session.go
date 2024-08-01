@@ -4,17 +4,23 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"slices"
+	"sort"
 	"sync"
 	"time"
 
 	"golang.org/x/oauth2"
 	"k8s.io/klog/v2"
+
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const (
 	OpenshiftAccessTokenCookieName  = "openshift-session-token"
 	openshiftRefreshTokenCookieName = "openshift-refresh-token"
 )
+
+var sessionPruningPeriod = 5 * time.Minute
 
 type SessionStore struct {
 	byToken map[string]*LoginState
@@ -28,12 +34,15 @@ type SessionStore struct {
 }
 
 func NewServerSessionStore(maxSessions int) *SessionStore {
-	return &SessionStore{
+	ss := &SessionStore{
 		byToken:        make(map[string]*LoginState),
 		byRefreshToken: make(map[string]*LoginState),
 		maxSessions:    maxSessions,
 		now:            time.Now,
 	}
+
+	go wait.Forever(ss.pruneSessions, sessionPruningPeriod)
+	return ss
 }
 
 // addSession sets sessionToken to a random value and adds loginState to session data structures
@@ -123,33 +132,47 @@ func (ss *SessionStore) DeleteBySessionToken(sessionToken string) {
 	}
 }
 
-func (ss *SessionStore) PruneSessions() {
+func (ss *SessionStore) pruneSessions() {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
-	expired := 0
-	for i := 0; i < len(ss.byAge); i++ {
-		s := ss.byAge[i]
-		if s.IsExpired() {
-			delete(ss.byToken, s.sessionToken)
-			delete(ss.byRefreshToken, s.refreshToken)
-			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
-			expired++
-		}
+
+	if len(ss.byAge) == 0 {
+		return
 	}
-	klog.V(4).Infof("Pruned %v expired sessions.", expired)
-	toRemove := len(ss.byAge) - ss.maxSessions
-	if toRemove > 0 {
-		klog.V(4).Infof("Still too many sessions. Pruning oldest %v sessions...", toRemove)
+
+	if !slices.IsSortedFunc(ss.byAge, loginStateSorter) {
+		// sort the byAge slice by current expiry (expiry can change via token refreshes)
+		slices.SortFunc(ss.byAge, loginStateSorter)
+	}
+
+	// binary search for the first expired session
+	firstExpired := sort.Search(len(ss.byAge), func(i int) bool {
+		return ss.byAge[i].IsExpired()
+	})
+
+	removalPivot := ss.maxSessions
+	// if we've got more expired sessions than we need to remove, just remove all expired
+	if firstExpired != len(ss.byAge) && firstExpired < removalPivot {
+		removalPivot = firstExpired
+	}
+
+	if removalPivot < len(ss.byAge) {
 		// TODO: account for user ids when pruning old sessions. Otherwise one user could log in 16k times and boot out everyone else.
-		for _, s := range ss.byAge[:toRemove] {
-			delete(ss.byToken, s.sessionToken)
+		for _, s := range ss.byAge[removalPivot:] {
+			delete(ss.byToken, s.sessionToken) // FIXME: delete keys in ss.byRefreshToken ? (it's not that easy as it's indexed by previous refresh token)
+			for _, rt := range ss.byRefreshToken {
+				if rt == s {
+					delete(ss.byRefreshToken, rt.refreshToken)
+				}
+			}
 		}
-		ss.byAge = ss.byAge[toRemove:]
-	}
-	if expired+toRemove > 0 {
-		klog.V(4).Infof("Pruned %v old sessions.", expired+toRemove)
+		ss.byAge = ss.byAge[:removalPivot]
+
+		klog.V(4).Infof("Pruned %v old sessions.", len(ss.byAge)-removalPivot)
 	}
 }
+
+func loginStateSorter(a, b *LoginState) int { return a.CompareExpiry(b) }
 
 func RandomString(length int) string {
 	bytes := make([]byte, length)

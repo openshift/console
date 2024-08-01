@@ -417,10 +417,16 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 
 	setupServerStore := func() *SessionStore {
 		testServerSessions := NewServerSessionStore(10)
+		// lock the sessions lock to prevent data race check being
+		// triggered in the test setup
+		testServerSessions.mux.Lock()
+		defer testServerSessions.mux.Unlock()
+
 		for i := 0; i < 5; i++ {
 			sessionToken := strconv.Itoa(i)
-			testServerSessions.byToken[sessionToken] = &LoginState{sessionToken: sessionToken}
+			testServerSessions.byToken[sessionToken] = &LoginState{sessionToken: sessionToken, exp: time.Now().Add(5 * time.Minute), now: time.Now}
 			testServerSessions.byAge = append(testServerSessions.byAge, testServerSessions.byToken[sessionToken])
+
 		}
 
 		refreshedSession := testServerSessions.byToken["4"]
