@@ -212,13 +212,13 @@ const capabilityLevelSort = (provider) => {
 
 const infraFeaturesSort = (infrastructure) => {
   switch (infrastructure.value) {
-    case InfraFeatures.Disconnected:
+    case InfraFeatures.disconnected:
       return 0;
-    case InfraFeatures.Proxy:
+    case InfraFeatures.proxyAware:
       return 1;
-    case InfraFeatures.FipsMode:
+    case InfraFeatures.fipsMode:
       return 2;
-    case InfraFeatures.TokenAuth:
+    case InfraFeatures.tokenAuth:
       return 3;
     case InfraFeatures.tlsProfiles:
       return 4;
@@ -439,7 +439,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
     ) {
       setTokenizedAuth('AWS');
     }
@@ -450,7 +450,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
     ) {
       setTokenizedAuth('Azure');
     }
@@ -461,7 +461,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
     ) {
       setTokenizedAuth('GCP');
     }

@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { InfraFeatures } from '@console/operator-lifecycle-manager/src/components/operator-hub';
+import { OperatorHubCSVAnnotationKey } from '@console/operator-lifecycle-manager/src/components/operator-hub';
+import { normalizedInfrastructureFeatures } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
 import {
   CommaSeparatedList,
   ExtensionCatalogItemMetadata,
@@ -68,7 +69,7 @@ const aggregateNormalizedInfrastructureFeatures = (acc, key, value) => {
   if (!infrastructureFeatures) return acc;
   return {
     ...acc,
-    infrastructureFeatures: infrastructureFeatures.map((i) => InfraFeatures[i]),
+    infrastructureFeatures: infrastructureFeatures.map((i) => normalizedInfrastructureFeatures[i]),
   };
 };
 
@@ -96,6 +97,21 @@ const aggregateAnnotations = (
         );
       case CSVMetadataKey.categories:
         return aggregateCommaSeparatedList(acc, key, value);
+      case OperatorHubCSVAnnotationKey.disconnected:
+      case OperatorHubCSVAnnotationKey.fipsCompliant:
+      case OperatorHubCSVAnnotationKey.proxyAware:
+      case OperatorHubCSVAnnotationKey.cnf:
+      case OperatorHubCSVAnnotationKey.cni:
+      case OperatorHubCSVAnnotationKey.csi:
+      case OperatorHubCSVAnnotationKey.tlsProfiles:
+      case OperatorHubCSVAnnotationKey.tokenAuthAWS:
+      case OperatorHubCSVAnnotationKey.tokenAuthAzure:
+      case OperatorHubCSVAnnotationKey.tokenAuthGCP:
+        return value === 'true'
+          ? aggregateArray(acc, NormalizedCSVMetadataKey.infrastructureFeatures, [
+              normalizedInfrastructureFeatures[key],
+            ])
+          : acc;
       default:
         return acc;
     }

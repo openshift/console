@@ -378,7 +378,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             <div className="co-catalog-page__overlay-description">
               {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
                 showWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
+                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
                   <Alert
                     isInline
                     variant="warning"
@@ -395,7 +395,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 )}
               {isAzureWIFCluster(cloudCredentials, infrastructure, authentication) &&
                 showWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
+                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
                   <Alert
                     isInline
                     variant="warning"

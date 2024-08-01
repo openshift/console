@@ -20,20 +20,15 @@ export enum CapabilityLevel {
 }
 
 export enum InfraFeatures {
-  Disconnected = 'Disconnected',
   disconnected = 'Disconnected',
-  Proxy = 'Proxy-aware',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'proxy-aware' = 'Proxy-aware',
-  FipsMode = 'Designed for FIPS',
-  fips = 'Designed for FIPS',
+  proxyAware = 'Proxy-aware',
+  fipsMode = 'Designed for FIPS',
   tlsProfiles = 'Configurable TLS ciphers',
   cnf = 'Cloud-Native Network Function',
   cni = 'Container Network Interface',
   csi = 'Container Storage Interface',
   sno = 'Single Node Clusters',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  TokenAuth = 'Short-lived token authentication',
+  tokenAuth = 'Short-lived token authentication',
   tokenAuthGCP = 'Auth Token GCP',
 }
 
