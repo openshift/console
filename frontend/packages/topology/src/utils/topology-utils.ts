@@ -44,30 +44,36 @@ export const getCheDecoratorData = (consoleLinks: K8sResourceKind[]): CheDecorat
   };
 };
 
-const getFullGitURL = (gitUrl: GitUrlParse.GitUrl, branch?: string) => {
+const getFullGitURL = (gitUrl: GitUrlParse.GitUrl, branch?: string, contextDir?: string) => {
   const baseUrl = `https://${gitUrl.resource}/${gitUrl.owner}/${gitUrl.name}`;
   if (!branch) {
     return baseUrl;
   }
+  const contextPart = contextDir ? `/${contextDir.replace(/^\//, '')}` : '';
   if (gitUrl.resource.includes('github')) {
-    return `${baseUrl}/tree/${branch}`;
+    return `${baseUrl}/tree/${branch}${contextPart}`;
   }
   if (gitUrl.resource.includes('gitlab')) {
-    return `${baseUrl}/-/tree/${branch}`;
+    return `${baseUrl}/-/tree/${branch}${contextPart}`;
   }
   // Branch names containing '/' do not work with bitbucket src URLs
   // https://jira.atlassian.com/browse/BCLOUD-9969
   if (gitUrl.resource.includes('bitbucket') && !branch.includes('/')) {
-    return `${baseUrl}/src/${branch}`;
+    return `${baseUrl}/src/${branch}${contextPart}`;
   }
   return baseUrl;
 };
 
-export const getEditURL = (vcsURI?: string, gitBranch?: string, cheURL?: string) => {
+export const getEditURL = (
+  vcsURI?: string,
+  gitBranch?: string,
+  cheURL?: string,
+  contextDir?: string,
+) => {
   if (!vcsURI) {
     return null;
   }
-  const fullGitURL = getFullGitURL(GitUrlParse(vcsURI), gitBranch);
+  const fullGitURL = getFullGitURL(GitUrlParse(vcsURI), gitBranch, contextDir);
   return cheURL ? `${cheURL}/f?url=${fullGitURL}&policies.create=peruser` : fullGitURL;
 };
 

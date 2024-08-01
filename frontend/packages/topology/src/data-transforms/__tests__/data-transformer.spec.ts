@@ -176,6 +176,46 @@ describe('data transformer ', () => {
     expect(editUrl).toBe('https://bitbucket.org/username/examplerepo/src/branch1');
   });
 
+  it('should return full git url for GitHub URI with context directory', () => {
+    const mockGitURI = 'https://github.com/openshift/console';
+    const editUrl = getEditURL(mockGitURI, 'branch1', '', 'context-directory');
+    expect(editUrl).toBe('https://github.com/openshift/console/tree/branch1/context-directory');
+  });
+
+  it('should return full git url for GitLab URI with context directory', () => {
+    const mockGitURI = 'https://gitlab.com/example/reponame';
+    const editUrl = getEditURL(mockGitURI, 'branch1', '', 'context-directory');
+    expect(editUrl).toBe('https://gitlab.com/example/reponame/-/tree/branch1/context-directory');
+  });
+
+  it('should return full git url for Bitbucket URI with context directory', () => {
+    const mockGitURI = 'https://bitbucket.org/username/examplerepo';
+    const editUrl = getEditURL(mockGitURI, 'branch1', '', 'context-directory');
+    expect(editUrl).toBe(
+      'https://bitbucket.org/username/examplerepo/src/branch1/context-directory',
+    );
+  });
+
+  it('should return full git url for GitHub URI with context directory with forward slash', () => {
+    const mockGitURI = 'https://github.com/openshift/console';
+    const editUrl = getEditURL(mockGitURI, 'branch1', '', '/context-directory');
+    expect(editUrl).toBe('https://github.com/openshift/console/tree/branch1/context-directory');
+  });
+
+  it('should return full git url for GitLab URI with context directory with forward slash', () => {
+    const mockGitURI = 'https://gitlab.com/example/reponame';
+    const editUrl = getEditURL(mockGitURI, 'branch1', '', '/context-directory');
+    expect(editUrl).toBe('https://gitlab.com/example/reponame/-/tree/branch1/context-directory');
+  });
+
+  it('should return full git url for Bitbucket URI with context directory with forward slash', () => {
+    const mockGitURI = 'https://bitbucket.org/username/examplerepo';
+    const editUrl = getEditURL(mockGitURI, 'branch1', '', '/context-directory');
+    expect(editUrl).toBe(
+      'https://bitbucket.org/username/examplerepo/src/branch1/context-directory',
+    );
+  });
+
   it('should return only git url for repo from non-supported git provider', () => {
     const mockGitURI = 'https://example.com/username/examplerepo';
     const editUrl = getEditURL(mockGitURI, 'branch1');
