@@ -47,7 +47,17 @@ the current Console plugin SDK features.
 
 Here is a list of real world dynamic plugins that may serve as a further reference point:
 
-- [KubeVirt plugin](https://github.com/kubevirt-ui/kubevirt-plugin)
+| Plugin Name | Git Repo |
+| ----------- | -------- |
+| `kubevirt-plugin` (KubeVirt) | https://github.com/kubevirt-ui/kubevirt-plugin |
+| `networking-console-plugin` (OpenShift Networking) | https://github.com/openshift/networking-console-plugin |
+| `netobserv-plugin` (Network Observability) | https://github.com/netobserv/network-observability-console-plugin |
+| `odf-console` (OpenShift Data Foundation) | https://github.com/red-hat-storage/odf-console/tree/master/plugins/odf |
+| `odf-multicluster-console` (ODF MultiCluster Orchestrator) | https://github.com/red-hat-storage/odf-console/tree/master/plugins/mco |
+| `pipelines-console-plugin` (OpenShift Pipelines) | https://github.com/openshift-pipelines/console-plugin |
+| `acm` (Red Hat Advanced Cluster Management) | https://github.com/stolostron/console/tree/main/frontend/plugins/acm |
+| `mce` (MultiCluster Engine for Kubernetes) | https://github.com/stolostron/console/tree/main/frontend/plugins/mce |
+| `ossmconsole` (OpenShift Service Mesh) | https://github.com/kiali/openshift-servicemesh-plugin |
 
 ## Distributable SDK package overview
 
