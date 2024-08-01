@@ -82,7 +82,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
       relevantLabels.os.push(osDefaultLinuxLabel);
     }
 
-    if (_.isEmpty(relevantLabels.os)) {
+    if (_.isEmpty(relevantLabels.arch)) {
       relevantLabels.arch.push(archDefaultAMD64Label);
     }
 
