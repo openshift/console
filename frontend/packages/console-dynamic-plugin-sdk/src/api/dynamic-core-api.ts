@@ -35,6 +35,7 @@ import {
   VirtualizedTableFC,
   UseActiveNamespace,
   UseUserSettings,
+  UseQuickStartContext,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -96,7 +97,7 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/int
  * @param {function} [onSelect] - (optional) function for handling select of table
  * @param {R} [rowData] - (optional) data specific to row
  * @param {number} [sortColumnIndex] - (optional) The index of the column to sort. The default is `0`
- * @param {SortByDirection.asc | SortByDirection.desc} [sortDirection] - (optional) The direction of the sort. The default is `SortByDirection.asc` 
+ * @param {SortByDirection.asc | SortByDirection.desc} [sortDirection] - (optional) The direction of the sort. The default is `SortByDirection.asc`
  * @example
  * ```ts
  * const MachineList: React.FC<MachineListProps> = (props) => {
@@ -900,3 +901,21 @@ export const useActiveNamespace: UseActiveNamespace = require('@console/shared/s
  */
 export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
   .useUserSettings;
+
+/**
+ * Hook that provides the current quick start context values. This allows plugins to interop with Console
+ * quick start functionality.
+ * @returns Quick start context values object.
+ * @example
+ * ```tsx
+ * const OpenQuickStartButton = ({ quickStartId }) => {
+ *    const { setActiveQuickStart } = useQuickStartContext();
+ *    const onClick = React.useCallback(() => {
+ *        setActiveQuickStart(quickStartId);
+ *    }, [quickStartId]);
+ *    return <button onClick={onClick}>{t('Open Quick Start')}</button>
+ * };
+ * ```
+ */
+export const useQuickStartContext: UseQuickStartContext = require('@console/shared/src/hooks/useQuickStartContext')
+  .useQuickStartContext;

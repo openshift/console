@@ -37,3 +37,4 @@ export * from './useUtilizationDuration';
 export * from './usePrometheusGate';
 export * from './useCopyCodeModal';
 export * from './useCopyLoginCommands';
+export * from './useQuickStartContext';

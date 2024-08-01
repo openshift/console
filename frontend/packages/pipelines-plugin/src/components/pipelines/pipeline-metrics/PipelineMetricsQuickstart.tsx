@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { QuickStartContextValues, QuickStartContext } from '@patternfly/quickstarts';
 import { Alert, AlertVariant } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom-v5-compat';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { isModifiedEvent } from '@console/shared/src';
+import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 import { PipelineMetricsLevel } from '../const';
 
 type PipelineMetricsQuickstartInfoProps = {
@@ -35,7 +35,7 @@ const PipelineMetricsQuickstart: React.FC<PipelineMetricsQuickstartProps> = ({ m
   const { t } = useTranslation();
   const PIPELINE_METRICS_CONFIGURATION_QUICKSTART = 'configure-pipeline-metrics';
   const { pathname, search } = useLocation();
-  const { setActiveQuickStart } = React.useContext<QuickStartContextValues>(QuickStartContext);
+  const { setActiveQuickStart } = useQuickStartContext();
   const queryParams = new URLSearchParams(search);
   queryParams.set('quickstart', PIPELINE_METRICS_CONFIGURATION_QUICKSTART);
 
