@@ -60,7 +60,7 @@ const ServerlessFunctionSection = ({ builderImages }) => {
         })
         .finally(() => {
           setLoaded(true);
-          setFieldValue('serverless.funcLoaded', true);
+          setFieldValue('import.kNativeFuncLoaded', true);
         });
   }, [
     setFieldValue,

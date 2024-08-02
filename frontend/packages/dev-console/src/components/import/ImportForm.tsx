@@ -138,7 +138,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     },
     import: {
       loaded: false,
-      funcLoaded: false,
+      kNativeFuncLoaded: false,
       loadError: null,
       strategies: [],
       selectedStrategy: {
