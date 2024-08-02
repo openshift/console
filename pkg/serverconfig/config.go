@@ -331,7 +331,7 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 	if customization.Capabilities != nil {
 		capabilities, err := json.Marshal(customization.Capabilities)
 		if err != nil {
-			klog.Fatalf("Could not marshal ConsoleConfig customization.perspectives field: %v", err)
+			klog.Fatalf("Could not marshal ConsoleConfig customization.capabilities field: %v", err)
 		} else {
 			fs.Set("capabilities", string(capabilities))
 		}

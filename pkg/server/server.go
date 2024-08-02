@@ -32,6 +32,7 @@ import (
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/metrics"
+	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -70,10 +71,9 @@ const (
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
 	knativeProxyEndpoint                  = "/api/console/knative/"
-	packageManifestEndpoint               = "/api/console/package-manifest/"
 	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
-	operatorListEndpoint                  = "/api/list-operator/"
+	packageManifestEndpoint               = "/api/check-package-manifest/"
 	operandsListEndpoint                  = "/api/list-operands/"
 	pluginAssetsEndpoint                  = "/api/plugins/"
 	pluginProxyEndpoint                   = "/api/proxy/"
@@ -438,30 +438,23 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		})),
 	)
 
-	packageManifestHandler := &PackageManifestHandler{
+	// Handler for OLM related resources
+	olmHandler := &olm.OLMHandler{
 		APIServerURL: k8sProxyURL,
 		Client: &http.Client{
 			Transport: internalProxiedK8SRT,
 		},
 	}
 
-	handle(operatorListEndpoint, http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, operatorListEndpoint),
-		authHandler(packageManifestHandler.PackageManifestGetHandler),
+	handle(packageManifestEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, packageManifestEndpoint),
+		authHandler(olmHandler.CheckPackageManifest),
 	))
-
-	// List operator operands endpoint
-	operatorHandler := &OperandsListHandler{
-		APIServerURL: k8sProxyURL,
-		Client: &http.Client{
-			Transport: internalProxiedK8SRT,
-		},
-	}
 
 	handle(operandsListEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			operatorHandler.OperandsListHandler(user, w, r)
+			olmHandler.OperandsList(user, w, r)
 		}),
 	))
 
@@ -478,14 +471,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
-
-	// Dev-Console Proxy
-	handle(packageManifestEndpoint, http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, packageManifestEndpoint),
-		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsoleProxy.Handler(w, r)
-		})),
-	)
 
 	// Dev-Console Proxy
 	handle(devConsoleEndpoint, http.StripPrefix(

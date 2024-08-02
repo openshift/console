@@ -72,7 +72,7 @@ import 'url-search-params-polyfill';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
-import { useOperator } from '@console/shared/src/hooks/useOperator';
+import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 
 initI18n();
 
@@ -153,7 +153,10 @@ const App = (props) => {
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useDispatch();
-  const [, , errorMessage] = useOperator('lightspeed-operator', 'openshift-marketplace');
+  const [, , errorMessage] = usePackageManifestCheck(
+    'lightspeed-operator',
+    'openshift-marketplace',
+  );
 
   React.useEffect(() => {
     const lightspeedButtonCapability = window.SERVER_FLAGS?.capabilities?.find(
