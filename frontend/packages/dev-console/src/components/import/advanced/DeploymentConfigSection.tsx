@@ -24,7 +24,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
     values: {
       resources,
       deployment: { env },
-      import: { selectedStrategy, funcLoaded },
+      import: { selectedStrategy, kNativeFuncLoaded: funcLoaded },
     },
   } = useFormikContext<FormikValues>();
   const deploymentConfigObj = resource || {
@@ -46,7 +46,9 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
           label={t('devconsole~Auto deploy when deployment configuration changes')}
         />
       )}
-      {(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded : true) ? (
+      {(
+        selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded ?? false : true
+      ) ? (
         <EnvironmentField
           name="deployment.env"
           label={t('devconsole~Environment variables (runtime only)')}
