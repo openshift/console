@@ -7,16 +7,11 @@ import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MenuActions, MultiTabListPage } from '@console/shared';
 import {
-  BuildModel,
-  BuildModelV1Alpha1,
-  BuildRunModel,
-  BuildRunModelV1Alpha1,
-  BuildStrategyModel,
-  BuildStrategyModelV1Alpha1,
-  ClusterBuildStrategyModel,
-  ClusterBuildStrategyModelV1Alpha1,
-} from '../../models';
-import { useDetermineModelVersion } from '../../utils';
+  useBuildModel,
+  useBuildRunModel,
+  useBuildStrategyModel,
+  useClusterBuildStrategyModel,
+} from '../../utils';
 import BuildListPage from '../build-list/BuildListPage';
 import BuildRunListPage from '../buildrun-list/BuildRunListPage';
 
@@ -26,23 +21,33 @@ const commonPageProps = {
   hideBadge: true,
 };
 
-const buildListTab: Page = {
-  href: 'builds',
-  component: BuildListPage,
-  nameKey: 'shipwright-plugin~Builds',
-  pageData: commonPageProps,
+const buildListTab = (model: K8sModel): Page => {
+  return {
+    href: 'builds',
+    component: BuildListPage,
+    nameKey: 'shipwright-plugin~Builds',
+    pageData: {
+      ...commonPageProps,
+      kind: referenceForModel(model),
+    },
+  };
 };
 
-const buildRunListTab: Page = {
-  href: 'build-runs',
-  component: BuildRunListPage,
-  nameKey: 'shipwright-plugin~BuildRuns',
-  pageData: commonPageProps,
+const buildRunListTab = (model: K8sModel): Page => {
+  return {
+    href: 'buildruns',
+    component: BuildRunListPage,
+    nameKey: 'shipwright-plugin~BuildRuns',
+    pageData: {
+      ...commonPageProps,
+      kind: referenceForModel(model),
+    },
+  };
 };
 
 const buildStrategyTab = (model: K8sModel): Page => {
   return {
-    href: 'build-strategies',
+    href: 'buildstrategies',
     component: DefaultPage,
     nameKey: 'shipwright-plugin~BuildStrategies',
     pageData: {
@@ -54,7 +59,7 @@ const buildStrategyTab = (model: K8sModel): Page => {
 
 const clusterBuildStrategyTab = (model: K8sModel): Page => {
   return {
-    href: 'cluster-build-strategies',
+    href: 'clusterbuildstrategies',
     component: DefaultPage,
     nameKey: 'shipwright-plugin~ClusterBuildStrategies',
     pageData: {
@@ -69,37 +74,17 @@ const ShipwrightTabListPage: React.FC = () => {
   const { '*': currentTab } = useParams();
   const navigate = useNavigate();
 
-  const buildModel = useDetermineModelVersion(
-    BuildModel,
-    BuildModelV1Alpha1,
-    'SHIPWRIGHT_BUILD',
-    'SHIPWRIGHT_BUILD_V1ALPHA1',
-  );
-  const buildRunModel = useDetermineModelVersion(
-    BuildRunModel,
-    BuildRunModelV1Alpha1,
-    'SHIPWRIGHT_BUILDRUN',
-    'SHIPWRIGHT_BUILDRUN_V1ALPHA1',
-  );
-  const buildStrategyModel = useDetermineModelVersion(
-    BuildStrategyModel,
-    BuildStrategyModelV1Alpha1,
-    'SHIPWRIGHT_BUILDSTRATEGY',
-    'SHIPWRIGHT_BUILDSTRATEGY_V1ALPHA1',
-  );
-  const clusterBuildStrategyModel = useDetermineModelVersion(
-    ClusterBuildStrategyModel,
-    ClusterBuildStrategyModelV1Alpha1,
-    'SHIPWRIGHT_CLUSTERBUILDSTRATEGY',
-    'SHIPWRIGHT_CLUSTERBUILDSTRATEGY_V1ALPHA1',
-  );
+  const buildModel = useBuildModel();
+  const buildRunModel = useBuildRunModel();
+  const buildStrategyModel = useBuildStrategyModel();
+  const clusterBuildStrategyModel = useClusterBuildStrategyModel();
 
   /* Use feature flags to determine which pages to show */
   const pages: Page[] = [];
   const menuActions: MenuActions = {};
 
   if (buildModel) {
-    pages.push(buildListTab);
+    pages.push(buildListTab(buildModel));
     menuActions.build = {
       model: buildModel,
       label: t('shipwright-plugin~Build'),
@@ -107,7 +92,7 @@ const ShipwrightTabListPage: React.FC = () => {
   }
 
   if (buildRunModel) {
-    pages.push(buildRunListTab);
+    pages.push(buildRunListTab(buildRunModel));
     menuActions.buildRun = {
       model: buildRunModel,
       label: t('shipwright-plugin~BuildRun'),
@@ -139,11 +124,11 @@ const ShipwrightTabListPage: React.FC = () => {
     if (buildModel) {
       navigate('builds');
     } else if (buildRunModel) {
-      navigate('build-runs');
+      navigate('buildruns');
     } else if (buildStrategyModel) {
-      navigate('build-strategies');
+      navigate('buildstrategies');
     } else if (clusterBuildStrategyModel) {
-      navigate('cluster-build-strategies');
+      navigate('clusterbuildstrategies');
     }
   }, [
     currentTab,

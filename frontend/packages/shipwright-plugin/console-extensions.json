@@ -103,6 +103,17 @@
     "properties": {
       "model": {
         "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildRun"
+      },
+      "flag": "SHIPWRIGHT_BUILDRUN"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
         "version": "v1alpha1",
         "kind": "BuildStrategy"
       },
@@ -224,6 +235,58 @@
         "kind": "Build"
       },
       "component": { "$codeRef": "pages.BuildDetailsPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "BuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.BuildStrategyDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "BuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.BuildStrategyDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1alpha1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.ClusterBuildStrategyDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "shipwright.io",
+        "version": "v1beta1",
+        "kind": "ClusterBuildStrategy"
+      },
+      "component": {
+        "$codeRef": "pages.ClusterBuildStrategyDetailsPage"
+      }
     }
   },
   {
