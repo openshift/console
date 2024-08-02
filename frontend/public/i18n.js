@@ -36,7 +36,7 @@ export const init = () => {
     // for all options read: https://www.i18next.com/overview/configuration-options
     .init({
       backend: {
-        loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
+        loadPath: `${window.SERVER_FLAGS.basePath}locales/resource.json?lng={{lng}}&ns={{ns}}`,
         parse: function (data, lng, ns) {
           const parsed = JSON.parse(data);
           // i18next-v4-format-converter functions differently for plurals in
