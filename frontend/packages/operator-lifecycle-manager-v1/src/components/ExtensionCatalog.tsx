@@ -83,7 +83,7 @@ const ExtensionCatalog = () => {
               detail={
                 <span>
                   {t(
-                    'Please check that OLM v1 is configured and that you have created at least one valid ClusterCatalog.',
+                    'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
                   )}
                 </span>
               }

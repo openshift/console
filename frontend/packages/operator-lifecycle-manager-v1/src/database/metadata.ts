@@ -64,7 +64,7 @@ const aggregateCommaSeparatedList = (
   }
 };
 
-const aggregateNormalizedInfrastructureFeatures = (acc, key, value) => {
+const aggregateLegacyInfrastructureFeatures = (acc, key, value) => {
   const { infrastructureFeatures } = aggregateSerialJSONArray(acc, key, value);
   if (!infrastructureFeatures) return acc;
   return {
@@ -89,8 +89,8 @@ const aggregateAnnotations = (
         };
       case CSVMetadataKey.validSubscription:
         return aggregateSerialJSONArray(acc, NormalizedCSVMetadataKey.validSubscription, value);
-      case CSVMetadataKey.infrastructureFeatures:
-        return aggregateNormalizedInfrastructureFeatures(
+      case CSVMetadataKey.legacyInfrastructureFeatures:
+        return aggregateLegacyInfrastructureFeatures(
           acc,
           NormalizedCSVMetadataKey.infrastructureFeatures,
           value,

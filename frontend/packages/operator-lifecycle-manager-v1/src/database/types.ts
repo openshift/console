@@ -16,7 +16,7 @@ export enum CSVMetadataKey {
   categories = 'categories',
   keywords = 'keywords',
   validSubscription = 'operators.openshift.io/valid-subscription',
-  infrastructureFeatures = 'operators.openshift.io/infrastructure-features',
+  legacyInfrastructureFeatures = 'operators.openshift.io/infrastructure-features',
 }
 
 export enum NormalizedCSVMetadataKey {
@@ -35,7 +35,7 @@ export type FileBasedCatalogMetadata = {
     [CSVMetadataKey.capabilities]?: string;
     [CSVMetadataKey.description]?: string;
     [CSVMetadataKey.displayName]?: string;
-    [CSVMetadataKey.infrastructureFeatures]?: string[];
+    [CSVMetadataKey.legacyInfrastructureFeatures]?: SerializedJSONArray;
     [CSVMetadataKey.validSubscription]?: SerializedJSONArray;
     [key: string]: any;
   };
