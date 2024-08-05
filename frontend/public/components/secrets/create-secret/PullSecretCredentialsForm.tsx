@@ -4,7 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { PullSecretCredentialEntry, SecretChangeData, SecretStringData, SecretType } from '.';
+import {
+  AUTHS_KEY,
+  PullSecretCredentialEntry,
+  SecretChangeData,
+  SecretStringData,
+  SecretType,
+} from '.';
 import { usePullSecretCredentialEntries } from './usePullSecretCredentialEntries';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
@@ -32,11 +38,25 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
     onFormDisable,
   );
 
+  const isDockerconfigjson = React.useMemo(() => {
+    return stringData || !!stringData[AUTHS_KEY];
+  }, [stringData]);
+
   const updateEntry = (updatedEntry, entryIndex: number) => {
     const updatedSecretEntriesArray = entries.map((entry, index) =>
       index === entryIndex ? { uid: entry.uid, ...updatedEntry } : entry,
     );
     setEntries(updatedSecretEntriesArray);
+    const secretData = isDockerconfigjson ? { [AUTHS_KEY]: entries } : entries;
+    const newDataKey = isDockerconfigjson ? '.dockerconfigjson' : '.dockercfg';
+    if (!_.isError(secretData)) {
+      onFormDisable(false);
+    }
+    onChange({
+      stringData: {
+        [newDataKey]: JSON.stringify(secretData),
+      },
+    });
   };
 
   const removeEntry = (entryIndex: number) => {
