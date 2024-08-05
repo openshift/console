@@ -7,6 +7,7 @@ import {
   ActionMenuVariant,
   ActionServiceProvider,
 } from '@console/shared/src/components/actions';
+import { useShipwrightBreadcrumbsFor } from '../../utils';
 import { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import BuildRunDetailsTab from './BuildRunDetailsTab';
 import BuildRunEventsTab from './BuildRunEventsTab';
@@ -40,6 +41,7 @@ const BuildRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
       getResourceStatus={getBuildRunStatus}
       customActionMenu={customActionMenu}
       pages={pages}
+      breadcrumbsFor={useShipwrightBreadcrumbsFor}
     />
   );
 };

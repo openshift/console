@@ -7,6 +7,7 @@ import {
   ActionMenuVariant,
   ActionServiceProvider,
 } from '@console/shared/src/components/actions';
+import { useShipwrightBreadcrumbsFor } from '../../utils';
 import BuildDetailsTab from './BuildDetailsTab';
 import BuildEventsTab from './BuildEventsTab';
 import BuildRunsTab from './BuildRunsTab';
@@ -38,7 +39,14 @@ const BuildDetailsPage: React.FC<DetailsPageProps> = (props) => {
     navFactory.events(BuildEventsTab),
   ];
 
-  return <DetailsPage {...props} customActionMenu={customActionMenu} pages={pages} />;
+  return (
+    <DetailsPage
+      {...props}
+      customActionMenu={customActionMenu}
+      pages={pages}
+      breadcrumbsFor={useShipwrightBreadcrumbsFor}
+    />
+  );
 };
 
 export default BuildDetailsPage;

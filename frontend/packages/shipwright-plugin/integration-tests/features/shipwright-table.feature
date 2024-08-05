@@ -13,7 +13,7 @@ Feature: Shipwright builds table view
         @smoke
         Scenario: Shipwright Builds Table should contain all the required headers: SWB-03-TC01
             Given user is at Builds page
-             When user clicks on "Shipwright Builds" tab
+             When user clicks on "Shipwright Builds" tab in the Developer perspective
              Then user will see "Name"
               And user will see "Output"
               And user will see "Last run"

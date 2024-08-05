@@ -168,7 +168,9 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
 };
 DefaultList.displayName = 'DefaultList';
 
-export const DefaultPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => (
+export const DefaultPage: React.FC<Omit<React.ComponentProps<typeof ListPage>, 'ListComponent'>> = (
+  props,
+) => (
   <ListPage
     {...props}
     ListComponent={DefaultList}
