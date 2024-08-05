@@ -19,6 +19,7 @@ import {
   gitUrlRegex,
   resourcesValidationSchema,
   devfileValidationSchema,
+  importFlowPipelineTemplateValidationSchema,
 } from './validation-schema';
 
 export const validationSchema = (t: TFunction) =>
@@ -38,6 +39,7 @@ export const validationSchema = (t: TFunction) =>
     resources: resourcesValidationSchema,
     healthChecks: healthChecksProbesValidationSchema(t),
     pac: importFlowRepositoryValidationSchema(t),
+    pipeline: importFlowPipelineTemplateValidationSchema,
   });
 
 const hasDomain = (url: string, domain: string): boolean => {

@@ -2,9 +2,10 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { convertToBaseValue } from '@console/internal/components/utils';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isInteger } from '../../utils/yup-validation-util';
-import { Resources } from './import-types';
+import { BuildOptions, Resources } from './import-types';
 import { removeKsvcInfoFromDomainMapping } from './serverless/serverless-utils';
 
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
@@ -345,4 +346,15 @@ export const isiValidationSchema = (t: TFunction) =>
     image: yup.object().required(t('devconsole~Required')),
     tag: yup.string(),
     status: yup.string().required(t('devconsole~Required')),
+  });
+
+export const importFlowPipelineTemplateValidationSchema = yup
+  .object()
+  .when(['enabled', 'type', 'build.option', 'pac.pipelineEnabled'], {
+    is: (isPipelineEnabled, pipelineType, buildOption, isPACPipelineEnabled) =>
+      (isPipelineEnabled || buildOption === BuildOptions.PIPELINES || isPACPipelineEnabled) &&
+      pipelineType !== PipelineType.PAC,
+    then: yup.object().shape({
+      templateSelected: yup.string().required(),
+    }),
   });
