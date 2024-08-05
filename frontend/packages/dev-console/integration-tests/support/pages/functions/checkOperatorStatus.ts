@@ -1,5 +1,28 @@
 import { operatorNamespaces, operatorSubscriptions } from '../../constants/global';
 
+export const checkWebterminalOperatorStatus = (retries: number = 5) => {
+  const namespace = operatorNamespaces.WebTerminalOperator;
+  const resourceName = 'web-terminal-controller';
+  if (retries === 0) {
+    throw new Error('Failed to install Webterminal Operator - Pod timeout');
+  } else {
+    cy.exec(
+      `oc wait --for=condition=ready pod -l app.kubernetes.io/name=${resourceName} -n ${namespace} --timeout=300s`,
+      {
+        failOnNonZeroExit: false,
+      },
+    ).then(function (result) {
+      if (result.stdout.includes('condition met')) {
+        cy.log(`Success: ${result.stdout}`);
+      } else {
+        cy.log(result.stderr);
+        cy.wait(30000);
+        checkWebterminalOperatorStatus(retries - 1);
+      }
+    });
+  }
+};
+
 export const checkShipwrightOperatorStatus = (retries: number = 5) => {
   const namespace = operatorNamespaces.ShipwrightOperator;
   const resourceName = operatorSubscriptions.ShipwrightOperator;

@@ -61,6 +61,7 @@ export enum operatorNamespaces {
   ServerlessOperator = 'openshift-serverless',
   ShipwrightOperator = 'openshift-operators',
   BuildsForOpenshiftOperator = 'openshift-operators',
+  WebTerminalOperator = 'openshift-operators',
 }
 
 export enum operatorSubscriptions {
@@ -68,6 +69,7 @@ export enum operatorSubscriptions {
   ServerlessOperator = 'serverless-operator',
   ShipwrightOperator = 'shipwright-operator',
   BuildsForOpenshiftOperator = 'openshift-builds-operator',
+  WebTerminalOperator = 'web-terminal',
 }
 
 export enum authenticationType {
