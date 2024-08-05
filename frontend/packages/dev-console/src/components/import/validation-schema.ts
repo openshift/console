@@ -2,6 +2,7 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { convertToBaseValue } from '@console/internal/components/utils';
+import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isInteger } from '../../utils/yup-validation-util';
 import { Resources } from './import-types';
@@ -346,3 +347,10 @@ export const isiValidationSchema = (t: TFunction) =>
     tag: yup.string(),
     status: yup.string().required(t('devconsole~Required')),
   });
+
+export const importFlowPipelineTemplateValidationSchema = yup.object().when(['enabled', 'type'], {
+  is: (isPipelineEnabled, pipelineType) => isPipelineEnabled && pipelineType !== PipelineType.PAC,
+  then: yup.object().shape({
+    templateSelected: yup.string().required(),
+  }),
+});
