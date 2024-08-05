@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { DockerConfigCredential, DockerConfigData, PullSecretData } from './PullSecretForm';
+import { DockerConfigCredential, DockerConfigData } from './PullSecretForm';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
 import { PullSecretCredential } from './PullSecretCredentialsForm';
-import { getImageSecretKey, SecretStringData, SecretType } from '.';
+import { AUTHS_KEY, getImageSecretKey, SecretChangeData, SecretStringData, SecretType } from '.';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
   address: '',
@@ -23,8 +23,8 @@ const dockerConfigDataToPullSecretCredentials = (
       const [parsedUsername, parsedPassword] = decodedAuth?.split(':') ?? [];
       return {
         address: key,
-        username: parsedUsername,
-        password: parsedPassword,
+        username: parsedUsername || '',
+        password: parsedPassword || '',
         email: value?.email || '',
         auth: value?.auth,
         uid: _.uniqueId(),
@@ -47,9 +47,10 @@ const pullSecretCredentialsToDockerConfigData = (
 
 export const usePullSecretCredentialEntries = (
   stringData: SecretStringData,
-  onChange: (changeData: PullSecretData) => void,
+  onChange: (stringData: SecretChangeData) => void,
   onError: (error: any) => void,
   secretType: SecretType,
+  onFormDisable: (disable: boolean) => void,
 ): [PullSecretCredential[], React.Dispatch<React.SetStateAction<PullSecretCredential[]>>] => {
   const initialEntries = React.useMemo(() => {
     try {
@@ -66,7 +67,15 @@ export const usePullSecretCredentialEntries = (
 
   React.useEffect(() => {
     const newSecretData = pullSecretCredentialsToDockerConfigData(entries);
-    onChange(newSecretData);
+    if (!_.isError(newSecretData)) {
+      onFormDisable(false);
+    }
+    const newDataKey = newSecretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
+    onChange({
+      stringData: {
+        [newDataKey]: JSON.stringify(newSecretData),
+      },
+    });
   }, [entries]);
 
   return [entries, setEntries];
