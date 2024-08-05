@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { PullSecretCredentialEntry, PullSecretData, SecretStringData, SecretType } from '.';
+import { PullSecretCredentialEntry, SecretChangeData, SecretStringData, SecretType } from '.';
 import { usePullSecretCredentialEntries } from './usePullSecretCredentialEntries';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
@@ -21,6 +21,7 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   stringData,
   onError,
   secretType,
+  onFormDisable,
 }) => {
   const { t } = useTranslation();
   const [entries, setEntries] = usePullSecretCredentialEntries(
@@ -28,6 +29,7 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
     onChange,
     onError,
     secretType,
+    onFormDisable,
   );
 
   const updateEntry = (updatedEntry, entryIndex: number) => {
@@ -93,13 +95,14 @@ export type PullSecretCredential = {
   username: string;
   password: string;
   email: string;
-  auth: string;
+  auth?: string;
   uid: string;
 };
 
 type PullSecretCredentialsFormProps = {
-  onChange: (secretData: PullSecretData) => void;
+  onChange: (stringData: SecretChangeData) => void;
   stringData: SecretStringData;
   onError: (error: any) => void;
   secretType: SecretType;
+  onFormDisable?: (disable: boolean) => void;
 };

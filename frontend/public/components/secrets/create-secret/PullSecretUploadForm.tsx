@@ -1,18 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  AUTHS_KEY,
   DroppableFileInput,
   getImageSecretKey,
-  PullSecretData,
+  SecretChangeData,
   SecretStringData,
   SecretType,
 } from '.';
 
 export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   onChange,
-  onDisable,
   stringData,
   secretType,
+  onFormDisable,
 }) => {
   const { t } = useTranslation();
   const key = getImageSecretKey(secretType);
@@ -25,15 +26,20 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
       try {
         setConfigFile(fileData);
         const newPullSecret = JSON.parse(fileData);
-        onChange(newPullSecret);
+        const newDataKey = newPullSecret[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
+        onChange({
+          stringData: {
+            [newDataKey]: fileData,
+          },
+        });
         setParseError(false);
-        onDisable(false);
+        onFormDisable(false);
       } catch (e) {
         setParseError(true);
-        onDisable(true);
+        onFormDisable(true);
       }
     },
-    [onChange, onDisable],
+    [onChange, onFormDisable],
   );
 
   return (
@@ -59,8 +65,8 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
 };
 
 type PullSecretUploadFormProps = {
-  onChange: (secretData: PullSecretData) => void;
-  onDisable: (disable: boolean) => void;
+  onChange: (stringData: SecretChangeData) => void;
   stringData: SecretStringData;
   secretType: SecretType;
+  onFormDisable?: (disable: boolean) => void;
 };

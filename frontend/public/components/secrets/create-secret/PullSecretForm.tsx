@@ -1,8 +1,7 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '../../utils';
-import { AUTHS_KEY, PullSecretCredentialsForm, PullSecretUploadForm, SecretSubFormProps } from '.';
+import { PullSecretCredentialsForm, PullSecretUploadForm, SecretSubFormProps } from '.';
 
 export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,
@@ -14,23 +13,6 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
 }) => {
   const [authType, setAuthType] = React.useState('credentials');
   const { t } = useTranslation();
-
-  const onDataChanged = React.useCallback(
-    (secretData: PullSecretData) => {
-      if (!_.isError(secretData)) {
-        onFormDisable(false);
-      }
-      const newDataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
-      onChange({
-        stringData: {
-          [newDataKey]: JSON.stringify(secretData),
-        },
-        base64StringData: {},
-      });
-    },
-    [onFormDisable, onchange],
-  );
-
   const authTypes = {
     credentials: t('public~Image registry credentials'),
     'config-file': t('public~Upload configuration file'),
@@ -56,17 +38,18 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
       )}
       {authType === 'credentials' ? (
         <PullSecretCredentialsForm
-          onChange={onDataChanged}
-          stringData={stringData}
+          onChange={onChange}
           onError={onError}
+          onFormDisable={onFormDisable}
           secretType={secretType}
+          stringData={stringData}
         />
       ) : (
         <PullSecretUploadForm
-          onChange={onDataChanged}
+          onChange={onChange}
           stringData={stringData}
-          onDisable={onFormDisable}
           secretType={secretType}
+          onFormDisable={onFormDisable}
         />
       )}
     </>
