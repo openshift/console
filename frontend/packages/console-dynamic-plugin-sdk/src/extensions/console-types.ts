@@ -320,6 +320,8 @@ type VirtualizedTableProps<D, R extends any = {}> = {
   gridBreakPoint?: TableGridBreakpoint;
   rowData?: R;
   mock?: boolean;
+  sortColumnIndex?: number;
+  sortDirection?: SortByDirection;
 };
 
 export type VirtualizedTableFC = <D, R extends any = {}>(
