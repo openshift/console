@@ -366,7 +366,6 @@ Feature: Create the pipeline from builder page
               And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
               And user selects "git-clone" from Artifacthub
-              And user waits for "1" seconds  # TODO look into why this is needed
               And user clicks on Add button
               And user selects the "git-clone" node
               And user adds the git url in the url Parameter in cluster task sidebar
