@@ -51,6 +51,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     setSelectedVersion(selectedItem?.attributes?.installed ?? '');
     setHasInstalledVersion(isOneVersionInstalled(selectedItem));
   }, [selectedItem]);
+  const [artifactHubDataLoaded, setArtifactHubDataLoaded] = React.useState<boolean>(false);
 
   const onChangeVersion = React.useCallback(
     (key) => {
@@ -107,6 +108,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     if (isArtifactHubTask(selectedItem)) {
       const debouncedLoadDetails = debounce(async () => {
         if (mounted) {
+          setArtifactHubDataLoaded(false);
           try {
             const item = await getArtifactHubTaskDetails(selectedItem);
             selectedItem.attributes.versions = item.available_versions;
@@ -120,6 +122,8 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
             if (mounted) {
               resetVersions();
             }
+          } finally {
+            setArtifactHubDataLoaded(true);
           }
         }
       }, 10);
@@ -162,7 +166,10 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
           <Split hasGutter>
             <SplitItem>
               <Button
-                isDisabled={isTektonHubTaskWithoutVersions(selectedItem)}
+                isDisabled={
+                  isTektonHubTaskWithoutVersions(selectedItem) ||
+                  (isArtifactHubTask(selectedItem) && !artifactHubDataLoaded)
+                }
                 data-test="task-cta"
                 variant={ButtonVariant.primary}
                 className="opp-quick-search-details__form-button"
