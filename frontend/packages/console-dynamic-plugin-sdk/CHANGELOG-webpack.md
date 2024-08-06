@@ -1,7 +1,11 @@
 # Changelog for `@openshift-console/dynamic-plugin-sdk-webpack`
 
-Refer to [Console dynamic plugins README][README] for OpenShift Console version vs SDK package
+Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
+
+## 1.2.0 - 2024-08-02
+
+- Improve control over PatternFly shared modules ([OCPBUGS-35928], [#13992])
 
 ## 1.1.1 - 2024-07-02
 
@@ -28,7 +32,6 @@ version and PatternFly version compatibility.
 - Prevent PatternFly styles from being included in plugin builds ([CONSOLE-3853], [#13388])
 - Optimize module federation of PatternFly packages via dynamic modules ([CONSOLE-3853], [#13521])
 
-[README]: ./README.md
 [CONSOLE-3705]: https://issues.redhat.com/browse/CONSOLE-3705
 [CONSOLE-3853]: https://issues.redhat.com/browse/CONSOLE-3853
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
@@ -36,6 +39,7 @@ version and PatternFly version compatibility.
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
 [OCPBUGS-33642]: https://issues.redhat.com/browse/OCPBUGS-33642
 [OCPBUGS-34683]: https://issues.redhat.com/browse/OCPBUGS-34683
+[OCPBUGS-35928]: https://issues.redhat.com/browse/OCPBUGS-35928
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -44,3 +48,4 @@ version and PatternFly version compatibility.
 [#13832]: https://github.com/openshift/console/pull/13832
 [#13849]: https://github.com/openshift/console/pull/13849
 [#13893]: https://github.com/openshift/console/pull/13893
+[#13992]: https://github.com/openshift/console/pull/13992
