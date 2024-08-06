@@ -8,7 +8,7 @@ import {
 } from '@console/dynamic-plugin-sdk/dist/core/lib/lib-core';
 import { ConfigMap } from '../../resources';
 import { getVSphereHealth } from '../getVSphereHealth';
-import { VSphereConnection } from '../VSphereConnection';
+import { VSphereConnectionModal } from '../VSphereConnectionModal';
 import { VSphereOperatorStatuses } from '../VSphereOperatorStatuses';
 import './VSphereStatus.css';
 
@@ -25,7 +25,11 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, 
   ) {
     const cloudProviderConfig = k8sResult.data as ConfigMap;
     return (
-      <VSphereConnection hide={hide} cloudProviderConfig={cloudProviderConfig} health={health} />
+      <VSphereConnectionModal
+        hide={hide}
+        cloudProviderConfig={cloudProviderConfig}
+        health={health}
+      />
     );
   }
 

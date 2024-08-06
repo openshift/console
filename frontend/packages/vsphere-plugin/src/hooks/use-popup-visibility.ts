@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { ConnectionFormContextProvider } from './ConnectionFormContext';
-import { VSphereConnectionProps } from './types';
-import { VSphereConnectionModal } from './VSphereConnectionModal';
 
 const setPopupVisibility = (v: 'visible' | 'hidden') => {
   const popup = document.getElementsByClassName('plugin-vsphere-status-popup');
@@ -10,7 +7,7 @@ const setPopupVisibility = (v: 'visible' | 'hidden') => {
   style && (style.visibility = v);
 };
 
-export const VSphereConnection: React.FC<VSphereConnectionProps> = (props) => {
+export const usePopupVisibility = () => {
   React.useEffect(
     // Hack to stick with the Health status popup
     () => {
@@ -22,11 +19,5 @@ export const VSphereConnection: React.FC<VSphereConnectionProps> = (props) => {
     [
       /* just once */
     ],
-  );
-
-  return (
-    <ConnectionFormContextProvider>
-      <VSphereConnectionModal {...props} />
-    </ConnectionFormContextProvider>
   );
 };
