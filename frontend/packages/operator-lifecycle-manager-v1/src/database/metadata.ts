@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as _ from 'lodash';
 import { OperatorHubCSVAnnotationKey } from '@console/operator-lifecycle-manager/src/components/operator-hub';
 import { normalizedInfrastructureFeatures } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
@@ -36,9 +37,10 @@ const aggregateSerialJSONArray = (
   try {
     return aggregateArray(acc, key, JSON.parse(value));
   } catch (e) {
-    throw new Error(
-      `Malformed FBC metadata property: "${key}". Expected serialized JSON array, got "${value}".`,
+    console.warn(
+      `[Extension Catalog Database] Malformed FBC metadata property: "${key}". Expected serialized JSON array, got "${value}".`,
     );
+    return aggregateArray(acc, key, [value]);
   }
 };
 
@@ -53,14 +55,12 @@ const aggregateCommaSeparatedList = (
       .split(',')
       .map((e) => e.trim())
       .filter((e) => e);
-    if (!newValues.length) {
-      throw new Error();
-    }
-    return aggregateArray(acc, key, newValues);
+    return newValues.length > 0 ? aggregateArray(acc, key, newValues) : acc;
   } catch (e) {
-    throw new Error(
-      `Malformed FBC metadata property: "${key}". Expected comma-separated list, got "${value}".`,
+    console.warn(
+      `[Extension Catalog Database] Malformed FBC metadata property: "${key}". Expected comma-separated list, got "${value}".`,
     );
+    return aggregateArray(acc, key, [value]);
   }
 };
 
@@ -69,7 +69,9 @@ const aggregateLegacyInfrastructureFeatures = (acc, key, value) => {
   if (!infrastructureFeatures) return acc;
   return {
     ...acc,
-    infrastructureFeatures: infrastructureFeatures.map((i) => normalizedInfrastructureFeatures[i]),
+    infrastructureFeatures: infrastructureFeatures.map(
+      (i) => normalizedInfrastructureFeatures[i] ?? i,
+    ),
   };
 };
 

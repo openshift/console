@@ -13,6 +13,7 @@ import {
   OperatorHubItem,
 } from '@console/operator-lifecycle-manager/src/components/operator-hub';
 import { OperatorHubTileView } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-items';
+import { getValidSubscriptionFilters } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-page';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ExtensionCatalogItem } from '../database/types';
 import { useExtensionCatalogItems } from '../hooks/useExtensionCatalogItems';
@@ -53,6 +54,7 @@ const mapExtensionItemsToLegacyOperatorHubItems = (packages: ExtensionCatalogIte
       tags: keywords,
       uid: name,
       validSubscription,
+      validSubscriptionFilters: getValidSubscriptionFilters(validSubscription),
       ...(icon ? { imgUrl: `data:${icon.mediatype};base64,${icon.base64data}` } : {}),
     }),
   );

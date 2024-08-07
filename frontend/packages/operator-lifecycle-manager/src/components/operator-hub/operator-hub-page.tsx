@@ -72,12 +72,24 @@ const clusterServiceVersionFor = (
   return clusterServiceVersions?.find((csv) => csv.metadata.name === csvName);
 };
 
-const isOpenShiftValidSubscriptionValue = (validSubscriptionValue) =>
-  [
-    ValidSubscriptionValue.OpenShiftKubernetesEngine,
-    ValidSubscriptionValue.OpenShiftContainerPlatform,
-    ValidSubscriptionValue.OpenShiftPlatformPlus,
-  ].includes(validSubscriptionValue);
+export const getValidSubscriptionFilters = (validSubscription) =>
+  Object.keys(
+    (validSubscription ?? []).reduce((map, value) => {
+      const k =
+        {
+          [ValidSubscriptionValue.OpenShiftKubernetesEngine]:
+            ValidSubscriptionValue.OpenShiftKubernetesEngine,
+          [ValidSubscriptionValue.OpenShiftContainerPlatform]:
+            ValidSubscriptionValue.OpenShiftContainerPlatform,
+          [ValidSubscriptionValue.OpenShiftPlatformPlus]:
+            ValidSubscriptionValue.OpenShiftPlatformPlus,
+        }[value] ?? ValidSubscriptionValue.RequiresSeparateSubscription;
+      return {
+        ...map,
+        [k]: true,
+      };
+    }, {}),
+  );
 
 export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   loaded,
@@ -124,32 +136,6 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
                 // eslint-disable-next-line no-console
                 console.warn(`Error parsing annotation in PackageManifest ${pkg.metadata.name}`),
               ) ?? [],
-          );
-
-          const validSubscriptionFilters = validSubscription.reduce(
-            (previousValidSubscriptionValues, currentValidSubscriptionValue) => {
-              // The three openshift valid subscriptions values should be appended as-is so that
-              // they show up as filter options on operator hub
-              if (isOpenShiftValidSubscriptionValue(currentValidSubscriptionValue)) {
-                return [...previousValidSubscriptionValues, currentValidSubscriptionValue];
-              }
-
-              // Any value other than the openshift valid subscription values above should be
-              // aggregated into a single "Requires separate subscription" filter option
-              if (
-                !previousValidSubscriptionValues.includes(
-                  ValidSubscriptionValue.RequiresSeparateSubscription,
-                )
-              ) {
-                return [
-                  ...previousValidSubscriptionValues,
-                  ValidSubscriptionValue.RequiresSeparateSubscription,
-                ];
-              }
-
-              return previousValidSubscriptionValues;
-            },
-            [],
           );
 
           const {
@@ -265,7 +251,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             marketplaceRemoteWorkflow,
             marketplaceSupportWorkflow,
             validSubscription,
-            validSubscriptionFilters,
+            validSubscriptionFilters: getValidSubscriptionFilters(validSubscription),
             infraFeatures,
             keywords: currentCSVDesc?.keywords ?? [],
             cloudCredentials: cloudCredential,
