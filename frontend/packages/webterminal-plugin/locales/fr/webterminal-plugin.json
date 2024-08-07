@@ -1,8 +1,8 @@
 {
   "Web Terminal": "Terminal Web",
   "Configure default timeout and image of web terminal operator.": "Configurez le délai d’expiration et l’image par défaut de l’opérateur du terminal Web.",
-  "DevWorkspaceTemplate": "Modèle d’espace de travail de développement",
-  "DevWorkspaceTemplates": "Modèles d’espace de travail de développement",
+  "DevWorkspaceTemplate": "DevWorkspaceTemplate",
+  "DevWorkspaceTemplates": "DevWorkspaceTemplates",
   "Close terminal?": "Fermer le terminal ?",
   "This will close the terminal session. Content in the terminal will not be restored on next session.": "Cette action aura pour effet de fermer la session du terminal. Le contenu du terminal ne sera pas restauré lors de la prochaine session.",
   "Yes": "Oui",

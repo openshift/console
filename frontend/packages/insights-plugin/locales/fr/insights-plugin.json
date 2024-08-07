@@ -2,7 +2,7 @@
   "low": "faible",
   "moderate": "modéré",
   "important": "important",
-  "critical": "critique",
+  "critical": "critical",
   "Last refresh": "Dernière actualisation",
   "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.": "Insights Advisor identifie et hiérarchise les risques liés à la sécurité, aux performances, à la disponibilité et à la stabilité de vos clusters.",
   "Temporarily unavailable.": "Temporairement non disponible.",

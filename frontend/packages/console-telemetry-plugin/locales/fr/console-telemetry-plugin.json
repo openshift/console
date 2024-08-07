@@ -10,7 +10,7 @@
   "Disabled": "Désactivé",
   "Disable the telemetry in the cluster.": "Désactivez la télémétrie dans le cluster.",
   "Select option": "Sélectionner une option",
-  "Analytics": "Analyses",
+  "Analytics": "Analytics",
   "As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.": "En tant qu’administrateur, vous pouvez décider d’envoyer des événements de télémétrie à un proxy Red Hat préconfiguré qui peut être transmis à des services tiers pour analyse.",
   "Accept": "Accepter",
   "Send telemetry events.": "Envoyez des événements de télémétrie.",

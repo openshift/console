@@ -63,5 +63,7 @@
   "ClusterBuildStrategy": "ClusterBuildStrategy",
   "ClusterBuildStrategies": "ClusterBuildStrategies",
   "BuildStrategy": "构建策略",
-  "BuildStrategies": "构建策略"
+  "BuildStrategies": "构建策略",
+  "Buildah": "Buildah",
+  "Source-to-Image": "Source-to-Image"
 }

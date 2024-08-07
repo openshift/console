@@ -12,11 +12,11 @@
   "Disks Not Found": "Disques introuvables",
   "Discover Disks": "Découvrir les disques",
   "Available": "Disponible",
-  "NotAvailable": "Non disponible",
+  "NotAvailable": "NotAvailable",
   "Unknown": "Inconnu",
   "Disks on all nodes": "Disques sur tous les nœuds",
-  "{{nodes, number}} node_one": "{{nodes, number}} nœud",
-  "{{nodes, number}} node_other": "{{nodes, number}} nœuds",
+  "{{nodes, number}} node_one": "{{nodes, number}} node_one",
+  "{{nodes, number}} node_other": "{{nodes, number}} node_other",
   "Discovers available disks on all nodes.": "Détecte les disques disponibles sur tous les nœuds.",
   "Disks on selected nodes": "Disques sur les nœuds sélectionnés",
   "Allows you to limit the discovery for available disks to specific nodes.": "Permet de limiter la découverte des disques disponibles à des nœuds spécifiques.",
@@ -49,9 +49,9 @@
   "Memory": "Mémoire",
   "Zone": "Zone",
   "Select nodes for creating volume filter": "Sélectionner des nœuds pour créer un filtre de volume",
-  "{{nodeCount, number}} node_one": "{{nodeCount, number}} nœud",
-  "{{nodeCount, number}} node_other": "{{nodeCount, number}} nœuds",
+  "{{nodeCount, number}} node_one": "{{nodeCount, number}} node_one",
+  "{{nodeCount, number}} node_other": "{{nodeCount, number}} node_other",
   "selected": "choisi(s)",
   "SSD / NVMe": "SSD/NVMe",
-  "HDD": "Disque dur"
+  "HDD": "HDD"
 }
