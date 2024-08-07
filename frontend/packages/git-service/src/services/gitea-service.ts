@@ -4,12 +4,6 @@ import * as _ from 'lodash';
 import 'whatwg-fetch';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
-  API_PROXY_URL,
-  ProxyResponse,
-  consoleProxyFetchJSON,
-  convertHeaders,
-} from '@console/shared/src/utils/proxy';
-import {
   BranchList,
   GitSource,
   RepoFileList,
@@ -24,14 +18,9 @@ import { BaseService } from './base-service';
 export class GiteaService extends BaseService {
   private readonly metadata: RepoMetadata;
 
-  private isServer = false;
-
   constructor(gitsource: GitSource) {
     super(gitsource);
     this.metadata = this.getRepoMetadata();
-    if (!this.metadata.host.includes('gitea.com')) {
-      this.isServer = true;
-    }
   }
 
   protected getAuthProvider = (): any => {
@@ -58,15 +47,6 @@ export class GiteaService extends BaseService {
       ...authHeaders,
       ...headers,
     };
-    if (this.isServer) {
-      return consoleProxyFetchJSON({
-        allowInsecure: true,
-        url,
-        method: requestMethod || 'GET',
-        headers: convertHeaders(requestHeaders),
-        ...(body && { body: JSON.stringify(body) }),
-      });
-    }
 
     const response = await fetch(url, {
       method: requestMethod || 'GET',
@@ -149,10 +129,10 @@ export class GiteaService extends BaseService {
 
   /* TODO: Gitea PAC Support */
   createRepoWebhook = async (token: string, webhookURL: string): Promise<boolean> => {
-    const headers = {
-      'Content-Type': ['application/json'],
-      Authorization: [`token ${token}`],
-    };
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: `token ${token}`,
+    });
     const body = {
       active: true,
       authorization_header: '',
@@ -166,15 +146,9 @@ export class GiteaService extends BaseService {
     };
     const url = `${this.metadata.host}/api/v1/repos/${this.metadata.owner}/${this.metadata.repoName}/hooks`;
 
-    /* Using DevConsole Proxy to create webhook as Gitea is giving CORS error */
-    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
-      url,
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const webhookResponse: Response = await consoleFetchJSON.post(url, body, { headers });
 
-    return webhookResponse.statusCode === 201;
+    return webhookResponse.status === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {
