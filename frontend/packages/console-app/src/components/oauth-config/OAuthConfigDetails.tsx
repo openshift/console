@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Alert } from '@patternfly/react-core';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-} from '@patternfly/react-core/deprecated';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+  Alert,
+  Dropdown,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
@@ -62,7 +63,7 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
     const [key, value] = idp;
 
     return (
-      <DropdownItemDeprecated
+      <DropdownItem
         key={`idp-${key}`}
         component="button"
         id={key}
@@ -70,7 +71,7 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
         onClick={(e) => navigate(`/settings/idp/${e.currentTarget.id}`)}
       >
         {getAddIDPItemLabels(value)}
-      </DropdownItemDeprecated>
+      </DropdownItem>
     );
   });
 
@@ -113,23 +114,27 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
             </>
           </Alert>
         )}
-        <DropdownDeprecated
-          className="co-m-pane__dropdown"
-          toggle={
-            <DropdownToggleDeprecated
+        <Dropdown
+          isOpen={isIDPOpen}
+          onSelect={() => setIDPOpen(false)}
+          onOpenChange={(isOpen: boolean) => setIDPOpen(isOpen)}
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
               id="idp-dropdown"
-              onToggle={() => setIDPOpen(!isIDPOpen)}
-              toggleIndicator={CaretDownIcon}
               data-test-id="dropdown-button"
+              ref={toggleRef}
+              onClick={() => setIDPOpen(!isIDPOpen)}
+              isExpanded={isIDPOpen}
             >
               {t('console-app~Add')}
-            </DropdownToggleDeprecated>
-          }
-          isOpen={isIDPOpen}
-          dropdownItems={IDPDropdownItems}
-          onSelect={() => setIDPOpen(false)}
+            </MenuToggle>
+          )}
+          shouldFocusToggleOnSelect
           id="idp"
-        />
+        >
+          <DropdownList>{IDPDropdownItems}</DropdownList>
+        </Dropdown>
+
         <IdentityProviders identityProviders={identityProviders} />
       </div>
     </>
