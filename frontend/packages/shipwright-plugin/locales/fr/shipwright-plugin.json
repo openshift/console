@@ -1,5 +1,5 @@
 {
-  "Build": "Compilation",
+  "Build": "Build",
   "Builds": "Compilations",
   "BuildRun": "Exécution de compilation",
   "BuildRuns": "Exécutions de compilations",
@@ -63,5 +63,7 @@
   "ClusterBuildStrategy": "Stratégie de compilation de cluster",
   "ClusterBuildStrategies": "Stratégies de compilation de cluster",
   "BuildStrategy": "Stratégie de compilation",
-  "BuildStrategies": "Stratégies de compilation"
+  "BuildStrategies": "Stratégies de compilation",
+  "Buildah": "Buildah",
+  "Source-to-Image": "Source vers image"
 }
