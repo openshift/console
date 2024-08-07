@@ -14,6 +14,12 @@ import (
 //
 // Compatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).
 // +openshift:compatibility-gen:level=1
+// +openshift:api-approved.openshift.io=https://github.com/openshift/api/pull/470
+// +openshift:file-pattern=cvoRunLevel=0000_10,operatorName=config-operator,operatorOrdering=01
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:path=apiservers,scope=Cluster
+// +kubebuilder:subresource:status
+// +kubebuilder:metadata:annotations=release.openshift.io/bootstrap-required=true
 type APIServer struct {
 	metav1.TypeMeta `json:",inline"`
 
@@ -54,7 +60,7 @@ type APIServerSpec struct {
 	//
 	// If unset, a default (which may change between releases) is chosen. Note that only Old,
 	// Intermediate and Custom profiles are currently supported, and the maximum available
-	// MinTLSVersions is VersionTLS12.
+	// minTLSVersion is VersionTLS12.
 	// +optional
 	TLSSecurityProfile *TLSSecurityProfile `json:"tlsSecurityProfile,omitempty"`
 	// audit specifies the settings for audit configuration to be applied to all OpenShift-provided

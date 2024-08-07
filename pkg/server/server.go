@@ -22,6 +22,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
+	operatorv1 "github.com/openshift/api/operator/v1"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -31,6 +32,7 @@ import (
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/metrics"
+	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -71,6 +73,7 @@ const (
 	knativeProxyEndpoint                  = "/api/console/knative/"
 	devConsoleEndpoint                    = "/api/dev-console/"
 	localesEndpoint                       = "/locales/resource.json"
+	packageManifestEndpoint               = "/api/check-package-manifest/"
 	operandsListEndpoint                  = "/api/list-operands/"
 	pluginAssetsEndpoint                  = "/api/plugins/"
 	pluginProxyEndpoint                   = "/api/proxy/"
@@ -127,6 +130,7 @@ type jsGlobals struct {
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
 	K8sMode                         string                     `json:"k8sMode"`
+	Capabilities                    []operatorv1.Capability    `json:"capabilities"`
 }
 
 type Server struct {
@@ -171,6 +175,7 @@ type Server struct {
 	NodeArchitectures                   []string
 	NodeOperatingSystems                []string
 	Perspectives                        string
+	Capabilities                        []operatorv1.Capability
 	PluginProxy                         string
 	PluginsProxyTLSConfig               *tls.Config
 	ProjectAccessClusterRoles           string
@@ -433,18 +438,23 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		})),
 	)
 
-	// List operator operands endpoint
-	operandsListHandler := &OperandsListHandler{
+	// Handler for OLM related resources
+	olmHandler := &olm.OLMHandler{
 		APIServerURL: k8sProxyURL,
 		Client: &http.Client{
 			Transport: internalProxiedK8SRT,
 		},
 	}
 
+	handle(packageManifestEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, packageManifestEndpoint),
+		authHandler(olmHandler.CheckPackageManifest),
+	))
+
 	handle(operandsListEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			operandsListHandler.OperandsListHandler(user, w, r)
+			olmHandler.OperandsList(user, w, r)
 		}),
 	))
 
@@ -704,6 +714,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		NodeOperatingSystems:      s.NodeOperatingSystems,
 		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
 		K8sMode:                   s.K8sMode,
+		Capabilities:              s.Capabilities,
 	}
 
 	if s.prometheusProxyEnabled() {

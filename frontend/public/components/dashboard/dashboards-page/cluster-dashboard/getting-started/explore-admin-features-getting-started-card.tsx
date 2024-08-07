@@ -2,35 +2,21 @@ import * as React from 'react';
 import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons/dist/esm/icons/flag-icon';
+import { FLAGS, useOpenShiftVersion } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 
-import { useOpenShiftVersion } from '@console/shared/src';
 import {
   GettingStartedCard,
   GettingStartedLink,
 } from '@console/shared/src/components/getting-started';
+import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
 import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils';
-import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { PackageManifestModel } from '@console/operator-lifecycle-manager/src';
-
-const getLightSpeedAvailability = async () => {
-  try {
-    await k8sGetResource({
-      model: PackageManifestModel,
-      name: 'lightspeed-operator',
-      ns: 'openshift-marketplace',
-    });
-    return true;
-  } catch (err) {
-    if (err.response.status !== 404) {
-      // eslint-disable-next-line no-console
-      console.log(err.message);
-    }
-    return false;
-  }
-};
 
 export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
+  const canListPackageManifest = useFlag(FLAGS.CAN_LIST_PACKAGE_MANIFEST);
+  const canListOperatorGroup = useFlag(FLAGS.CAN_LIST_OPERATOR_GROUP);
+  const lightspeedIsAvailable = useFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL);
   const parsed = semver.parse(useOpenShiftVersion());
   // Show only major and minor version.
   const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
@@ -54,20 +40,15 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   );
 
   React.useEffect(() => {
-    const addLinkIfLightSpeedIsAvailable = async () => {
-      if (await getLightSpeedAvailability()) {
-        links.splice(1, 1, {
-          id: 'lightspeed',
-          title: t('public~OpenShift LightSpeed'),
-          description: t('public~Your personal AI helper.'),
-          href:
-            '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-lightspeed-operator-catalog-openshift-marketplace',
-        });
-      }
-    };
-
-    addLinkIfLightSpeedIsAvailable();
-  }, [links, t]);
+    if (canListPackageManifest && canListOperatorGroup && lightspeedIsAvailable) {
+      links.splice(1, 1, {
+        id: 'lightspeed',
+        title: t('public~OpenShift LightSpeed'),
+        description: t('public~Your personal AI helper.'),
+        href: lightspeedOperatorURL,
+      });
+    }
+  }, [canListPackageManifest, canListOperatorGroup, lightspeedIsAvailable, links, t]);
 
   const moreLink: GettingStartedLink = {
     id: 'whats-new',

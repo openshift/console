@@ -55,6 +55,7 @@ declare interface Window {
     nodeOperatingSystems: string[];
     hubConsoleURL: string;
     k8sMode: string;
+    capabilities: Record<string, string>[];
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;

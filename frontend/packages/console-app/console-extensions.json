@@ -586,6 +586,30 @@
   {
     "type": "console.user-preference/item",
     "properties": {
+      "id": "console.hideLightspeedButton",
+      "label": "%console-app~Lightspeed%",
+      "groupId": "general",
+      "description": "%console-app~Do not display the Lightspeed button.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.hideLightspeedButton",
+        "label": "%console-app~Hide Lightspeed%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
+      },
+      "insertAfter": "console.preferredCreateEditMethod"
+    },
+    "flags": {
+      "required": [
+        "CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED",
+        "LIGHTSPEED_IS_AVAILABLE_TO_INSTALL"
+      ]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
       "id": "console.preferredLanguage",
       "label": "%console-app~Language%",
       "groupId": "language",

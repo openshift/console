@@ -2,6 +2,7 @@ package serverconfig
 
 import (
 	configv1 "github.com/openshift/api/config/v1"
+	operatorv1 "github.com/openshift/api/operator/v1"
 	authorizationv1 "k8s.io/api/authorization/v1"
 )
 
@@ -108,9 +109,10 @@ type Customization struct {
 	DeveloperCatalog DeveloperConsoleCatalogCustomization `yaml:"developerCatalog,omitempty"`
 	QuickStarts      QuickStarts                          `yaml:"quickStarts,omitempty"`
 	// addPage allows customizing actions on the Add page in developer perspective.
-	AddPage       AddPage       `yaml:"addPage,omitempty"`
-	ProjectAccess ProjectAccess `yaml:"projectAccess,omitempty"`
-	Perspectives  []Perspective `yaml:"perspectives,omitempty"`
+	AddPage       AddPage                 `yaml:"addPage,omitempty"`
+	ProjectAccess ProjectAccess           `yaml:"projectAccess,omitempty"`
+	Perspectives  []Perspective           `yaml:"perspectives,omitempty"`
+	Capabilities  []operatorv1.Capability `yaml:"capabilities,omitempty"`
 }
 
 // QuickStarts contains options for ConsoleQuickStarts resource
