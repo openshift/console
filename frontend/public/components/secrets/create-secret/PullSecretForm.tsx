@@ -55,20 +55,3 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
     </>
   );
 };
-
-export type DockerConfigCredential = {
-  username: string;
-  password: string;
-  email: string;
-  auth: string;
-};
-
-export type DockerConfigData = {
-  [url: string]: DockerConfigCredential;
-};
-
-type DockerConfigJSONData = {
-  auths: DockerConfigData;
-};
-
-export type PullSecretData = DockerConfigData | DockerConfigJSONData;

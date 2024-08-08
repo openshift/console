@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { DockerConfigCredential, DockerConfigData } from './PullSecretForm';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
 import { PullSecretCredential } from './PullSecretCredentialsForm';
-import { AUTHS_KEY, getImageSecretKey, SecretChangeData, SecretStringData, SecretType } from '.';
+import { getPullSecretFileName, SecretChangeData, SecretStringData, SecretType } from '.';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
   address: '',
@@ -26,7 +25,6 @@ const dockerConfigDataToPullSecretCredentials = (
         username: parsedUsername || '',
         password: parsedPassword || '',
         email: value?.email || '',
-        auth: value?.auth,
         uid: _.uniqueId(),
       };
     },
@@ -37,27 +35,37 @@ const dockerConfigDataToPullSecretCredentials = (
 const pullSecretCredentialsToDockerConfigData = (
   pullSecretCredentials: PullSecretCredential[],
 ): DockerConfigData =>
-  pullSecretCredentials.reduce(
-    (acc, { address, ...entry }) => ({
+  pullSecretCredentials.reduce((acc, { address, username, password, email }) => {
+    const auth = username && password ? Base64.encode(`${username}:${password}`) : '';
+    return {
       ...acc,
-      [address]: entry,
-    }),
-    {},
-  );
+      [address]: {
+        ...(auth ? { auth } : {}),
+        username,
+        password,
+        email,
+      },
+    };
+  }, {});
 
 export const usePullSecretCredentialEntries = (
+  secretType: SecretType,
   stringData: SecretStringData,
+
   onChange: (stringData: SecretChangeData) => void,
   onError: (error: any) => void,
-  secretType: SecretType,
-  onFormDisable: (disable: boolean) => void,
 ): [PullSecretCredential[], React.Dispatch<React.SetStateAction<PullSecretCredential[]>>] => {
-  const initialEntries = React.useMemo(() => {
+  const fileName = getPullSecretFileName(secretType);
+  const isDockerConfigJSONData = (value: PullSecretData): value is DockerConfigData =>
+    Boolean(value?.auths);
+  const getDockerConfigData = (pullSecretData: any): DockerConfigData =>
+    isDockerConfigJSONData(pullSecretData) ? pullSecretData.auths : pullSecretData;
+  const initialEntries = React.useMemo<PullSecretCredential[]>(() => {
     try {
-      const key = getImageSecretKey(secretType);
-      const jsonContent = stringData[key] ?? '{}';
-      const dockerConfigData = JSON.parse(jsonContent);
-      return dockerConfigDataToPullSecretCredentials(dockerConfigData?.auths || dockerConfigData);
+      const jsonContent = stringData[fileName] ?? '{}';
+      const pullSecretData: PullSecretData = JSON.parse(jsonContent);
+      const dockerConfigData = getDockerConfigData(pullSecretData);
+      return dockerConfigDataToPullSecretCredentials(dockerConfigData);
     } catch (err) {
       onError(`Error parsing pull secret: ${err.message}`);
       return [];
@@ -67,16 +75,29 @@ export const usePullSecretCredentialEntries = (
 
   React.useEffect(() => {
     const newSecretData = pullSecretCredentialsToDockerConfigData(entries);
-    if (!_.isError(newSecretData)) {
-      onFormDisable(false);
-    }
-    const newDataKey = newSecretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
     onChange({
       stringData: {
-        [newDataKey]: JSON.stringify(newSecretData),
+        [fileName]: JSON.stringify(newSecretData),
       },
     });
   }, [entries]);
 
   return [entries, setEntries];
 };
+
+export type DockerConfigCredential = {
+  username: string;
+  password: string;
+  email: string;
+  auth: string;
+};
+
+export type DockerConfigData = {
+  [url: string]: DockerConfigCredential;
+};
+
+type DockerConfigJSONData = {
+  auths: DockerConfigData;
+};
+
+export type PullSecretData = DockerConfigData | DockerConfigJSONData;
