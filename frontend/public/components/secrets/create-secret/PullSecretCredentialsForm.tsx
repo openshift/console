@@ -31,11 +31,10 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
 }) => {
   const { t } = useTranslation();
   const [entries, setEntries] = usePullSecretCredentialEntries(
+    secretType,
     stringData,
     onChange,
     onError,
-    secretType,
-    onFormDisable,
   );
 
   const isDockerconfigjson = React.useMemo(() => {

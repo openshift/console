@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   AUTHS_KEY,
   DroppableFileInput,
-  getImageSecretKey,
+  getPullSecretFileName,
   SecretChangeData,
   SecretStringData,
   SecretType,
@@ -16,8 +16,8 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   onFormDisable,
 }) => {
   const { t } = useTranslation();
-  const key = getImageSecretKey(secretType);
-  const configContent = stringData[key] ?? '';
+  const fileName = getPullSecretFileName(secretType);
+  const configContent = stringData[fileName] ?? '';
   const [configFile, setConfigFile] = React.useState<string>(configContent);
   const [parseError, setParseError] = React.useState<boolean>(false);
 

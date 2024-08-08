@@ -58,7 +58,7 @@ export const determineSecretType = (stringData): SecretType => {
   return SecretType.opaque;
 };
 
-export const getImageSecretKey = (secretType: SecretType): string => {
+export const getPullSecretFileName = (secretType: SecretType): string => {
   switch (secretType) {
     case SecretType.dockercfg:
       return '.dockercfg';
