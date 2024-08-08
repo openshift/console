@@ -30,10 +30,10 @@ import { ResourceKebabWithUserLabel } from '../pipelineruns/triggered-by';
 import { chainsSignedAnnotation } from '../pipelines/const';
 import { getTaskRunsOfPipelineRun } from '../taskruns/useTaskRuns';
 import {
-  RepositoryLabels,
-  RepositoryFields,
   RepoAnnotationFields,
   RepositoryAnnotations,
+  RepositoryFields,
+  RepositoryLabels,
 } from './consts';
 import { sanitizeBranchName } from './repository-utils';
 import { tableColumnClasses } from './RepositoryPipelineRunHeader';
@@ -67,6 +67,9 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
   const plrAnnotations = obj.metadata.annotations;
   const { operatorVersion, taskRuns, taskRunsLoaded } = customData;
   const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
+  const branchName =
+    plrLabels?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]] ||
+    plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -109,7 +112,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
           <ExternalLink
             href={plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.SHA_URL]]}
           >
-            {truncateMiddle(plrLabels[RepositoryLabels[RepositoryFields.SHA]], {
+            {truncateMiddle(plrLabels?.[RepositoryLabels[RepositoryFields.SHA]], {
               length: 7,
               truncateEnd: true,
               omission: '',
@@ -137,9 +140,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
         <Timestamp timestamp={obj.status && obj.status.startTime} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>{pipelineRunDuration(obj)}</TableData>
-      <TableData className={tableColumnClasses[7]}>
-        {sanitizeBranchName(plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]])}
-      </TableData>
+      <TableData className={tableColumnClasses[7]}>{sanitizeBranchName(branchName)}</TableData>
       <TableData className={tableColumnClasses[8]}>
         <ResourceKebabWithUserLabel
           actions={getPipelineRunKebabActions(operatorVersion, PLRTaskRuns)}

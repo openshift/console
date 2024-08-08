@@ -12,10 +12,10 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { RepositoryModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import {
-  RepositoryLabels,
-  RepositoryFields,
   RepositoryAnnotations,
   RepoAnnotationFields,
+  RepositoryFields,
+  RepositoryLabels,
 } from './consts';
 import { getGitProviderIcon, getLabelValue, sanitizeBranchName } from './repository-utils';
 
@@ -31,6 +31,9 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
   const repoName = plrLabels?.[repoLabel];
   const repoURL = plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.REPO_URL]];
   const shaURL = plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.SHA_URL]];
+  const branchName =
+    plrLabels?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]] ||
+    plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]];
 
   if (!repoName) return null;
 
@@ -58,12 +61,10 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
           </ExternalLink>
         )}
       </dd>
-      {plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]] && (
+      {branchName && (
         <>
-          <dt>{t(getLabelValue(plrLabels[RepositoryLabels[RepositoryFields.BRANCH]]))}</dt>
-          <dd data-test="pl-repository-branch">
-            {sanitizeBranchName(plrLabels[RepositoryLabels[RepositoryFields.BRANCH]])}
-          </dd>
+          <dt>{t(getLabelValue(branchName))}</dt>
+          <dd data-test="pl-repository-branch">{sanitizeBranchName(branchName)}</dd>
         </>
       )}
       {plrLabels?.[RepositoryLabels[RepositoryFields.SHA]] && (

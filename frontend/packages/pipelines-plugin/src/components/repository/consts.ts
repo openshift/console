@@ -3,7 +3,6 @@ import { RepositoryFormValues } from './types';
 
 export enum RepositoryFields {
   REPOSITORY = 'Repository',
-  BRANCH = 'Branch',
   URL_REPO = 'RepoUrl',
   URL_ORG = 'RepoOrg',
   SHA = 'sha',
@@ -14,6 +13,7 @@ export enum RepoAnnotationFields {
   SHA_MESSAGE = 'sha_message',
   SHA_URL = 'sha_url',
   REPO_URL = 'repo_url',
+  BRANCH = 'Branch',
 }
 
 export enum RepositoryRuntimes {
@@ -25,7 +25,6 @@ export enum RepositoryRuntimes {
 
 export const RepositoryLabels: Record<RepositoryFields, string> = {
   [RepositoryFields.REPOSITORY]: 'pipelinesascode.tekton.dev/repository',
-  [RepositoryFields.BRANCH]: 'pipelinesascode.tekton.dev/branch',
   [RepositoryFields.URL_REPO]: 'pipelinesascode.tekton.dev/url-repository',
   [RepositoryFields.URL_ORG]: 'pipelinesascode.tekton.dev/url-org',
   [RepositoryFields.SHA]: 'pipelinesascode.tekton.dev/sha',
@@ -36,6 +35,7 @@ export const RepositoryAnnotations: Record<RepoAnnotationFields, string> = {
   [RepoAnnotationFields.SHA_MESSAGE]: 'pipelinesascode.tekton.dev/sha-title',
   [RepoAnnotationFields.SHA_URL]: 'pipelinesascode.tekton.dev/sha-url',
   [RepoAnnotationFields.REPO_URL]: 'pipelinesascode.tekton.dev/repo-url',
+  [RepoAnnotationFields.BRANCH]: 'pipelinesascode.tekton.dev/branch',
 };
 
 export const baseURL = 'https://github.com';
