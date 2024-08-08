@@ -61,7 +61,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
           title: t('public~OpenShift LightSpeed'),
           description: t('public~Your personal AI helper.'),
           href:
-            '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-lightspeed-operator-catalog-openshift-marketplace',
+            '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-redhat-operators-openshift-marketplace',
         });
       }
     };
