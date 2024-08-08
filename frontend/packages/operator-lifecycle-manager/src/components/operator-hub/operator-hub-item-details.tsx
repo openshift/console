@@ -219,7 +219,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   const { t } = useTranslation();
   const {
     catalogSource,
-    catalogSourceDisplayName,
+    source,
     description,
     infraFeatures,
     installed,
@@ -253,11 +253,11 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   React.useEffect(() => {
     setDeprecatedPackage(_.pick(item?.obj?.status, 'deprecation'));
   }, [item?.obj?.status, setDeprecatedPackage]);
-
-  const currentChannel = obj.status.channels.find((ch) => ch.name === installChannel);
+  const currentChannel = obj?.status.channels.find((ch) => ch.name === installChannel);
   const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations.containerImage;
   const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations.createdAt;
-  const selectedChannelCapabilityLevel = currentChannel?.currentCSVDesc.annotations.capabilities;
+  const selectedChannelCapabilityLevel =
+    currentChannel?.currentCSVDesc.annotations.capabilities ?? item.capabilityLevel;
 
   const installedChannel = item?.subscription?.spec?.channel;
   const notAvailable = (
@@ -331,10 +331,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                   )
                 }
               />
-              <PropertyItem
-                label={t('olm~Source')}
-                value={catalogSourceDisplayName || notAvailable}
-              />
+              <PropertyItem label={t('olm~Source')} value={source || notAvailable} />
               <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
               {infraFeatures?.length > 0 && (
                 <PropertyItem
@@ -381,7 +378,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             <div className="co-catalog-page__overlay-description">
               {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
                 showWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
+                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
                   <Alert
                     isInline
                     variant="warning"
@@ -398,7 +395,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 )}
               {isAzureWIFCluster(cloudCredentials, infrastructure, authentication) &&
                 showWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
+                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
                   <Alert
                     isInline
                     variant="warning"

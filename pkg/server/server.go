@@ -62,6 +62,7 @@ const (
 	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
 	authLoginEndpoint                     = "/auth/login"
 	authLogoutEndpoint                    = "/api/console/logout"
+	catalogdEndpoint                      = "/api/catalogd/"
 	customLogoEndpoint                    = "/custom-logo"
 	devfileEndpoint                       = "/api/devfile/"
 	devfileSamplesEndpoint                = "/api/devfile/samples/"
@@ -145,6 +146,7 @@ type Server struct {
 	Authenticator                       auth.Authenticator
 	BaseURL                             *url.URL
 	Branding                            string
+	CatalogdProxyConfig                 *proxy.Config
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
@@ -311,6 +313,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handleFunc("/health", health.Checker{
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
+
+	handle(catalogdEndpoint, s.CatalogdHandler())
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
@@ -787,4 +791,15 @@ func (s *Server) NoAuthConfiguredHandler() http.Handler {
 		fmt.Fprint(w, "Please configure authentication to use the web console.")
 	}))
 	return securityHeadersMiddleware(mux)
+}
+
+func (s *Server) CatalogdHandler() http.Handler {
+	if s.CatalogdProxyConfig == nil {
+		return http.NotFoundHandler()
+	}
+	catalogdProxy := proxy.NewProxy(s.CatalogdProxyConfig)
+	return http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, catalogdEndpoint),
+		catalogdProxy,
+	)
 }

@@ -32,6 +32,8 @@ const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
+	catalogdHost = "catalogd-catalogserver.openshift-catalogd.svc:443"
+
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
 	openshiftThanosTenancyHost = "thanos-querier.openshift-monitoring.svc:9092"
@@ -87,6 +89,7 @@ func main() {
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
+	fK8sModeOffClusterCatalogd := fs.String("k8s-mode-off-cluster-catalogd", "", "DEV ONLY. URL of the cluster's catalogd server.")
 
 	fK8sAuth := fs.String("k8s-auth", "", "this option is deprecated, setting it has no effect")
 
@@ -369,6 +372,11 @@ func main() {
 				},
 			}
 
+			srv.CatalogdProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
+			}
+
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -434,6 +442,15 @@ func main() {
 			HeaderBlacklist:         []string{"Cookie", "X-CSRFToken"},
 			Endpoint:                k8sEndpoint,
 			UseProxyFromEnvironment: true,
+		}
+
+		if *fK8sModeOffClusterCatalogd != "" {
+			offClusterCatalogdURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-catalogd", *fK8sModeOffClusterCatalogd, false)
+			flags.FatalIfFailed(err)
+			srv.CatalogdProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				Endpoint:        offClusterCatalogdURL,
+			}
 		}
 
 		if *fK8sModeOffClusterThanos != "" {

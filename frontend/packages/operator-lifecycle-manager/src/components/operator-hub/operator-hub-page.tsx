@@ -45,10 +45,11 @@ import {
 import { subscriptionFor } from '../operator-group';
 import { OperatorHubTileView } from './operator-hub-items';
 import {
-  getCatalogSourceDisplayName,
+  getPackageSource,
   isAWSSTSCluster,
   isAzureWIFCluster,
   isGCPWIFCluster,
+  normalizedInfrastructureFeatures,
 } from './operator-hub-utils';
 import {
   OperatorHubItem,
@@ -185,14 +186,14 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
 
           // old infra feature annotation
           let infrastructureFeatures: InfraFeatures[] = parsedInfraFeatures.map(
-            (key) => InfraFeatures[key],
+            (key) => normalizedInfrastructureFeatures[key],
           );
 
           // new infra feature annotation
           const featuresAnnotationsObjects = [
-            { key: InfraFeatures.Disconnected, value: disconnected },
-            { key: InfraFeatures.FipsMode, value: fipsCompliant },
-            { key: InfraFeatures.Proxy, value: proxyAware },
+            { key: InfraFeatures.disconnected, value: disconnected },
+            { key: InfraFeatures.fipsMode, value: fipsCompliant },
+            { key: InfraFeatures.proxyAware, value: proxyAware },
             { key: InfraFeatures.cnf, value: cnf },
             { key: InfraFeatures.cni, value: cni },
             { key: InfraFeatures.csi, value: csi },
@@ -210,11 +211,11 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           });
 
           if (tokenAuthAWS === 'true' && isAWSSTSCluster(cloudCredential, infra, auth)) {
-            infrastructureFeatures.push(InfraFeatures.TokenAuth);
+            infrastructureFeatures.push(InfraFeatures.tokenAuth);
           } else if (tokenAuthGCP === 'true' && isGCPWIFCluster(cloudCredential, infra, auth)) {
             infrastructureFeatures.push(InfraFeatures.tokenAuthGCP);
           } else if (tokenAuthAzure === 'true' && isAzureWIFCluster(cloudCredential, infra, auth)) {
-            infrastructureFeatures.push(InfraFeatures.TokenAuth);
+            infrastructureFeatures.push(InfraFeatures.tokenAuth);
           }
 
           const infraFeatures = _.uniq(_.compact(infrastructureFeatures));
@@ -251,7 +252,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
               .split(',')
               .map((category) => category.trim()),
             catalogSource: pkg.status.catalogSource,
-            catalogSourceDisplayName: getCatalogSourceDisplayName(pkg),
+            source: getPackageSource(pkg),
             catalogSourceNamespace: pkg.status.catalogSourceNamespace,
             certifiedLevel,
             healthIndex,

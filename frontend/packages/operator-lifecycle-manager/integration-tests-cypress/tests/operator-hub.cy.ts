@@ -23,7 +23,7 @@ describe('Interacting with OperatorHub', () => {
     cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
 
     cy.log('enable the Community filter');
-    cy.byTestID('catalogSourceDisplayName-community').click();
+    cy.byTestID('source-community').click();
     cy.log('more than one tile should be present');
     cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
     cy.log('track which tile is first');
@@ -34,9 +34,9 @@ describe('Interacting with OperatorHub', () => {
         const origCatalogTitleTxt = $origCatalogTitle.find('.catalog-tile-pf-title').text();
         cy.log(`first Community filtered tile title text is ${origCatalogTitleTxt}`);
         cy.log('disable the Community filter');
-        cy.byTestID('catalogSourceDisplayName-community').click();
+        cy.byTestID('source-community').click();
         cy.log('enable the Certified filter');
-        cy.byTestID('catalogSourceDisplayName-certified').click();
+        cy.byTestID('source-certified').click();
         cy.log('more than one tile should be present');
         cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
         cy.log('the first tile title text for Certified should not be the same as Community');

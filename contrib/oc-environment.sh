@@ -37,6 +37,14 @@ if [ -n "$GITOPS_HOSTNAME" ]; then
     export BRIDGE_K8S_MODE_OFF_CLUSTER_GITOPS
 fi
 
+# This route will not exist by default. If we want olmv1 to work off cluster, we will need to
+# manually create a route for the catalogd service.
+CATALOGD_HOSTNAME=$(oc -n openshift-catalogd get route catalogd-catalogserver -o jsonpath='{.spec.host}' 2>/dev/null)
+if [ -n "$CATALOGD_HOSTNAME" ]; then
+    BRIDGE_K8S_MODE_OFF_CLUSTER_CATALOGD="https://$CATALOGD_HOSTNAME"
+    export BRIDGE_K8S_MODE_OFF_CLUSTER_CATALOGD
+fi
+
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(oc whoami --show-token)
 export BRIDGE_K8S_AUTH_BEARER_TOKEN
 

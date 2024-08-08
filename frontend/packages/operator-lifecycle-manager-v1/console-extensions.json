@@ -5,9 +5,20 @@
       "model": {
         "group": "catalogd.operatorframework.io",
         "version": "v1alpha1",
-        "kind": "Catalog"
+        "kind": "ClusterCatalog"
       },
-      "flag": "CONSOLE_OLM_V1"
+      "flag": "CLUSTER_CATALOG_API"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1alpha1",
+        "kind": "ClusterExtension"
+      },
+      "flag": "CLUSTER_EXTENSION_API"
     }
   },
   {
@@ -19,7 +30,32 @@
       "insertAfter": "usermanagement"
     },
     "flags": {
-      "required": ["CONSOLE_OLM_V1"]
+      "required": ["CLUSTER_CATALOG_API"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "extension-catalog",
+      "perspective": "admin",
+      "section": "ecosystem",
+      "name": "%olm-v1~Extension Catalog%",
+      "href": "/ecosystem/catalog"
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/ecosystem/catalog",
+      "component": {
+        "$codeRef": "ExtensionCatalog"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
     }
   },
   {
@@ -34,6 +70,19 @@
         "group": "olm.operatorframework.io"
       },
       "startsWith": ["olm.operatorframework.io"]
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "ExtensionCatalogDatabaseContextProvider" },
+      "useValueHook": { "$codeRef": "useExtensionCatalogDatabaseContextValues" }
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API"]
     }
   }
 ]
