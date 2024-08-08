@@ -28,7 +28,6 @@ function copyArtifacts {
     cp -r "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
   fi
 }
-trap copyArtifacts EXIT
 
 function generateReport {
   yarn run cypress-postreport
@@ -36,7 +35,7 @@ function generateReport {
     yarn cypress-a11y-report
   fi
 }
-trap generateReport EXIT
+trap "copyArtifacts; generateReport" EXIT
 
 while getopts p:s:h:l:n: flag
 do
