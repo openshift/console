@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
+import { DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import NameSection from '../buildconfig/sections/NameSection';
@@ -21,7 +22,7 @@ const EditDeploymentFormEditor: React.FC<EditDeploymentFormEditorProps> = ({
   const [showYAMLAlert, setShowYAMLAlert] = React.useState<boolean>(true);
   return (
     <>
-      <DeploymentConfigDeprecationAlert />
+      {resourceObj.kind === DeploymentConfigModel.kind && <DeploymentConfigDeprecationAlert />}
       {showYAMLAlert && <SwitchToYAMLAlert onClose={() => setShowYAMLAlert(false)} />}
       <NameSection />
       <DeploymentStrategySection resourceType={resourceType} resourceObj={resourceObj} />

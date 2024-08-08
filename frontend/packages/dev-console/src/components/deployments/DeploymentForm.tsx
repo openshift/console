@@ -53,8 +53,7 @@ const EditDeploymentForm: React.FC<
 
   const yamlEditor = (
     <>
-      <DeploymentConfigDeprecationAlert />
-      <br />
+      {resource.kind === DeploymentConfigModel.kind && <DeploymentConfigDeprecationAlert />}
       <CodeEditorField
         name="yamlData"
         model={resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel}
