@@ -109,12 +109,12 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
     Block: ['ReadWriteOnce'],
   },
   'cephfs.csi.ceph.com': {
-    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
     partialMatch: true,
   },
   'rbd.csi.ceph.com': {
-    Filesystem: ['ReadWriteOnce', 'ReadOnlyMany'],
-    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
     partialMatch: true,
   },
 });
