@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import * as classNames from 'classnames';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -30,6 +31,8 @@ import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { MarkdownView } from '../clusterserviceversion';
+import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/deprecated-operator-warnings';
+import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 import { defaultChannelNameFor } from '../index';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
 import { isAWSSTSCluster, isAzureWIFCluster } from './operator-hub-utils';
@@ -236,6 +239,21 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   } = item;
 
   const installChannel = getQueryArgument('channel');
+  const {
+    deprecatedPackage,
+    deprecatedChannel,
+    deprecatedVersion,
+    setDeprecatedPackage,
+  } = useDeprecatedOperatorWarnings();
+  const deprecatedWarning =
+    deprecatedPackage?.deprecation ||
+    deprecatedChannel?.deprecation ||
+    deprecatedVersion?.deprecation;
+
+  React.useEffect(() => {
+    setDeprecatedPackage(_.pick(item?.obj?.status, 'deprecation'));
+  }, [item?.obj?.status, setDeprecatedPackage]);
+
   const currentChannel = obj.status.channels.find((ch) => ch.name === installChannel);
   const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations.containerImage;
   const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations.createdAt;
@@ -395,6 +413,13 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                     </p>
                   </Alert>
                 )}
+              {deprecatedWarning && (
+                <DeprecatedOperatorWarningAlert
+                  deprecatedPackage={deprecatedPackage}
+                  deprecatedChannel={deprecatedChannel}
+                  deprecatedVersion={deprecatedVersion}
+                />
+              )}
               <OperatorHubItemDetailsHintBlock
                 installed={installed}
                 isInstalling={isInstalling}

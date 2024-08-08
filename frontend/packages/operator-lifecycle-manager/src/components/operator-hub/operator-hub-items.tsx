@@ -29,6 +29,7 @@ import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
 import { SubscriptionModel } from '../../models';
+import { DeprecatedOperatorWarningBadge } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
@@ -371,6 +372,19 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
     ? [<Badge text={item.catalogSourceDisplayName} />]
     : [];
   const icon = <img className="co-catalog--logo" loading="lazy" src={imgUrl} alt="" />;
+  const vendorAndDeprecated = () => (
+    <>
+      {vendor}
+      {item?.obj?.status?.deprecation && (
+        <div>
+          <DeprecatedOperatorWarningBadge
+            className="pf-v5-u-mt-xs"
+            deprecation={item.obj.status.deprecation}
+          />
+        </div>
+      )}
+    </>
+  );
 
   return (
     <CatalogTile
@@ -380,7 +394,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       title={name}
       badges={badges}
       icon={icon}
-      vendor={vendor}
+      vendor={vendorAndDeprecated()}
       description={description}
       onClick={(e: React.MouseEvent<HTMLElement>) => {
         if (isModifiedEvent(e)) return;
@@ -553,6 +567,17 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     validSubscriptionFilters: t('olm~Valid subscription'),
   };
 
+  const titleAndDeprecatedPackage = () => (
+    <>
+      {detailsItem.name}
+      {detailsItem?.obj?.status?.deprecation && (
+        <DeprecatedOperatorWarningBadge
+          className="pf-v5-u-ml-sm"
+          deprecation={detailsItem.obj.status.deprecation}
+        />
+      )}
+    </>
+  );
   return (
     <>
       <TileViewPage
@@ -580,7 +605,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 className="co-catalog-page__overlay-header"
                 iconClass={detailsItem.iconClass}
                 iconImg={detailsItem.imgUrl}
-                title={detailsItem.name}
+                title={titleAndDeprecatedPackage()}
                 vendor={t('olm~{{version}} provided by {{provider}}', {
                   version: updateVersion || installVersion || detailsItem.version,
                   provider: detailsItem.provider,

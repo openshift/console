@@ -71,6 +71,11 @@ import {
   CatalogSourceKind,
 } from '../types';
 import { upgradeRequiresApproval } from '../utils';
+import {
+  DeprecatedOperatorWarningAlert,
+  DeprecatedOperatorWarningIcon,
+  findDeprecatedOperator,
+} from './deprecated-operator-warnings/deprecated-operator-warnings';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
 import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
@@ -436,6 +441,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
       .result.then(() => removeQueryArgument('showDelete'))
       .catch(_.noop);
   }
+  const { deprecatedPackage, deprecatedChannel, deprecatedVersion } = findDeprecatedOperator(obj);
 
   return (
     <>
@@ -446,6 +452,16 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
           sourceNamespace={sourceNamespace}
         />
         <InstallFailedAlert installPlan={installPlan} />
+        {(deprecatedPackage.deprecation ||
+          deprecatedChannel.deprecation ||
+          deprecatedVersion.deprecation) && (
+          <DeprecatedOperatorWarningAlert
+            deprecatedPackage={deprecatedPackage}
+            deprecatedChannel={deprecatedChannel}
+            deprecatedVersion={deprecatedVersion}
+            dismissible
+          />
+        )}
         <SectionHeading text={t('olm~Subscription details')} />
         <div className="co-m-pane__body-group">
           <SubscriptionUpdates
@@ -581,6 +597,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
     subscriptions,
     obj.metadata.namespace,
   );
+  const { deprecatedChannel } = findDeprecatedOperator(obj);
 
   return (
     <div className="co-detail-table">
@@ -597,16 +614,23 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
               {waitingForUpdate ? (
                 <LoadingInline />
               ) : (
-                <Button
-                  type="button"
-                  isInline
-                  onClick={channelModal}
-                  variant="link"
-                  isDisabled={!pkg}
-                >
-                  {obj.spec.channel || 'default'}
-                  {pkg && <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
-                </Button>
+                <>
+                  <Button
+                    type="button"
+                    isInline
+                    onClick={channelModal}
+                    variant="link"
+                    isDisabled={!pkg}
+                  >
+                    {obj.spec.channel || 'default'}
+                    {pkg && (
+                      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
+                    )}
+                  </Button>
+                  {deprecatedChannel.deprecation && (
+                    <DeprecatedOperatorWarningIcon deprecation={deprecatedChannel.deprecation} />
+                  )}
+                </>
               )}
             </dd>
           </dl>

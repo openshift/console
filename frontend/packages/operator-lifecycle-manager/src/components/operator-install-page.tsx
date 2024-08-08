@@ -47,8 +47,9 @@ import {
   InstallPlanKind,
   PackageManifestKind,
 } from '../types';
+import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { InstallPlanPreview, NeedInstallPlanPermissions } from './install-plan';
-import { ClusterServiceVersionLogo, iconFor, InstallPlanReview } from './index';
+import { iconFor, InstallPlanReview } from './index';
 
 const INITIALIZATION_RESOURCE_ANNOTATION = 'operatorframework.io/initialization-resource';
 const getInitializationResource = (

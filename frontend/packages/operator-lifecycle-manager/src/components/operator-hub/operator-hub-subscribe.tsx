@@ -62,9 +62,11 @@ import {
 } from '../../types';
 import { getClusterServiceVersionPlugins, isCatalogSourceTrusted } from '../../utils';
 import { ConsolePluginFormGroup } from '../../utils/console-plugin-form-group';
+import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import { CRDCard } from '../clusterserviceversion';
+import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/deprecated-operator-warnings';
+import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 import {
-  ClusterServiceVersionLogo,
   defaultChannelNameFor,
   getManualSubscriptionsInNamespace,
   iconFor,
@@ -125,6 +127,21 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   });
   const [enabledPlugins, setEnabledPlugins] = React.useState<string[]>([]);
   const { t } = useTranslation();
+
+  const {
+    deprecatedPackage,
+    deprecatedChannel,
+    deprecatedVersion,
+    setDeprecatedPackage,
+  } = useDeprecatedOperatorWarnings();
+  const deprecatedWarning =
+    deprecatedPackage?.deprecation ||
+    deprecatedChannel?.deprecation ||
+    deprecatedVersion?.deprecation;
+
+  React.useEffect(() => {
+    setDeprecatedPackage(_.pick(packageManifest?.status, 'deprecation'));
+  }, [packageManifest?.status, setDeprecatedPackage]);
 
   const setPluginEnabled = (plugin: string, enabled: boolean) => {
     if (enabled) {
@@ -1033,6 +1050,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 />
               )}
             </>
+            {deprecatedWarning && (
+              <DeprecatedOperatorWarningAlert
+                deprecatedPackage={deprecatedPackage}
+                deprecatedChannel={deprecatedChannel}
+                deprecatedVersion={deprecatedVersion}
+              />
+            )}
             <div className="co-form-section__separator" />
             {formError()}
             <ActionGroup className="pf-v5-c-form">
@@ -1056,6 +1080,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               }
               icon={iconFor(props.packageManifest.data[0])}
               provider={provider}
+              deprecation={packageManifest?.status?.deprecation}
             />
             <h4>{t('olm~Provided APIs')}</h4>
             <div className="co-crd-card-row">
