@@ -2,7 +2,7 @@ import * as React from 'react';
 import Measure from 'react-measure';
 import MonacoEditor from 'react-monaco-editor';
 import { CodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { CODE_EDITOR_THEME_USERSETTINGS_KEY, useUserSettings } from '@console/shared';
 import CodeEditorToolbar from './CodeEditorToolbar';
 import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
 import './theme';
@@ -21,7 +21,11 @@ const CodeEditor = React.forwardRef<MonacoEditor, CodeEditorProps>((props, ref) 
     language,
   } = props;
 
-  const theme = React.useContext(ThemeContext);
+  const [editorTheme, ,] = useUserSettings<'console-dark' | 'console-light'>(
+    CODE_EDITOR_THEME_USERSETTINGS_KEY,
+    'console-dark',
+    true,
+  );
   const [usesValue] = React.useState<boolean>(value !== undefined);
   const editorDidMount = React.useCallback(
     (editor, monaco) => {
@@ -63,7 +67,7 @@ const CodeEditor = React.forwardRef<MonacoEditor, CodeEditorProps>((props, ref) 
               <MonacoEditor
                 ref={ref}
                 language={language ?? 'yaml'}
-                theme={theme === 'light' ? 'console-light' : 'console-dark'}
+                theme={editorTheme}
                 height={contentRect.bounds.height}
                 width={contentRect.bounds.width}
                 value={value}
