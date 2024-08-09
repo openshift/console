@@ -15,7 +15,6 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import { MonitoringSilencesPage } from './alerts/monitoring-silences';
 import MonitoringEvents from './events/MonitoringEvents';
-import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
@@ -41,12 +40,6 @@ export const PageContents: React.FC = () => {
       // t('devconsole~Dashboards')
       nameKey: 'devconsole~Dashboards',
       component: MonitoringDashboardsPage,
-    },
-    {
-      href: 'metrics',
-      // t('devconsole~Metrics')
-      nameKey: 'devconsole~Metrics',
-      component: ConnectedMonitoringMetrics,
     },
     ...(prometheousRulesAccess
       ? [
