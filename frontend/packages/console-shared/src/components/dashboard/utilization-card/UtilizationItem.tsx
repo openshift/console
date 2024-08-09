@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, Popover } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Humanize, TopConsumerPopoverProps, LIMIT_STATE } from '@console/dynamic-plugin-sdk';
@@ -149,6 +150,7 @@ export const trimSecondsXMutator = (x) => {
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
   ({
     title,
+    titleHelpComponent,
     utilization,
     humanizeValue,
     isLoading = false,
@@ -160,6 +162,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     limit,
     requested,
     setLimitReqState,
+    errorThreashold,
+    warningThreashold,
   }) => {
     const { t } = useTranslation();
     const { startDate, endDate, updateEndDate } = useUtilizationDuration();
@@ -245,6 +249,14 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       }
     }
 
+    if (current > warningThreashold) {
+      LimitIcon = YellowExclamationTriangleIcon;
+    }
+
+    if (current > errorThreashold) {
+      LimitIcon = RedExclamationCircleIcon;
+    }
+
     const currentHumanized = !_.isNil(current) ? humanizeValue(current).string : null;
 
     return (
@@ -257,6 +269,14 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             <FlexItem>
               <h4 className="pf-v5-c-title pf-m-md" data-test="utilization-item-title">
                 {title}
+                {titleHelpComponent && (
+                  <Popover bodyContent={titleHelpComponent}>
+                    <>
+                      {' '}
+                      <HelpIcon />
+                    </>
+                  </Popover>
+                )}
               </h4>
             </FlexItem>
             <FlexItem>

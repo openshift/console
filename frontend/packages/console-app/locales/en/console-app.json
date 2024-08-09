@@ -434,6 +434,7 @@
   "Container runtime": "Container runtime",
   "Kubelet version": "Kubelet version",
   "Kube-Proxy version": "Kube-Proxy version",
+  "Memory overcommit": "Memory overcommit",
   "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} cores / {{totalCores}} cores",
   "Ready": "Ready",
   "Not Ready": "Not Ready",

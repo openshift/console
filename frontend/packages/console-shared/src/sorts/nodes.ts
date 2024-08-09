@@ -24,6 +24,8 @@ export const nodeInstanceType = (node: NodeKind): string =>
 export const nodeZone = (node: NodeKind): string =>
   node.metadata.labels?.['topology.kubernetes.io/zone'];
 export const nodeUptime = (node: NodeKind): string => getNodeUptime(node);
+export const nodeMemoryOvercommit = (node: NodeKind): string =>
+  `${UIActions.getNodeMetric(node, 'memoryOvercommit')}%`;
 
 export const nodeReadiness = (node: NodeKind) => {
   const readiness = node?.status?.conditions?.find((c) => c.type === 'Ready');

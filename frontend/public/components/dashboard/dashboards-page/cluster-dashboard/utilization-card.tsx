@@ -31,6 +31,7 @@ import {
   humanizeCpuCores,
   humanizeNumber,
   humanizeDecimalBytesPerSec,
+  humanizePercentage,
 } from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import {
@@ -54,6 +55,8 @@ import {
   NetworkOutPopover,
   PodPopover,
 } from './utilization-popovers';
+import NodeMemoryOvercommitPopover from './NodeMemoryOvercommitPopover';
+import useClusterHasVMs from '@console/internal/components/utils/useClusterHasVMs';
 
 const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
@@ -65,6 +68,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     utilizationQuery,
     totalQuery,
     title,
+    titleHelpComponent,
     TopConsumerPopover,
     humanizeValue,
     byteDataType,
@@ -73,6 +77,8 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     limitQuery,
     requestQuery,
     setLimitReqState,
+    warningThreashold,
+    errorThreashold,
   }) => {
     let utilization: PrometheusResponse, utilizationError: any;
     let total: PrometheusResponse, totalError: any;
@@ -128,6 +134,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     return (
       <UtilizationItem
         title={title}
+        titleHelpComponent={titleHelpComponent}
         utilization={utilization}
         limit={limit}
         requested={request}
@@ -139,6 +146,8 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
         max={max && max.length ? max[0].y : null}
         TopConsumerPopover={TopConsumerPopover}
         setLimitReqState={setLimitReqState}
+        warningThreashold={warningThreashold}
+        errorThreashold={errorThreashold}
       />
     );
   },
@@ -266,6 +275,7 @@ export const UtilizationCard = () => {
   // TODO: add `useUserSettings` to get default selected
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
 
+  const hasVMs = useClusterHasVMs();
   const [dynamicItemExtensions] = useResolvedExtensions<ClusterOverviewUtilizationItem>(
     isClusterOverviewUtilizationItem,
   );
@@ -336,6 +346,18 @@ export const UtilizationCard = () => {
               humanizeValue={humanizeBinaryBytes}
               byteDataType={ByteDataTypes.BinaryBytes}
             />
+            {hasVMs && (
+              <PrometheusUtilizationItem
+                title={t('public~Node memory overcommit')}
+                titleHelpComponent={NodeMemoryOvercommitPopover}
+                utilizationQuery={
+                  utilizationQueries[OverviewQuery.NODE_MEMORY_OVERCOMMIT].utilization
+                }
+                warningThreashold={95}
+                errorThreashold={105}
+                humanizeValue={humanizePercentage}
+              />
+            )}
             <PrometheusUtilizationItem
               title={t('public~Filesystem')}
               utilizationQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].utilization}
@@ -386,10 +408,13 @@ export const UtilizationCard = () => {
 
 type PrometheusCommonProps = {
   title: string;
+  titleHelpComponent?: React.ComponentType;
   humanizeValue: Humanize;
   byteDataType?: ByteDataTypes;
   namespace?: string;
   isDisabled?: boolean;
+  warningThreashold?: number;
+  errorThreashold?: number;
 };
 
 type PrometheusUtilizationItemProps = DashboardItemProps &
