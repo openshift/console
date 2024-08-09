@@ -323,6 +323,7 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
   mock?: boolean;
   sortColumnIndex?: number;
   sortDirection?: SortByDirection;
+  csvData?: string;
 };
 
 export type VirtualizedTableFC = <D, R extends any = {}>(
