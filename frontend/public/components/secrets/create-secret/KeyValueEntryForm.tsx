@@ -21,7 +21,7 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
     this.setState(
       {
         value: fileData,
-        isBase64: isBinary,
+        isBinary,
       },
       () => this.props.onChange(this.state, this.props.id),
     );
@@ -77,7 +77,6 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
 export const KeyValueEntryForm = withTranslation()(KeyValueEntryFormWithTranslation);
 
 export type KeyValueEntryFormState = {
-  isBase64?: boolean;
   isBinary?: boolean;
   key: string;
   value: string;
