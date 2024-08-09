@@ -63,5 +63,7 @@
   "ClusterBuildStrategy": "클러스터 빌드 전략",
   "ClusterBuildStrategies": "클러스터 빌드 전략",
   "BuildStrategy": "빌드 전략",
-  "BuildStrategies": "빌드 전략"
+  "BuildStrategies": "빌드 전략",
+  "Buildah": "Buildah",
+  "Source-to-Image": "S2I(Source-to-Image)"
 }

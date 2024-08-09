@@ -15,7 +15,7 @@
   "Deployment history": "Historique de déploiement",
   "Application environments": "Environnements applicatifs",
   "Synced": "Synchronisé",
-  "OutOfSync": "Non synchronisé",
+  "OutOfSync": "OutOfSync",
   "Unknown": "Inconnu",
   "{{x}} of {{total}} Unhealthy": "{{x}} sur {{total}} non sain(s)",
   "{{x}} of {{total}} OutOfSync": "{{x}} sur {{total}} non synchronisé(s)",
