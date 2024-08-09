@@ -30,7 +30,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     project: { name: namespace },
     build: { option: buildOption, env: buildEnv },
     image: { selected: selectedImage, tag: selectedTag },
-    import: { selectedStrategy },
+    import: { selectedStrategy, kNativeFuncLoaded: funcLoaded },
   } = values;
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
@@ -158,7 +158,11 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
           {values.build?.option === BuildOptions.BUILDS && (
             <BuildConfigSection showHeader={false} />
           )}
-          {envsLoaded ? (
+          {(
+            selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION
+              ? funcLoaded ?? false
+              : envsLoaded
+          ) ? (
             <EnvironmentField
               name="build.env"
               label={t('devconsole~Environment variables (build and runtime)')}

@@ -20,6 +20,9 @@ jest.mock('formik', () => ({
           },
         ],
       },
+      import: {
+        selectedStrategy: 1, // dockerfile
+      },
     },
   })),
 }));
