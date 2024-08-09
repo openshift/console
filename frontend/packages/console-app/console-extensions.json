@@ -1550,9 +1550,9 @@
         "documentationLink": { "$codeRef": "storageProvisionerDocs.AWS_EBS" },
         "parameters": {
           "type": {
-            "name": "Type",
+            "name": "%console-app~Type%",
             "values": { "io1": "io1", "gp2": "gp2", "sc1": "sc1", "st1": "st1" },
-            "hintText": "Select AWS Type"
+            "hintText": "%console-app~Select AWS Type%"
           },
           "iopsPerGB": {
             "name": "%console-app~IOPS per GiB%",
@@ -1588,28 +1588,28 @@
         "documentationLink": { "$codeRef": "storageProvisionerDocs.GCE" },
         "parameters": {
           "type": {
-            "name": "Type",
+            "name": "%console-app~Type%",
             "values": {
               "pd-standard": "pd-standard",
               "pd-ssd": "pd-ssd"
             },
-            "hintText": "Select GCE type"
+            "hintText": "%console-app~Select GCE type%"
           },
           "zone": {
-            "name": "Zone",
+            "name": "%console-app~Zone%",
             "validation": { "$codeRef": "storageProvisioners.validateGcePdZone" }
           },
           "zones": {
-            "name": "Zones",
+            "name": "%console-app~Zones%",
             "validation": { "$codeRef": "storageProvisioners.validateGcePdZones" }
           },
           "replication-type": {
-            "name": "Replication type",
+            "name": "%console-app~Replication type%",
             "values": {
               "none": "none",
               "regional-pd": "regional-pd"
             },
-            "hintText": "Select Replication type",
+            "hintText": "%console-app~Select Replication type%",
             "validation": { "$codeRef": "storageProvisioners.validateGCEReplicationType" }
           }
         }
