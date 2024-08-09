@@ -50,6 +50,7 @@ import {
   TableColumnsType,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  getNodeArchitecture,
   getNodeRoleMatch,
   getNodeRoles,
   useUserSettingsCompatibility,
@@ -59,6 +60,7 @@ import {
   nodeInstanceType,
   nodeFS,
   nodeCPU,
+  nodeArch,
   nodeMemory,
   nodePods,
   nodeReadiness,
@@ -98,6 +100,10 @@ const nodeColumnInfo = Object.freeze({
   cpu: {
     classes: '',
     id: 'cpu',
+  },
+  architecture: {
+    classes: '',
+    id: 'architecture',
   },
   filesystem: {
     classes: '',
@@ -174,6 +180,14 @@ const getColumns = (t: TFunction): TableColumn<NodeRowItem>[] => [
     sort: sortWithCSRResource(nodeCPU, 0),
     transforms: [sortable],
     props: { className: nodeColumnInfo.cpu.classes },
+  },
+  {
+    title: t('console-app~Architecture'),
+    id: nodeColumnInfo.architecture.id,
+    sort: sortWithCSRResource(nodeArch, ''),
+    transforms: [sortable],
+    props: { className: nodeColumnInfo.architecture.classes },
+    additional: true,
   },
   {
     title: t('console-app~Filesystem'),
@@ -260,6 +274,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         })
       : '-';
   const usedStrg = metrics?.usedStorage?.[nodeName];
+  const architecture = getNodeArchitecture(node);
   const totalStrg = metrics?.totalStorage?.[nodeName];
   const storage =
     Number.isFinite(usedStrg) && Number.isFinite(totalStrg)
@@ -322,6 +337,13 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         activeColumnIDs={activeColumnIDs}
       >
         {cpu}
+      </TableData>
+      <TableData
+        className={nodeColumnInfo.architecture.classes}
+        id={nodeColumnInfo.architecture.id}
+        activeColumnIDs={activeColumnIDs}
+      >
+        {architecture}
       </TableData>
       <TableData
         className={nodeColumnInfo.filesystem.classes}
@@ -495,6 +517,13 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
         -
       </TableData>
       <TableData
+        className={nodeColumnInfo.architecture.classes}
+        id={nodeColumnInfo.architecture.id}
+        activeColumnIDs={activeColumnIDs}
+      >
+        -
+      </TableData>
+      <TableData
         className={nodeColumnInfo.filesystem.classes}
         id={nodeColumnInfo.filesystem.id}
         activeColumnIDs={activeColumnIDs}
@@ -625,6 +654,26 @@ const getFilters = (t: TFunction): RowFilter<NodeRowItem>[] => [
       }
       const nodeRoles = getNodeRoles(obj);
       return input.selected?.some((r) => nodeRoles.includes(r));
+    },
+  },
+  {
+    filterGroupName: t('console-app~Architecture'),
+    type: 'cpu-arch',
+    reducer: (obj) => (isCSRResource(obj) ? '' : getNodeArchitecture(obj)),
+    items: [
+      { id: 'amd64', title: 'amd64' },
+      { id: 'ppc64le', title: 'ppc64le' },
+      { id: 'arm64', title: 'arm64' },
+      { id: 's390x', title: 's390x' },
+    ],
+    filter: (input, obj) => {
+      if (!input.selected?.length) {
+        return true;
+      }
+      if (isCSRResource(obj)) {
+        return false;
+      }
+      return input.selected?.includes(getNodeArchitecture(obj));
     },
   },
 ];
