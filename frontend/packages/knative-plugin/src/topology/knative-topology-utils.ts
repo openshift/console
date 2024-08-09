@@ -33,6 +33,7 @@ import {
   getTopologyNodeItem,
   mergeGroup,
   WorkloadModelProps,
+  getContextDirByName,
 } from '@console/topology/src/data-transforms/transform-utils';
 import { TopologyDataResources, TopologyDataObject } from '@console/topology/src/topology-types';
 import {
@@ -1016,11 +1017,14 @@ export const createTopologyServiceNodeData = (
   resource: K8sResourceKind,
   svcRes: OverviewItem,
   type: string,
+  resources: TopologyDataResources,
 ): TopologyDataObject => {
   const { obj: knativeSvc } = svcRes;
   const uid = _.get(knativeSvc, 'metadata.uid');
   const labels = _.get(knativeSvc, 'metadata.labels', {});
   const annotations = _.get(knativeSvc, 'metadata.annotations', {});
+  const serviceName = _.get(knativeSvc, 'metadata.name');
+  const contextDir = getContextDirByName(resources, serviceName);
   return {
     id: uid,
     name: _.get(knativeSvc, 'metadata.name') || labels['app.kubernetes.io/instance'],
@@ -1032,7 +1036,9 @@ export const createTopologyServiceNodeData = (
       kind: referenceFor(knativeSvc),
       editURL: annotations['app.openshift.io/edit-url'],
       vcsURI: annotations['app.openshift.io/vcs-uri'],
+      vcsRef: annotations['app.openshift.io/vcs-ref'],
       isKnativeResource: true,
+      contextDir,
     },
   };
 };
@@ -1231,7 +1237,7 @@ export const transformKnNodeData = (
         break;
       }
       case NodeType.KnService: {
-        const data = createTopologyServiceNodeData(res, item, type);
+        const data = createTopologyServiceNodeData(res, item, type, resources);
         knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
         knDataModel.edges.push(...getTrafficTopologyEdgeItems(res, resources.revisions));
         const newGroup = getTopologyGroupItems(res);

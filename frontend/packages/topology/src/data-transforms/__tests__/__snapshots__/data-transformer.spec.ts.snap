@@ -16,6 +16,7 @@ Object {
       "data": Object {
         "data": Object {
           "builderImage": "test-file-stub",
+          "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~Deployment",
@@ -230,6 +231,7 @@ Object {
       "data": Object {
         "data": Object {
           "builderImage": "test-file-stub",
+          "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~Deployment",
@@ -531,6 +533,7 @@ Object {
       "data": Object {
         "data": Object {
           "builderImage": "test-file-stub",
+          "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~Deployment",
@@ -922,6 +925,7 @@ Object {
       "data": Object {
         "data": Object {
           "builderImage": "test-file-stub",
+          "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~DeploymentConfig",
@@ -1148,6 +1152,7 @@ Object {
       "data": Object {
         "data": Object {
           "builderImage": "test-file-stub",
+          "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~DeploymentConfig",
@@ -1377,6 +1382,7 @@ Object {
       "data": Object {
         "data": Object {
           "builderImage": "test-file-stub",
+          "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~DeploymentConfig",
@@ -1554,6 +1560,7 @@ Object {
             "data": Object {
               "data": Object {
                 "builderImage": "test-file-stub",
+                "contextDir": null,
                 "editURL": undefined,
                 "isKnativeResource": false,
                 "kind": "apps~v1~Deployment",
@@ -1768,6 +1775,7 @@ Object {
             "data": Object {
               "data": Object {
                 "builderImage": "test-file-stub",
+                "contextDir": null,
                 "editURL": undefined,
                 "isKnativeResource": false,
                 "kind": "apps~v1~Deployment",
@@ -2094,6 +2102,7 @@ Object {
             "data": Object {
               "data": Object {
                 "builderImage": "test-file-stub",
+                "contextDir": null,
                 "editURL": undefined,
                 "isKnativeResource": false,
                 "kind": "apps~v1~Deployment",
