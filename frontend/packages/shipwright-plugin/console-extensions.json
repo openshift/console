@@ -501,5 +501,18 @@
     "flags": {
       "required": ["SHIPWRIGHT_BUILDRUN"]
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/ns/:ns/shipwright.io~v1beta1~Build/~new/form",
+        "/k8s/ns/:ns/shipwright.io~v1beta1~Build/:name/form"
+      ],
+      "component": {
+        "$codeRef": "pages.BuildFormPage"
+      }
+    }
   }
 ]

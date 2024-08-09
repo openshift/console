@@ -77,6 +77,7 @@ export interface GitSectionProps {
   formType?: string;
   importType?: string;
   imageStreamName?: string;
+  autoFocus?: boolean;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
@@ -88,6 +89,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   formType,
   importType,
   imageStreamName,
+  autoFocus = true,
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
@@ -546,7 +548,9 @@ const GitSection: React.FC<GitSectionProps> = ({
     // Skip handling until Knative Service status is unknown!
     if (canCreateKnativeServiceLoading) return;
 
-    inputRef.current?.focus();
+    if (autoFocus) {
+      inputRef.current?.focus();
+    }
 
     const { sampleName, repository: sampleRepository } = getGitImportSample();
     if (sampleRepository?.url) {

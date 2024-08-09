@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
+import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
 import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { errorModal } from '@console/internal/components/modals';
 import { resourceObjPath } from '@console/internal/components/utils';
@@ -61,7 +61,26 @@ const useBuildActions = (build: Build) => {
         },
       });
     }
-    actions.push(...getCommonResourceActions(kindObj, build));
+    actions.push(
+      ...[
+        CommonActionFactory.ModifyLabels(kindObj, build),
+        CommonActionFactory.ModifyAnnotations(kindObj, build),
+      ],
+    );
+    actions.push({
+      id: 'shipwright-build-edit',
+      label: t('shipwright-plugin~Edit Build'),
+      cta: {
+        href: `${resourceObjPath(build, referenceFor(build))}/form`,
+      },
+      accessReview: {
+        verb: 'update',
+        group: BuildRunModel.apiGroup,
+        resource: BuildRunModel.plural,
+        namespace: build.metadata?.namespace,
+      },
+    });
+    actions.push(CommonActionFactory.Delete(kindObj, build));
     return actions;
   }, [t, build, kindObj, navigate]);
 

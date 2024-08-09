@@ -12,10 +12,10 @@ export const ClusterBuildStrategyModelV1Alpha1: K8sModel = {
 
   label: 'ClusterBuildStrategy',
   // t('shipwright-plugin~ClusterBuildStrategy')
-  labelKey: 'knative-plugin~ClusterBuildStrategy',
+  labelKey: 'shipwright-plugin~ClusterBuildStrategy',
   labelPlural: 'ClusterBuildStrategies',
   // t('shipwright-plugin~ClusterBuildStrategies')
-  labelPluralKey: 'knative-plugin~ClusterBuildStrategies',
+  labelPluralKey: 'shipwright-plugin~ClusterBuildStrategies',
   abbr: 'CBS',
 };
 
@@ -30,10 +30,10 @@ export const BuildStrategyModelV1Alpha1: K8sModel = {
 
   label: 'BuildStrategy',
   // t('shipwright-plugin~BuildStrategy')
-  labelKey: 'knative-plugin~BuildStrategy',
+  labelKey: 'shipwright-plugin~BuildStrategy',
   labelPlural: 'BuildStrategies',
   // t('shipwright-plugin~BuildStrategies')
-  labelPluralKey: 'knative-plugin~BuildStrategies',
+  labelPluralKey: 'shipwright-plugin~BuildStrategies',
   abbr: 'BS',
 };
 
@@ -48,10 +48,10 @@ export const BuildModelV1Alpha1: K8sModel = {
 
   label: 'Build',
   // t('shipwright-plugin~Build')
-  labelKey: 'knative-plugin~Build',
+  labelKey: 'shipwright-plugin~Build',
   labelPlural: 'Builds',
   // t('shipwright-plugin~Builds')
-  labelPluralKey: 'knative-plugin~Builds',
+  labelPluralKey: 'shipwright-plugin~Builds',
   abbr: 'B',
 };
 
@@ -66,10 +66,10 @@ export const BuildRunModelV1Alpha1: K8sModel = {
 
   label: 'BuildRun',
   // t('shipwright-plugin~BuildRun')
-  labelKey: 'knative-plugin~BuildRun',
+  labelKey: 'shipwright-plugin~BuildRun',
   labelPlural: 'BuildRuns',
   // t('shipwright-plugin~BuildRuns')
-  labelPluralKey: 'knative-plugin~BuildRuns',
+  labelPluralKey: 'shipwright-plugin~BuildRuns',
   abbr: 'BR',
 };
 
@@ -84,10 +84,10 @@ export const ClusterBuildStrategyModel: K8sModel = {
 
   label: 'ClusterBuildStrategy',
   // t('shipwright-plugin~ClusterBuildStrategy')
-  labelKey: 'knative-plugin~ClusterBuildStrategy',
+  labelKey: 'shipwright-plugin~ClusterBuildStrategy',
   labelPlural: 'ClusterBuildStrategies',
   // t('shipwright-plugin~ClusterBuildStrategies')
-  labelPluralKey: 'knative-plugin~ClusterBuildStrategies',
+  labelPluralKey: 'shipwright-plugin~ClusterBuildStrategies',
   abbr: 'CBS',
 };
 
@@ -102,10 +102,10 @@ export const BuildStrategyModel: K8sModel = {
 
   label: 'BuildStrategy',
   // t('shipwright-plugin~BuildStrategy')
-  labelKey: 'knative-plugin~BuildStrategy',
+  labelKey: 'shipwright-plugin~BuildStrategy',
   labelPlural: 'BuildStrategies',
   // t('shipwright-plugin~BuildStrategies')
-  labelPluralKey: 'knative-plugin~BuildStrategies',
+  labelPluralKey: 'shipwright-plugin~BuildStrategies',
   abbr: 'BS',
 };
 
@@ -120,10 +120,10 @@ export const BuildModel: K8sModel = {
 
   label: 'Build',
   // t('shipwright-plugin~Build')
-  labelKey: 'knative-plugin~Build',
+  labelKey: 'shipwright-plugin~Build',
   labelPlural: 'Builds',
   // t('shipwright-plugin~Builds')
-  labelPluralKey: 'knative-plugin~Builds',
+  labelPluralKey: 'shipwright-plugin~Builds',
   abbr: 'B',
 };
 
@@ -138,9 +138,9 @@ export const BuildRunModel: K8sModel = {
 
   label: 'BuildRun',
   // t('shipwright-plugin~BuildRun')
-  labelKey: 'knative-plugin~BuildRun',
+  labelKey: 'shipwright-plugin~BuildRun',
   labelPlural: 'BuildRuns',
   // t('shipwright-plugin~BuildRuns')
-  labelPluralKey: 'knative-plugin~BuildRuns',
+  labelPluralKey: 'shipwright-plugin~BuildRuns',
   abbr: 'BR',
 };

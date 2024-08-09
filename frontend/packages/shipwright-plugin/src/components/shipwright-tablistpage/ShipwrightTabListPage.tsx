@@ -5,7 +5,7 @@ import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuActions, MultiTabListPage } from '@console/shared';
+import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
 import {
   useBuildModel,
   useBuildRunModel,
@@ -88,6 +88,7 @@ const ShipwrightTabListPage: React.FC = () => {
     menuActions.build = {
       model: buildModel,
       label: t('shipwright-plugin~Build'),
+      onSelection: (_key: string, _action: MenuAction, url: string) => `${url}/form`,
     };
   }
 

@@ -51,6 +51,11 @@ const BuildListPage: React.FC<BuildListPageProps> = (props) => {
       ListComponent={BuildTable}
       rowFilters={filters}
       canCreate
+      createProps={{
+        to: props.namespace
+          ? `/k8s/ns/${props.namespace}/${referenceForModel(buildModel)}/~new/form`
+          : `/k8s/cluster/${referenceForModel(buildModel)}/~new`,
+      }}
       {...props}
     />
   );
