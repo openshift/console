@@ -24,9 +24,17 @@ const PodsTabSection: React.FC<{
     loaded: boolean;
   }>({ loaded: false });
 
-  const handleAdapterResolved = React.useCallback((data) => {
-    setPodData({ data, loaded: true });
-  }, []);
+  const handleAdapterResolved = React.useCallback(
+    (data) => {
+      if (podAdapter?.resource?.kind === 'CronJob') {
+        // Fixes the issue of Topology page crashing.
+        setTimeout(() => setPodData({ data, loaded: true }), 3000);
+      } else {
+        setPodData({ data, loaded: true });
+      }
+    },
+    [podAdapter],
+  );
 
   return podAdapter ? (
     <TopologySideBarTabSection>

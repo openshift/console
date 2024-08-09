@@ -161,6 +161,10 @@ Then('user can see show waiting pods with errors', () => {
   cy.get(topologyPO.sidePane.resourcesTab.waitingPods).should('be.visible');
 });
 
+Then('user verifies {string} section is visible', (workload: string) => {
+  topologySidePane.verifySection(workload);
+});
+
 Then('user can see traffic details for pod', () => {
   topologySidePane.selectTab('Resources');
   topologySidePane.verifySection('Pods');
