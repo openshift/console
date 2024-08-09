@@ -461,7 +461,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuthGCP)
     ) {
       setTokenizedAuth('GCP');
     }
