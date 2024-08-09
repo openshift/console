@@ -5,6 +5,7 @@ import {
   checkShipwrightOperatorStatus,
   checkBuildsForOpenshiftOperatorStatus,
   checkWebterminalOperatorStatus,
+  checkRedHatIntegrationCamelKOperatorStatus,
 } from './checkOperatorStatus';
 import {
   createKnativeEventingUsingCLI,
@@ -34,6 +35,9 @@ export const checkOperatorStatus = (operator: operators) => {
       break;
     case operators.WebTerminalOperator:
       checkWebterminalOperatorStatus();
+      break;
+    case operators.RedHatIntegrationCamelK:
+      checkRedHatIntegrationCamelKOperatorStatus();
       break;
     default:
       throw new Error('Invalid Operator');
@@ -95,6 +99,10 @@ export const installOperatorUsingCLI = (operator: operators) => {
       yamlFile =
         '../../webterminal-plugin/integration-tests/testData/webterminalOperatorSubscription.yaml';
       break;
+    case operators.RedHatIntegrationCamelK:
+      yamlFile =
+        '../../knative-plugin/integration-tests/testData/redhatCamelkOperatorSubscription.yaml';
+      break;
     default:
       throw new Error('Invalid Operator');
   }
@@ -139,6 +147,10 @@ export const checkSubscriptionStatus = (operator: operators) => {
       namespace = operatorNamespaces.WebTerminalOperator;
       subscriptionName = operatorSubscriptions.WebTerminalOperator;
       break;
+    case operators.RedHatIntegrationCamelK:
+      namespace = operatorNamespaces.RedHatIntegrationCamelK;
+      subscriptionName = operatorSubscriptions.RedHatIntegrationCamelK;
+      break;
     default:
       throw new Error('Invalid Operator');
   }
@@ -181,4 +193,8 @@ export const installBuildsForOpenshiftOperatorUsingCLI = () => {
 
 export const installWebterminalOperatorUsingCLI = () => {
   verifyAndInstallOperatorUsingCLI(operators.WebTerminalOperator);
+};
+
+export const installRedHatIntegrationCamelKOperatorUsingCLI = () => {
+  verifyAndInstallOperatorUsingCLI(operators.RedHatIntegrationCamelK);
 };

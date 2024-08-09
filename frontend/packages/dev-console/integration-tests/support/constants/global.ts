@@ -62,6 +62,7 @@ export enum operatorNamespaces {
   ShipwrightOperator = 'openshift-operators',
   BuildsForOpenshiftOperator = 'openshift-operators',
   WebTerminalOperator = 'openshift-operators',
+  RedHatIntegrationCamelK = 'openshift-operators',
 }
 
 export enum operatorSubscriptions {
@@ -70,6 +71,7 @@ export enum operatorSubscriptions {
   ShipwrightOperator = 'shipwright-operator',
   BuildsForOpenshiftOperator = 'openshift-builds-operator',
   WebTerminalOperator = 'web-terminal',
+  RedHatIntegrationCamelK = 'red-hat-camel-k',
 }
 
 export enum authenticationType {

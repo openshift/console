@@ -23,6 +23,7 @@ import {
   verifyAndInstallOperator,
   app,
   installKnativeOperatorUsingCLI,
+  installRedHatIntegrationCamelKOperatorUsingCLI,
 } from '@console/dev-console/integration-tests/support/pages';
 import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 import { userLoginPage } from '../../pages/dev-perspective/common';
@@ -82,18 +83,7 @@ Given('user has installed eventing operator', () => {
 });
 
 Given('user has installed Red Hat Integration - Camel K Operator', () => {
-  perspective.switchTo(switchPerspective.Administrator);
-  operatorsPage.navigateToInstallOperatorsPage();
-  operatorsPage.searchOperatorInInstallPage(operators.RedHatIntegrationCamelK);
-  cy.get('body', {
-    timeout: 50000,
-  }).then(($ele) => {
-    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
-      installOperator(operators.RedHatIntegrationCamelK);
-    } else {
-      cy.log(`${operators.RedHatIntegrationCamelK} operator is installed in cluster`);
-    }
-  });
+  installRedHatIntegrationCamelKOperatorUsingCLI();
 });
 
 Given('user has installed Red Hat Integration - AMQ Streams operator', () => {
