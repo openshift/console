@@ -15,7 +15,7 @@ import { useHideLightspeed } from '@console/app/src/components/user-preferences/
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { ConsolePluginModel } from '@console/internal/models';
-import { FLAGS } from '@console/shared';
+import { FLAGS, useTelemetry } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import './Lightspeed.scss';
 
@@ -44,6 +44,7 @@ const Lightspeed: React.FC = () => {
   const [isReady, setIsReady] = React.useState(false);
   const [lightspeedIsInstalled, setLightspeedIsInstalled] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
+  const fireTelemetryEvent = useTelemetry();
   const canListPackageManifest = useFlag(FLAGS.CAN_LIST_PACKAGE_MANIFEST);
   const canListOperatorGroup = useFlag(FLAGS.CAN_LIST_OPERATOR_GROUP);
   const canInstallLightspeed = canListPackageManifest && canListOperatorGroup;
@@ -60,10 +61,12 @@ const Lightspeed: React.FC = () => {
 
   const onPopoverButtonClick = () => {
     setIsOpen(!isOpen);
+    fireTelemetryEvent('Console capability LightspeedButton clicked');
   };
   const onInstallClick = () => {
     setIsOpen(false);
     history.push(lightspeedOperatorURL);
+    fireTelemetryEvent('Console capability LightspeedButton Get started button clicked');
   };
 
   const title = t('console-app~Red Hat OpenShift Lightspeed');
