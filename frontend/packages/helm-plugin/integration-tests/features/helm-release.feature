@@ -38,6 +38,16 @@ Feature: Helm Release
              Then user will be redirected to Topology page
               And Topology page have the helm chart workload "nodejs-release"
 
+        Scenario: Helm release status verification: HR-01-TC04
+            Given user is at the Helm page
+              And user is able to see "nodejs-release" in helm page
+              And user is able to see the status and status icon of "nodejs-release" under helm releases tab
+              And user is able to see the "PendingInstall", "PendingUpgrade" and "PendingRollback" options under filter bar
+             When user clicks on the helm release name "nodejs-release"
+             Then user is able to see the status and status icon in title after "nodejs-release"
+              And user is able to see the status and status icon under helm release details
+              And user switch to Revision history tab
+              And user is able to see the status and status icon of Revision history page
 
         Scenario: Context menu options of helm release:  HR-01-TC01
             Given user is at the Topology page
@@ -111,14 +121,3 @@ Feature: Helm Release
               And user clicks on the Delete button
              Then user will be redirected to Topology page
 
-        @manual
-        Scenario: Helm release status verification: HR-01-TC04
-            Given user has installed helm chart "Nodejs" with helm release name "nodejs-release"
-              And user is able to see "nodejs-release" in helm page
-              And user is able to see the status and status icon of "nodejs-release" under helm releases tab
-              And user is able to see the "PendingInstall", "PendingUpgrade" and "PendingRollback" options under filter bar
-             When user clicks on the helm release name "nodejs-release"
-             Then user is able to see the status and status icon in title after "nodejs-release"
-              And user is able to see the status and status icon under helm release details
-              And user switch to Revision history tab
-              And user is able to see the status and status icon of Revision history page
