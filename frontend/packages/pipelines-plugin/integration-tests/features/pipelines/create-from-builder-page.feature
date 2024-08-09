@@ -359,7 +359,7 @@ Feature: Create the pipeline from builder page
                   | testData/pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
 
         # Issue with install tasks provided by ArtifactHub
-        @regression @broken-test @odc-7246
+        @regression @odc-7246
         Scenario: Install task provided by ArtifactHub and add create a Pipeline: P-02-TC25
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pl-task-from-artifacthub"
