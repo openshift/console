@@ -111,6 +111,7 @@ Feature: Helm Release
               And user clicks on the Delete button
              Then user will be redirected to Topology page
 
+        @manual
         Scenario: Helm release status verification: HR-01-TC04
             Given user has installed helm chart "Nodejs" with helm release name "nodejs-release"
               And user is able to see "nodejs-release" in helm page
