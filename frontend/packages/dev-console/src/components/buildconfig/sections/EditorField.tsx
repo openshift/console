@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import MonacoEditor, { ChangeHandler, MonacoEditorProps } from 'react-monaco-editor';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
 import '@console/shared/src/components/editor/theme';
 
@@ -22,6 +23,7 @@ const EditorField: React.FC<EditorFieldProps> = ({
   onChange,
   ...otherProps
 }) => {
+  const theme = React.useContext(ThemeContext);
   const { getFieldMeta, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { error, value } = getFieldMeta<string>(name);
 
@@ -35,7 +37,12 @@ const EditorField: React.FC<EditorFieldProps> = ({
 
   return (
     <FormGroup fieldId="" label={label} isRequired={required}>
-      <MonacoEditor {...otherProps} value={value} onChange={debouncedOnChange} />
+      <MonacoEditor
+        {...otherProps}
+        value={value}
+        onChange={debouncedOnChange}
+        theme={theme === 'light' ? 'console-light' : 'console-dark'}
+      />
 
       <FormHelperText>
         <HelperText>
