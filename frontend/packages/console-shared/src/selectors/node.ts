@@ -54,3 +54,7 @@ export const isWindowsNode = (node): boolean =>
 export const getNodeUptime = (node: NodeKind): string =>
   node?.status?.conditions?.find(({ type, status }) => type === 'Ready' && status === 'True')
     ?.lastTransitionTime;
+
+export const getNodeArchitecture = (node: NodeKind) => {
+  return node?.status?.nodeInfo?.architecture ?? '';
+};

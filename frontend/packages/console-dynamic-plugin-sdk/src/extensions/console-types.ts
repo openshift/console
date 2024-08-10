@@ -797,6 +797,7 @@ export type NodeKind = {
     phase?: string;
     nodeInfo?: {
       operatingSystem: string;
+      architecture: string;
     };
     addresses?: NodeAddress[];
   };
