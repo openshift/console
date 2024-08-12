@@ -405,6 +405,10 @@ dl.co-inline {
   }
 }
 
+.co-toolbar__selector .pf-v5-c-menu__content {
+  max-height: 60vh;
+}
+
 .co-legend {
   border-bottom: 0;
   font-weight: var(--pf-v5-global--FontWeight--bold);

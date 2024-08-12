@@ -7,6 +7,12 @@ import { useDispatch } from 'react-redux';
 import {
   Badge,
   Button,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectGroup,
+  SelectList,
+  SelectOption,
   Toolbar,
   ToolbarChip,
   ToolbarContent,
@@ -16,12 +22,6 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import {
-  Select as SelectDeprecated,
-  SelectGroup as SelectGroupDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { ColumnsIcon } from '@patternfly/react-icons/dist/esm/icons/columns-icon';
 import {
@@ -136,7 +136,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     : labelFilter;
 
   const params = new URLSearchParams(location.search);
-  const [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   const [nameInputText, setNameInputText] = React.useState(
     params.get(nameFilterQueryArgumentKey) ?? '',
   );
@@ -212,25 +212,27 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   // Map row filters to select groups
   const dropdownItems = generatedRowFilters.map((rowFilter) => (
-    <SelectGroupDeprecated key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
+    <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
       {rowFilter.items?.map?.((item) =>
         item.hideIfEmpty && (item.count === 0 || item.count === '0') ? (
           <React.Fragment key={item.id} />
         ) : (
-          <SelectOptionDeprecated
+          <SelectOption
             data-test-row-filter={item.id}
             key={item.id}
-            inputId={item.id}
+            id={item.id}
             value={item.id}
+            isSelected={selectedRowFilters.includes(item.id)}
+            hasCheckbox
           >
             <span className="co-filter-dropdown-item__name">{item.title}</span>
             <Badge key={item.id} isRead>
               {item.count}
             </Badge>
-          </SelectOptionDeprecated>
+          </SelectOption>
         ),
       )}
-    </SelectGroupDeprecated>
+    </SelectGroup>
   ));
 
   const applyFilters = React.useCallback(
@@ -270,8 +272,8 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     });
   };
 
-  const updateRowFilterSelected = (id: string[]) => {
-    const selectedNew = _.xor(selectedRowFilters, id);
+  const updateRowFilterSelected = (value: string[]) => {
+    const selectedNew = _.xor(selectedRowFilters, value);
     onRowFilterSearchParamChange(selectedNew);
     applyRowFilter(selectedNew);
   };
@@ -280,8 +282,8 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     updateRowFilterSelected(_.intersection(filters[f], selectedRowFilters));
   };
 
-  const onRowFilterSelect = (event) => {
-    updateRowFilterSelected([event?.target?.id]);
+  const onRowFilterSelect = (value: string) => {
+    updateRowFilterSelected([value]);
   };
 
   const applyLabelFilters = (values: string[]) => {
@@ -391,24 +393,32 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                     </ToolbarFilter>
                   ),
                   <div data-test-id="filter-dropdown-toggle">
-                    <SelectDeprecated
-                      placeholderText={
-                        <span>
-                          <FilterIcon className="span--icon__right-margin" />
-                          {t('public~Filter')}
-                        </span>
-                      }
+                    <Select
+                      role="menu"
+                      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                        <MenuToggle
+                          ref={toggleRef}
+                          onClick={(open) => setIsOpen(open)}
+                          isExpanded={isOpen}
+                        >
+                          <span>
+                            <FilterIcon className="span--icon__right-margin" />
+                            {t('public~Filter')}
+                          </span>
+                        </MenuToggle>
+                      )}
                       isOpen={isOpen}
-                      onToggle={(_toggleEvent, isExpanded) => setOpen(isExpanded)}
-                      onSelect={onRowFilterSelect}
-                      variant={SelectVariantDeprecated.checkbox}
-                      selections={selectedRowFilters}
-                      isCheckboxSelectionBadgeHidden
-                      isGrouped
-                      maxHeight="60vh"
+                      onOpenChange={(open) => setIsOpen(open)}
+                      onSelect={(event: React.MouseEvent | React.ChangeEvent, value: string) => {
+                        onRowFilterSelect(value);
+                      }}
+                      selected={selectedRowFilters}
+                      // maxMenuHeight="60vh" // A bug in the current PatternFly version prevents usage, so CSS added in _common.scss
+                      isScrollable
+                      className="co-toolbar__selector"
                     >
-                      {dropdownItems}
-                    </SelectDeprecated>
+                      <SelectList data-test="filter-dropdown-list">{dropdownItems}</SelectList>
+                    </Select>
                   </div>,
                 )}
               </ToolbarItem>

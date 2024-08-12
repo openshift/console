@@ -3,7 +3,7 @@ export const buildPO = {
     buildTab: '[data-quickstart-id="qs-nav-builds"]',
     nav: '[data-test="nav"]',
   },
-  filter: '[aria-label="Options menu"]',
+  filter: '[data-test-id="filter-dropdown-toggle"] button',
   filterList: '[aria-labelledby="Status"]',
   pane: '.co-m-pane__body',
   eventTab: '[data-test-id="horizontal-link-Events"]',
