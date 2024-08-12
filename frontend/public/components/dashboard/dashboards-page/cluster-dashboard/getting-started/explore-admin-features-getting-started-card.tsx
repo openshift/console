@@ -43,7 +43,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
     if (canListPackageManifest && canListOperatorGroup && lightspeedIsAvailable) {
       links.splice(1, 1, {
         id: 'lightspeed',
-        title: t('public~OpenShift LightSpeed'),
+        title: t('public~OpenShift Lightspeed'),
         description: t('public~Your personal AI helper.'),
         href: lightspeedOperatorURL,
       });
