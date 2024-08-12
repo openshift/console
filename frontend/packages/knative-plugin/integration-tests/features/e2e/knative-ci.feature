@@ -147,7 +147,6 @@ Feature: Perform actions on knative service and revision
               And user clicks Delete button on Delete Service modal
              Then "kn-service" service should not be displayed in project
 
-        @broken-test
         Scenario Outline: Create serverless function using Create Serverless function form with Builder Images: SF-01-TC06
             Given user has created or selected namespace "knative-ci"
               And user is at Add page
