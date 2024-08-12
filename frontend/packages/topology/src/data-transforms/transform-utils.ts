@@ -1,9 +1,10 @@
 import { EdgeModel, Model, NodeModel, NodeShape } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { Alerts } from '@console/internal/components/monitoring/types';
+import { BuildConfigModel, HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
   apiVersionForReference,
   isGroupVersionKind,
@@ -33,6 +34,7 @@ import {
   TopologyDataResources,
   TopologyDataModelDepicted,
   OdcNodeModel,
+  TopologyResourcesObject,
 } from '../topology-types';
 import { ConnectsToData, edgesFromAnnotations } from '../utils/connector-utils';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
@@ -48,6 +50,42 @@ export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
   };
 };
 
+export const getContextDirByName = (data, name) => {
+  if (!data?.builds && !data?.buildConfigs && !data?.pipelines) {
+    return null;
+  }
+
+  const extractContextDir = (item) => item.spec?.source?.contextDir ?? null;
+  const buildsData = data?.builds?.data?.find(
+    (build: K8sResourceKind) => build.metadata.name === name,
+  );
+  if (buildsData) {
+    const contextDir = extractContextDir(buildsData);
+    return contextDir;
+  }
+
+  const buildConfigData = data?.buildConfigs?.data?.find(
+    (buildConfig: K8sResourceKind) => buildConfig.metadata.name === name,
+  );
+  if (buildConfigData) {
+    const contextDir = extractContextDir(buildConfigData);
+    return contextDir;
+  }
+
+  const pipelinesData = data?.pipelines?.data?.find(
+    (pipeline: K8sResourceKind) => pipeline.metadata.name === name,
+  );
+  if (pipelinesData) {
+    const pathContextParam = pipelinesData?.spec?.params?.find(
+      (param) => param.name === 'PATH_CONTEXT',
+    );
+    if (pathContextParam) {
+      return pathContextParam.default;
+    }
+  }
+  return null;
+};
+
 /**
  * create all data that need to be shown on a topology data
  */
@@ -57,12 +95,14 @@ export const createTopologyNodeData = (
   type: string,
   defaultIcon: string,
   operatorBackedService: boolean = false,
+  resources?: WatchK8sResults<TopologyResourcesObject> | { [x: string]: Alerts },
 ): TopologyDataObject => {
   const { monitoringAlerts = [] } = overviewItem;
   const dcUID = _.get(resource, 'metadata.uid');
   const deploymentsLabels = _.get(resource, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
-
+  const deploymentsName = _.get(resource, 'metadata.name', '');
+  const contextDir = getContextDirByName(resources, deploymentsName);
   const builderImageIcon =
     getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
     getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
@@ -78,6 +118,7 @@ export const createTopologyNodeData = (
       editURL: deploymentsAnnotations['app.openshift.io/edit-url'],
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
       vcsRef: deploymentsAnnotations['app.openshift.io/vcs-ref'],
+      contextDir,
       builderImage: builderImageIcon || defaultIcon,
       isKnativeResource:
         type &&
@@ -370,6 +411,12 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
     hpas: {
       isList: true,
       kind: HorizontalPodAutoscalerModel.kind,
+      namespace,
+      optional: true,
+    },
+    buildConfigs: {
+      isList: true,
+      kind: BuildConfigModel.kind,
       namespace,
       optional: true,
     },
