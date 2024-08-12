@@ -3,6 +3,11 @@
 Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
 
+## 1.6.0 - 2024-08-12
+
+- Add `csvData` prop to `VirtualizedTable` component ([CONSOLE-4185], [#14050])
+- Document how to translate plugin messages using `i18next` and `react-i18next` ([OCPBUGS-37426], [#14081])
+
 ## 1.5.0 - 2024-08-02
 
 - Fix active perspective detection code ([OCPBUGS-19048], [#13785])
@@ -46,6 +51,7 @@ version and PatternFly version compatibility.
 [CONSOLE-3899]: https://issues.redhat.com/browse/CONSOLE-3899
 [CONSOLE-3949]: https://issues.redhat.com/browse/CONSOLE-3949
 [CONSOLE-4097]: https://issues.redhat.com/browse/CONSOLE-4097
+[CONSOLE-4185]: https://issues.redhat.com/browse/CONSOLE-4185
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -54,6 +60,7 @@ version and PatternFly version compatibility.
 [OCPBUGS-33567]: https://issues.redhat.com/browse/OCPBUGS-33567
 [OCPBUGS-34538]: https://issues.redhat.com/browse/OCPBUGS-34538
 [OCPBUGS-36678]: https://issues.redhat.com/browse/OCPBUGS-36678
+[OCPBUGS-37426]: https://issues.redhat.com/browse/OCPBUGS-37426
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -69,4 +76,6 @@ version and PatternFly version compatibility.
 [#13843]: https://github.com/openshift/console/pull/13843
 [#13900]: https://github.com/openshift/console/pull/13900
 [#13916]: https://github.com/openshift/console/pull/13916
+[#14050]: https://github.com/openshift/console/pull/14050
 [#14055]: https://github.com/openshift/console/pull/14055
+[#14081]: https://github.com/openshift/console/pull/14081
