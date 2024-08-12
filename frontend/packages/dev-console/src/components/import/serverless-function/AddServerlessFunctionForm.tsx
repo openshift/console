@@ -92,8 +92,8 @@ const AddServerlessFunctionForm: React.FC<
           .then((res) => {
             if (res) {
               setStatus({});
-              setFieldValue('build.env', res?.values?.builderEnvs);
-              setFieldValue('deployment.env', res?.values?.runtimeEnvs);
+              setFieldValue('build.env', res?.values?.builderEnvs || []);
+              setFieldValue('deployment.env', res?.values?.runtimeEnvs || []);
               setFieldValue(
                 'image.selected',
                 notSupportedRuntime.indexOf(res?.values?.runtime) === -1
