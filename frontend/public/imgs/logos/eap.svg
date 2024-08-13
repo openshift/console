@@ -1,1 +1,87 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><style>.cls-1{fill:#d71e00;}.cls-2{fill:#c21a00;}.cls-3{fill:#cdcdcd;}.cls-4{fill:#b7b7b7;}.cls-5{fill:#eaeaea;}.cls-6{fill:#fff;}</style></defs><title>Logo</title><g id="Layer_1" data-name="Layer 1"><circle class="cls-1" cx="50" cy="50" r="50" transform="translate(-20.71 50) rotate(-45)"/><path class="cls-2" d="M85.36,14.64A50,50,0,0,1,14.64,85.36Z"/><path class="cls-3" d="M60.17,43.13a3.41,3.41,0,0,1,.07.68A3.4,3.4,0,0,0,60.17,43.13Z"/><path class="cls-3" d="M59.21,41.38A3.48,3.48,0,0,1,60,42.47,3.48,3.48,0,0,0,59.21,41.38Z"/><polygon class="cls-3" points="59.13 41.29 59.13 41.29 59.04 41.21 59.13 41.29"/><path class="cls-3" d="M59.12,46.34,33.54,69.73l25.58-23.4a3.45,3.45,0,0,0,.91-1.4A3.45,3.45,0,0,1,59.12,46.34Z"/><path class="cls-3" d="M28.54,71.48,58.87,41,58.79,41a3.7,3.7,0,0,0-5.21.2L29,68.26c-1,1-1.19,2.52-.35,3.31a1.75,1.75,0,0,0,.74.41,1.75,1.75,0,0,1-.74-.41Z"/><path class="cls-4" d="M28.62,71.57A2.52,2.52,0,0,0,32,71.11L59.12,46.34a3.42,3.42,0,0,0,0-5L58.87,41,28.54,71.48Z"/><path class="cls-5" d="M34.46,34.71l-10.6-8.43a2.6,2.6,0,0,0-4.2,2.33l.19,1.64a18.21,18.21,0,0,0,11.69,15l13.69,5.14,2.31-2.55L36.16,36.73A16.45,16.45,0,0,1,34.46,34.71Z"/><path class="cls-5" d="M74.69,75.41,65.88,65.12a16.45,16.45,0,0,1-2.08-1.63L52.33,52.55l-2.52,2.3,5.67,13.58A18.21,18.21,0,0,0,70.87,79.56l1.64.13A2.6,2.6,0,0,0,74.69,75.41Z"/><path class="cls-5" d="M58.64,46.78a3,3,0,0,0,3.85-2.17,3.28,3.28,0,0,0-3-4.15h0l-.59.59h0l.26.25a3.42,3.42,0,0,1,0,5Z"/><path class="cls-6" d="M32.77,17.18l-.5,1.53a17.6,17.6,0,0,0,3.89,18L47.53,47.82l3.61-4-13.7-27A2.54,2.54,0,0,0,32.77,17.18Z"/><path class="cls-6" d="M83.65,61.48,56.35,48.87l-4,3.68L63.8,63.49a17.6,17.6,0,0,0,18.15,3.23l1.51-.55A2.54,2.54,0,0,0,83.65,61.48Z"/><path class="cls-6" d="M53.58,41.17a3.7,3.7,0,0,1,5.21-.2l.08.08h0l.59-.59h0a3.41,3.41,0,0,0-4.29-2.93c-2,.38-3.07,2.68-2,4.11Z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?><svg id="uuid-f0e4473c-a402-45db-be51-17fefc5268ac" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38"><title>Red Hat JBoss Enterprise Application Platform icon</title>
+<desc>EAP, Application services</desc>
+<metadata><?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 8.0-c001 1.000000, 0000/00/00-00:00:00        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:cq="http://www.day.com/jcr/cq/1.0"
+            xmlns:xmpRights="http://ns.adobe.com/xap/1.0/rights/">
+         <xmp:rhcc-effective-on>2024-03-01T15:26:51.150Z</xmp:rhcc-effective-on>
+         <xmp:rhcc-metadata-complete-moderator>pending</xmp:rhcc-metadata-complete-moderator>
+         <xmp:rhcc-translation-id>TRAbbb0b1d8-60ee-4cff-914c-cd9b72265ed6</xmp:rhcc-translation-id>
+         <xmp:brand-content-type>Icon</xmp:brand-content-type>
+         <xmp:CreateDate>2024-03-01T15:26:51.150Z</xmp:CreateDate>
+         <xmp:rhcc-effective-on-set-on-upload>true</xmp:rhcc-effective-on-set-on-upload>
+         <xmp:rhcc-metadata-complete-uploader>pending</xmp:rhcc-metadata-complete-uploader>
+         <xmp:rhcc-file-last-modified>2024-03-21T00:40:28.827Z</xmp:rhcc-file-last-modified>
+         <xmp:rhcc-audience>rhcc-audience:internal</xmp:rhcc-audience>
+         <xmp:rhcc-rights-restricted>no</xmp:rhcc-rights-restricted>
+         <xmp:brand-content-subtype>Technology icon</xmp:brand-content-subtype>
+         <xmp:rhcc-derivative-id>DERbbb0b1d8-60ee-4cff-914c-cd9b72265ed6</xmp:rhcc-derivative-id>
+         <xmp:brand-logo-color>Standard</xmp:brand-logo-color>
+         <xmp:rhcc-notify-portal-subscribers-on-change>yes</xmp:rhcc-notify-portal-subscribers-on-change>
+         <xmp:rhcc-product>
+            <rdf:Bag>
+               <rdf:li>rhcc-product:red-hat-jboss-enterprise-application-platform</rdf:li>
+            </rdf:Bag>
+         </xmp:rhcc-product>
+         <xmp:brand-subtype>
+            <rdf:Bag>
+               <rdf:li>Technology icon</rdf:li>
+            </rdf:Bag>
+         </xmp:brand-subtype>
+         <dc:format>image/svg+xml</dc:format>
+         <dc:modified>2024-05-10T14:16:07.300Z</dc:modified>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">Red Hat JBoss Enterprise Application Platform icon</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <dc:description>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">EAP, Application services</rdf:li>
+            </rdf:Alt>
+         </dc:description>
+         <cq:lastReplicationAction_scene7>Activate</cq:lastReplicationAction_scene7>
+         <cq:lastReplicationAction_publish>Activate</cq:lastReplicationAction_publish>
+         <cq:lastReplicated_publish>2024-05-10T14:16:08.073Z</cq:lastReplicated_publish>
+         <cq:lastReplicatedBy>workflow-process-service</cq:lastReplicatedBy>
+         <cq:lastReplicationAction>Activate</cq:lastReplicationAction>
+         <cq:lastReplicatedBy_publish>workflow-process-service</cq:lastReplicatedBy_publish>
+         <cq:isDelivered>false</cq:isDelivered>
+         <cq:lastReplicated>2024-05-10T14:16:08.073Z</cq:lastReplicated>
+         <cq:lastReplicatedBy_scene7>workflow-process-service</cq:lastReplicatedBy_scene7>
+         <cq:lastReplicated_scene7>2024-05-10T14:16:08.073Z</cq:lastReplicated_scene7>
+         <xmpRights:UsageTerms>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">Use technology icons to represent Red Hat products and components. Do not remove the icon from the bounding shape.</rdf:li>
+            </rdf:Alt>
+         </xmpRights:UsageTerms>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                           
+<?xpacket end="w"?></metadata>
+<defs><style>.uuid-5c740f3d-2ccc-4135-a33a-3edd433db156{fill:#ed0000;}.uuid-09a01491-f073-4da1-9b74-f78b2b604bf8{fill:#fff;}.uuid-3b0426ce-8862-4529-8d1b-e25d717d674e{fill:#4d4d4d;}</style></defs><rect x="1" y="1" width="36" height="36" rx="9" ry="9"/><path class="uuid-3b0426ce-8862-4529-8d1b-e25d717d674e" d="m28,2.25c4.27338,0,7.75,3.47665,7.75,7.75v18c0,4.27335-3.47662,7.75-7.75,7.75H10c-4.27338,0-7.75-3.47665-7.75-7.75V10c0-4.27335,3.47662-7.75,7.75-7.75h18m0-1.25H10C5.02942,1,1,5.02945,1,10v18c0,4.97055,4.02942,9,9,9h18c4.97058,0,9-4.02945,9-9V10c0-4.97055-4.02942-9-9-9h0Z"/><path class="uuid-09a01491-f073-4da1-9b74-f78b2b604bf8" d="m23,26.625c-.34473,0-.625-.28027-.625-.625v-7c0-.34473.28027-.625.625-.625s.625.28027.625.625v7c0,.34473-.28027.625-.625.625Z"/><path class="uuid-09a01491-f073-4da1-9b74-f78b2b604bf8" d="m15,19.625c-.34473,0-.625-.28027-.625-.625v-7c0-.34473.28027-.625.625-.625s.625.28027.625.625v7c0,.34473-.28027.625-.625.625Z"/><path class="uuid-5c740f3d-2ccc-4135-a33a-3edd433db156" d="m13,20.375h-3.375v-2.75h11.375c.34473,0,.625-.28027.625-.625s-.28027-.625-.625-.625h-12c-.34473,0-.625.28027-.625.625v4c0,.34473.28027.625.625.625h4c.34473,0,.625-.28027.625-.625s-.28027-.625-.625-.625Z"/><path class="uuid-5c740f3d-2ccc-4135-a33a-3edd433db156" d="m29,16.375h-4c-.34473,0-.625.28027-.625.625s.28027.625.625.625h3.375v2.75h-11.375c-.34473,0-.625.28027-.625.625s.28027.625.625.625h12c.34473,0,.625-.28027.625-.625v-4c0-.34473-.28027-.625-.625-.625Z"/><path class="uuid-09a01491-f073-4da1-9b74-f78b2b604bf8" d="m17.44238,24.55762c-.24414-.24414-.64062-.24414-.88477,0l-.93262.93323v-6.49084c0-.34473-.28027-.625-.625-.625s-.625.28027-.625.625v6.49084l-.93262-.93323c-.24414-.24414-.64062-.24414-.88477,0-.24316.24414-.24316.64062,0,.88477l2,2c.0249.0249.05664.03613.08435.05591.03845.02771.07373.05963.11798.07812.07678.03174.1582.04858.24005.04858s.16327-.01685.24005-.04858c.04425-.01849.07953-.05042.11798-.07812.02771-.01978.05945-.03101.08435-.05591l2-2c.24316-.24414.24316-.64062,0-.88477Z"/><path class="uuid-09a01491-f073-4da1-9b74-f78b2b604bf8" d="m25.44238,12.55762l-2-2c-.02759-.02759-.06244-.04065-.09344-.06201-.03577-.0249-.06769-.05487-.10834-.0719-.15381-.06403-.32739-.06403-.4812,0-.04065.01703-.07257.047-.10834.0719-.03101.02136-.06586.03442-.09344.06201l-2,2c-.24316.24414-.24316.64062,0,.88477.24414.24414.64062.24414.88477,0l.93262-.93323v6.49084c0,.34473.28027.625.625.625s.625-.28027.625-.625v-6.49084l.93262.93323c.12207.12207.28223.18262.44238.18262s.32031-.06055.44238-.18262c.24316-.24414.24316-.64062,0-.88477Z"/></svg>
