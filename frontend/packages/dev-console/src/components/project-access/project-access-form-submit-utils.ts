@@ -147,7 +147,9 @@ export const sendRoleBindingRequest = (
         ? [
             {
               ...(user.subject.kind === 'ServiceAccount'
-                ? { namespace: user.subject.namespace }
+                ? user.subject.namespace
+                  ? { namespace: user.subject.namespace }
+                  : {}
                 : { apiGroup: 'rbac.authorization.k8s.io' }),
               kind: user.subject.kind,
               name: user.subject.name,
