@@ -14,14 +14,14 @@ describe(`${crd} CRD`, () => {
     {
       name,
       dropdownMenuName: 'help menu',
-      dropdownToggle: '[data-test=help-dropdown-toggle] [aria-label="Help menu"]',
+      dropdownToggle: '[data-test=help-dropdown-toggle]',
       menuLinkLocation: 'HelpMenu',
       menuLinkText: `${name} help menu link`,
     },
     {
       name,
       dropdownMenuName: 'user menu',
-      dropdownToggle: '[data-test=user-dropdown] [aria-label="User menu"]',
+      dropdownToggle: '[data-test=user-dropdown]',
       menuLinkLocation: 'UserMenu',
       menuLinkText: `${name} user menu link`,
     },

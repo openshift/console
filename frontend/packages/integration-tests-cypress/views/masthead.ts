@@ -10,7 +10,7 @@ export const masthead = {
         .should('have.text', text),
   },
   userDropdown: () => cy.byTestID('user-dropdown'),
-  copyLoginCommand: () => cy.byTestID('copy-login-command'),
+  copyLoginCommand: () => cy.byTestID('copy-login-command').find('a'),
   clickMastheadLink: (path: string) => {
     return cy.byTestID(path).click();
   },
