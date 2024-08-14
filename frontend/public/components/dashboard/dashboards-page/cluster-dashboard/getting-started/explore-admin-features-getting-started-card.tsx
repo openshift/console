@@ -58,7 +58,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
       if (await getLightSpeedAvailability()) {
         links.splice(1, 1, {
           id: 'lightspeed',
-          title: t('public~OpenShift LightSpeed'),
+          title: t('public~OpenShift Lightspeed'),
           description: t('public~Your personal AI helper.'),
           href:
             '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-redhat-operators-openshift-marketplace',
