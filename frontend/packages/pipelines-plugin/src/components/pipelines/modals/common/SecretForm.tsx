@@ -123,14 +123,11 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
     [t],
   );
 
-  const setValues = (type: SecretType) => {
+  const setValues = (type: SecretType, data) => {
     if (type === SecretType.dockerconfigjson) {
-      setFieldValue(
-        'formData',
-        _.mapValues({ '.dockerconfigjson': stringData[type] }, JSON.stringify),
-      );
+      setFieldValue('formData', _.mapValues({ '.dockerconfigjson': data[type] }, JSON.stringify));
     } else {
-      setFieldValue('formData', stringData[type]);
+      setFieldValue('formData', data[type]);
     }
     if (values.type !== type) {
       clearServerURL();
@@ -138,8 +135,10 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
   };
 
   const onDataChanged = (value: string) => {
-    setStringData({ ...stringData, [values.type]: value });
-    setValues(values.type);
+    setStringData((prevState) => {
+      setValues(values.type, { ...prevState, [values.type]: value });
+      return { ...prevState, [values.type]: value };
+    });
   };
 
   return (
@@ -172,7 +171,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
           label={t('pipelines-plugin~Authentication type')}
           items={authTypes}
           title={authTypes[values.type]}
-          onChange={(type: SecretType) => setValues(type)}
+          onChange={(type: SecretType) => setValues(type, stringData)}
           fullWidth
           required
         />
