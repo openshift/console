@@ -3,11 +3,11 @@ import * as webpack from 'webpack';
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-import * as HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import * as _crypto from 'crypto';
 
+import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
@@ -79,7 +79,7 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 
 const config: Configuration = {
   entry: {
-    main: ['./public/components/app.jsx', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
+    main: ['./public/components/app.jsx', 'monaco-editor/esm/vs/editor/editor.worker.js'],
     'vendor-patternfly-4-shared': './public/vendor-patternfly-4-shared.scss',
   },
   output: {
@@ -289,13 +289,13 @@ const config: Configuration = {
       filename: './tokener.html',
       template: './public/tokener.html',
       inject: false,
-      chunksSortMode: 'none',
+      chunksSortMode: 'auto',
     }),
     new HtmlWebpackPlugin({
       filename: './index.html',
       template: './public/index.html',
       production: NODE_ENV === 'production',
-      chunksSortMode: 'none',
+      chunksSortMode: 'auto',
       // exclude:
       // vendor-patternfly-4-shared-chunk-<hash>.min.js (js entry for vendor-patternfly-4-shared.scss)
       // app-bundle.vendor-patternfly-4-shared~main.<hash>.css (PF4 from the shared PF modules - we already share out PF4 css)
@@ -304,42 +304,57 @@ const config: Configuration = {
         /vendor-patternfly-4-shared~main.*\.css/,
       ],
     }),
-    new HtmlWebpackExcludeAssetsPlugin(),
+    new HtmlWebpackSkipAssetsPlugin(),
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
+      globalAPI: true,
     }),
-    new CopyWebpackPlugin([{ from: './public/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/console-shared/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/console-app/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([
-      { from: './packages/operator-lifecycle-manager/locales', to: 'locales' },
-    ]),
-    new CopyWebpackPlugin([
-      { from: './packages/operator-lifecycle-manager-v1/locales', to: 'locales' },
-    ]),
-    new CopyWebpackPlugin([{ from: './packages/dev-console/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/knative-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/container-security/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/pipelines-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/service-binding-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/shipwright-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/webterminal-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/topology/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/helm-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/rhoas-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/git-service/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/gitops-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/metal3-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/vsphere-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([
-      { from: './packages/network-attachment-definition-plugin/locales', to: 'locales' },
-    ]),
-    new CopyWebpackPlugin([{ from: './packages/patternfly/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/insights-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([
-      { from: './packages/local-storage-operator-plugin/locales', to: 'locales' },
-    ]),
-    new CopyWebpackPlugin([{ from: './packages/console-telemetry-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, './public/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/console-shared/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/console-app/locales'), to: 'locales' },
+        {
+          from: path.resolve(__dirname, './packages/operator-lifecycle-manager/locales'),
+          to: 'locales',
+        },
+        {
+          from: path.resolve(__dirname, './packages/operator-lifecycle-manager-v1/locales'),
+          to: 'locales',
+        },
+        { from: path.resolve(__dirname, './packages/dev-console/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/knative-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/container-security/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/pipelines-plugin/locales'), to: 'locales' },
+        {
+          from: path.resolve(__dirname, './packages/service-binding-plugin/locales'),
+          to: 'locales',
+        },
+        { from: path.resolve(__dirname, './packages/shipwright-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/webterminal-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/topology/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/helm-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/rhoas-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/git-service/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/gitops-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/metal3-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/vsphere-plugin/locales'), to: 'locales' },
+        {
+          from: path.resolve(__dirname, './packages/network-attachment-definition-plugin/locales'),
+          to: 'locales',
+        },
+        { from: path.resolve(__dirname, './packages/patternfly/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/insights-plugin/locales'), to: 'locales' },
+        {
+          from: path.resolve(__dirname, './packages/local-storage-operator-plugin/locales'),
+          to: 'locales',
+        },
+        {
+          from: path.resolve(__dirname, './packages/console-telemetry-plugin/locales'),
+          to: 'locales',
+        },
+      ],
+    }),
     extractCSS,
     virtualModules,
     new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),
