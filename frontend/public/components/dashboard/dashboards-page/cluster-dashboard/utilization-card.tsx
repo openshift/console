@@ -1,12 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, Split, SplitItem } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Badge,
+  Card,
+  CardHeader,
+  CardTitle,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import {
   ClusterOverviewUtilizationItem,
   isClusterOverviewUtilizationItem,
@@ -237,30 +244,41 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
     }
     return indexA - indexB;
   });
-  const onToggle = (_event, open: boolean): void => setIsOpen(open);
 
-  const selectedNodesUpdated = selectedNodes.map((item) =>
-    item === 'master' ? 'control plane' : item,
+  const selectOptions = sortedMCPs.map((mcp) => (
+    <SelectOption
+      hasCheckbox
+      key={mcp.metadata.name}
+      value={mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name}
+      isSelected={selectedNodes.includes(mcp.metadata.name)}
+    >
+      {mcp.metadata.name}
+    </SelectOption>
+  ));
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
+      {t('public~Filter by Node type')}
+      {selectedNodes.length > 0 && (
+        <Badge className="pf-v5-u-ml-sm" isRead>
+          {selectedNodes.length}
+        </Badge>
+      )}
+    </MenuToggle>
   );
 
   return (
-    <SelectDeprecated
-      variant={SelectVariantDeprecated.checkbox}
+    <Select
+      role="menu"
       aria-label={t('public~Filter by Node type')}
-      onToggle={onToggle}
       onSelect={onNodeSelect}
-      selections={selectedNodesUpdated}
       isOpen={isOpen}
-      placeholderText={t('public~Filter by Node type')}
-      isPlain
+      selected={selectedNodes}
+      onOpenChange={(open) => setIsOpen(open)}
+      toggle={toggle}
     >
-      {sortedMCPs.map((mcp) => (
-        <SelectOptionDeprecated
-          key={mcp.metadata.name}
-          value={mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name}
-        />
-      ))}
-    </SelectDeprecated>
+      <SelectList>{selectOptions}</SelectList>
+    </Select>
   );
 };
 
