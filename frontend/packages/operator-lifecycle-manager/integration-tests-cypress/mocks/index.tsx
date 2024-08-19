@@ -311,3 +311,23 @@ export const testCatalogSource = {
     },
   },
 };
+
+export const testDeprecatedOperatorCR = {
+  kind: 'CatalogSource',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  metadata: {
+    name: 'test-community-operator-deprecation',
+    namespace: 'openshift-marketplace',
+  },
+  spec: {
+    displayName: 'Community Operators for testing deprecation',
+    image: 'quay.io/jordankeister/deprecation-catalog:latest',
+    publisher: 'OLM community',
+    sourceType: 'grpc',
+    updateStrategy: {
+      registryPoll: {
+        interval: '10m',
+      },
+    },
+  },
+};

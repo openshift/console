@@ -36,7 +36,12 @@ export const DeprecatedOperatorWarningBadge: React.FC<DeprecatedOperatorWarningB
 
   return (
     <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
-      <Label color="orange" className={className} icon={<YellowExclamationTriangleIcon />}>
+      <Label
+        data-test="deprecated-badge"
+        color="orange"
+        className={className}
+        icon={<YellowExclamationTriangleIcon />}
+      >
         {t('olm~Deprecated')}
       </Label>
     </Tooltip>
@@ -50,7 +55,10 @@ export const DeprecatedOperatorWarningIcon: React.FC<DeprecatedOperatorWarning> 
 
   return (
     <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
-      <YellowExclamationTriangleIcon className="pf-v5-u-ml-xs" />
+      <YellowExclamationTriangleIcon
+        dataTest="deprecated-operator-warning-icon"
+        className="pf-v5-u-ml-xs"
+      />
     </Tooltip>
   );
 };
@@ -76,9 +84,9 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
             dismissible && <AlertActionCloseButton onClose={() => setAlertVisible(false)} />
           }
         >
-          <div>{deprecatedPackage?.deprecation?.message}</div>
-          <div>{deprecatedChannel?.deprecation?.message}</div>
-          <div>{deprecatedVersion?.deprecation?.message}</div>
+          <div data-test="deprecated-package">{deprecatedPackage?.deprecation?.message}</div>
+          <div data-test="deprecated-channel">{deprecatedChannel?.deprecation?.message}</div>
+          <div data-test="deprecated-version">{deprecatedVersion?.deprecation?.message}</div>
         </Alert>
       </FormAlert>
     )

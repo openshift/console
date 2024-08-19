@@ -14,6 +14,7 @@ export type ColoredIconProps = {
   className?: string;
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  dataTest?: string;
 };
 
 /**
@@ -82,11 +83,13 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
   className,
   title,
   size,
+  dataTest,
 }) => {
   const icon = (
     <ExclamationTriangleIcon
       className={classNames('dps-icons__yellow-exclamation-icon', className)}
       title={title}
+      data-test={dataTest}
     />
   );
 
