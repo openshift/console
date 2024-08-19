@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { AsyncResourceYAMLEditor } from '@console/internal/components/AsyncResourceYAMLEditor';
 import { PageHeading } from '@console/internal/components/utils';
 import { MultiNetworkPolicyModel, NetworkPolicyModel } from '@console/internal/models';
@@ -24,9 +25,11 @@ const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.createNetworkPolicy.edi
 export const CreateNetworkPolicy: React.FC<{}> = () => {
   const { t } = useTranslation();
   const isMulti = useIsMultiNetworkPolicy();
+  const params = useParams();
 
   const initialPolicy: NetworkPolicy = {
     name: '',
+    namespace: params.ns,
     podSelector: [['', '']],
     ingress: {
       denyAll: false,
