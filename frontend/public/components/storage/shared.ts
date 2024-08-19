@@ -105,8 +105,8 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
     Block: ['ReadWriteOnce'],
   },
   'pd.csi.storage.gke.io': {
-    Filesystem: ['ReadWriteOnce'],
-    Block: ['ReadWriteOnce'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteOncePod'],
   },
   'cephfs.csi.ceph.com': {
     Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
