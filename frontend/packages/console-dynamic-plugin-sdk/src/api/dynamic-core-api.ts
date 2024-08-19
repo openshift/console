@@ -94,6 +94,8 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/int
  * @param {TableGridBreakpoint} [gridBreakPoint] - sizing of how to break up grid for responsiveness
  * @param {function} [onSelect] - (optional) function for handling select of table
  * @param {R} [rowData] - (optional) data specific to row
+ * @param {number} [sortColumnIndex] - (optional) The index of the column to sort. The default is `0`
+ * @param {SortByDirection.asc | SortByDirection.desc} [sortDirection] - (optional) The direction of the sort. The default is `SortByDirection.asc` 
  * @example
  * ```ts
  * const MachineList: React.FC<MachineListProps> = (props) => {
