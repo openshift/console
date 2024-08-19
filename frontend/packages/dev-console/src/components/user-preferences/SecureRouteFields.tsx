@@ -5,12 +5,11 @@ import {
   FormHelperText,
   HelperText,
   HelperTextItem,
+  Select,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
 } from '@patternfly/react-core';
-import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
@@ -36,37 +35,42 @@ const SecureRouteFields: React.FC = () => {
   const [isTLSTerminationOpen, setIsTLSTerminationOpen] = React.useState<boolean>(false);
   const [isInsecureTrafficOpen, setIsInsecureTrafficOpen] = React.useState<boolean>(false);
 
-  const tlsTerminationSelectOptions: JSX.Element[] = React.useMemo(() => {
-    const terminationOptions = {
+  const terminationOptions = React.useMemo(() => {
+    return {
       [TerminationType.EDGE]: t('devconsole~Edge'),
       [TerminationType.PASSTHROUGH]: t('devconsole~Passthrough'),
       [TerminationType.REENCRYPT]: t('devconsole~Re-encrypt'),
     };
-    return Object.keys(terminationOptions).map((tlsTerminationOption) => (
-      <SelectOptionDeprecated key={tlsTerminationOption} value={tlsTerminationOption}>
-        {terminationOptions[tlsTerminationOption]}
-      </SelectOptionDeprecated>
-    ));
   }, [t]);
 
-  const insecureTrafficSelectOptions: JSX.Element[] = React.useMemo(() => {
-    const insecureTrafficOptions =
-      tlsTermination === TerminationType.PASSTHROUGH
-        ? {
-            [PassthroughInsecureTrafficType.None]: t('devconsole~None'),
-            [PassthroughInsecureTrafficType.Redirect]: t('devconsole~Redirect'),
-          }
-        : {
-            [InsecureTrafficType.None]: t('devconsole~None'),
-            [InsecureTrafficType.Allow]: t('devconsole~Allow'),
-            [InsecureTrafficType.Redirect]: t('devconsole~Redirect'),
-          };
-    return Object.keys(insecureTrafficOptions).map((insecureTrafficOption) => (
-      <SelectOptionDeprecated key={insecureTrafficOption} value={insecureTrafficOption}>
-        {insecureTrafficOptions[insecureTrafficOption]}
-      </SelectOptionDeprecated>
+  const tlsTerminationSelectOptions: JSX.Element[] = React.useMemo(() => {
+    return Object.keys(terminationOptions).map((tlsTerminationOption) => (
+      <SelectOption key={tlsTerminationOption} value={tlsTerminationOption}>
+        {terminationOptions[tlsTerminationOption]}
+      </SelectOption>
     ));
+  }, [terminationOptions]);
+
+  const insecureTrafficOptions = React.useMemo(() => {
+    return tlsTermination === TerminationType.PASSTHROUGH
+      ? {
+          [PassthroughInsecureTrafficType.None]: t('devconsole~None'),
+          [PassthroughInsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+        }
+      : {
+          [InsecureTrafficType.None]: t('devconsole~None'),
+          [InsecureTrafficType.Allow]: t('devconsole~Allow'),
+          [InsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+        };
   }, [t, tlsTermination]);
+
+  const insecureTrafficSelectOptions: JSX.Element[] = React.useMemo(() => {
+    return Object.keys(insecureTrafficOptions).map((insecureTrafficOption) => (
+      <SelectOption key={insecureTrafficOption} value={insecureTrafficOption}>
+        {insecureTrafficOptions[insecureTrafficOption]}
+      </SelectOption>
+    ));
+  }, [insecureTrafficOptions]);
 
   const onSecureRouteChecked = React.useCallback(
     (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
@@ -82,21 +86,23 @@ const SecureRouteFields: React.FC = () => {
     [fireTelemetryEvent, insecureTraffic, setPreferredRoutingOptions, tlsTermination],
   );
 
-  const onTLSTerminationToggle = React.useCallback(
-    (_event: Event, isOpen: boolean) => setIsTLSTerminationOpen(isOpen),
-    [],
-  );
+  const onTLSTerminationToggle = () => {
+    setIsTLSTerminationOpen(!isTLSTerminationOpen);
+  };
 
-  const onInsecureTrafficToggle = React.useCallback(
-    (_event: Event, isOpen: boolean) => setIsInsecureTrafficOpen(isOpen),
-    [],
-  );
+  const onInsecureTrafficToggle = () => {
+    setIsInsecureTrafficOpen(!isInsecureTrafficOpen);
+  };
 
   const onTLSTerminationSelect = React.useCallback(
     (_, selection: string) => {
+      if (typeof selection === 'undefined') {
+        return;
+      }
+
       setPreferredRoutingOptions({
         secure,
-        tlsTermination: selection,
+        tlsTermination: selection.toString(),
         insecureTraffic,
       });
       setIsTLSTerminationOpen(false);
@@ -112,7 +118,7 @@ const SecureRouteFields: React.FC = () => {
       setPreferredRoutingOptions({
         secure,
         tlsTermination,
-        insecureTraffic: selection,
+        insecureTraffic: selection.toString(),
       });
       setIsInsecureTrafficOpen(false);
       fireTelemetryEvent('User Preference Changed', {
@@ -120,6 +126,44 @@ const SecureRouteFields: React.FC = () => {
       });
     },
     [fireTelemetryEvent, secure, setPreferredRoutingOptions, tlsTermination],
+  );
+
+  const tlsTerminationToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      isFullWidth
+      ref={toggleRef}
+      onClick={onTLSTerminationToggle}
+      isExpanded={isTLSTerminationOpen}
+      isDisabled={!preferredRoutingOptionsLoaded}
+      placeholder={t('devconsole~Select termination type')}
+      aria-label={t('devconsole~Select termination type')}
+      style={
+        {
+          maxHeight: '300px',
+        } as React.CSSProperties
+      }
+    >
+      {terminationOptions[tlsTermination]}
+    </MenuToggle>
+  );
+
+  const insecureTrafficToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      isFullWidth
+      ref={toggleRef}
+      onClick={onInsecureTrafficToggle}
+      isExpanded={isInsecureTrafficOpen}
+      isDisabled={!preferredRoutingOptionsLoaded}
+      placeholder={t('devconsole~Select insecure traffic type')}
+      aria-label={t('devconsole~Select insecure traffic type')}
+      style={
+        {
+          maxHeight: '300px',
+        } as React.CSSProperties
+      }
+    >
+      {insecureTrafficOptions[insecureTraffic]}
+    </MenuToggle>
   );
 
   return (
@@ -145,38 +189,30 @@ const SecureRouteFields: React.FC = () => {
       />
 
       <FormGroup fieldId="tls-termination" label={t('devconsole~TLS termination')}>
-        <SelectDeprecated
+        <Select
           id="tls-termination"
-          variant={SelectVariantDeprecated.single}
           isOpen={isTLSTerminationOpen}
-          selections={tlsTermination}
-          toggleId="tls-termination"
-          onToggle={onTLSTerminationToggle}
           onSelect={onTLSTerminationSelect}
-          placeholderText={t('devconsole~Select termination type')}
-          isDisabled={!preferredRoutingOptionsLoaded}
-          aria-label={t('devconsole~Select termination type')}
-          maxHeight={300}
+          selected={tlsTermination}
+          onOpenChange={onTLSTerminationToggle}
+          toggle={tlsTerminationToggle}
+          shouldFocusToggleOnSelect
         >
           {tlsTerminationSelectOptions}
-        </SelectDeprecated>
+        </Select>
       </FormGroup>
       <FormGroup fieldId="insecure-traffic" label={t('devconsole~Insecure traffic')}>
-        <SelectDeprecated
+        <Select
           id="insecure-traffic"
-          variant={SelectVariantDeprecated.single}
           isOpen={isInsecureTrafficOpen}
-          selections={insecureTraffic}
-          toggleId="insecure-traffic"
-          onToggle={onInsecureTrafficToggle}
+          selected={insecureTraffic}
           onSelect={onInsecureTrafficSelect}
-          placeholderText={t('devconsole~Select insecure traffic type')}
-          isDisabled={!preferredRoutingOptionsLoaded}
-          aria-label={t('devconsole~Select insecure traffic type')}
-          maxHeight={300}
+          onOpenChange={onInsecureTrafficToggle}
+          toggle={insecureTrafficToggle}
+          shouldFocusToggleOnSelect
         >
           {insecureTrafficSelectOptions}
-        </SelectDeprecated>
+        </Select>
 
         <FormHelperText>
           <HelperText>
