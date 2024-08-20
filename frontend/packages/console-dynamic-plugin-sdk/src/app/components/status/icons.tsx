@@ -26,15 +26,19 @@ export type ColoredIconProps = {
  * <GreenCheckCircleIcon title="Healthy" />
  * ```
  */
-export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, title, size }) => (
-  <Icon size={size}>
+export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, title, size }) => {
+  const icon = (
     <CheckCircleIcon
       data-test="success-icon"
       className={classNames('dps-icons__green-check-icon', className)}
       title={title}
     />
-  </Icon>
-);
+  );
+  if (size) {
+    return <Icon size={size}>{icon}</Icon>;
+  }
+  return icon;
+};
 
 /**
  * Component for displaying a red exclamation mark circle icon.
@@ -50,14 +54,19 @@ export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
   className,
   title,
   size,
-}) => (
-  <Icon size={size}>
+}) => {
+  const icon = (
     <ExclamationCircleIcon
       className={classNames('dps-icons__red-exclamation-icon', className)}
       title={title}
     />
-  </Icon>
-);
+  );
+
+  if (size) {
+    return <Icon size={size}>{icon}</Icon>;
+  }
+  return icon;
+};
 
 /**
  * Component for displaying a yellow triangle exclamation icon.
@@ -73,14 +82,19 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
   className,
   title,
   size,
-}) => (
-  <Icon size={size}>
+}) => {
+  const icon = (
     <ExclamationTriangleIcon
       className={classNames('dps-icons__yellow-exclamation-icon', className)}
       title={title}
     />
-  </Icon>
-);
+  );
+
+  if (size) {
+    return <Icon size={size}>{icon}</Icon>;
+  }
+  return icon;
+};
 
 /**
  * Component for displaying a blue info circle icon.
@@ -92,8 +106,13 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
  * <BlueInfoCircleIcon title="Info" />
  * ```
  */
-export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, title, size }) => (
-  <Icon size={size}>
+export const BlueInfoCircleIcon: React.FC<ColoredIconProps> = ({ className, title, size }) => {
+  const icon = (
     <InfoCircleIcon className={classNames('dps-icons__blue-info-icon', className)} title={title} />
-  </Icon>
-);
+  );
+
+  if (size) {
+    return <Icon size={size}>{icon}</Icon>;
+  }
+  return icon;
+};
