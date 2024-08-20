@@ -5,6 +5,7 @@ import * as Router from 'react-router-dom-v5-compat';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
+import { useQueryParams } from '@console/shared/src';
 import UserPreferencePage from '../UserPreferencePage';
 import {
   mockUserPreferenceGroupExtensions,
@@ -24,8 +25,13 @@ jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  useQueryParams: jest.fn(),
+}));
+
 const useExtensionsMock = useExtensions as jest.Mock;
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
+const useQueryParamsMock = useQueryParams as jest.Mock;
 
 describe('UserPreferencePage', () => {
   type UserPreferencePageProps = React.ComponentProps<typeof UserPreferencePage>;
@@ -41,6 +47,7 @@ describe('UserPreferencePage', () => {
     });
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
     wrapper = shallow(<UserPreferencePage />);
 
@@ -52,6 +59,7 @@ describe('UserPreferencePage', () => {
     jest.spyOn(Router, 'useParams').mockReturnValue({});
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
     wrapper = shallow(<UserPreferencePage />);
 
@@ -63,6 +71,7 @@ describe('UserPreferencePage', () => {
     jest.spyOn(Router, 'useParams').mockReturnValue({});
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, false]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
     wrapper = shallow(<UserPreferencePage />);
 

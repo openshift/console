@@ -1,7 +1,5 @@
 @keyframes ocs-spotlight-expand {
   0% {
-    outline-offset: -4px;
-    outline-width: 4px;
     opacity: 1;
   }
   100% {
@@ -29,6 +27,11 @@
   }
 }
 
+@mixin ocs-spotlight-outline {
+  outline: 4px solid var(--pf-v5-global--palette--blue-200);
+  outline-offset: 4px;
+}
+
 .ocs-spotlight {
   pointer-events: none;
   position: absolute;
@@ -41,24 +44,23 @@
     z-index: 9999;
   }
   &__element-highlight-animate {
-    pointer-events: none;
-    position: absolute;
-    box-shadow: inset 0px 0px 0px 4px var(--pf-v5-global--palette--blue-200);
-    opacity: 0;
     animation: 0.4s ocs-spotlight-fade-in 0s ease-in-out,
       5s ocs-spotlight-fade-out 12.8s ease-in-out;
     animation-fill-mode: forwards;
+    pointer-events: none;
+    position: absolute;
+    opacity: 0;
+    @include ocs-spotlight-outline;
     &::after {
+      animation-fill-mode: forwards;
+      animation: 1.2s ocs-spotlight-expand 1.6s ease-out;
+      bottom: 0;
       content: '';
-      position: absolute;
       left: 0;
+      position: absolute;
       right: 0;
       top: 0;
-      bottom: 0;
-      animation: 1.2s ocs-spotlight-expand 1.6s ease-out;
-      animation-fill-mode: forwards;
-      outline: 4px solid var(--pf-v5-global--palette--blue-200);
-      outline-offset: -4px;
+      @include ocs-spotlight-outline;
     }
   }
 }
