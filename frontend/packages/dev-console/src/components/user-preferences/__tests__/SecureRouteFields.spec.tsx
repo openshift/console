@@ -24,7 +24,7 @@ describe('SecureRouteFields', () => {
     expect(screen.queryByTestId('tls-termination')).not.toBeNull();
   });
 
-  it('should render skelton if usePreferredRoutingOptions is not loaded', () => {
+  it('should render skeleton if usePreferredRoutingOptions is not loaded', () => {
     mockUsePreferredRoutingOptions.mockReturnValue([{}, () => {}, false]);
     render(<SecureRouteFields />);
     const secureRouteCheckbox = screen.queryByTestId('secure-route-checkbox');

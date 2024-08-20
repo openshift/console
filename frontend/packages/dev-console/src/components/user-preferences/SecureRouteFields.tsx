@@ -6,6 +6,7 @@ import {
   HelperText,
   HelperTextItem,
   Select,
+  SelectList,
   SelectOption,
   MenuToggle,
   MenuToggleElement,
@@ -131,6 +132,7 @@ const SecureRouteFields: React.FC = () => {
   const tlsTerminationToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       isFullWidth
+      id="tls-termination"
       ref={toggleRef}
       onClick={onTLSTerminationToggle}
       isExpanded={isTLSTerminationOpen}
@@ -151,6 +153,7 @@ const SecureRouteFields: React.FC = () => {
     <MenuToggle
       isFullWidth
       ref={toggleRef}
+      id="insecure-traffic"
       onClick={onInsecureTrafficToggle}
       isExpanded={isInsecureTrafficOpen}
       isDisabled={!preferredRoutingOptionsLoaded}
@@ -190,7 +193,7 @@ const SecureRouteFields: React.FC = () => {
 
       <FormGroup fieldId="tls-termination" label={t('devconsole~TLS termination')}>
         <Select
-          id="tls-termination"
+          id="tls-termination-select"
           isOpen={isTLSTerminationOpen}
           onSelect={onTLSTerminationSelect}
           selected={tlsTermination}
@@ -198,12 +201,12 @@ const SecureRouteFields: React.FC = () => {
           toggle={tlsTerminationToggle}
           shouldFocusToggleOnSelect
         >
-          {tlsTerminationSelectOptions}
+          <SelectList>{tlsTerminationSelectOptions}</SelectList>
         </Select>
       </FormGroup>
       <FormGroup fieldId="insecure-traffic" label={t('devconsole~Insecure traffic')}>
         <Select
-          id="insecure-traffic"
+          id="insecure-traffic-select"
           isOpen={isInsecureTrafficOpen}
           selected={insecureTraffic}
           onSelect={onInsecureTrafficSelect}
@@ -211,7 +214,7 @@ const SecureRouteFields: React.FC = () => {
           toggle={insecureTrafficToggle}
           shouldFocusToggleOnSelect
         >
-          {insecureTrafficSelectOptions}
+          <SelectList>{insecureTrafficSelectOptions}</SelectList>
         </Select>
 
         <FormHelperText>
