@@ -45,6 +45,15 @@ const initialLoad = async (
   const datacenter = keyValues.datacenter || '';
   const defaultDatastore = keyValues['default-datastore'] || '';
   const folder = keyValues.folder || '';
+
+  let vCenterCluster = '';
+  const resourcePoolPath = keyValues['resourcepool-path'] as string;
+  if (resourcePoolPath?.length) {
+    const paths = resourcePoolPath.split('/');
+    if (paths.length > 3) {
+      [, , , vCenterCluster] = paths;
+    }
+  }
   let username = '';
   let password = '';
 
@@ -76,7 +85,6 @@ const initialLoad = async (
     }
   }
 
-  let vCenterCluster = '';
   let mustPatch = false;
   try {
     const infrastructure = await k8sGet<Infrastructure>({
@@ -89,11 +97,18 @@ const initialLoad = async (
     );
     if (domain) {
       const computeCluster = domain?.topology?.computeCluster?.split('/');
-      vCenterCluster = (computeCluster?.length && computeCluster[computeCluster.length - 1]) || '';
+      let infraVCenterCluster = '';
+      if (computeCluster.length > 3) {
+        [, , , infraVCenterCluster] = computeCluster;
+      }
 
+      if (!vCenterCluster) {
+        vCenterCluster = infraVCenterCluster;
+      }
       const datacenterDiff = domain.topology.datacenter !== datacenter;
       const datastoreDiff = domain.topology.datastore !== defaultDatastore;
-      mustPatch = datacenterDiff || datastoreDiff;
+      const vCenterClusterDiff = infraVCenterCluster !== vCenterCluster;
+      mustPatch = datacenterDiff || datastoreDiff || vCenterClusterDiff;
     }
   } catch (e) {
     throw new LoadError(t('Failed to fetch infrastructure resource'), getErrorMessage(t, e));
