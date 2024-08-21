@@ -24,7 +24,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
     values: {
       resources,
       deployment: { env },
-      import: { selectedStrategy, kNativeFuncLoaded: funcLoaded },
+      import: { selectedStrategy, knativeFuncLoaded: funcLoaded },
     },
   } = useFormikContext<FormikValues>();
   const deploymentConfigObj = resource || {

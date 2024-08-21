@@ -250,7 +250,7 @@ export interface DetectedStrategyFormData extends DetectedStrategy {
 
 export interface ImportStrategyData {
   loaded?: boolean;
-  kNativeFuncLoaded?: boolean;
+  knativeFuncLoaded?: boolean;
   loadError?: string;
   strategies?: DetectedStrategy[];
   recommendedStrategy?: DetectedStrategyFormData;

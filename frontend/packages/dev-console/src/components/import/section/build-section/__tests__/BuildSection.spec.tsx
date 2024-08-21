@@ -102,7 +102,7 @@ describe('BuildSection', () => {
         values={{
           ...componentProps.values,
           import: {
-            kNativeFuncLoaded: true, // env already loaded
+            knativeFuncLoaded: true, // env already loaded
             selectedStrategy: {
               type: 3,
             } as DetectedStrategyFormData,
