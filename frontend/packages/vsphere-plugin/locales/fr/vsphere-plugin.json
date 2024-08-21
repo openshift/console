@@ -56,7 +56,7 @@
   "Kube API Server": "Serveur d’API Kube",
   "Kube Controller Manager": "Gestionnaire de contrôleur Kube",
   "Storage": "Stockage",
-  "Failed to fetch infrastructure resource": "N’a pas pu récupérer la ressource d’infrastructure",
-  "An error occured": "Une erreur est survenue",
+  "Failed to fetch infrastructure resource": "Échec de la récupération des ressources d'infrastructure",
+  "An error occured": "Une erreur est survenue.",
   "Help": "Aide"
 }
