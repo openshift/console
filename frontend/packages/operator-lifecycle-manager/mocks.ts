@@ -494,10 +494,12 @@ const amqPackageManifest = {
       name: 'Red Hat',
     },
     packageName: 'amq-streams',
+    deprecation: { message: 'This package is deprecated' },
     channels: [
       {
         name: 'preview',
         currentCSV: 'amqstreams.v1.0.0.beta',
+        deprecation: { message: 'This channel is deprecated' },
         currentCSVDesc: {
           displayName: 'AMQ Streams',
           icon: [],
@@ -514,6 +516,15 @@ const amqPackageManifest = {
             categories: 'messaging,streaming',
           },
         },
+        entries: [
+          {
+            name: 'version TestOwnedResource',
+            version: '0.0.1',
+            deprecation: {
+              message: 'The version is deprecated',
+            },
+          },
+        ],
       },
     ],
     defaultChannel: '',

@@ -5,9 +5,11 @@ import {
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
 import { Modal } from '@patternfly/react-core';
-import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
+import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import store from '@console/internal/redux';
 import {
   operatorHubListPageProps,
   operatorHubTileViewPageProps,
@@ -194,13 +196,16 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
 });
 
 describe(OperatorHubItemDetails.displayName, () => {
-  let wrapper: ShallowWrapper<OperatorHubItemDetailsProps>;
-
-  beforeEach(() => {
-    wrapper = shallow(
-      <OperatorHubItemDetails updateChannel={''} updateVersion={''} {...operatorHubDetailsProps} />,
-    );
-  });
+  const wrapper: ReactWrapper<OperatorHubItemDetailsProps> = mount(
+    <OperatorHubItemDetails updateChannel={''} updateVersion={''} {...operatorHubDetailsProps} />,
+    {
+      wrappingComponent: ({ children }) => (
+        <MemoryRouter>
+          <Provider store={store}>{children}</Provider>
+        </MemoryRouter>
+      ),
+    },
+  );
 
   it('renders longDescription with a MarkdownView component', () => {
     const noMarkdown = wrapper.find(MarkdownView);
