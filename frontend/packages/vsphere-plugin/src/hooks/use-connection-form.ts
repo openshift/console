@@ -24,6 +24,15 @@ export const initialLoad = async (
   const dc = keyValues.datacenter || '';
   const ds = keyValues['default-datastore'] || '';
   const folder = keyValues.folder || '';
+
+  let vCenterCluster = '';
+  const resourcePoolPath = keyValues['resourcepool-path'] as string;
+  if (resourcePoolPath?.length) {
+    const paths = resourcePoolPath.split('/');
+    if (paths.length > 3) {
+      [, , , vCenterCluster] = paths;
+    }
+  }
   let username = '';
   let pwd = '';
 
@@ -55,7 +64,6 @@ export const initialLoad = async (
     }
   }
 
-  let vCenterCluster = '';
   try {
     const infrastructure = await k8sGet<Infrastructure>({
       model: infrastructureModel,
@@ -65,8 +73,17 @@ export const initialLoad = async (
     const domain = infrastructure?.spec?.platformSpec?.vsphere?.failureDomains?.find(
       (d) => d.server === server,
     );
-    const computeCluster = domain?.topology?.computeCluster?.split('/');
-    vCenterCluster = (computeCluster?.length && computeCluster[computeCluster.length - 1]) || '';
+    if (domain) {
+      const computeCluster = domain.topology?.computeCluster?.split('/');
+      let infraVCenterCluster = '';
+      if (computeCluster.length > 3) {
+        [, , , infraVCenterCluster] = computeCluster;
+      }
+
+      if (!vCenterCluster) {
+        vCenterCluster = infraVCenterCluster;
+      }
+    }
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Failed to fetch infrastructure resource', e);
