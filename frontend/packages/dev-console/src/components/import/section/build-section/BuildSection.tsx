@@ -30,7 +30,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     project: { name: namespace },
     build: { option: buildOption, env: buildEnv },
     image: { selected: selectedImage, tag: selectedTag },
-    import: { selectedStrategy, kNativeFuncLoaded: funcLoaded },
+    import: { selectedStrategy, knativeFuncLoaded: funcLoaded },
   } = values;
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
