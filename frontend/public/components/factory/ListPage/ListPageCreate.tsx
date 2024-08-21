@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Button } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
 import {
-  DropdownToggle as DropdownToggleDeprecated,
-  Dropdown as DropdownDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-} from '@patternfly/react-core/deprecated';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
+import { Link } from 'react-router-dom-v5-compat';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
@@ -66,32 +67,40 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
   onClick,
 }) => {
   const [isOpen, setOpen] = React.useState(false);
+
+  const listCreateDropdownItems = Object.keys(items).map((key) => {
+    return (
+      <DropdownItem
+        key={key}
+        data-test={`list-page-create-dropdown-item-${key}`}
+        onClick={() => onClick(key)}
+      >
+        {items[key]}
+      </DropdownItem>
+    );
+  });
+
   return (
     <CreateWithPermissions createAccessReview={createAccessReview}>
-      <DropdownDeprecated
-        position="right"
-        toggle={
-          <DropdownToggleDeprecated
-            onToggle={(_event, isExpanded: boolean) => setOpen(isExpanded)}
-            toggleIndicator={CaretDownIcon}
-            toggleVariant="primary"
+      <Dropdown
+        isOpen={isOpen}
+        onSelect={() => setOpen(false)}
+        onOpenChange={() => setOpen(!isOpen)}
+        popperProps={{ position: 'right' }}
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={() => setOpen(!isOpen)}
+            variant="primary"
+            isExpanded={isOpen}
+            data-test="item-create"
           >
             {children}
-          </DropdownToggleDeprecated>
-        }
-        dropdownItems={Object.keys(items).map((key) => (
-          <DropdownItemDeprecated
-            key={key}
-            data-test={`list-page-create-dropdown-item-${key}`}
-            component="button"
-            onClick={() => onClick(key)}
-          >
-            {items[key]}
-          </DropdownItemDeprecated>
-        ))}
-        isOpen={isOpen}
-        data-test="item-create"
-      />
+          </MenuToggle>
+        )}
+      >
+        <DropdownList>{listCreateDropdownItems}</DropdownList>
+      </Dropdown>
     </CreateWithPermissions>
   );
 };
