@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { configure, fireEvent, render, screen } from '@testing-library/react';
+import { configure, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import SecureRouteFields from '../SecureRouteFields';
 import { usePreferredRoutingOptions } from '../usePreferredRoutingOptions';
 
@@ -12,6 +12,19 @@ jest.mock('../usePreferredRoutingOptions', () => ({
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
+
+// FIXME Remove this code when jest is updated to at least 25.1.0 -- see https://github.com/jsdom/jsdom/issues/1555
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function (this: Element, selector: string) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let el: Element | null = this;
+    while (el) {
+      if (el.matches(selector)) return el;
+      el = el.parentElement;
+    }
+    return null;
+  };
+}
 
 const mockUsePreferredRoutingOptions = usePreferredRoutingOptions as jest.Mock;
 
@@ -35,7 +48,7 @@ describe('SecureRouteFields', () => {
     expect(inSecureTraffic.hasAttribute('disabled')).toBeTruthy();
   });
 
-  it('should not show Allow option in Insecure traffic dropdown if TLS termination is Passthrough', () => {
+  it('should not show Allow option in Insecure traffic dropdown if TLS termination is Passthrough', async () => {
     mockUsePreferredRoutingOptions.mockReturnValue([
       {
         secure: true,
@@ -48,12 +61,14 @@ describe('SecureRouteFields', () => {
     render(<SecureRouteFields />);
     const inSecureTraffic = screen.queryByTestId('insecure-traffic');
     fireEvent.click(inSecureTraffic);
-    expect(screen.queryByRole('option', { name: /Allow/i })).toBeNull();
-    expect(screen.queryByRole('option', { name: /None/i })).not.toBeNull();
-    expect(screen.queryByRole('option', { name: /Redirect/i })).not.toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByRole('option', { name: /Allow/i })).toBeNull();
+      expect(screen.queryByRole('option', { name: /None/i })).not.toBeNull();
+      expect(screen.queryByRole('option', { name: /Redirect/i })).not.toBeNull();
+    });
   });
 
-  it('should show Allow, None and  Redirect options in Insecure traffic dropdown if TLS termination is not Passthrough', () => {
+  it('should show Allow, None and  Redirect options in Insecure traffic dropdown if TLS termination is not Passthrough', async () => {
     mockUsePreferredRoutingOptions.mockReturnValue([
       {
         secure: true,
@@ -66,8 +81,10 @@ describe('SecureRouteFields', () => {
     render(<SecureRouteFields />);
     const inSecureTraffic = screen.queryByTestId('insecure-traffic');
     fireEvent.click(inSecureTraffic);
-    expect(screen.queryByRole('option', { name: /Allow/i })).not.toBeNull();
-    expect(screen.queryByRole('option', { name: /None/i })).not.toBeNull();
-    expect(screen.queryByRole('option', { name: /Redirect/i })).not.toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByRole('option', { name: /Allow/i })).not.toBeNull();
+      expect(screen.queryByRole('option', { name: /None/i })).not.toBeNull();
+      expect(screen.queryByRole('option', { name: /Redirect/i })).not.toBeNull();
+    });
   });
 });
