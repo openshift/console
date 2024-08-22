@@ -195,6 +195,7 @@ type Server struct {
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
 	UserSettingsLocation                string
+	AuthMetrics                         *auth.Metrics
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
