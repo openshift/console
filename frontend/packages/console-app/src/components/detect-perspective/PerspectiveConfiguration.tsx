@@ -5,11 +5,12 @@ import {
   ExpandableSection,
   CodeBlock,
   CodeBlockCode,
+  Select,
+  SelectOption,
+  SelectList,
+  MenuToggle,
+  MenuToggleElement,
 } from '@patternfly/react-core';
-import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-} from '@patternfly/react-core/deprecated';
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import {
@@ -154,25 +155,36 @@ const PerspectiveVisibilitySelect: React.FC<{
 
   return (
     <>
-      <SelectDeprecated
-        toggleId={toggleId}
-        disabled={disabled}
+      <Select
         isOpen={isOpen}
-        selections={selection}
-        onToggle={(_event, isExpanded) => setIsOpen(isExpanded)}
         onSelect={() => setIsOpen(false)}
-      >
-        {options.map((option) => (
-          <SelectOptionDeprecated
-            key={option.value}
-            value={option.value}
-            description={option.description}
-            onClick={() => onChange(option)}
+        selected={selection}
+        onOpenChange={(open) => setIsOpen(open)}
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            isFullWidth
+            id={toggleId}
+            isDisabled={disabled}
+            ref={toggleRef}
+            onClick={(open) => setIsOpen(open)}
           >
-            {option.title}
-          </SelectOptionDeprecated>
-        ))}
-      </SelectDeprecated>
+            {options.find((option) => option.isSelected)?.title}
+          </MenuToggle>
+        )}
+      >
+        <SelectList>
+          {options.map((option) => (
+            <SelectOption
+              key={option.value}
+              value={option.value}
+              description={option.description}
+              onClick={() => onChange(option)}
+            >
+              {option.title}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
       {selection === 'Custom' && value?.accessReview && (
         <ExpandableSection toggleText={t('console-app~Access review rules')}>
           <CodeBlock>
