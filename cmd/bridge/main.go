@@ -17,6 +17,7 @@ import (
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -291,6 +292,7 @@ func main() {
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 		Capabilities:                 capabilities,
+		AuthMetrics:                  auth.NewMetrics(),
 	}
 
 	completedAuthnOptions, err := authOptions.Complete()
