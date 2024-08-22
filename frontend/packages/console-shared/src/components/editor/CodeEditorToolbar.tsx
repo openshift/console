@@ -9,7 +9,6 @@ import { action } from 'typesafe-actions';
 import { useOLSConfig } from '../../hooks/ols-hook';
 import { isMac, ShortcutCommand } from '../shortcuts/Shortcut';
 import ShortcutsLink from './ShortcutsLink';
-import ThemeSwitcherLink from './ThemeSwitcherLink';
 
 import './CodeEditorToolbar.scss';
 
@@ -60,14 +59,6 @@ const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ showShortcuts, to
               {t('console-shared~Accessibility help')}
             </span>
           </div>
-        </div>
-        <div className="ocs-yaml-editor-toolbar__link pf-v5-l-flex">
-          <Divider
-            orientation={{
-              default: 'vertical',
-            }}
-          />
-          <ThemeSwitcherLink />
         </div>
         {showShortcuts && (
           <div className="ocs-yaml-editor-toolbar__link pf-v5-l-flex">
