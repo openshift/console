@@ -381,7 +381,59 @@ export const projectNameSpace = {
 export const createForm = {
   clickOnFormView: () => cy.get(formPO.configureVia.formView).click(),
   clickOnYAMLView: () => cy.get(formPO.configureVia.yamlView).click(),
-  clickCreate: () => cy.get(formPO.create).should('be.enabled').click(),
+  clickCreate: () => {
+    cy.get(formPO.create).should('be.enabled').click();
+    cy.request(
+      `api/kubernetes/apis/image.openshift.io/v1/namespaces/${Cypress.env(
+        'NAMESPACES',
+      )}/imagestreams?dryRun=All`,
+      { failOnStatusCode: false },
+    ).then((resp) => {
+      // expect(resp.status).toEqual(200);
+      cy.log(resp.status.toString());
+      cy.log(JSON.stringify(resp));
+    });
+    cy.request(
+      `api/kubernetes/apis/serving.knative.dev/v1/namespaces/${Cypress.env(
+        'NAMESPACES',
+      )}/services?dryRun=All`,
+      { failOnStatusCode: false },
+    ).then((resp) => {
+      // expect(resp.status).toEqual(200);
+      cy.log(resp.status.toString());
+      cy.log(JSON.stringify(resp));
+    });
+    cy.request(
+      `api/kubernetes/apis/image.openshift.io/v1/namespaces/${Cypress.env(
+        'NAMESPACES',
+      )}/imagestreams`,
+      { failOnStatusCode: false },
+    ).then((resp) => {
+      // expect(resp.status).toEqual(200);
+      cy.log(resp.status.toString());
+      cy.log(JSON.stringify(resp));
+    });
+    cy.request(
+      `api/kubernetes/apis/serving.knative.dev/v1/namespaces/${Cypress.env(
+        'NAMESPACES',
+      )}/imagestreams?dryRun=All`,
+      { failOnStatusCode: false },
+    ).then((resp) => {
+      // expect(resp.status).toEqual(200);
+      cy.log(resp.status.toString());
+      cy.log(JSON.stringify(resp));
+    });
+    cy.request(
+      `api/kubernetes/apis/serving.knative.dev/v1beta1/namespaces/${Cypress.env(
+        'NAMESPACES',
+      )}/domainmappings`,
+      { failOnStatusCode: false },
+    ).then((resp) => {
+      // expect(resp.status).toEqual(200);
+      cy.log(resp.status.toString());
+      cy.log(JSON.stringify(resp));
+    });
+  },
   clickCancel: () => cy.get(formPO.cancel).should('be.enabled').click(),
   clickSave: () => cy.get(formPO.save).should('be.enabled').click(),
   clickConfirm: () => cy.get(formPO.confirm).should('be.enabled').click(),
