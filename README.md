@@ -123,10 +123,10 @@ In order to update the `tectonic-console-builder` to a new version i.e. v27, fol
 2. Update the dependencies in Dockerfile.builder file i.e. v18.0.0.
 3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
    Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
-   To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo. 
-4. Lastly, update the mapping of `tectonic-console-builder` image tag in 
-   [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository. 
-   Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle. 
+   To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo.
+4. Lastly, update the mapping of `tectonic-console-builder` image tag in
+   [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository.
+   Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle.
    Optional: Request for the [rhel-8-base-nodejs-openshift-4.15](https://github.com/openshift-eng/ocp-build-data/pull/3775/files) nodebuilder update if it doesn't match the node version in `tectonic-console-builder`.
 
 #### CodeReady Containers
@@ -216,6 +216,8 @@ yarn run dev
 ```
 
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>. If you need to increase your watchers, it's common to see multiple errors beginning with `Error from chokidar`.
+
+Note:  ensure `yarn run dev` has finished its initial build before visiting http://localhost:9000, otherwise `./bin/bridge` will stop running.
 
 ### Unit Tests
 
