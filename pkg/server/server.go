@@ -593,6 +593,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	usageMetrics.MonitorUsers(internalProxiedK8SClient)
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
+
+	authMetrics := auth.NewMetrics()
+	prometheus.MustRegister(authMetrics.GetCollectors()...)
+
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
 		authHandler(func(w http.ResponseWriter, r *http.Request) {
 			promhttp.Handler().ServeHTTP(w, r)
