@@ -323,7 +323,7 @@ func (a *Authenticator) DeleteCookie(w http.ResponseWriter, r *http.Request) {
 
 // LoginFunc redirects to the OIDC provider for user login.
 func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
-	var randData [4]byte
+	var randData [16]byte
 	if _, err := io.ReadFull(rand.Reader, randData[:]); err != nil {
 		panic(err)
 	}
