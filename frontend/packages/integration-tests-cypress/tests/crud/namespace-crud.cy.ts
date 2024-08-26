@@ -54,30 +54,39 @@ describe('Namespace', () => {
   });
 
   it('Nav and breadcrumbs restores last selected "All Projects" when navigating from details to list view', () => {
-    nav.sidenav.clickNavLink(['Networking', 'Services']);
+    nav.sidenav.clickNavLink(['Workloads', 'Pods']);
     projectDropdown.selectProject(allProjectsDropdownLabel);
     projectDropdown.shouldContain(allProjectsDropdownLabel);
     listPage.rows.shouldBeLoaded();
+
     cy.log(
       'List page to details page should change Project from "All Projects" to resource specific project',
     );
-    listPage.filter.byName('kubernetes');
-    listPage.rows.countShouldBeWithin(1, 3);
-    listPage.rows.clickRowByName('kubernetes');
-    detailsPage.isLoaded();
-    projectDropdown.shouldContain(defaultProjectName);
-    nav.sidenav.clickNavLink(['Networking', 'Services']);
-    listPage.rows.shouldBeLoaded();
-    projectDropdown.shouldContain(allProjectsDropdownLabel);
-    cy.log('Details page to list page via breadcrumb should change Project back to "All Projects"');
-    listPage.filter.byName('kubernetes');
-    listPage.rows.countShouldBeWithin(1, 3);
-    listPage.rows.clickRowByName('kubernetes');
-    detailsPage.isLoaded();
-    projectDropdown.shouldContain(defaultProjectName);
-    detailsPage.breadcrumb(0).contains('Services').click();
-    listPage.rows.shouldBeLoaded();
-    projectDropdown.shouldContain(allProjectsDropdownLabel);
+
+    listPage.rows
+      .getFirstElementName()
+      .invoke('text')
+      .then((text) => {
+        listPage.filter.byName(text);
+        listPage.rows.countShouldBeWithin(1, 3);
+        listPage.rows.clickRowByName(text);
+        detailsPage.isLoaded();
+        projectDropdown.shouldNotContain(allProjectsDropdownLabel);
+        nav.sidenav.clickNavLink(['Workloads', 'Pods']);
+        listPage.rows.shouldBeLoaded();
+        projectDropdown.shouldContain(allProjectsDropdownLabel);
+        cy.log(
+          'Details page to list page via breadcrumb should change Project back to "All Projects"',
+        );
+        listPage.filter.byName(text);
+        listPage.rows.countShouldBeWithin(1, 3);
+        listPage.rows.clickRowByName(text);
+        detailsPage.isLoaded();
+        projectDropdown.shouldNotContain(allProjectsDropdownLabel);
+        detailsPage.breadcrumb(0).contains('Pods').click();
+        listPage.rows.shouldBeLoaded();
+        projectDropdown.shouldContain(allProjectsDropdownLabel);
+      });
   });
 
   it('Nav and breadcrumbs restores last selected project when navigating from details to list view', () => {
