@@ -292,7 +292,6 @@ func main() {
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 		Capabilities:                 capabilities,
-		AuthMetrics:                  auth.NewMetrics(),
 	}
 
 	completedAuthnOptions, err := authOptions.Complete()
@@ -578,6 +577,8 @@ func main() {
 		internalProxiedK8SRT,
 		knative.ChannelFilter,
 	)
+
+	srv.AuthMetrics = auth.NewMetrics(srv.InternalProxiedK8SClientConfig)
 
 	caCertFilePath := *fCAFile
 	if *fK8sMode == "in-cluster" {
