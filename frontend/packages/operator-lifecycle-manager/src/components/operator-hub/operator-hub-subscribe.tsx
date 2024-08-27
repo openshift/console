@@ -948,7 +948,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               {tokenizedAuth === 'GCP' && (
                 <div className="form-group">
                   <InputField
-                    label={t('olm~GCP Pool ID')}
+                    label={t('olm~GCP Project Number')}
                     helpText={t(
                       'olm~The GCP Project Number required for the operator to access the cloud API.',
                     )}
