@@ -48,6 +48,7 @@ type Metrics struct {
 	loginFailures        *prometheus.CounterVec
 	logoutRequests       *prometheus.CounterVec
 	tokenRefreshRequests *prometheus.CounterVec
+	proxyConfig          *rest.Config
 }
 
 func (m *Metrics) GetCollectors() []prometheus.Collector {
@@ -138,7 +139,7 @@ func (m *Metrics) TokenRefreshRequest(handled TokenRefreshHandledType) {
 }
 
 func (m *Metrics) canGetNamespaces(ctx context.Context, config *rest.Config) (bool, error) {
-	client, err := kubernetes.NewForConfig(config)
+	client, err := kubernetes.NewForConfig(m.proxyConfig)
 	if err != nil {
 		klog.Errorf("Error in auth.metrics canGetNamespaces: %v\n", err)
 		return false, err
@@ -164,7 +165,7 @@ func (m *Metrics) canGetNamespaces(ctx context.Context, config *rest.Config) (bo
 }
 
 func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, error) {
-	client, err := dynamic.NewForConfig(config)
+	client, err := dynamic.NewForConfig(m.proxyConfig)
 	if err != nil {
 		klog.Errorf("Error in auth.metrics isKubeAdmin: %v\n", err)
 		return false, err
@@ -179,8 +180,9 @@ func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, e
 	return isKubeAdmin, nil
 }
 
-func NewMetrics() *Metrics {
+func NewMetrics(proxyConfig *rest.Config) *Metrics {
 	m := new(Metrics)
+	m.proxyConfig = proxyConfig
 
 	m.loginRequests = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: "console",
