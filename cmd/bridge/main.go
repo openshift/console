@@ -578,7 +578,7 @@ func main() {
 		knative.ChannelFilter,
 	)
 
-	srv.AuthMetrics = auth.NewMetrics(srv.InternalProxiedK8SClientConfig)
+	srv.AuthMetrics = auth.NewMetrics(srv.InternalProxiedK8SClientConfig, srv.K8sProxyConfig)
 
 	caCertFilePath := *fCAFile
 	if *fK8sMode == "in-cluster" {
