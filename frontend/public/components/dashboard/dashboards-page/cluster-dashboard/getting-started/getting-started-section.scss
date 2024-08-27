@@ -2,11 +2,4 @@
   // Similar padding to dashboard card grid gap (.co-dashboard-grid)
   // See also packages/console-shared/src/components/dashboard/dashboard.scss
   padding-bottom: 1rem;
-
-  .ocs-getting-started-grid__header {
-    // Use same font-size as all other cards on the cluster dashboard
-    .pf-v5-c-title {
-      font-size: 1rem;
-    }
-  }
 }
