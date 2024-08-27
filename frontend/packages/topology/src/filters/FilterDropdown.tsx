@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { Switch } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectGroup as SelectGroupDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-  SelectOption as SelectOptionDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Switch,
+  Divider,
+  Select,
+  SelectGroup,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
@@ -86,54 +89,64 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
-            <span className="pf-v5-c-select__menu-group-title">{t('topology~Expand')}</span>
+            <span className="pf-v5-c-menu__group-title">{t('topology~Expand')}</span>
             <Switch
               aria-label={t('topology~Collapse groups')}
               isChecked={groupsExpanded}
               onChange={onGroupsExpandedChange}
             />
           </span>
-          <SelectGroupDeprecated className="odc-topology-filter-dropdown__expand-groups-label">
+          <SelectGroup className="odc-topology-filter-dropdown__expand-groups-label" label={<></>}>
             {expandFilters.map((filter) => (
-              <SelectOptionDeprecated
+              <SelectOption
                 key={filter.id}
                 value={filter.id}
                 isDisabled={!groupsExpanded}
-                isChecked={filter.value}
+                isSelected={filter.value}
+                hasCheckbox
               >
                 {filter.labelKey ? t(filter.labelKey) : filter.label}
-              </SelectOptionDeprecated>
+              </SelectOption>
             ))}
-          </SelectGroupDeprecated>
+          </SelectGroup>
         </div>
       ) : null}
       {viewType === TopologyViewType.graph && showFilters.length ? (
-        <div className="odc-topology-filter-dropdown__group">
-          <SelectGroupDeprecated label={t('topology~Show')}>
+        <div>
+          <Divider />
+          <SelectGroup label={t('topology~Show')}>
             {showFilters.map((filter) => (
-              <SelectOptionDeprecated key={filter.id} value={filter.id} isChecked={filter.value}>
+              <SelectOption key={filter.id} value={filter.id} isSelected={filter.value} hasCheckbox>
                 {filter.labelKey ? t(filter.labelKey) : filter.label}
-              </SelectOptionDeprecated>
+              </SelectOption>
             ))}
-          </SelectGroupDeprecated>
+          </SelectGroup>
         </div>
       ) : null}
     </div>
   );
 
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle ref={toggleRef} onClick={() => setIsOpen(!isOpen)} isExpanded={isOpen}>
+      {t('topology~Display options')}
+    </MenuToggle>
+  );
+
   return (
-    <SelectDeprecated
+    <Select
+      toggle={toggle}
       className="odc-topology-filter-dropdown__select"
-      variant={SelectVariantDeprecated.checkbox}
       customContent={selectContent}
       isDisabled={isSelectDisabled}
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
-      placeholderText={t('topology~Display options')}
       isGrouped
       isCheckboxSelectionBadgeHidden
-    />
+      onOpenChange={(open) => setIsOpen(open)}
+    >
+      <SelectList>{selectContent}</SelectList>
+    </Select>
   );
 };
 

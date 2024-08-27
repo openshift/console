@@ -5,8 +5,10 @@
     display: flex;
     align-items: center;
 
-    .pf-v5-c-select__menu-group-title {
+    .pf-v5-c-menu__group-title {
       flex: 1;
+      padding-block-start: var(--pf-v5-global--spacer--sm);
+      padding-block-end: var(--pf-v5-global--spacer--sm);
     }
 
     .pf-v5-c-switch {
@@ -15,16 +17,6 @@
 
     .pf-m-disabled {
       color: var(--pf-v5-c-check__label--disabled--Color);
-    }
-  }
-
-  &__group {
-    &:not(:first-of-type) {
-      margin-top: var(--pf-v5-global--spacer--sm);
-      border-top: 1px solid var(--pf-v5-global--BorderColor--300);
-    }
-    .pf-v5-c-check__input {
-      --pf-v5-c-check__input--MarginTop: 0;
     }
   }
 
