@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { FormGroup, Title } from '@patternfly/react-core';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-} from '@patternfly/react-core/deprecated';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+  FormGroup,
+  Title,
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { Edge, Node } from '@patternfly/react-topology';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { TFunction } from 'i18next';
@@ -67,24 +69,17 @@ const MoveConnectionForm: React.FC<
   const isDirty = values.target.getId() !== edge.getTarget().getId();
   setTranslator(t);
 
-  const onToggle = () => {
-    setOpen(!isOpen);
-  };
-
-  const dropDownNodeItem = (node: Node) => {
-    return (
-      <DropdownItemDeprecated
-        key={node.getId()}
-        component="button"
-        onClick={() => {
-          values.target = node;
-          setOpen(false);
-        }}
-      >
-        {nodeItem(node)}
-      </DropdownItemDeprecated>
-    );
-  };
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      id="toggle-id"
+      ref={toggleRef}
+      onClick={() => setOpen(!isOpen)}
+      isExpanded={isOpen}
+      isFullWidth
+    >
+      {nodeItem(values.target)}
+    </MenuToggle>
+  );
 
   const sourceLabel = edge.getSource().getLabel();
   return (
@@ -98,21 +93,31 @@ const MoveConnectionForm: React.FC<
         </Title>
         <div className="pf-v5-c-form">
           <FormGroup fieldId="target-node" label="Target">
-            <DropdownDeprecated
+            <Select
               id="target-node-dropdown"
               className="dropdown--full-width"
-              toggle={
-                <DropdownToggleDeprecated
-                  id="toggle-id"
-                  onToggle={onToggle}
-                  toggleIndicator={CaretDownIcon}
-                >
-                  {nodeItem(values.target)}
-                </DropdownToggleDeprecated>
-              }
+              onSelect={(_, value: Node) => {
+                if (value) {
+                  values.target = value;
+                }
+                setOpen(false);
+              }}
+              toggle={toggle}
               isOpen={isOpen}
-              dropdownItems={availableTargets.map(dropDownNodeItem)}
-            />
+              onOpenChange={(open) => setOpen(open)}
+            >
+              <SelectList>
+                {availableTargets.map((node) => (
+                  <SelectOption
+                    key={node.getId()}
+                    value={node}
+                    isSelected={values.target.getId() === node.getId()}
+                  >
+                    {nodeItem(node)}
+                  </SelectOption>
+                ))}
+              </SelectList>
+            </Select>
           </FormGroup>
         </div>
       </ModalBody>
