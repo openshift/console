@@ -24,13 +24,6 @@ describe('Localization', () => {
     });
   });
 
-  // temporarily disable until https://github.com/openshift/networking-console-plugin/issues/46 is resolved
-  xit('pseudolocalizes navigation', () => {
-    cy.log('test navigation');
-    cy.visitWithDefaultLang(url);
-    cy.byTestID('nav').isPseudoLocalized();
-  });
-
   it('pseudolocalizes activity card', () => {
     cy.log('test activity card components');
     cy.visitWithDefaultLang(url);
