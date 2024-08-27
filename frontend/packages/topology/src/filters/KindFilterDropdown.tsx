@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Button,
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { getTitleForNodeKind } from '@console/shared';
@@ -77,36 +79,40 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
         </Button>
       </span>
       {kindFilters.map((filter) => (
-        <SelectOptionDeprecated
+        <SelectOption
           key={filter.id}
           value={filter.id}
-          isChecked={filter.value}
+          isSelected={filter.value}
           data-test={filter.label}
+          hasCheckbox
         >
           <ResourceIcon kind={filter.id} />
           {filter.label} ({supportedKinds[filter.id]})
-        </SelectOptionDeprecated>
+        </SelectOption>
       ))}
     </div>
   );
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle ref={toggleRef} onClick={() => setIsOpen(!isOpen)} isExpanded={isOpen} isDisabled={isDisabled}>
+      {t('topology~Filter by resource')}
+      {selectedFilterCount ? (
+        <span className="odc-kind-filter-dropdown__kind-count">{selectedFilterCount}</span>
+      ) : null}
+    </MenuToggle>
+  );
+
   return (
-    <SelectDeprecated
-      variant={SelectVariantDeprecated.checkbox}
+    <Select
+      toggle={toggle}
       onToggle={onToggle}
-      customContent={selectContent}
       isOpen={isOpen}
-      isDisabled={isDisabled}
       onSelect={onSelect}
-      placeholderText={
-        <span>
-          {t('topology~Filter by resource')}
-          {selectedFilterCount ? (
-            <span className="odc-kind-filter-dropdown__kind-count">{selectedFilterCount}</span>
-          ) : null}
-        </span>
-      }
       isCheckboxSelectionBadgeHidden
-    />
+      onOpenChange={(open) => setIsOpen(open)}
+    >
+      <SelectList>{selectContent}</SelectList>
+    </Select>
   );
 };
 
