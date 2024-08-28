@@ -122,10 +122,10 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 
 	ctx := context.TODO()
 	configWithBearerToken := &rest.Config{
-		Host:            k8sConfig.Host,
-		Transport:       &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
-		BearerTokenFile: ls.AccessToken(),
-		Timeout:         30 * time.Second,
+		Host:      k8sConfig.Host,
+		Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
+		// BearerTokenFile: ls.AccessToken(),
+		Timeout: 30 * time.Second,
 	}
 
 	// anonClientConfig := &rest.Config{
