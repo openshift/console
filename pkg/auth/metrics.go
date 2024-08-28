@@ -2,10 +2,13 @@ package auth
 
 import (
 	"context"
+	"crypto/tls"
+	"net/http"
 	"time"
 
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
+	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	"github.com/prometheus/client_golang/prometheus"
 	authv1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -44,13 +47,13 @@ const (
 )
 
 type Metrics struct {
-	loginRequests        prometheus.Counter
-	loginSuccessful      *prometheus.CounterVec
-	loginFailures        *prometheus.CounterVec
-	logoutRequests       *prometheus.CounterVec
-	tokenRefreshRequests *prometheus.CounterVec
-	// internalproxyClientConfig *rest.Config
-	// K8sProxyConfig            *proxy.Config
+	loginRequests             prometheus.Counter
+	loginSuccessful           *prometheus.CounterVec
+	loginFailures             *prometheus.CounterVec
+	logoutRequests            *prometheus.CounterVec
+	tokenRefreshRequests      *prometheus.CounterVec
+	internalproxyClientConfig *rest.Config
+	K8sProxyConfig            *proxy.Config
 }
 
 func (m *Metrics) GetCollectors() []prometheus.Collector {
@@ -108,18 +111,21 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 	// 	}, nil
 	// }
 
-	tlsConfig := rest.CopyConfig(k8sConfig).TLSClientConfig
-	tlsConfig.Insecure = true
+	// tlsConfig := rest.CopyConfig(k8sConfig).TLSClientConfig
+	// tlsConfig.Insecure = true
 
 	klog.Infof("auth.Metrics loginSuccessfulSync - k8sConfig: %s\n", k8sConfig)
+
+	serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
+		InsecureSkipVerify: true,
+	})
 
 	ctx := context.TODO()
 	configWithBearerToken := &rest.Config{
 		Host:            k8sConfig.Host,
-		Transport:       k8sConfig.Transport,
-		BearerToken:     ls.AccessToken(),
+		Transport:       &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
+		BearerTokenFile: ls.AccessToken(),
 		Timeout:         30 * time.Second,
-		TLSClientConfig: tlsConfig,
 	}
 
 	// anonClientConfig := &rest.Config{
@@ -221,8 +227,8 @@ func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, e
 
 func NewMetrics(internalproxyClientConfig *rest.Config, K8sProxyConfig *proxy.Config) *Metrics {
 	m := new(Metrics)
-	// m.internalproxyClientConfig = internalproxyClientConfig
-	// m.K8sProxyConfig = K8sProxyConfig
+	m.internalproxyClientConfig = internalproxyClientConfig
+	m.K8sProxyConfig = K8sProxyConfig
 
 	m.loginRequests = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: "console",
