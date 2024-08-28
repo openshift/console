@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"time"
 
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
@@ -43,13 +44,13 @@ const (
 )
 
 type Metrics struct {
-	loginRequests             prometheus.Counter
-	loginSuccessful           *prometheus.CounterVec
-	loginFailures             *prometheus.CounterVec
-	logoutRequests            *prometheus.CounterVec
-	tokenRefreshRequests      *prometheus.CounterVec
-	internalproxyClientConfig *rest.Config
-	K8sProxyConfig            *proxy.Config
+	loginRequests        prometheus.Counter
+	loginSuccessful      *prometheus.CounterVec
+	loginFailures        *prometheus.CounterVec
+	logoutRequests       *prometheus.CounterVec
+	tokenRefreshRequests *prometheus.CounterVec
+	// internalproxyClientConfig *rest.Config
+	// K8sProxyConfig            *proxy.Config
 }
 
 func (m *Metrics) GetCollectors() []prometheus.Collector {
@@ -81,30 +82,30 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 		return
 	}
 
-	anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(m.internalproxyClientConfig))
-	if err != nil {
-		klog.Errorf("Error in auth.metrics loginSuccessfulSync: %v\n", err)
-		return
-	}
-
-	ctx := context.TODO()
-	// configWithBearerToken := &rest.Config{
-	// 	Host:            "https://" + k8sConfig.Host,
-	// 	Transport:       k8sConfig.Transport,
-	// 	BearerTokenFile: ls.AccessToken(),
-	// 	Timeout:         30 * time.Second,
+	// anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(m.internalproxyClientConfig))
+	// if err != nil {
+	// 	klog.Errorf("Error in auth.metrics loginSuccessfulSync: %v\n", err)
+	// 	return
 	// }
 
-	anonClientConfig := &rest.Config{
-		Host:      m.K8sProxyConfig.Endpoint.String(),
-		Transport: anonymousInternalProxiedK8SRT,
+	ctx := context.TODO()
+	configWithBearerToken := &rest.Config{
+		Host:            k8sConfig.Host,
+		Transport:       k8sConfig.Transport,
+		BearerTokenFile: ls.AccessToken(),
+		Timeout:         30 * time.Second,
 	}
+
+	// anonClientConfig := &rest.Config{
+	// 	Host:      m.K8sProxyConfig.Endpoint.String(),
+	// 	Transport: anonymousInternalProxiedK8SRT,
+	// }
 
 	role := UnknownLoginRole
 
-	if isKubeAdmin, err := m.isKubeAdmin(ctx, anonClientConfig); isKubeAdmin && err == nil {
+	if isKubeAdmin, err := m.isKubeAdmin(ctx, configWithBearerToken); isKubeAdmin && err == nil {
 		role = KubeadminLoginRole
-	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, anonClientConfig); err == nil {
+	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, configWithBearerToken); err == nil {
 		if canGetNamespaces {
 			role = ClusterAdminLoginRole
 		} else {
@@ -194,8 +195,8 @@ func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, e
 
 func NewMetrics(internalproxyClientConfig *rest.Config, K8sProxyConfig *proxy.Config) *Metrics {
 	m := new(Metrics)
-	m.internalproxyClientConfig = internalproxyClientConfig
-	m.K8sProxyConfig = K8sProxyConfig
+	// m.internalproxyClientConfig = internalproxyClientConfig
+	// m.K8sProxyConfig = K8sProxyConfig
 
 	m.loginRequests = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: "console",
