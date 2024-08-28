@@ -94,7 +94,12 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   );
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={() => setIsOpen(!isOpen)} isExpanded={isOpen} isDisabled={isDisabled}>
+    <MenuToggle
+      ref={toggleRef}
+      onClick={() => setIsOpen(!isOpen)}
+      isExpanded={isOpen}
+      isDisabled={isDisabled}
+    >
       {t('topology~Filter by resource')}
       {selectedFilterCount ? (
         <span className="odc-kind-filter-dropdown__kind-count">{selectedFilterCount}</span>
@@ -108,7 +113,6 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
-      isCheckboxSelectionBadgeHidden
       onOpenChange={(open) => setIsOpen(open)}
     >
       <SelectList>{selectContent}</SelectList>
