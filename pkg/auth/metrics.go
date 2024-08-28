@@ -88,12 +88,38 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 	// 	return
 	// }
 
+	// func (m *Metrics) getConfig(token string) (*rest.Config, error) {
+	// 	var tlsClientConfig rest.TLSClientConfig
+	// 	if m.TLSClientConfig.InsecureSkipVerify {
+	// 		// off-cluster mode
+	// 		tlsClientConfig.Insecure = true
+	// 	} else {
+	// 		inCluster, err := rest.InClusterConfig()
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		tlsClientConfig = inCluster.TLSClientConfig
+	// 	}
+
+	// 	return &rest.Config{
+	// 		Host:            m.ClusterEndpoint.Host,
+	// 		TLSClientConfig: tlsClientConfig,
+	// 		BearerToken:     token,
+	// 	}, nil
+	// }
+
+	tlsConfig := rest.CopyConfig(k8sConfig).TLSClientConfig
+	tlsConfig.Insecure = true
+
+	klog.Infof("auth.Metrics loginSuccessfulSync - k8sConfig: %s\n", k8sConfig)
+
 	ctx := context.TODO()
 	configWithBearerToken := &rest.Config{
-		Host:        k8sConfig.Host,
-		Transport:   k8sConfig.Transport,
-		BearerToken: ls.AccessToken(),
-		Timeout:     30 * time.Second,
+		Host:            k8sConfig.Host,
+		Transport:       k8sConfig.Transport,
+		BearerToken:     ls.AccessToken(),
+		Timeout:         30 * time.Second,
+		TLSClientConfig: tlsConfig,
 	}
 
 	// anonClientConfig := &rest.Config{
