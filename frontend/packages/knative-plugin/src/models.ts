@@ -155,6 +155,24 @@ export const EventingBrokerModel: K8sKind = {
   color: knativeEventingColor.value,
 };
 
+export const EventingEventTypeModel: K8sKind = {
+  apiGroup: KNATIVE_EVENTING_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'EventType',
+  label: 'Event',
+  // t('knative-plugin~EventType')
+  labelKey: 'knative-plugin~EventType',
+  labelPlural: 'Events',
+  // t('knative-plugin~EventTypes')
+  labelPluralKey: 'knative-plugin~EventTypes',
+  plural: 'eventtypes',
+  id: 'eventtype',
+  abbr: 'E',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
 export const EventingTriggerModel: K8sKind = {
   apiGroup: KNATIVE_EVENTING_APIGROUP,
   apiVersion,
