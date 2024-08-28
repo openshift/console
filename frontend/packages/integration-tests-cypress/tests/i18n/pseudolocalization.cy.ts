@@ -16,11 +16,11 @@ describe('Localization', () => {
     cy.log('test masthead');
     cy.visitWithDefaultLang(url);
     masthead.clickMastheadLink('help-dropdown-toggle');
-    cy.byTestID('help-dropdown-toggle').within(() => {
+    cy.byTestID('help-dropdown').within(() => {
       // wait for both console help menu items and additionalHelpActions items to load
-      cy.get('section').should('have.length', 2);
+      cy.get('ul[role="menu"]').should('have.length', 2);
       // Test that all links are translated
-      cy.get('section [role="menuitem"]').isPseudoLocalized();
+      cy.get('ul[role="menu"] [role="menuitem"]').isPseudoLocalized();
     });
   });
 

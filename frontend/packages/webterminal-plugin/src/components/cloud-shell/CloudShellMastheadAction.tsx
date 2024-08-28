@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Split, SplitItem } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -31,19 +32,22 @@ const ClouldShellMastheadAction: React.FC<Props> = ({ onClick, className, open }
       data-tour-id="tour-cloud-shell-button"
       data-quickstart-id="qs-masthead-cloudshell"
     >
-      {t('webterminal-plugin~OpenShift command line')}
-      {open ? (
-        <span
-          style={{
-            marginLeft: 'auto',
-            color: 'var(--pf-v5-global--active-color--100)',
-            fontSize: 'var(--pf-v5-global--FontSize--xs)',
-            paddingLeft: 'var(--pf-v5-global--spacer--md)',
-          }}
-        >
-          <CheckIcon />
-        </span>
-      ) : null}
+      <Split className="pf-v5-u-w-100">
+        <SplitItem isFilled>{t('webterminal-plugin~OpenShift command line')}</SplitItem>
+        {open ? (
+          <SplitItem>
+            <span
+              style={{
+                color: 'var(--pf-v5-global--active-color--100)',
+                fontSize: 'var(--pf-v5-global--FontSize--xs)',
+                paddingLeft: 'var(--pf-v5-global--spacer--md)',
+              }}
+            >
+              <CheckIcon />
+            </span>
+          </SplitItem>
+        ) : null}
+      </Split>
     </button>
   );
 };
