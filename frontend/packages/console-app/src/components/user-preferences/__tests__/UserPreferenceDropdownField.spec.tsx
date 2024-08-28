@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select as SelectDeprecated } from '@patternfly/react-core/deprecated';
+import { Select, SelectProps } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
 import { useUserSettings } from '@console/shared';
@@ -31,14 +31,14 @@ describe('UserPreferenceDropdownField', () => {
   it('should render skeleton if user preference have not loaded', () => {
     mockUserSettings.mockReturnValue(['', () => {}, false]);
     wrapper = shallow(<UserPreferenceDropdownField {...props} />);
-    expect(wrapper.find('[data-test="dropdown skeleton id"]').exists()).toBeTruthy();
+    expect(wrapper.find('[data-test="select skeleton id"]').exists()).toBeTruthy();
   });
 
   it('should render select with selected value corresponding to user preference if it has loaded and is defined', () => {
     mockUserSettings.mockReturnValue(['value', () => {}, true]);
     wrapper = shallow(<UserPreferenceDropdownField {...props} />);
-    expect(wrapper.find('[data-test="dropdown id"]').exists()).toBeTruthy();
-    expect(wrapper.find(SelectDeprecated).props().selections).toBe('label');
+    expect(wrapper.find('[data-test="select id"]').exists()).toBeTruthy();
+    expect((wrapper.find(Select).props() as SelectProps).selected).toBe('label');
   });
 
   it('should render select with selected value corresponding to defaultValue if user preference has loaded and is undefined', () => {
@@ -47,7 +47,7 @@ describe('UserPreferenceDropdownField', () => {
       return [val, setVal, true];
     });
     wrapper = shallow(<UserPreferenceDropdownField {...props} defaultValue="#LATEST#" />);
-    expect(wrapper.find('[data-test="dropdown id"]').exists()).toBeTruthy();
-    expect(wrapper.find(SelectDeprecated).props().selections).toBe('Last viewed');
+    expect(wrapper.find('[data-test="select id"]').exists()).toBeTruthy();
+    expect((wrapper.find(Select).props() as SelectProps).selected).toBe('Last viewed');
   });
 });

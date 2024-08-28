@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { Skeleton } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  MenuToggle,
+  MenuToggleElement,
+  Skeleton,
+  Select,
+  SelectList,
+  SelectOption,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UserPreferenceDropdownField as DropdownFieldType } from '@console/dynamic-plugin-sdk/src';
 import { useTelemetry, useUserSettings } from '@console/shared';
@@ -29,17 +31,19 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
     setCurrentUserPreferenceValue,
     currentUserPreferenceValueLoaded,
   ] = useUserSettings<string>(userSettingsKey);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   const selectOptions: JSX.Element[] = React.useMemo(
     () =>
       options.map((dropdownOption, index) => {
         const key = `${dropdownOption.label}${index}`;
         return (
-          <SelectOptionDeprecated
+          <SelectOption
             key={key}
             value={dropdownOption.label}
             description={dropdownOption?.description}
-          />
+          >
+            {dropdownOption.label}
+          </SelectOption>
         );
       }),
     [options],
@@ -62,11 +66,13 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
     options.find((option) => option.label === searchLabel)?.value;
   const getDropdownLabelFromValue = (searchValue: string): string =>
     options.find((option) => option.value === searchValue)?.label;
-  const onToggle = (_event, isOpen: boolean) => setDropdownOpen(isOpen);
+
+  const selected = getDropdownLabelFromValue(currentUserPreferenceValue);
+
   const onSelect = (_, selection) => {
     const selectedValue = getDropdownValueFromLabel(selection);
     selectedValue !== currentUserPreferenceValue && setCurrentUserPreferenceValue(selectedValue);
-    setDropdownOpen(false);
+    setIsOpen(false);
     fireTelemetryEvent('User Preference Changed', {
       property: userSettingsKey,
       value: selectedValue,
@@ -78,21 +84,23 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
       {description && (
         <div className="co-help-text co-user-preference-field--description">{description}</div>
       )}
-      <SelectDeprecated
-        toggleId={id}
-        variant={SelectVariantDeprecated.single}
-        isOpen={dropdownOpen}
-        selections={getDropdownLabelFromValue(currentUserPreferenceValue)}
-        onToggle={onToggle}
+      <Select
+        selected={selected}
+        onOpenChange={(open) => setIsOpen(open)}
+        isOpen={isOpen}
         onSelect={onSelect}
-        placeholderText={t('console-app~Select an option')}
-        data-test={`dropdown ${id}`}
+        data-test={`select ${id}`}
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle isFullWidth ref={toggleRef} onClick={(open) => setIsOpen(open)}>
+            {selected || t('console-app~Select an option')}
+          </MenuToggle>
+        )}
       >
-        {selectOptions}
-      </SelectDeprecated>
+        <SelectList>{selectOptions}</SelectList>
+      </Select>
     </>
   ) : (
-    <Skeleton height="30px" width="100%" data-test={`dropdown skeleton ${id}`} />
+    <Skeleton height="30px" width="100%" data-test={`select skeleton ${id}`} />
   );
 };
 export default UserPreferenceDropdownField;
