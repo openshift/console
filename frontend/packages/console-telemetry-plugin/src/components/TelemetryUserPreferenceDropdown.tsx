@@ -1,10 +1,15 @@
 import * as React from 'react';
-import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
@@ -43,33 +48,49 @@ const TelemetryAnalyticsSelect: React.FC<{
   ];
   const [isOpen, setIsOpen] = React.useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
+
+  const toggle = (toggleRef: React.RefObject<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={() => setIsOpen(!isOpen)}
+      isDisabled={disabled}
+      isFullWidth
+      id="telemetry"
+    >
+      {selection
+        ? options.find((option) => option.value === selection)?.title
+        : t('console-telemetry-plugin~Select option')}
+    </MenuToggle>
+  );
+
   return (
-    <>
-      <SelectDeprecated
-        id="telemetry"
-        variant={SelectVariantDeprecated.single}
-        isOpen={isOpen}
-        selections={selection}
-        toggleId="telemetry"
-        onToggle={(_event, isExpanded) => setIsOpen(isExpanded)}
-        onSelect={() => setIsOpen(false)}
-        placeholderText={t('console-telemetry-plugin~Select option')}
-        isDisabled={disabled}
-        aria-label={t('console-telemetry-plugin~Select option')}
-        maxHeight={300}
-      >
+    <Select
+      toggle={toggle}
+      isOpen={isOpen}
+      toggleId="telemetry"
+      onSelect={(_, selectedValue?: TelemetryAnalyticsSelectOptions) => {
+        if (selectedValue) {
+          onChange(selectedValue);
+        }
+        setIsOpen(false);
+      }}
+      aria-label={t('console-telemetry-plugin~Select option')}
+      maxHeight={300}
+      onOpenChange={(open) => setIsOpen(open)}
+    >
+      <SelectList>
         {options.map((option) => (
-          <SelectOptionDeprecated
+          <SelectOption
             key={option.value}
-            value={option.value}
+            value={option}
             description={option.description}
-            onClick={() => onChange(option)}
+            isSelected={option.isSelected}
           >
             {option.title}
-          </SelectOptionDeprecated>
+          </SelectOption>
         ))}
-      </SelectDeprecated>
-    </>
+      </SelectList>
+    </Select>
   );
 };
 
