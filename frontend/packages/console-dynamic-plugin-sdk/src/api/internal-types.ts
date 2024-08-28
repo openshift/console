@@ -111,7 +111,6 @@ export enum ByteDataTypes {
 
 export type UtilizationItemProps = {
   title: string;
-  titleHelpComponent?: React.ComponentType;
   utilization?: PrometheusResponse;
   limit?: PrometheusResponse;
   requested?: PrometheusResponse;
@@ -124,8 +123,6 @@ export type UtilizationItemProps = {
   byteDataType?: ByteDataTypes;
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
   setLimitReqState?: (state: { limit: LIMIT_STATE; requested: LIMIT_STATE }) => void;
-  warningThreashold?: number;
-  errorThreashold?: number;
 };
 
 type EventInvolvedObject = {

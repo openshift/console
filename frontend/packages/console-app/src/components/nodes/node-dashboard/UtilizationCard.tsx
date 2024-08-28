@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import NodeMemoryOvercommitPopover from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/NodeMemoryOvercommitPopover';
 import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,
@@ -11,9 +10,7 @@ import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   humanizeNumber,
-  humanizePercentage,
 } from '@console/internal/components/utils';
-import useClusterHasVMs from '@console/internal/components/utils/useClusterHasVMs';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -38,7 +35,6 @@ const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const hasVMs = useClusterHasVMs();
   const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
 
   const nodeName = obj.metadata.name;
@@ -91,16 +87,6 @@ const UtilizationCard: React.FC = () => {
             TopConsumerPopover={MemoryPopover}
             setLimitReqState={setMemoryLimit}
           />
-          {hasVMs && (
-            <PrometheusUtilizationItem
-              title={t('public~Node memory overcommit')}
-              titleHelpComponent={NodeMemoryOvercommitPopover}
-              utilizationQuery={queries[NodeQueries.NODE_MEMORY_OVERCOMMIT]}
-              warningThreashold={95}
-              errorThreashold={105}
-              humanizeValue={humanizePercentage}
-            />
-          )}
           <PrometheusUtilizationItem
             title={t('console-app~Filesystem')}
             humanizeValue={humanizeBinaryBytes}
