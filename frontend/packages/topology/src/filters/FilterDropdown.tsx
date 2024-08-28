@@ -127,7 +127,12 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   );
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={() => setIsOpen(!isOpen)} isExpanded={isOpen}>
+    <MenuToggle
+      ref={toggleRef}
+      onClick={() => setIsOpen(!isOpen)}
+      isExpanded={isOpen}
+      isDisabled={isSelectDisabled}
+    >
       {t('topology~Display options')}
     </MenuToggle>
   );
@@ -136,8 +141,6 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <Select
       toggle={toggle}
       className="odc-topology-filter-dropdown__select"
-      customContent={selectContent}
-      isDisabled={isSelectDisabled}
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}

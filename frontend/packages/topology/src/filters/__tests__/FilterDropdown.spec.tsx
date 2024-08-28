@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Switch } from '@patternfly/react-core';
-import { SelectOption as SelectOptionDeprecated } from '@patternfly/react-core/deprecated';
+import { Switch, SelectOption } from '@patternfly/react-core';
 import { mount, shallow } from 'enzyme';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../../topology-types';
 import {
@@ -14,6 +13,19 @@ import FilterDropdown from '../FilterDropdown';
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
+
+// FIXME Remove this code when jest is updated to at least 25.1.0 -- see https://github.com/jsdom/jsdom/issues/1555
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function (this: Element, selector: string) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let el: Element | null = this;
+    while (el) {
+      if (el.matches(selector)) return el;
+      el = el.parentElement;
+    }
+    return null;
+  };
+}
 
 describe(FilterDropdown.displayName, () => {
   let dropdownFilter: DisplayFilters;
@@ -45,7 +57,7 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find(SelectOptionDeprecated)).toHaveLength(DEFAULT_TOPOLOGY_FILTERS.length - 1);
+    expect(wrapper.find(SelectOption)).toHaveLength(DEFAULT_TOPOLOGY_FILTERS.length - 1);
   });
 
   it('should hide the show filters for list view', () => {
@@ -58,7 +70,7 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find(SelectOptionDeprecated)).toHaveLength(
+    expect(wrapper.find(SelectOption)).toHaveLength(
       DEFAULT_TOPOLOGY_FILTERS.filter((f) => f.type !== TopologyDisplayFilterType.show).length - 1,
     );
   });
@@ -73,7 +85,7 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find(SelectOptionDeprecated)).toHaveLength(1);
+    expect(wrapper.find(SelectOption)).toHaveLength(1);
   });
 
   it('should contain the expand groups switch', () => {
@@ -100,6 +112,6 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find(SelectOptionDeprecated).first().props().isDisabled).toBeTruthy();
+    expect(wrapper.find('[disabled].pf-v5-c-menu-toggle')).toBeTruthy();
   });
 });
