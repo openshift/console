@@ -35,7 +35,6 @@ import {
   TogglePlay,
 } from './utils';
 import { EventStreamList } from './utils/event-stream';
-import CloseButton from '@console/shared/src/components/close-button';
 import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 
@@ -281,6 +280,8 @@ export const EventsList = (props) => {
               defaultIsOpen={false}
               collapsedText={t('public~{{numRemaining}} more', { numRemaining: '${remaining}' })}
               expandedText={t('public~Show less')}
+              isClosable
+              onClick={clearSelection}
             >
               {[...selected].map((chip) => {
                 return (
@@ -290,7 +291,6 @@ export const EventsList = (props) => {
                   </Chip>
                 );
               })}
-              <CloseButton onClick={clearSelection} />
             </ChipGroup>
           )}
         </div>
