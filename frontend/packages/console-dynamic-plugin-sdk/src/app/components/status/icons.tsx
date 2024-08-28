@@ -14,6 +14,7 @@ export type ColoredIconProps = {
   className?: string;
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  dataTest?: string;
 };
 
 /**
@@ -73,6 +74,7 @@ export const RedExclamationCircleIcon: React.FC<ColoredIconProps> = ({
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [title] - (optional) icon title
  * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
+ * @param {string} [dataTest] - (optional) icon test id
  * @example
  * ```tsx
  * <YellowExclamationTriangleIcon title="Warning" />
@@ -82,11 +84,13 @@ export const YellowExclamationTriangleIcon: React.FC<ColoredIconProps> = ({
   className,
   title,
   size,
+  dataTest,
 }) => {
   const icon = (
     <ExclamationTriangleIcon
       className={classNames('dps-icons__yellow-exclamation-icon', className)}
       title={title}
+      data-test={dataTest}
     />
   );
 

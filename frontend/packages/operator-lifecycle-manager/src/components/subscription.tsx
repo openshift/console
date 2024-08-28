@@ -584,7 +584,11 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
     if (installPlan) {
       switch (installPlan.status?.phase as InstallPlanPhase) {
         case InstallPlanPhase.InstallPlanPhaseRequiresApproval:
-          return t('olm~1 requires approval');
+          return (
+            <span data-test="operator-subscription-requires-approval">
+              {t('olm~1 requires approval')}
+            </span>
+          );
         case InstallPlanPhase.InstallPlanPhaseFailed:
           return t('olm~1 failed');
         default:
@@ -621,6 +625,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                     onClick={channelModal}
                     variant="link"
                     isDisabled={!pkg}
+                    data-test="subscription-channel-update-button"
                   >
                     {obj.spec.channel || 'default'}
                     {pkg && (
@@ -628,7 +633,10 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                     )}
                   </Button>
                   {deprecatedChannel.deprecation && (
-                    <DeprecatedOperatorWarningIcon deprecation={deprecatedChannel.deprecation} />
+                    <DeprecatedOperatorWarningIcon
+                      dataTest="deprecated-operator-warning-subscription-update-icon"
+                      deprecation={deprecatedChannel.deprecation}
+                    />
                   )}
                 </>
               )}

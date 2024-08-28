@@ -36,21 +36,27 @@ export const DeprecatedOperatorWarningBadge: React.FC<DeprecatedOperatorWarningB
 
   return (
     <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
-      <Label color="orange" className={className} icon={<YellowExclamationTriangleIcon />}>
+      <Label
+        data-test="deprecated-operator-warning-badge"
+        color="orange"
+        className={className}
+        icon={<YellowExclamationTriangleIcon />}
+      >
         {t('olm~Deprecated')}
       </Label>
     </Tooltip>
   );
 };
 
-export const DeprecatedOperatorWarningIcon: React.FC<DeprecatedOperatorWarning> = ({
+export const DeprecatedOperatorWarningIcon: React.FC<DeprecatedOperatorWarningIcon> = ({
   deprecation,
+  dataTest,
 }) => {
   const { t } = useTranslation();
 
   return (
     <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
-      <YellowExclamationTriangleIcon className="pf-v5-u-ml-xs" />
+      <YellowExclamationTriangleIcon dataTest={dataTest} className="pf-v5-u-ml-xs" />
     </Tooltip>
   );
 };
@@ -76,9 +82,15 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
             dismissible && <AlertActionCloseButton onClose={() => setAlertVisible(false)} />
           }
         >
-          <div>{deprecatedPackage?.deprecation?.message}</div>
-          <div>{deprecatedChannel?.deprecation?.message}</div>
-          <div>{deprecatedVersion?.deprecation?.message}</div>
+          <div data-test="deprecated-operator-warning-package">
+            {deprecatedPackage?.deprecation?.message}
+          </div>
+          <div data-test="deprecated-operator-warning-channel">
+            {deprecatedChannel?.deprecation?.message}
+          </div>
+          <div data-test="deprecated-operator-warning-version">
+            {deprecatedVersion?.deprecation?.message}
+          </div>
         </Alert>
       </FormAlert>
     )
@@ -87,6 +99,10 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
 
 type DeprecatedOperatorWarningBadge = {
   className?: string;
+} & DeprecatedOperatorWarning;
+
+type DeprecatedOperatorWarningIcon = {
+  dataTest?: string;
 } & DeprecatedOperatorWarning;
 
 type DeprecatedOperatorWarningProps = {
