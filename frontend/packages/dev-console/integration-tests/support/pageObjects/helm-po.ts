@@ -7,7 +7,7 @@ export const helmPO = {
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   revisionHistoryTab: '[data-test-id="horizontal-link-Revision history"]',
   releaseNotesTab: '[data-test-id="horizontal-link-Release notes"]',
-  filterDropdown: '[data-test-id="filter-dropdown-toggle"] button[aria-label="Options menu"]',
+  filterDropdown: '[data-test-id="filter-dropdown-toggle"] button',
   filterDropdownDialog: '[class$="menu-group"]',
   filterDropdownItem: '.co-filter-dropdown-item__name',
   filter: {
@@ -16,9 +16,9 @@ export const helmPO = {
     pendingRollback: '[data-test-row-filter="pending-rollback"]',
   },
   filterToolBar: '#filter-toolbar',
-  deployedCheckbox: '[id*="deployed"]',
-  failedCheckbox: '[id*="failed"]',
-  otherCheckbox: '[id*="other"]',
+  deployedCheckbox: '[id*="deployed"] input',
+  failedCheckbox: '[id*="failed"] input',
+  otherCheckbox: '[id*="other"] input',
   details: {
     title: '[data-test-section-heading="Helm Release Details"]',
   },
