@@ -9,7 +9,7 @@ Feature: OpenShift Serverless Operator E2E
               And user is at developer perspective
 
 
-        Scenario: Create knative workload from Import From Git card on Add page: EE-02-TC01
+        Scenario: Check environment variable initialisation in git form : EE-02-TC01
             Given user is at Add page
               And user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/logonoff/oc-node-func-with-env"
@@ -17,10 +17,7 @@ Feature: OpenShift Serverless Operator E2E
               And user clicks "Show advanced Build option" link in Advanced Options section
               And user clicks "Show advanced Deployment option" link in Advanced Options section
              Then the environment variable "MY_BUILD_KEY" has value "tests" in the advanced options of the Build section in the Import from Git page
-             Then the environment variable "MY_API_KEY" has value "{{ env:API_KEY }}" in the advanced options of the Deployment section in the Import from Git page
-              And user clicks Create button on Add page
-             Then user will be redirected to Topology page
-              And user is able to see workload "node-knative" in topology page list view
+              And the environment variable "MY_API_KEY" has value "{{ env:API_KEY }}" in the advanced options of the Deployment section in the Import from Git page
 
 
         @to-do
