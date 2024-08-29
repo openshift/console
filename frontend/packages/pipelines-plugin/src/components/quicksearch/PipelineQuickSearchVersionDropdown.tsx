@@ -49,7 +49,7 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
       isExpanded={isOpen}
       ref={toggleRef}
       isDisabled={versions.length === 1}
-      data-test="task-version-toggle"
+      data-test="task-version"
     >
       {versionItems[selectedVersion]}
     </MenuToggle>
@@ -57,7 +57,6 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
 
   return (
     <Select
-      data-test="task-version"
       className="opp-quick-search-details__version-dropdown"
       isOpen={isOpen}
       onSelect={(_, value: string) => {
