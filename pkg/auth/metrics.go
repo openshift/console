@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/openshift/console/pkg/auth/sessions"
-	"github.com/openshift/console/pkg/proxy"
 	"github.com/prometheus/client_golang/prometheus"
 	authv1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -50,7 +49,6 @@ type Metrics struct {
 	logoutRequests            *prometheus.CounterVec
 	tokenRefreshRequests      *prometheus.CounterVec
 	internalproxyClientConfig *rest.Config
-	K8sProxyConfig            *proxy.Config
 }
 
 func (m *Metrics) GetCollectors() []prometheus.Collector {
@@ -84,47 +82,11 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 
 	anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(m.internalproxyClientConfig))
 	if err != nil {
-		klog.Errorf("failed to set up an anonymous roundtripper: %w", err)
+		klog.Errorf("failed to set up an anonymous roundtripper: %v", err)
 		return
 	}
 
-	// func (m *Metrics) getConfig(token string) (*rest.Config, error) {
-	// 	var tlsClientConfig rest.TLSClientConfig
-	// 	if m.TLSClientConfig.InsecureSkipVerify {
-	// 		// off-cluster mode
-	// 		tlsClientConfig.Insecure = true
-	// 	} else {
-	// 		inCluster, err := rest.InClusterConfig()
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		tlsClientConfig = inCluster.TLSClientConfig
-	// 	}
-
-	// 	return &rest.Config{
-	// 		Host:            m.ClusterEndpoint.Host,
-	// 		TLSClientConfig: tlsClientConfig,
-	// 		BearerToken:     token,
-	// 	}, nil
-	// }
-
-	// tlsConfig := rest.CopyConfig(k8sConfig).TLSClientConfig
-	// tlsConfig.Insecure = true
-
-	klog.Infof("auth.Metrics - k8sConfig: %s\n", k8sConfig.Host)
-	klog.Infof("auth.Metrics - proxy: %s\n", m.K8sProxyConfig.Endpoint.String())
-
-	// serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
-	// 	InsecureSkipVerify: true,
-	// })
-
 	ctx := context.TODO()
-	// configWithBearerToken := &rest.Config{
-	// 	Host:      k8sConfig.Host,
-	// 	Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
-	// 	// BearerTokenFile: ls.AccessToken(),
-	// 	Timeout: 30 * time.Second,
-	// }
 
 	anonConfigWithBearerToken := &rest.Config{
 		Host:        k8sConfig.Host,
@@ -225,10 +187,9 @@ func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, e
 	return isKubeAdmin, nil
 }
 
-func NewMetrics(internalproxyClientConfig *rest.Config, K8sProxyConfig *proxy.Config) *Metrics {
+func NewMetrics(internalproxyClientConfig *rest.Config) *Metrics {
 	m := new(Metrics)
 	m.internalproxyClientConfig = internalproxyClientConfig
-	m.K8sProxyConfig = K8sProxyConfig
 
 	m.loginRequests = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: "console",
