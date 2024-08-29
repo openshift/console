@@ -2,13 +2,10 @@ package auth
 
 import (
 	"context"
-	"crypto/tls"
-	"net/http"
 	"time"
 
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
-	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	"github.com/prometheus/client_golang/prometheus"
 	authv1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -85,11 +82,11 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 		return
 	}
 
-	// anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(m.internalproxyClientConfig))
-	// if err != nil {
-	// 	klog.Errorf("Error in auth.metrics loginSuccessfulSync: %v\n", err)
-	// 	return
-	// }
+	anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(m.internalproxyClientConfig))
+	if err != nil {
+		klog.Errorf("Error in auth.metrics loginSuccessfulSync: %v\n", err)
+		return
+	}
 
 	// func (m *Metrics) getConfig(token string) (*rest.Config, error) {
 	// 	var tlsClientConfig rest.TLSClientConfig
@@ -116,28 +113,30 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 
 	klog.Infof("auth.Metrics loginSuccessfulSync - k8sConfig: %s\n", k8sConfig)
 
-	serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
-		InsecureSkipVerify: true,
-	})
+	// serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
+	// 	InsecureSkipVerify: true,
+	// })
 
 	ctx := context.TODO()
-	configWithBearerToken := &rest.Config{
-		Host:      k8sConfig.Host,
-		Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
-		// BearerTokenFile: ls.AccessToken(),
-		Timeout: 30 * time.Second,
-	}
-
-	// anonClientConfig := &rest.Config{
-	// 	Host:      m.K8sProxyConfig.Endpoint.String(),
-	// 	Transport: anonymousInternalProxiedK8SRT,
+	// configWithBearerToken := &rest.Config{
+	// 	Host:      k8sConfig.Host,
+	// 	Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
+	// 	// BearerTokenFile: ls.AccessToken(),
+	// 	Timeout: 30 * time.Second,
 	// }
+
+	anonClientConfig := &rest.Config{
+		Host:        m.K8sProxyConfig.Endpoint.String(),
+		Transport:   anonymousInternalProxiedK8SRT,
+		BearerToken: ls.AccessToken(),
+		Timeout:     30 * time.Second,
+	}
 
 	role := UnknownLoginRole
 
-	if isKubeAdmin, err := m.isKubeAdmin(ctx, configWithBearerToken); isKubeAdmin && err == nil {
+	if isKubeAdmin, err := m.isKubeAdmin(ctx, anonClientConfig); isKubeAdmin && err == nil {
 		role = KubeadminLoginRole
-	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, configWithBearerToken); err == nil {
+	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, anonClientConfig); err == nil {
 		if canGetNamespaces {
 			role = ClusterAdminLoginRole
 		} else {
