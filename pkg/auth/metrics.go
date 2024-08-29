@@ -88,7 +88,7 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 
 	ctx := context.TODO()
 
-	anonConfigWithBearerToken := &rest.Config{
+	configWithBearerToken := &rest.Config{
 		Host:        k8sConfig.Host,
 		Transport:   anonymousInternalProxiedK8SRT,
 		BearerToken: ls.AccessToken(),
@@ -97,9 +97,9 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 
 	role := UnknownLoginRole
 
-	if isKubeAdmin, err := m.isKubeAdmin(ctx, anonConfigWithBearerToken); isKubeAdmin && err == nil {
+	if isKubeAdmin, err := m.isKubeAdmin(ctx, configWithBearerToken); isKubeAdmin && err == nil {
 		role = KubeadminLoginRole
-	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, anonConfigWithBearerToken); err == nil {
+	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, configWithBearerToken); err == nil {
 		if canGetNamespaces {
 			role = ClusterAdminLoginRole
 		} else {
