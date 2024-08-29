@@ -84,7 +84,7 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 
 	anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(m.internalproxyClientConfig))
 	if err != nil {
-		klog.Errorf("Error in auth.metrics loginSuccessfulSync: %v\n", err)
+		klog.Errorf("failed to set up an anonymous roundtripper: %w", err)
 		return
 	}
 
@@ -111,7 +111,8 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 	// tlsConfig := rest.CopyConfig(k8sConfig).TLSClientConfig
 	// tlsConfig.Insecure = true
 
-	klog.Infof("auth.Metrics loginSuccessfulSync - k8sConfig: %s\n", k8sConfig)
+	klog.Infof("auth.Metrics - k8sConfig: %s\n", k8sConfig.Host)
+	klog.Infof("auth.Metrics - proxy: %s\n", m.K8sProxyConfig.Endpoint.String())
 
 	// serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
 	// 	InsecureSkipVerify: true,
@@ -125,8 +126,8 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 	// 	Timeout: 30 * time.Second,
 	// }
 
-	anonClientConfig := &rest.Config{
-		Host:        m.K8sProxyConfig.Endpoint.String(),
+	anonConfigWithBearerToken := &rest.Config{
+		Host:        k8sConfig.Host,
 		Transport:   anonymousInternalProxiedK8SRT,
 		BearerToken: ls.AccessToken(),
 		Timeout:     30 * time.Second,
@@ -134,9 +135,9 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 
 	role := UnknownLoginRole
 
-	if isKubeAdmin, err := m.isKubeAdmin(ctx, anonClientConfig); isKubeAdmin && err == nil {
+	if isKubeAdmin, err := m.isKubeAdmin(ctx, anonConfigWithBearerToken); isKubeAdmin && err == nil {
 		role = KubeadminLoginRole
-	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, anonClientConfig); err == nil {
+	} else if canGetNamespaces, err := m.canGetNamespaces(ctx, anonConfigWithBearerToken); err == nil {
 		if canGetNamespaces {
 			role = ClusterAdminLoginRole
 		} else {
