@@ -26,6 +26,7 @@ import (
 	"github.com/gorilla/securecookie"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
+	"k8s.io/client-go/rest"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -37,6 +38,10 @@ const (
 	testClientSecret      = "testsecret"
 	testValidRefreshToken = "valid-refresh-token"
 	testNewRefreshToken   = "new-refresh-token"
+)
+
+var (
+	internalproxyClientConfig = &rest.Config{}
 )
 
 // mockOIDCProvider serves so that we are able to serve basic discovery endpoints
@@ -285,7 +290,7 @@ func Test_oidcAuth_login(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(),
+				auth.NewMetrics(internalproxyClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -396,7 +401,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(),
+				auth.NewMetrics(internalproxyClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -520,7 +525,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(),
+				auth.NewMetrics(internalproxyClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -573,7 +578,7 @@ func BenchmarkRefreshSession(b *testing.B) {
 	for _, userNum := range numUsers {
 		b.Run(fmt.Sprintf("BenchmarkRefreshSession-Users=%d", userNum), func(b *testing.B) {
 			b.StopTimer()
-			authMetrics := auth.NewMetrics()
+			authMetrics := auth.NewMetrics(internalproxyClientConfig)
 			o, err := newOIDCAuth(
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),

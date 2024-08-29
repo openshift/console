@@ -13,8 +13,12 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+var (
+	internalproxyClientConfig = &rest.Config{}
+)
+
 func TestDefaultMetrics(t *testing.T) {
-	m := NewMetrics()
+	m := NewMetrics(internalproxyClientConfig)
 
 	assert.Equal(t,
 		metrics.RemoveComments(`
@@ -33,7 +37,7 @@ func TestDefaultMetrics(t *testing.T) {
 }
 
 func TestLoginRequested(t *testing.T) {
-	m := NewMetrics()
+	m := NewMetrics(internalproxyClientConfig)
 	m.LoginRequested()
 
 	assert.Equal(t,
@@ -141,7 +145,7 @@ func TestLoginSuccessful(t *testing.T) {
 			}
 			ls := sessions.NewRawLoginState(testcase.name)
 
-			m := NewMetrics()
+			m := NewMetrics(internalproxyClientConfig)
 			m.loginSuccessfulSync(k8sConfig, ls)
 
 			assert.Equal(t,
@@ -153,7 +157,7 @@ func TestLoginSuccessful(t *testing.T) {
 }
 
 func TestLoginFailed(t *testing.T) {
-	m := NewMetrics()
+	m := NewMetrics(internalproxyClientConfig)
 	m.LoginFailed(UnknownLoginFailureReason)
 
 	assert.Equal(t,
@@ -164,8 +168,8 @@ func TestLoginFailed(t *testing.T) {
 	)
 }
 
-func TestLogoutRequests(t *testing.T) {
-	m := NewMetrics()
+func TestLogoutRequested(t *testing.T) {
+	m := NewMetrics(internalproxyClientConfig)
 	m.LogoutRequested(UnknownLogoutReason)
 
 	assert.Equal(t,
