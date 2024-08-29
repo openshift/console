@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import MonitoringDashboardsPage from '@console/internal/components/monitoring/dashboards';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import {
   HorizontalNav,
@@ -17,6 +16,8 @@ import { MonitoringSilencesPage } from './alerts/monitoring-silences';
 import MonitoringEvents from './events/MonitoringEvents';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
+
+// t('public~Dashboards')
 
 const handleNamespaceChange = (newNamespace: string): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
@@ -35,12 +36,6 @@ export const PageContents: React.FC = () => {
     namespace: activeNamespace,
   });
   const pages = [
-    {
-      href: '',
-      // t('devconsole~Dashboards')
-      nameKey: 'devconsole~Dashboards',
-      component: MonitoringDashboardsPage,
-    },
     ...(prometheousRulesAccess
       ? [
           {
