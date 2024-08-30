@@ -17,7 +17,7 @@ const DeleteModalComponent: ModalComponent<DeleteModalProps> = ({
   resource,
 }) => {
   return (
-    <ModalWrapper blocking onClose={closeModal}>
+    <ModalWrapper onClose={closeModal}>
       <DeleteModal
         kind={kind}
         resource={resource}

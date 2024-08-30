@@ -1,26 +1,3 @@
-.co-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  bottom: 0;
-  cursor: default;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: $zindex-modal;
-}
-
-.modal-dialog {
-  --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
-
-  background: var(--os-modal-dialog--BackgroundColor);
-
-  :where(.pf-v5-theme-dark) & {
-    --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--300);
-  }
-}
-
 .modal-body {
   display: flex;
   flex: 1 1 auto;
@@ -51,26 +28,6 @@
   // Remove focus outline from opened modal
   outline: 0;
   position: relative;
-}
-
-.modal-dialog {
-  margin: var(--pf-v5-global--spacer--md);
-  max-width: calc(100% - var(--pf-v5-global--spacer--xl));
-  outline: 0;
-  position: relative;
-  width: 100%;
-  @media (min-width: $pf-v5-global--breakpoint--md) {
-    margin: 30px auto;
-    &:not(.modal-lg) {
-      max-width: 600px;
-    }
-  }
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    &.modal-lg {
-      // Manually set to match --pf-v5-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v5-c-modal-box
-      max-width: 70rem;
-    }
-  }
 }
 
 .modal-footer {
