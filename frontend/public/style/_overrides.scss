@@ -237,8 +237,7 @@ form.pf-v5-c-form {
 }
 
 // specificity targeting form elements to override --pf-v5-global--FontSize--md
-.pf-v5-c-page,
-.modal-dialog {
+.pf-v5-c-page {
   .pf-v5-c-app-launcher,
   .pf-v5-c-button,
   .pf-c-button,
@@ -378,7 +377,7 @@ ul {
   list-style: disc;
 }
 // And here we explicitly remove it from PF components, except for the List component.
-:where([class^="pf-"]:not(.pf-v5-c-list, .pf-c-list)) {
+:where([class^='pf-']:not(.pf-v5-c-list, .pf-c-list)) {
   @at-root :is(ul, ol)#{&} {
     list-style: none !important;
   }
