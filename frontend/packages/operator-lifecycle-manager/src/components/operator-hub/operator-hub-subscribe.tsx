@@ -78,6 +78,54 @@ import {
 import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '../operator-group';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
 
+export const CloudServiceTokenWarningAlert = ({
+  title,
+  message,
+  onClose,
+}: CloudServiceTokenWarningAlertProps) => {
+  return (
+    <Alert
+      isInline
+      variant="warning"
+      title={title}
+      actionClose={<AlertActionCloseButton onClose={() => onClose(false)} />}
+      className="pf-u-mb-lg"
+    >
+      <p>{message}</p>
+    </Alert>
+  );
+};
+
+const InputField: React.FC<InputFieldProps> = ({
+  label,
+  helpText,
+  placeholder,
+  ariaLabel,
+  value,
+  setValue,
+}) => {
+  return (
+    <div className="form-group">
+      <fieldset>
+        <label className="co-required">{label}</label>
+        <FieldLevelHelp>{helpText}</FieldLevelHelp>
+        <div className="co-toolbar__item">
+          <TextInput
+            autoFocus
+            placeholder={placeholder}
+            aria-label={ariaLabel}
+            type="text"
+            value={value}
+            onChange={(_event, val) => {
+              setValue(val);
+            }}
+          />
+        </div>
+      </fieldset>
+    </div>
+  );
+};
+
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
   const { name: pkgName } = packageManifest?.metadata ?? {};
@@ -85,14 +133,17 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     packageManifest?.status ?? {};
 
   const { pathname: url } = useLocation();
-
   const [roleARNText, setRoleARNText] = React.useState('');
   const [azureTenantId, setAzureTenantId] = React.useState('');
   const [azureClientId, setAzureClientId] = React.useState('');
   const [azureSubscriptionId, setAzureSubscriptionId] = React.useState('');
-  const { catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
+  const [gcpProjectNumber, setGcpProjectNumber] = React.useState('');
+  const [gcpPoolId, setGcpPoolId] = React.useState('');
+  const [gcpProviderId, setGcpProviderId] = React.useState('');
+  const [gcpServiceAcctEmail, setGcpServiceAcctEmail] = React.useState('');
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
+  const { catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
 
   const defaultChannel = defaultChannelNameFor(packageManifest);
   const [updateChannelName, setUpdateChannelName] = React.useState(channel || defaultChannel);
@@ -101,7 +152,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const [updateVersion, setUpdateVersion] = React.useState(version || currentLatestVersion);
 
-  const [showSTSWarn, setShowSTSWarn] = React.useState(true);
+  const [showCSTokenWarn, setShowCSTokenWarn] = React.useState(true);
 
   const [approval, setApproval] = React.useState(
     updateVersion !== currentLatestVersion
@@ -276,7 +327,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       version !== currentLatestVersion ||
       manualSubscriptionsInNamespace?.length > 0 ||
       tokenizedAuth === 'AWS' ||
-      tokenizedAuth === 'Azure'
+      tokenizedAuth === 'Azure' ||
+      tokenizedAuth === 'GCP'
     ) {
       setApproval(InstallPlanApproval.Manual);
     } else setApproval(InstallPlanApproval.Automatic);
@@ -468,6 +520,28 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           ],
         };
         break;
+      case 'GCP':
+        subscription.spec.config = {
+          env: [
+            {
+              name: 'PROJECT_NUMBER',
+              value: gcpProjectNumber,
+            },
+            {
+              name: 'POOL_ID',
+              value: gcpPoolId,
+            },
+            {
+              name: 'PROVIDER_ID',
+              value: gcpProviderId,
+            },
+            {
+              name: 'SERVICE_ACCOUNT_EMAIL',
+              value: gcpServiceAcctEmail,
+            },
+          ],
+        };
+        break;
       default:
         break;
     }
@@ -521,7 +595,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
     (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText)) ||
     (tokenizedAuth === 'Azure' &&
-      [azureClientId, azureTenantId, azureSubscriptionId].some((v) => _.isEmpty(v)));
+      [azureClientId, azureTenantId, azureSubscriptionId].some((v) => _.isEmpty(v))) ||
+    (tokenizedAuth === 'GCP' &&
+      [gcpProjectNumber, gcpPoolId, gcpProviderId, gcpServiceAcctEmail].some((v) => _.isEmpty(v)));
 
   const formError = () => {
     return (
@@ -785,123 +861,127 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         )}
       />
       <div className="co-m-pane__body">
-        {tokenizedAuth === 'AWS' && showSTSWarn && (
-          <Alert
-            isInline
-            variant="warning"
+        {tokenizedAuth === 'AWS' && showCSTokenWarn && (
+          <CloudServiceTokenWarningAlert
             title={t('olm~Cluster in STS Mode')}
-            actionClose={<AlertActionCloseButton onClose={() => setShowSTSWarn(false)} />}
-            className="pf-v5-u-mb-lg"
-          >
-            <p>
-              {t(
-                'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
-              )}
-            </p>
-          </Alert>
+            message={t(
+              'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
+            )}
+            onClose={() => setShowCSTokenWarn(false)}
+          />
         )}
-        {tokenizedAuth === 'Azure' && showSTSWarn && (
-          <Alert
-            isInline
-            variant="warning"
+        {tokenizedAuth === 'Azure' && showCSTokenWarn && (
+          <CloudServiceTokenWarningAlert
             title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
-            actionClose={<AlertActionCloseButton onClose={() => setShowSTSWarn(false)} />}
-            className="pf-u-mb-lg"
-          >
-            <p>
-              {t(
-                'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
-              )}
-            </p>
-          </Alert>
+            message={t(
+              'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
+            )}
+            onClose={() => setShowCSTokenWarn(false)}
+          />
+        )}{' '}
+        {tokenizedAuth === 'GCP' && showCSTokenWarn && (
+          <CloudServiceTokenWarningAlert
+            title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
+            message={t(
+              'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
+            )}
+            onClose={() => setShowCSTokenWarn(false)}
+          />
         )}
         <div className="row">
           <div className="col-xs-6">
             <>
               {tokenizedAuth === 'AWS' && (
                 <div className="form-group">
-                  <fieldset>
-                    <label className="co-required">{t('olm~role ARN')}</label>
-                    <FieldLevelHelp>
-                      {t('olm~The role ARN required for the operator to access the cloud API.')}
-                    </FieldLevelHelp>
-                    <div className="co-toolbar__item">
-                      <TextInput
-                        autoFocus
-                        placeholder={'role ARN'}
-                        aria-label={'role ARN'}
-                        type="text"
-                        value={roleARNText}
-                        onChange={(_event, value) => {
-                          setRoleARNText(value);
-                        }}
-                      />
-                    </div>
-                  </fieldset>
+                  <InputField
+                    label={t('olm~role ARN')}
+                    helpText={t(
+                      'olm~The role ARN required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~role ARN')}
+                    ariaLabel={t('olm~role ARN')}
+                    value={roleARNText}
+                    setValue={setRoleARNText}
+                  />
                 </div>
               )}
               {tokenizedAuth === 'Azure' && (
                 <div className="form-group">
-                  <fieldset>
-                    <label className="co-required">{t('olm~Azure Client ID')}</label>
-                    <FieldLevelHelp>
-                      {t(
-                        'olm~The Azure Client ID required for the operator to access the cloud API.',
-                      )}
-                    </FieldLevelHelp>
-                    <div className="co-toolbar__item">
-                      <TextInput
-                        autoFocus
-                        placeholder={'Azure Client ID'}
-                        aria-label={'Azure Client ID'}
-                        type="text"
-                        value={azureClientId}
-                        onChange={(_event, value) => {
-                          setAzureClientId(value);
-                        }}
-                      />
-                    </div>
-                  </fieldset>
-                  <fieldset>
-                    <label className="co-required">{t('olm~Azure Tenant ID')}</label>
-                    <FieldLevelHelp>
-                      {t(
-                        'olm~The Azure Tenant ID required for the operator to access the cloud API.',
-                      )}
-                    </FieldLevelHelp>
-                    <div className="co-toolbar__item">
-                      <TextInput
-                        autoFocus
-                        placeholder={'Azure Tenant ID'}
-                        aria-label={'Azure Tenant ID'}
-                        type="text"
-                        value={azureTenantId}
-                        onChange={(_event, value) => {
-                          setAzureTenantId(value);
-                        }}
-                      />
-                    </div>
-                  </fieldset>
-                  <fieldset>
-                    <label className="co-required">{t('olm~Azure Subscription ID')}</label>
-                    <FieldLevelHelp>
-                      {t(
-                        'olm~The Azure Subscription ID required for the operator to access the cloud API.',
-                      )}
-                    </FieldLevelHelp>
-                    <div className="co-toolbar__item">
-                      <TextInput
-                        autoFocus
-                        placeholder={'Azure Subcription ID'}
-                        aria-label={'Azure Subscription ID'}
-                        type="text"
-                        value={azureSubscriptionId}
-                        onChange={(_event, value) => {
-                          setAzureSubscriptionId(value);
-                        }}
-                      />
-                    </div>
-                  </fieldset>
+                  <InputField
+                    label={t('olm~Azure Client ID')}
+                    helpText={t(
+                      'olm~The Azure Client ID required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~Azure Client ID')}
+                    ariaLabel={t('olm~Azure Client ID')}
+                    value={azureClientId}
+                    setValue={setAzureClientId}
+                  />
+                  <InputField
+                    label={t('olm~Azure Tenant ID')}
+                    helpText={t(
+                      'olm~The Azure Tenant ID required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~Azure Tenant ID')}
+                    ariaLabel={t('olm~Azure Tenant ID')}
+                    value={azureTenantId}
+                    setValue={setAzureTenantId}
+                  />
+
+                  <InputField
+                    label={t('olm~Azure Subscription ID')}
+                    helpText={t(
+                      'olm~The Azure Subscription ID required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~Azure Subscription ID')}
+                    ariaLabel={t('olm~Azure Subscription ID')}
+                    value={azureSubscriptionId}
+                    setValue={setAzureSubscriptionId}
+                  />
+                </div>
+              )}
+              {tokenizedAuth === 'GCP' && (
+                <div className="form-group">
+                  <InputField
+                    label={t('olm~GCP Pool ID')}
+                    helpText={t(
+                      'olm~The GCP Project Number required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~GCP Project Number')}
+                    ariaLabel={t('olm~GCP Project Number')}
+                    value={gcpProjectNumber}
+                    setValue={setGcpProjectNumber}
+                  />
+                  <InputField
+                    label={t('olm~GCP Pool ID')}
+                    helpText={t(
+                      'olm~The GCP Pool ID required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~GCP Pool ID')}
+                    ariaLabel={t('olm~GCP Pool ID')}
+                    value={gcpPoolId}
+                    setValue={setGcpPoolId}
+                  />
+                  <InputField
+                    label={t('olm~GCP Provider ID')}
+                    helpText={t(
+                      'olm~The GCP Provider ID required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~GCP Provider ID')}
+                    ariaLabel={t('olm~GCP Provider ID')}
+                    value={gcpProviderId}
+                    setValue={setGcpProviderId}
+                  />
+                  <InputField
+                    label={t('olm~Service Account Email')}
+                    helpText={t(
+                      'olm~The GCP Service Account Email required for the operator to access the cloud API.',
+                    )}
+                    placeholder={t('olm~GCP Service Account Email')}
+                    ariaLabel={t('olm~GCP Service Account Email')}
+                    value={gcpServiceAcctEmail}
+                    setValue={setGcpServiceAcctEmail}
+                  />
                 </div>
               )}
               <div className="form-group">
@@ -1158,6 +1238,21 @@ export type OperatorHubSubscribeFormProps = {
   operatorGroup: { loaded: boolean; data: OperatorGroupKind[] };
   packageManifest: { loaded: boolean; data: PackageManifestKind[] };
   subscription: { loaded: boolean; data: SubscriptionKind[] };
+};
+
+type InputFieldProps = {
+  label: string;
+  helpText: string;
+  placeholder: string;
+  ariaLabel: string;
+  value: string;
+  setValue: (value: string) => void;
+};
+
+type CloudServiceTokenWarningAlertProps = {
+  title: string;
+  message: string;
+  onClose: (value: boolean) => void;
 };
 
 OperatorHubSubscribe.displayName = 'OperatorHubSubscribe';
