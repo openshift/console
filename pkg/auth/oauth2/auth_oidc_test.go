@@ -26,7 +26,6 @@ import (
 	"github.com/gorilla/securecookie"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
-	"k8s.io/client-go/rest"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -41,7 +40,7 @@ const (
 )
 
 var (
-	defaultRestClientConfig = &rest.Config{}
+	defaultRestClientConfig = http.RoundTripper(nil)
 )
 
 // mockOIDCProvider serves so that we are able to serve basic discovery endpoints
