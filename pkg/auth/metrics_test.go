@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	internalproxyClientConfig = &rest.Config{}
+	defaultRestClientConfig = &rest.Config{}
 )
 
 func TestDefaultMetrics(t *testing.T) {
-	m := NewMetrics(internalproxyClientConfig)
+	m := NewMetrics(defaultRestClientConfig)
 
 	assert.Equal(t,
 		metrics.RemoveComments(`
@@ -37,7 +37,7 @@ func TestDefaultMetrics(t *testing.T) {
 }
 
 func TestLoginRequested(t *testing.T) {
-	m := NewMetrics(internalproxyClientConfig)
+	m := NewMetrics(defaultRestClientConfig)
 	m.LoginRequested()
 
 	assert.Equal(t,
@@ -145,7 +145,7 @@ func TestLoginSuccessful(t *testing.T) {
 			}
 			ls := sessions.NewRawLoginState(testcase.name)
 
-			m := NewMetrics(internalproxyClientConfig)
+			m := NewMetrics(defaultRestClientConfig)
 			m.loginSuccessfulSync(k8sConfig, ls)
 
 			assert.Equal(t,
@@ -157,7 +157,7 @@ func TestLoginSuccessful(t *testing.T) {
 }
 
 func TestLoginFailed(t *testing.T) {
-	m := NewMetrics(internalproxyClientConfig)
+	m := NewMetrics(defaultRestClientConfig)
 	m.LoginFailed(UnknownLoginFailureReason)
 
 	assert.Equal(t,
@@ -169,7 +169,7 @@ func TestLoginFailed(t *testing.T) {
 }
 
 func TestLogoutRequested(t *testing.T) {
-	m := NewMetrics(internalproxyClientConfig)
+	m := NewMetrics(defaultRestClientConfig)
 	m.LogoutRequested(UnknownLogoutReason)
 
 	assert.Equal(t,
