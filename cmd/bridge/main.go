@@ -17,6 +17,7 @@ import (
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -576,6 +577,13 @@ func main() {
 		internalProxiedK8SRT,
 		knative.ChannelFilter,
 	)
+
+	srv.AnonymousInternalProxiedK8SRT, err = rest.TransportFor(rest.AnonymousClientConfig(srv.InternalProxiedK8SClientConfig))
+	if err != nil {
+		klog.Fatalf("Failed to create anonymous k8s HTTP client: %v", err)
+	}
+
+	srv.AuthMetrics = auth.NewMetrics(srv.AnonymousInternalProxiedK8SRT)
 
 	caCertFilePath := *fCAFile
 	if *fK8sMode == "in-cluster" {
