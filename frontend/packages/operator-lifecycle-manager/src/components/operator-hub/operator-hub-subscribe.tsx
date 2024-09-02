@@ -169,7 +169,12 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     useSuggestedNSForSingleInstallMode,
     setUseSuggestedNSForSingleInstallMode,
   ] = React.useState(true);
-  const [enableMonitoring, setEnableMonitoring] = React.useState(false);
+
+  const defaultEnableMonitoring =
+    packageManifest?.metadata?.labels?.provider?.includes('Red Hat') &&
+    currentCSVDesc.annotations?.['console.openshift.io/operator-monitoring-default'] === 'true';
+  const [enableMonitoring, setEnableMonitoring] = React.useState(defaultEnableMonitoring);
+
   const [error, setError] = React.useState('');
   const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>({
     kind: referenceForModel(ConsoleOperatorConfigModel),
