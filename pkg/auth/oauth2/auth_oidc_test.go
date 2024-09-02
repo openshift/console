@@ -41,7 +41,7 @@ const (
 )
 
 var (
-	internalproxyClientConfig = &rest.Config{}
+	defaultRestClientConfig = &rest.Config{}
 )
 
 // mockOIDCProvider serves so that we are able to serve basic discovery endpoints
@@ -290,7 +290,7 @@ func Test_oidcAuth_login(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(internalproxyClientConfig),
+				auth.NewMetrics(defaultRestClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -401,7 +401,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(internalproxyClientConfig),
+				auth.NewMetrics(defaultRestClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -525,7 +525,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(internalproxyClientConfig),
+				auth.NewMetrics(defaultRestClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -578,7 +578,7 @@ func BenchmarkRefreshSession(b *testing.B) {
 	for _, userNum := range numUsers {
 		b.Run(fmt.Sprintf("BenchmarkRefreshSession-Users=%d", userNum), func(b *testing.B) {
 			b.StopTimer()
-			authMetrics := auth.NewMetrics(internalproxyClientConfig)
+			authMetrics := auth.NewMetrics(defaultRestClientConfig)
 			o, err := newOIDCAuth(
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
