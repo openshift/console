@@ -17,7 +17,6 @@ import (
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
-	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -577,8 +576,6 @@ func main() {
 		internalProxiedK8SRT,
 		knative.ChannelFilter,
 	)
-
-	srv.AuthMetrics = auth.NewMetrics(srv.InternalProxiedK8SClientConfig)
 
 	caCertFilePath := *fCAFile
 	if *fK8sMode == "in-cluster" {

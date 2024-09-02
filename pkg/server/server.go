@@ -135,67 +135,67 @@ type jsGlobals struct {
 }
 
 type Server struct {
-	AddPage                             string
-	AlertManagerProxyConfig             *proxy.Config
-	AlertManagerPublicURL               *url.URL
-	AlertManagerTenancyHost             string
-	AlertManagerTenancyProxyConfig      *proxy.Config
-	AlertManagerUserWorkloadHost        string
-	AlertManagerUserWorkloadProxyConfig *proxy.Config
-	AuthDisabled                        bool
-	Authenticator                       auth.Authenticator
-	BaseURL                             *url.URL
-	Branding                            string
-	CatalogdProxyConfig                 *proxy.Config
-	ClusterManagementProxyConfig        *proxy.Config
-	CookieEncryptionKey                 []byte
-	CookieAuthenticationKey             []byte
-	ControlPlaneTopology                string
-	CopiedCSVsDisabled                  bool
-	CSRFVerifier                        *csrfverifier.CSRFVerifier
-	CustomLogoFile                      string
-	CustomProductName                   string
-	DevCatalogCategories                string
-	DevCatalogTypes                     string
-	DocumentationBaseURL                *url.URL
-	EnabledConsolePlugins               serverconfig.MultiKeyValue
-	GitOpsProxyConfig                   *proxy.Config
-	GOARCH                              string
-	GOOS                                string
-	GrafanaPublicURL                    *url.URL
-	I18nNamespaces                      []string
-	InactivityTimeout                   int
-	InternalProxiedK8SClientConfig      *rest.Config
-	K8sMode                             string
-	K8sProxyConfig                      *proxy.Config
-	KnativeChannelCRDLister             ResourceLister
-	KnativeEventSourceCRDLister         ResourceLister
-	KubeAPIServerURL                    string // JS global only. Not used for proxying.
-	KubeVersion                         string
-	LoadTestFactor                      int
-	MonitoringDashboardConfigMapLister  ResourceLister
-	NodeArchitectures                   []string
-	NodeOperatingSystems                []string
-	Perspectives                        string
-	Capabilities                        []operatorv1.Capability
-	PluginProxy                         string
-	PluginsProxyTLSConfig               *tls.Config
-	ProjectAccessClusterRoles           string
-	PrometheusPublicURL                 *url.URL
-	PublicDir                           string
-	QuickStarts                         string
-	ReleaseVersion                      string
-	ServiceClient                       *http.Client
-	StatuspageID                        string
-	TectonicVersion                     string
-	Telemetry                           serverconfig.MultiKeyValue
-	TerminalProxyTLSConfig              *tls.Config
-	ThanosProxyConfig                   *proxy.Config
-	ThanosPublicURL                     *url.URL
-	ThanosTenancyProxyConfig            *proxy.Config
-	ThanosTenancyProxyForRulesConfig    *proxy.Config
-	UserSettingsLocation                string
-	AuthMetrics                         *auth.Metrics
+	AddPage                                 string
+	AlertManagerProxyConfig                 *proxy.Config
+	AlertManagerPublicURL                   *url.URL
+	AlertManagerTenancyHost                 string
+	AlertManagerTenancyProxyConfig          *proxy.Config
+	AlertManagerUserWorkloadHost            string
+	AlertManagerUserWorkloadProxyConfig     *proxy.Config
+	AuthDisabled                            bool
+	Authenticator                           auth.Authenticator
+	BaseURL                                 *url.URL
+	Branding                                string
+	CatalogdProxyConfig                     *proxy.Config
+	ClusterManagementProxyConfig            *proxy.Config
+	CookieEncryptionKey                     []byte
+	CookieAuthenticationKey                 []byte
+	ControlPlaneTopology                    string
+	CopiedCSVsDisabled                      bool
+	CSRFVerifier                            *csrfverifier.CSRFVerifier
+	CustomLogoFile                          string
+	CustomProductName                       string
+	DevCatalogCategories                    string
+	DevCatalogTypes                         string
+	DocumentationBaseURL                    *url.URL
+	EnabledConsolePlugins                   serverconfig.MultiKeyValue
+	GitOpsProxyConfig                       *proxy.Config
+	GOARCH                                  string
+	GOOS                                    string
+	GrafanaPublicURL                        *url.URL
+	I18nNamespaces                          []string
+	InactivityTimeout                       int
+	InternalProxiedK8SClientConfig          *rest.Config
+	AnonymousInternalProxiedK8SRoundTripper http.RoundTripper
+	K8sMode                                 string
+	K8sProxyConfig                          *proxy.Config
+	KnativeChannelCRDLister                 ResourceLister
+	KnativeEventSourceCRDLister             ResourceLister
+	KubeAPIServerURL                        string // JS global only. Not used for proxying.
+	KubeVersion                             string
+	LoadTestFactor                          int
+	MonitoringDashboardConfigMapLister      ResourceLister
+	NodeArchitectures                       []string
+	NodeOperatingSystems                    []string
+	Perspectives                            string
+	Capabilities                            []operatorv1.Capability
+	PluginProxy                             string
+	PluginsProxyTLSConfig                   *tls.Config
+	ProjectAccessClusterRoles               string
+	PrometheusPublicURL                     *url.URL
+	PublicDir                               string
+	QuickStarts                             string
+	ReleaseVersion                          string
+	ServiceClient                           *http.Client
+	StatuspageID                            string
+	TectonicVersion                         string
+	Telemetry                               serverconfig.MultiKeyValue
+	TerminalProxyTLSConfig                  *tls.Config
+	ThanosProxyConfig                       *proxy.Config
+	ThanosPublicURL                         *url.URL
+	ThanosTenancyProxyConfig                *proxy.Config
+	ThanosTenancyProxyForRulesConfig        *proxy.Config
+	UserSettingsLocation                    string
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -593,7 +593,9 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	usageMetrics.MonitorUsers(internalProxiedK8SClient)
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
-	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
+
+	authMetrics := auth.NewMetrics(anonymousInternalProxiedK8SRT)
+	prometheus.MustRegister(authMetrics.GetCollectors()...)
 
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
 		authHandler(func(w http.ResponseWriter, r *http.Request) {

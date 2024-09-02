@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -43,12 +44,12 @@ const (
 )
 
 type Metrics struct {
-	loginRequests             prometheus.Counter
-	loginSuccessful           *prometheus.CounterVec
-	loginFailures             *prometheus.CounterVec
-	logoutRequests            *prometheus.CounterVec
-	tokenRefreshRequests      *prometheus.CounterVec
-	internalproxyClientConfig *rest.Config
+	loginRequests                 prometheus.Counter
+	loginSuccessful               *prometheus.CounterVec
+	loginFailures                 *prometheus.CounterVec
+	logoutRequests                *prometheus.CounterVec
+	tokenRefreshRequests          *prometheus.CounterVec
+	anonymousInternalProxiedK8SRT http.RoundTripper
 }
 
 func (m *Metrics) GetCollectors() []prometheus.Collector {
@@ -80,21 +81,13 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 		return
 	}
 
-	anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(m.internalproxyClientConfig))
-	if err != nil {
-		klog.Errorf("failed to set up an anonymous roundtripper: %v", err)
-		return
-	}
-
 	ctx := context.TODO()
-
 	configWithBearerToken := &rest.Config{
 		Host:        k8sConfig.Host,
-		Transport:   anonymousInternalProxiedK8SRT,
+		Transport:   m.anonymousInternalProxiedK8SRT,
 		BearerToken: ls.AccessToken(),
 		Timeout:     30 * time.Second,
 	}
-
 	role := UnknownLoginRole
 
 	if isKubeAdmin, err := m.isKubeAdmin(ctx, configWithBearerToken); isKubeAdmin && err == nil {
@@ -187,9 +180,9 @@ func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, e
 	return isKubeAdmin, nil
 }
 
-func NewMetrics(internalproxyClientConfig *rest.Config) *Metrics {
+func NewMetrics(anonymousInternalProxiedK8SRT http.RoundTripper) *Metrics {
 	m := new(Metrics)
-	m.internalproxyClientConfig = internalproxyClientConfig
+	m.anonymousInternalProxiedK8SRT = anonymousInternalProxiedK8SRT
 
 	m.loginRequests = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: "console",
