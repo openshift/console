@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	defaultRestClientConfig = &rest.Config{}
+	defaultRestClientConfig = http.RoundTripper(nil)
 )
 
 func TestDefaultMetrics(t *testing.T) {
