@@ -82,7 +82,7 @@ export const topologyPO = {
     knativeServiceIcon: '[title="Service"]',
     tabs: '[role="dialog"] li button',
     sectionTitle: 'h2',
-    close: 'button[aria-label="Close"]',
+    close: '[data-test-id="sidebar-close-button"]',
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
     tabName: '[role="dialog"] li button',
