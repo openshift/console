@@ -146,7 +146,7 @@ const Lightspeed: React.FC = () => {
                   >
                     <Text>
                       {t(
-                        'console-app~Contact your administrator and ask them to instal Red Hat OpenShift Lightspeed.',
+                        'console-app~Contact your administrator and ask them to install Red Hat OpenShift Lightspeed.',
                       )}
                     </Text>
                   </Alert>
