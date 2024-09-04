@@ -16,6 +16,16 @@ import { gitPage } from '@console/dev-console/integration-tests/support/pages/ad
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
+  verifyOrOpenSidebar: (nodeName: string) => {
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get('[class="odc-topology"]').then(($body) => {
+      if ($body.find(topologyPO.sidePane.dialog).length === 0) {
+        topologyPage.componentNode(nodeName).click({ force: true });
+      } else {
+        cy.log(`Sidebar is already open`);
+      }
+    });
+  },
   verifyUserIsInGraphView: () => {
     cy.byLegacyTestID('topology-view-shortcuts').should('be.visible');
     // eslint-disable-next-line promise/catch-or-return
@@ -70,7 +80,10 @@ export const topologyPage = {
     topologyHelper.verifyWorkloadDeleted(appName, options);
   },
   clickDisplayOptionDropdown: () =>
-    cy.get('.odc-topology-filter-dropdown__select').contains('Display options').click(),
+    cy
+      .get('[type="button"][aria-label="Options menu"]')
+      .contains('Display options')
+      .click({ force: true }),
   checkConnectivityMode: () => cy.get(topologyPO.graph.displayOptions.connectivityMode).click(),
   checkConsumptionMode: () => cy.get(topologyPO.graph.displayOptions.consumptionMode).click(),
   verifyConnectivityModeChecked: () =>
@@ -164,7 +177,6 @@ export const topologyPage = {
         break;
       default:
         throw new Error('Option is not available');
-        break;
     }
   },
   verifyPipelineRunStatus: (status: string) =>
