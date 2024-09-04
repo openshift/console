@@ -30,7 +30,7 @@ Feature: Update user in topology page if Quotas has been reached in a namespace
             Given user is at Add page
               And user has created workload "ex-node-js1" with resource type "deployment"
               And user is at Topology page
-             When user clicks on workload 'ex-node-js1'
+             When user clicks on workload 'ex-node-js1' to open sidebar
               And user can see sidebar opens with Resources tab selected by default
              Then user is able to see resource quota alert
               And user is able to see yellow border around 'ex-node-js1' workload
