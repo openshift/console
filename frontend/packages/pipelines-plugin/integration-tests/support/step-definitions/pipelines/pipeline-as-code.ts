@@ -235,7 +235,7 @@ Then('user will be redirected to Repositories page', () => {
 Then('{string} is not displayed on Repositories page', (repoName: string) => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.selectTab(pipelineTabs.Repositories);
-  cy.byTestID('empty-message')
+  cy.byTestID('empty-box-body')
     .should('be.visible')
     .then(() => {
       cy.log(`${repoName} is deleted from namespace`);

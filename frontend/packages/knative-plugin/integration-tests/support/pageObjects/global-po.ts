@@ -170,7 +170,7 @@ export const eventingPO = {
     },
   },
   catalogSidebarCreateButton: 'a[role="button"]',
-  message: '[data-test="empty-message"]',
+  message: '[data-test="empty-box-body"]',
   pageDetails: '[aria-label="Breadcrumb"]',
   eventSourcesTab: '[data-test-id="horizontal-link-Event Sources"]',
   brokersTab: '[data-test-id="horizontal-link-Brokers"]',
