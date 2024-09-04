@@ -7,7 +7,7 @@ describe('AsyncComponent', () => {
   let wrapper: ReactWrapper;
   const fooId = 'fooId';
   const Foo = (props: { className: string }) => <div id={fooId} className={props.className} />;
-  const loadingBoxSelector = '.cos-status-box';
+  const loadingBoxSelector = '[data-test="loading-box"]';
 
   beforeEach(() => {
     wrapper = null;

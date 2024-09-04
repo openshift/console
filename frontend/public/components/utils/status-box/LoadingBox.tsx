@@ -1,16 +1,13 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { Box, Loading } from '.';
+import { EmptyState, EmptyStateBody } from '@patternfly/react-core';
+import { Loading } from './Loading';
 
-export const LoadingBox: React.FC<LoadingBoxProps> = ({ className, message }) => (
-  <Box className={classNames('cos-status-box--loading', className)}>
-    <Loading />
-    {message && <div className="cos-status-box__loading-message">{message}</div>}
-  </Box>
+export const LoadingBox: React.FC = ({ children }) => (
+  <EmptyState data-test="loading-box">
+    <EmptyStateBody>
+      <Loading />
+      {children}
+    </EmptyStateBody>
+  </EmptyState>
 );
 LoadingBox.displayName = 'LoadingBox';
-
-type LoadingBoxProps = {
-  className?: string;
-  message?: string;
-};
