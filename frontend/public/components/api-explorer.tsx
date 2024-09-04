@@ -201,7 +201,7 @@ const APIResourcesList = compose(
     groupSpacer.add(sortedGroups[0]);
   }
 
-  const autocompleteGroups = (text: string, item: string, key: string): boolean => {
+  const autocompleteGroups = (text: string, _item: string, key: string): boolean => {
     return key !== ALL && fuzzy(text, key);
   };
 
@@ -514,13 +514,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   }, [apiGroup, apiVersion, plural, namespace, verb]);
 
   if (error) {
-    return (
-      <LoadError
-        message={error.message}
-        label={t('public~Access review')}
-        className="loading-box loading-box__errored"
-      />
-    );
+    return <LoadError label={t('public~Access review')}>{error.message}</LoadError>;
   }
 
   if (!accessResponse) {

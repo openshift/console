@@ -1784,7 +1784,6 @@
   "Error details": "Error details",
   "No {{label}} found": "No {{label}} found",
   "Not found": "Not found",
-  "Error Loading {{label}}: {{message}}": "Error Loading {{label}}: {{message}}",
   "Error Loading {{label}}": "Error Loading {{label}}",
   "Please <2>try again</2>.": "Please <2>try again</2>.",
   "404: Not Found": "404: Not Found",
