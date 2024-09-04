@@ -7,11 +7,10 @@ import { connect } from 'react-redux';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
-import { DeploymentConfigModel, DeploymentModel, RouteModel } from '@console/internal/models';
+import { RouteModel } from '@console/internal/models';
 import { RouteKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ServiceModel as knSvcModel } from '@console/knative-plugin/src';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { usePacInfo } from '@console/pipelines-plugin/src/components/repository/hooks/pac-hook';
@@ -23,11 +22,22 @@ import {
   useTelemetry,
 } from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
+import { startBuild as startShipwrightBuild } from '@console/shipwright-plugin/src/api';
+import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
+import {
+  Build as ShipwrightBuildKind,
+  ClusterBuildStrategy as ShipwrightClusterBuildStrategy,
+} from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { getBaseInitialValues } from './form-initial-values';
-import { createOrUpdateResources, getTelemetryImport, handleRedirect } from './import-submit-utils';
+import {
+  createOrUpdateResources,
+  filterDeployedResources,
+  getTelemetryImport,
+  handleRedirect,
+} from './import-submit-utils';
 import {
   GitImportFormData,
   FirehoseList,
@@ -35,6 +45,7 @@ import {
   Resources,
   BaseFormData,
   ImportTypes,
+  BuildOptions,
 } from './import-types';
 import { validationSchema } from './import-validation-utils';
 import { useDefaultBuildOption } from './section/useDefaultBuildOption';
@@ -123,6 +134,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       },
       strategy: importData.buildStrategy || 'Devfile',
       option: defaultBuildOption,
+      clusterBuildStrategy: ShipwrightClusterBuildStrategy.UNKNOWN,
     },
     import: {
       loaded: false,
@@ -148,6 +160,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     const imageStream = builderImages && builderImages[values.image.selected]?.obj;
     const createNewProject = projects.loaded && _.isEmpty(projects.data);
     const {
+      build: { option: buildOption },
       project: { name: projectName },
       pipeline: { enabled: pipelineEnabled, type: pipelineType },
       pac: { repository },
@@ -188,13 +201,28 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
           });
         }
 
-        const deployedResources = resources.filter(
-          (resource) =>
-            resource.kind === DeploymentModel.kind ||
-            resource.kind === DeploymentConfigModel.kind ||
-            (resource.kind === knSvcModel.kind &&
-              resource.apiVersion === `${knSvcModel.apiGroup}/${knSvcModel.apiVersion}`),
-        );
+        const deployedResources = filterDeployedResources(resources);
+
+        const redirectSearchParams = new URLSearchParams();
+
+        /* NOTE: This will be automated once Shipwright Triggers is GA */
+        if (buildOption === BuildOptions.SHIPWRIGHT_BUILD) {
+          const shipwrightBuild = resources?.find(
+            (resource) => resource.kind === ShipwrightBuildModel.kind,
+          ) as ShipwrightBuildKind;
+          try {
+            await startShipwrightBuild(shipwrightBuild);
+          } catch (err) {
+            toastContext.addToast({
+              variant: AlertVariant.danger,
+              title: t('devconsole~Build failed'),
+              content: err.message,
+              timeout: true,
+              dismissible: true,
+            });
+          }
+        }
+
         const route = resources.find((resource) => resource.kind === RouteModel.kind) as RouteKind;
         if (deployedResources.length > 0) {
           toastContext.addToast({
@@ -207,10 +235,15 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
             timeout: true,
             dismissible: true,
           });
+
+          if (typeof deployedResources[0].metadata.uid === 'string') {
+            redirectSearchParams.set('selectId', deployedResources[0].metadata.uid);
+          }
         }
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
-        handleRedirect(projectName, perspective, perspectiveExtensions);
+
+        handleRedirect(projectName, perspective, perspectiveExtensions, redirectSearchParams);
       })
       .catch((err) => {
         // eslint-disable-next-line no-console

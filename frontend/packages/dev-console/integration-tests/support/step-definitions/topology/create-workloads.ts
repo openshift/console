@@ -1,7 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { nav } from '@console/cypress-integration-tests/views/nav';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import {
+  topologyPage,
+  topologySidePane,
+} from '@console/topology/integration-tests/support/pages/topology';
 import { switchPerspective, devNavigationMenu } from '../../constants';
 import { perspective, navigateTo } from '../../pages';
 
@@ -41,4 +44,9 @@ Then('user will see pod with name {string} on topology page', (name: string) => 
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   topologyPage.verifyWorkloadInTopologyPage(`${name}`);
+});
+
+Then('user will see sidebar in topology page with title {string}', (title: string) => {
+  topologySidePane.verify();
+  topologySidePane.verifyTitle(title);
 });

@@ -24,8 +24,12 @@ Then('user can see application groupings updated to {string}', (newAppName: stri
 
 When('user clicks on Show advanced image options', () => {
   cy.get(pipelineBuilderPO.formView.switchToFormView).click();
-  if (cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options')) {
-    cy.get(topologyPO.createSecret.advancedOptions).click();
+  // if (cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options')) {
+  //   cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options').click();
+  if (cy.get(topologyPO.createSecret.createSecretButton).contains('Show advanced image options')) {
+    cy.get(topologyPO.createSecret.createSecretButton)
+      .contains('Show advanced image options')
+      .click();
   } else {
     cy.log('You have already opened advanced options');
   }
@@ -45,8 +49,12 @@ When('user clicks on {string} from context action menu', (actionItem: string) =>
 
 Then('user will see {string} in secret name dropdown under Pull secret', (secretName: string) => {
   cy.reload();
-  if (cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options')) {
-    cy.get(topologyPO.createSecret.advancedOptions).click();
+  // if (cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options')) {
+  //   cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options').click();
+  if (cy.get(topologyPO.createSecret.createSecretButton).contains('Show advanced image options')) {
+    cy.get(topologyPO.createSecret.createSecretButton)
+      .contains('Show advanced image options')
+      .click();
   } else {
     cy.log('You have already opened advanced options');
   }
@@ -141,7 +149,18 @@ When('user enters Timeout value as {string}', (timeoutValue: string) => {
 });
 
 When('user clicks on Show additional parameters and lifcycle hooks', () => {
-  cy.get(topologyPO.createSecret.advancedOptions).eq(0).click();
+  // cy.get(topologyPO.createSecret.advancedOptions).eq(0).click();
+  if (
+    cy
+      .get(topologyPO.deploymentStrategy.showsAdditionalHooks)
+      .contains('Show additional parameters and lifecycle hooks')
+  ) {
+    cy.get(topologyPO.deploymentStrategy.showsAdditionalHooks)
+      .contains('Show additional parameters and lifecycle hooks')
+      .click();
+  } else {
+    cy.log('You have already opened additional parameters and lifecycle hooks');
+  }
 });
 
 When(

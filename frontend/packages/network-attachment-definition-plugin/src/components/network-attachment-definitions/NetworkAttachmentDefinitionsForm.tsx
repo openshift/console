@@ -35,18 +35,19 @@ import {
 } from '@console/internal/module/k8s';
 import {
   RedExclamationCircleIcon,
+  useActiveNamespace,
   validateDNS1123SubdomainValue,
   ValidationErrorType,
 } from '@console/shared';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import {
   NET_ATTACH_DEF_HEADER_LABEL,
-  cnvBridgeNetworkType,
+  bridgeNetworkType,
   networkTypeParams,
   networkTypes,
   ovnKubernetesNetworkType,
   ovnKubernetesSecondaryLocalnet,
-} from '../../constants';
+} from '../../constants/constants';
 import {
   NetworkAttachmentDefinitionAnnotations,
   NetworkAttachmentDefinitionConfig,
@@ -73,7 +74,7 @@ const buildConfig = (
     console.error('Could not parse ipam.value JSON', e); // eslint-disable-line no-console
   }
 
-  if (networkType === cnvBridgeNetworkType) {
+  if (networkType === bridgeNetworkType) {
     config.bridge = _.get(typeParamsData, 'bridge.value', '');
     config.vlan = parseInt(typeParamsData?.vlanTagNum?.value, 10) || undefined;
     config.macspoofchk = _.get(typeParamsData, 'macspoofchk.value', true);
@@ -84,6 +85,7 @@ const buildConfig = (
   } else if (networkType === ovnKubernetesNetworkType) {
     config.topology = 'layer2';
     config.netAttachDefName = `${namespace}/${name}`;
+    config.subnets = _.get(typeParamsData, 'subnets.value');
   } else if (networkType === ovnKubernetesSecondaryLocalnet) {
     config.cniVersion = '0.4.0';
     config.name = _.get(typeParamsData, 'bridgeMapping.value', '');
@@ -92,6 +94,8 @@ const buildConfig = (
     config.vlanID = parseInt(typeParamsData?.vlanID?.value, 10) || undefined;
     config.mtu = parseInt(typeParamsData?.mtu?.value, 10) || undefined;
     config.netAttachDefName = `${namespace}/${name}`;
+    config.subnets = _.get(typeParamsData, 'subnets.value');
+    config.excludeSubnets = _.get(typeParamsData, 'excludeSubnets.value');
   }
   return config;
 };
@@ -99,7 +103,7 @@ const buildConfig = (
 const getResourceName = (networkType, typeParamsData): string => {
   if (_.isEmpty(typeParamsData)) return null;
 
-  return networkType === cnvBridgeNetworkType
+  return networkType === bridgeNetworkType
     ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
 };
@@ -166,21 +170,23 @@ const handleNameChange = (enteredName, namespace, fieldErrors, setName, setField
   delete fieldErrorsUpdate.nameValidationMsg;
 
   const nameValidation = validateDNS1123SubdomainValue(enteredName, {
-    // t('kubevirt-plugin~Network attachment definition name cannot be empty')
-    // t('kubevirt-plugin~Network attachment definition name can contain only alphanumeric characters')
-    // t('kubevirt-plugin~Network attachment definition name must start/end with alphanumeric character')
-    // t('kubevirt-plugin~Network attachment definition name cannot contain uppercase characters')
-    // t('kubevirt-plugin~Network attachment definition name is too long')
-    // t('kubevirt-plugin~Network attachment definition name is too short')
-    emptyMsg: 'kubevirt-plugin~Network attachment definition name cannot be empty',
+    // t('network-attachment-definition-plugin~Network attachment definition name cannot be empty')
+    // t('network-attachment-definition-plugin~Network attachment definition name can contain only alphanumeric characters')
+    // t('network-attachment-definition-plugin~Network attachment definition name must start/end with alphanumeric character')
+    // t('network-attachment-definition-plugin~Network attachment definition name cannot contain uppercase characters')
+    // t('network-attachment-definition-plugin~Network attachment definition name is too long')
+    // t('network-attachment-definition-plugin~Network attachment definition name is too short')
+    emptyMsg:
+      'network-attachment-definition-plugin~Network attachment definition name cannot be empty',
     errorMsg:
-      'kubevirt-plugin~Network attachment definition name can contain only alphanumeric characters',
+      'network-attachment-definition-plugin~Network attachment definition name can contain only alphanumeric characters',
     startEndAlphanumbericMsg:
-      'kubevirt-plugin~Network attachment definition name must start/end with alphanumeric character',
+      'network-attachment-definition-plugin~Network attachment definition name must start/end with alphanumeric character',
     uppercaseMsg:
-      'kubevirt-plugin~Network attachment definition name cannot contain uppercase characters',
-    longMsg: 'kubevirt-plugin~Network attachment definition name is too long',
-    shortMsg: 'kubevirt-plugin~Network attachment definition name is too short',
+      'network-attachment-definition-plugin~Network attachment definition name cannot contain uppercase characters',
+    longMsg: 'network-attachment-definition-plugin~Network attachment definition name is too long',
+    shortMsg:
+      'network-attachment-definition-plugin~Network attachment definition name is too short',
   });
   if (_.get(nameValidation, 'type', null) === ValidationErrorType.Error) {
     fieldErrorsUpdate.nameValidationMsg = nameValidation.messageKey;
@@ -197,7 +203,7 @@ const getNetworkTypes = (hasSriovNetNodePolicyCRD, hasHyperConvergedCRD, hasOVNK
   }
 
   if (!hasHyperConvergedCRD) {
-    delete types[cnvBridgeNetworkType];
+    delete types[bridgeNetworkType];
   }
 
   if (!hasOVNK8sNetwork) {
@@ -240,11 +246,11 @@ const validateForm = (fieldErrors, name, networkType, typeParamsData, setError) 
 };
 
 const NetworkAttachmentDefinitionFormBase = (props) => {
-  // t('kubevirt-plugin~Network Type')
-  // t('kubevirt-plugin~Edit YAML')
-  // t('kubevirt-plugin~Networks are not project-bound. Using the same name creates a shared NAD.')
-  const { loaded, match, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = props;
-  const namespace = _.get(match, 'params.ns', 'default');
+  // t('network-attachment-definition-plugin~Network Type')
+  // t('network-attachment-definition-plugin~Edit YAML')
+  // t('network-attachment-definition-plugin~Networks are not project-bound. Using the same name creates a shared NAD.')
+  const { loaded, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = props;
+  const [activeNamespace] = useActiveNamespace();
   const sriovNetNodePoliciesData = _.get(resources, 'sriovnetworknodepolicies.data', []);
 
   const { t } = useTranslation();
@@ -279,7 +285,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
     hasOVNK8sNetwork,
   );
 
-  const networkTypeTitle = t('kubevirt-plugin~Network Type');
+  const networkTypeTitle = t('network-attachment-definition-plugin~Network Type');
 
   React.useEffect(() => setLoading(hasSriovNetNodePolicyCRD && !loaded && !networkConfigLoaded), [
     hasSriovNetNodePolicyCRD,
@@ -288,7 +294,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
     loaded,
   ]);
 
-  // t('kubevirt-plugin~Create network attachment definition')
+  // t('network-attachment-definition-plugin~Create network attachment definition')
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
@@ -296,11 +302,13 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         <div className="co-m-pane__name">{NET_ATTACH_DEF_HEADER_LABEL}</div>
         <div className="co-m-pane__heading-link">
           <Link
-            to={`/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new`}
+            to={`/k8s/ns/${activeNamespace}/${referenceForModel(
+              NetworkAttachmentDefinitionModel,
+            )}/~new`}
             id="yaml-link"
             replace
           >
-            {t('kubevirt-plugin~Edit YAML')}
+            {t('network-attachment-definition-plugin~Edit YAML')}
           </Link>
         </div>
       </h1>
@@ -308,13 +316,13 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         <FormGroup
           fieldId="basic-settings-name"
           isRequired
-          label={t('kubevirt-plugin~Name')}
+          label={t('network-attachment-definition-plugin~Name')}
           labelIcon={
             <Popover
               aria-label={'Help'}
               bodyContent={() =>
                 t(
-                  'kubevirt-plugin~Networks are not project-bound. Using the same name creates a shared NAD.',
+                  'network-attachment-definition-plugin~Networks are not project-bound. Using the same name creates a shared NAD.',
                 )
               }
               position={PopoverPosition.right}
@@ -328,7 +336,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             placeholder={name}
             id="network-attachment-definition-name"
             onChange={(_event, value) =>
-              handleNameChange(value, namespace, fieldErrors, setName, setFieldErrors)
+              handleNameChange(value, activeNamespace, fieldErrors, setName, setFieldErrors)
             }
             value={name}
           />
@@ -346,7 +354,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
 
         <FormGroup fieldId="basic-settings-description">
           <label htmlFor="network-attachment-definition-description">
-            {t('kubevirt-plugin~Description')}
+            {t('network-attachment-definition-plugin~Description')}
           </label>
           <TextInput
             type="text"
@@ -367,7 +375,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
               variant="warning"
               title={'Missing installed operators'}
             >
-              <Trans ns="kubevirt-plugin" t={t}>
+              <Trans ns="network-attachment-definition-plugin" t={t}>
                 <strong>OpenShift Virtualization Operator</strong> or{' '}
                 <strong>SR-IOV Network Operator </strong>
                 needs to be installed on the cluster, in order to pick the Network Type.
@@ -406,7 +414,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
                   name,
                   networkType,
                   typeParamsData,
-                  namespace,
+                  activeNamespace,
                   setError,
                   setLoading,
                 )
@@ -414,10 +422,10 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
               type="submit"
               variant="primary"
             >
-              {t('kubevirt-plugin~Create')}
+              {t('network-attachment-definition-plugin~Create')}
             </Button>
             <Button id="cancel" onClick={history.goBack} type="button" variant="secondary">
-              {t('kubevirt-plugin~Cancel')}
+              {t('network-attachment-definition-plugin~Cancel')}
             </Button>
           </ActionGroup>
         </ButtonBar>

@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
 import {
-  getAccessModeRadios,
+  getAccessModeOptions,
   snapshotPVCStorageClassAnnotation,
   snapshotPVCAccessModeAnnotation,
   snapshotPVCVolumeModeAnnotation,
@@ -84,7 +84,7 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
   const requestedCapacity = persistentVolumeClaim?.spec?.resources?.requests?.storage;
   const sizeBase = convertToBaseValue(requestedCapacity);
   const sizeMetrics = requestedCapacity ? humanizeBinaryBytes(sizeBase).string : '-';
-  const accessModes = getAccessModeRadios().find(
+  const accessModes = getAccessModeOptions().find(
     (accessMode) => accessMode.value === persistentVolumeClaim?.spec?.accessModes?.[0],
   );
   const volumeMode = persistentVolumeClaim?.spec?.volumeMode;

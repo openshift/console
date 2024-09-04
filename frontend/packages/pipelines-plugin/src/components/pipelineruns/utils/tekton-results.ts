@@ -257,8 +257,6 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
   nextPageToken?: string,
   cacheKey?: string,
 ): Promise<[R[], RecordsList, boolean?]> => {
-  const url = await createTektonResultsUrl(namespace, dataType, filter, options, nextPageToken);
-
   if (cacheKey) {
     const result = CACHE[cacheKey];
     if (result) {
@@ -278,6 +276,7 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
   InFlightStore[cacheKey] = true;
   const value = await (async (): Promise<[R[], RecordsList]> => {
     try {
+      const url = await createTektonResultsUrl(namespace, dataType, filter, options, nextPageToken);
       let list: RecordsList = await consoleProxyFetchJSON({
         url,
         method: 'GET',

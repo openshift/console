@@ -26,6 +26,7 @@ export enum NodeQueries {
   POD_RESOURCE_LIMIT_MEMORY = 'POD_RESOURCE_LIMIT_MEMORY',
   POD_RESOURCE_REQUEST_CPU = 'POD_RESOURCE_REQUEST_CPU',
   POD_RESOURCE_REQUEST_MEMORY = 'POD_RESOURCE_REQUEST_MEMORY',
+  NODE_MEMORY_OVERCOMMIT = 'NODE_MEMORY_OVERCOMMIT',
 }
 
 const queries = {
@@ -37,16 +38,20 @@ const queries = {
   [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
   [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pods{instance=~'<%= ipAddress %>:.*'}`),
   [NodeQueries.FILESYSTEM_USAGE]: _.template(
-    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) - sum(max by (device) (node_filesystem_avail_bytes{instance='<%= node %>', device=~"/.*"}))`,
+    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) - sum(max by (device) (node_filesystem_avail_bytes{instance='<%= node %>', device=~"/.*"})) or
+    sum (max by (volume) (windows_logical_disk_size_bytes{instance='<%= node %>'})) - sum(max by (volume) (windows_logical_disk_free_bytes{instance='<%= node %>'}))`,
   ),
   [NodeQueries.FILESYSTEM_TOTAL]: _.template(
-    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"}))`,
+    `sum(max by (device) (node_filesystem_size_bytes{instance='<%= node %>', device=~"/.*"})) or sum(max by (volume) (windows_logical_disk_size_bytes{instance='<%= node %>'}))`,
   ),
   [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(
     `instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`,
   ),
   [NodeQueries.NETWORK_OUT_UTILIZATION]: _.template(
     `instance:node_network_transmit_bytes:rate:sum{instance='<%= node %>'}`,
+  ),
+  [NodeQueries.NODE_MEMORY_OVERCOMMIT]: _.template(
+    `((node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}) + (node_memory_SwapTotal_bytes{instance='<%= node %>'} - node_memory_SwapFree_bytes{instance='<%= node %>'})) / node_memory_MemTotal_bytes{instance='<%= node %>'} * 100`,
   ),
 };
 
@@ -128,7 +133,7 @@ export const getResourceQutoaQueries = (node: string) => ({
   ]({ node }),
 });
 
-export const getUtilizationQueries = (node: string, ipAddress: string) => ({
+export const getUtilizationQueries = (node?: string, ipAddress?: string) => ({
   [NodeQueries.CPU_USAGE]: queries[NodeQueries.CPU_USAGE]({ node }),
   [NodeQueries.CPU_TOTAL]: queries[NodeQueries.CPU_TOTAL]({ node }),
   [NodeQueries.MEMORY_USAGE]: queries[NodeQueries.MEMORY_USAGE]({ node }),
@@ -138,6 +143,9 @@ export const getUtilizationQueries = (node: string, ipAddress: string) => ({
     node,
   }),
   [NodeQueries.FILESYSTEM_TOTAL]: queries[NodeQueries.FILESYSTEM_TOTAL]({
+    node,
+  }),
+  [NodeQueries.NODE_MEMORY_OVERCOMMIT]: queries[NodeQueries.NODE_MEMORY_OVERCOMMIT]({
     node,
   }),
 });

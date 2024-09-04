@@ -143,8 +143,23 @@ export const updateResourceApplication = (
   });
 };
 
-const safeLoadList = async (model: K8sModel, queryParams: { [key: string]: any } = {}) => {
+const safeLoadList = async (
+  model: K8sModel,
+  queryParams: { [key: string]: any } = {},
+  accessCheckRequired?: boolean,
+) => {
   try {
+    if (accessCheckRequired) {
+      const canListResource = await checkAccess({
+        group: model.apiGroup,
+        resource: model.plural,
+        verb: 'list',
+        namespace: queryParams?.ns,
+      });
+      if (!canListResource?.status?.allowed) {
+        return [];
+      }
+    }
     return await k8sList(model, queryParams);
   } catch (error) {
     // Ignore when resource is not found
@@ -238,13 +253,21 @@ export const cleanUpWorkload = async (resource: K8sResourceKind): Promise<K8sRes
 
   const buildConfigs = await safeLoadList(BuildConfigModel, { ns: resource.metadata.namespace });
   const builds = await safeLoadList(BuildModel, { ns: resource.metadata.namespace });
-  const pipelines = await safeLoadList(PipelineModel, { ns: resource.metadata.namespace });
-  const triggerTemplates = await safeLoadList(TriggerTemplateModel, {
-    ns: resource.metadata.namespace,
-  });
-  const eventListeners = await safeLoadList(EventListenerModel, {
-    ns: resource.metadata.namespace,
-  });
+  const pipelines = await safeLoadList(PipelineModel, { ns: resource.metadata.namespace }, true);
+  const triggerTemplates = await safeLoadList(
+    TriggerTemplateModel,
+    {
+      ns: resource.metadata.namespace,
+    },
+    true,
+  );
+  const eventListeners = await safeLoadList(
+    EventListenerModel,
+    {
+      ns: resource.metadata.namespace,
+    },
+    true,
+  );
   const channelModels = await fetchChannelsCrd();
 
   const resourceModel = modelFor(referenceFor(resource));

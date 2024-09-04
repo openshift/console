@@ -23,6 +23,8 @@
   "Node Selector": "节点选择器",
   "Local Volume Discovery": "本地卷发现",
   "Allows you to discover the available disks on all available nodes": "允许您在所有可用节点上发现可用磁盘",
+  "All disk type may include HDD disks. Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.": "所有磁盘类型都可能包含 HDD 磁盘。Data Foundation 不支持使用 HDD 磁盘作为本地设备。如果计划使用 Data Foundation，需要选择 SSD。",
+  "Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.": "Data Foundation 不支持使用 HDD 磁盘作为本地设备。如果计划使用 Data Foundation，需要选择 SSD。",
   "LocalVolumeSet Name": "本地卷集名称",
   "StorageClass Name": "存储类名称",
   "Filter Disks By": "过滤磁盘",

@@ -1,6 +1,6 @@
 export const monitoringPO = {
   tabs: {
-    dashboard: '[data-test-id="horizontal-link-Dashboard"]',
+    dashboard: '[data-test-id="horizontal-link-Dashboards"]',
     metrics: '[data-test-id="horizontal-link-Metrics"]',
     alerts: '[data-test-id="horizontal-link-Alerts"]',
     events: '[data-test-id="horizontal-link-Events"]',
@@ -29,7 +29,7 @@ export const monitoringPO = {
   metricsTab: {
     selectQuery: '.odc-metrics-query-input button[type="button"]',
     queryExpression: 'textarea[placeholder="Expression (press Shift+Enter for newlines)"]',
-    cpuGraph: 'div.pf-v5-c-chart.query-browser__graph-container',
+    cpuGraph: '.graph-wrapper--query-browser',
     podsList: 'table[aria-label="query results table"]',
     showPromQL: '',
     hidePromQL: '',

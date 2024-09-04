@@ -4,7 +4,7 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
 import { linkify } from 'react-linkify';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
 // AbortController is not supported in some older browser versions
@@ -12,8 +12,7 @@ import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON, appInternalFetch } from '../co-fetch';
-
-import { detectFeatures } from '../actions/features';
+import { detectFeatures, setFlag } from '../actions/features';
 import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
@@ -52,6 +51,9 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
+import { FLAGS } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
 import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core'; // PF4 Imports
@@ -69,6 +71,8 @@ const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 import 'url-search-params-polyfill';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
+import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
+import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 
 initI18n();
 
@@ -148,6 +152,30 @@ const App = (props) => {
     setPrevParams(params);
   }, [location, params, prevLocation, prevParams]);
 
+  const dispatch = useDispatch();
+  const [, , errorMessage] = usePackageManifestCheck(
+    'lightspeed-operator',
+    'openshift-marketplace',
+  );
+
+  React.useEffect(() => {
+    const lightspeedButtonCapability = window.SERVER_FLAGS?.capabilities?.find(
+      (capability) => capability.name === 'LightspeedButton',
+    );
+    dispatch(
+      setFlag(
+        FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
+        lightspeedButtonCapability?.visibility?.state === 'Enabled' ? true : false,
+      ),
+    );
+    dispatch(setFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL, errorMessage === ''));
+  }, [dispatch, errorMessage]);
+
+  const consoleCapabilityLightspeedButtonIsEnabled = useFlag(
+    FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
+  );
+  const lightspeedIsAvailableToInstall = useFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL);
+
   const onNavToggle = () => {
     // Some components, like svg charts, need to reflow when nav is toggled.
     // Fire event after a short delay to allow nav animation to complete.
@@ -213,6 +241,9 @@ const App = (props) => {
               <AppContents />
             </ConnectedNotificationDrawer>
           </Page>
+          {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
+            <Lightspeed />
+          )}
           <CloudShell />
           <GuidedTour />
         </div>
@@ -300,12 +331,12 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   );
 
   React.useEffect(() => {
-    if (user.metadata?.uid || user.metadata?.name) {
+    if (user?.uid || user?.username) {
       fireTelemetryEvent('identify', { perspective, user });
     }
     // Only trigger identify event when the user identifier changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.metadata?.uid || user.metadata?.name, fireTelemetryEvent]);
+  }, [user?.uid || user?.username, fireTelemetryEvent]);
 
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
@@ -597,6 +628,7 @@ graphQLReady.onReady(() => {
           >
             <ToastProvider>
               <PollConsoleUpdates />
+              <AdmissionWebhookWarningNotifications />
               <AppRouter />
             </ToastProvider>
           </AppInitSDK>

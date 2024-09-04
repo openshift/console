@@ -54,6 +54,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({ placeholder, value, onChang
       dropDownClassName="dropdown--full-width odc-icon-dropdown"
       menuClassName="odc-icon-dropdown__menu"
       onChange={onChanged}
+      selectedKey={value || 'openshift'}
     />
   );
 };

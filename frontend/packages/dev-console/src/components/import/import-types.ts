@@ -8,6 +8,7 @@ import { PipelineData } from '@console/pipelines-plugin/src/components/import/im
 import { RepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/types';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
+import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import { HealthCheckFormProbe } from '../health-checks/health-checks-types';
 
@@ -239,6 +240,7 @@ export interface BuildData {
   strategy: string;
   source?: { type: string };
   option?: BuildOptions;
+  clusterBuildStrategy?: ClusterBuildStrategy;
 }
 
 export interface DetectedStrategyFormData extends DetectedStrategy {
@@ -284,6 +286,7 @@ export interface ServerlessScaling {
 export const GitReadableTypes = {
   [GitProvider.GITHUB]: 'GitHub',
   [GitProvider.GITLAB]: 'GitLab',
+  [GitProvider.GITEA]: 'Gitea',
   [GitProvider.BITBUCKET]: 'Bitbucket',
   [GitProvider.UNSURE]: 'Other',
 };
@@ -303,6 +306,7 @@ export enum Resources {
 
 export enum BuildOptions {
   BUILDS = 'BUILDS',
+  SHIPWRIGHT_BUILD = 'SHIPWRIGHT_BUILD',
   PIPELINES = 'PIPELINES',
   DISABLED = 'DISABLED',
 }
@@ -325,9 +329,12 @@ export const ReadableResourcesNames: Record<Resources, string> = {
 };
 
 export const ReadableBuildOptions: Record<BuildOptions, string> = {
-  [BuildOptions.BUILDS]: `devconsole~Builds`,
-  [BuildOptions.PIPELINES]: `pipelines-plugin~Pipelines`,
-  [BuildOptions.DISABLED]: `devconsole~Disabled`,
+  [BuildOptions.BUILDS]: 'devconsole~BuildConfig',
+  // t('devconsole~Builds for OpenShift (Shipwright)')
+  [BuildOptions.SHIPWRIGHT_BUILD]: 'devconsole~Builds for OpenShift (Shipwright)',
+  // t('devconsole~Build using pipelines')
+  [BuildOptions.PIPELINES]: 'devconsole~Build using pipelines',
+  [BuildOptions.DISABLED]: 'devconsole~Disabled',
 };
 
 export const ResourcesKinds: Record<Resources, string> = {

@@ -1,10 +1,10 @@
 export const quickStartsPO = {
   quickStartTitle: '[data-test="page-title"]',
-  filterKeyword: 'input.pf-v5-c-search-input__text-input',
-  statusFilter: 'button.pf-v5-c-select__toggle',
+  filterKeyword: '[aria-label="Search input"]',
+  statusFilter: 'button[class*="menu-toggle"]',
   statusDropdown: '[aria-label="Select filter"]',
   statusComplete: '[data-key="Complete"]',
-  emptyState: 'div.pf-v5-c-empty-state__content',
+  emptyState: '[class*="empty-state__content"]',
   clearFilter: '[data-test="clear-filter button"]',
   cardStatus: '[data-test~="tile"] [data-test~="status"]',
   duration: '[data-test="duration"]',

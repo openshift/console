@@ -16,7 +16,7 @@ export const monitoringPage = {
     },
     selectDashboard: (dashboardName: string) => {
       cy.get(monitoringPO.dashboardTab.dashboardDropdown).click();
-      cy.get('input.pf-m-search').type(dashboardName);
+      cy.get('input[type="search"]').type(dashboardName);
       cy.get('button.monitoring-dashboards__dashboard_dropdown_item').first().click();
     },
     verifySection: () => cy.get(monitoringPO.dashboardTab.dashboard).should('exist'),
@@ -49,21 +49,6 @@ export const monitoringPage = {
     verifyResetZoom: () => cy.byButtonText('Reset Zoom').should('be.visible'),
     clickResetZoom: () => cy.byButtonText('Reset Zoom').click(),
   },
-  alerts: {
-    search: (name: string) => {
-      cy.byLegacyTestID('item-filter').type(name);
-    },
-    filter: (
-      alertState: string[] = new Array('firing'),
-      severity: string[] = new Array('Critical'),
-    ) => {
-      cy.byLegacyTestID('filter-dropdown-toggle').find('button').click();
-      cy.get(`[data-test-row-filter="${alertState}"]`).click();
-      //  To Do
-      cy.byLegacyTestID(`[data-test-row-filter="${severity}"]`).click();
-    },
-    clickFilter: () => cy.byLegacyTestID('filter-dropdown-toggle').find('button').click(),
-  },
   events: {
     selectResources: (resourceName: string) => {
       cy.selectValueFromAutoCompleteDropDown(monitoringPO.eventsTab.resources, resourceName);
@@ -90,11 +75,6 @@ export const monitoringPage = {
       case monitoringTabs.Events:
         detailsPage.selectTab(monitoringPO.tabs.events);
         cy.url().should('include', 'events');
-        break;
-      case 'Alerts':
-      case monitoringTabs.Alerts:
-        detailsPage.selectTab(monitoringPO.tabs.alerts);
-        cy.url().should('include', 'alerts');
         break;
       default:
         cy.log(`${tabName} is unable to click on monitoring page`);

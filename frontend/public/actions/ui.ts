@@ -21,6 +21,7 @@ import {
   getUser,
   getImpersonate,
 } from '@console/dynamic-plugin-sdk';
+import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
 
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
@@ -48,6 +49,9 @@ export enum ActionType {
   SetUtilizationDurationSelectedKey = 'SetUtilizationDurationSelectedKey',
   SetUtilizationDurationEndTime = 'SetUtilizationDurationEndTime',
   SetShowOperandsInAllNamespaces = 'setShowOperandsInAllNamespaces',
+  SetDeprecatedPackage = 'setDeprecatedPackage',
+  SetDeprecatedChannel = 'setDeprecatedChannel',
+  SetDeprecatedVersion = 'setDeprecatedVersion',
 }
 
 type MetricValuesByName = {
@@ -76,6 +80,7 @@ export type NodeMetrics = {
   totalMemory: MetricValuesByName;
   usedStorage: MetricValuesByName;
   totalStorage: MetricValuesByName;
+  memoryOvercommit: MetricValuesByName;
 };
 
 export type PVCMetrics = {
@@ -304,6 +309,15 @@ export const setUtilizationDurationEndTime = (endTime) =>
 export const setShowOperandsInAllNamespaces = (value: boolean) => {
   return action(ActionType.SetShowOperandsInAllNamespaces, { value });
 };
+export const setDeprecatedPackage = (value: DeprecatedOperatorWarning) => {
+  return action(ActionType.SetDeprecatedPackage, { value });
+};
+export const setDeprecatedChannel = (value: DeprecatedOperatorWarning) => {
+  return action(ActionType.SetDeprecatedChannel, { value });
+};
+export const setDeprecatedVersion = (value: DeprecatedOperatorWarning) => {
+  return action(ActionType.SetDeprecatedVersion, { value });
+};
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -332,6 +346,9 @@ const uiActions = {
   setUtilizationDuration,
   setUtilizationDurationSelectedKey,
   setUtilizationDurationEndTime,
+  setDeprecatedPackage,
+  setDeprecatedChannel,
+  setDeprecatedVersion,
 };
 
 export type UIAction = Action<typeof uiActions>;

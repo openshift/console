@@ -1,11 +1,11 @@
 export const operatorsPO = {
-  search: '[data-test="search-operatorhub"] input.pf-v5-c-text-input-group__text-input',
+  search: '[data-test="search-operatorhub"] input[aria-label="Filter by keyword..."]',
   nav: {
     operators: '[data-quickstart-id="qs-nav-operators"]',
     operatorHub: 'a[data-test="nav"][href="/operatorhub"]',
     installedOperators:
       'a[data-test="nav"][href$="/operators.coreos.com~v1alpha1~ClusterServiceVersion"]',
-    link: 'li.pf-v5-c-nav__item.pf-m-expandable',
+    link: '[data-test="nav"]',
     menuItems: '#page-sidebar ul li',
     serverless: '[data-quickstart-id="qs-nav-serverless"]',
     eventing: `a[href^="/eventing/"]`,
@@ -33,7 +33,7 @@ export const operatorsPO = {
     knativeApacheCamelKOperatorCard:
       '[data-test="knative-camel-operator-community-operators-openshift-marketplace"]',
     apacheKafkaOperatorCard: '[data-test^="amq-streams-redhat-operators"]',
-    redHatSourceType: '[data-test-group-name="catalogSourceDisplayName"] [title="Red Hat"]',
+    redHatSourceType: '[data-test-group-name="source"] [title="Red Hat"]',
     redHatCodeReadyWorkspacesCard:
       '[data-test^="codeready-workspaces-redhat-operators-openshift-marketplace"]',
     gitopsPrimer: '[data-test="gitops-primer-community-operators-openshift-marketplace"]',

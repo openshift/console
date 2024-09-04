@@ -111,6 +111,7 @@ export enum ByteDataTypes {
 
 export type UtilizationItemProps = {
   title: string;
+  titleHelpComponent?: React.ComponentType;
   utilization?: PrometheusResponse;
   limit?: PrometheusResponse;
   requested?: PrometheusResponse;
@@ -123,6 +124,8 @@ export type UtilizationItemProps = {
   byteDataType?: ByteDataTypes;
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
   setLimitReqState?: (state: { limit: LIMIT_STATE; requested: LIMIT_STATE }) => void;
+  warningThreashold?: number;
+  errorThreashold?: number;
 };
 
 type EventInvolvedObject = {
@@ -275,12 +278,6 @@ export type UseDashboardResources = ({
   prometheusResults: RequestMap<PrometheusResponse>;
   notificationAlerts: { alerts: Alert[]; loaded: boolean; loadError: Error };
 };
-
-export type UseUserSettings = <T>(
-  key: string,
-  defaultValue?: T,
-  sync?: boolean,
-) => [T, React.Dispatch<React.SetStateAction<T>>, boolean];
 
 export type QuickStartsLoaderProps = {
   children: (quickStarts: QuickStart[], loaded: boolean) => React.ReactNode;

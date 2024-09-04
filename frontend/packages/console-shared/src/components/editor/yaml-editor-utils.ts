@@ -177,6 +177,7 @@ export const fold = (editor, model, resetMouseLocation: boolean): void => {
   }
 };
 
+// TODO: These functions are not part of React Component LifeCycle, will need refactoring
 export const enableYAMLValidation = (
   editor,
   monaco,
@@ -218,7 +219,7 @@ export const enableYAMLValidation = (
   const tryFolding = () => {
     const document = createDocument(getModel());
     if (!initialFoldingTriggered && document.getText() !== '') {
-      fold(editor, getModel(), true);
+      setTimeout(() => fold(editor, getModel(), true));
       initialFoldingTriggered = true;
     }
   };

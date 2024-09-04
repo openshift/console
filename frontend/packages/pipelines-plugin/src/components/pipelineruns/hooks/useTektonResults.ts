@@ -6,7 +6,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
 import { TektonResourceLabel } from '../../pipelines/const';
-import { RepositoryFields, RepositoryLabels } from '../../repository/consts';
+import { RepositoryLabels, RepositoryFields } from '../../repository/consts';
 import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import {
   getPipelineRuns,
@@ -120,7 +120,9 @@ export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: s
     selector = { matchLabels: { 'tekton.dev/pipeline': options?.name } };
   }
   if (options?.kind === 'Repository') {
-    selector = { matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: options?.name } };
+    selector = {
+      matchLabels: { [RepositoryLabels[RepositoryFields.REPOSITORY]]: options?.name },
+    };
   }
   const [resultPlrs, resultPlrsLoaded, resultPlrsLoadError, getNextPage] = useTRPipelineRuns(
     ns,
@@ -136,7 +138,7 @@ export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: s
   });
   const mergedPlrs =
     (resultPlrsLoaded || k8sPlrsLoaded) && !k8sPlrsLoadError
-      ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.name)
+      ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.uid)
       : [];
   return [
     mergedPlrs,

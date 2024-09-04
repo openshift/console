@@ -16,8 +16,8 @@ export const NetworkAttachmentDefinitionsDetailsPage: React.FC<NetworkAttachment
 ) => {
   const overviewPage = {
     href: '', // default landing page
-    // t('kubevirt-plugin~Details')
-    nameKey: 'kubevirt-plugin~Details',
+    // t('network-attachment-definition-plugin~Details')
+    nameKey: 'network-attachment-definition-plugin~Details',
     component: NetworkAttachmentDefinitionDetails,
   };
 

@@ -1,14 +1,8 @@
 apiVersion: v1
+annotations:
+  console-warning: 'The following repositories seem to be invalid or unreachable: repo1, repo2'
 entries:
   aks-helloworld--sample-repo-1:
-    - apiVersion: v1
-      created: "2020-03-30T16:27:13.4350608-05:00"
-      description: A Helm chart for Kubernetes
-      digest: a9bc374461e31cb1429021a898ef83d0a650783033f3bc121ed536ad99301bbc
-      name: aks-helloworld
-      urls:
-        - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.1.tgz
-      version: 0.1.1
     - apiVersion: v1
       created: "2020-03-30T16:27:13.433497-05:00"
       description: A Helm chart for Kubernetes
@@ -17,6 +11,14 @@ entries:
       urls:
         - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.0.tgz
       version: 0.1.0
+    - apiVersion: v1
+      created: "2020-03-30T16:27:13.4350608-05:00"
+      description: A Helm chart for Kubernetes
+      digest: a9bc374461e31cb1429021a898ef83d0a650783033f3bc121ed536ad99301bbc
+      name: aks-helloworld
+      urls:
+        - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.1.tgz
+      version: 0.1.1
   azure-vote--sample-repo-1:
     - apiVersion: v1
       created: "2020-03-30T16:27:13.4454224-05:00"
@@ -161,4 +163,4 @@ entries:
       urls:
         - https://azure-samples.github.io/helm-charts/twitter-sentiment-cnab-0.1.0.tgz
       version: 0.1.0
-generated: "2020-03-30T16:27:13.4275217-05:00"
+generated: "024-05-15T10:44:04"

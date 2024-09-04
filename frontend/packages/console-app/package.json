@@ -16,11 +16,11 @@
     "@console/internal": "0.0.0-fixed",
     "@console/insights-plugin": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
-    "@console/kubevirt-plugin": "0.0.0-fixed",
     "@console/local-storage-operator-plugin": "0.0.0-fixed",
     "@console/metal3-plugin": "0.0.0-fixed",
     "@console/network-attachment-definition-plugin": "0.0.0-fixed",
     "@console/operator-lifecycle-manager": "0.0.0-fixed",
+    "@console/operator-lifecycle-manager-v1": "0.0.0-fixed",
     "@console/patternfly": "0.0.0-fixed",
     "@console/pipelines-plugin": "0.0.0-fixed",
     "@console/shipwright-plugin": "0.0.0-fixed",
@@ -49,7 +49,9 @@
       "storageProvisionerDocs": "src/components/storage/Documentation",
       "nodeStatus": "src/components/nodes/status",
       "nodeActions": "src/components/nodes/menu-actions.tsx",
-      "oauthConfigDetailsPage": "src/components/oauth-config/OAuthConfigDetailsPage.tsx"
+      "oauthConfigDetailsPage": "src/components/oauth-config/OAuthConfigDetailsPage.tsx",
+      "networkPolicyListPage": "src/components/network-policies/multi-network-policy/NetworkPolicyListPage.tsx",
+      "multiNetworkFlag": "src/components/network-policies/multi-network-policy/multiNetworkFlag.ts"
     }
   }
 }

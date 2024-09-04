@@ -12,6 +12,7 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { QuickStartModel } from '@console/app/src/models';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { ListPage, Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { history, Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -120,6 +121,12 @@ const NADListEmpty: React.FC = () => {
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
 
+  const [canCreate] = useAccessReview({
+    group: NetworkAttachmentDefinitionModel.apiGroup,
+    resource: NetworkAttachmentDefinitionModel.plural,
+    verb: 'create',
+  });
+
   const searchText = 'network attachment definition';
   const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
     kind: referenceForModel(QuickStartModel),
@@ -136,7 +143,13 @@ const NADListEmpty: React.FC = () => {
   return (
     <EmptyState>
       <EmptyStateHeader
-        titleText={<>{t('kubevirt-plugin~No network attachment definitions found')}</>}
+        titleText={
+          <>
+            {t('network-attachment-definition-plugin~No {{label}} found', {
+              label: NetworkAttachmentDefinitionModel.labelPlural,
+            })}
+          </>
+        }
         headingLevel="h4"
       />
       <EmptyStateFooter>
@@ -146,8 +159,11 @@ const NADListEmpty: React.FC = () => {
           onClick={() =>
             history.push(getCreateLink(namespace === ALL_NAMESPACES_KEY ? undefined : namespace))
           }
+          isDisabled={!canCreate}
         >
-          {t('kubevirt-plugin~Create network attachment definition')}
+          {t('network-attachment-definition-plugin~Create {{label}}', {
+            label: NetworkAttachmentDefinitionModel.label,
+          })}
         </Button>
         {hasQuickStarts && (
           <EmptyStateActions>
@@ -157,7 +173,9 @@ const NADListEmpty: React.FC = () => {
               onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
             >
               <RocketIcon className="nad-quickstart-icon" />
-              {t('kubevirt-plugin~Learn how to use network attachment definitions')}
+              {t('network-attachment-definition-plugin~Learn how to use {{label}}', {
+                label: NetworkAttachmentDefinitionModel.labelPlural,
+              })}
             </Button>
           </EmptyStateActions>
         )}

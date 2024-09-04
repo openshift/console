@@ -66,7 +66,7 @@ class CreateRouteWithTranslation extends React.Component<
     namespace: getActiveNamespace(),
     labels: {},
     portOptions: {},
-    alternateServices: [],
+    alternateBackends: [],
   };
 
   componentDidMount() {
@@ -181,45 +181,49 @@ class CreateRouteWithTranslation extends React.Component<
   };
 
   addAltServiceEntry = () => {
-    this.setState(({ alternateServices }) => {
+    this.setState(({ alternateBackends }) => {
       const services = [
-        ...alternateServices,
+        ...alternateBackends,
         { name: null, weight: 100, key: _.uniqueId('alternate-backend-') },
       ];
-      this.props.formik.setFieldValue('formData.alternateServices', services);
+      this.props.formik.setFieldValue('formData.alternateBackends', services);
       return {
-        alternateServices: services,
+        alternateBackends: services,
       };
     });
   };
 
   removeAltServiceEntry(alternateServiceIndex: number) {
-    this.setState(({ alternateServices }) => {
-      const updatedServiceEntriesArray: AlternateServiceEntryType[] = [...alternateServices];
-      updatedServiceEntriesArray.splice(alternateServiceIndex, 1);
-      this.props.formik.setFieldValue('formData.alternateServices', updatedServiceEntriesArray);
-      if (updatedServiceEntriesArray.length < 1) {
-        this.setState({ weight: 100 });
-        this.props.formik.setFieldValue('formData.weight', 100);
-      }
-      return {
-        alternateServices: updatedServiceEntriesArray,
-      };
-    });
+    this.setState(
+      ({ alternateBackends }) => {
+        const updatedServiceEntriesArray: AlternateServiceEntryType[] = [...alternateBackends];
+        updatedServiceEntriesArray.splice(alternateServiceIndex, 1);
+        this.props.formik.setFieldValue('formData.alternateBackends', updatedServiceEntriesArray);
+        return {
+          alternateBackends: updatedServiceEntriesArray,
+        };
+      },
+      () => {
+        if (this.state.alternateBackends.length < 1) {
+          this.setState({ weight: 100 });
+          this.props.formik.setFieldValue('formData.weight', 100);
+        }
+      },
+    );
   }
 
   onDataChanged = (updatedEntry: AlternateServiceEntryGroupData, index: number) => {
-    this.setState(({ alternateServices }) => {
-      const updatedServiceEntriesArray: AlternateServiceEntryType[] = [...alternateServices];
+    this.setState(({ alternateBackends }) => {
+      const updatedServiceEntriesArray: AlternateServiceEntryType[] = [...alternateBackends];
       const updatedEntryData: AlternateServiceEntryType = {
         key: updatedServiceEntriesArray[index].key,
         weight: updatedEntry.weight,
         name: updatedEntry.name,
       };
       updatedServiceEntriesArray[index] = updatedEntryData;
-      this.props.formik.setFieldValue('formData.alternateServices', updatedServiceEntriesArray);
+      this.props.formik.setFieldValue('formData.alternateBackends', updatedServiceEntriesArray);
       return {
-        alternateServices: updatedServiceEntriesArray,
+        alternateBackends: updatedServiceEntriesArray,
       };
     });
   };
@@ -234,7 +238,7 @@ class CreateRouteWithTranslation extends React.Component<
       portOptions,
       targetPort,
       termination,
-      alternateServices,
+      alternateBackends,
       insecureEdgeTerminationPolicy,
     } = this.state;
     const serviceOptions = {};
@@ -247,7 +251,7 @@ class CreateRouteWithTranslation extends React.Component<
     if (service) {
       configuredServices.add(service.metadata.name);
     }
-    _.each(alternateServices, ({ name }) => configuredServices.add(name));
+    _.each(alternateBackends, ({ name }) => configuredServices.add(name));
     const availableServiceOptions = _.pickBy(
       serviceOptions,
       (item, key) => !configuredServices.has(key),
@@ -266,10 +270,10 @@ class CreateRouteWithTranslation extends React.Component<
       None: 'None',
       Redirect: 'Redirect',
     };
-    const alternateServicesList = _.map(alternateServices, (entryData, index) => {
+    const alternateBackendsList = _.map(alternateBackends, (entryData, index) => {
       return (
         <div className="co-add-remove-form__entry" key={entryData.key}>
-          {!_.isEmpty(alternateServices) && (
+          {!_.isEmpty(alternateBackends) && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
                 type="button"
@@ -342,7 +346,7 @@ class CreateRouteWithTranslation extends React.Component<
             className="pf-v5-c-form-control"
             type="text"
             onChange={this.handleChange}
-            value={this.state.path}
+            value={this.state.path ?? ''} // this.state.path can be set to undefined in componentDidMount
             placeholder="/"
             id="path"
             name="path"
@@ -381,7 +385,7 @@ class CreateRouteWithTranslation extends React.Component<
             <p>{t('public~Service to route to.')}</p>
           </div>
         </div>
-        {alternateServicesList.length > 0 && (
+        {alternateBackendsList.length > 0 && (
           <>
             <div className="form-group co-create-route__weight">
               <label htmlFor="weight">{t('public~Weight')}</label>
@@ -401,11 +405,11 @@ class CreateRouteWithTranslation extends React.Component<
                 </p>
               </div>
             </div>
-            {alternateServicesList}
+            {alternateBackendsList}
           </>
         )}
-        {alternateServicesList.length < MAX_ALT_SERVICE_TARGET &&
-          alternateServicesList.length + 1 < _.keys(serviceOptions).length &&
+        {alternateBackendsList.length < MAX_ALT_SERVICE_TARGET &&
+          alternateBackendsList.length + 1 < _.keys(serviceOptions).length &&
           service && (
             <Button
               className="pf-m-link--align-left co-create-route__add-service-btn"
@@ -426,7 +430,8 @@ class CreateRouteWithTranslation extends React.Component<
           {!_.isEmpty(portOptions) && (
             <Dropdown
               items={portOptions}
-              title={portOptions[targetPort] || t('public~Select target port')}
+              title={t('public~Select target port')}
+              selectedKey={_.isNumber(targetPort) ? UNNAMED_PORT_KEY : targetPort} // if targetPort is a number, it's an unnamed port
               dropDownClassName="dropdown--full-width"
               id="target-port"
               onChange={this.changeTargetPort}
@@ -510,7 +515,7 @@ class CreateRouteWithTranslation extends React.Component<
                       id="certificate"
                       label={t('public~Certificate')}
                       inputFieldHelpText={t(
-                        'public~The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                        'public~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                       )}
                     />
                   </div>
@@ -521,7 +526,7 @@ class CreateRouteWithTranslation extends React.Component<
                       id="private-key"
                       label={t('public~Private key')}
                       inputFieldHelpText={t(
-                        'public~The PEM format key. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                        'public~The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                       )}
                     />
                   </div>
@@ -532,7 +537,7 @@ class CreateRouteWithTranslation extends React.Component<
                       id="ca-certificate"
                       label={t('public~CA certificate')}
                       inputFieldHelpText={t(
-                        'public~The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                        'public~The PEM format CA certificate chain. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                       )}
                     />
                   </div>
@@ -659,7 +664,7 @@ export type RouteFormProps = {
   secure: boolean;
   namespace: string;
   labels: object;
-  alternateServices: AlternateServiceEntryType[];
+  alternateBackends: AlternateServiceEntryType[];
 };
 
 export type CreateRouteState = RouteFormProps & {

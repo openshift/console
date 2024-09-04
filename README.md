@@ -16,10 +16,9 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 ### Dependencies:
 
 1. [node.js](https://nodejs.org/) >= 18 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.20
-2. [go](https://golang.org/) >= 1.18+
-3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.4/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
+2. [go](https://golang.org/) >= 1.22+
+3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
-5. Google Chrome/Chromium or Firefox for integration tests
 
 ### Build everything:
 
@@ -79,10 +78,13 @@ oc get oauthclient console-oauth-client -o jsonpath='{.secret}' > examples/conso
 ```
 
 If the CA bundle of the OpenShift API server is unavailable, fetch the CA
-certificates from a service account secret. Otherwise copy the CA bundle to
+certificates from a service account secret. Due to [upstream changes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#manually-create-an-api-token-for-a-serviceaccount),
+these service account secrets need to be created manually.
+Otherwise copy the CA bundle to
 `examples/ca.crt`:
 
 ```
+oc apply -f examples/sa-secrets.yaml
 oc get secrets -n default --field-selector type=kubernetes.io/service-account-token -o json | \
     jq '.items[0].data."ca.crt"' -r | python -m base64 -d > examples/ca.crt
 # Note: use "openssl base64" because the "base64" tool is different between mac and linux
@@ -121,10 +123,10 @@ In order to update the `tectonic-console-builder` to a new version i.e. v27, fol
 2. Update the dependencies in Dockerfile.builder file i.e. v18.0.0.
 3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
    Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
-   To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo. 
-4. Lastly, update the mapping of `tectonic-console-builder` image tag in 
-   [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository. 
-   Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle. 
+   To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo.
+4. Lastly, update the mapping of `tectonic-console-builder` image tag in
+   [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository.
+   Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle.
    Optional: Request for the [rhel-8-base-nodejs-openshift-4.15](https://github.com/openshift-eng/ocp-build-data/pull/3775/files) nodebuilder update if it doesn't match the node version in `tectonic-console-builder`.
 
 #### CodeReady Containers
@@ -215,6 +217,8 @@ yarn run dev
 
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>. If you need to increase your watchers, it's common to see multiple errors beginning with `Error from chokidar`.
 
+Note:  ensure `yarn run dev` has finished its initial build before visiting http://localhost:9000, otherwise `./bin/bridge` will stop running.
+
 ### Unit Tests
 
 Run all unit tests:
@@ -269,22 +273,23 @@ This will launch the Cypress Test Runner UI in the `console` package, where you 
 
 #### Execute Cypress in different packages
 
-An alternate way to execute cypress tests is via [test-cypress.sh](test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
+An alternate way to execute cypress tests is via [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
 
 ```
-console>./test-cypress.sh
+console/frontend > ./integration-tests/test-cypress.sh
+
 Runs Cypress tests in Test Runner or headless mode
 Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]
   '-p <package>' may be 'console, 'olm' or 'devconsole'
   '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified.
   '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner
 Examples:
-  test-cypress.sh                                       // displays this help text
-  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
-  test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
-  test-cypress.sh -h true                               // runs all packages in headless mode
-  test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
-  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
+  ./integration-tests/test-cypress.sh                                       // displays this help text
+  ./integration-tests/test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
+  ./integration-tests/test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
+  ./integration-tests/test-cypress.sh -h true                               // runs all packages in headless mode
+  ./integration-tests/test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
+  ./integration-tests/test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
 ```
 
 When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
@@ -299,9 +304,9 @@ The end-to-end tests run against pull requests using [ci-operator](https://githu
 The tests are defined in [this manifest](https://github.com/openshift/release/blob/master/ci-operator/jobs/openshift/console/openshift-console-master-presubmits.yaml)
 in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
 
-CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [test-cypress.sh](test-cypress.sh).
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
 
-[test-cypress.sh](test-cypress.sh) runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
+`test-cypress.sh` runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
 
 `test-cypress.sh -h true`
 

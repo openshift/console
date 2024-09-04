@@ -1,0 +1,8 @@
+{
+  "Ecosystem": "Ecosystem",
+  "Extension Catalog": "Extension Catalog",
+  "Installed Extensions": "Installed Extensions",
+  "Extension Catalog items": "Extension Catalog items",
+  "No Extension Catalog items found": "No Extension Catalog items found",
+  "Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.": "Check that OLM v1 is configured and at least one valid ClusterCatalog has been created."
+}

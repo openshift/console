@@ -1,0 +1,306 @@
+[
+    {
+        "scope": "https://gitea.com:443",
+        "method": "GET",
+        "path": "/api/v1/repos/redhat-openshift/spring-petclinic/contents/",
+        "body": "",
+        "status": 200,
+        "response": [
+            {
+                "name": ".editorconfig",
+                "path": ".editorconfig",
+                "sha": "2513d2a34b1de7c60c7f5b80f5e546580b160011",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "file",
+                "size": 316,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.editorconfig?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.editorconfig",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/2513d2a34b1de7c60c7f5b80f5e546580b160011",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/.editorconfig",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.editorconfig?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/2513d2a34b1de7c60c7f5b80f5e546580b160011",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.editorconfig"
+                }
+            },
+            {
+                "name": ".gitignore",
+                "path": ".gitignore",
+                "sha": "24d2753c72aa4904f58182a4b1a7672b15e70190",
+                "last_commit_sha": "b2e86853b4fb340e5192af4e91e64d3994417070",
+                "type": "file",
+                "size": 215,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.gitignore?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.gitignore",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/24d2753c72aa4904f58182a4b1a7672b15e70190",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/.gitignore",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.gitignore?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/24d2753c72aa4904f58182a4b1a7672b15e70190",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.gitignore"
+                }
+            },
+            {
+                "name": ".mvn",
+                "path": ".mvn",
+                "sha": "39c9cf6d287e15a896e13525ab739fb44ab9c493",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.mvn?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.mvn",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/39c9cf6d287e15a896e13525ab739fb44ab9c493",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.mvn?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/39c9cf6d287e15a896e13525ab739fb44ab9c493",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.mvn"
+                }
+            },
+            {
+                "name": ".travis.yml",
+                "path": ".travis.yml",
+                "sha": "1e91cb501e6267d96c51a9c44dd6339f532e80f9",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "file",
+                "size": 44,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.travis.yml?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.travis.yml",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/1e91cb501e6267d96c51a9c44dd6339f532e80f9",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/.travis.yml",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.travis.yml?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/1e91cb501e6267d96c51a9c44dd6339f532e80f9",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.travis.yml"
+                }
+            },
+            {
+                "name": ".vscode",
+                "path": ".vscode",
+                "sha": "ab240f173729ba80f25ab48134c42cd2e7c07184",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.vscode?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.vscode",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/ab240f173729ba80f25ab48134c42cd2e7c07184",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/.vscode?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/ab240f173729ba80f25ab48134c42cd2e7c07184",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/.vscode"
+                }
+            },
+            {
+                "name": "clean.sh",
+                "path": "clean.sh",
+                "sha": "187423f351ab7ceb30dbaa09b64d5a0aeda06401",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "file",
+                "size": 394,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/clean.sh?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/clean.sh",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/187423f351ab7ceb30dbaa09b64d5a0aeda06401",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/clean.sh",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/clean.sh?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/187423f351ab7ceb30dbaa09b64d5a0aeda06401",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/clean.sh"
+                }
+            },
+            {
+                "name": "docker-compose.yml",
+                "path": "docker-compose.yml",
+                "sha": "22cf9c44386f944d51e7992b6c8184be6d842873",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "file",
+                "size": 282,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/docker-compose.yml?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/docker-compose.yml",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/22cf9c44386f944d51e7992b6c8184be6d842873",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/docker-compose.yml",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/docker-compose.yml?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/22cf9c44386f944d51e7992b6c8184be6d842873",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/docker-compose.yml"
+                }
+            },
+            {
+                "name": "images",
+                "path": "images",
+                "sha": "6b9134c053338a0767f741902bd59488d406e9d8",
+                "last_commit_sha": "b2e86853b4fb340e5192af4e91e64d3994417070",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/images?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/images",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/6b9134c053338a0767f741902bd59488d406e9d8",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/images?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/6b9134c053338a0767f741902bd59488d406e9d8",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/images"
+                }
+            },
+            {
+                "name": "mvnw",
+                "path": "mvnw",
+                "sha": "2c90d17e42f4eb9593fb109c92dd4ac4b3a07040",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "file",
+                "size": 10071,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/mvnw?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/mvnw",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/2c90d17e42f4eb9593fb109c92dd4ac4b3a07040",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/mvnw",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/mvnw?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/2c90d17e42f4eb9593fb109c92dd4ac4b3a07040",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/mvnw"
+                }
+            },
+            {
+                "name": "mvnw.cmd",
+                "path": "mvnw.cmd",
+                "sha": "0d34af4501b7d768cfe7d51b5d01f08958406c5d",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "file",
+                "size": 6609,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/mvnw.cmd?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/mvnw.cmd",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/0d34af4501b7d768cfe7d51b5d01f08958406c5d",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/mvnw.cmd",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/mvnw.cmd?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/0d34af4501b7d768cfe7d51b5d01f08958406c5d",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/mvnw.cmd"
+                }
+            },
+            {
+                "name": "pom.xml",
+                "path": "pom.xml",
+                "sha": "e4e74747a397e9a929fdabb91b278084f4461f01",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "file",
+                "size": 12939,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/pom.xml?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/pom.xml",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/e4e74747a397e9a929fdabb91b278084f4461f01",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/pom.xml",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/pom.xml?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/e4e74747a397e9a929fdabb91b278084f4461f01",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/pom.xml"
+                }
+            },
+            {
+                "name": "readme.md",
+                "path": "readme.md",
+                "sha": "5129f245b049d0d7578859e19dfe8fff6fcf8da8",
+                "last_commit_sha": "6398d8efdd49b35bfa44db3d63676fed7f899964",
+                "type": "file",
+                "size": 3774,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/readme.md?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/readme.md",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/5129f245b049d0d7578859e19dfe8fff6fcf8da8",
+                "download_url": "https://gitea.com/redhat-openshift/spring-petclinic/raw/branch/main/readme.md",
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/readme.md?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/5129f245b049d0d7578859e19dfe8fff6fcf8da8",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/readme.md"
+                }
+            },
+            {
+                "name": "src",
+                "path": "src",
+                "sha": "1d77f4784872e4ef13aa1320171178fd1480f704",
+                "last_commit_sha": "43a7ffa99413d6cdb948a98a8c1b4bd3ce580add",
+                "type": "dir",
+                "size": 0,
+                "encoding": null,
+                "content": null,
+                "target": null,
+                "url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/src?ref=main",
+                "html_url": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/src",
+                "git_url": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/1d77f4784872e4ef13aa1320171178fd1480f704",
+                "download_url": null,
+                "submodule_git_url": null,
+                "_links": {
+                    "self": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/contents/src?ref=main",
+                    "git": "https://gitea.com/api/v1/repos/redhat-openshift/spring-petclinic/git/blobs/1d77f4784872e4ef13aa1320171178fd1480f704",
+                    "html": "https://gitea.com/redhat-openshift/spring-petclinic/src/branch/main/src"
+                }
+            }
+        ],
+        "rawHeaders": [
+            "Date",
+            "Sat, 01 Jun 2024 14:45:06 GMT",
+            "Content-Type",
+            "application/json;charset=utf-8",
+            "Transfer-Encoding",
+            "chunked",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Cache-Control",
+            "max-age=0, private, must-revalidate, no-transform",
+            "Server",
+            "Caddy",
+            "Vary",
+            "Origin",
+            "X-Content-Type-Options",
+            "nosniff",
+            "X-Frame-Options",
+            "SAMEORIGIN"
+        ]
+    }
+]

@@ -20,6 +20,7 @@ export enum GitProvider {
   GITHUB = 'github',
   BITBUCKET = 'bitbucket',
   GITLAB = 'gitlab',
+  GITEA = 'gitea',
   UNSURE = 'other',
   INVALID = '',
 }

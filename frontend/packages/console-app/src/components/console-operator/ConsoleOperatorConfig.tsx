@@ -15,8 +15,13 @@ import {
 } from '@patternfly/react-table/deprecated';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import {
+  getGroupVersionKindForModel,
+  getReference,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -26,6 +31,7 @@ import {
   KebabAction,
   LoadingBox,
   navFactory,
+  RequireCreatePermission,
   ResourceLink,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -254,6 +260,20 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
           )}
         />
       )}
+      <RequireCreatePermission model={ConsolePluginModel}>
+        <div className="co-m-pane__createLink--no-title">
+          <Link
+            className="co-m-primary-action"
+            to={`/k8s/cluster/${getReference(
+              getGroupVersionKindForModel(ConsolePluginModel),
+            )}/~new`}
+          >
+            <Button variant="primary" id="yaml-create" data-test="item-create">
+              {t('public~Create {{label}}', { label: t(ConsolePluginModel.label) })}
+            </Button>
+          </Link>
+        </div>
+      </RequireCreatePermission>
       {rows.length ? (
         <TableDeprecated
           aria-label={t('console-app~Console plugins table')}

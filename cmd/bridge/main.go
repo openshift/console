@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"runtime"
@@ -13,9 +14,9 @@ import (
 	"os"
 	"strings"
 
+	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
-	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -24,12 +25,14 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	downloadsServer "github.com/openshift/console/cmd/bridge/downloads/server"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	klog "k8s.io/klog/v2"
 )
 
 const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+	catalogdHost = "catalogd-catalogserver.openshift-catalogd.svc:443"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
@@ -92,9 +95,9 @@ func main() {
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
+	fK8sModeOffClusterCatalogd := fs.String("k8s-mode-off-cluster-catalogd", "", "DEV ONLY. URL of the cluster's catalogd server.")
 
-	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
-	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
+	fK8sAuth := fs.String("k8s-auth", "", "this option is deprecated, setting it has no effect")
 
 	fK8sModeOffClusterGitOps := fs.String("k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
 
@@ -141,6 +144,7 @@ func main() {
 	fAddPage := fs.String("add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
 	fProjectAccessClusterRoles := fs.String("project-access-cluster-roles", "", "The list of Cluster Roles assignable for the project access page. (JSON as string)")
 	fPerspectives := fs.String("perspectives", "", "Allow enabling/disabling of perspectives in the console. (JSON as string)")
+	fCapabilities := fs.String("capabilities", "", "Allow enabling/disabling of capabilities in the console. (JSON as string)")
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control/infra nodes (External | HighlyAvailable | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
@@ -252,6 +256,14 @@ func main() {
 		}
 	}
 
+	capabilities := []operatorv1.Capability{}
+	if *fCapabilities != "" {
+		err = json.Unmarshal([]byte(*fCapabilities), &capabilities)
+		if err != nil {
+			klog.Fatalf("Error unmarshaling capabilities JSON: %v", err)
+		}
+	}
+
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
@@ -284,6 +296,7 @@ func main() {
 		NodeOperatingSystems:         nodeOperatingSystems,
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
+		Capabilities:                 capabilities,
 	}
 
 	completedAuthnOptions, err := authOptions.Complete()
@@ -314,10 +327,6 @@ func main() {
 		k8sCertPEM []byte
 	)
 
-	var (
-		k8sAuthServiceAccountBearerToken string
-	)
-
 	var k8sEndpoint *url.URL
 	switch *fK8sMode {
 	case "in-cluster":
@@ -335,13 +344,9 @@ func main() {
 			RootCAs: rootCAs,
 		})
 
-		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
-		if err != nil {
-			klog.Fatalf("failed to read bearer token: %v", err)
-		}
-
 		srv.InternalProxiedK8SClientConfig = &rest.Config{
-			Host: k8sEndpoint.String(),
+			Host:            k8sEndpoint.String(),
+			BearerTokenFile: k8sInClusterBearerToken,
 			TLSClientConfig: rest.TLSClientConfig{
 				CAFile: k8sInClusterCA,
 			},
@@ -352,8 +357,6 @@ func main() {
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
 		}
-
-		k8sAuthServiceAccountBearerToken = string(bearerToken)
 
 		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
 		if *fServiceCAFile != "" {
@@ -373,6 +376,11 @@ func main() {
 				Transport: &http.Transport{
 					TLSClientConfig: serviceProxyTLSConfig,
 				},
+			}
+
+			srv.CatalogdProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
 			}
 
 			srv.ThanosProxyConfig = &proxy.Config{
@@ -440,6 +448,15 @@ func main() {
 			HeaderBlacklist:         []string{"Cookie", "X-CSRFToken"},
 			Endpoint:                k8sEndpoint,
 			UseProxyFromEnvironment: true,
+		}
+
+		if *fK8sModeOffClusterCatalogd != "" {
+			offClusterCatalogdURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-catalogd", *fK8sModeOffClusterCatalogd, false)
+			flags.FatalIfFailed(err)
+			srv.CatalogdProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				Endpoint:        offClusterCatalogdURL,
+			}
 		}
 
 		if *fK8sModeOffClusterThanos != "" {
@@ -519,25 +536,8 @@ func main() {
 		Endpoint:        clusterManagementURL,
 	}
 
-	switch *fK8sAuth {
-	case "service-account":
-		flags.FatalIfFailed(flags.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster"))
-		srv.StaticUser = &auth.User{
-			Token: k8sAuthServiceAccountBearerToken, // FIXME: make it read the token from the file and periodically re-read?
-		}
-		srv.InternalProxiedK8SClientConfig.BearerTokenFile = k8sInClusterBearerToken
-	case "bearer-token":
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken))
-
-		srv.StaticUser = &auth.User{
-			Token: *fK8sAuthBearerToken,
-		}
-		srv.InternalProxiedK8SClientConfig.BearerToken = *fK8sAuthBearerToken
-	case "oidc", "openshift":
-		flags.FatalIfFailed(flags.ValidateFlagIs("user-auth", authOptions.AuthType, "oidc", "openshift"))
-		srv.InternalProxiedK8SClientConfig.BearerTokenFile = k8sInClusterBearerToken
-	default:
-		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift"))
+	if len(*fK8sAuth) > 0 {
+		klog.Warning("DEPRECATED: --k8s-auth is deprecated and setting it has no effect")
 	}
 
 	internalProxiedK8SRT, err := rest.TransportFor(srv.InternalProxiedK8SClientConfig)

@@ -5,6 +5,7 @@ import { TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
 const apiKey =
   window.SERVER_FLAGS?.telemetry?.DEVSANDBOX_SEGMENT_API_KEY ||
   window.SERVER_FLAGS?.telemetry?.SEGMENT_API_KEY ||
+  window.SERVER_FLAGS?.telemetry?.SEGMENT_PUBLIC_API_KEY ||
   '';
 
 /**
@@ -24,7 +25,7 @@ const jsUrl =
 const initSegment = () => {
   if (TELEMETRY_DEBUG) {
     // eslint-disable-next-line no-console
-    console.debug('console-telemetry-plugin: initialize segment API with:', {
+    console.info('console-telemetry-plugin: initialize segment API with:', {
       apiKey,
       apiHost,
       jsHost,
@@ -110,32 +111,58 @@ export const eventListener: TelemetryEventListener = async (
   eventType: string,
   properties?: any,
 ) => {
-  if (TELEMETRY_DEBUG) {
-    // eslint-disable-next-line no-console
-    console.debug('console-telemetry-plugin: received telemetry event:', eventType, properties);
-    return;
-  }
-  if (TELEMETRY_DISABLED || !apiKey) {
+  if (!apiKey) {
+    if (TELEMETRY_DEBUG) {
+      // eslint-disable-next-line no-console
+      console.debug(
+        'console-telemetry-plugin: missing Segment API key - ignoring telemetry event:',
+        eventType,
+        properties,
+      );
+    }
     return;
   }
   switch (eventType) {
     case 'identify':
       {
         const { user, ...otherProperties } = properties;
-        const id = user?.metadata?.name;
-        if (id) {
+        const clusterId = otherProperties?.clusterId;
+        const organizationId = otherProperties?.organizationId;
+        const username = user?.username;
+        if (username) {
+          let anonymousIdInput: string;
+          if (organizationId) {
+            if (username === 'kubeadmin' || username === 'kube:admin') {
+              anonymousIdInput = `${organizationId}@${clusterId}`;
+            } else {
+              anonymousIdInput = `${username}@${clusterId}`;
+            }
+          } else {
+            anonymousIdInput = username;
+          }
+
           // Use SHA1 hash algorithm to anonymize the user
           const anonymousIdBuffer = await crypto.subtle.digest(
             'SHA-1',
-            new TextEncoder().encode(id),
+            new TextEncoder().encode(anonymousIdInput),
           );
           const anonymousIdArray = Array.from(new Uint8Array(anonymousIdBuffer));
           const anonymousId = anonymousIdArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+          if (TELEMETRY_DEBUG) {
+            // eslint-disable-next-line no-console
+            console.debug(
+              `console-telemetry-plugin: use anonymized user identifier to group events`,
+              { username, clusterId, organizationId, anonymousIdInput, anonymousId },
+            );
+          }
+
           (window as any).analytics.identify(anonymousId, otherProperties, anonymousIP);
         } else {
           // eslint-disable-next-line no-console
           console.error(
             'console-telemetry-plugin: unable to identify as no user name was provided',
+            properties,
           );
         }
       }

@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { PerspectiveType } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import { usePerspectiveExtension, usePerspectives, useTelemetry } from '@console/shared';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
 import { usePreferredPerspective } from '../user-preferences';
@@ -8,9 +8,10 @@ import { useLastPerspective } from './useLastPerspective';
 
 export const useValuesForPerspectiveContext = (): [
   PerspectiveType,
-  (newPerspective: string) => void,
+  (newPerspective: string, next?: string) => void,
   boolean,
 ] => {
+  const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const perspectiveExtensions = usePerspectives();
   const [lastPerspective, setLastPerspective, lastPerspectiveLoaded] = useLastPerspective();
@@ -25,12 +26,14 @@ export const useValuesForPerspectiveContext = (): [
   const isValidPerspective =
     loaded && perspectiveExtensions.some((p) => p.properties.id === perspective);
 
-  const setPerspective = (newPerspective: string) => {
+  const setPerspective = (newPerspective: string, next?: string) => {
     setLastPerspective(newPerspective);
     setActivePerspective(newPerspective);
-    // Navigate to root and let the default page determine where to go to next
-    history.push('/');
+    // Navigate to next or root and let the default page determine where to go to next
+    navigate(next || '/');
     fireTelemetryEvent('Perspective Changed', { perspective: newPerspective });
+    // eslint-disable-next-line no-console
+    console.log('DEBUG: setting perspective', newPerspective, next);
   };
 
   return [isValidPerspective ? perspective : undefined, setPerspective, loaded];

@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import {
   DynamicRemotePlugin,
@@ -47,22 +48,50 @@ const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
   ...pkg.dependencies,
 });
 
+const getPluginSDKPackageDependencies = () =>
+  loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').dependencies;
+
+const getPatternFlyMajorVersion = (pkg: ConsolePluginPackageJSON) => {
+  const pluginDeps = getPackageDependencies(pkg);
+  const pfCoreVersionRange = pluginDeps['@patternfly/react-core'];
+
+  return semver.validRange(pfCoreVersionRange)
+    ? semver.minVersion(pfCoreVersionRange)?.major
+    : undefined;
+};
+
 const getPatternFlyStyles = (baseDir: string) =>
   glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
 
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-const getWebpackSharedModules = () =>
-  sharedPluginModules.reduce<WebpackSharedObject>((acc, moduleName) => {
+const getWebpackSharedModules = (pkg: ConsolePluginPackageJSON) => {
+  const pfMajorVersion = getPatternFlyMajorVersion(pkg);
+  const sdkPkgDeps = getPluginSDKPackageDependencies();
+
+  return sharedPluginModules.reduce<WebpackSharedObject>((acc, moduleName) => {
     const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
+    const providedVersionRange = sdkPkgDeps[moduleName];
     const moduleConfig: WebpackSharedConfig = { singleton };
+
+    // Console provides PatternFly 4 shared modules to its plugins for backwards compatibility.
+    // Plugins using PatternFly 5 and higher share the PatternFly code bits via dynamic modules.
+    // TODO(vojtech): remove this code when Console drops support for PatternFly 4
+    if (moduleName.startsWith('@patternfly/') && pfMajorVersion > 4) {
+      return acc;
+    }
 
     if (!allowFallback) {
       moduleConfig.import = false;
     }
 
+    if (semver.validRange(providedVersionRange)) {
+      moduleConfig.requiredVersion = providedVersionRange;
+    }
+
     acc[moduleName] = moduleConfig;
     return acc;
   }, {});
+};
 
 const getWebpackSharedDynamicModules = (
   pkg: ConsolePluginPackageJSON,
@@ -109,8 +138,8 @@ export const validateConsoleExtensionsFileSchema = (
 };
 
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
-  const sdkPkg = loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk');
   const pluginDeps = getPackageDependencies(pkg);
+  const sdkPkgDeps = getPluginSDKPackageDependencies();
   const result = new ValidationResult('package.json');
 
   sharedPluginModules.forEach((moduleName) => {
@@ -122,7 +151,7 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
       return;
     }
 
-    const providedVersionRange = sdkPkg.dependencies[moduleName];
+    const providedVersionRange = sdkPkgDeps[moduleName];
     const consumedVersion = getVendorPackageVersion(moduleName);
 
     if (semver.validRange(providedVersionRange) && semver.valid(consumedVersion)) {
@@ -219,6 +248,18 @@ export type ConsoleRemotePluginOptions = Partial<{
    */
   sharedDynamicModuleSettings: Partial<{
     /**
+     * Paths to `node_modules` directories to search when parsing dynamic modules.
+     *
+     * Paths listed here _must_ be absolute.
+     *
+     * If not specified, the list will contain a single entry:
+     * ```ts
+     * path.resolve(process.cwd(), 'node_modules')
+     * ```
+     */
+    modulePaths: string[];
+
+    /**
      * Attempt to parse dynamic modules for these packages.
      *
      * Each package listed here should include a `dist/dynamic` directory containing `package.json`
@@ -227,6 +268,7 @@ export type ConsoleRemotePluginOptions = Partial<{
      * If not specified, the following packages will be included:
      * - `@patternfly/react-core`
      * - `@patternfly/react-icons`
+     * - `@patternfly/react-table`
      */
     packageSpecs: Record<
       string,
@@ -287,20 +329,26 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       validateConsoleProvidedSharedModules(this.pkg).report();
     }
 
+    const resolvedModulePaths = this.adaptedOptions.sharedDynamicModuleSettings.modulePaths ?? [
+      path.resolve(process.cwd(), 'node_modules'),
+    ];
+
     this.sharedDynamicModuleMaps = Object.entries(
       this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? {
         '@patternfly/react-core': {},
         '@patternfly/react-icons': {},
+        '@patternfly/react-table': {},
       },
     ).reduce<Record<string, DynamicModuleMap>>(
-      (acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => ({
-        ...acc,
-        [pkgName]: getDynamicModuleMap(
-          path.resolve(this.baseDir, 'node_modules', pkgName),
-          indexModule,
-          resolutionField,
-        ),
-      }),
+      (acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => {
+        const basePath = resolvedModulePaths
+          .map((p) => path.resolve(p, pkgName))
+          .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
+
+        return basePath
+          ? { ...acc, [pkgName]: getDynamicModuleMap(basePath, indexModule, resolutionField) }
+          : acc;
+      },
       {},
     );
   }
@@ -345,7 +393,9 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       }
     });
 
-    const allSharedDynamicModules = Object.entries(this.sharedDynamicModuleMaps).reduce<
+    const consoleProvidedSharedModules = getWebpackSharedModules(this.pkg);
+
+    const sharedDynamicModules = Object.entries(this.sharedDynamicModuleMaps).reduce<
       WebpackSharedObject
     >(
       (acc, [moduleName, dynamicModuleMap]) => ({
@@ -366,10 +416,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
         exposedModules,
       },
       extensions,
-      sharedModules: {
-        ...getWebpackSharedModules(),
-        ...allSharedDynamicModules,
-      },
+      sharedModules: { ...consoleProvidedSharedModules, ...sharedDynamicModules },
       entryCallbackSettings: {
         name: 'loadPluginEntry',
         pluginID: `${name}@${version}`,

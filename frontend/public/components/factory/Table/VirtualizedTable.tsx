@@ -13,6 +13,7 @@ import { VirtualizedTableFC, TableColumn, TableDataProps } from '@console/dynami
 import VirtualizedTableBody from './VirtualizedTableBody';
 import { StatusBox, WithScrollContainer, EmptyBox } from '../../utils';
 import { sortResourceByValue } from './sort';
+import { Button } from '@patternfly/react-core';
 
 const BREAKPOINT_SM = 576;
 const BREAKPOINT_MD = 768;
@@ -76,13 +77,16 @@ const VirtualizedTable: VirtualizedTableFC = ({
   rowData,
   unfilteredData,
   mock = false,
+  sortColumnIndex,
+  sortDirection,
+  csvData,
 }) => {
   const navigate = useNavigate();
   const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
   const [sortBy, setSortBy] = React.useState<{
     index: number;
     direction: SortByDirection;
-  }>({ index: columnShift, direction: SortByDirection.asc });
+  }>({ index: sortColumnIndex || columnShift, direction: sortDirection || SortByDirection.asc });
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
@@ -179,6 +183,17 @@ const VirtualizedTable: VirtualizedTableFC = ({
     </WindowScroller>
   );
 
+  const downloadCsv = () => {
+    // csvData should be formatted as comma-seperated values
+    // (e.g. `"a","b","c", \n"d","e","f", \n"h","i","j"`)
+    const blobCsvData = new Blob([csvData], { type: 'text/csv' });
+    const csvURL = URL.createObjectURL(blobCsvData);
+    const link = document.createElement('a');
+    link.href = csvURL;
+    link.download = `openshift.csv`;
+    link.click();
+  };
+
   return (
     <div className="co-m-table-grid co-m-table-grid--bordered">
       {mock ? (
@@ -200,6 +215,11 @@ const VirtualizedTable: VirtualizedTableFC = ({
             aria-label={ariaLabel}
             aria-rowcount={data?.length}
           >
+            {csvData && (
+              <Button className="co-virtualized-table--export-csv-button" onClick={downloadCsv}>
+                Export as CSV
+              </Button>
+            )}
             <PfTable
               cells={columns}
               rows={[]}

@@ -31,7 +31,7 @@ type NodeDetailsOverviewProps = {
 
 const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
   const launchLabelsModal = useLabelsModal(node);
-  const machine = getNodeMachineNameAndNamespace(node);
+  const [machineName, machineNamespace] = getNodeMachineNameAndNamespace(node);
   const canUpdate = useAccessReview({
     group: NodeModel.apiGroup,
     resource: NodeModel.plural,
@@ -114,14 +114,14 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                 </span>
               )}
             </dd>
-            {machine.name && (
+            {machineName && (
               <>
                 <dt>{t('console-app~Machine')}</dt>
                 <dd>
                   <ResourceLink
                     kind={referenceForModel(MachineModel)}
-                    name={machine.name}
-                    namespace={machine.namespace}
+                    name={machineName}
+                    namespace={machineNamespace}
                   />
                 </dd>
               </>

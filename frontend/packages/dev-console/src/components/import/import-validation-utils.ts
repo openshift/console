@@ -19,6 +19,7 @@ import {
   gitUrlRegex,
   resourcesValidationSchema,
   devfileValidationSchema,
+  importFlowPipelineTemplateValidationSchema,
 } from './validation-schema';
 
 export const validationSchema = (t: TFunction) =>
@@ -38,6 +39,7 @@ export const validationSchema = (t: TFunction) =>
     resources: resourcesValidationSchema,
     healthChecks: healthChecksProbesValidationSchema(t),
     pac: importFlowRepositoryValidationSchema(t),
+    pipeline: importFlowPipelineTemplateValidationSchema,
   });
 
 const hasDomain = (url: string, domain: string): boolean => {
@@ -61,6 +63,9 @@ export const detectGitType = (url: string): GitProvider => {
   }
   if (hasDomain(url, 'gitlab.com')) {
     return GitProvider.GITLAB;
+  }
+  if (hasDomain(url, 'gitea.com') || url.includes('gitea')) {
+    return GitProvider.GITEA;
   }
   // Not a known URL
   return GitProvider.UNSURE;

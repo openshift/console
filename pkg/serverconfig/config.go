@@ -12,7 +12,7 @@ import (
 
 	"github.com/coreos/pkg/flagutil"
 	"gopkg.in/yaml.v2"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
@@ -112,7 +112,6 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	}
 
 	addClusterInfo(fs, &config.ClusterInfo)
-	defaultK8SAuth(fs)
 	addCustomization(fs, &config.Customization)
 	addProviders(fs, &config.Providers)
 	addMonitoringInfo(fs, &config.MonitoringInfo)
@@ -233,14 +232,6 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	}
 }
 
-func defaultK8SAuth(fs *flag.FlagSet) {
-	// Assume "openshift" if config file is used and it is not set already
-	// by a command-line argument or environment variable.
-	if !isAlreadySet(fs, "k8s-auth") {
-		fs.Set("k8s-auth", "openshift")
-	}
-}
-
 func addProviders(fs *flag.FlagSet, providers *Providers) {
 	if providers.StatuspageID != "" {
 		fs.Set("statuspage-id", providers.StatuspageID)
@@ -334,6 +325,15 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 			klog.Fatalf("Could not marshal ConsoleConfig customization.perspectives field: %v", err)
 		} else {
 			fs.Set("perspectives", string(perspectives))
+		}
+	}
+
+	if customization.Capabilities != nil {
+		capabilities, err := json.Marshal(customization.Capabilities)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.capabilities field: %v", err)
+		} else {
+			fs.Set("capabilities", string(capabilities))
 		}
 	}
 }

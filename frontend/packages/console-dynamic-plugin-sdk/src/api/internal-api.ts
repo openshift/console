@@ -16,11 +16,11 @@ import {
   VirtualizedGridProps,
   LazyActionMenuProps,
   UseDashboardResources,
-  UseUserSettings,
   QuickStartsLoaderProps,
   UseURLPoll,
   UseLastNamespace,
 } from './internal-types';
+import { UseUserSettings } from '../extensions';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
   .default;
@@ -60,6 +60,7 @@ export const useUtilizationDuration: UseUtilizationDuration = require('@console/
 export const ServicesList = require('@console/internal/components/service').ServicesList;
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
   .useDashboardResources;
+// useUserSettings is deprecated and is now exposed in dynamic plugin SDK.
 export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
   .useUserSettings;
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')

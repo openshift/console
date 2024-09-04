@@ -8,7 +8,11 @@ import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
+import {
+  getQueryArgument,
+  removeQueryArgument,
+  setQueryArgument,
+} from '@console/internal/components/utils';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
@@ -94,7 +98,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
     const lastOverviewOpen = JSON.parse(
       sessionStorage.getItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY) ?? '{}',
     );
-    if (loaded && namespace in lastOverviewOpen) {
+    if (loaded && namespace in lastOverviewOpen && !getQueryArgument('selectId')) {
       setQueryArgument('selectId', lastOverviewOpen[namespace]);
     }
   }, [loaded, namespace]);

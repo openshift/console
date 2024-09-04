@@ -15,13 +15,7 @@ import {
   ServerlessBuildStrategyType,
   ServiceModel as ksvcModel,
 } from '@console/knative-plugin';
-import {
-  InputField,
-  DropdownField,
-  useFormikValidationFix,
-  useDebounceCallback,
-  useFlag,
-} from '@console/shared';
+import { InputField, useFormikValidationFix, useDebounceCallback, useFlag } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isGitImportSource } from '../../../types/samples';
 import {
@@ -31,10 +25,11 @@ import {
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
 import { getSample, getGitImportSample } from '../../../utils/samples';
-import { GitData, GitReadableTypes, DetectedStrategyFormData } from '../import-types';
+import { GitData, DetectedStrategyFormData } from '../import-types';
 import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
 import AdvancedGitOptions from './AdvancedGitOptions';
+import GitTypeSelector from './GitTypeSelector';
 import SampleRepo from './SampleRepo';
 
 export type GitSectionFormData = {
@@ -82,6 +77,7 @@ export interface GitSectionProps {
   formType?: string;
   importType?: string;
   imageStreamName?: string;
+  autoFocus?: boolean;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
@@ -93,6 +89,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   formType,
   importType,
   imageStreamName,
+  autoFocus = true,
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
@@ -477,7 +474,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         }
         case RepoStatus.GitTypeNotDetected: {
           return t(
-            'devconsole~URL is valid but a git type could not be identified. Please select a git type from the git type dropdown below',
+            'devconsole~URL is valid but a git type could not be identified. Please select a git type from the options below',
           );
         }
         case RepoStatus.PrivateRepo: {
@@ -491,6 +488,12 @@ const GitSection: React.FC<GitSectionProps> = ({
         case RepoStatus.InvalidGitTypeSelected: {
           return t(
             'devconsole~The selected git type might not be valid or the repository is private. Please try selecting another git type or enter a source Secret in advanced Git options',
+          );
+        }
+        /* Special case for Gitea as it throws 404 for all kinds of negatives */
+        case RepoStatus.GiteaRepoUnreachable: {
+          return t(
+            'devconsole~The Gitea repository is unreachable. The repository might be private or does not exist',
           );
         }
         default: {
@@ -545,7 +548,9 @@ const GitSection: React.FC<GitSectionProps> = ({
     // Skip handling until Knative Service status is unknown!
     if (canCreateKnativeServiceLoading) return;
 
-    inputRef.current?.focus();
+    if (autoFocus) {
+      inputRef.current?.focus();
+    }
 
     const { sampleName, repository: sampleRepository } = getGitImportSample();
     if (sampleRepository?.url) {
@@ -646,15 +651,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       )}
       {values.git.showGitType && (
         <>
-          <DropdownField
-            name={`${fieldPrefix}git.type`}
-            label={t('devconsole~Git type')}
-            items={GitReadableTypes}
-            title={GitReadableTypes[values.git.type]}
-            fullWidth
-            required
-            dataTest="git-type"
-          />
+          <GitTypeSelector fieldPrefix={fieldPrefix} />
           {values.git.type === GitProvider.UNSURE && (
             <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>
               {t('devconsole~We failed to detect the Git type.')}

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 export interface MultiColumnFieldFooterProps {
   addLabel?: string;
   disableAddRow?: boolean;
+  hideAddRow?: boolean;
   tooltipAddRow?: string;
   onAdd: () => void;
 }
@@ -14,6 +15,7 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldFooterProps> = ({
   addLabel,
   disableAddRow = false,
   tooltipAddRow,
+  hideAddRow = false,
   onAdd,
 }) => {
   const { t } = useTranslation();
@@ -29,7 +31,9 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldFooterProps> = ({
       {addLabel || t('console-shared~Add values')}
     </Button>
   );
-  return tooltipAddRow ? <Tooltip content={tooltipAddRow}>{button}</Tooltip> : button;
+  return (
+    !hideAddRow && (tooltipAddRow ? <Tooltip content={tooltipAddRow}>{button}</Tooltip> : button)
+  );
 };
 
 export default MultiColumnFieldFooter;

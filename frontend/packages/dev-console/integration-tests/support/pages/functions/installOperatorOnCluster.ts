@@ -45,7 +45,7 @@ export const installOperator = (operatorName: operators) => {
         cy.get('body').then((body) => {
           if (body.find(`[data-test="success-icon"]`).length > 0) {
             cy.byTestID('success-icon').should('be.visible');
-          } else if (body.find(`.pf-v5-c-alert`).length > 0) {
+          } else if (body.find('[class*="alert"]').length > 0) {
             cy.log('Installation flow interrupted, check the Installed Operators page for status');
             operatorsPage.navigateToInstallOperatorsPage();
             operatorsPage.searchOperatorInInstallPage(operatorName);
@@ -58,7 +58,7 @@ export const installOperator = (operatorName: operators) => {
       waitForResult();
     } else {
       cy.log(`${operatorName} Operator is already installed`);
-      sidePane.close();
+      sidePane.operatorClose();
     }
     operatorsPage.navigateToInstallOperatorsPage();
     operatorsPage.verifyInstalledOperator(operatorName);

@@ -46,6 +46,18 @@ form.pf-v5-c-form {
   }
 }
 
+.odc-catalog-tile {
+  // Get rid of weird stretching of catalog grid items
+  .pf-v5-c-card__header-main {
+    flex: unset;
+
+    // When images are too wide, scale them instead of squishing
+    img {
+      object-fit: contain;
+    }
+  }
+}
+
 .catalog-item-header-pf-icon {
   @include catalog-logo-background(var(--pf-v5-global--spacer--sm));
 }
@@ -205,9 +217,15 @@ form.pf-v5-c-form {
   &__main.default-overflow {
     z-index: calc(var(--pf-v5-c-page__header--ZIndex) + 50);
   }
+
   // Default light background for our content
   .co-page-backdrop {
     background-color: var(--pf-global--BackgroundColor--100) !important;
+  }
+
+  // Restore the max-height from PageHeader to maintain backwards compatibility
+  .pf-v5-c-brand {
+    max-height: var(--pf-c-page__header-brand-link--c-brand--MaxHeight);
   }
 
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing

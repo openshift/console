@@ -47,10 +47,12 @@ compatible versions of distributable SDK packages to versions of the OpenShift C
 
 | Console Version   | SDK Package                                     | Last Package Version |
 | ----------------- | ----------------------------------------------- | -------------------- |
-| 4.16.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
+| 4.17.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
+| 4.16.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.1                |
 | 4.15.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.0                |
+|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.2                |
 | 4.14.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
 |                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
 | 4.13.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
@@ -75,7 +77,7 @@ Console.
 | 4.13.x            | 4.x                 |                                       |
 | 4.12.x            | 4.x                 |                                       |
 
-Refer to [PatternFly Upgrade Notes](./upgrade-PatternFly.md) containing links to PatternFly documentation.
+Refer to [PatternFly Upgrade Notes][console-pf-upgrade-notes] containing links to PatternFly documentation.
 
 ## Shared modules
 
@@ -102,6 +104,29 @@ For backwards compatibility, Console also provides the following PatternFly **4.
 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
+
+### Changes in shared modules
+
+This section documents notable changes in the Console provided shared modules across Console versions.
+
+#### Console 4.14.x
+
+- Added `react-router-dom-v5-compat` module to allow plugins to migrate to React Router v6. Check the
+  [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
+  (section "Migration Strategy" and beyond) for details.
+
+#### Console 4.15.x
+
+- The Console application now uses React Router v6 code internally. Plugins that only target OpenShift
+  Console 4.15 or later should fully upgrade to React Router v6 via `react-router-dom-v5-compat` module.
+
+#### Console 4.16.x
+
+- Removed `react-helmet` module.
+- All Console provided PatternFly 4.x shared modules are deprecated and will be removed in the future.
+  See [PatternFly Upgrade Notes][console-pf-upgrade-notes] for details on upgrading to PatternFly 5.
+- All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
+  Plugins should upgrade to React Router v6 via `react-router-dom-v5-compat` module.
 
 ### PatternFly dynamic modules
 
@@ -283,18 +308,61 @@ initiated requests when the MIME type of requested asset is not valid.
 **Important!** Make sure to provide valid JavaScript MIME type via the `Content-Type` response header
 for all assets served by your plugin web server.
 
-## Plugin development
+## Local plugin development
 
-Run Bridge locally and instruct it to proxy e.g. `/api/plugins/console-demo-plugin` requests directly
-to your local plugin asset server (web server hosting the plugin's generated assets):
+Clone Console repo and build the Bridge server by running `build-backend.sh` script.
+
+Run the following commands to log in as `kubeadmin` user and start a local Bridge server instance.
+The `-plugins` argument tells Bridge to force load your plugin upon Console application startup.
+The `-i18n-namespaces` argument registers the corresponding i18n namespace for your plugin in Console.
 
 ```sh
-# Note that the plugin's base URL should have a trailing slash
-./bin/bridge -plugins console-demo-plugin=http://localhost:9001/
+oc login https://example.openshift.com:6443 -u kubeadmin -p example-password
+source ./contrib/oc-environment.sh
+# Note: the plugin web server URL should include a trailing slash
+./bin/bridge -plugins foo-plugin=http://localhost:9001/ -i18n-namespaces=plugin__foo-plugin
 ```
 
-Your plugin should start loading automatically upon Console application startup. Inspect the value of
-`window.SERVER_FLAGS.consolePlugins` to see the list of plugins which Console loads upon its startup.
+To work with multiple plugins, provide multiple arguments to Bridge server:
+
+```sh
+./bin/bridge \
+  -plugins foo-plugin=http://localhost:9001/ -i18n-namespaces=plugin__foo-plugin \
+  -plugins bar-plugin=http://localhost:9002/ -i18n-namespaces=plugin__bar-plugin
+```
+
+Once the Bridge server is running, start your plugin web server(s), and ensure that plugin assets can
+be fetched via `/api/plugins/<plugin-name>` Bridge endpoint. For example, the following URLs should
+provide the same content:
+
+- http://localhost:9000/api/plugins/foo-plugin/plugin-manifest.json
+- http://localhost:9001/plugin-manifest.json
+
+Open the Console in your web browser and inspect the value of `window.SERVER_FLAGS.consolePlugins` to
+see the list of dynamic plugins the Console loads at runtime. For local development, this should only
+include plugin(s) listed via `-plugins` Bridge argument.
+
+Console development builds allow you to interact with the `PluginStore` object that manages all
+plugins and their extensions directly in your web browser with `window.pluginStore`. Please note
+that this is _not_ a public API and is meant only for debugging local Console development builds.
+
+### Using local Console plugin SDK code
+
+If you need to make modifications to Console dynamic plugin SDK code and reflect them in your
+plugin builds, follow these steps:
+
+1. Make changes in Console repo. Run `yarn build` in `frontend/packages/console-dynamic-plugin-sdk`
+   directory to rebuild plugin SDK files at `frontend/packages/console-dynamic-plugin-sdk/dist`.
+2. Make sure your plugin's `package.json` dependencies refer to local plugin SDK files, for example:
+```json
+"@openshift-console/dynamic-plugin-sdk": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/core",
+"@openshift-console/dynamic-plugin-sdk-webpack": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
+```
+3. Refresh your plugin's `node_modules` whenever you change local plugin SDK files:
+```sh
+rm -rf node_modules/@openshift-console && yarn --check-files
+```
+4. Build your plugin as usual. The build should now use the current local plugin SDK files.
 
 ## Plugin detection and management
 
@@ -350,6 +418,14 @@ yarn publish dist/<pkg> --no-git-tag-version --new-version <version>
 
 If the given package doesn't exist in npm registry, add `--access public` to `yarn publish` command.
 
+If the newly published version comes before the latest published version in terms of semver rules
+(e.g. hotfix release 1.0.2 for an older minor version stream 1.0.x), ensure the `latest` dist-tag
+still applies to the appropriate package version:
+
+```sh
+npm dist-tag add <package-name>@<version> latest
+```
+
 ## Future Deprecations in Shared Plugin Dependencies
 
 Console provides certain packages as shared modules to all of its dynamic plugins. Some of these shared
@@ -358,8 +434,105 @@ configs or choose other options.
 
 The list of shared modules planned for deprecation:
 
-- `react-helmet`
+- Console provided PatternFly 4.x shared modules
+  - `@patternfly/react-core`
+  - `@patternfly/react-table`
+  - `@patternfly/quickstarts`
+
+- Console provided React Router v5 shared modules
+  - `react-router`
+  - `react-router-dom`
+
+## i18n translations for messages
+
+The following demonstrates how to translate messages in the console plugin using the [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/) libraries. Also included are the instructions for uploading/downloading strings to/from the Phrase Translation Memory System (TMS).
+
+### Step 1: Mark strings with `t` function for translation
+
+You can use the `useTranslation` hook within the component, or the `i18next` function outside the component, along with the namespace. The i18n namespace must match the name of the `ConsolePlugin` resource with the `plugin__` prefix to avoid naming conflicts. For example, a console plugin named console-crontab-plugin use the `plugin__console-crontab-plugin` namespace. See the following for examples:
+
+```tsx
+import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
+
+const helloWorldMessages = {
+  Foo: {
+    title: i18next.t('plugin__console-crontab-plugin~Foo'),
+    message: i18next.t(
+      'plugin__console-crontab-plugin~This is foo description...',
+    ),
+  },
+    Bar: {
+    title: i18next.t('plugin__console-crontab-plugin~Bar'),
+    message: i18next.t(
+      'plugin__console-crontab-plugin~This is bar description...',
+    ),
+  },
+  }
+
+const Header: React.FC = () => {
+  const { t } = useTranslation('plugin__console-crontab-plugin');
+  return <h1>{t('Hello, World!')}</h1>;
+};
+```
+
+For labels in `console-extensions.json`, you can use the format `%plugin__console-crontab-plugin~My Label%`. Console will replace the value with the string for the current language from the `plugin__console-crontab-plugin` namespace. For example:
+
+```json
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "admin-demo-section",
+      "perspective": "admin",
+      "name": "%plugin__console-crontab-plugin~Hello World%"
+    }
+  }
+```
+
+Then, run `yarn i18n` to update the JSON files in the `locales` folder of the plugin console after adding or updating strings.
+
+### Step 2: Request a Phrase Translation Memory System (TMS) user account
+
+i. Request an account from the localization team for the console plugin project.
+ii. Create a Project Template to include the supported language in the Phrase TMS portal. Refer to the [Phrase Project Templates ](https://support.phrase.com/hc/en-us/articles/5709647439772-Project-Templates-TMS) on how to create/update the Project Template. You must have Phrase project owner permissions to perform this task. The localization team can help with creating the Project Template and setup.
+
+### Step 3: Create utility scripts to automate i18n-related tasks
+
+Create scripts for uploading and downloading the i18n JSON files to/from the Phrase portal. See the [console](https://github.com/openshift/console/tree/master/frontend/i18n-scripts) repository or [Advanced Cluster Management (ACM) console plugin](https://github.com/stolostron/console/tree/main/frontend/i18n-scripts) repository for similar scripts.
+
+### Step 4: Upload to Phrase portal
+
+i. Install the unofficial Memsource CLI client. This client is a command-line tool designed for interacting with the Phrase portal. See the following link for details: [The unofficial Memsource CLI client](https://github.com/unofficial-memsource/memsource-cli-client#pip-install)
+
+ii. Configure the Memsource client using the account credentials. Create a file named ~/.memsourcerc in any location, for example, /Users/.../, and paste the following content into the file:
+
+```
+export MEMSOURCE_URL="https://cloud.memsource.com/web"
+export MEMSOURCE_USERNAME=username
+export MEMSOURCE_PASSWORD=password
+export MEMSOURCE_TOKEN=$(memsource auth login --user-name $MEMSOURCE_USERNAME --password "${MEMSOURCE_PASSWORD}" -c token -f value)
+```
+
+See the following link for details:[The RHEL instructions for MacOS](https://github.com/unofficial-memsource/memsource-cli-client#configuration-red-hat-enterprise-linux-derivatives)
+
+iii. Change directory to the root of the console plugin, and then run the upload script created earlier in step 3, for example: `yarn memsource-upload -v PLUGIN_VERSION_NUMBER`. Take note of the generated `PROJECT_ID`.
+
+iv. Notify the localization team of the upload and wait for a reply from them on when the translated strings are ready for download.
+
+### Step 5: Download from Phrase portal
+
+i. Use the `PROJECT_ID` generated during the upload task, or visit the [Phrase TMS](https://cloud.memsource.com) portal. Find the URL of the previously uploaded project, then copy the `PROJECT_ID` from the URL path following `../show/<PROJECT_ID>`
+
+ii.  Use the download script created earlier in step 3 with `PROJECT_ID` to download the translated strings. Change the directory to the root of the console plugin, and then run the download script.
+For example: `yarn memsource-download -v PLUGIN_VERSION_NUMBER`.  This should download the updated locale files, which contain the translated strings in the languages that were configured earlier in the Project Template and upload utility script.
+
+iii. Commit, review and merge the changes accordingly.
+
+iv. Reach out to the localization team if you have any questions or concerns regarding the translated strings.
+
+For more information on OpenShift Internationalization, see the console [Internationalization README page](https://github.com/openshift/console/blob/master/INTERNATIONALIZATION.md).
 
 [console-doc-extensions]: ./docs/console-extensions.md
 [console-doc-api]: ./docs/api.md
 [console-doc-feature-page]: https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md
+[console-pf-upgrade-notes]: ./upgrade-PatternFly.md

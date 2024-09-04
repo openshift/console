@@ -1,31 +1,61 @@
 import * as React from 'react';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { K8sModel, k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
-import { useConnectionFormContext } from '../components/ConnectionFormContext';
-import { ConnectionFormContextSetters } from '../components/types';
-import { decodeBase64, parseKeyValue } from '../components/utils';
+import { ConnectionFormFormikValues } from '../components/types';
+import { decodeBase64, getErrorMessage, parseKeyValue } from '../components/utils';
 import { ConfigMap, Infrastructure, Secret } from '../resources';
 import { useConnectionModels } from './use-connection-models';
 
-// TODO: Adopt npm/ini package to do following parsing (see persist.ts)
-export const initialLoad = async (
-  setters: ConnectionFormContextSetters,
+export class LoadError extends Error {
+  detail: string;
+
+  constructor(title: string, detail: string) {
+    super(title);
+    this.name = 'LoadError';
+    this.detail = detail;
+  }
+}
+
+const initialLoad = async (
+  t: TFunction,
   secretModel: K8sModel,
   infrastructureModel: K8sModel,
   cloudProviderConfig: ConfigMap,
-): Promise<void> => {
+): Promise<{ values: ConnectionFormFormikValues; mustPatch: boolean }> => {
   const config = cloudProviderConfig.data?.config;
   if (!config) {
-    return;
+    return {
+      values: {
+        vcenter: '',
+        datacenter: '',
+        defaultDatastore: '',
+        folder: '',
+        username: '',
+        password: '',
+        vCenterCluster: '',
+      },
+      mustPatch: false,
+    };
   }
 
   const keyValues = parseKeyValue(config);
 
   const server = keyValues.server || '';
-  const dc = keyValues.datacenter || '';
-  const ds = keyValues['default-datastore'] || '';
+  const datacenter = keyValues.datacenter || '';
+  const defaultDatastore = keyValues['default-datastore'] || '';
   const folder = keyValues.folder || '';
+
+  let vCenterCluster = '';
+  const resourcePoolPath = keyValues['resourcepool-path'] as string;
+  if (resourcePoolPath?.length) {
+    const paths = resourcePoolPath.split('/');
+    if (paths.length > 3) {
+      [, , , vCenterCluster] = paths;
+    }
+  }
   let username = '';
-  let pwd = '';
+  let password = '';
 
   // query Secret
   if (keyValues['secret-name'] && keyValues['secret-namespace']) {
@@ -42,9 +72,9 @@ export const initialLoad = async (
         console.error(`Unexpected structure of the "${keyValues['secret-name']}" secret`);
       }
 
-      const secretKeyValues = secret.data;
+      const secretKeyValues = secret.data || {};
       username = decodeBase64(secretKeyValues[`${server}.username`]);
-      pwd = decodeBase64(secretKeyValues[`${server}.password`]);
+      password = decodeBase64(secretKeyValues[`${server}.password`]);
     } catch (e) {
       // It should be there if referenced
       // eslint-disable-next-line no-console
@@ -55,7 +85,7 @@ export const initialLoad = async (
     }
   }
 
-  let vCenterCluster = '';
+  let mustPatch = false;
   try {
     const infrastructure = await k8sGet<Infrastructure>({
       model: infrastructureModel,
@@ -65,46 +95,79 @@ export const initialLoad = async (
     const domain = infrastructure?.spec?.platformSpec?.vsphere?.failureDomains?.find(
       (d) => d.server === server,
     );
-    const computeCluster = domain?.topology?.computeCluster?.split('/');
-    vCenterCluster = (computeCluster?.length && computeCluster[computeCluster.length - 1]) || '';
+    if (domain) {
+      const computeCluster = domain?.topology?.computeCluster?.split('/');
+      let infraVCenterCluster = '';
+      if (computeCluster.length > 3) {
+        [, , , infraVCenterCluster] = computeCluster;
+      }
+
+      if (!vCenterCluster) {
+        vCenterCluster = infraVCenterCluster;
+      }
+      const datacenterDiff = domain.topology.datacenter !== datacenter;
+      const datastoreDiff = domain.topology.datastore !== defaultDatastore;
+      const vCenterClusterDiff = infraVCenterCluster !== vCenterCluster;
+      mustPatch = datacenterDiff || datastoreDiff || vCenterClusterDiff;
+    }
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to fetch infrastructure resource', e);
+    throw new LoadError(t('Failed to fetch infrastructure resource'), getErrorMessage(t, e));
   }
 
-  setters.setVcenter(server);
-  setters.setDatacenter(dc);
-  setters.setDefaultDatastore(ds);
-  setters.setFolder(folder);
-  setters.setUsername(username);
-  setters.setPassword(pwd);
-  setters.setVCenterCluster(vCenterCluster);
+  return {
+    values: {
+      vcenter: server,
+      datacenter,
+      defaultDatastore,
+      folder,
+      username,
+      password,
+      vCenterCluster,
+    },
+    mustPatch,
+  };
 };
 
 export const useConnectionForm = (cloudProviderConfig?: ConfigMap) => {
+  const { t } = useTranslation('vsphere-plugin');
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [error, setError] = React.useState<{ title: string; message: string }>();
   const { secretModel, infrastructureModel } = useConnectionModels();
-  const { setDirty, setters, values } = useConnectionFormContext();
+  const [result, setResult] = React.useState<{
+    values: ConnectionFormFormikValues;
+    mustPatch: boolean;
+  }>();
 
   React.useEffect(() => {
     const doItAsync = async () => {
-      if (isLoaded) {
+      if (isLoaded || !cloudProviderConfig) {
         return;
       }
-      if (!cloudProviderConfig) {
-        return;
+      try {
+        const loadResult = await initialLoad(
+          t,
+          secretModel,
+          infrastructureModel,
+          cloudProviderConfig,
+        );
+        setResult(loadResult);
+      } catch (e) {
+        if (e instanceof LoadError) {
+          setError({ title: e.message, message: e.detail });
+        } else {
+          setError({ title: t('An error occured'), message: getErrorMessage(t, e) });
+        }
       }
-      await initialLoad(setters, secretModel, infrastructureModel, cloudProviderConfig);
       setIsLoaded(true);
-      setDirty(false);
     };
 
     doItAsync();
-  }, [cloudProviderConfig, infrastructureModel, isLoaded, secretModel, setDirty, setters]);
+  }, [cloudProviderConfig, infrastructureModel, isLoaded, secretModel, t]);
 
   return {
-    setters,
-    values,
+    initValues: result?.values,
     isLoaded,
+    error,
+    mustPatch: result?.mustPatch,
   };
 };

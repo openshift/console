@@ -1,13 +1,10 @@
 import * as React from 'react';
 import {
-  QuickStartContext,
-  QuickStartContextProvider,
   QuickStartContextValues,
   getDefaultQuickStartState,
   QuickStartStatus,
   QuickStartTaskStatus,
   getTaskStatusKey,
-  QUICKSTART_TASKS_INITIAL_STATES,
 } from '@patternfly/quickstarts';
 import Pseudo from 'i18next-pseudo';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +17,7 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';
 
-export { QuickStartContext };
-export { QuickStartContextProvider };
+export { QuickStartContext, QuickStartContextProvider } from '@patternfly/quickstarts';
 
 export const getProcessedResourceBundle = (resourceBundle, lng) => {
   const params = new URLSearchParams(window.location.search);
@@ -120,7 +116,6 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
         const quickStart = qs[activeQuickStartID];
         const status = quickStart?.status;
         const taskNumber = quickStart?.taskNumber;
-        const taskStatus = quickStart[getTaskStatusKey(taskNumber)];
 
         let updatedStatus;
         let updatedTaskNumber;
@@ -132,19 +127,11 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
             type: 'start',
           });
           updatedStatus = QuickStartStatus.IN_PROGRESS;
-        } else if (
-          status === QuickStartStatus.IN_PROGRESS &&
-          !QUICKSTART_TASKS_INITIAL_STATES.includes(taskStatus) &&
-          taskNumber === totalTasks - 1
-        ) {
+        } else if (status === QuickStartStatus.IN_PROGRESS && taskNumber === totalTasks - 1) {
           fireTelemetryEvent('Quick Start Completed', {
             id: activeQuickStartID,
           });
           updatedStatus = QuickStartStatus.COMPLETE;
-        }
-
-        if (taskStatus === QuickStartTaskStatus.VISITED) {
-          updatedTaskStatus = QuickStartTaskStatus.REVIEW;
         }
 
         if (taskNumber < totalTasks && !updatedTaskStatus) {

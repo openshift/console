@@ -1,6 +1,12 @@
 import { TFunction } from 'i18next';
 import { DiskMechanicalProperties } from '../components/local-volume-set/types';
 
+export enum DiskType {
+  All = 'All',
+  SSD = 'SSD',
+  HDD = 'HDD',
+}
+
 export const diskModeDropdownItems = Object.freeze({
   BLOCK: 'Block',
   FILESYSTEM: 'Filesystem',
@@ -16,10 +22,10 @@ export const DISK_TYPES: {
     property: keyof typeof DiskMechanicalProperties;
   };
 } = {
-  SSD: {
+  [DiskType.SSD]: {
     property: 'NonRotational',
   },
-  HDD: {
+  [DiskType.HDD]: {
     property: 'Rotational',
   },
 };
@@ -37,9 +43,9 @@ export const fsTypeDropdownItems = Object.freeze({
 
 export const diskTypeDropdownItems = (t: TFunction) =>
   Object.freeze({
-    All: t('lso-plugin~All'),
-    SSD: t('lso-plugin~SSD / NVMe'),
-    HDD: t('lso-plugin~HDD'),
+    [DiskType.All]: t('lso-plugin~All'),
+    [DiskType.SSD]: t('lso-plugin~SSD / NVMe'),
+    [DiskType.HDD]: t('lso-plugin~HDD'),
   });
 
 export const AUTO_DISCOVER_ERR_MSG = 'Failed to update the Auto Detect Volume!';

@@ -29,7 +29,6 @@ export const GRAPH_MAX_HEIGHT_PERCENT = 45;
 export enum NodeType {
   TASK_NODE = 'task',
   CUSTOM_TASK_NODE = 'custom-task',
-  APPROVAL_TASK_NODE = 'approval-task',
   SPACER_NODE = 'spacer',
   LOADING_NODE = 'loading',
   TASK_LIST_NODE = 'task-list',
@@ -104,6 +103,5 @@ export const DAGRE_BUILDER_SPACED_PROPS: dagre.GraphLabel = {
 };
 
 export enum CustomTask {
-  APPROVAL_TASK = 'ApprovalTask',
   CUSTOM_TASK = 'CustomTask',
 }

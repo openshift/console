@@ -9,14 +9,17 @@ import { FormBody, FormFooter } from '@console/shared/src/components/form-utils'
 import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
-import { DeploySection } from './DeploySection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
-import { BuildOptions, GitImportFormProps, ImportTypes } from './import-types';
+import { BuildOptions, GitImportFormData, GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
-import { BuildSection } from './section/BuildSection';
+import SecureRoute from './route/SecureRoute';
+import { BuildSection } from './section/build-section/BuildSection';
+import { DeploySection } from './section/deploy-section/DeploySection';
 
-const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
+const GitImportForm: React.FC<
+  FormikProps<FormikValues & GitImportFormData> & GitImportFormProps
+> = ({
   values,
   errors,
   handleSubmit,
@@ -35,7 +38,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
   const formType = searchParams.get('formType');
   const importType = searchParams.get('importType');
   const {
-    git: { validated, gitType },
+    git: { validated, type: gitType },
     build: { option: buildOption },
   } = values;
 
@@ -48,6 +51,10 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
     importType !== ImportTypes.devfile &&
     values.import.selectedStrategy.type !== ImportStrategy.DEVFILE &&
     !isSample;
+  const showSecureRouteSectionForDevfile =
+    (importType === ImportTypes.devfile ||
+      values.import.selectedStrategy.type === ImportStrategy.DEVFILE) &&
+    values?.devfile?.devfileSuggestedResources?.route?.spec?.tls;
 
   return (
     <form onSubmit={handleSubmit} data-test-id="import-git-form">
@@ -89,6 +96,11 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
 
                     <AdvancedSection values={values} />
                   </>
+                )}
+                {showSecureRouteSectionForDevfile && (
+                  <div className="pf-v5-c-form co-m-pane__form">
+                    <SecureRoute />
+                  </div>
                 )}
               </>
             )}

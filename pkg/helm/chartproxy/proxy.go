@@ -1,6 +1,7 @@
 package chartproxy
 
 import (
+	"sort"
 	"strings"
 
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -9,7 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/version"
 )
@@ -92,25 +93,34 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 				continue
 			}
 
-			for key, entry := range idxFile.Entries {
-				for i := len(entry) - 1; i >= 0; i-- {
-					if entry[i].Type == "library" {
-						entry = append(entry[:i], entry[i+1:]...)
+			for key, entries := range idxFile.Entries {
+				for i := len(entries) - 1; i >= 0; i-- {
+					if entries[i] == nil || entries[i].Metadata == nil {
+						klog.Warningf("Helm chart %v from repository %v has an invalid entry at index %v", key, helmRepo.Name, i)
+						entries = append(entries[:i], entries[i+1:]...)
 						continue
 					}
-					if onlyCompatible && entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
-						if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
-							entry = append(entry[:i], entry[i+1:]...)
+					if entries[i].Type == "library" {
+						entries = append(entries[:i], entries[i+1:]...)
+						continue
+					}
+					if onlyCompatible && entries[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
+						if !chartutil.IsCompatibleRange(entries[i].Metadata.KubeVersion, p.kubeVersion) {
+							entries = append(entries[:i], entries[i+1:]...)
 						}
 					}
 				}
-				if len(entry) > 0 {
+				if len(entries) > 0 {
 					if overwrites != "" {
 						// Adding potential duplicates to the list
-						delKeys = append(delKeys, entry[0].Name+"--"+overwrites)
+						delKeys = append(delKeys, entries[0].Name+"--"+overwrites)
 					}
 
-					indexFile.Entries[key+"--"+helmRepo.Name] = entry
+					sort.Slice(entries, func(i, j int) bool {
+						return entries[i].Version < entries[j].Version
+					})
+
+					indexFile.Entries[key+"--"+helmRepo.Name] = entries
 				}
 			}
 		}

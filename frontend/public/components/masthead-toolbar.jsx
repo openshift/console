@@ -1,38 +1,44 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { connect } from 'react-redux';
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
+import { ThIcon } from '@patternfly/react-icons/dist/esm/icons/th-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import {
+  Dropdown,
+  Divider,
+  DropdownGroup,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
   NotificationBadge,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  ApplicationLauncher,
-  ApplicationLauncherGroup,
-  ApplicationLauncherItem,
-  ApplicationLauncherSeparator,
-} from '@patternfly/react-core/deprecated';
 import { Link } from 'react-router-dom-v5-compat';
 import {
   ACM_LINK_ID,
   FLAGS,
+  useActiveNamespace,
+  useCopyCodeModal,
+  useCopyLoginCommands,
+  useFlag,
   usePerspectiveExtension,
+  useTelemetry,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
 import { getUser } from '@console/dynamic-plugin-sdk';
+import { history } from '@console/internal/components/utils';
 import * as UIActions from '../actions/ui';
-import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
 import { getOCMLink, referenceForModel } from '../module/k8s';
@@ -43,12 +49,14 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
-import { withTelemetry, withQuickStartContext, withRequestTokenURL } from '@console/shared/src/hoc';
 import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import { useFeedbackLocal } from './feedback-local';
+import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
+
+const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
 const defaultHelpLinks = [
   {
@@ -106,188 +114,74 @@ const SystemStatusButton = ({ statuspageData }) => {
   ) : null;
 };
 
-class MastheadToolbarContents_ extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isApplicationLauncherDropdownOpen: false,
-      isUserDropdownOpen: false,
-      isKebabDropdownOpen: false,
-      statuspageData: null,
-      username: null,
-      isKubeAdmin: false,
-      showAboutModal: false,
-      isFeedbackModalOpen: false,
-      reportBugLink: null,
-    };
+// TODO migrate to TS, break this down into smaller components and hooks
+const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
+  const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
+  const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
+  const consoleCLIDownloadFlag = useFlag(FLAGS.CONSOLE_CLI_DOWNLOAD);
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+  const quickstartFlag = useFlag(FLAGS.CONSOLE_QUICKSTART);
+  const dispatch = useDispatch();
+  const [activeNamespace] = useActiveNamespace();
+  const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
+  const launchCopyLoginCommandModal = useCopyCodeModal(
+    t('public~Login with this command'),
+    externalLoginCommand,
+  );
+  const { clusterID, user, alertCount, canAccessNS } = useSelector((state) => ({
+    clusterID: state.UI.get('clusterID'),
+    user: getUser(state),
+    alertCount: state.observe.getIn(['alertCount']),
+    canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+  }));
+  const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = React.useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = React.useState(false);
+  const [isKebabDropdownOpen, setIsKebabDropdownOpen] = React.useState(false);
+  const [isHelpDropdownOpen, setIsHelpDropdownOpen] = React.useState(false);
+  const [statusPageData, setStatusPageData] = React.useState(null);
+  const [showAboutModal, setshowAboutModal] = React.useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = React.useState(false);
+  const applicationLauncherMenuRef = React.useRef(null);
+  const helpMenuRef = React.useRef(null);
+  const userMenuRef = React.useRef(null);
+  const kebabMenuRef = React.useRef(null);
+  const reportBugLink = cv?.data ? getReportBugLink(cv.data, t) : null;
+  const userInactivityTimeout = React.useRef(null);
+  const username = user?.username ?? '';
+  const isKubeAdmin = username === 'kube:admin';
 
-    this._getStatuspageData = this._getStatuspageData.bind(this);
-    this._getImportYAMLPath = this._getImportYAMLPath.bind(this);
-    this._updateUser = this._updateUser.bind(this);
-    this._onUserDropdownToggle = this._onUserDropdownToggle.bind(this);
-    this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
-    this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
-    this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
-    this._renderMenu = this._renderMenu.bind(this);
-    this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(
-      this,
-    );
-    this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(
-      this,
-    );
-    this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
-    this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
-    this._onAboutModal = this._onAboutModal.bind(this);
-    this._onFeedbackModal = this._onFeedbackModal.bind(this);
-    this._closeAboutModal = this._closeAboutModal.bind(this);
-    this._resetInactivityTimeout = this._resetInactivityTimeout.bind(this);
-    this.userInactivityTimeout = null;
-  }
+  const drawerToggle = React.useCallback(
+    () => dispatch(UIActions.notificationDrawerToggleExpanded()),
+    [dispatch],
+  );
 
-  componentDidMount() {
-    if (window.SERVER_FLAGS.statuspageID) {
-      this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
-    }
-    // Ignore inactivity-timeout if set to less then 300 seconds
-    const inactivityTimeoutEnabled = window.SERVER_FLAGS.inactivityTimeout >= 300;
-    if (inactivityTimeoutEnabled) {
-      window.addEventListener('click', _.throttle(this._resetInactivityTimeout, 500));
-      window.addEventListener('keydown', _.throttle(this._resetInactivityTimeout, 500));
-      this._resetInactivityTimeout();
-    }
-    this._updateUser();
-  }
-
-  componentDidUpdate(prevProps) {
-    const { flags, user } = this.props;
-    if (
-      flags[FLAGS.OPENSHIFT] !== prevProps.flags[FLAGS.OPENSHIFT] ||
-      !_.isEqual(user, prevProps.user)
-    ) {
-      this._updateUser();
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('click', this._resetInactivityTimeout);
-    window.removeEventListener('keydown', this._resetInactivityTimeout);
-    clearTimeout(this.userInactivityTimeout);
-  }
-
-  _resetInactivityTimeout() {
-    const { flags, user } = this.props;
-    clearTimeout(this.userInactivityTimeout);
-    this.userInactivityTimeout = setTimeout(() => {
-      if (flags[FLAGS.OPENSHIFT]) {
-        authSvc.logoutOpenShift(user?.metadata?.name === 'kube:admin');
-      } else {
-        authSvc.logout();
-      }
-    }, window.SERVER_FLAGS.inactivityTimeout * 1000);
-  }
-
-  _getStatuspageData(statuspageID) {
-    fetch(`https://${statuspageID}.statuspage.io/api/v2/summary.json`, {
-      headers: { Accept: 'application/json' },
-    })
-      .then((response) => response.json())
-      .then((statuspageData) => this.setState({ statuspageData }));
-  }
-
-  _getImportYAMLPath() {
-    return formatNamespacedRouteForResource('import', this.props.activeNamespace);
-  }
-
-  _updateUser() {
-    const { flags, user } = this.props;
-    if (!flags[FLAGS.OPENSHIFT]) {
-      this.setState({ username: authSvc.name() });
-    }
-    this.setState({
-      username: _.get(user, 'username') || _.get(user, 'metadata.name', ''),
-      isKubeAdmin: _.get(user, 'metadata.name') === 'kube:admin',
-    });
-  }
-
-  _onUserDropdownToggle(event, isUserDropdownOpen) {
-    this.setState({
-      isUserDropdownOpen,
-    });
-  }
-
-  _onUserDropdownSelect() {
-    this.setState({
-      isUserDropdownOpen: !this.state.isUserDropdownOpen,
-    });
-  }
-
-  _onKebabDropdownToggle(event, isKebabDropdownOpen) {
-    this.setState({
-      isKebabDropdownOpen,
-    });
-  }
-
-  _onKebabDropdownSelect() {
-    this.setState({
-      isKebabDropdownOpen: !this.state.isKebabDropdownOpen,
-    });
-  }
-
-  _onApplicationLauncherDropdownSelect() {
-    this.setState({
-      isApplicationLauncherDropdownOpen: !this.state.isApplicationLauncherDropdownOpen,
-    });
-  }
-
-  _onApplicationLauncherDropdownToggle(event, isApplicationLauncherDropdownOpen) {
-    this.setState({
-      isApplicationLauncherDropdownOpen,
-    });
-  }
-
-  _onHelpDropdownSelect() {
-    this.setState({
-      isHelpDropdownOpen: !this.state.isHelpDropdownOpen,
-    });
-  }
-
-  _onHelpDropdownToggle(event, isHelpDropdownOpen) {
-    this.setState({
-      isHelpDropdownOpen,
-    });
-  }
-
-  _onFeedbackModal(bugLink) {
-    this.setState({ isFeedbackModalOpen: true, reportBugLink: bugLink });
-  }
-  _onAboutModal(e) {
+  const getImportYAMLPath = () => formatNamespacedRouteForResource('import', activeNamespace);
+  const onFeedbackModal = () => setIsFeedbackModalOpen(true);
+  const onAboutModal = (e) => {
     e.preventDefault();
-    this.setState({ showAboutModal: true });
-  }
+    setshowAboutModal(true);
+  };
 
-  _closeAboutModal() {
-    this.setState({ showAboutModal: false });
-  }
+  const closeAboutModal = () => setshowAboutModal(false);
 
-  _getAdditionalLinks(links, type) {
-    return _.sortBy(
+  const getAdditionalLinks = (links, type) =>
+    _.sortBy(
       // ACM link is being moved to the perspective switcher, so do not show in application launcher
       _.filter(links, (link) => link.spec.location === type && link.metadata.name !== ACM_LINK_ID),
       'spec.text',
     );
-  }
 
-  _getSectionLauncherItems(launcherItems, sectionName) {
-    return _.sortBy(
+  const getSectionLauncherItems = (launcherItems, sectionName) =>
+    _.sortBy(
       _.filter(
         launcherItems,
         (link) => _.get(link, 'spec.applicationMenu.section', '') === sectionName,
       ),
       'spec.text',
     );
-  }
 
-  _sectionSort(section) {
+  const sectionSort = (section) => {
     switch (section.name) {
       case 'Red Hat Applications':
         return 0;
@@ -295,16 +189,20 @@ class MastheadToolbarContents_ extends React.Component {
         return 1;
       case 'Customer Applications':
         return 2;
+      case 'Troubleshooting':
+        return 3;
       case '':
         return 9; // Items w/o sections go last
       default:
         return 3; // Custom groups come after well-known groups
     }
-  }
+  };
 
-  _launchActions = () => {
-    const { clusterID, consoleLinks, t, fireTelemetryEvent } = this.props;
-    const launcherItems = this._getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
+  const getLaunchActions = () => {
+    const isTroubleshootingPanelEnabled = Array.isArray(window.SERVER_FLAGS.consolePlugins)
+      ? window.SERVER_FLAGS.consolePlugins.includes('troubleshooting-panel-console-plugin')
+      : false;
+    const launcherItems = getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
 
     const sections = [];
     if (
@@ -344,6 +242,27 @@ class MastheadToolbarContents_ extends React.Component {
       });
     }
 
+    // This should be removed when the extension to add items to the masthead is implemented: https://issues.redhat.com/browse/OU-488
+    if (isTroubleshootingPanelEnabled) {
+      sections.push({
+        name: t('public~Troubleshooting'),
+        isSection: true,
+        actions: [
+          {
+            label: t('public~Signal Correlation'),
+            callback: (e) => {
+              e.preventDefault();
+              dispatch(reduxAction('openTroubleshootingPanel'));
+              fireTelemetryEvent('Launcher Menu Accessed', {
+                id: 'Signal Correlation',
+                name: 'Signal Correlation',
+              });
+            },
+          },
+        ],
+      });
+    }
+
     _.each(launcherItems, (item) => {
       const sectionName = _.get(item, 'spec.applicationMenu.section', '');
       if (!_.find(sections, { name: sectionName })) {
@@ -351,10 +270,10 @@ class MastheadToolbarContents_ extends React.Component {
       }
     });
 
-    const sortedSections = _.sortBy(sections, [this._sectionSort, 'name']);
+    const sortedSections = _.sortBy(sections, [sectionSort, 'name']);
 
     _.each(sortedSections, (section) => {
-      const sectionItems = this._getSectionLauncherItems(launcherItems, section.name);
+      const sectionItems = getSectionLauncherItems(launcherItems, section.name);
       _.each(sectionItems, (item) => {
         section.actions.push({
           label: _.get(item, 'spec.text'),
@@ -374,20 +293,21 @@ class MastheadToolbarContents_ extends React.Component {
     return sections;
   };
 
-  _helpActions(additionalHelpActions) {
-    const { flags, cv, t, fireTelemetryEvent } = this.props;
+  const getHelpActions = (additionalHelpActions) => {
     const helpActions = [];
-    const reportBugLink = cv && cv.data ? getReportBugLink(cv.data, t) : null;
     const tourRef = React.createRef();
 
     helpActions.push({
-      name: '',
       isSection: true,
       actions: [
-        ...(flags[FLAGS.CONSOLE_QUICKSTART]
+        ...(quickstartFlag
           ? [
               {
-                component: <Link to="/quickstart">{t('public~Quick Starts')}</Link>,
+                label: t('public~Quick Starts'),
+                callback: (e) => {
+                  e.preventDefault();
+                  history.push('/quickstart');
+                },
               },
             ]
           : []),
@@ -399,41 +319,37 @@ class MastheadToolbarContents_ extends React.Component {
             fireTelemetryEvent('Documentation Clicked');
           },
         },
-        ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
+        ...(consoleCLIDownloadFlag
           ? [
               {
-                component: (
-                  <Link
-                    onClick={() => {
-                      fireTelemetryEvent('CLI Clicked');
-                    }}
-                    to="/command-line-tools"
-                  >
-                    {t('public~Command Line Tools')}
-                  </Link>
-                ),
+                label: t('public~Command Line Tools'),
+                callback: (e) => {
+                  e.preventDefault();
+                  history.push('/command-line-tools');
+                  fireTelemetryEvent('CLI Clicked');
+                },
               },
             ]
           : []),
         {
-          component: <GuidedTourMastheadTrigger ref={tourRef} />,
+          component: () => (
+            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v5-c-menu__item" />
+          ),
         },
         ...(reportBugLink
           ? [
               {
                 label: t('public~Share Feedback'),
-                component: 'button',
                 callback: (e) => {
                   e.preventDefault();
-                  this._onFeedbackModal(reportBugLink);
+                  onFeedbackModal(reportBugLink);
                 },
               },
             ]
           : []),
         {
           label: t('public~About'),
-          callback: this._onAboutModal,
-          component: 'button',
+          callback: onAboutModal,
         },
       ],
     });
@@ -451,9 +367,9 @@ class MastheadToolbarContents_ extends React.Component {
     }
 
     return helpActions;
-  }
+  };
 
-  _getAdditionalActions(links) {
+  const getAdditionalActions = (links) => {
     const actions = _.map(links, (link) => {
       return {
         label: link.spec.text,
@@ -463,104 +379,103 @@ class MastheadToolbarContents_ extends React.Component {
     });
 
     return {
-      name: '',
       isSection: true,
       actions,
     };
-  }
+  };
 
-  _externalProps = (action) =>
-    action.externalLink ? { isExternal: true, target: '_blank', rel: 'noopener noreferrer' } : {};
+  const externalProps = (externalLink) => (externalLink ? { rel: 'noopener noreferrer' } : {});
 
-  _renderApplicationItems(actions) {
-    return _.map(actions, (action, groupIndex) => {
+  const renderApplicationItems = (actions) =>
+    _.map(actions, (action, groupIndex) => {
       if (action.isSection) {
-        return (
-          <ApplicationLauncherGroup key={groupIndex} label={action.name}>
+        const list = (
+          <DropdownList>
             {_.map(action.actions, (sectionAction, itemIndex) => {
               return (
-                <ApplicationLauncherItem
+                <DropdownItem
                   key={itemIndex}
                   icon={sectionAction.image}
-                  href={sectionAction.href || '#'}
+                  to={sectionAction.href}
+                  isExternalLink={sectionAction.externalLink}
+                  {...externalProps(sectionAction.externalLink)}
                   onClick={sectionAction.callback}
                   component={sectionAction.component}
                   data-test={
                     sectionAction.dataTest ? sectionAction.dataTest : 'application-launcher-item'
                   }
-                  {...this._externalProps(sectionAction)}
+                  value={sectionAction.label}
                 >
                   {sectionAction.label}
-                </ApplicationLauncherItem>
+                </DropdownItem>
               );
             })}
-            <>
-              {groupIndex < actions.length - 1 && (
-                <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
-              )}
-            </>
-          </ApplicationLauncherGroup>
+          </DropdownList>
+        );
+        return (
+          <>
+            {action.name ? (
+              <DropdownGroup key={groupIndex} label={action.name}>
+                {list}
+              </DropdownGroup>
+            ) : (
+              <>{list}</>
+            )}
+            <>{groupIndex < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}</>
+          </>
         );
       }
 
       return (
-        <ApplicationLauncherGroup key={groupIndex}>
-          <>
-            <ApplicationLauncherItem
+        <>
+          <DropdownList>
+            <DropdownItem
               key={action.label}
               icon={action.image}
-              href={action.href || '#'}
+              to={action.href}
+              isExternalLink={action.externalLink}
+              {...externalProps(action.externalLink)}
               onClick={action.callback}
               component={action.component}
-              {...this._externalProps(action)}
+              value={action.label}
             >
               {action.label}
-            </ApplicationLauncherItem>
-            {groupIndex < actions.length - 1 && (
-              <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
-            )}
-          </>
-        </ApplicationLauncherGroup>
+            </DropdownItem>
+          </DropdownList>
+          {groupIndex < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}
+        </>
       );
     });
-  }
 
-  _renderMenu(mobile) {
-    const { requestTokenURL, flags, consoleLinks, t } = this.props;
-    const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
-    const additionalUserActions = this._getAdditionalActions(
-      this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
+  const renderMenu = (mobile) => {
+    const additionalUserActions = getAdditionalActions(
+      getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
     );
-    const helpActions = this._helpActions(
-      this._getAdditionalActions(this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu')),
+    const helpActions = getHelpActions(
+      getAdditionalActions(getAdditionalLinks(consoleLinks?.data, 'HelpMenu')),
     );
-    const launchActions = this._launchActions();
+    const launchActions = getLaunchActions();
 
-    if (
-      flagPending(flags[FLAGS.OPENSHIFT]) ||
-      flagPending(flags[FLAGS.AUTH_ENABLED]) ||
-      !username
-    ) {
+    if (flagPending(openshiftFlag) || flagPending(authEnabledFlag)) {
       return null;
     }
 
     const actions = [];
     const userActions = [
       {
-        component: <Link to="/user-preferences">{t('public~User Preferences')}</Link>,
+        label: t('public~User Preferences'),
+        callback: (e) => {
+          e.preventDefault();
+          history.push('/user-preferences');
+        },
       },
     ];
 
-    if (flags[FLAGS.AUTH_ENABLED]) {
+    if (authEnabledFlag) {
       const logout = (e) => {
         e.preventDefault();
-        if (flags[FLAGS.OPENSHIFT]) {
-          authSvc.logoutOpenShift(this.state.isKubeAdmin);
-        } else {
-          authSvc.logout();
-        }
+        authSvc.logout('', isKubeAdmin);
       };
-
       if (requestTokenURL) {
         userActions.unshift({
           label: t('public~Copy login command'),
@@ -568,18 +483,22 @@ class MastheadToolbarContents_ extends React.Component {
           externalLink: true,
           dataTest: 'copy-login-command',
         });
+      } else if (externalLoginCommand) {
+        userActions.unshift({
+          callback: launchCopyLoginCommandModal,
+          dataTest: 'copy-login-command',
+          label: t('public~Copy login command'),
+        });
       }
 
       userActions.push({
         label: t('public~Log out'),
         callback: logout,
-        component: 'button',
         dataTest: 'log-out',
       });
     }
 
     actions.push({
-      name: '',
       isSection: true,
       actions: userActions,
     });
@@ -592,14 +511,17 @@ class MastheadToolbarContents_ extends React.Component {
       actions.unshift(...helpActions);
 
       actions.unshift({
-        name: '',
         isSection: true,
         actions: [
           {
-            component: <Link to={this._getImportYAMLPath()}>{t('public~Import YAML')}</Link>,
+            label: t('public~Import YAML'),
+            callback: (e) => {
+              e.preventDefault();
+              history.push(getImportYAMLPath());
+            },
           },
           {
-            component: <CloudShellMastheadAction />,
+            component: () => <CloudShellMastheadAction className="pf-v5-c-menu__item" />,
           },
         ],
       });
@@ -609,197 +531,247 @@ class MastheadToolbarContents_ extends React.Component {
       }
 
       return (
-        <ApplicationLauncher
-          aria-label={t('public~Utility menu')}
+        <Dropdown
           className="co-app-launcher"
-          onSelect={this._onKebabDropdownSelect}
-          onToggle={this._onKebabDropdownToggle}
           isOpen={isKebabDropdownOpen}
-          items={this._renderApplicationItems(actions)}
-          position="right"
-          data-quickstart-id="qs-masthead-utilitymenu"
-          toggleIcon={<EllipsisVIcon />}
-          isGrouped
-        />
+          onOpenChange={(open) => setIsKebabDropdownOpen(open)}
+          onSelect={() => setIsKebabDropdownOpen(false)}
+          toggle={(toggleRef) => (
+            <MenuToggle
+              aria-label={t('public~Utility menu')}
+              ref={toggleRef}
+              variant="plain"
+              onClick={(open) => setIsKebabDropdownOpen(open)}
+              isExpanded={isKebabDropdownOpen}
+              data-quickstart-id="qs-masthead-utilitymenu"
+            >
+              <EllipsisVIcon />
+            </MenuToggle>
+          )}
+          ref={kebabMenuRef}
+          popperProps={{ position: 'right' }}
+        >
+          {renderApplicationItems(actions)}
+        </Dropdown>
       );
     }
 
     const userToggle = (
       <span className="pf-v5-c-dropdown__toggle">
         <span className="co-username" data-test="username">
-          {username}
+          {authEnabledFlag ? username : t('public~Auth disabled')}
         </span>
         <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
     );
 
     return (
-      <ApplicationLauncher
-        aria-label={t('public~User menu')}
-        data-test="user-dropdown"
+      <Dropdown
         className="co-app-launcher co-user-menu"
-        onSelect={this._onUserDropdownSelect}
-        onToggle={this._onUserDropdownToggle}
         isOpen={isUserDropdownOpen}
-        items={this._renderApplicationItems(actions)}
-        data-tour-id="tour-user-button"
-        data-quickstart-id="qs-masthead-usermenu"
-        position="right"
-        toggleIcon={userToggle}
-        isGrouped
-      />
+        onOpenChange={(open) => setIsUserDropdownOpen(open)}
+        onSelect={() => setIsUserDropdownOpen(false)}
+        toggle={(toggleRef) => (
+          <MenuToggle
+            aria-label={t('public~User menu')}
+            ref={toggleRef}
+            variant="plain"
+            onClick={(open) => setIsUserDropdownOpen(open)}
+            isExpanded={isUserDropdownOpen}
+            data-test="user-dropdown"
+            data-tour-id="tour-user-button"
+            data-quickstart-id="qs-masthead-usermenu"
+          >
+            {userToggle}
+          </MenuToggle>
+        )}
+        ref={userMenuRef}
+        popperProps={{ position: 'right' }}
+      >
+        {renderApplicationItems(actions)}
+      </Dropdown>
     );
-  }
+  };
 
-  render() {
-    const {
-      isApplicationLauncherDropdownOpen,
-      isHelpDropdownOpen,
-      showAboutModal,
-      statuspageData,
-    } = this.state;
-    const {
-      alertCount,
-      canAccessNS,
-      consoleLinks,
-      drawerToggle,
-      isMastheadStacked,
-      t,
-    } = this.props;
-    const launchActions = this._launchActions();
-    const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
-    return (
-      <>
-        <Toolbar isFullHeight isStatic>
-          <ToolbarContent>
-            <MultiClusterToolbarGroup />
-            <ToolbarGroup
-              align={{ default: 'alignRight' }}
-              spacer={{ default: 'spacerNone' }}
-              visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}
-            >
-              <ToolbarItem spacer={{ default: 'spacerNone', lg: 'spacerLg' }}>
-                <SystemStatusButton statuspageData={statuspageData} />
-                {!_.isEmpty(launchActions) && (
-                  <ApplicationLauncher
-                    aria-label={t('public~Application launcher')}
-                    className="co-app-launcher"
-                    data-test-id="application-launcher"
-                    onSelect={this._onApplicationLauncherDropdownSelect}
-                    onToggle={this._onApplicationLauncherDropdownToggle}
-                    isOpen={isApplicationLauncherDropdownOpen}
-                    items={this._renderApplicationItems(this._launchActions())}
-                    data-quickstart-id="qs-masthead-applications"
-                    position="right"
-                    isGrouped
-                  />
-                )}
-                {alertAccess && (
-                  <NotificationBadge
-                    aria-label={t('public~Notification drawer')}
-                    onClick={drawerToggle}
-                    variant="read"
-                    count={alertCount || 0}
-                    data-quickstart-id="qs-masthead-notifications"
-                  >
-                    <BellIcon alt="" />
-                  </NotificationBadge>
-                )}
-                <Link
-                  to={this._getImportYAMLPath()}
-                  className="pf-v5-c-button pf-m-plain"
-                  aria-label={t('public~Import YAML')}
-                  data-quickstart-id="qs-masthead-import"
-                  data-test="import-yaml"
-                >
-                  <PlusCircleIcon className="co-masthead-icon" alt="" />
-                </Link>
-                <CloudShellMastheadButton />
-                <ApplicationLauncher
-                  aria-label={t('public~Help menu')}
+  React.useEffect(() => {
+    if (window.SERVER_FLAGS.statuspageID) {
+      fetch(`https://${window.SERVER_FLAGS.statuspageID}.statuspage.io/api/v2/summary.json`, {
+        headers: { Accept: 'application/json' },
+      })
+        .then((response) => response.json())
+        .then((newStatusPageData) => setStatusPageData(newStatusPageData));
+    }
+  }, [setStatusPageData]);
+
+  const setLastConsoleActivityTimestamp = () =>
+    localStorage.setItem(LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY, Date.now().toString());
+
+  const resetInactivityTimeout = React.useCallback(() => {
+    setLastConsoleActivityTimestamp();
+    clearTimeout(userInactivityTimeout.current);
+    userInactivityTimeout.current = setTimeout(() => {
+      if (openshiftFlag) {
+        authSvc.logoutOpenShift(isKubeAdmin);
+      } else {
+        authSvc.logout();
+      }
+    }, window.SERVER_FLAGS.inactivityTimeout * 1000);
+  }, [openshiftFlag, isKubeAdmin]);
+
+  React.useEffect(() => {
+    const onStorageChange = (e) => {
+      const { key, oldValue, newValue } = e;
+      if (key === LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY && oldValue < newValue) {
+        resetInactivityTimeout();
+      }
+    };
+    // Ignore inactivity-timeout if set to less then 300 seconds
+    const inactivityTimeoutEnabled = window.SERVER_FLAGS.inactivityTimeout >= 300;
+    if (inactivityTimeoutEnabled) {
+      setLastConsoleActivityTimestamp();
+      window.addEventListener('storage', onStorageChange);
+      window.addEventListener('click', _.throttle(resetInactivityTimeout, 500));
+      window.addEventListener('keydown', _.throttle(resetInactivityTimeout, 500));
+      resetInactivityTimeout();
+    }
+    return () => {
+      window.removeEventListener('storage', onStorageChange);
+      window.removeEventListener('click', resetInactivityTimeout);
+      window.removeEventListener('keydown', resetInactivityTimeout);
+      clearTimeout(userInactivityTimeout.current);
+    };
+  }, [resetInactivityTimeout]);
+
+  const launchActions = getLaunchActions();
+  const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
+  return (
+    <>
+      <Toolbar isFullHeight isStatic>
+        <ToolbarContent>
+          <MultiClusterToolbarGroup />
+          <ToolbarGroup
+            align={{ default: 'alignRight' }}
+            spacer={{ default: 'spacerNone' }}
+            visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}
+          >
+            <ToolbarItem spacer={{ default: 'spacerNone', lg: 'spacerLg' }}>
+              <SystemStatusButton statuspageData={statusPageData} />
+              {!_.isEmpty(launchActions) && (
+                <Dropdown
                   className="co-app-launcher"
-                  data-test="help-dropdown-toggle"
-                  data-tour-id="tour-help-button"
-                  data-quickstart-id="qs-masthead-help"
-                  onSelect={this._onHelpDropdownSelect}
-                  onToggle={this._onHelpDropdownToggle}
-                  isOpen={isHelpDropdownOpen}
-                  items={this._renderApplicationItems(
-                    this._helpActions(
-                      this._getAdditionalActions(
-                        this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu'),
-                      ),
-                    ),
+                  isOpen={isAppLauncherDropdownOpen}
+                  onOpenChange={(open) => setIsAppLauncherDropdownOpen(open)}
+                  onSelect={() => setIsAppLauncherDropdownOpen(false)}
+                  onOpenChangeKeys={['Escape']}
+                  toggle={(toggleRef) => (
+                    <MenuToggle
+                      aria-label={t('public~Application launcher')}
+                      ref={toggleRef}
+                      variant="plain"
+                      onClick={(open) => setIsAppLauncherDropdownOpen(open)}
+                      isExpanded={isKebabDropdownOpen}
+                      data-test-id="application-launcher"
+                    >
+                      <ThIcon />
+                    </MenuToggle>
                   )}
-                  position="right"
-                  toggleIcon={<QuestionCircleIcon className="co-masthead-icon" alt="" />}
-                  isGrouped
-                />
-              </ToolbarItem>
-              <ToolbarItem>{this._renderMenu(false)}</ToolbarItem>
-            </ToolbarGroup>
-            <ToolbarGroup
-              align={{ default: 'alignRight' }}
-              spacer={{ default: 'spacerNone' }}
-              visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
-            >
-              <SystemStatusButton statuspageData={statuspageData} />
-              {alertAccess && alertCount > 0 && (
+                  ref={applicationLauncherMenuRef}
+                  popperProps={{ position: 'right' }}
+                >
+                  {renderApplicationItems(launchActions)}
+                </Dropdown>
+              )}
+              {alertAccess && (
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
                   variant="read"
-                  count={alertCount}
+                  count={alertCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
                 >
-                  <BellIcon />
+                  <BellIcon alt="" />
                 </NotificationBadge>
               )}
-              <ToolbarItem>{this._renderMenu(true)}</ToolbarItem>
-            </ToolbarGroup>
-          </ToolbarContent>
-        </Toolbar>
-        <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />
-        {this.state.reportBugLink ? (
-          <FeedbackModalLocalized
-            reportBugLink={this.state.reportBugLink}
-            isOpen={this.state.isFeedbackModalOpen}
-            onClose={() => this.setState({ isFeedbackModalOpen: false })}
-          />
-        ) : null}
-      </>
-    );
-  }
-}
+              <Link
+                to={getImportYAMLPath()}
+                className="pf-v5-c-button pf-m-plain"
+                aria-label={t('public~Import YAML')}
+                data-quickstart-id="qs-masthead-import"
+                data-test="import-yaml"
+              >
+                <PlusCircleIcon className="co-masthead-icon" alt="" />
+              </Link>
+              <CloudShellMastheadButton />
+              <Dropdown
+                className="co-app-launcher"
+                isOpen={isHelpDropdownOpen}
+                onOpenChange={(open) => setIsHelpDropdownOpen(open)}
+                onSelect={() => setIsHelpDropdownOpen(false)}
+                toggle={(toggleRef) => (
+                  <MenuToggle
+                    aria-label={t('public~Help menu')}
+                    ref={toggleRef}
+                    variant="plain"
+                    onClick={(open) => setIsHelpDropdownOpen(open)}
+                    isExpanded={isHelpDropdownOpen}
+                    data-test="help-dropdown-toggle"
+                    data-tour-id="tour-help-button"
+                    data-quickstart-id="qs-masthead-help"
+                  >
+                    <QuestionCircleIcon className="co-masthead-icon" alt="" />
+                  </MenuToggle>
+                )}
+                ref={helpMenuRef}
+                popperProps={{ position: 'right' }}
+                data-test="help-dropdown"
+              >
+                {renderApplicationItems(
+                  getHelpActions(
+                    getAdditionalActions(getAdditionalLinks(consoleLinks?.data, 'HelpMenu')),
+                  ),
+                )}
+              </Dropdown>
+            </ToolbarItem>
+            <ToolbarItem>{renderMenu(false)}</ToolbarItem>
+          </ToolbarGroup>
+          <ToolbarGroup
+            align={{ default: 'alignRight' }}
+            spacer={{ default: 'spacerNone' }}
+            visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
+          >
+            <SystemStatusButton statuspageData={statusPageData} />
+            {alertAccess && alertCount > 0 && (
+              <NotificationBadge
+                aria-label={t('public~Notification drawer')}
+                onClick={drawerToggle}
+                variant="read"
+                count={alertCount}
+                data-quickstart-id="qs-masthead-notifications"
+              >
+                <BellIcon />
+              </NotificationBadge>
+            )}
+            <ToolbarItem>{renderMenu(true)}</ToolbarItem>
+          </ToolbarGroup>
+        </ToolbarContent>
+      </Toolbar>
+      <AboutModal isOpen={showAboutModal} closeAboutModal={closeAboutModal} />
+      {reportBugLink ? (
+        <FeedbackModalLocalized
+          reportBugLink={reportBugLink}
+          isOpen={isFeedbackModalOpen}
+          onClose={() => setIsFeedbackModalOpen(false)}
+        />
+      ) : null}
+    </>
+  );
+};
 
-const mastheadToolbarStateToProps = (state) => ({
-  activeNamespace: state.UI.get('activeNamespace'),
-  clusterID: state.UI.get('clusterID'),
-  user: getUser(state),
-  alertCount: state.observe.getIn(['alertCount']),
-  canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
-});
-
-const MastheadToolbarContentsWithTranslation = withQuickStartContext(
-  withTranslation()(withTelemetry(withRequestTokenURL(MastheadToolbarContents_))),
-);
-const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
-  drawerToggle: UIActions.notificationDrawerToggleExpanded,
-})(
-  connectToFlags(
-    FLAGS.AUTH_ENABLED,
-    FLAGS.CONSOLE_QUICKSTART,
-    FLAGS.CONSOLE_CLI_DOWNLOAD,
-    FLAGS.OPENSHIFT,
-  )(MastheadToolbarContentsWithTranslation),
-);
-
-export const MastheadToolbar = connectToFlags(
-  FLAGS.CLUSTER_VERSION,
-  FLAGS.CONSOLE_LINK,
-)(({ flags, isMastheadStacked }) => {
+export const MastheadToolbar = ({ isMastheadStacked }) => {
+  const clusterVersionFlag = useFlag(FLAGS.CLUSTER_VERSION);
+  const consoleLinkFlag = useFlag(FLAGS.CONSOLE_LINK);
   const resources = [];
-  if (flags[FLAGS.CLUSTER_VERSION]) {
+  if (clusterVersionFlag) {
     resources.push({
       kind: clusterVersionReference,
       name: 'version',
@@ -807,7 +779,7 @@ export const MastheadToolbar = connectToFlags(
       prop: 'cv',
     });
   }
-  if (flags[FLAGS.CONSOLE_LINK]) {
+  if (consoleLinkFlag) {
     resources.push({
       kind: referenceForModel(ConsoleLinkModel),
       isList: true,
@@ -820,4 +792,4 @@ export const MastheadToolbar = connectToFlags(
       <MastheadToolbarContents isMastheadStacked={isMastheadStacked} />
     </Firehose>
   );
-});
+};

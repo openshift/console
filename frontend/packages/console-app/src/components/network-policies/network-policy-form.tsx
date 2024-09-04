@@ -14,6 +14,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
   ButtonBar,
@@ -23,11 +24,12 @@ import {
   isManaged,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
-import { NetworkPolicyModel } from '@console/internal/models';
+import { MultiNetworkPolicyModel, NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate, NetworkPolicyKind } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import NADsSelector from './NADsSelector';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import {
   isNetworkPolicyConversionError,
@@ -40,6 +42,7 @@ import {
 } from './network-policy-model';
 import { NetworkPolicyRuleConfigPanel } from './network-policy-rule-config';
 import { NetworkPolicySelectorPreview } from './network-policy-selector-preview';
+import useIsMultiNetworkPolicy from './useIsMultiNetworkPolicy';
 
 const emptyRule = (): NetworkPolicyRule => {
   return {
@@ -58,6 +61,8 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
   const { t } = useTranslation();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
+  const { ns: namespace } = useParams();
+
   const normalizedK8S = networkPolicyNormalizeK8sResource(formData);
   const converted = networkPolicyFromK8sResource(normalizedK8S, t);
   const [networkPolicy, setNetworkPolicy] = React.useState(converted);
@@ -67,6 +72,10 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
   const [showSDNAlert, setShowSDNAlert] = React.useState(true);
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
   const podsPreviewPopoverRef = React.useRef();
+
+  const isMulti = useIsMultiNetworkPolicy();
+
+  const model = isMulti ? MultiNetworkPolicyModel : NetworkPolicyModel;
 
   if (isNetworkPolicyConversionError(networkPolicy)) {
     // Note, this case is not expected to happen. Validity of the network policy for form should have been checked prior to showing this form.
@@ -87,7 +96,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
 
   const onPolicyChange = (policy: NetworkPolicy) => {
     setNetworkPolicy(policy);
-    onChange(networkPolicyToK8sResource(policy));
+    onChange(networkPolicyToK8sResource(policy, isMulti));
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -181,14 +190,12 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
       return;
     }
 
-    const policy = networkPolicyToK8sResource(networkPolicy);
+    const policy = networkPolicyToK8sResource(networkPolicy, isMulti);
     setInProgress(true);
-    k8sCreate(NetworkPolicyModel, policy)
+    k8sCreate(model, policy)
       .then(() => {
         setInProgress(false);
-        history.push(
-          resourcePathFromModel(NetworkPolicyModel, networkPolicy.name, networkPolicy.namespace),
-        );
+        history.push(resourcePathFromModel(model, networkPolicy.name, networkPolicy.namespace));
       })
       .catch((err) => {
         setError(err.message);
@@ -245,6 +252,13 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             required
           />
         </div>
+        {isMulti && (
+          <NADsSelector
+            namespace={namespace as string}
+            networkPolicy={networkPolicy}
+            onPolicyChange={onPolicyChange}
+          />
+        )}
         <div className="form-group co-create-networkpolicy__podselector">
           <NetworkPolicyConditionalSelector
             selectorType="pod"

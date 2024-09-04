@@ -23,6 +23,6 @@ export const customizationPO = {
   },
   successAlert: '[aria-label="Success Alert"]',
   resourceSearch: '[placeholder="Select Resource"]',
-  filter: '[aria-label="Options menu"]',
+  filter: '[data-test-id="filter-dropdown-toggle"] button',
   consoleItems: '[data-filter-text="CConsole"]',
 };

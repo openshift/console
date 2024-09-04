@@ -4,10 +4,10 @@ import { Node } from '@patternfly/react-topology';
 import { TYPE_HELM_RELEASE } from '@console/helm-plugin/src/topology/components/const';
 import HelmReleaseListViewNode from '@console/helm-plugin/src/topology/listView/HelmReleaseListViewNode';
 import { knativeListViewNodeComponentFactory } from '@console/knative-plugin/src/topology/listView/knativeListViewComponentFactory';
-import { kubevirtListViewNodeComponentFactory } from '@console/kubevirt-plugin/src/topology/listView/kubevirtListViewComponentFactory';
 import { TYPE_WORKLOAD } from '../../const';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import OperatorGroupListViewNode from '../../operators/listView/OperatorGroupListViewNode';
+import { kubevirtListViewNodeComponentFactory } from './kubevirtListViewComponentFactory';
 import TopologyListViewNode from './TopologyListViewNode';
 
 export const listViewNodeComponentFactory = (

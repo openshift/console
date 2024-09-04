@@ -3,8 +3,7 @@ Feature: Shipwright build in topolgy
               As a user, I want check my Shipwright Build in topology.
 
         Background:
-            Given user has installed OpenShift Pipelines Operator
-              And user has installed Shipwright Operator
+            Given user has installed Shipwright Operator
               And user has installed OpenShift Serverless Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
@@ -32,7 +31,7 @@ Feature: Shipwright build in topolgy
         Scenario Outline: BuildRun Section in Topology Sidebar: SWB-02-TC02
              When user navigates to Topology in Developer perspective
               And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
-              And user clicks on the workload of type "<workload_type>"
+              And user clicks on the workload with name "<workload_name>" and of type "<workload_type>"
              Then user will clicks on the Resources tab on the topology sidebar for "<workload_name>"
               And user will verify BuildRuns section is visible
 
@@ -49,7 +48,7 @@ Feature: Shipwright build in topolgy
              When user selects "Start" option from Actions menu
               And user navigates to Topology in Developer perspective
               And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
-             Then user will see build running for "<workload_type>"
+             Then user will see build running for "<workload_name>" of type "<workload_type>"
 
         Examples:
                   | build_name                        | workload_name               | workload_type    |
@@ -62,7 +61,7 @@ Feature: Shipwright build in topolgy
         Scenario Outline: View logs for shipwright buildrun: SWB-02-TC04
              When user navigates to Topology in Developer perspective
               And user filters the workload "<workload_name>" by name and sets the workload type to "<workload_type>"
-              And user clicks on View logs button for buildrun for workload type "<workload_type>" from the sidebar
+              And user clicks on View logs button for buildrun for workload with name "<workload_name>" and of type "<workload_type>" from the sidebar
              Then user will be able to see the buildRun logs
 
         Examples:

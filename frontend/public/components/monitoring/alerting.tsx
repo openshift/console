@@ -1001,7 +1001,7 @@ const AlertsDetailsPage_: React.FC<{}> = () => {
     </>
   );
 };
-export const AlertsDetailsPage = withFallback(AlertsDetailsPage_);
+const AlertsDetailsPage = withFallback(AlertsDetailsPage_);
 
 // Renders Prometheus template text and highlights any {{ ... }} tags that it contains
 const PrometheusTemplate = ({ text }) => (

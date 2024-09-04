@@ -21,7 +21,7 @@ export type Perspective = ExtensionDeclaration<
     defaultPins?: ExtensionK8sModel[];
     /** The function to get perspective landing page URL. */
     landingPageURL: CodeRef<(flags: { [key: string]: boolean }, isFirstVisit: boolean) => string>;
-    /** The function to get redirect URL for import flow. */
+    /** The function to get a relative redirect URL for import flow. */
     importRedirectURL: CodeRef<(namespace: string) => string>;
     /** The hook to detect default perspective */
     usePerspectiveDetection?: CodeRef<() => [boolean, boolean]>; // [enablePerspective: boolean, loading: boolean]

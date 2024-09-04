@@ -1,12 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, Split, SplitItem } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Badge,
+  Card,
+  CardHeader,
+  CardTitle,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import {
   ClusterOverviewUtilizationItem,
   isClusterOverviewUtilizationItem,
@@ -31,6 +38,7 @@ import {
   humanizeCpuCores,
   humanizeNumber,
   humanizeDecimalBytesPerSec,
+  humanizePercentage,
 } from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import {
@@ -54,6 +62,8 @@ import {
   NetworkOutPopover,
   PodPopover,
 } from './utilization-popovers';
+import NodeMemoryOvercommitPopover from './NodeMemoryOvercommitPopover';
+import useClusterHasVMs from '@console/internal/components/utils/useClusterHasVMs';
 
 const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
@@ -65,6 +75,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     utilizationQuery,
     totalQuery,
     title,
+    titleHelpComponent,
     TopConsumerPopover,
     humanizeValue,
     byteDataType,
@@ -73,6 +84,8 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     limitQuery,
     requestQuery,
     setLimitReqState,
+    warningThreashold,
+    errorThreashold,
   }) => {
     let utilization: PrometheusResponse, utilizationError: any;
     let total: PrometheusResponse, totalError: any;
@@ -128,6 +141,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     return (
       <UtilizationItem
         title={title}
+        titleHelpComponent={titleHelpComponent}
         utilization={utilization}
         limit={limit}
         requested={request}
@@ -139,6 +153,8 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
         max={max && max.length ? max[0].y : null}
         TopConsumerPopover={TopConsumerPopover}
         setLimitReqState={setLimitReqState}
+        warningThreashold={warningThreashold}
+        errorThreashold={errorThreashold}
       />
     );
   },
@@ -228,30 +244,41 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
     }
     return indexA - indexB;
   });
-  const onToggle = (_event, open: boolean): void => setIsOpen(open);
 
-  const selectedNodesUpdated = selectedNodes.map((item) =>
-    item === 'master' ? 'control plane' : item,
+  const selectOptions = sortedMCPs.map((mcp) => (
+    <SelectOption
+      hasCheckbox
+      key={mcp.metadata.name}
+      value={mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name}
+      isSelected={selectedNodes.includes(mcp.metadata.name)}
+    >
+      {mcp.metadata.name}
+    </SelectOption>
+  ));
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
+      {t('public~Filter by Node type')}
+      {selectedNodes.length > 0 && (
+        <Badge className="pf-v5-u-ml-sm" isRead>
+          {selectedNodes.length}
+        </Badge>
+      )}
+    </MenuToggle>
   );
 
   return (
-    <SelectDeprecated
-      variant={SelectVariantDeprecated.checkbox}
+    <Select
+      role="menu"
       aria-label={t('public~Filter by Node type')}
-      onToggle={onToggle}
       onSelect={onNodeSelect}
-      selections={selectedNodesUpdated}
       isOpen={isOpen}
-      placeholderText={t('public~Filter by Node type')}
-      isPlain
+      selected={selectedNodes}
+      onOpenChange={(open) => setIsOpen(open)}
+      toggle={toggle}
     >
-      {sortedMCPs.map((mcp) => (
-        <SelectOptionDeprecated
-          key={mcp.metadata.name}
-          value={mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name}
-        />
-      ))}
-    </SelectDeprecated>
+      <SelectList>{selectOptions}</SelectList>
+    </Select>
   );
 };
 
@@ -266,6 +293,7 @@ export const UtilizationCard = () => {
   // TODO: add `useUserSettings` to get default selected
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
 
+  const hasVMs = useClusterHasVMs();
   const [dynamicItemExtensions] = useResolvedExtensions<ClusterOverviewUtilizationItem>(
     isClusterOverviewUtilizationItem,
   );
@@ -336,6 +364,18 @@ export const UtilizationCard = () => {
               humanizeValue={humanizeBinaryBytes}
               byteDataType={ByteDataTypes.BinaryBytes}
             />
+            {hasVMs && (
+              <PrometheusUtilizationItem
+                title={t('public~Node memory overcommit')}
+                titleHelpComponent={NodeMemoryOvercommitPopover}
+                utilizationQuery={
+                  utilizationQueries[OverviewQuery.NODE_MEMORY_OVERCOMMIT].utilization
+                }
+                warningThreashold={95}
+                errorThreashold={105}
+                humanizeValue={humanizePercentage}
+              />
+            )}
             <PrometheusUtilizationItem
               title={t('public~Filesystem')}
               utilizationQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].utilization}
@@ -386,10 +426,13 @@ export const UtilizationCard = () => {
 
 type PrometheusCommonProps = {
   title: string;
+  titleHelpComponent?: React.ComponentType;
   humanizeValue: Humanize;
   byteDataType?: ByteDataTypes;
   namespace?: string;
   isDisabled?: boolean;
+  warningThreashold?: number;
+  errorThreashold?: number;
 };
 
 type PrometheusUtilizationItemProps = DashboardItemProps &

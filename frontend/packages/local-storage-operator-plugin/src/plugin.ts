@@ -47,9 +47,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
-        models.LocalVolumeSetModel,
-      )}/~new`,
+      path: [
+        `/k8s/ns/:ns/${referenceForModel(ClusterServiceVersionModel)}/:appName/${referenceForModel(
+          models.LocalVolumeSetModel,
+        )}/~new`,
+        `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
+          models.LocalVolumeSetModel,
+        )}/~new`,
+      ],
       loader: () =>
         import(
           './components/local-volume-set/create-local-volume-set' /* webpackChunkName: "lso-create-local-volume-set" */
@@ -81,9 +86,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
-        models.LocalVolumeDiscovery,
-      )}/~new`,
+      path: [
+        `/k8s/ns/:ns/${referenceForModel(ClusterServiceVersionModel)}/:appName/${referenceForModel(
+          models.LocalVolumeDiscovery,
+        )}/~new`,
+        `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
+          models.LocalVolumeDiscovery,
+        )}/~new`,
+      ],
       loader: () =>
         import(
           './components/local-volume-discovery/create-local-volume-discovery' /* webpackChunkName: "lso-create-local-volume-discovery" */

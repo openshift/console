@@ -232,6 +232,7 @@ const config: Configuration = {
         loader: 'file-loader',
         options: {
           name: 'assets/[path][name].[ext]',
+          esModule: false,
         },
       },
       {
@@ -313,6 +314,9 @@ const config: Configuration = {
     new CopyWebpackPlugin([
       { from: './packages/operator-lifecycle-manager/locales', to: 'locales' },
     ]),
+    new CopyWebpackPlugin([
+      { from: './packages/operator-lifecycle-manager-v1/locales', to: 'locales' },
+    ]),
     new CopyWebpackPlugin([{ from: './packages/dev-console/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/knative-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/container-security/locales', to: 'locales' }]),
@@ -325,7 +329,6 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/rhoas-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/git-service/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/gitops-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/kubevirt-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/metal3-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/vsphere-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([

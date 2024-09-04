@@ -78,12 +78,7 @@ import {
   navFactory,
   useAccessReview,
 } from './utils';
-import {
-  createProjectModal,
-  createNamespaceModal,
-  deleteNamespaceModal,
-  configureNamespacePullSecretModal,
-} from './modals';
+import { deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH } from './graphs';
 import { flagPending } from '../reducers/features';
@@ -100,6 +95,8 @@ import {
   isOtherUser,
   isSystemNamespace,
 } from '@console/shared/src/components/namespace';
+import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
+import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -456,6 +453,7 @@ export const NamespacesList = (props) => {
 
 export const NamespacesPage = (props) => {
   const { t } = useTranslation();
+  const createNamespaceModal = useCreateNamespaceModal();
   const [tableColumns] = useUserSettingsCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
@@ -472,7 +470,7 @@ export const NamespacesPage = (props) => {
       rowFilters={getFilters()}
       ListComponent={NamespacesList}
       canCreate={true}
-      createHandler={() => createNamespaceModal({ blocking: true })}
+      createHandler={() => createNamespaceModal()}
       columnLayout={{
         columns: NamespacesTableHeader(null, t).map((column) =>
           _.pick(column, ['title', 'additional', 'id']),
@@ -841,6 +839,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
 
 export const ProjectsPage = (props) => {
   const { t } = useTranslation();
+  const createProjectModal = useCreateProjectModal();
   // Skip self-subject access review for projects since they use a special project request API.
   // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
@@ -860,7 +859,7 @@ export const ProjectsPage = (props) => {
       rowFilters={getFilters()}
       ListComponent={ProjectList}
       canCreate={canCreateProject}
-      createHandler={() => createProjectModal({ blocking: true })}
+      createHandler={() => createProjectModal()}
       filterLabel={t('public~by name or display name')}
       skipAccessReview
       textFilter="project-name"

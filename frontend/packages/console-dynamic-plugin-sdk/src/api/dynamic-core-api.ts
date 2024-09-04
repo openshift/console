@@ -34,6 +34,8 @@ import {
   UseResolvedExtensions,
   VirtualizedTableFC,
   UseActiveNamespace,
+  UseUserSettings,
+  UseQuickStartContext,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -94,6 +96,8 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/int
  * @param {TableGridBreakpoint} [gridBreakPoint] - sizing of how to break up grid for responsiveness
  * @param {function} [onSelect] - (optional) function for handling select of table
  * @param {R} [rowData] - (optional) data specific to row
+ * @param {number} [sortColumnIndex] - (optional) The index of the column to sort. The default is `0`
+ * @param {SortByDirection.asc | SortByDirection.desc} [sortDirection] - (optional) The direction of the sort. The default is `SortByDirection.asc`
  * @example
  * ```ts
  * const MachineList: React.FC<MachineListProps> = (props) => {
@@ -640,6 +644,10 @@ export const CodeEditor: React.ForwardRefExoticComponent<
  * @param {ResourceYAMLEditorProps['initialResource']} initialResource - YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render.
  * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor.
  * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button. Passing it will override the default update performed on the resource by the editor.
+ * @param {ResourceYAMLEditorProps['readOnly']} readOnly - Sets the YAML editor to read-only mode.
+ * @param {ResourceYAMLEditorProps['create']} create - Editor will be on creation mode. Create button will replace the Save and Cancel buttons. If no onSave method defined, the 'Create' button will trigger the creation of the defined resource. Default: false
+ * @param {ResourceYAMLEditorProps['onChange']} onChange - Callback triggered at any editor change.
+ * @param {ResourceYAMLEditorProps['hideHeader']} hideHeader - On creation mode the editor by default show an header that can be hided with this property
  */
 export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@console/internal/components/AsyncResourceYAMLEditor')
   .AsyncResourceYAMLEditor;
@@ -873,3 +881,41 @@ export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks
  */
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;
+
+/**
+ * Hook that provides a user setting value and a callback for setting the user setting value.
+ * @returns A tuple containing the user setting value, a setter callback, and a loaded boolean.
+ * @example
+ * ```tsx
+ * const Component: React.FC = (props) => {
+ *    const [state, setState, loaded] = useUserSettings(
+ *      'devconsole.addPage.showDetails',
+ *      true,
+ *      true,
+ *    );
+ *    return loaded ? (
+ *       <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+ *     ) : null;
+ * };
+ * ```
+ */
+export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
+  .useUserSettings;
+
+/**
+ * Hook that provides the current quick start context values. This allows plugins to interop with Console
+ * quick start functionality.
+ * @returns Quick start context values object.
+ * @example
+ * ```tsx
+ * const OpenQuickStartButton = ({ quickStartId }) => {
+ *    const { setActiveQuickStart } = useQuickStartContext();
+ *    const onClick = React.useCallback(() => {
+ *        setActiveQuickStart(quickStartId);
+ *    }, [quickStartId]);
+ *    return <button onClick={onClick}>{t('Open Quick Start')}</button>
+ * };
+ * ```
+ */
+export const useQuickStartContext: UseQuickStartContext = require('@console/shared/src/hooks/useQuickStartContext')
+  .useQuickStartContext;

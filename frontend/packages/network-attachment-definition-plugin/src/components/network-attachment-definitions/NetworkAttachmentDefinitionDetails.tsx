@@ -2,14 +2,18 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
+  ResourceSummary,
   ScrollToTopOnMount,
   SectionHeading,
   StatusBox,
-  ResourceSummary,
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
-import { networkTypes } from '../../constants';
+import {
+  networkTypes,
+  ovnKubernetesNetworkType,
+  ovnKubernetesSecondaryLocalnet,
+} from '../../constants/constants';
 import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';
 
@@ -41,13 +45,22 @@ export const NetAttachDefinitionSummary: React.FC<NetAttachDefinitionSummaryProp
   netAttachDef,
 }) => {
   const { t } = useTranslation();
-  const type = getType(getConfigAsJSON(netAttachDef));
+  const nadConfig = getConfigAsJSON(netAttachDef);
+  const type = getType(nadConfig);
+  const typeLabel = React.useMemo(() => {
+    if (type === ovnKubernetesNetworkType && nadConfig?.topology === 'localnet') {
+      return networkTypes[ovnKubernetesSecondaryLocalnet];
+    }
+    return _.get(networkTypes, [type], null) || type;
+  }, [nadConfig?.topology, type]);
   const id = getBasicID(netAttachDef);
 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('kubevirt-plugin~NetworkAttachmentDefinition details')} />
+        <SectionHeading
+          text={t('network-attachment-definition-plugin~NetworkAttachmentDefinition details')}
+        />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={netAttachDef} />
@@ -55,11 +68,11 @@ export const NetAttachDefinitionSummary: React.FC<NetAttachDefinitionSummaryProp
           <div className="col-sm-6">
             <dl className="co-m-pane__details">
               <DetailsItem
-                title={t('kubevirt-plugin~Type')}
+                title={t('network-attachment-definition-plugin~Type')}
                 idValue={prefixedID(id, 'type')}
                 isNotAvail={!type}
               >
-                {_.get(networkTypes, [type], null) || type}
+                {typeLabel}
               </DetailsItem>
             </dl>
           </div>

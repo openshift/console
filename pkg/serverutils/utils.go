@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // Copied from Server package to maintain error response consistency

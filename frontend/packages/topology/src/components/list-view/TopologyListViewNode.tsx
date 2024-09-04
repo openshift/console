@@ -138,6 +138,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
       id={item.getId()}
       aria-labelledby={`${item.getId()}_label`}
       isExpanded={children !== undefined}
+      data-test={`row-${item.getLabel()}`}
     >
       <DataListItemRow className={className}>
         <DataListItemCells dataListCells={cells} />

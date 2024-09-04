@@ -10,7 +10,6 @@
       "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
     }
   },
-
   {
     "type": "console.flag/model",
     "properties": {
@@ -154,23 +153,6 @@
         "version": "v1alpha2",
         "kind": "DevWorkspace"
       }
-    }
-  },
-
-  {
-    "type": "console.global-config",
-    "properties": {
-      "id": "oauth-config",
-      "name": "oauth-config",
-      "model": {
-        "group": "config.openshift.io",
-        "version": "v1",
-        "kind": "OAuth"
-      },
-      "namespace": ""
-    },
-    "flags": {
-      "required": ["OPENSHIFT_OAUTH_API"]
     }
   },
   {
@@ -604,6 +586,30 @@
   {
     "type": "console.user-preference/item",
     "properties": {
+      "id": "console.hideLightspeedButton",
+      "label": "%console-app~Lightspeed%",
+      "groupId": "general",
+      "description": "%console-app~Do not display the Lightspeed button.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.hideLightspeedButton",
+        "label": "%console-app~Hide Lightspeed%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
+      },
+      "insertAfter": "console.preferredCreateEditMethod"
+    },
+    "flags": {
+      "required": [
+        "CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED",
+        "LIGHTSPEED_IS_AVAILABLE_TO_INSTALL"
+      ]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
       "id": "console.preferredLanguage",
       "label": "%console-app~Language%",
       "groupId": "language",
@@ -995,65 +1001,6 @@
         "group": "policy",
         "version": "v1",
         "kind": "PodDisruptionBudget"
-      }
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "networking",
-      "id": "services",
-      "name": "%console-app~Services%",
-      "model": {
-        "version": "v1",
-        "kind": "Service"
-      }
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "networking",
-      "id": "routes",
-      "insertAfter": "services",
-      "name": "%console-app~Routes%",
-      "model": {
-        "group": "route.openshift.io",
-        "version": "v1",
-        "kind": "Route"
-      }
-    },
-    "flags": { "required": ["OPENSHIFT"] }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "networking",
-      "id": "ingresses",
-      "insertAfter": "routes",
-      "name": "%console-app~Ingresses%",
-      "model": {
-        "group": "networking.k8s.io",
-        "version": "v1",
-        "kind": "Ingress"
-      }
-    }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "networking",
-      "id": "networkpolicies",
-      "insertAfter": "ingresses",
-      "name": "%console-app~NetworkPolicies%",
-      "model": {
-        "group": "networking.k8s.io",
-        "version": "v1",
-        "kind": "NetworkPolicy"
       }
     }
   },
@@ -1511,9 +1458,9 @@
         "documentationLink": { "$codeRef": "storageProvisionerDocs.AWS_EBS" },
         "parameters": {
           "type": {
-            "name": "Type",
+            "name": "%console-app~Type%",
             "values": { "io1": "io1", "gp2": "gp2", "sc1": "sc1", "st1": "st1" },
-            "hintText": "Select AWS Type"
+            "hintText": "%console-app~Select AWS Type%"
           },
           "iopsPerGB": {
             "name": "%console-app~IOPS per GiB%",
@@ -1549,28 +1496,28 @@
         "documentationLink": { "$codeRef": "storageProvisionerDocs.GCE" },
         "parameters": {
           "type": {
-            "name": "Type",
+            "name": "%console-app~Type%",
             "values": {
               "pd-standard": "pd-standard",
               "pd-ssd": "pd-ssd"
             },
-            "hintText": "Select GCE type"
+            "hintText": "%console-app~Select GCE type%"
           },
           "zone": {
-            "name": "Zone",
+            "name": "%console-app~Zone%",
             "validation": { "$codeRef": "storageProvisioners.validateGcePdZone" }
           },
           "zones": {
-            "name": "Zones",
+            "name": "%console-app~Zones%",
             "validation": { "$codeRef": "storageProvisioners.validateGcePdZones" }
           },
           "replication-type": {
-            "name": "Replication type",
+            "name": "%console-app~Replication type%",
             "values": {
               "none": "none",
               "regional-pd": "regional-pd"
             },
-            "hintText": "Select Replication type",
+            "hintText": "%console-app~Select Replication type%",
             "validation": { "$codeRef": "storageProvisioners.validateGCEReplicationType" }
           }
         }

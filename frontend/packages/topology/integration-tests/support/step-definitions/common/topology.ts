@@ -8,6 +8,7 @@ import {
 import {
   createGitWorkload,
   gitPage,
+  installKnativeOperatorUsingCLI,
   topologyHelper,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
@@ -18,7 +19,6 @@ import {
 } from '@console/dev-console/integration-tests/support/pages/app';
 import {
   verifyAndInstallGitopsPrimerOperator,
-  verifyAndInstallKnativeOperator,
   verifyAndInstallPipelinesOperator,
 } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
@@ -156,7 +156,7 @@ Then('user will see workload disappeared from topology', () => {
 });
 
 Given('user has installed OpenShift Serverless Operator', () => {
-  verifyAndInstallKnativeOperator();
+  installKnativeOperatorUsingCLI();
 });
 
 Given('user is at Topology Graph view', () => {
@@ -173,7 +173,7 @@ When('user enters {string} builder image in Quick Search bar', (searchItem: stri
 });
 
 When('user clicks Create application on Quick Search Dialog', () => {
-  cy.get('.pf-v5-c-spinner__tail-ball').should('not.exist');
+  cy.get('[class*="spinner"]').should('not.exist');
   cy.get('ul[aria-label="Quick search list"] li')
     .contains('Builder Images', { timeout: 60000 })
     .click();

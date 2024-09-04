@@ -5,7 +5,6 @@ import {
   quickStartSidebarPO,
   quickStartsPO,
 } from '../pageObjects';
-import { catalogPage } from './add-flow/catalog-page';
 import { app, navigateTo } from './app';
 
 function clickVisibleButton(el: string) {
@@ -33,7 +32,8 @@ export const quickStartsPage = {
     app.waitForDocumentLoad();
     cy.get(addPagePO.viewAllQuickStarts).click();
     cy.get(quickStartsPO.quickStartTitle).scrollIntoView().should('be.visible');
-    catalogPage.isCardsDisplayed();
+    app.waitForLoad();
+    cy.get('.pfext-quick-start-catalog__gallery').should('be.visible');
   },
   filterByKeyword: (filterName: string) => {
     cy.get(quickStartsPO.filterKeyword).scrollIntoView().click();
@@ -93,5 +93,18 @@ export const quickStartsPage = {
     cy.get(quickStartSidebarPO.quickStartSidebarBody).should('be.visible');
     cy.get(quickStartSidebarPO.quickStartSidebarBody).find(quickStartSidebarPO.startButton).click();
     closeQuickStart();
+  },
+  finishFirstQuickStart: () => {
+    cy.get(addPagePO.buildWithGuidedDocumentationItems).first().click();
+    cy.get(quickStartSidebarPO.restartSideNoteAction).click();
+    cy.get('li[class*=nav-item]  h3').then(($elements) => {
+      const noOfsteps = $elements.length;
+      cy.get(quickStartSidebarPO.startButton).click();
+      for (let currentStep = 0; currentStep < noOfsteps; currentStep++) {
+        cy.get(quickStartSidebarPO.yesOptionCheckInput).click();
+        cy.get(quickStartSidebarPO.nextButton).click();
+      }
+      cy.get(quickStartSidebarPO.closeButton).click();
+    });
   },
 };

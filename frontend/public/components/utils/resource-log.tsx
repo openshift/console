@@ -13,18 +13,16 @@ import {
   Checkbox,
   Divider,
   Dropdown,
-  DropdownItem,
   DropdownGroup,
-  Tooltip,
-  MenuToggleElement,
-  MenuToggle,
+  DropdownItem,
   DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+  Tooltip,
 } from '@patternfly/react-core';
-import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
   CompressIcon,
@@ -146,9 +144,6 @@ const showDebugAction = (pod: PodKind, containerName: string) => {
     return false;
   }
   const containerStatus = pod?.status?.containerStatuses?.find((c) => c.name === containerName);
-  if (pod?.status?.phase === 'Succeeded') {
-    return false;
-  }
   if (pod?.metadata?.annotations?.['openshift.io/build.name']) {
     return false;
   }
@@ -186,7 +181,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
   toggleShowFullLog,
 }) => {
   const { t } = useTranslation();
-  const [isLogTypeOpen, setLogTypeOpen] = React.useState(false);
+  const [isLogTypeOpen, setIsLogTypeOpen] = React.useState(false);
   const isMobile = useIsMobile();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
@@ -205,9 +200,9 @@ export const LogControls: React.FC<LogControlsProps> = ({
 
   const logOption = (log: LogType) => {
     return (
-      <SelectOptionDeprecated key={log.type} value={log.type}>
+      <SelectOption key={log.type} value={log.type}>
         {log.text}
-      </SelectOptionDeprecated>
+      </SelectOption>
     );
   };
 
@@ -231,7 +226,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
     return <>{t(streamStatusMessages[STREAM_EOF])} </>;
   };
 
-  const logTypeSelect = (isDisabled: boolean) => {
+  const logTypeSelect = () => {
     if (!showLogTypeSelect) {
       return null;
     }
@@ -241,22 +236,28 @@ export const LogControls: React.FC<LogControlsProps> = ({
         <span id="logTypeSelect" hidden>
           Log type
         </span>
-        <SelectDeprecated
-          variant={SelectVariantDeprecated.single}
-          onToggle={(_event, isOpen: boolean) => {
-            setLogTypeOpen(isOpen);
-          }}
+        <Select
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
+              ref={toggleRef}
+              onClick={(open) => setIsLogTypeOpen(open)}
+              isExpanded={isLogTypeOpen}
+              isDisabled={!hasPreviousLog}
+            >
+              {logTypes.find((lt) => lt.type === logType).text}
+            </MenuToggle>
+          )}
           onSelect={(event: React.MouseEvent | React.ChangeEvent, value: LogTypeStatus) => {
             changeLogType(value);
-            setLogTypeOpen(false);
+            setIsLogTypeOpen(false);
           }}
-          selections={logType}
+          selected={logType}
+          onOpenChange={(isOpen) => setIsLogTypeOpen(isOpen)}
           isOpen={isLogTypeOpen}
-          isDisabled={isDisabled}
           aria-labelledby="logTypeSelect"
         >
-          {logTypes.map((log) => logOption(log))}
-        </SelectDeprecated>
+          <SelectList>{logTypes.map((log) => logOption(log))}</SelectList>
+        </Select>
       </span>
     );
     return hasPreviousLog ? (
@@ -377,7 +378,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
       >
         <div className="co-toolbar__item">{showStatus()}</div>
         {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
-        <div className="co-toolbar__item">{logTypeSelect(!hasPreviousLog)}</div>
+        <div className="co-toolbar__item">{logTypeSelect()}</div>
         <div className="co-toolbar__item">
           <LogViewerSearch
             onFocus={() => {

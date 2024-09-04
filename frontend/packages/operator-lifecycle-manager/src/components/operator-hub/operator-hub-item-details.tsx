@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import {
-  Alert,
-  AlertActionCloseButton,
   DescriptionList,
   DescriptionListTerm,
   DescriptionListGroup,
@@ -10,6 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import * as classNames from 'classnames';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -25,14 +24,17 @@ import {
   AuthenticationKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { RH_OPERATOR_SUPPORT_POLICY_LINK, isClusterExternallyManaged } from '@console/shared';
+import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { MarkdownView } from '../clusterserviceversion';
+import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/deprecated-operator-warnings';
+import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 import { defaultChannelNameFor } from '../index';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
-import { isAWSSTSCluster, isAzureWIFCluster } from './operator-hub-utils';
+import { CloudServiceTokenWarningAlert } from './operator-hub-subscribe';
+import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
 import { InfraFeatures, OperatorHubItem } from './index';
 
 // t('olm~Basic Install'),
@@ -216,7 +218,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   const { t } = useTranslation();
   const {
     catalogSource,
-    catalogSourceDisplayName,
+    source,
     description,
     infraFeatures,
     installed,
@@ -236,10 +238,25 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   } = item;
 
   const installChannel = getQueryArgument('channel');
-  const currentChannel = obj.status.channels.find((ch) => ch.name === installChannel);
+  const {
+    deprecatedPackage,
+    deprecatedChannel,
+    deprecatedVersion,
+    setDeprecatedPackage,
+  } = useDeprecatedOperatorWarnings();
+  const deprecatedWarning =
+    deprecatedPackage?.deprecation ||
+    deprecatedChannel?.deprecation ||
+    deprecatedVersion?.deprecation;
+
+  React.useEffect(() => {
+    setDeprecatedPackage(_.pick(item?.obj?.status, 'deprecation'));
+  }, [item?.obj?.status, setDeprecatedPackage]);
+  const currentChannel = obj?.status.channels.find((ch) => ch.name === installChannel);
   const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations.containerImage;
   const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations.createdAt;
-  const selectedChannelCapabilityLevel = currentChannel?.currentCSVDesc.annotations.capabilities;
+  const selectedChannelCapabilityLevel =
+    currentChannel?.currentCSVDesc.annotations.capabilities ?? item.capabilityLevel;
 
   const installedChannel = item?.subscription?.spec?.channel;
   const notAvailable = (
@@ -251,7 +268,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     selectedChannelCreatedAt
   );
 
-  const [showWarn, setShowWarn] = React.useState(true);
+  const [showCSTokenWarn, setShowCSTokenWarn] = React.useState(true);
   const mappedData = (data) => data?.map?.((d) => <div key={d}>{d}</div>) ?? notAvailable;
 
   const mappedInfraFeatures = mappedData(infraFeatures);
@@ -313,10 +330,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                   )
                 }
               />
-              <PropertyItem
-                label={t('olm~Source')}
-                value={catalogSourceDisplayName || notAvailable}
-              />
+              <PropertyItem label={t('olm~Source')} value={source || notAvailable} />
               <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
               {infraFeatures?.length > 0 && (
                 <PropertyItem
@@ -362,40 +376,45 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             </PropertiesSidePanel>
             <div className="co-catalog-page__overlay-description">
               {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
-                showWarn &&
-                !isClusterExternallyManaged() &&
-                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
-                  <Alert
-                    isInline
-                    variant="warning"
+                showCSTokenWarn &&
+                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
+                  <CloudServiceTokenWarningAlert
                     title={t('olm~Cluster in STS Mode')}
-                    actionClose={<AlertActionCloseButton onClose={() => setShowWarn(false)} />}
-                    className="pf-v5-u-mb-lg"
-                  >
-                    <p>
-                      {t(
-                        'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
-                      )}
-                    </p>
-                  </Alert>
+                    message={t(
+                      'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+                    )}
+                    onClose={() => setShowCSTokenWarn(false)}
+                  />
                 )}
               {isAzureWIFCluster(cloudCredentials, infrastructure, authentication) &&
-                showWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.TokenAuth) && (
-                  <Alert
-                    isInline
-                    variant="warning"
+                showCSTokenWarn &&
+                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
+                  <CloudServiceTokenWarningAlert
                     title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
-                    actionClose={<AlertActionCloseButton onClose={() => setShowWarn(false)} />}
-                    className="pf-u-mb-lg"
-                  >
-                    <p>
-                      {t(
-                        'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
-                      )}
-                    </p>
-                  </Alert>
+                    message={t(
+                      'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
+                    )}
+                    onClose={() => setShowCSTokenWarn(false)}
+                  />
                 )}
+              {isGCPWIFCluster(cloudCredentials, infrastructure, authentication) &&
+                showCSTokenWarn &&
+                infraFeatures?.find((i) => i === InfraFeatures.tokenAuthGCP) && (
+                  <CloudServiceTokenWarningAlert
+                    title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
+                    message={t(
+                      'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
+                    )}
+                    onClose={() => setShowCSTokenWarn(false)}
+                  />
+                )}
+              {deprecatedWarning && (
+                <DeprecatedOperatorWarningAlert
+                  deprecatedPackage={deprecatedPackage}
+                  deprecatedChannel={deprecatedChannel}
+                  deprecatedVersion={deprecatedVersion}
+                />
+              )}
               <OperatorHubItemDetailsHintBlock
                 installed={installed}
                 isInstalling={isInstalling}

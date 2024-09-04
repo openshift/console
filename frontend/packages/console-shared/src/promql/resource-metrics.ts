@@ -5,6 +5,7 @@ import { useK8sModel } from '../hooks/useK8sModel';
 export enum ResourceUtilizationQuery {
   MEMORY = 'MEMORY',
   CPU = 'CPU',
+  CPU_ARCH = 'CPU_ARCH',
   FILESYSTEM = 'FILESYSTEM',
   NETWORK_IN = 'NETWORK_IN',
   NETWORK_OUT = 'NETWORK_OUT',
@@ -21,10 +22,10 @@ const podMetricsQueries = {
     "pod:container_fs_usage_bytes:sum{pod='<%= name %>'}",
   ),
   [ResourceUtilizationQuery.NETWORK_IN]: _.template(
-    "(sum(irate(container_network_receive_bytes_total{pod='<%= name %>'}[5m])) by (pod, interface)) + on(pod,interface) group_left(network_name) (pod_network_name_info)",
+    "pod_interface_network:container_network_receive_bytes:irate5m{pod='<%= name %>'}",
   ),
   [ResourceUtilizationQuery.NETWORK_OUT]: _.template(
-    "(sum(irate(container_network_transmit_bytes_total{pod='<%= name %>'}[5m])) by (pod, interface)) + on(pod,interface) group_left(network_name) (pod_network_name_info)",
+    "pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='<%= name %>'}",
   ),
   [ResourceUtilizationQuery.QUOTA_LIMIT]: _.template(
     "sum by (pod, resource) (kube_pod_resource_limit{resource='<%= resource %>',pod='<%= name %>'})",
@@ -40,6 +41,9 @@ const podControllerMetricsQueries = {
   ),
   [ResourceUtilizationQuery.CPU]: _.template(
     "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{} * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
+  ),
+  [ResourceUtilizationQuery.CPU_ARCH]: _.template(
+    "sum by(node) (kube_node_info{node='<%= name %>'})",
   ),
   [ResourceUtilizationQuery.FILESYSTEM]: _.template(
     "sum(pod:container_fs_usage_bytes:sum * on(pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",

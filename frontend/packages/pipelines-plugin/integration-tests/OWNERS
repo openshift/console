@@ -1,7 +1,9 @@
 reviewers:
-  - VeereshAradhya
   - ppitonak
+  - sanketpathak
+  - VeereshAradhya
+  - the-anton
 approvers:
-  - psrna
   - jrichter1
+  - psrna
   - sanketpathak

@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   addPagePO,
+  helpDropdownMenu,
   quickStartCard,
   quickStartLeaveModalPO,
   quickStartSidebarPO,
@@ -22,27 +23,31 @@ Then('user can see the "View all quick starts" on the card', () => {
   cy.get(addPagePO.viewAllQuickStarts).should('be.visible');
 });
 
-When('user clicks on the "View all quick starts" on Build with guided documentation card', () => {
-  cy.get(addPagePO.viewAllQuickStarts).should('be.visible').click();
+When('user selects QuickStarts from the help menu icon on the masthead', () => {
+  cy.get(helpDropdownMenu).should('be.visible').click();
+  cy.get('button[role="menuitem"]').contains('Quick Starts').click();
 });
 
 Then(
   'user can see {string}, {string} and {string} Quick Starts',
   (quickStartDisplayName1, quickStartDisplayName2, quickStartDisplayName3) => {
-    cy.get(quickStartCard(quickStartDisplayName1)).should('be.visible');
-    cy.get(quickStartCard(quickStartDisplayName2)).should('be.visible');
-    cy.get(quickStartCard(quickStartDisplayName3)).should('be.visible');
+    cy.get(quickStartCard(quickStartDisplayName1)).scrollIntoView().should('be.visible');
+    cy.get(quickStartCard(quickStartDisplayName2)).scrollIntoView().should('be.visible');
+    cy.get(quickStartCard(quickStartDisplayName3)).scrollIntoView().should('be.visible');
   },
 );
 
 Then('user can see time taken to complete the tour on the card', () => {
   cy.get(quickStartCard('Get started with a sample application'))
+    .scrollIntoView()
     .find(quickStartsPO.duration)
     .should('be.visible');
-  cy.get(quickStartCard('Install the OpenShift Pipelines Operator'))
+  cy.get(quickStartCard('Install Red Hat Developer Hub (RHDH) with a Helm Chart'))
+    .scrollIntoView()
     .find(quickStartsPO.duration)
     .should('be.visible');
   cy.get(quickStartCard('Add health checks to your sample application'))
+    .scrollIntoView()
     .find(quickStartsPO.duration)
     .should('be.visible');
 });

@@ -11,7 +11,7 @@ import {
 import { connectToPlural } from '@console/internal/kinds';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getNamespace, getName } from '@console/shared';
-import { NET_ATTACH_DEF_HEADER_LABEL } from '../../constants';
+import { NET_ATTACH_DEF_HEADER_LABEL } from '../../constants/constants';
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { NetworkAttachmentDefinitionsYAMLTemplates } from '../../models/templates';
 

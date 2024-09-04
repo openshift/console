@@ -1,9 +1,11 @@
 import { formPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { webTerminalPO } from '@console/dev-console/integration-tests/support/pageObjects/webterminal-po';
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
 
 export const initTerminalPage = {
-  clickOnProjectDropDawn: () => {
-    cy.get(webTerminalPO.createProjectMenu.createProjectDropdownMenu).click();
+  clickOnProjectDropDown: () => {
+    app.waitForDocumentLoad();
+    cy.get(webTerminalPO.createProjectMenu.createProjectDropdownMenu).click('center');
   },
 
   selectCreateProjectButton: () => {
@@ -19,18 +21,21 @@ export const initTerminalPage = {
   },
 
   selectProject: (projectName: string) => {
-    cy.get(`a#${projectName}-link`).click();
+    cy.byTestID(webTerminalPO.createProjectMenu.inputField)
+      .type(projectName)
+      .should('have.value', projectName);
+    cy.byTestID('dropdown-menu-item-link').contains(projectName).click();
   },
 
   createAndStartTerminalInNewProject: (projectName: string) => {
-    initTerminalPage.clickOnProjectDropDawn();
+    initTerminalPage.clickOnProjectDropDown();
     initTerminalPage.selectCreateProjectButton();
     initTerminalPage.typeProjectName(projectName);
     initTerminalPage.clickStartButton();
   },
 
   startTerminalInExistedProject: (projectName: string) => {
-    initTerminalPage.clickOnProjectDropDawn();
+    initTerminalPage.clickOnProjectDropDown();
     initTerminalPage.selectProject(projectName);
     initTerminalPage.clickStartButton();
   },

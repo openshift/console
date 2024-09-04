@@ -64,11 +64,9 @@ export const gitPage = {
     }
     app.waitForDocumentLoad();
   },
-  verifyPipelineCheckBox: () => {
-    cy.get(gitPO.pipeline.addPipeline).scrollIntoView().should('be.visible');
-  },
-  verifyPipelineCheckBoxChecked: () => {
-    cy.get(gitPO.pipeline.addPipeline).scrollIntoView().should('be.checked');
+  verifyPipelineOption: () => {
+    cy.get(gitPO.pipeline.buildDropdown).scrollIntoView().click();
+    cy.get(gitPO.pipeline.addPipeline).should('be.visible');
   },
   selectPipeline: (pipelineName: string) => {
     cy.get(gitPO.pipeline.pipelineDropdown).scrollIntoView().click();
@@ -131,6 +129,42 @@ export const gitPage = {
   },
   verifyNodeName: (componentName: string) =>
     cy.get(gitPO.nodeName).should('have.value', componentName),
+  selectBuildOption: (buildOption: string) => {
+    cy.get(gitPO.buildsDropdown).scrollIntoView().click();
+    switch (buildOption) {
+      case 'Builds for Openshift':
+      case 'Shipwright':
+        cy.get(gitPO.buildOptions.buildsForOpenshift).scrollIntoView().click();
+        break;
+      case 'BuildConfig':
+      case 'Builds':
+        cy.get(gitPO.buildOptions.buildConfig).scrollIntoView().click();
+        break;
+      case 'Build using pipelines':
+      case 'Pipelines':
+        cy.get(gitPO.buildOptions.buildUsingPipelines).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Build option is not available');
+    }
+    cy.log(`Build option "${buildOption}" is selected`);
+  },
+  selectClusterBuildStrategy: (clusterBuildStrategy: string) => {
+    cy.get(gitPO.cbsDropdown).scrollIntoView().click();
+    switch (clusterBuildStrategy) {
+      case 'buildah':
+      case 'Buildah':
+        cy.get(gitPO.clusterBuildStrategies.buildah).scrollIntoView().click();
+        break;
+      case 'S2I':
+      case 'Source-to-Image':
+        cy.get(gitPO.clusterBuildStrategies.s2i).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Cluster Build Strategy is not available');
+    }
+    cy.log(`Cluster Build Strategy "${clusterBuildStrategy}" is selected`);
+  },
   selectResource: (resource: string = 'deployment') => {
     cy.get(gitPO.resourcesDropdown).scrollIntoView().click();
     switch (resource) {
@@ -150,9 +184,54 @@ export const gitPage = {
         break;
       default:
         throw new Error('Resource option is not available');
-        break;
     }
     cy.log(`Resource type "${resource}" is selected`);
+  },
+  selectGitType: (gitType: string) => {
+    switch (gitType) {
+      case 'GitHub':
+        cy.get(gitPO.gitType.github).scrollIntoView().click();
+        break;
+      case 'GitLab':
+        cy.get(gitPO.gitType.gitlab).scrollIntoView().click();
+        break;
+      case 'Bitbucket':
+        cy.get(gitPO.gitType.bitbucket).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Git type is not available');
+        break;
+    }
+    cy.wait(10000);
+    cy.log(`Git type "${gitType}" is selected`);
+  },
+  selectBuilderImage: (builderImage: string) => {
+    switch (builderImage) {
+      case builderImages.NodeJs:
+        cy.get(gitPO.builderImages.nodejs).scrollIntoView().click();
+        break;
+      case builderImages.PHP:
+        cy.get(gitPO.builderImages.php).scrollIntoView().click();
+        break;
+      case builderImages.Python:
+        cy.get(gitPO.builderImages.python).scrollIntoView().click();
+        break;
+      case builderImages.Ruby:
+        cy.get(gitPO.builderImages.ruby).scrollIntoView().click();
+        break;
+      case builderImages.Go:
+        cy.get(gitPO.builderImages.go).scrollIntoView().click();
+        break;
+      case builderImages.Java:
+        cy.get(gitPO.builderImages.java).scrollIntoView().click();
+        break;
+      case builderImages.Perl:
+        cy.get(gitPO.builderImages.perl).scrollIntoView().click();
+        break;
+      default:
+        throw new Error('Builder image is not available');
+        break;
+    }
   },
   enterSecret: (secret: string) => {
     cy.get('#form-input-pac-repository-webhook-token-field').clear().type(secret);
@@ -191,7 +270,10 @@ export const gitPage = {
         break;
     }
   },
-  selectAddPipeline: () => cy.get(gitPO.pipeline.addPipeline).scrollIntoView().check(),
+  selectAddPipeline: () => {
+    cy.get(gitPO.pipeline.buildDropdown).scrollIntoView().click();
+    cy.get(gitPO.pipeline.addPipeline).should('be.visible').click();
+  },
   clickCreate: () => cy.get(gitPO.create).scrollIntoView().should('be.enabled').click(),
   clickCancel: () => cy.get(gitPO.cancel).should('be.enabled').click(),
   selectBuilderImageForGitUrl: (gitUrl: string) => {
@@ -287,6 +369,10 @@ export const gitPage = {
     cy.get(gitPO.builderSection.builderImageVersion).should('be.visible'),
   selectTargetPortForRouting: () => {
     cy.get(gitPO.advancedOptions.routing.targetPort).scrollIntoView().clear().type('8080');
+  },
+  selectTargetPortForRoutingWithPort: (port: string) => {
+    cy.get(gitPO.advancedOptions.routing.targetPortDropdown).click();
+    cy.get(`[id="select-option-route.unknownTargetPort-${port}"]`).click();
   },
   enterRoutingHostName: (hostName: string) =>
     cy.get(gitPO.advancedOptions.routing.hostname).type(hostName),

@@ -19,8 +19,8 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { setFlag } from '../actions/features';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
-import { createNamespaceOrProjectModal } from './modals';
 import { Firehose, FirehoseResult, removeQueryArgument } from './utils';
+import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 
 export type NamespaceBarDropdownsProps = {
   children: React.ReactNode;
@@ -39,6 +39,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
   onNamespaceChange,
   useProjects,
 }) => {
+  const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const dispatch = useDispatch();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
   const activePerspective = useActivePerspective()[0];
@@ -82,7 +83,6 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
         }}
         onCreateNew={() => {
           createNamespaceOrProjectModal({
-            blocking: true,
             onSubmit: (newProject) => {
               setActiveNamespace(newProject.metadata.name);
               removeQueryArgument('project-name');

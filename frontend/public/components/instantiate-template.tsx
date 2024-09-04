@@ -136,16 +136,20 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   const [parameters, setParameters] = React.useState([]);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState('');
+  const isInitialLoad = React.useRef(true);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
-      acc[name] = value;
-      return acc;
-    }, {});
-    setParameters(object);
+    if (isInitialLoad.current && obj.loaded) {
+      const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
+        acc[name] = value;
+        return acc;
+      }, {});
+      setParameters(object);
+      isInitialLoad.current = false;
+    }
   }, [obj]);
 
   const onParameterChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
@@ -313,13 +317,9 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
               );
             },
           )}
-          <ButtonBar
-            className="co-instantiate-template-form__button-bar"
-            errorMessage={error}
-            inProgress={inProgress}
-          >
+          <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={error}>
             <ActionGroup className="pf-v5-c-form">
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" isLoading={inProgress}>
                 {t('public~Create')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>

@@ -23,6 +23,8 @@
   "Node Selector": "Node セレクター",
   "Local Volume Discovery": "ローカルボリューム検出",
   "Allows you to discover the available disks on all available nodes": "利用可能なすべてのノードで利用可能なディスクを検出できます。",
+  "All disk type may include HDD disks. Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.": "すべてのディスクタイプに HDD ディスクを含めることができます。Data Foundation は、ローカルデバイスとしての HDD ディスクをサポートしていません。Data Foundation を使用する予定の場合は、SSD を選択してください。",
+  "Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.": "Data Foundation は、HDD ディスクをローカルデバイスとしてサポートしていません。Data Foundation を使用する場合は、SSD を選択してください。",
   "LocalVolumeSet Name": "LocalVolumeSet 名",
   "StorageClass Name": "StorageClass 名",
   "Filter Disks By": "ディスクのフィルター",

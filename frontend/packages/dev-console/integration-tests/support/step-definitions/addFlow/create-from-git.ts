@@ -25,6 +25,17 @@ Then('git url {string} gets Validated', (gitUrl: string) => {
   gitPage.verifyValidatedMessage(gitUrl);
 });
 
+When('user selects Git Type as {string}', (gitType: string) => {
+  gitPage.selectGitType(gitType);
+});
+
+When('user selects Import Strategy as Builder Image', () => {
+  cy.byTestID('import-strategy-Builder Image').click();
+});
+
+When('user selects {string} builder image', (builderImage: string) => {
+  gitPage.selectBuilderImage(builderImage);
+});
 Then('builder image is detected', () => {
   gitPage.verifyBuilderImageDetectedMessage();
 });
@@ -43,6 +54,10 @@ Then('Name displays as {string}', (nodeName: string) => {
 
 Then('user can see toast notification saying {string} created successfully', (message: string) => {
   gitPage.notificationVerify(message);
+});
+
+When('user selects Build option as {string} in Build section', (buildOption: string) => {
+  gitPage.selectBuildOption(buildOption);
 });
 
 When('user selects resource type as {string}', (resourceType: string) => {
@@ -137,8 +152,7 @@ When('user enters Value as {string} in Environment Variables section', (envValue
 });
 
 Then('build does not get started for {string}', (nodeName: string) => {
-  topologyPage.componentNode(nodeName).click({ force: true });
-  topologySidePane.verify();
+  topologyPage.verifyOrOpenSidebar(nodeName);
   cy.get('div.build-overview li.list-group-item > span').should(
     'contain.text',
     'No Builds found for this Build Config.',
@@ -205,7 +219,7 @@ Then('user can see the toast notification containg the route value {string}', (m
 
 Then('public url is not created for node {string} in the workload sidebar', (nodeName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
-  topologyPage.componentNode(nodeName).click({ force: true });
+  topologyPage.verifyOrOpenSidebar(nodeName);
   topologySidePane.selectTab('Resources');
   topologySidePane.verifySection('Routes');
   cy.get('[role="dialog"] h2')
@@ -218,7 +232,7 @@ Then(
   'the route of application {string} contains {string} in the Routes section of the workload sidebar',
   (nodeName: string, routeName: string) => {
     topologyPage.verifyWorkloadInTopologyPage(nodeName);
-    topologyPage.componentNode(nodeName).click({ force: true });
+    topologyPage.verifyOrOpenSidebar(nodeName);
     topologySidePane.selectTab('Resources');
     topologySidePane.verifySection('Routes');
     // cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
@@ -229,7 +243,7 @@ Then(
 Then(
   'verify the label {string} in side bar of application node {string}',
   (labelName: string, nodeName: string) => {
-    topologyPage.componentNode(nodeName).click({ force: true });
+    topologyPage.verifyOrOpenSidebar(nodeName);
     topologySidePane.selectTab('Details');
     topologySidePane.verifyLabel(labelName);
     topologySidePane.close();

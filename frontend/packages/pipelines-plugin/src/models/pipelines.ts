@@ -165,24 +165,6 @@ export const CustomRunModelV1Beta1: K8sKind = {
   color,
 };
 
-export const ApprovalTaskModel: K8sKind = {
-  apiGroup: 'openshift-pipelines.org',
-  apiVersion: 'v1alpha1',
-  label: 'ApprovalTask',
-  // t('pipelines-plugin~ApprovalTask')
-  labelKey: 'pipelines-plugin~ApprovalTask',
-  // t('pipelines-plugin~ApprovalTasks')
-  labelPluralKey: 'pipelines-plugin~ApprovalTasks',
-  plural: 'approvaltasks',
-  abbr: 'AT',
-  namespaced: true,
-  kind: 'ApprovalTask',
-  id: 'approvaltask',
-  labelPlural: 'ApprovalTasks',
-  crd: true,
-  color,
-};
-
 export const PipelineResourceModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1alpha1',

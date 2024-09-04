@@ -32,7 +32,7 @@ func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath
 	clientStore := gorilla.NewCookieStore(authnKey, encryptKey)
 	clientStore.Options.Secure = secureCookies
 	clientStore.Options.HttpOnly = true
-	clientStore.Options.SameSite = http.SameSiteLaxMode
+	clientStore.Options.SameSite = http.SameSiteStrictMode
 	clientStore.Options.Path = cookiePath
 
 	return &CombinedSessionStore{
@@ -43,19 +43,20 @@ func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath
 	}
 }
 
-func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Request, ls *LoginState) error {
+func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Request, tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginState, error) {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
-	if err := cs.serverStore.AddSession(ls); err != nil {
-		return fmt.Errorf("failed to add session to server store: %w", err)
+	ls, err := cs.serverStore.AddSession(tokenVerifier, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to add session to server store: %w", err)
 	}
 
 	clientSession := cs.getCookieSession(r)
 	clientSession.sessionToken.Values["session-token"] = ls.sessionToken
 	clientSession.refreshToken.Values["refresh-token"] = ls.refreshToken
 
-	return clientSession.save(r, w)
+	return ls, clientSession.save(r, w)
 }
 
 func (cs *CombinedSessionStore) getCookieSession(r *http.Request) *session {
@@ -136,45 +137,51 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 	}
 	if loginState == nil {
 		var err error
-		// FIXME: all the below should be a part of AddSession
-		loginState, err = NewLoginState(tokenVerifier, tokenResponse)
+		loginState, err = cs.serverStore.AddSession(tokenVerifier, tokenResponse)
 		if err != nil {
-			return nil, err
-		}
-		if err := cs.serverStore.AddSession(loginState); err != nil {
 			return nil, fmt.Errorf("failed to add session to server store: %w", err)
 		}
-		cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
 		clientSession.sessionToken.Values["session-token"] = loginState.sessionToken
 	} else {
+		// loginState is a pointer to the cache so this effectively mutates it for everyone
 		if err := loginState.UpdateTokens(tokenVerifier, tokenResponse); err != nil {
 			return nil, err
 		}
-		cs.serverStore.byRefreshToken[oldRefreshToken] = loginState // TODO: figure out a nicer way to do this in an internal method probably
-		// loginState is a pointer to the cache so this effectively mutates it for everyone
-
 	}
 
+	// index by the old refresh token so that any follow-up requests that arrived
+	// before their cookie was updated with an actual session can still find the login state
+	cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
 	return loginState, clientSession.save(r, w)
 }
 
-func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Request, sessionToken string) error {
+func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
 	for _, cookie := range r.Cookies() {
+		cookie := cookie
 		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) {
 			cookie.MaxAge = -1
 			http.SetCookie(w, cookie)
 		}
 	}
 
-	refreshTokenCookie, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
-	refreshTokenCookie.Options.MaxAge = -1
-	return cs.clientStore.Save(r, w, refreshTokenCookie)
-}
+	cookieSession := cs.getCookieSession(r)
+	if refreshToken, ok := cookieSession.refreshToken.Values["refresh-token"]; ok {
+		cs.serverStore.DeleteByRefreshToken(refreshToken.(string))
+	}
 
-// FIXME: do this regulary in a separate goroutine on background
-func (cs *CombinedSessionStore) PruneSessions() {
-	cs.serverStore.PruneSessions()
+	if sessionToken, ok := cookieSession.sessionToken.Values["session-token"]; ok {
+		cs.serverStore.DeleteBySessionToken(sessionToken.(string))
+	}
+
+	refreshTokenCookie, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
+	if !refreshTokenCookie.IsNew {
+		// Get always returns a session, only timeout current sessions
+		refreshTokenCookie.Options.MaxAge = -1
+		return cs.clientStore.Save(r, w, refreshTokenCookie)
+	}
+
+	return nil
 }

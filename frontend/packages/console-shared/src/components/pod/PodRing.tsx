@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
 import { AngleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-up-icon';
+import { AutomationIcon } from '@patternfly/react-icons/dist/esm/icons/automation-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
@@ -84,6 +85,7 @@ const PodRing: React.FC<PodRingProps> = ({
 
   const isScalingAllowed = isAccessScalingAllowed && !hpaControlledScaling;
 
+  const enableAutoscaling = !isScalingAllowed && clickCount === 0;
   const resourceObj = rc || obj;
   const { title, subTitle, titleComponent } = usePodRingLabel(
     resourceObj,
@@ -107,6 +109,19 @@ const PodRing: React.FC<PodRingProps> = ({
           />
         </div>
       </SplitItem>
+      {enableAutoscaling && (
+        <SplitItem className="pf-v5-u-display-flex pf-v5-u-align-content-center">
+          <Button
+            type="button"
+            variant="link"
+            data-test="enable-autoscale"
+            icon={<AutomationIcon />}
+            onClick={() => handleClick(1)}
+          >
+            {t('console-shared~Enable Autoscale')}
+          </Button>
+        </SplitItem>
+      )}
       {isScalingAllowed && (
         <SplitItem>
           <Bullseye>

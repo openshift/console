@@ -22,8 +22,8 @@ describe('Interacting with OperatorHub', () => {
     cy.log('more than one tile should be present');
     cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
 
-    cy.log('enable the Red Hat filter');
-    cy.byTestID('catalogSourceDisplayName-red-hat').click();
+    cy.log('enable the Community filter');
+    cy.byTestID('source-community').click();
     cy.log('more than one tile should be present');
     cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
     cy.log('track which tile is first');
@@ -32,14 +32,14 @@ describe('Interacting with OperatorHub', () => {
       .first()
       .then(($origCatalogTitle) => {
         const origCatalogTitleTxt = $origCatalogTitle.find('.catalog-tile-pf-title').text();
-        cy.log(`first Red Hat filtered tile title text is ${origCatalogTitleTxt}`);
-        cy.log('disable the Red Hat filter');
-        cy.byTestID('catalogSourceDisplayName-red-hat').click();
+        cy.log(`first Community filtered tile title text is ${origCatalogTitleTxt}`);
+        cy.log('disable the Community filter');
+        cy.byTestID('source-community').click();
         cy.log('enable the Certified filter');
-        cy.byTestID('catalogSourceDisplayName-certified').click();
+        cy.byTestID('source-certified').click();
         cy.log('more than one tile should be present');
         cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
-        cy.log('the first tile title text for Certified should not be the same as Red Hat');
+        cy.log('the first tile title text for Certified should not be the same as Community');
         cy.get('.co-catalog-tile')
           .first()
           .find('.catalog-tile-pf-title')

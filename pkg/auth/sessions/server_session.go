@@ -4,16 +4,23 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"slices"
+	"sort"
 	"sync"
 	"time"
 
-	"k8s.io/klog"
+	"golang.org/x/oauth2"
+	"k8s.io/klog/v2"
+
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 const (
 	OpenshiftAccessTokenCookieName  = "openshift-session-token"
 	openshiftRefreshTokenCookieName = "openshift-refresh-token"
 )
+
+var sessionPruningPeriod = 5 * time.Minute
 
 type SessionStore struct {
 	byToken map[string]*LoginState
@@ -27,20 +34,28 @@ type SessionStore struct {
 }
 
 func NewServerSessionStore(maxSessions int) *SessionStore {
-	return &SessionStore{
+	ss := &SessionStore{
 		byToken:        make(map[string]*LoginState),
 		byRefreshToken: make(map[string]*LoginState),
 		maxSessions:    maxSessions,
 		now:            time.Now,
 	}
+
+	go wait.Forever(ss.pruneSessions, sessionPruningPeriod)
+	return ss
 }
 
 // addSession sets sessionToken to a random value and adds loginState to session data structures
-func (ss *SessionStore) AddSession(ls *LoginState) error {
-	sessionToken := RandomString(256)
+func (ss *SessionStore) AddSession(tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginState, error) {
+	ls, err := newLoginState(tokenVerifier, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new session: %w", err)
+	}
+
+	sessionToken := ls.sessionToken
 	if ss.byToken[sessionToken] != nil {
 		ss.DeleteSession(sessionToken)
-		return fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
+		return nil, fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
 	ss.mux.Lock()
@@ -49,7 +64,7 @@ func (ss *SessionStore) AddSession(ls *LoginState) error {
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, ls)
 	ss.mux.Unlock()
-	return nil
+	return ls, nil
 }
 
 func (ss *SessionStore) GetSession(sessionToken, refreshToken string) *LoginState {
@@ -82,33 +97,82 @@ func (ss *SessionStore) DeleteSession(sessionToken string) error {
 	return fmt.Errorf("ss.byAge did not contain session %v", sessionToken)
 }
 
-func (ss *SessionStore) PruneSessions() {
+func (ss *SessionStore) DeleteByRefreshToken(refreshToken string) {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
-	expired := 0
-	for i := 0; i < len(ss.byAge); i++ {
-		s := ss.byAge[i]
-		if s.IsExpired() {
-			delete(ss.byToken, s.sessionToken)
-			delete(ss.byRefreshToken, s.refreshToken)
-			ss.byAge = append(ss.byAge[:i], ss.byAge[i+1:]...)
-			expired++
-		}
+
+	session, ok := ss.byRefreshToken[refreshToken]
+	if !ok {
+		return
 	}
-	klog.V(4).Infof("Pruned %v expired sessions.", expired)
-	toRemove := len(ss.byAge) - ss.maxSessions
-	if toRemove > 0 {
-		klog.V(4).Infof("Still too many sessions. Pruning oldest %v sessions...", toRemove)
-		// TODO: account for user ids when pruning old sessions. Otherwise one user could log in 16k times and boot out everyone else.
-		for _, s := range ss.byAge[:toRemove] {
-			delete(ss.byToken, s.sessionToken)
-		}
-		ss.byAge = ss.byAge[toRemove:]
+
+	delete(ss.byRefreshToken, refreshToken)
+	delete(ss.byToken, session.sessionToken)
+
+	ss.byAge = spliceOut(ss.byAge, session)
+}
+
+func (ss *SessionStore) DeleteBySessionToken(sessionToken string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+
+	session, ok := ss.byToken[sessionToken]
+	if !ok {
+		return
 	}
-	if expired+toRemove > 0 {
-		klog.V(4).Infof("Pruned %v old sessions.", expired+toRemove)
+
+	delete(ss.byToken, sessionToken)
+	ss.byAge = spliceOut(ss.byAge, session)
+
+	for k, v := range ss.byRefreshToken {
+		if v == session {
+			delete(ss.byRefreshToken, k)
+			return
+		}
 	}
 }
+
+func (ss *SessionStore) pruneSessions() {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+
+	if len(ss.byAge) == 0 {
+		return
+	}
+
+	if !slices.IsSortedFunc(ss.byAge, loginStateSorter) {
+		// sort the byAge slice by current expiry (expiry can change via token refreshes)
+		slices.SortFunc(ss.byAge, loginStateSorter)
+	}
+
+	// binary search for the first expired session
+	firstExpired := sort.Search(len(ss.byAge), func(i int) bool {
+		return ss.byAge[i].IsExpired()
+	})
+
+	removalPivot := ss.maxSessions
+	// if we've got more expired sessions than we need to remove, just remove all expired
+	if firstExpired != len(ss.byAge) && firstExpired < removalPivot {
+		removalPivot = firstExpired
+	}
+
+	if removalPivot < len(ss.byAge) {
+		// TODO: account for user ids when pruning old sessions. Otherwise one user could log in 16k times and boot out everyone else.
+		for _, s := range ss.byAge[removalPivot:] {
+			delete(ss.byToken, s.sessionToken) // FIXME: delete keys in ss.byRefreshToken ? (it's not that easy as it's indexed by previous refresh token)
+			for _, rt := range ss.byRefreshToken {
+				if rt == s {
+					delete(ss.byRefreshToken, rt.refreshToken)
+				}
+			}
+		}
+		ss.byAge = ss.byAge[:removalPivot]
+
+		klog.V(4).Infof("Pruned %v old sessions.", len(ss.byAge)-removalPivot)
+	}
+}
+
+func loginStateSorter(a, b *LoginState) int { return a.CompareExpiry(b) }
 
 func RandomString(length int) string {
 	bytes := make([]byte, length)
@@ -117,4 +181,17 @@ func RandomString(length int) string {
 		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
 	}
 	return base64.StdEncoding.EncodeToString(bytes)
+}
+
+func spliceOut(slice []*LoginState, toRemove *LoginState) []*LoginState {
+	for i := 0; i < len(slice); i++ {
+		s := slice[i]
+		// compare pointers, these should be the same in the byAge cache
+		if s == toRemove {
+			// splice out the session from the slice
+			return append(slice[:i], slice[i+1:]...)
+
+		}
+	}
+	return slice
 }

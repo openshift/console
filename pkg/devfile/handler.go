@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/openshift/console/pkg/serverutils"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	devfile "github.com/devfile/library/v2/pkg/devfile"
 	"github.com/devfile/library/v2/pkg/devfile/parser"

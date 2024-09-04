@@ -1,0 +1,11 @@
+{
+  "Notifications": "Notifications",
+  "{{count}} unread_one": "{{count}} non lu",
+  "{{count}} unread_other": "{{count}} non lus",
+  "Close": "Fermer",
+  "Warning notification:": "Notification d’avertissement :",
+  "Critical notification:": "Notification critique :",
+  "Success notification:": "Notification de réussite :",
+  "Update notification:": "Notification de mise à jour :",
+  "Info notification:": "Notification d’information :"
+}

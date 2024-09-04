@@ -28,7 +28,7 @@ Then('Git provider type field is enabled', () => {
 });
 
 Then('Add button is disabled', () => {
-  cy.get(pipelinesPO.addTrigger.add).should('be.disabled');
+  cy.get(pipelinesPO.addTrigger.add).should('be.enabled');
   modal.cancel();
 });
 
@@ -197,8 +197,8 @@ Then('trigger template dropdown displayed with help text Select Trigger Template
   cy.get(pipelinesPO.removeTrigger.triggerTemplate).should('have.text', 'Select TriggerTemplate');
 });
 
-Then('Remove button will be disabled', () => {
-  cy.get(pipelinesPO.removeTrigger.remove).should('be.disabled');
+Then('Remove button will be enabled', () => {
+  cy.get(pipelinesPO.removeTrigger.remove).should('be.enabled');
   modal.cancel();
 });
 

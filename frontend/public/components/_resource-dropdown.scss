@@ -61,17 +61,8 @@
   width: auto !important;
 }
 
-.co-type-selector {
-  .pf-v5-c-select__menu {
-    min-width: 290px;
-    @media (min-width: 480px) {
-      min-width: 420px;
-    }
-    .co-resource-item__tech-dev-preview {
-      color: red;
-      margin-left: 10px;
-    }
-  }
+.co-type-selector .pf-v5-c-menu__content {
+  max-height: 60vh;
 }
 
 .span--icon__right-margin {

@@ -31,13 +31,17 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ children, onClose }) 
       onResize={handleResizeCallback}
       className="ocs-sidebar-index"
     >
-      <PFTopologySideBar resizable className="pf-topology-side-bar-resizable">
+      <PFTopologySideBar
+        resizable
+        className="pf-topology-side-bar-resizable"
+        data-test="topology-sidepane"
+      >
         <div className="pf-topology-side-bar__body">
           <div className="co-sidebar-dismiss clearfix">
             <CloseButton
               onClick={onClose}
               dataTestID="sidebar-close-button"
-              additionalClassName="co-close-button--float-right co-sidebar-dismiss__close-button"
+              additionalClassName="co-sidebar-dismiss__close-button"
             />
           </div>
           {children}

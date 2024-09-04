@@ -4,12 +4,20 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { Alert, ActionGroup, Button, TextArea, TextInput, Tooltip } from '@patternfly/react-core';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-} from '@patternfly/react-core/deprecated';
+  ActionGroup,
+  Alert,
+  Button,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+  TextArea,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
+
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import * as React from 'react';
@@ -239,10 +247,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       });
   };
 
-  const dropdownItems = _.map(durations, (displayText, key) => (
-    <DropdownItemDeprecated key={key} onClick={() => setDuration(key)}>
+  const selectOptions = _.map(durations, (displayText, key) => (
+    <SelectOption key={key} value={key}>
       {displayText}
-    </DropdownItemDeprecated>
+    </SelectOption>
   ));
 
   return (
@@ -273,25 +281,35 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <DatetimeTextInput
                     data-test="silence-from"
                     isRequired
-                    onChange={(v: string) => setStartsAt(v)}
+                    onChange={(_event, value: string) => setStartsAt(value)}
                     value={startsAt}
                   />
                 )}
               </div>
               <div className="form-group col-sm-4 col-md-2">
                 <label>{t('public~For...')}</label>
-                <DropdownDeprecated
-                  className="dropdown--full-width"
+                <Select
                   data-test="silence-for"
-                  dropdownItems={dropdownItems}
                   isOpen={isOpen}
-                  onSelect={setClosed}
-                  toggle={
-                    <DropdownToggleDeprecated data-test="silence-for-toggle" onToggle={setIsOpen}>
+                  onSelect={(event: React.MouseEvent | React.ChangeEvent, value: string) => {
+                    setDuration(value);
+                    setClosed();
+                  }}
+                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      onClick={setIsOpen}
+                      isExpanded={isOpen}
+                      isFullWidth
+                      data-test="silence-for-toggle"
+                    >
                       {duration}
-                    </DropdownToggleDeprecated>
-                  }
-                />
+                    </MenuToggle>
+                  )}
+                  onOpenChange={setIsOpen}
+                >
+                  <SelectList>{selectOptions}</SelectList>
+                </Select>
               </div>
               <div className="form-group col-sm-4 col-md-5">
                 <label>{t('public~Until...')}</label>
@@ -299,7 +317,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <DatetimeTextInput
                     data-test="silence-until"
                     isRequired
-                    onChange={(v: string) => setEndsAt(v)}
+                    onChange={(_event, value: string) => setEndsAt(value)}
                     value={endsAt}
                   />
                 ) : (

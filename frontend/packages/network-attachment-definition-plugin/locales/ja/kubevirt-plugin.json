@@ -1,7 +1,7 @@
 {
-  "No network attachment definitions found": "ネットワーク接続定義が見つかりません",
-  "Create network attachment definition": "ネットワーク接続定義の作成",
-  "Learn how to use network attachment definitions": "ネットワーク接続定義の使用方法について",
+  "No {{label}} found": "{{label}} が見つかりません",
+  "Create {{label}}": "{{label}} の作成",
+  "Learn how to use {{label}}": "{{label}} の使用方法の詳細",
   "NetworkAttachmentDefinition details": "NetworkAttachmentDefinition の詳細",
   "Type": "タイプ",
   "Details": "詳細",
@@ -14,6 +14,7 @@
   "Network Type": "ネットワークタイプ",
   "Edit YAML": "YAML の編集",
   "Networks are not project-bound. Using the same name creates a shared NAD.": "ネットワークはプロジェクトにバインドされていません。同じ名前を使用すると共有 NAD が作成されます。",
+  "Create network attachment definition": "ネットワーク接続定義の作成",
   "Name": "名前",
   "Description": "説明",
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "ネットワークタイプを選択するには、<0>OpenShift Virtualization Operator</0> または <3>SR-IOV Network Operator</3> がクラスターにインストールされている必要があります。",

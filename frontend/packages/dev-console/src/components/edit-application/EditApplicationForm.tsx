@@ -13,8 +13,9 @@ import BuilderSection from '../import/builder/BuilderSection';
 import DockerSection from '../import/git/DockerSection';
 import GitSection from '../import/git/GitSection';
 import ImageSearchSection from '../import/image-search/ImageSearchSection';
+import { GitImportFormData } from '../import/import-types';
 import JarSection from '../import/jar/section/JarSection';
-import { BuildSection } from '../import/section/BuildSection';
+import { BuildSection } from '../import/section/build-section/BuildSection';
 import FormSection from '../import/section/FormSection';
 import IconSection from '../import/section/IconSection';
 import { AppResources } from './edit-application-types';
@@ -26,7 +27,9 @@ export interface EditApplicationFormProps {
   appResources: AppResources;
 }
 
-const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationFormProps> = ({
+const EditApplicationForm: React.FC<
+  FormikProps<FormikValues & GitImportFormData> & EditApplicationFormProps
+> = ({
   handleSubmit,
   handleReset,
   values,

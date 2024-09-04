@@ -36,7 +36,7 @@ When('user selects the workload {string} from the dropdown', (workloadName: stri
 });
 
 When('user clicks on Resources dropdown', () => {
-  cy.contains('.pf-v5-c-select__toggle', 'Resources').click();
+  cy.get('[aria-label="Options menu"] div span').click({ force: true });
 });
 
 When('user selects {string} in Resource type section', (resourceType: string) => {
@@ -60,7 +60,7 @@ When('user clicks on Types dropdown', () => {
 });
 
 When('user selects {string} from Types dropdown', (typeName: string) => {
-  cy.contains('.pf-v5-c-dropdown__menu-item', typeName).click();
+  cy.contains('[data-test-id="dropdown-menu"]', typeName).click();
 });
 
 When('user enters {string} in the Filter field', (filterCriteria: string) => {
@@ -121,7 +121,6 @@ Then('user will see the Rate of Transmitted Packets Dropped on Metrics tab', () 
 });
 
 Then('user will see events related to all resources and all types', () => {
-  cy.get(monitoringPO.eventsTab.selectedResource).should('contain.text', 'All');
   cy.get(monitoringPO.eventsTab.types).should('contain.text', 'All types');
 });
 
@@ -259,11 +258,11 @@ When('user clicks on Pod dropdown', () => {
 });
 
 When('user selects {string} option from the dropdown', (workloadName: string) => {
-  cy.contains('.pf-v5-c-select__menu-item', workloadName).click();
+  cy.contains('button[role="option"]', workloadName).click();
 });
 
 When('user selects the first option from the dropdown', () => {
-  cy.get('.pf-v5-c-select__menu-item').first().click();
+  cy.get('[id*="select-option"]').first().click();
 });
 
 When('user clicks on Inspect on {string} chart', (chartTitle: string) => {

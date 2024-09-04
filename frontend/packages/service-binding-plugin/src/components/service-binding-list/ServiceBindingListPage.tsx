@@ -7,6 +7,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '../../models';
 import { ServiceBinding } from '../../types';
 import { getComputedServiceBindingStatus } from '../../utils';
+import { ServiceBindingDeprecationAlert } from '../service-binding-utils/ServiceBindingAlerts';
 import ServiceBindingTable from './ServiceBindingTable';
 
 type ListPageProps = React.ComponentProps<typeof ListPage>;
@@ -45,6 +46,7 @@ const ServiceBindingListPage: React.FC<ServiceBindingListPageProps> = (props) =>
       ListComponent={ServiceBindingTable}
       rowFilters={filters}
       canCreate
+      helpText={<ServiceBindingDeprecationAlert />}
       {...propsWithoutName}
     />
   );

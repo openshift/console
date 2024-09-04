@@ -105,6 +105,7 @@ export interface MultiColumnFieldProps extends FieldProps {
   disableDeleteRow?: boolean;
   tooltipDeleteRow?: string;
   disableAddRow?: boolean;
+  hideAddRow?: boolean;
   tooltipAddRow?: string;
 }
 

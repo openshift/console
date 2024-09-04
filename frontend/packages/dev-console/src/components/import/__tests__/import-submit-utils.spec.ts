@@ -26,7 +26,12 @@ import {
   sampleDevfileFormData,
 } from './import-submit-utils-data';
 
-const { createOrUpdateDeployment, createOrUpdateResources, createDevfileResources } = submitUtils;
+const {
+  createOrUpdateDeployment,
+  createOrUpdateResources,
+  createDevfileResources,
+  addSearchParamsToRelativeURL,
+} = submitUtils;
 
 describe('Import Submit Utils', () => {
   const t = jest.fn();
@@ -53,7 +58,7 @@ describe('Import Submit Utils', () => {
             namespace: 'gijohn',
           },
           fieldPath: 'spec.template.spec.containers[?(@.name=="nodejs-ex-git")].image',
-          pause: 'false',
+          paused: 'false',
         },
       ]);
       done();
@@ -426,7 +431,7 @@ describe('Import Submit Utils', () => {
             'app.openshift.io/vcs-ref': 'master',
             'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/devfile-sample',
             'image.openshift.io/triggers':
-              '[{"from":{"kind":"ImageStreamTag","name":"devfile-sample:latest","namespace":"gijohn"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"devfile-sample\\")].image","pause":"false"}]',
+              '[{"from":{"kind":"ImageStreamTag","name":"devfile-sample:latest","namespace":"gijohn"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"devfile-sample\\")].image","paused":"false"}]',
             isFromDevfile: 'true',
             'openshift.io/generated-by': 'OpenShiftWebConsole',
             'app.openshift.io/route-disabled': 'false',
@@ -651,6 +656,47 @@ describe('Import Submit Utils', () => {
         devFileLanguage: 'python',
         devFileProjectType: 'python',
       });
+    });
+  });
+
+  describe('addSearchParamsToRelativeURL tests', () => {
+    it('should work when the URL already has a search param', () => {
+      expect(
+        addSearchParamsToRelativeURL(
+          '/foo/bar?param=true',
+          new URLSearchParams({ newParam: 'new' }),
+        ),
+      ).toEqual('/foo/bar?param=true&newParam=new');
+    });
+
+    it('should override existing search params', () => {
+      expect(
+        addSearchParamsToRelativeURL(
+          '/foo/bar?param=true',
+          new URLSearchParams({ param: 'false' }),
+        ),
+      ).toEqual('/foo/bar?param=false');
+    });
+
+    it('should work when there is a section in the URL', () => {
+      expect(
+        addSearchParamsToRelativeURL('/foo/bar#section', new URLSearchParams({ param: 'true' })),
+      ).toEqual('/foo/bar?param=true#section');
+    });
+
+    it('should work when the URL has no search params', () => {
+      expect(
+        addSearchParamsToRelativeURL('/foo/bar', new URLSearchParams({ param: 'true' })),
+      ).toEqual('/foo/bar?param=true');
+    });
+
+    it('should override search params, work when there are sections', () => {
+      expect(
+        addSearchParamsToRelativeURL(
+          '/foo/bar?param=true#section',
+          new URLSearchParams({ param: 'false' }),
+        ),
+      ).toEqual('/foo/bar?param=false#section');
     });
   });
 });

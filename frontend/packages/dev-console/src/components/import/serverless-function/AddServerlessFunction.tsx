@@ -23,8 +23,12 @@ import {
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
-import { createOrUpdateResources, handleRedirect } from '../import-submit-utils';
-import { BaseFormData, Resources } from '../import-types';
+import {
+  createOrUpdateResources,
+  handleRedirect,
+  filterDeployedResources,
+} from '../import-submit-utils';
+import { BaseFormData, BuildOptions, Resources } from '../import-types';
 import { validationSchema } from '../import-validation-utils';
 import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalingDefaultValues';
 import AddServerlessFunctionForm from './AddServerlessFunctionForm';
@@ -135,15 +139,23 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
       resourcesData.projects.loaded && _.isEmpty(resourcesData.projects.data);
     const {
       project: { name: projectName },
+      pipeline: { enabled: isPipelineOptionChecked },
     } = values;
 
+    const updatedFormData = {
+      ...values,
+      build: {
+        ...values.build,
+        option: isPipelineOptionChecked ? BuildOptions.PIPELINES : BuildOptions.BUILDS,
+      },
+    };
     const resourceActions = createOrUpdateResources(
       t,
-      values,
+      updatedFormData,
       imageStream,
       createNewProject,
       true,
-    ).then(() => createOrUpdateResources(t, values, imageStream));
+    ).then(() => createOrUpdateResources(t, updatedFormData, imageStream));
 
     resourceActions
       .then((resources) => {
@@ -152,8 +164,15 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
       .catch(() => {});
     fireTelemetryEvent('Serverless Function being created');
     return resourceActions
-      .then(() => {
-        handleRedirect(projectName, perspective, perspectiveExtensions);
+      .then((res) => {
+        const selectId = filterDeployedResources(res)[0]?.metadata?.uid || undefined;
+
+        handleRedirect(
+          projectName,
+          perspective,
+          perspectiveExtensions,
+          new URLSearchParams({ selectId }),
+        );
       })
       .catch((err) => {
         // eslint-disable-next-line no-console

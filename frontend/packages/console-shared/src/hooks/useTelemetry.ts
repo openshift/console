@@ -12,27 +12,33 @@ import {
 } from '../constants';
 import { useUserSettings } from './useUserSettings';
 
-let telemetryArray = [];
+let telemetryEvents: { eventType: string; event: Record<string, any> }[] = [];
 
-export const getConsoleVersion = () => window.SERVER_FLAGS?.consoleVersion;
+interface ClusterProperties {
+  clusterId?: string;
+  clusterType?: string;
+  consoleVersion?: string;
+  organizationId?: string;
+}
 
-export const getClusterType = () => {
+export const getClusterProperties = () => {
+  const clusterProperties: ClusterProperties = {};
+  clusterProperties.clusterId = window.SERVER_FLAGS?.telemetry?.CLUSTER_ID;
+  clusterProperties.clusterType = window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE;
   if (
     window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE === 'OSD' &&
     window.SERVER_FLAGS?.telemetry?.DEVSANDBOX === 'true'
   ) {
-    return 'DEVSANDBOX';
+    clusterProperties.clusterType = 'DEVSANDBOX';
   }
-  return window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE;
+  clusterProperties.consoleVersion = window.SERVER_FLAGS?.consoleVersion;
+  clusterProperties.organizationId = window.SERVER_FLAGS?.telemetry?.ORGANIZATION_ID;
+  return clusterProperties;
 };
 
-let consoleVersion = getConsoleVersion();
-let clusterType = getClusterType();
+let clusterProperties = getClusterProperties();
 
-export const updateServerFlagsFromTests = () => {
-  consoleVersion = getConsoleVersion();
-  clusterType = getClusterType();
-};
+export const updateClusterPropertiesFromTests = () => (clusterProperties = getClusterProperties());
 
 export const useTelemetry = () => {
   // TODO use useDynamicPluginInfo() hook to tell whether all dynamic plugins have been processed
@@ -50,25 +56,24 @@ export const useTelemetry = () => {
     if (
       currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.ALLOW &&
       window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN &&
-      telemetryArray.length > 0
+      telemetryEvents.length > 0
     ) {
-      telemetryArray.forEach((telemetryEvent) => {
-        extensions.forEach((e) =>
-          e.properties.listener(telemetryEvent.eventType, {
-            consoleVersion,
-            clusterType,
-            ...telemetryEvent,
-            path: telemetryEvent?.pathname,
-          }),
-        );
+      telemetryEvents.forEach(({ eventType, event }) => {
+        extensions.forEach((e) => e.properties.listener(eventType, event));
       });
-      telemetryArray = [];
+      telemetryEvents = [];
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserPreferenceTelemetryValue]);
 
   return React.useCallback<TelemetryEventListener>(
-    (eventType, properties) => {
+    (eventType, properties: Record<string, any>) => {
+      const event = {
+        ...clusterProperties,
+        ...properties,
+        // This is required to ensure that the replayed events uses the right path.
+        path: properties?.pathname,
+      };
       if (
         window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.DISABLED ||
         (currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.DENY &&
@@ -81,19 +86,13 @@ export const useTelemetry = () => {
         !currentUserPreferenceTelemetryValue &&
         window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN
       ) {
-        telemetryArray.push({ ...properties, eventType });
-        if (telemetryArray.length > 10) {
-          telemetryArray.shift(); // Remove the first element
+        telemetryEvents.push({ eventType, event });
+        if (telemetryEvents.length > 10) {
+          telemetryEvents.shift(); // Remove the first element
         }
         return;
       }
-      extensions.forEach((e) =>
-        e.properties.listener(eventType, {
-          consoleVersion,
-          clusterType,
-          ...properties,
-        }),
-      );
+      extensions.forEach((e) => e.properties.listener(eventType, event));
     },
     [extensions, currentUserPreferenceTelemetryValue],
   );

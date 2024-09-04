@@ -108,6 +108,7 @@ export const PDBFormPage: React.FC<{}> = () => {
               formContext: {
                 existingResource,
                 params: match.params,
+                replicasCount: resource?.spec?.replicas,
               },
               yamlContext: {},
             }}

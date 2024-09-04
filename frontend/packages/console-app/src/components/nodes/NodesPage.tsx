@@ -35,6 +35,7 @@ import {
   LabelList,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import useClusterHasVMs from '@console/internal/components/utils/useClusterHasVMs';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import {
   NodeKind,
@@ -50,6 +51,7 @@ import {
   TableColumnsType,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  getNodeArchitecture,
   getNodeRoleMatch,
   getNodeRoles,
   useUserSettingsCompatibility,
@@ -59,12 +61,14 @@ import {
   nodeInstanceType,
   nodeFS,
   nodeCPU,
+  nodeArch,
   nodeMemory,
   nodePods,
   nodeReadiness,
   nodeRoles as nodeRolesSort,
   sortWithCSRResource,
   LazyActionMenu,
+  nodeMemoryOvercommit,
 } from '@console/shared';
 import { nodeStatus } from '../../status';
 import { getNodeClientCSRs, isCSRResource } from './csr';
@@ -99,6 +103,10 @@ const nodeColumnInfo = Object.freeze({
     classes: '',
     id: 'cpu',
   },
+  architecture: {
+    classes: '',
+    id: 'architecture',
+  },
   filesystem: {
     classes: '',
     id: 'filesystem',
@@ -127,12 +135,16 @@ const nodeColumnInfo = Object.freeze({
     classes: '',
     id: 'uptime',
   },
+  memoryOvercommit: {
+    classes: '',
+    id: 'memoryOvercommit',
+  },
 });
 
 const columnManagementID = referenceForModel(NodeModel);
 const kind = 'Node';
 
-const getColumns = (t: TFunction): TableColumn<NodeRowItem>[] => [
+const getColumns = (t: TFunction, hasVMs: boolean): TableColumn<NodeRowItem>[] => [
   {
     title: t('console-app~Name'),
     id: nodeColumnInfo.name.id,
@@ -174,6 +186,14 @@ const getColumns = (t: TFunction): TableColumn<NodeRowItem>[] => [
     sort: sortWithCSRResource(nodeCPU, 0),
     transforms: [sortable],
     props: { className: nodeColumnInfo.cpu.classes },
+  },
+  {
+    title: t('console-app~Architecture'),
+    id: nodeColumnInfo.architecture.id,
+    sort: sortWithCSRResource(nodeArch, ''),
+    transforms: [sortable],
+    props: { className: nodeColumnInfo.architecture.classes },
+    additional: true,
   },
   {
     title: t('console-app~Filesystem'),
@@ -228,6 +248,18 @@ const getColumns = (t: TFunction): TableColumn<NodeRowItem>[] => [
     props: { className: nodeColumnInfo.uptime.classes },
     additional: true,
   },
+  ...(hasVMs
+    ? [
+        {
+          title: t('console-app~Memory overcommit'),
+          id: nodeColumnInfo.memoryOvercommit.id,
+          sort: sortWithCSRResource(nodeMemoryOvercommit, ''),
+          transforms: [sortable],
+          props: { className: nodeColumnInfo.memoryOvercommit.classes },
+          additional: true,
+        },
+      ]
+    : []),
   {
     title: '',
     id: '',
@@ -260,18 +292,22 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         })
       : '-';
   const usedStrg = metrics?.usedStorage?.[nodeName];
+  const architecture = getNodeArchitecture(node);
   const totalStrg = metrics?.totalStorage?.[nodeName];
+  const memoryOvercommit = Math.round(metrics?.memoryOvercommit?.[nodeName] * 100) / 100;
+
   const storage =
     Number.isFinite(usedStrg) && Number.isFinite(totalStrg)
       ? `${humanizeBinaryBytes(usedStrg).string} / ${humanizeBinaryBytes(totalStrg).string}`
       : '-';
   const pods = metrics?.pods?.[nodeName] ?? '-';
-  const machine = getNodeMachineNameAndNamespace(node);
+  const [machineName, machineNamespace] = getNodeMachineNameAndNamespace(node);
   const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const labels = getLabels(node);
   const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
   const resourceKind = referenceFor(node);
   const context = { [resourceKind]: node };
+
   return (
     <>
       <TableData
@@ -324,6 +360,13 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         {cpu}
       </TableData>
       <TableData
+        className={nodeColumnInfo.architecture.classes}
+        id={nodeColumnInfo.architecture.id}
+        activeColumnIDs={activeColumnIDs}
+      >
+        {architecture}
+      </TableData>
+      <TableData
         className={nodeColumnInfo.filesystem.classes}
         id={nodeColumnInfo.filesystem.id}
         activeColumnIDs={activeColumnIDs}
@@ -349,15 +392,15 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         id={nodeColumnInfo.machine.id}
         activeColumnIDs={activeColumnIDs}
       >
-        {machine.name && machine.namespace ? (
+        {machineName && machineNamespace ? (
           <ResourceLink
             groupVersionKind={{
               kind: MachineModel.kind,
               version: MachineModel.apiVersion,
               group: MachineModel.apiGroup,
             }}
-            name={machine.name}
-            namespace={machine.namespace}
+            name={machineName}
+            namespace={machineNamespace}
           />
         ) : (
           '-'
@@ -384,6 +427,13 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
       >
         <NodeUptime obj={node} />
       </TableData>
+      <TableData
+        className={nodeColumnInfo.memoryOvercommit.classes}
+        id={nodeColumnInfo.memoryOvercommit.id}
+        activeColumnIDs={activeColumnIDs}
+      >
+        {memoryOvercommit && `${memoryOvercommit}%`}
+      </TableData>
       <TableData className={Kebab.columnClass} activeColumnIDs={activeColumnIDs} id="">
         <LazyActionMenu context={context} />
       </TableData>
@@ -404,12 +454,14 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     {
       key: 'usedStorage',
       query:
-        'sum by (instance) ((max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})) - (max by (device, instance) (node_filesystem_free_bytes{device=~"/.*"})))',
+        'sum by (instance) ((max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})) - (max by (device, instance) (node_filesystem_free_bytes{device=~"/.*"}))) or ' +
+        'sum by (instance) ((max by (volume, instance) (windows_logical_disk_size_bytes)) - (max by (volume, instance) (windows_logical_disk_free_bytes)))',
     },
     {
       key: 'totalStorage',
       query:
-        'sum by (instance) (max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"}))',
+        'sum by (instance) (max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})) or ' +
+        'sum by (instance) (max by (volume, instance) (windows_logical_disk_size_bytes))',
     },
     {
       key: 'cpu',
@@ -422,6 +474,14 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     {
       key: 'pods',
       query: 'sum by(node)(kubelet_running_pods)',
+    },
+    {
+      key: 'memoryOvercommit',
+      query: `sum by (instance)(
+        (
+          (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) + (node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes)
+        ) / node_memory_MemTotal_bytes
+      ) *100`,
     },
   ];
   const promises = metrics.map(({ key, query }) => {
@@ -442,6 +502,9 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
   obj: csr,
   activeColumnIDs,
 }) => {
+  const csrObj = _.omit(csr, ['metadata.originalName']);
+  csrObj.metadata.name = csr.metadata.originalName;
+
   return (
     <>
       <TableData
@@ -457,7 +520,7 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
         activeColumnIDs={activeColumnIDs}
       >
         <ClientCSRStatus
-          csr={{ ...csr, metadata: { ...csr.metadata, name: csr.metadata.originalName } }}
+          csr={{ ...csrObj, metadata: { ...csrObj.metadata, name: csr.metadata.originalName } }}
           title="Discovered"
         />
       </TableData>
@@ -485,6 +548,13 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
       <TableData
         className={nodeColumnInfo.cpu.classes}
         id={nodeColumnInfo.cpu.id}
+        activeColumnIDs={activeColumnIDs}
+      >
+        -
+      </TableData>
+      <TableData
+        className={nodeColumnInfo.architecture.classes}
+        id={nodeColumnInfo.architecture.id}
         activeColumnIDs={activeColumnIDs}
       >
         -
@@ -553,7 +623,8 @@ type NodeListProps = Pick<
 
 const NodeList: React.FC<NodeListProps> = (props) => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => getColumns(t), [t]);
+  const hasVMs = useClusterHasVMs();
+  const columns = React.useMemo(() => getColumns(t, hasVMs), [t, hasVMs]);
   const [activeColumns, userSettingsLoaded] = useActiveColumns({
     columns,
     showNamespaceOverride: false,
@@ -561,6 +632,7 @@ const NodeList: React.FC<NodeListProps> = (props) => {
   });
 
   const statusExtensions = useNodeStatusExtensions();
+
   return (
     userSettingsLoaded && (
       <VirtualizedTable<NodeRowItem, GetNodeStatusExtensions>
@@ -622,10 +694,31 @@ const getFilters = (t: TFunction): RowFilter<NodeRowItem>[] => [
       return input.selected?.some((r) => nodeRoles.includes(r));
     },
   },
+  {
+    filterGroupName: t('console-app~Architecture'),
+    type: 'cpu-arch',
+    reducer: (obj) => (isCSRResource(obj) ? '' : getNodeArchitecture(obj)),
+    items: [
+      { id: 'amd64', title: 'amd64' },
+      { id: 'ppc64le', title: 'ppc64le' },
+      { id: 'arm64', title: 'arm64' },
+      { id: 's390x', title: 's390x' },
+    ],
+    filter: (input, obj) => {
+      if (!input.selected?.length) {
+        return true;
+      }
+      if (isCSRResource(obj)) {
+        return false;
+      }
+      return input.selected?.includes(getNodeArchitecture(obj));
+    },
+  },
 ];
 
 const NodesPage = () => {
   const dispatch = useDispatch();
+  const hasVMs = useClusterHasVMs();
 
   const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -684,7 +777,7 @@ const NodesPage = () => {
   const loaded = nodesLoaded && csrsLoaded;
   const loadError = nodesLoadError || csrsLoadError;
 
-  const columns = React.useMemo(() => getColumns(t), [t]);
+  const columns = React.useMemo(() => getColumns(t, hasVMs), [t, hasVMs]);
 
   return (
     userSettingsLoaded && (

@@ -148,6 +148,61 @@ PodsOverviewList.displayName = 'PodsOverviewList';
 
 const isComplete = (build: K8sResourceKind) => build.status?.completionTimestamp;
 
+/**
+ * Get the Shipwright BuildRun status for a pod's image if it exists, otherwise
+ * return an empty object
+ */
+const useGetShipwrightBuilds = (namespace: string, name: string): K8sResourceKind[] => {
+  const watchedResources = {
+    buildRunBeta: {
+      groupVersionKind: {
+        group: 'shipwright.io',
+        version: 'v1beta1',
+        kind: 'BuildRun',
+      },
+      namespace,
+    },
+    buildRunAlpha: {
+      groupVersionKind: {
+        group: 'shipwright.io',
+        version: 'v1alpha1',
+        kind: 'BuildRun',
+      },
+      namespace,
+    },
+  };
+
+  // get all shipwright buildrun CRDs and concatenate into a list
+  const watchedBuildRuns = useK8sWatchResources(watchedResources);
+
+  const buildRuns = React.useMemo(() => {
+    const allBuildRuns = {
+      ...((watchedBuildRuns.buildRunBeta.data as object) || {}),
+      ...((watchedBuildRuns.buildRunAlpha.data as object) || {}),
+    };
+
+    return Object.keys(allBuildRuns)
+      .filter((key) => {
+        const buildRun = allBuildRuns[key] as K8sResourceKind;
+        return buildRun.spec?.build?.name === name;
+      })
+      .map((key) => allBuildRuns[key] as K8sResourceKind);
+  }, [watchedBuildRuns, name]);
+
+  return buildRuns;
+};
+
+const buildRunIsComplete = (buildRun: K8sResourceKind) => {
+  const succeededCondition = buildRun?.status?.conditions?.find(
+    (condition) => condition.type === 'Succeeded',
+  );
+
+  return (
+    (succeededCondition?.status === 'True' || succeededCondition?.status === 'False') &&
+    succeededCondition?.reason === 'Succeeded'
+  );
+};
+
 export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
   obj,
   pods,
@@ -162,10 +217,18 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
   } = obj;
   const { t } = useTranslation();
   const [showWaitingPods, setShowWaitingPods] = React.useState(false);
-  const showWaitingForBuildAlert =
+  const shipwrightBuilds = useGetShipwrightBuilds(namespace, name);
+
+  const waitingForBuildConfig =
     buildConfigData?.buildConfigs?.length > 0 &&
-    !buildConfigData.buildConfigs[0].builds.some((build) => isComplete(build)) &&
-    isDeploymentGeneratedByWebConsole(obj);
+    !buildConfigData.buildConfigs[0].builds.some((build) => isComplete(build));
+
+  const waitingForShipwright =
+    shipwrightBuilds?.length > 0 &&
+    !shipwrightBuilds.some((buildRun) => buildRunIsComplete(buildRun));
+
+  const showWaitingForBuildAlert =
+    (waitingForBuildConfig || waitingForShipwright) && isDeploymentGeneratedByWebConsole(obj);
 
   let filteredPods = [...pods];
   if (showWaitingForBuildAlert && !showWaitingPods) {

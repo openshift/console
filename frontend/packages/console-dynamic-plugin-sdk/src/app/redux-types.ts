@@ -3,6 +3,11 @@ import { UserInfo } from '../extensions/console-types';
 
 export type K8sState = ImmutableMap<string, any>;
 
+export type AdmissionWebhookWarning = {
+  kind: string;
+  name: string;
+  warning: string;
+};
 export type ImpersonateKind = {
   kind: string;
   name: string;
@@ -12,6 +17,7 @@ export type ImpersonateKind = {
 export type CoreState = {
   user?: UserInfo;
   impersonate?: ImpersonateKind;
+  admissionWebhookWarnings?: ImmutableMap<string, AdmissionWebhookWarning>;
 };
 
 export type SDKStoreState = {

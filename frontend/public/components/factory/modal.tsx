@@ -12,6 +12,7 @@ import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
 
+/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
 export const createModal: CreateModal = (getModalElement) => {
   const containerElement = document.getElementById('modal-container');
   const result = new Promise<void>((resolve) => {
@@ -28,6 +29,7 @@ export const createModal: CreateModal = (getModalElement) => {
   return { result };
 };
 
+/** @deprecated Use PF modals instead */
 export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   blocking,
   className,
@@ -51,6 +53,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   );
 };
 
+/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
 export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper = true) => ({
   blocking,
   modalClassName,
@@ -87,6 +90,7 @@ export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper
   return createModal(getModalContainer);
 };
 
+/** @deprecated Use PF modals instead */
 export const ModalTitle: React.FC<ModalTitleProps> = ({
   children,
   className = 'modal-header',
@@ -102,7 +106,6 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
               e.stopPropagation();
               close(e);
             }}
-            additionalClassName="co-close-button--float-right"
           />
         )}
       </Text>
@@ -110,12 +113,14 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
   </div>
 );
 
+/** @deprecated Use PF modals instead */
 export const ModalBody: React.FC<ModalBodyProps> = ({ children }) => (
   <div className="modal-body">
     <div className="modal-body-content">{children}</div>
   </div>
 );
 
+/** @deprecated Use PF modals instead */
 export const ModalFooter: React.FC<ModalFooterProps> = ({
   message,
   errorMessage,
@@ -134,6 +139,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   );
 };
 
+/** @deprecated Use PF modals instead */
 export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
   message,
   errorMessage,
@@ -178,6 +184,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
       isDisabled={submitDisabled}
       type="submit"
       variant={submitDanger ? 'danger' : 'primary'}
+      isLoading={inProgress}
     >
       {submitText || t('public~Submit')}
     </Button>
@@ -191,7 +198,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
 
   return (
     <ModalFooter
-      inProgress={inProgress}
+      inProgress={false}
       errorMessage={errorMessage}
       message={message}
       className={className}
@@ -226,6 +233,7 @@ export type ModalWrapperProps = {
   onClose?: (event?: React.SyntheticEvent) => void;
 };
 
+/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
 export type GetModalContainer = (onClose: (e?: React.SyntheticEvent) => void) => React.ReactElement;
 
 type CreateModal = (getModalContainer: GetModalContainer) => { result: Promise<any> };

@@ -110,7 +110,7 @@ const getMessage: GetMessage = (
 
 const HealthChecksLink: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const { name, namespace } = getNodeMachineNameAndNamespace(obj);
+  const [name, namespace] = getNodeMachineNameAndNamespace(obj);
 
   const machine = useK8sWatchResource<MachineKind>(
     name && namespace

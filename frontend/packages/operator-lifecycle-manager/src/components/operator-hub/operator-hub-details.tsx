@@ -45,7 +45,7 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
               editAsGroup
               hideEmpty
             >
-              {operatorHub.status?.sources
+              {operatorHub?.status?.sources
                 .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
                 .map((source, idx) => {
                   return (

@@ -47,7 +47,7 @@ Good: t('public~Hello, it is now {{date}}', { date: new Date() })
 ```
 
 * `aria-label`, `aria-placeholder`, `aria-roledescription`, and `aria-valuetext` should be internationalized.
-* Use the query parameter `?pseudolocalization=true&lng=en` to see pseudolocalization on strings you've marked for internationalization.
+* To view pseudolocalization on strings marked for internationalization, append the query parameter `?pseudolocalization=true&lng=en-US` to the URL. Please note, if your browser's preferred language isn't `en-US`, change that value to match the language that is in the query parameter.  [Visit the Internationalization Checker](https://validator.w3.org/i18n-checker/check?uri=www.w3.org%2FInternational%2Fquestions%2Fqa-lang-priorities.en#validate-by-uri+) and view the first value under `Request headers > Accept-Language` to determine the browser's first preferred language.
     * Pseudolocalization adds brackets around the text and makes it longer so you can test components with different text lengths.
 * Make sure there are no missing key warnings in your browser's developer tools - missing keys will trigger errors in integration tests. The warning will show up as an error in the JavaScript console.
 * When displaying a resource kind, you can hard-code it directly in the internationalized text or use the predefined label on the model for the kind.
@@ -109,6 +109,7 @@ To add support for a new language to OpenShift:
 1. Look up the [ISO 639-1 code](https://www.loc.gov/standards/iso639-2/php/code_list.php) for the new language.
 2. Add the new language code to `./frontend/i18n-scripts/languages.sh`
 3. Update the language switcher component (`./frontend/public/components/modals/language-preferences-modal.tsx`) to support the new language if translations are available.
+4. Update the OCP UI Project Template to include the new laguage(s) in the Phrase TMS portal. Refer to the [Phrase Project Templates ](https://support.phrase.com/hc/en-us/articles/5709647439772-Project-Templates-TMS) on how to update the Project Template. You must have Phrase project owner permissions to perform this task.
 
 #### Utilities
 We have added various scripts to help us automate internationalization-related tasks in OpenShift.
@@ -119,3 +120,6 @@ For more information, please review the [README](./frontend/i18n-scripts/README.
 
 #### Testing
 We test that internationalization is working for various pages and components using the [i18next-pseudo](https://github.com/MattBoatman/i18next-pseudo) JavaScript library, which returns translated strings in "pseudolocalization" format. Our Cypress custom commands [cy.isPseudoLocalized()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L45) and [cy.testI18n()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L13) append query params to URLs to invoke "pseudolocalization" and are used in various test suites such as [pseudolocalization.cy.ts](https://github.com/openshift/console/blob/175a6a274204bbe44def1963daf572e4463c36f9/frontend/packages/integration-tests-cypress/tests/i18n/pseudolocalization.cy.ts#L27) to verify strings in the masthead, dashboard, navigation menu, list views, and detail pages are translated.
+
+#### Supported Languages representation
+Supported languages are represented using the ISO 639-1 Code defined in `frontend/packages/console-app/src/components/user-preferences/language/const.ts` with the exception of Chinese. While locale directories for Chinese still follow the ISO 639-1 Code format, the region code is also included to distinguish the supported simplified Chinese from other variants.

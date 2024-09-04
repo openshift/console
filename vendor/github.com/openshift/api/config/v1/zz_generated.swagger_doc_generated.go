@@ -316,7 +316,7 @@ var map_APIServerSpec = map[string]string{
 	"clientCA":                     "clientCA references a ConfigMap containing a certificate bundle for the signers that will be recognized for incoming client certificates in addition to the operator managed signers. If this is empty, then only operator managed signers are valid. You usually only have to set this if you have your own PKI you wish to honor client certificates from. The ConfigMap must exist in the openshift-config namespace and contain the following required fields: - ConfigMap.Data[\"ca-bundle.crt\"] - CA bundle.",
 	"additionalCORSAllowedOrigins": "additionalCORSAllowedOrigins lists additional, user-defined regular expressions describing hosts for which the API server allows access using the CORS headers. This may be needed to access the API and the integrated OAuth server from JavaScript applications. The values are regular expressions that correspond to the Golang regular expression language.",
 	"encryption":                   "encryption allows the configuration of encryption of resources at the datastore layer.",
-	"tlsSecurityProfile":           "tlsSecurityProfile specifies settings for TLS connections for externally exposed servers.\n\nIf unset, a default (which may change between releases) is chosen. Note that only Old, Intermediate and Custom profiles are currently supported, and the maximum available MinTLSVersions is VersionTLS12.",
+	"tlsSecurityProfile":           "tlsSecurityProfile specifies settings for TLS connections for externally exposed servers.\n\nIf unset, a default (which may change between releases) is chosen. Note that only Old, Intermediate and Custom profiles are currently supported, and the maximum available minTLSVersion is VersionTLS12.",
 	"audit":                        "audit specifies the settings for audit configuration to be applied to all OpenShift-provided API servers in the cluster.",
 }
 
@@ -378,6 +378,7 @@ func (AuthenticationSpec) SwaggerDoc() map[string]string {
 
 var map_AuthenticationStatus = map[string]string{
 	"integratedOAuthMetadata": "integratedOAuthMetadata contains the discovery endpoint data for OAuth 2.0 Authorization Server Metadata for the in-cluster integrated OAuth server. This discovery document can be viewed from its served location: oc get --raw '/.well-known/oauth-authorization-server' For further details, see the IETF Draft: https://tools.ietf.org/html/draft-ietf-oauth-discovery-04#section-2 This contains the observed value based on cluster state. An explicitly set value in spec.oauthMetadata has precedence over this field. This field has no meaning if authentication spec.type is not set to IntegratedOAuth. The key \"oauthMetadata\" is used to locate the data. If the config map or expected key is not found, no metadata is served. If the specified metadata is not valid, no metadata is served. The namespace for this config map is openshift-config-managed.",
+	"oidcClients":             "OIDCClients is where participating operators place the current OIDC client status for OIDC clients that can be customized by the cluster-admin.",
 }
 
 func (AuthenticationStatus) SwaggerDoc() map[string]string {
@@ -393,9 +394,44 @@ func (DeprecatedWebhookTokenAuthenticator) SwaggerDoc() map[string]string {
 	return map_DeprecatedWebhookTokenAuthenticator
 }
 
+var map_OIDCClientConfig = map[string]string{
+	"componentName":      "ComponentName is the name of the component that is supposed to consume this client configuration",
+	"componentNamespace": "ComponentNamespace is the namespace of the component that is supposed to consume this client configuration",
+	"clientID":           "ClientID is the identifier of the OIDC client from the OIDC provider",
+	"clientSecret":       "ClientSecret refers to a secret in the `openshift-config` namespace that contains the client secret in the `clientSecret` key of the `.data` field",
+	"extraScopes":        "ExtraScopes is an optional set of scopes to request tokens with.",
+}
+
+func (OIDCClientConfig) SwaggerDoc() map[string]string {
+	return map_OIDCClientConfig
+}
+
+var map_OIDCClientReference = map[string]string{
+	"oidcProviderName": "OIDCName refers to the `name` of the provider from `oidcProviders`",
+	"issuerURL":        "URL is the serving URL of the token issuer. Must use the https:// scheme.",
+	"clientID":         "ClientID is the identifier of the OIDC client from the OIDC provider",
+}
+
+func (OIDCClientReference) SwaggerDoc() map[string]string {
+	return map_OIDCClientReference
+}
+
+var map_OIDCClientStatus = map[string]string{
+	"componentName":      "ComponentName is the name of the component that will consume a client configuration.",
+	"componentNamespace": "ComponentNamespace is the namespace of the component that will consume a client configuration.",
+	"currentOIDCClients": "CurrentOIDCClients is a list of clients that the component is currently using.",
+	"consumingUsers":     "ConsumingUsers is a slice of ServiceAccounts that need to have read permission on the `clientSecret` secret.",
+	"conditions":         "Conditions are used to communicate the state of the `oidcClients` entry.\n\nSupported conditions include Available, Degraded and Progressing.\n\nIf Available is true, the component is successfully using the configured client. If Degraded is true, that means something has gone wrong trying to handle the client configuration. If Progressing is true, that means the component is taking some action related to the `oidcClients` entry.",
+}
+
+func (OIDCClientStatus) SwaggerDoc() map[string]string {
+	return map_OIDCClientStatus
+}
+
 var map_OIDCProvider = map[string]string{
 	"name":                 "Name of the OIDC provider",
 	"issuer":               "Issuer describes atributes of the OIDC token issuer",
+	"oidcClients":          "OIDCClients contains configuration for the platform's clients that need to request tokens from the issuer",
 	"claimMappings":        "ClaimMappings describes rules on how to transform information from an ID token into a cluster identity",
 	"claimValidationRules": "ClaimValidationRules are rules that are applied to validate token claims to authenticate users.",
 }
@@ -660,13 +696,14 @@ func (ClusterVersionList) SwaggerDoc() map[string]string {
 }
 
 var map_ClusterVersionSpec = map[string]string{
-	"":              "ClusterVersionSpec is the desired version state of the cluster. It includes the version the cluster should be at, how the cluster is identified, and where the cluster should look for version updates.",
-	"clusterID":     "clusterID uniquely identifies this cluster. This is expected to be an RFC4122 UUID value (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx in hexadecimal values). This is a required field.",
-	"desiredUpdate": "desiredUpdate is an optional field that indicates the desired value of the cluster version. Setting this value will trigger an upgrade (if the current version does not match the desired version). The set of recommended update values is listed as part of available updates in status, and setting values outside that range may cause the upgrade to fail.\n\nSome of the fields are inter-related with restrictions and meanings described here. 1. image is specified, version is specified, architecture is specified. API validation error. 2. image is specified, version is specified, architecture is not specified. You should not do this. version is silently ignored and image is used. 3. image is specified, version is not specified, architecture is specified. API validation error. 4. image is specified, version is not specified, architecture is not specified. image is used. 5. image is not specified, version is specified, architecture is specified. version and desired architecture are used to select an image. 6. image is not specified, version is specified, architecture is not specified. version and current architecture are used to select an image. 7. image is not specified, version is not specified, architecture is specified. API validation error. 8. image is not specified, version is not specified, architecture is not specified. API validation error.\n\nIf an upgrade fails the operator will halt and report status about the failing component. Setting the desired update value back to the previous version will cause a rollback to be attempted. Not all rollbacks will succeed.",
-	"upstream":      "upstream may be used to specify the preferred update server. By default it will use the appropriate update server for the cluster and region.",
-	"channel":       "channel is an identifier for explicitly requesting that a non-default set of updates be applied to this cluster. The default channel will be contain stable updates that are appropriate for production clusters.",
-	"capabilities":  "capabilities configures the installation of optional, core cluster components.  A null value here is identical to an empty object; see the child properties for default semantics.",
-	"overrides":     "overrides is list of overides for components that are managed by cluster version operator. Marking a component unmanaged will prevent the operator from creating or updating the object.",
+	"":                "ClusterVersionSpec is the desired version state of the cluster. It includes the version the cluster should be at, how the cluster is identified, and where the cluster should look for version updates.",
+	"clusterID":       "clusterID uniquely identifies this cluster. This is expected to be an RFC4122 UUID value (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx in hexadecimal values). This is a required field.",
+	"desiredUpdate":   "desiredUpdate is an optional field that indicates the desired value of the cluster version. Setting this value will trigger an upgrade (if the current version does not match the desired version). The set of recommended update values is listed as part of available updates in status, and setting values outside that range may cause the upgrade to fail.\n\nSome of the fields are inter-related with restrictions and meanings described here. 1. image is specified, version is specified, architecture is specified. API validation error. 2. image is specified, version is specified, architecture is not specified. You should not do this. version is silently ignored and image is used. 3. image is specified, version is not specified, architecture is specified. API validation error. 4. image is specified, version is not specified, architecture is not specified. image is used. 5. image is not specified, version is specified, architecture is specified. version and desired architecture are used to select an image. 6. image is not specified, version is specified, architecture is not specified. version and current architecture are used to select an image. 7. image is not specified, version is not specified, architecture is specified. API validation error. 8. image is not specified, version is not specified, architecture is not specified. API validation error.\n\nIf an upgrade fails the operator will halt and report status about the failing component. Setting the desired update value back to the previous version will cause a rollback to be attempted. Not all rollbacks will succeed.",
+	"upstream":        "upstream may be used to specify the preferred update server. By default it will use the appropriate update server for the cluster and region.",
+	"channel":         "channel is an identifier for explicitly requesting that a non-default set of updates be applied to this cluster. The default channel will be contain stable updates that are appropriate for production clusters.",
+	"capabilities":    "capabilities configures the installation of optional, core cluster components.  A null value here is identical to an empty object; see the child properties for default semantics.",
+	"signatureStores": "signatureStores contains the upstream URIs to verify release signatures and optional reference to a config map by name containing the PEM-encoded CA bundle.\n\nBy default, CVO will use existing signature stores if this property is empty. The CVO will check the release signatures in the local ConfigMaps first. It will search for a valid signature in these stores in parallel only when local ConfigMaps did not include a valid signature. Validation will fail if none of the signature stores reply with valid signature before timeout. Setting signatureStores will replace the default signature stores with custom signature stores. Default stores can be used with custom signature stores by adding them manually.\n\nA maximum of 32 signature stores may be configured.",
+	"overrides":       "overrides is list of overides for components that are managed by cluster version operator. Marking a component unmanaged will prevent the operator from creating or updating the object.",
 }
 
 func (ClusterVersionSpec) SwaggerDoc() map[string]string {
@@ -706,7 +743,7 @@ var map_ConditionalUpdate = map[string]string{
 	"":           "ConditionalUpdate represents an update which is recommended to some clusters on the version the current cluster is reconciling, but which may not be recommended for the current cluster.",
 	"release":    "release is the target of the update.",
 	"risks":      "risks represents the range of issues associated with updating to the target release. The cluster-version operator will evaluate all entries, and only recommend the update if there is at least one entry and all entries recommend the update.",
-	"conditions": "conditions represents the observations of the conditional update's current status. Known types are: * Evaluating, for whether the cluster-version operator will attempt to evaluate any risks[].matchingRules. * Recommended, for whether the update is recommended for the current cluster.",
+	"conditions": "conditions represents the observations of the conditional update's current status. Known types are: * Recommended, for whether the update is recommended for the current cluster.",
 }
 
 func (ConditionalUpdate) SwaggerDoc() map[string]string {
@@ -744,6 +781,16 @@ var map_Release = map[string]string{
 
 func (Release) SwaggerDoc() map[string]string {
 	return map_Release
+}
+
+var map_SignatureStore = map[string]string{
+	"":    "SignatureStore represents the URL of custom Signature Store",
+	"url": "url contains the upstream custom signature store URL. url should be a valid absolute http/https URI of an upstream signature store as per rfc1738. This must be provided and cannot be empty.",
+	"ca":  "ca is an optional reference to a config map by name containing the PEM-encoded CA bundle. It is used as a trust anchor to validate the TLS certificate presented by the remote server. The key \"ca.crt\" is used to locate the data. If specified and the config map or expected key is not found, the signature store is not honored. If the specified ca data is not valid, the signature store is not honored. If empty, we fall back to the CA configured via Proxy, which is appended to the default system roots. The namespace for this config map is openshift-config.",
+}
+
+func (SignatureStore) SwaggerDoc() map[string]string {
+	return map_SignatureStore
 }
 
 var map_Update = map[string]string{
@@ -1235,7 +1282,10 @@ func (BareMetalPlatformLoadBalancer) SwaggerDoc() map[string]string {
 }
 
 var map_BareMetalPlatformSpec = map[string]string{
-	"": "BareMetalPlatformSpec holds the desired state of the BareMetal infrastructure provider. This only includes fields that can be modified in the cluster.",
+	"":                     "BareMetalPlatformSpec holds the desired state of the BareMetal infrastructure provider. This only includes fields that can be modified in the cluster.",
+	"apiServerInternalIPs": "apiServerInternalIPs are the IP addresses to contact the Kubernetes API server that can be used by components inside the cluster, like kubelets using the infrastructure rather than Kubernetes networking. These are the IPs for a self-hosted load balancer in front of the API servers. In dual stack clusters this list contains two IP addresses, one from IPv4 family and one from IPv6. In single stack clusters a single IP address is expected. When omitted, values from the status.apiServerInternalIPs will be used. Once set, the list cannot be completely removed (but its second entry can).",
+	"ingressIPs":           "ingressIPs are the external IPs which route to the default ingress controller. The IPs are suitable targets of a wildcard DNS record used to resolve default route host names. In dual stack clusters this list contains two IP addresses, one from IPv4 family and one from IPv6. In single stack clusters a single IP address is expected. When omitted, values from the status.ingressIPs will be used. Once set, the list cannot be completely removed (but its second entry can).",
+	"machineNetworks":      "machineNetworks are IP networks used to connect all the OpenShift cluster nodes. Each network is provided in the CIDR format and should be IPv4 or IPv6, for example \"10.0.0.0/8\" or \"fd00::/8\".",
 }
 
 func (BareMetalPlatformSpec) SwaggerDoc() map[string]string {
@@ -1250,6 +1300,7 @@ var map_BareMetalPlatformStatus = map[string]string{
 	"ingressIPs":           "ingressIPs are the external IPs which route to the default ingress controller. The IPs are suitable targets of a wildcard DNS record used to resolve default route host names. In dual stack clusters this list contains two IPs otherwise only one.",
 	"nodeDNSIP":            "nodeDNSIP is the IP address for the internal DNS used by the nodes. Unlike the one managed by the DNS operator, `NodeDNSIP` provides name resolution for the nodes themselves. There is no DNS-as-a-service for BareMetal deployments. In order to minimize necessary changes to the datacenter DNS, a DNS service is hosted as a static pod to serve those hostnames to the nodes in the cluster.",
 	"loadBalancer":         "loadBalancer defines how the load balancer used by the cluster is configured.",
+	"machineNetworks":      "machineNetworks are IP networks used to connect all the OpenShift cluster nodes.",
 }
 
 func (BareMetalPlatformStatus) SwaggerDoc() map[string]string {
@@ -1263,6 +1314,27 @@ var map_CloudControllerManagerStatus = map[string]string{
 
 func (CloudControllerManagerStatus) SwaggerDoc() map[string]string {
 	return map_CloudControllerManagerStatus
+}
+
+var map_CloudLoadBalancerConfig = map[string]string{
+	"":              "CloudLoadBalancerConfig contains an union discriminator indicating the type of DNS solution in use within the cluster. When the DNSType is `ClusterHosted`, the cloud's Load Balancer configuration needs to be provided so that the DNS solution hosted within the cluster can be configured with those values.",
+	"dnsType":       "dnsType indicates the type of DNS solution in use within the cluster. Its default value of `PlatformDefault` indicates that the cluster's DNS is the default provided by the cloud platform. It can be set to `ClusterHosted` to bypass the configuration of the cloud default DNS. In this mode, the cluster needs to provide a self-hosted DNS solution for the cluster's installation to succeed. The cluster's use of the cloud's Load Balancers is unaffected by this setting. The value is immutable after it has been set at install time. Currently, there is no way for the customer to add additional DNS entries into the cluster hosted DNS. Enabling this functionality allows the user to start their own DNS solution outside the cluster after installation is complete. The customer would be responsible for configuring this custom DNS solution, and it can be run in addition to the in-cluster DNS solution.",
+	"clusterHosted": "clusterHosted holds the IP addresses of API, API-Int and Ingress Load Balancers on Cloud Platforms. The DNS solution hosted within the cluster use these IP addresses to provide resolution for API, API-Int and Ingress services.",
+}
+
+func (CloudLoadBalancerConfig) SwaggerDoc() map[string]string {
+	return map_CloudLoadBalancerConfig
+}
+
+var map_CloudLoadBalancerIPs = map[string]string{
+	"":                       "CloudLoadBalancerIPs contains the Load Balancer IPs for the cloud's API, API-Int and Ingress Load balancers. They will be populated as soon as the respective Load Balancers have been configured. These values are utilized to configure the DNS solution hosted within the cluster.",
+	"apiIntLoadBalancerIPs":  "apiIntLoadBalancerIPs holds Load Balancer IPs for the internal API service. These Load Balancer IP addresses can be IPv4 and/or IPv6 addresses. Entries in the apiIntLoadBalancerIPs must be unique. A maximum of 16 IP addresses are permitted.",
+	"apiLoadBalancerIPs":     "apiLoadBalancerIPs holds Load Balancer IPs for the API service. These Load Balancer IP addresses can be IPv4 and/or IPv6 addresses. Could be empty for private clusters. Entries in the apiLoadBalancerIPs must be unique. A maximum of 16 IP addresses are permitted.",
+	"ingressLoadBalancerIPs": "ingressLoadBalancerIPs holds IPs for Ingress Load Balancers. These Load Balancer IP addresses can be IPv4 and/or IPv6 addresses. Entries in the ingressLoadBalancerIPs must be unique. A maximum of 16 IP addresses are permitted.",
+}
+
+func (CloudLoadBalancerIPs) SwaggerDoc() map[string]string {
+	return map_CloudLoadBalancerIPs
 }
 
 var map_EquinixMetalPlatformSpec = map[string]string{
@@ -1310,11 +1382,12 @@ func (GCPPlatformSpec) SwaggerDoc() map[string]string {
 }
 
 var map_GCPPlatformStatus = map[string]string{
-	"":               "GCPPlatformStatus holds the current status of the Google Cloud Platform infrastructure provider.",
-	"projectID":      "resourceGroupName is the Project ID for new GCP resources created for the cluster.",
-	"region":         "region holds the region for new GCP resources created for the cluster.",
-	"resourceLabels": "resourceLabels is a list of additional labels to apply to GCP resources created for the cluster. See https://cloud.google.com/compute/docs/labeling-resources for information on labeling GCP resources. GCP supports a maximum of 64 labels per resource. OpenShift reserves 32 labels for internal use, allowing 32 labels for user configuration.",
-	"resourceTags":   "resourceTags is a list of additional tags to apply to GCP resources created for the cluster. See https://cloud.google.com/resource-manager/docs/tags/tags-overview for information on tagging GCP resources. GCP supports a maximum of 50 tags per resource.",
+	"":                        "GCPPlatformStatus holds the current status of the Google Cloud Platform infrastructure provider.",
+	"projectID":               "resourceGroupName is the Project ID for new GCP resources created for the cluster.",
+	"region":                  "region holds the region for new GCP resources created for the cluster.",
+	"resourceLabels":          "resourceLabels is a list of additional labels to apply to GCP resources created for the cluster. See https://cloud.google.com/compute/docs/labeling-resources for information on labeling GCP resources. GCP supports a maximum of 64 labels per resource. OpenShift reserves 32 labels for internal use, allowing 32 labels for user configuration.",
+	"resourceTags":            "resourceTags is a list of additional tags to apply to GCP resources created for the cluster. See https://cloud.google.com/resource-manager/docs/tags/tags-overview for information on tagging GCP resources. GCP supports a maximum of 50 tags per resource.",
+	"cloudLoadBalancerConfig": "cloudLoadBalancerConfig is a union that contains the IP addresses of API, API-Int and Ingress Load Balancers created on the cloud platform. These values would not be populated on on-prem platforms. These Load Balancer IPs are used to configure the in-cluster DNS instances for API, API-Int and Ingress services. `dnsType` is expected to be set to `ClusterHosted` when these Load Balancer IP addresses are populated and used.",
 }
 
 func (GCPPlatformStatus) SwaggerDoc() map[string]string {
@@ -1366,7 +1439,7 @@ func (IBMCloudPlatformStatus) SwaggerDoc() map[string]string {
 
 var map_IBMCloudServiceEndpoint = map[string]string{
 	"":     "IBMCloudServiceEndpoint stores the configuration of a custom url to override existing defaults of IBM Cloud Services.",
-	"name": "name is the name of the IBM Cloud service. For example, the IBM Cloud Private IAM service could be configured with the service `name` of `IAM` and `url` of `https://private.iam.cloud.ibm.com` Whereas the IBM Cloud Private VPC service for US South (Dallas) could be configured with the service `name` of `VPC` and `url` of `https://us.south.private.iaas.cloud.ibm.com`",
+	"name": "name is the name of the IBM Cloud service. Possible values are: CIS, COS, COSConfig, DNSServices, GlobalCatalog, GlobalSearch, GlobalTagging, HyperProtect, IAM, KeyProtect, ResourceController, ResourceManager, or VPC. For example, the IBM Cloud Private IAM service could be configured with the service `name` of `IAM` and `url` of `https://private.iam.cloud.ibm.com` Whereas the IBM Cloud Private VPC service for US South (Dallas) could be configured with the service `name` of `VPC` and `url` of `https://us.south.private.iaas.cloud.ibm.com`",
 	"url":  "url is fully qualified URI with scheme https, that overrides the default generated endpoint for a client. This must be provided and cannot be empty.",
 }
 
@@ -1439,6 +1512,17 @@ func (KubevirtPlatformStatus) SwaggerDoc() map[string]string {
 	return map_KubevirtPlatformStatus
 }
 
+var map_NutanixFailureDomain = map[string]string{
+	"":        "NutanixFailureDomain configures failure domain information for the Nutanix platform.",
+	"name":    "name defines the unique name of a failure domain. Name is required and must be at most 64 characters in length. It must consist of only lower case alphanumeric characters and hyphens (-). It must start and end with an alphanumeric character. This value is arbitrary and is used to identify the failure domain within the platform.",
+	"cluster": "cluster is to identify the cluster (the Prism Element under management of the Prism Central), in which the Machine's VM will be created. The cluster identifier (uuid or name) can be obtained from the Prism Central console or using the prism_central API.",
+	"subnets": "subnets holds a list of identifiers (one or more) of the cluster's network subnets for the Machine's VM to connect to. The subnet identifiers (uuid or name) can be obtained from the Prism Central console or using the prism_central API.",
+}
+
+func (NutanixFailureDomain) SwaggerDoc() map[string]string {
+	return map_NutanixFailureDomain
+}
+
 var map_NutanixPlatformLoadBalancer = map[string]string{
 	"":     "NutanixPlatformLoadBalancer defines the load balancer used by the cluster on Nutanix platform.",
 	"type": "type defines the type of load balancer used by the cluster on Nutanix platform which can be a user-managed or openshift-managed load balancer that is to be used for the OpenShift API and Ingress endpoints. When set to OpenShiftManagedDefault the static pods in charge of API and Ingress traffic load-balancing defined in the machine config operator will be deployed. When set to UserManaged these static pods will not be deployed and it is expected that the load balancer is configured out of band by the deployer. When omitted, this means no opinion and the platform is left to choose a reasonable default. The default value is OpenShiftManagedDefault.",
@@ -1449,9 +1533,10 @@ func (NutanixPlatformLoadBalancer) SwaggerDoc() map[string]string {
 }
 
 var map_NutanixPlatformSpec = map[string]string{
-	"":              "NutanixPlatformSpec holds the desired state of the Nutanix infrastructure provider. This only includes fields that can be modified in the cluster.",
-	"prismCentral":  "prismCentral holds the endpoint address and port to access the Nutanix Prism Central. When a cluster-wide proxy is installed, by default, this endpoint will be accessed via the proxy. Should you wish for communication with this endpoint not to be proxied, please add the endpoint to the proxy spec.noProxy list.",
-	"prismElements": "prismElements holds one or more endpoint address and port data to access the Nutanix Prism Elements (clusters) of the Nutanix Prism Central. Currently we only support one Prism Element (cluster) for an OpenShift cluster, where all the Nutanix resources (VMs, subnets, volumes, etc.) used in the OpenShift cluster are located. In the future, we may support Nutanix resources (VMs, etc.) spread over multiple Prism Elements (clusters) of the Prism Central.",
+	"":               "NutanixPlatformSpec holds the desired state of the Nutanix infrastructure provider. This only includes fields that can be modified in the cluster.",
+	"prismCentral":   "prismCentral holds the endpoint address and port to access the Nutanix Prism Central. When a cluster-wide proxy is installed, by default, this endpoint will be accessed via the proxy. Should you wish for communication with this endpoint not to be proxied, please add the endpoint to the proxy spec.noProxy list.",
+	"prismElements":  "prismElements holds one or more endpoint address and port data to access the Nutanix Prism Elements (clusters) of the Nutanix Prism Central. Currently we only support one Prism Element (cluster) for an OpenShift cluster, where all the Nutanix resources (VMs, subnets, volumes, etc.) used in the OpenShift cluster are located. In the future, we may support Nutanix resources (VMs, etc.) spread over multiple Prism Elements (clusters) of the Prism Central.",
+	"failureDomains": "failureDomains configures failure domains information for the Nutanix platform. When set, the failure domains defined here may be used to spread Machines across prism element clusters to improve fault tolerance of the cluster.",
 }
 
 func (NutanixPlatformSpec) SwaggerDoc() map[string]string {
@@ -1491,6 +1576,17 @@ func (NutanixPrismEndpoint) SwaggerDoc() map[string]string {
 	return map_NutanixPrismEndpoint
 }
 
+var map_NutanixResourceIdentifier = map[string]string{
+	"":     "NutanixResourceIdentifier holds the identity of a Nutanix PC resource (cluster, image, subnet, etc.)",
+	"type": "type is the identifier type to use for this resource.",
+	"uuid": "uuid is the UUID of the resource in the PC. It cannot be empty if the type is UUID.",
+	"name": "name is the resource name in the PC. It cannot be empty if the type is Name.",
+}
+
+func (NutanixResourceIdentifier) SwaggerDoc() map[string]string {
+	return map_NutanixResourceIdentifier
+}
+
 var map_OpenStackPlatformLoadBalancer = map[string]string{
 	"":     "OpenStackPlatformLoadBalancer defines the load balancer used by the cluster on OpenStack platform.",
 	"type": "type defines the type of load balancer used by the cluster on OpenStack platform which can be a user-managed or openshift-managed load balancer that is to be used for the OpenShift API and Ingress endpoints. When set to OpenShiftManagedDefault the static pods in charge of API and Ingress traffic load-balancing defined in the machine config operator will be deployed. When set to UserManaged these static pods will not be deployed and it is expected that the load balancer is configured out of band by the deployer. When omitted, this means no opinion and the platform is left to choose a reasonable default. The default value is OpenShiftManagedDefault.",
@@ -1501,7 +1597,10 @@ func (OpenStackPlatformLoadBalancer) SwaggerDoc() map[string]string {
 }
 
 var map_OpenStackPlatformSpec = map[string]string{
-	"": "OpenStackPlatformSpec holds the desired state of the OpenStack infrastructure provider. This only includes fields that can be modified in the cluster.",
+	"":                     "OpenStackPlatformSpec holds the desired state of the OpenStack infrastructure provider. This only includes fields that can be modified in the cluster.",
+	"apiServerInternalIPs": "apiServerInternalIPs are the IP addresses to contact the Kubernetes API server that can be used by components inside the cluster, like kubelets using the infrastructure rather than Kubernetes networking. These are the IPs for a self-hosted load balancer in front of the API servers. In dual stack clusters this list contains two IP addresses, one from IPv4 family and one from IPv6. In single stack clusters a single IP address is expected. When omitted, values from the status.apiServerInternalIPs will be used. Once set, the list cannot be completely removed (but its second entry can).",
+	"ingressIPs":           "ingressIPs are the external IPs which route to the default ingress controller. The IPs are suitable targets of a wildcard DNS record used to resolve default route host names. In dual stack clusters this list contains two IP addresses, one from IPv4 family and one from IPv6. In single stack clusters a single IP address is expected. When omitted, values from the status.ingressIPs will be used. Once set, the list cannot be completely removed (but its second entry can).",
+	"machineNetworks":      "machineNetworks are IP networks used to connect all the OpenShift cluster nodes. Each network is provided in the CIDR format and should be IPv4 or IPv6, for example \"10.0.0.0/8\" or \"fd00::/8\".",
 }
 
 func (OpenStackPlatformSpec) SwaggerDoc() map[string]string {
@@ -1517,6 +1616,7 @@ var map_OpenStackPlatformStatus = map[string]string{
 	"ingressIPs":           "ingressIPs are the external IPs which route to the default ingress controller. The IPs are suitable targets of a wildcard DNS record used to resolve default route host names. In dual stack clusters this list contains two IPs otherwise only one.",
 	"nodeDNSIP":            "nodeDNSIP is the IP address for the internal DNS used by the nodes. Unlike the one managed by the DNS operator, `NodeDNSIP` provides name resolution for the nodes themselves. There is no DNS-as-a-service for OpenStack deployments. In order to minimize necessary changes to the datacenter DNS, a DNS service is hosted as a static pod to serve those hostnames to the nodes in the cluster.",
 	"loadBalancer":         "loadBalancer defines how the load balancer used by the cluster is configured.",
+	"machineNetworks":      "machineNetworks are IP networks used to connect all the OpenShift cluster nodes.",
 }
 
 func (OpenStackPlatformStatus) SwaggerDoc() map[string]string {
@@ -1677,10 +1777,13 @@ func (VSpherePlatformNodeNetworkingSpec) SwaggerDoc() map[string]string {
 }
 
 var map_VSpherePlatformSpec = map[string]string{
-	"":               "VSpherePlatformSpec holds the desired state of the vSphere infrastructure provider. In the future the cloud provider operator, storage operator and machine operator will use these fields for configuration.",
-	"vcenters":       "vcenters holds the connection details for services to communicate with vCenter. Currently, only a single vCenter is supported.",
-	"failureDomains": "failureDomains contains the definition of region, zone and the vCenter topology. If this is omitted failure domains (regions and zones) will not be used.",
-	"nodeNetworking": "nodeNetworking contains the definition of internal and external network constraints for assigning the node's networking. If this field is omitted, networking defaults to the legacy address selection behavior which is to only support a single address and return the first one found.",
+	"":                     "VSpherePlatformSpec holds the desired state of the vSphere infrastructure provider. In the future the cloud provider operator, storage operator and machine operator will use these fields for configuration.",
+	"vcenters":             "vcenters holds the connection details for services to communicate with vCenter. Currently, only a single vCenter is supported.",
+	"failureDomains":       "failureDomains contains the definition of region, zone and the vCenter topology. If this is omitted failure domains (regions and zones) will not be used.",
+	"nodeNetworking":       "nodeNetworking contains the definition of internal and external network constraints for assigning the node's networking. If this field is omitted, networking defaults to the legacy address selection behavior which is to only support a single address and return the first one found.",
+	"apiServerInternalIPs": "apiServerInternalIPs are the IP addresses to contact the Kubernetes API server that can be used by components inside the cluster, like kubelets using the infrastructure rather than Kubernetes networking. These are the IPs for a self-hosted load balancer in front of the API servers. In dual stack clusters this list contains two IP addresses, one from IPv4 family and one from IPv6. In single stack clusters a single IP address is expected. When omitted, values from the status.apiServerInternalIPs will be used. Once set, the list cannot be completely removed (but its second entry can).",
+	"ingressIPs":           "ingressIPs are the external IPs which route to the default ingress controller. The IPs are suitable targets of a wildcard DNS record used to resolve default route host names. In dual stack clusters this list contains two IP addresses, one from IPv4 family and one from IPv6. In single stack clusters a single IP address is expected. When omitted, values from the status.ingressIPs will be used. Once set, the list cannot be completely removed (but its second entry can).",
+	"machineNetworks":      "machineNetworks are IP networks used to connect all the OpenShift cluster nodes. Each network is provided in the CIDR format and should be IPv4 or IPv6, for example \"10.0.0.0/8\" or \"fd00::/8\".",
 }
 
 func (VSpherePlatformSpec) SwaggerDoc() map[string]string {
@@ -1695,6 +1798,7 @@ var map_VSpherePlatformStatus = map[string]string{
 	"ingressIPs":           "ingressIPs are the external IPs which route to the default ingress controller. The IPs are suitable targets of a wildcard DNS record used to resolve default route host names. In dual stack clusters this list contains two IPs otherwise only one.",
 	"nodeDNSIP":            "nodeDNSIP is the IP address for the internal DNS used by the nodes. Unlike the one managed by the DNS operator, `NodeDNSIP` provides name resolution for the nodes themselves. There is no DNS-as-a-service for vSphere deployments. In order to minimize necessary changes to the datacenter DNS, a DNS service is hosted as a static pod to serve those hostnames to the nodes in the cluster.",
 	"loadBalancer":         "loadBalancer defines how the load balancer used by the cluster is configured.",
+	"machineNetworks":      "machineNetworks are IP networks used to connect all the OpenShift cluster nodes.",
 }
 
 func (VSpherePlatformStatus) SwaggerDoc() map[string]string {
@@ -1883,6 +1987,36 @@ func (Network) SwaggerDoc() map[string]string {
 	return map_Network
 }
 
+var map_NetworkDiagnostics = map[string]string{
+	"mode":            "mode controls the network diagnostics mode\n\nWhen omitted, this means the user has no opinion and the platform is left to choose reasonable defaults. These defaults are subject to change over time. The current default is All.",
+	"sourcePlacement": "sourcePlacement controls the scheduling of network diagnostics source deployment\n\nSee NetworkDiagnosticsSourcePlacement for more details about default values.",
+	"targetPlacement": "targetPlacement controls the scheduling of network diagnostics target daemonset\n\nSee NetworkDiagnosticsTargetPlacement for more details about default values.",
+}
+
+func (NetworkDiagnostics) SwaggerDoc() map[string]string {
+	return map_NetworkDiagnostics
+}
+
+var map_NetworkDiagnosticsSourcePlacement = map[string]string{
+	"":             "NetworkDiagnosticsSourcePlacement defines node scheduling configuration network diagnostics source components",
+	"nodeSelector": "nodeSelector is the node selector applied to network diagnostics components\n\nWhen omitted, this means the user has no opinion and the platform is left to choose reasonable defaults. These defaults are subject to change over time. The current default is `kubernetes.io/os: linux`.",
+	"tolerations":  "tolerations is a list of tolerations applied to network diagnostics components\n\nWhen omitted, this means the user has no opinion and the platform is left to choose reasonable defaults. These defaults are subject to change over time. The current default is an empty list.",
+}
+
+func (NetworkDiagnosticsSourcePlacement) SwaggerDoc() map[string]string {
+	return map_NetworkDiagnosticsSourcePlacement
+}
+
+var map_NetworkDiagnosticsTargetPlacement = map[string]string{
+	"":             "NetworkDiagnosticsTargetPlacement defines node scheduling configuration network diagnostics target components",
+	"nodeSelector": "nodeSelector is the node selector applied to network diagnostics components\n\nWhen omitted, this means the user has no opinion and the platform is left to choose reasonable defaults. These defaults are subject to change over time. The current default is `kubernetes.io/os: linux`.",
+	"tolerations":  "tolerations is a list of tolerations applied to network diagnostics components\n\nWhen omitted, this means the user has no opinion and the platform is left to choose reasonable defaults. These defaults are subject to change over time. The current default is `- operator: \"Exists\"` which means that all taints are tolerated.",
+}
+
+func (NetworkDiagnosticsTargetPlacement) SwaggerDoc() map[string]string {
+	return map_NetworkDiagnosticsTargetPlacement
+}
+
 var map_NetworkList = map[string]string{
 	"":         "Compatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).",
 	"metadata": "metadata is the standard list's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
@@ -1909,6 +2043,7 @@ var map_NetworkSpec = map[string]string{
 	"networkType":          "NetworkType is the plugin that is to be deployed (e.g. OpenShiftSDN). This should match a value that the cluster-network-operator understands, or else no networking will be installed. Currently supported values are: - OpenShiftSDN This field is immutable after installation.",
 	"externalIP":           "externalIP defines configuration for controllers that affect Service.ExternalIP. If nil, then ExternalIP is not allowed to be set.",
 	"serviceNodePortRange": "The port range allowed for Services of type NodePort. If not specified, the default of 30000-32767 will be used. Such Services without a NodePort specified will have one automatically allocated from this range. This parameter can be updated after the cluster is installed.",
+	"networkDiagnostics":   "networkDiagnostics defines network diagnostics configuration.\n\nTakes precedence over spec.disableNetworkDiagnostics in network.operator.openshift.io. If networkDiagnostics is not specified or is empty, and the spec.disableNetworkDiagnostics flag in network.operator.openshift.io is set to true, the network diagnostics feature will be disabled.",
 }
 
 func (NetworkSpec) SwaggerDoc() map[string]string {
@@ -1922,6 +2057,7 @@ var map_NetworkStatus = map[string]string{
 	"networkType":       "NetworkType is the plugin that is deployed (e.g. OpenShiftSDN).",
 	"clusterNetworkMTU": "ClusterNetworkMTU is the MTU for inter-pod networking.",
 	"migration":         "Migration contains the cluster network migration configuration.",
+	"conditions":        "conditions represents the observations of a network.config current state. Known .status.conditions.type are: \"NetworkTypeMigrationInProgress\", \"NetworkTypeMigrationMTUReady\", \"NetworkTypeMigrationTargetCNIAvailable\", \"NetworkTypeMigrationTargetCNIInUse\", \"NetworkTypeMigrationOriginalCNIPurged\" and \"NetworkDiagnosticsAvailable\"",
 }
 
 func (NetworkStatus) SwaggerDoc() map[string]string {
@@ -2330,6 +2466,15 @@ func (ProxyStatus) SwaggerDoc() map[string]string {
 	return map_ProxyStatus
 }
 
+var map_ProfileCustomizations = map[string]string{
+	"":                          "ProfileCustomizations contains various parameters for modifying the default behavior of certain profiles",
+	"dynamicResourceAllocation": "dynamicResourceAllocation allows to enable or disable dynamic resource allocation within the scheduler. Dynamic resource allocation is an API for requesting and sharing resources between pods and containers inside a pod. Third-party resource drivers are responsible for tracking and allocating resources. Different kinds of resources support arbitrary parameters for defining requirements and initialization. Valid values are Enabled, Disabled and omitted. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The current default is Disabled.",
+}
+
+func (ProfileCustomizations) SwaggerDoc() map[string]string {
+	return map_ProfileCustomizations
+}
+
 var map_Scheduler = map[string]string{
 	"":         "Scheduler holds cluster-wide config information to run the Kubernetes Scheduler and influence its placement decisions. The canonical name for this config is `cluster`.\n\nCompatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).",
 	"metadata": "metadata is the standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
@@ -2351,14 +2496,50 @@ func (SchedulerList) SwaggerDoc() map[string]string {
 }
 
 var map_SchedulerSpec = map[string]string{
-	"policy":              "DEPRECATED: the scheduler Policy API has been deprecated and will be removed in a future release. policy is a reference to a ConfigMap containing scheduler policy which has user specified predicates and priorities. If this ConfigMap is not available scheduler will default to use DefaultAlgorithmProvider. The namespace for this configmap is openshift-config.",
-	"profile":             "profile sets which scheduling profile should be set in order to configure scheduling decisions for new pods.\n\nValid values are \"LowNodeUtilization\", \"HighNodeUtilization\", \"NoScoring\" Defaults to \"LowNodeUtilization\"",
-	"defaultNodeSelector": "defaultNodeSelector helps set the cluster-wide default node selector to restrict pod placement to specific nodes. This is applied to the pods created in all namespaces and creates an intersection with any existing nodeSelectors already set on a pod, additionally constraining that pod's selector. For example, defaultNodeSelector: \"type=user-node,region=east\" would set nodeSelector field in pod spec to \"type=user-node,region=east\" to all pods created in all namespaces. Namespaces having project-wide node selectors won't be impacted even if this field is set. This adds an annotation section to the namespace. For example, if a new namespace is created with node-selector='type=user-node,region=east', the annotation openshift.io/node-selector: type=user-node,region=east gets added to the project. When the openshift.io/node-selector annotation is set on the project the value is used in preference to the value we are setting for defaultNodeSelector field. For instance, openshift.io/node-selector: \"type=user-node,region=west\" means that the default of \"type=user-node,region=east\" set in defaultNodeSelector would not be applied.",
-	"mastersSchedulable":  "MastersSchedulable allows masters nodes to be schedulable. When this flag is turned on, all the master nodes in the cluster will be made schedulable, so that workload pods can run on them. The default value for this field is false, meaning none of the master nodes are schedulable. Important Note: Once the workload pods start running on the master nodes, extreme care must be taken to ensure that cluster-critical control plane components are not impacted. Please turn on this field after doing due diligence.",
+	"policy":                "DEPRECATED: the scheduler Policy API has been deprecated and will be removed in a future release. policy is a reference to a ConfigMap containing scheduler policy which has user specified predicates and priorities. If this ConfigMap is not available scheduler will default to use DefaultAlgorithmProvider. The namespace for this configmap is openshift-config.",
+	"profile":               "profile sets which scheduling profile should be set in order to configure scheduling decisions for new pods.\n\nValid values are \"LowNodeUtilization\", \"HighNodeUtilization\", \"NoScoring\" Defaults to \"LowNodeUtilization\"",
+	"profileCustomizations": "profileCustomizations contains configuration for modifying the default behavior of existing scheduler profiles.",
+	"defaultNodeSelector":   "defaultNodeSelector helps set the cluster-wide default node selector to restrict pod placement to specific nodes. This is applied to the pods created in all namespaces and creates an intersection with any existing nodeSelectors already set on a pod, additionally constraining that pod's selector. For example, defaultNodeSelector: \"type=user-node,region=east\" would set nodeSelector field in pod spec to \"type=user-node,region=east\" to all pods created in all namespaces. Namespaces having project-wide node selectors won't be impacted even if this field is set. This adds an annotation section to the namespace. For example, if a new namespace is created with node-selector='type=user-node,region=east', the annotation openshift.io/node-selector: type=user-node,region=east gets added to the project. When the openshift.io/node-selector annotation is set on the project the value is used in preference to the value we are setting for defaultNodeSelector field. For instance, openshift.io/node-selector: \"type=user-node,region=west\" means that the default of \"type=user-node,region=east\" set in defaultNodeSelector would not be applied.",
+	"mastersSchedulable":    "MastersSchedulable allows masters nodes to be schedulable. When this flag is turned on, all the master nodes in the cluster will be made schedulable, so that workload pods can run on them. The default value for this field is false, meaning none of the master nodes are schedulable. Important Note: Once the workload pods start running on the master nodes, extreme care must be taken to ensure that cluster-critical control plane components are not impacted. Please turn on this field after doing due diligence.",
 }
 
 func (SchedulerSpec) SwaggerDoc() map[string]string {
 	return map_SchedulerSpec
+}
+
+var map_FeatureGateTests = map[string]string{
+	"featureGate": "FeatureGate is the name of the FeatureGate as it appears in The FeatureGate CR instance.",
+	"tests":       "Tests contains an item for every TestName",
+}
+
+func (FeatureGateTests) SwaggerDoc() map[string]string {
+	return map_FeatureGateTests
+}
+
+var map_TestDetails = map[string]string{
+	"testName": "TestName is the name of the test as it appears in junit XMLs. It does not include the suite name since the same test can be executed in many suites.",
+}
+
+func (TestDetails) SwaggerDoc() map[string]string {
+	return map_TestDetails
+}
+
+var map_TestReporting = map[string]string{
+	"":         "TestReporting is used for origin (and potentially others) to report the test names for a given FeatureGate into the payload for later analysis on a per-payload basis. This doesn't need any CRD because it's never stored in the cluster.\n\nCompatibility level 4: No compatibility is provided, the API can change at any point for any reason. These capabilities should not be used by applications needing long term support.",
+	"metadata": "metadata is the standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata",
+	"status":   "status holds observed values from the cluster. They may not be overridden.",
+}
+
+func (TestReporting) SwaggerDoc() map[string]string {
+	return map_TestReporting
+}
+
+var map_TestReportingSpec = map[string]string{
+	"testsForFeatureGates": "TestsForFeatureGates is a list, indexed by FeatureGate and includes information about testing.",
+}
+
+func (TestReportingSpec) SwaggerDoc() map[string]string {
+	return map_TestReportingSpec
 }
 
 var map_CustomTLSProfile = map[string]string{
@@ -2396,7 +2577,7 @@ func (OldTLSProfile) SwaggerDoc() map[string]string {
 var map_TLSProfileSpec = map[string]string{
 	"":              "TLSProfileSpec is the desired behavior of a TLSSecurityProfile.",
 	"ciphers":       "ciphers is used to specify the cipher algorithms that are negotiated during the TLS handshake.  Operators may remove entries their operands do not support.  For example, to use DES-CBC3-SHA  (yaml):\n\n  ciphers:\n    - DES-CBC3-SHA",
-	"minTLSVersion": "minTLSVersion is used to specify the minimal version of the TLS protocol that is negotiated during the TLS handshake. For example, to use TLS versions 1.1, 1.2 and 1.3 (yaml):\n\n  minTLSVersion: TLSv1.1\n\nNOTE: currently the highest minTLSVersion allowed is VersionTLS12",
+	"minTLSVersion": "minTLSVersion is used to specify the minimal version of the TLS protocol that is negotiated during the TLS handshake. For example, to use TLS versions 1.1, 1.2 and 1.3 (yaml):\n\n  minTLSVersion: VersionTLS11\n\nNOTE: currently the highest minTLSVersion allowed is VersionTLS12",
 }
 
 func (TLSProfileSpec) SwaggerDoc() map[string]string {
@@ -2406,10 +2587,10 @@ func (TLSProfileSpec) SwaggerDoc() map[string]string {
 var map_TLSSecurityProfile = map[string]string{
 	"":             "TLSSecurityProfile defines the schema for a TLS security profile. This object is used by operators to apply TLS security settings to operands.",
 	"type":         "type is one of Old, Intermediate, Modern or Custom. Custom provides the ability to specify individual TLS security profile parameters. Old, Intermediate and Modern are TLS security profiles based on:\n\nhttps://wiki.mozilla.org/Security/Server_Side_TLS#Recommended_configurations\n\nThe profiles are intent based, so they may change over time as new ciphers are developed and existing ciphers are found to be insecure.  Depending on precisely which ciphers are available to a process, the list may be reduced.\n\nNote that the Modern profile is currently not supported because it is not yet well adopted by common software libraries.",
-	"old":          "old is a TLS security profile based on:\n\nhttps://wiki.mozilla.org/Security/Server_Side_TLS#Old_backward_compatibility\n\nand looks like this (yaml):\n\n  ciphers:\n    - TLS_AES_128_GCM_SHA256\n    - TLS_AES_256_GCM_SHA384\n    - TLS_CHACHA20_POLY1305_SHA256\n    - ECDHE-ECDSA-AES128-GCM-SHA256\n    - ECDHE-RSA-AES128-GCM-SHA256\n    - ECDHE-ECDSA-AES256-GCM-SHA384\n    - ECDHE-RSA-AES256-GCM-SHA384\n    - ECDHE-ECDSA-CHACHA20-POLY1305\n    - ECDHE-RSA-CHACHA20-POLY1305\n    - DHE-RSA-AES128-GCM-SHA256\n    - DHE-RSA-AES256-GCM-SHA384\n    - DHE-RSA-CHACHA20-POLY1305\n    - ECDHE-ECDSA-AES128-SHA256\n    - ECDHE-RSA-AES128-SHA256\n    - ECDHE-ECDSA-AES128-SHA\n    - ECDHE-RSA-AES128-SHA\n    - ECDHE-ECDSA-AES256-SHA384\n    - ECDHE-RSA-AES256-SHA384\n    - ECDHE-ECDSA-AES256-SHA\n    - ECDHE-RSA-AES256-SHA\n    - DHE-RSA-AES128-SHA256\n    - DHE-RSA-AES256-SHA256\n    - AES128-GCM-SHA256\n    - AES256-GCM-SHA384\n    - AES128-SHA256\n    - AES256-SHA256\n    - AES128-SHA\n    - AES256-SHA\n    - DES-CBC3-SHA\n  minTLSVersion: TLSv1.0",
-	"intermediate": "intermediate is a TLS security profile based on:\n\nhttps://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28recommended.29\n\nand looks like this (yaml):\n\n  ciphers:\n    - TLS_AES_128_GCM_SHA256\n    - TLS_AES_256_GCM_SHA384\n    - TLS_CHACHA20_POLY1305_SHA256\n    - ECDHE-ECDSA-AES128-GCM-SHA256\n    - ECDHE-RSA-AES128-GCM-SHA256\n    - ECDHE-ECDSA-AES256-GCM-SHA384\n    - ECDHE-RSA-AES256-GCM-SHA384\n    - ECDHE-ECDSA-CHACHA20-POLY1305\n    - ECDHE-RSA-CHACHA20-POLY1305\n    - DHE-RSA-AES128-GCM-SHA256\n    - DHE-RSA-AES256-GCM-SHA384\n  minTLSVersion: TLSv1.2",
-	"modern":       "modern is a TLS security profile based on:\n\nhttps://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility\n\nand looks like this (yaml):\n\n  ciphers:\n    - TLS_AES_128_GCM_SHA256\n    - TLS_AES_256_GCM_SHA384\n    - TLS_CHACHA20_POLY1305_SHA256\n  minTLSVersion: TLSv1.3\n\nNOTE: Currently unsupported.",
-	"custom":       "custom is a user-defined TLS security profile. Be extremely careful using a custom profile as invalid configurations can be catastrophic. An example custom profile looks like this:\n\n  ciphers:\n    - ECDHE-ECDSA-CHACHA20-POLY1305\n    - ECDHE-RSA-CHACHA20-POLY1305\n    - ECDHE-RSA-AES128-GCM-SHA256\n    - ECDHE-ECDSA-AES128-GCM-SHA256\n  minTLSVersion: TLSv1.1",
+	"old":          "old is a TLS security profile based on:\n\nhttps://wiki.mozilla.org/Security/Server_Side_TLS#Old_backward_compatibility\n\nand looks like this (yaml):\n\n  ciphers:\n\n    - TLS_AES_128_GCM_SHA256\n\n    - TLS_AES_256_GCM_SHA384\n\n    - TLS_CHACHA20_POLY1305_SHA256\n\n    - ECDHE-ECDSA-AES128-GCM-SHA256\n\n    - ECDHE-RSA-AES128-GCM-SHA256\n\n    - ECDHE-ECDSA-AES256-GCM-SHA384\n\n    - ECDHE-RSA-AES256-GCM-SHA384\n\n    - ECDHE-ECDSA-CHACHA20-POLY1305\n\n    - ECDHE-RSA-CHACHA20-POLY1305\n\n    - DHE-RSA-AES128-GCM-SHA256\n\n    - DHE-RSA-AES256-GCM-SHA384\n\n    - DHE-RSA-CHACHA20-POLY1305\n\n    - ECDHE-ECDSA-AES128-SHA256\n\n    - ECDHE-RSA-AES128-SHA256\n\n    - ECDHE-ECDSA-AES128-SHA\n\n    - ECDHE-RSA-AES128-SHA\n\n    - ECDHE-ECDSA-AES256-SHA384\n\n    - ECDHE-RSA-AES256-SHA384\n\n    - ECDHE-ECDSA-AES256-SHA\n\n    - ECDHE-RSA-AES256-SHA\n\n    - DHE-RSA-AES128-SHA256\n\n    - DHE-RSA-AES256-SHA256\n\n    - AES128-GCM-SHA256\n\n    - AES256-GCM-SHA384\n\n    - AES128-SHA256\n\n    - AES256-SHA256\n\n    - AES128-SHA\n\n    - AES256-SHA\n\n    - DES-CBC3-SHA\n\n  minTLSVersion: VersionTLS10",
+	"intermediate": "intermediate is a TLS security profile based on:\n\nhttps://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28recommended.29\n\nand looks like this (yaml):\n\n  ciphers:\n\n    - TLS_AES_128_GCM_SHA256\n\n    - TLS_AES_256_GCM_SHA384\n\n    - TLS_CHACHA20_POLY1305_SHA256\n\n    - ECDHE-ECDSA-AES128-GCM-SHA256\n\n    - ECDHE-RSA-AES128-GCM-SHA256\n\n    - ECDHE-ECDSA-AES256-GCM-SHA384\n\n    - ECDHE-RSA-AES256-GCM-SHA384\n\n    - ECDHE-ECDSA-CHACHA20-POLY1305\n\n    - ECDHE-RSA-CHACHA20-POLY1305\n\n    - DHE-RSA-AES128-GCM-SHA256\n\n    - DHE-RSA-AES256-GCM-SHA384\n\n  minTLSVersion: VersionTLS12",
+	"modern":       "modern is a TLS security profile based on:\n\nhttps://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility\n\nand looks like this (yaml):\n\n  ciphers:\n\n    - TLS_AES_128_GCM_SHA256\n\n    - TLS_AES_256_GCM_SHA384\n\n    - TLS_CHACHA20_POLY1305_SHA256\n\n  minTLSVersion: VersionTLS13",
+	"custom":       "custom is a user-defined TLS security profile. Be extremely careful using a custom profile as invalid configurations can be catastrophic. An example custom profile looks like this:\n\n  ciphers:\n\n    - ECDHE-ECDSA-CHACHA20-POLY1305\n\n    - ECDHE-RSA-CHACHA20-POLY1305\n\n    - ECDHE-RSA-AES128-GCM-SHA256\n\n    - ECDHE-ECDSA-AES128-GCM-SHA256\n\n  minTLSVersion: VersionTLS11",
 }
 
 func (TLSSecurityProfile) SwaggerDoc() map[string]string {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
@@ -266,39 +267,14 @@ export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
   timeout?: number,
-  isEntireResponse?: boolean,
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
-  (
-    url: string,
-    method?: string,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
+  (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
   delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
-  post(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
-  put(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
-  patch(
-    url: string,
-    json: any,
-    options?: RequestInit,
-    timeout?: number,
-    isEntireResponse?: boolean,
-  ): Promise<T>;
+  post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
 };
 
 export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
@@ -345,6 +321,9 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
   gridBreakPoint?: TableGridBreakpoint;
   rowData?: R;
   mock?: boolean;
+  sortColumnIndex?: number;
+  sortDirection?: SortByDirection;
+  csvData?: string;
 };
 
 export type VirtualizedTableFC = <D, R extends any = {}>(
@@ -508,7 +487,7 @@ export type PerspectiveType = string;
 
 export type UseActivePerspective = () => [
   PerspectiveType,
-  React.Dispatch<React.SetStateAction<PerspectiveType>>,
+  (perspective: string, next?: string) => void,
 ];
 
 export type QueryParams = {
@@ -677,6 +656,10 @@ export type ResourceYAMLEditorProps = {
   initialResource: string | { [key: string]: any };
   header?: string;
   onSave?: (content: string) => void;
+  readOnly?: boolean;
+  create?: boolean;
+  onChange?: (content: string) => void;
+  hideHeader?: boolean;
 };
 
 export type ResourceEventStreamProps = {
@@ -755,6 +738,14 @@ export type UseValuesForNamespaceContext = () => {
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
 
+export type UseUserSettings = <T>(
+  key: string,
+  defaultValue?: T,
+  sync?: boolean,
+) => [T, React.Dispatch<React.SetStateAction<T>>, boolean];
+
+export type UseQuickStartContext = () => QuickStartContextValues;
+
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
 
 export type Taint = {
@@ -781,6 +772,11 @@ export type NodeCondition = {
   lastHeartbeatTime?: string;
 } & K8sResourceCondition;
 
+export type NodeAddress = {
+  type: string;
+  address: string;
+};
+
 export type NodeKind = {
   spec: {
     taints?: Taint[];
@@ -788,6 +784,9 @@ export type NodeKind = {
   };
   status?: {
     capacity?: {
+      [key: string]: string;
+    };
+    allocatable?: {
       [key: string]: string;
     };
     conditions?: NodeCondition[];
@@ -798,7 +797,9 @@ export type NodeKind = {
     phase?: string;
     nodeInfo?: {
       operatingSystem: string;
+      architecture: string;
     };
+    addresses?: NodeAddress[];
   };
 } & K8sResourceCommon;
 

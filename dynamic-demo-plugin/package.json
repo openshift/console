@@ -35,6 +35,7 @@
     "react-i18next": "^11.7.3",
     "react-router": "5.3.x",
     "react-router-dom": "5.3.x",
+    "react-router-dom-v5-compat": "^6.11.2",
     "style-loader": "0.23.1",
     "ts-loader": "9.x",
     "ts-node": "10.9.2",
@@ -70,7 +71,8 @@
       "projectOverviewInventory": "./components/ProjectOverview/Inventory",
       "projectOverview": "./utils/project-overview",
       "modalPage": "./components/Modals/ModalPage",
-      "sampleErrorBoundaryPage": "./components/ErrorBoundary/SampleErrorBoundaryPage"
+      "sampleErrorBoundaryPage": "./components/ErrorBoundary/SampleErrorBoundaryPage",
+      "createProjectModal": "./components/Modals/CreateProjectModal"
     },
     "disableStaticPlugins": [
       "@console/demo-plugin"

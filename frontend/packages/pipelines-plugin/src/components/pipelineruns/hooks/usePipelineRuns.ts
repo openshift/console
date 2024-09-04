@@ -8,9 +8,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import { CustomRunModelV1Beta1 } from '@console/pipelines-plugin/src/models';
 import {
-  CustomRunKind,
   PipelineRunGroupVersionKind,
   PipelineRunKind,
   TaskRunGroupVersionKind,
@@ -27,6 +25,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     limit?: number;
     name?: string;
   },
+  cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const etcdRunsRef = React.useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
@@ -98,7 +97,12 @@ const useRuns = <Kind extends K8sResourceCommon>(
   const [trResources, trLoaded, trError, trGetNextPage] = (groupVersionKind ===
     PipelineRunGroupVersionKind
     ? useTRPipelineRuns
-    : useTRTaskRuns)(queryTr ? namespace : null, trOptions) as [[], boolean, unknown, GetNextPage];
+    : useTRTaskRuns)(queryTr ? namespace : null, trOptions, cacheKey) as [
+    [],
+    boolean,
+    unknown,
+    GetNextPage,
+  ];
 
   return React.useMemo(() => {
     const rResources =
@@ -107,7 +111,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
         : runs || trResources;
     return [
       rResources,
-      !!rResources?.[0],
+      !!rResources?.[0] || (loaded && trLoaded),
       namespace
         ? queryTr
           ? isList
@@ -118,7 +122,18 @@ const useRuns = <Kind extends K8sResourceCommon>(
         : undefined,
       trGetNextPage,
     ];
-  }, [runs, trResources, trLoaded, namespace, queryTr, isList, trError, error, trGetNextPage]);
+  }, [
+    runs,
+    trResources,
+    trLoaded,
+    loaded,
+    namespace,
+    queryTr,
+    isList,
+    trError,
+    error,
+    trGetNextPage,
+  ]);
 };
 
 export const usePipelineRuns = (
@@ -136,26 +151,9 @@ export const useTaskRuns = (
     selector?: Selector;
     limit?: number;
   },
+  cacheKey?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
-  useRuns<TaskRunKind>(TaskRunGroupVersionKind, namespace, options);
-
-export const useCustomRuns = (namespace: string): [CustomRunKind[], boolean, any] => {
-  const watchedResource = React.useMemo(
-    () => ({
-      isList: true,
-      groupVersionKind: {
-        group: CustomRunModelV1Beta1.apiGroup,
-        kind: CustomRunModelV1Beta1.kind,
-        version: CustomRunModelV1Beta1.apiVersion,
-      },
-      namespace,
-      namespaced: true,
-    }),
-    [namespace],
-  );
-
-  return useK8sWatchResource<CustomRunKind[]>(watchedResource);
-};
+  useRuns<TaskRunKind>(TaskRunGroupVersionKind, namespace, options, cacheKey);
 
 export const usePipelineRun = (
   namespace: string,

@@ -27,11 +27,12 @@ import {
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { isModifiedEvent } from '@console/shared/src/utils';
-import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
+import { DefaultCatalogSource, PackageSource } from '../../const';
 import { SubscriptionModel } from '../../models';
+import { DeprecatedOperatorWarningBadge } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { isAWSSTSCluster, isAzureWIFCluster } from './operator-hub-utils';
+import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
 import {
   OperatorHubItem,
   InstalledState,
@@ -61,7 +62,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
     // - if the operator has no flags, treat it with the defaults
     // - if it has any flags, it must list all flags (no defaults applied)
     const relevantLabels = _.reduce(
-      item?.obj?.metadata?.labels,
+      item?.obj?.metadata?.labels ?? {},
       (result, value: string, label: string): { arch: string[]; os: string[] } => {
         if (label.includes(archBaseLabel) && value === 'supported') {
           result.arch.push(label);
@@ -81,7 +82,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
       relevantLabels.os.push(osDefaultLinuxLabel);
     }
 
-    if (_.isEmpty(relevantLabels.os)) {
+    if (_.isEmpty(relevantLabels.arch)) {
       relevantLabels.arch.push(archDefaultAMD64Label);
     }
 
@@ -102,7 +103,7 @@ const Badge = ({ text }) => (
  * Filter property allow list
  */
 const operatorHubFilterGroups = [
-  'catalogSourceDisplayName',
+  'source',
   'provider',
   'installState',
   'capabilityLevel',
@@ -168,15 +169,15 @@ const providerSort = (provider) => {
   return provider.value;
 };
 
-const catalogSourceDisplayNameSort = (catalogSourceDisplayName) => {
-  switch (catalogSourceDisplayName.value) {
-    case DefaultCatalogSourceDisplayName.RedHatOperators:
+const sourceSort = (source) => {
+  switch (source.value) {
+    case PackageSource.RedHatOperators:
       return 0;
-    case DefaultCatalogSourceDisplayName.CertifiedOperators:
+    case PackageSource.CertifiedOperators:
       return 1;
-    case DefaultCatalogSourceDisplayName.CommunityOperators:
+    case PackageSource.CommunityOperators:
       return 2;
-    case DefaultCatalogSourceDisplayName.RedHatMarketplace:
+    case PackageSource.RedHatMarketplace:
       return 3;
     default:
       return 4;
@@ -211,13 +212,13 @@ const capabilityLevelSort = (provider) => {
 
 const infraFeaturesSort = (infrastructure) => {
   switch (infrastructure.value) {
-    case InfraFeatures.Disconnected:
+    case InfraFeatures.disconnected:
       return 0;
-    case InfraFeatures.Proxy:
+    case InfraFeatures.proxyAware:
       return 1;
-    case InfraFeatures.FipsMode:
+    case InfraFeatures.fipsMode:
       return 2;
-    case InfraFeatures.TokenAuth:
+    case InfraFeatures.tokenAuth:
       return 3;
     case InfraFeatures.tlsProfiles:
       return 4;
@@ -248,8 +249,8 @@ const sortFilterValues = (values, field) => {
     sorter = providerSort;
   }
 
-  if (field === 'catalogSourceDisplayName') {
-    return _.sortBy(values, [catalogSourceDisplayNameSort, 'value']);
+  if (field === 'source') {
+    return _.sortBy(values, [sourceSort, 'value']);
   }
 
   if (field === 'installState') {
@@ -367,10 +368,21 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
   }
   const { uid, name, imgUrl, provider, description, installed } = item;
   const vendor = provider ? t('olm~provided by {{provider}}', { provider }) : null;
-  const badges = item?.catalogSourceDisplayName
-    ? [<Badge text={item.catalogSourceDisplayName} />]
-    : [];
+  const badges = item?.source ? [<Badge text={item.source} />] : [];
   const icon = <img className="co-catalog--logo" loading="lazy" src={imgUrl} alt="" />;
+  const vendorAndDeprecated = () => (
+    <>
+      {vendor}
+      {item?.obj?.status?.deprecation && (
+        <div>
+          <DeprecatedOperatorWarningBadge
+            className="pf-v5-u-mt-xs"
+            deprecation={item.obj.status.deprecation}
+          />
+        </div>
+      )}
+    </>
+  );
 
   return (
     <CatalogTile
@@ -380,7 +392,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       title={name}
       badges={badges}
       icon={icon}
-      vendor={vendor}
+      vendor={vendorAndDeprecated()}
       description={description}
       onClick={(e: React.MouseEvent<HTMLElement>) => {
         if (isModifiedEvent(e)) return;
@@ -427,7 +439,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
     ) {
       setTokenizedAuth('AWS');
     }
@@ -438,9 +450,20 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.TokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
     ) {
       setTokenizedAuth('Azure');
+    }
+    if (
+      currentItem &&
+      isGCPWIFCluster(
+        currentItem.cloudCredentials,
+        currentItem.infrastructure,
+        currentItem.authentication,
+      ) &&
+      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuthGCP)
+    ) {
+      setTokenizedAuth('GCP');
     }
   }, [filteredItems]);
 
@@ -490,10 +513,12 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 
   const createLink =
     detailsItem &&
+    detailsItem.obj &&
     `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}&channel=${updateChannel}&version=${updateVersion}&tokenizedAuth=${tokenizedAuth}`;
 
   const uninstallLink = () =>
     detailsItem &&
+    detailsItem.subscription &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
 
   const remoteWorkflowUrl = React.useMemo(() => {
@@ -534,7 +559,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   }
 
   const filterGroupNameMap = {
-    catalogSourceDisplayName: t('olm~Source'),
+    source: t('olm~Source'),
     provider: t('olm~Provider'),
     installState: t('olm~Install state'),
     capabilityLevel: t('olm~Capability level'),
@@ -542,6 +567,17 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     validSubscriptionFilters: t('olm~Valid subscription'),
   };
 
+  const titleAndDeprecatedPackage = () => (
+    <>
+      {detailsItem.name}
+      {detailsItem?.obj?.status?.deprecation && (
+        <DeprecatedOperatorWarningBadge
+          className="pf-v5-u-ml-sm"
+          deprecation={detailsItem.obj.status.deprecation}
+        />
+      )}
+    </>
+  );
   return (
     <>
       <TileViewPage
@@ -569,7 +605,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 className="co-catalog-page__overlay-header"
                 iconClass={detailsItem.iconClass}
                 iconImg={detailsItem.imgUrl}
-                title={detailsItem.name}
+                title={titleAndDeprecatedPackage()}
                 vendor={t('olm~{{version}} provided by {{provider}}', {
                   version: updateVersion || installVersion || detailsItem.version,
                   provider: detailsItem.provider,
@@ -604,7 +640,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                         'pf-m-primary': !remoteWorkflowUrl,
                       },
                       {
-                        'pf-m-disabled': detailsItem.isInstalling,
+                        'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
                       },
                       'co-catalog-page__overlay-action',
                     )}

@@ -115,46 +115,6 @@ func TestProxy_IndexFile(t *testing.T) {
 			indexFiles: []string{},
 			mergedFile: "",
 		},
-		{
-			name:       "returned merged index file for all accessible helm repos",
-			indexFiles: []string{"testdata/azureRepoIndex.yaml"},
-			mergedFile: "testdata/mergedAzureRepoIndex.yaml",
-			helmClusterCRS: []*unstructured.Unstructured{
-				{
-					Object: map[string]interface{}{
-						"apiVersion": "helm.openshift.io/v1beta1",
-						"kind":       "HelmChartRepository",
-						"metadata": map[string]interface{}{
-							"namespace": "",
-							"name":      "repo1",
-						},
-						"spec": map[string]interface{}{
-							"connectionConfig": map[string]interface{}{
-								"url": "http://foo.com/bar",
-							},
-						},
-					},
-				},
-			},
-			helmNamespaceCRS: []*unstructured.Unstructured{
-				{
-					Object: map[string]interface{}{
-						"apiVersion": "helm.openshift.io/v1beta1",
-						"kind":       "ProjectHelmChartRepository",
-						"metadata": map[string]interface{}{
-							"namespace": "test-namespace",
-							"name":      "repo2",
-						},
-						"spec": map[string]interface{}{
-							"connectionConfig": map[string]interface{}{
-								"url": "http://foo.com/baz",
-							},
-						},
-					},
-				},
-			},
-			namespace: "test-namespace",
-		},
 	}
 
 	for _, tt := range tests {

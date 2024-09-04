@@ -5,6 +5,8 @@ export enum devNavigationMenu {
   Topology = 'Topology',
   Observe = 'Observe',
   Builds = 'Builds',
+  ShipwrightBuilds = 'Shipwright Builds',
+  BuildConfigs = 'BuildConfigs',
   Search = 'Search',
   Helm = 'Helm',
   Project = 'Project',
@@ -51,6 +53,25 @@ export enum operators {
   AMQStreams = 'AMQ Streams',
   RHOAS = 'RHOAS',
   Jaeger = 'Red Hat OpenShift distributed tracing platform',
+  BuildsForOpenshiftOperator = 'builds for Red Hat OpenShift Operator',
+}
+
+export enum operatorNamespaces {
+  PipelinesOperator = 'openshift-operators',
+  ServerlessOperator = 'openshift-serverless',
+  ShipwrightOperator = 'openshift-operators',
+  BuildsForOpenshiftOperator = 'openshift-operators',
+  WebTerminalOperator = 'openshift-operators',
+  RedHatIntegrationCamelK = 'openshift-operators',
+}
+
+export enum operatorSubscriptions {
+  PipelinesOperator = 'openshift-pipelines-operator',
+  ServerlessOperator = 'serverless-operator',
+  ShipwrightOperator = 'shipwright-operator',
+  BuildsForOpenshiftOperator = 'openshift-builds-operator',
+  WebTerminalOperator = 'web-terminal',
+  RedHatIntegrationCamelK = 'red-hat-camel-k',
 }
 
 export enum authenticationType {

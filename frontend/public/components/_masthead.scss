@@ -1,14 +1,13 @@
 .co-app-launcher {
-  ul {
-    list-style: none;
-    margin-bottom: 0;
-    padding-left: 0;
-  }
-
-  .pf-v5-c-app-launcher__menu-item-external-icon {
-    --pf-v5-c-app-launcher__menu-item-external-icon--Color: var(--pf-v5-c-menu__item-action--Color);
+  .pf-v5-c-menu__item-external-icon {
+    --pf-v5-c-menu__item-external-icon--Color: var(--pf-v5-c-menu__item-action--Color);
 
     opacity: 1;
+  }
+
+  .pf-v5-c-menu__item-icon {
+    height: var(--pf-v5-global--icon--FontSize--lg);
+    width: var(--pf-v5-global--icon--FontSize--lg);
   }
 }
 

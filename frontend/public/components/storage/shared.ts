@@ -7,10 +7,15 @@ export const snapshotPVCStorageClassAnnotation = 'snapshot.storage.kubernetes.io
 export const snapshotPVCAccessModeAnnotation = 'snapshot.storage.kubernetes.io/pvc-access-modes';
 export const snapshotPVCVolumeModeAnnotation = 'snapshot.storage.kubernetes.io/pvc-volume-mode';
 
-type AccessMode = 'ReadWriteOnce' | 'ReadWriteMany' | 'ReadOnlyMany';
+type AccessMode = 'ReadWriteOnce' | 'ReadWriteMany' | 'ReadOnlyMany' | 'ReadWriteOncePod';
 type VolumeMode = 'Filesystem' | 'Block';
 
-export const initialAccessModes: AccessMode[] = ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+export const initialAccessModes: AccessMode[] = [
+  'ReadWriteOnce',
+  'ReadWriteMany',
+  'ReadOnlyMany',
+  'ReadWriteOncePod',
+];
 export const initialVolumeModes: VolumeMode[] = ['Filesystem', 'Block'];
 
 type PartialMatch = { partialMatch?: boolean };
@@ -23,31 +28,32 @@ type ProvisionerAccessModeMapping = {
   [provisioner: string]: AccessModeMapping;
 };
 
-// See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
+// See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes and
+// https://docs.openshift.com/container-platform/4.15/storage/understanding-persistent-storage.html for more details
 export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze({
   'kubernetes.io/no-provisioner': {
     Filesystem: ['ReadWriteOnce'],
     Block: ['ReadWriteOnce'],
   },
   'kubernetes.io/aws-ebs': {
-    Filesystem: ['ReadWriteOnce'],
-    Block: ['ReadWriteOnce'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteOncePod'],
   },
   'kubernetes.io/gce-pd': {
-    Filesystem: ['ReadWriteOnce', 'ReadOnlyMany'],
-    Block: ['ReadWriteOnce', 'ReadOnlyMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadOnlyMany', 'ReadWriteOncePod'],
   },
   'kubernetes.io/glusterfs': {
-    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
   },
   'kubernetes.io/cinder': {
-    Filesystem: ['ReadWriteOnce'],
-    Block: ['ReadWriteOnce'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteOncePod', 'ReadWriteOncePod'],
   },
   'kubernetes.io/azure-file': {
-    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
   },
   'kubernetes.io/azure-disk': {
     Filesystem: ['ReadWriteOnce'],
@@ -103,17 +109,17 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
     Block: ['ReadWriteOnce'],
   },
   'cephfs.csi.ceph.com': {
-    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
     partialMatch: true,
   },
   'rbd.csi.ceph.com': {
-    Filesystem: ['ReadWriteOnce', 'ReadOnlyMany'],
-    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
     partialMatch: true,
   },
 });
 
-export const getAccessModeRadios = () => [
+export const getAccessModeOptions = () => [
   {
     value: 'ReadWriteOnce',
     title: i18next.t('public~Single user (RWO)'),
@@ -125,6 +131,10 @@ export const getAccessModeRadios = () => [
   {
     value: 'ReadOnlyMany',
     title: i18next.t('public~Read only (ROX)'),
+  },
+  {
+    value: 'ReadWriteOncePod',
+    title: i18next.t('public~Read write once pod (RWOP)'),
   },
 ];
 

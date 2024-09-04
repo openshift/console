@@ -11,6 +11,7 @@ import { dateTimeFormatter, fromNow } from './components/utils/datetime';
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
+const language = params.get('lng');
 
 let resolvedLoading;
 
@@ -20,7 +21,9 @@ export const loading = new Promise((resolve) => {
 
 export const init = () => {
   i18n
-    .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
+    .use(
+      new Pseudo({ enabled: pseudolocalizationEnabled, languageToPseudo: language, wrapped: true }),
+    )
     // fetch json files
     // learn more: https://github.com/i18next/i18next-http-backend
     .use(httpBackend)
@@ -33,7 +36,7 @@ export const init = () => {
     // for all options read: https://www.i18next.com/overview/configuration-options
     .init({
       backend: {
-        loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
+        loadPath: `${window.SERVER_FLAGS.basePath}locales/resource.json?lng={{lng}}&ns={{ns}}`,
         parse: function (data, lng, ns) {
           const parsed = JSON.parse(data);
           // i18next-v4-format-converter functions differently for plurals in
@@ -64,11 +67,11 @@ export const init = () => {
         'helm-plugin',
         'insights-plugin',
         'knative-plugin',
-        'kubevirt-plugin',
         'lso-plugin',
         'metal3-plugin',
         'notification-drawer',
         'olm',
+        'olm-v1',
         'pipelines-plugin',
         'shipwright-plugin',
         'public',

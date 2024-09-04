@@ -7,9 +7,9 @@ import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/f
 import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
-import { DeploySection } from './DeploySection';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import { DeployImageFormProps } from './import-types';
+import { DeploySection } from './section/deploy-section/DeploySection';
 import IconSection from './section/IconSection';
 
 const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({

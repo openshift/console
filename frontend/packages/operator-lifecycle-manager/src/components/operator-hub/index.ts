@@ -20,20 +20,15 @@ export enum CapabilityLevel {
 }
 
 export enum InfraFeatures {
-  Disconnected = 'Disconnected',
   disconnected = 'Disconnected',
-  Proxy = 'Proxy-aware',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'proxy-aware' = 'Proxy-aware',
-  FipsMode = 'FIPS Mode',
-  fips = 'FIPS Mode',
+  proxyAware = 'Proxy-aware',
+  fipsMode = 'Designed for FIPS',
   tlsProfiles = 'Configurable TLS ciphers',
   cnf = 'Cloud-Native Network Function',
   cni = 'Container Network Interface',
   csi = 'Container Storage Interface',
   sno = 'Single Node Clusters',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  TokenAuth = 'Short-lived token authentication',
+  tokenAuth = 'Short-lived token authentication',
   tokenAuthGCP = 'Auth Token GCP',
 }
 
@@ -45,28 +40,28 @@ export enum ValidSubscriptionValue {
 }
 
 export type OperatorHubItem = {
-  obj: PackageManifestKind;
-  name: string;
-  kind: string;
-  uid: string;
+  authentication: AuthenticationKind;
+  catalogSource: string;
+  catalogSourceNamespace: string;
+  categories: string[];
+  cloudCredentials: CloudCredentialKind;
+  createdAt?: string;
+  description: string;
+  infraFeatures: InfraFeatures[];
+  infrastructure: InfrastructureKind;
   installed: boolean;
   installState?: InstalledState;
-  subscription?: SubscriptionKind;
-  provider: string;
+  kind: string;
   longDescription: string;
-  description: string;
-  createdAt?: string;
+  name: string;
+  obj: PackageManifestKind;
+  provider: string;
+  source?: string;
+  subscription?: SubscriptionKind;
   tags: string[];
-  categories: string[];
-  catalogSource: string;
-  catalogSourceDisplayName?: string;
-  catalogSourceNamespace: string;
-  [key: string]: any;
+  uid: string;
   validSubscription: string[];
-  infraFeatures: InfraFeatures[];
-  cloudCredentials: CloudCredentialKind;
-  infrastructure: InfrastructureKind;
-  authentication: AuthenticationKind;
+  [key: string]: any;
 };
 
 export enum OperatorHubCSVAnnotationKey {

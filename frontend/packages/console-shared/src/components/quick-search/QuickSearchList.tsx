@@ -140,7 +140,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                             </SplitItem>
                             {item?.secondaryLabel && (
                               <SplitItem className="ocs-quick-search-list__secondary-label">
-                                <Label>{item.secondaryLabel}</Label>
+                                {item.secondaryLabel}
                               </SplitItem>
                             )}
                           </Split>

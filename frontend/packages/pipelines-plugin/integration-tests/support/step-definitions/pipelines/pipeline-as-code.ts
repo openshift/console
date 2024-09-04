@@ -195,7 +195,7 @@ Then('user clicks on the save button', () => {
 });
 
 Then('user is able to see a success alert message on same page', () => {
-  cy.get(formPO.successAlert).should('be.visible');
+  cy.get('[class*="success co-alert"]').should('be.visible');
 });
 
 When('adds the label {string}', (label: string) => {

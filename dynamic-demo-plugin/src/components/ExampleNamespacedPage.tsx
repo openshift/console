@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   Card,
   CardBody,
@@ -39,8 +39,8 @@ const NamespacePageContent = ({ namespace }: { namespace?: string }) => {
   );
 };
 
-export const ExampleNamespacedPage: React.FC<ExampleNamespacedPageProps> = ({ match }) => {
-  const { ns } = match?.params;
+export const ExampleNamespacedPage: React.FC = () => {
+  const { ns } = useParams<'ns'>();
   const activeNamespace = ns || 'all-namespaces';
 
   return (
@@ -49,10 +49,4 @@ export const ExampleNamespacedPage: React.FC<ExampleNamespacedPageProps> = ({ ma
       <NamespacePageContent namespace={activeNamespace} />
     </>
   );
-};
-
-type ExampleNamespacedPageProps = {
-  match: RMatch<{
-    ns?: string;
-  }>;
 };

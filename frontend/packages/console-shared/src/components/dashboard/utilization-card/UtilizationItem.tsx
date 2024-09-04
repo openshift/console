@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Flex, FlexItem, Popover } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Humanize, TopConsumerPopoverProps, LIMIT_STATE } from '@console/dynamic-plugin-sdk';
@@ -148,6 +150,7 @@ export const trimSecondsXMutator = (x) => {
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
   ({
     title,
+    titleHelpComponent,
     utilization,
     humanizeValue,
     isLoading = false,
@@ -159,6 +162,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     limit,
     requested,
     setLimitReqState,
+    errorThreashold,
+    warningThreashold,
   }) => {
     const { t } = useTranslation();
     const { startDate, endDate, updateEndDate } = useUtilizationDuration();
@@ -244,72 +249,99 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       }
     }
 
+    if (current > warningThreashold) {
+      LimitIcon = YellowExclamationTriangleIcon;
+    }
+
+    if (current > errorThreashold) {
+      LimitIcon = RedExclamationCircleIcon;
+    }
+
     const currentHumanized = !_.isNil(current) ? humanizeValue(current).string : null;
 
     return (
       <div className="co-utilization-card__item" data-test-id="utilization-item">
         <div className="co-utilization-card__item-description">
-          <div className="co-utilization-card__item-section">
-            <h4 className="pf-v5-c-title pf-m-md" data-test="utilization-item-title">
-              {title}
-            </h4>
-            {error || (!isLoading && !utilizationData?.length) ? (
-              <div className="text-secondary">{t('console-shared~Not available')}</div>
-            ) : (
-              <div>
-                {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}
-                {TopConsumerPopover ? (
-                  <TopConsumerPopover
-                    current={currentHumanized}
-                    limit={!_.isNil(latestLimit) ? humanizeValue(latestLimit).string : null}
-                    requested={
-                      !_.isNil(latestRequested) ? humanizeValue(latestRequested).string : null
-                    }
-                    available={humanAvailable}
-                    total={humanMax}
-                    limitState={limitState}
-                    requestedState={requestedState}
-                  />
-                ) : (
-                  currentHumanized
+          <Flex
+            justifyContent={{ default: 'justifyContentSpaceBetween' }}
+            className="co-utilization-card__item-section"
+          >
+            <FlexItem>
+              <h4 className="pf-v5-c-title pf-m-md" data-test="utilization-item-title">
+                {title}
+                {titleHelpComponent && (
+                  <Popover bodyContent={titleHelpComponent}>
+                    <>
+                      {' '}
+                      <HelpIcon />
+                    </>
+                  </Popover>
                 )}
-              </div>
-            )}
-          </div>
-          {!error && (humanAvailable || humanMax) && (
-            <div className="co-utilization-card__item-section">
-              <span
+              </h4>
+            </FlexItem>
+            <FlexItem>
+              {error || (!isLoading && !utilizationData?.length) ? (
+                <div className="text-secondary">{t('console-shared~Not available')}</div>
+              ) : (
+                <div>
+                  {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}
+                  {TopConsumerPopover ? (
+                    <TopConsumerPopover
+                      current={currentHumanized}
+                      limit={!_.isNil(latestLimit) ? humanizeValue(latestLimit).string : null}
+                      requested={
+                        !_.isNil(latestRequested) ? humanizeValue(latestRequested).string : null
+                      }
+                      available={humanAvailable}
+                      total={humanMax}
+                      limitState={limitState}
+                      requestedState={requestedState}
+                    />
+                  ) : (
+                    currentHumanized
+                  )}
+                </div>
+              )}
+            </FlexItem>
+          </Flex>
+          {!error && (humanAvailable || humanLimit) && (
+            <Flex
+              justifyContent={{ default: 'justifyContentSpaceBetween' }}
+              className="co-utilization-card__item-section"
+            >
+              <FlexItem
                 className="co-utilization-card__item-text"
                 data-test="utilization-card-item-text"
               >
-                {humanLimit && (
-                  <span>
-                    {t(
-                      'console-shared~{{humanAvailable}} available of {{humanLimit}} total limit',
-                      {
-                        humanAvailable,
-                        humanLimit,
-                      },
-                    )}
-                  </span>
-                )}
-                {!humanLimit && humanMax && (
-                  <span>
+                {humanAvailable && humanMax && (
+                  <>
                     {t('console-shared~{{humanAvailable}} available of {{humanMax}}', {
                       humanAvailable,
                       humanMax,
                     })}
-                  </span>
+                  </>
                 )}
-                {!humanLimit && !humanMax && (
-                  <span>
+                {humanAvailable && !humanMax && (
+                  <>
                     {t('console-shared~{{humanAvailable}} available', {
                       humanAvailable,
                     })}
-                  </span>
+                  </>
                 )}
-              </span>
-            </div>
+              </FlexItem>
+              {humanLimit && (
+                <FlexItem
+                  className="co-utilization-card__item-text"
+                  data-test="utilization-card-item-text"
+                >
+                  <>
+                    {t('console-shared~{{humanLimit}} total limit', {
+                      humanLimit,
+                    })}
+                  </>
+                </FlexItem>
+              )}
+            </Flex>
           )}
         </div>
         <div className="co-utilization-card__item-chart">{chart}</div>
