@@ -1,9 +1,11 @@
 import * as React from 'react';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { DurationKeys, DURATION_VALUES } from '../../../constants/duration';
@@ -12,7 +14,7 @@ import { useUtilizationDuration } from '../../../hooks';
 export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = ({
   adjustDuration,
 }) => {
-  const [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   const { t } = useTranslation();
   const { selectedKey, updateSelectedKey, updateDuration } = useUtilizationDuration(adjustDuration);
   const items = {
@@ -25,27 +27,37 @@ export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownPr
     (event, newSelected) => {
       updateSelectedKey(newSelected);
       updateDuration(DURATION_VALUES[newSelected]);
-      setOpen(false);
+      setIsOpen(false);
     },
     [updateDuration, updateSelectedKey],
   );
 
   return (
     <div data-test-id="duration-select">
-      <SelectDeprecated
-        variant={SelectVariantDeprecated.single}
-        onToggle={(_event, isExpanded: boolean) => setOpen(isExpanded)}
+      <Select
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={(open) => setIsOpen(open)}
+            isExpanded={isOpen}
+            variant="plainText"
+          >
+            {items[selectedKey]}
+          </MenuToggle>
+        )}
         onSelect={onSelect}
-        selections={selectedKey}
+        selected={selectedKey}
+        onOpenChange={(open) => setIsOpen(open)}
         isOpen={isOpen}
-        isPlain
       >
-        {Object.keys(items).map((key) => (
-          <SelectOptionDeprecated key={key} value={key}>
-            {items[key]}
-          </SelectOptionDeprecated>
-        ))}
-      </SelectDeprecated>
+        <SelectList>
+          {Object.keys(items).map((key) => (
+            <SelectOption key={key} value={key}>
+              {items[key]}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
     </div>
   );
 };
