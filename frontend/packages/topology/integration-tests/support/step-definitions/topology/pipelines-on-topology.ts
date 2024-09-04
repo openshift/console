@@ -60,7 +60,7 @@ When('user navigates to Topology page', () => {
 });
 
 When('user clicks on workload {string} to open sidebar', (workloadName: string) => {
-  topologyPage.componentNode(workloadName).click({ force: true });
+  topologyPage.verifyOrOpenSidebar(workloadName);
   topologyPage.waitForLoad();
 });
 

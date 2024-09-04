@@ -15,7 +15,11 @@ Then('user will see the Pod count is unchecked', () => {
 });
 
 Then('user will see the Labels is checked', () => {
-  cy.get(topologyPO.graph.displayOptions.showLabels).should('be.checked');
+  cy.get('[role="menuitem"]')
+    .contains('Labels')
+    .within(() => {
+      cy.get('[type="checkbox"]').should('be.checked');
+    });
 });
 
 Then('app icon is not displayed', () => {
