@@ -309,12 +309,11 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
 const EmptyMsg = () => {
   const { t } = useTranslation();
   return (
-    <MsgBox
-      title={t('public~No Roles found')}
-      detail={t(
+    <MsgBox title={t('public~No Roles found')}>
+      {t(
         'public~Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.',
       )}
-    />
+    </MsgBox>
   );
 };
 

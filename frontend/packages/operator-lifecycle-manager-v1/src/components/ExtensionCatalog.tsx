@@ -78,16 +78,11 @@ const ExtensionCatalog = () => {
           loadError={error}
           label={t('Extension Catalog items')}
           EmptyMsg={() => (
-            <MsgBox
-              title={t('No Extension Catalog items found')}
-              detail={
-                <span>
-                  {t(
-                    'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
-                  )}
-                </span>
-              }
-            />
+            <MsgBox title={t('No Extension Catalog items found')}>
+              {t(
+                'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
+              )}
+            </MsgBox>
           )}
         >
           <OperatorHubTileView items={legacyOpertorHubItems} namespace={namespace} />

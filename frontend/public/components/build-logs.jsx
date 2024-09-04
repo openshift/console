@@ -26,7 +26,7 @@ const PipelineLogMessage = ({ build }) => {
     </>
   );
 
-  return <MsgBox title={t('public~See Jenkins log')} detail={detail} />;
+  return <MsgBox title={t('public~See Jenkins log')}>{detail}</MsgBox>;
 };
 
 const buildPhaseToLogSourceStatus = (phase) => {

@@ -19,9 +19,7 @@ const getRowProps = (vulnerability: Vulnerability) => ({
 
 const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (props) => {
   const { t } = useTranslation();
-  const EmptyMsg = () => (
-    <MsgBox title={t('container-security~No Image vulnerabilities found')} detail="" />
-  );
+  const EmptyMsg = () => <MsgBox title={t('container-security~No Image vulnerabilities found')} />;
   const ImageVulnerabilitiesTableHeader = () => [
     {
       title: t('container-security~Name'),

@@ -363,10 +363,11 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         title={t("olm~{{item}} can't be installed", {
           item: channels?.[0]?.currentCSVDesc?.displayName,
         })}
-        detail={t(
+      >
+        {t(
           'olm~The Operator does not support to be made available in a single namespace (OwnNamespace installMode) or global installation (AllNamespaces installMode).  Use the CLI to install this Operator instead.',
         )}
-      />
+      </MsgBox>
     );
   }
 

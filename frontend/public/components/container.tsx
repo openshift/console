@@ -114,8 +114,9 @@ const Ports: React.FC<PortsProps> = ({ ports }) => {
       <MsgBox
         className="co-sysevent-stream__status-box-empty"
         title={t('public~No ports have been exposed')}
-        detail={t('public~Ports allow for traffic to enter this container')}
-      />
+      >
+        {t('public~Ports allow for traffic to enter this container')}
+      </MsgBox>
     );
   }
 
@@ -146,8 +147,9 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
       <MsgBox
         className="co-sysevent-stream__status-box-empty"
         title={t('public~No volumes have been mounted')}
-        detail={t('public~Volumes allow data to be shared as files with the pod')}
-      />
+      >
+        {t('public~Volumes allow data to be shared as files with the pod')}
+      </MsgBox>
     );
   }
 
@@ -189,8 +191,9 @@ const Env: React.FC<EnvProps> = ({ env }) => {
       <MsgBox
         className="co-sysevent-stream__status-box-empty"
         title={t('public~No variables have been set')}
-        detail={t('public~An easy way to pass configuration values')}
-      />
+      >
+        {t('public~An easy way to pass configuration values')}
+      </MsgBox>
     );
   }
 

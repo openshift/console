@@ -110,10 +110,9 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
       Header={ResourceTableHeader}
       Row={ResourceTableRow}
       EmptyMsg={() => (
-        <MsgBox
-          title={t('olm~No resources found')}
-          detail={t('olm~There are no Kubernetes resources used by this operand.')}
-        />
+        <MsgBox title={t('olm~No resources found')}>
+          {t('olm~There are no Kubernetes resources used by this operand.')}
+        </MsgBox>
       )}
       virtualize
     />

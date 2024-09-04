@@ -801,10 +801,9 @@ export const ProjectList = ({ data, ...tableProps }) => {
   }
 
   const ProjectEmptyMessage = () => (
-    <MsgBox
-      title={t('public~Welcome to OpenShift')}
-      detail={<OpenShiftGettingStarted canCreate={canCreate} />}
-    />
+    <MsgBox title={t('public~Welcome to OpenShift')}>
+      {<OpenShiftGettingStarted canCreate={canCreate} />}
+    </MsgBox>
   );
 
   const ProjectNotFoundMessage = () => (

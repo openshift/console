@@ -300,17 +300,15 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       data={data}
       EmptyMsg={() =>
         noAPIsFound ? (
-          <MsgBox
-            title={t('olm~No provided APIs defined')}
-            detail={t('olm~This application was not properly installed or configured.')}
-          />
+          <MsgBox title={t('olm~No provided APIs defined')}>
+            {t('olm~This application was not properly installed or configured.')}
+          </MsgBox>
         ) : (
-          <MsgBox
-            title={t('olm~No operands found')}
-            detail={t(
+          <MsgBox title={t('olm~No operands found')}>
+            {t(
               'olm~Operands are declarative components used to define the behavior of the application.',
             )}
-          />
+          </MsgBox>
         )
       }
       aria-label="Operands"

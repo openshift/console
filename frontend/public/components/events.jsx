@@ -24,9 +24,9 @@ import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
 import {
-  Box,
   Dropdown,
   Loading,
+  MsgBox,
   PageHeading,
   ResourceIcon,
   ResourceLink,
@@ -310,44 +310,30 @@ export const EventsList = (props) => {
 
 export const NoEvents = () => {
   const { t } = useTranslation();
-  return (
-    <Box className="co-sysevent-stream__status-box-empty">
-      <div className="pf-v5-u-text-align-center cos-status-box__detail">
-        {t('public~No events')}
-      </div>
-    </Box>
-  );
+  return <MsgBox>{t('public~No events')}</MsgBox>;
 };
 
 export const NoMatchingEvents = ({ allCount }) => {
   const { t } = useTranslation();
   return (
-    <Box className="co-sysevent-stream__status-box-empty">
-      <div className="cos-status-box__title">{t('public~No matching events')}</div>
-      <div className="pf-v5-u-text-align-center cos-status-box__detail">
-        {allCount >= maxMessages
-          ? t('public~{{count}}+ event exist, but none match the current filter', {
-              count: maxMessages,
-            })
-          : t('public~{{count}} event exist, but none match the current filter', {
-              count: allCount,
-            })}
-      </div>
-    </Box>
+    <MsgBox title={t('public~No matching events')}>
+      {allCount >= maxMessages
+        ? t('public~{{count}}+ event exist, but none match the current filter', {
+            count: maxMessages,
+          })
+        : t('public~{{count}} event exist, but none match the current filter', {
+            count: allCount,
+          })}
+    </MsgBox>
   );
 };
 
 export const ErrorLoadingEvents = () => {
   const { t } = useTranslation();
   return (
-    <Box>
-      <div className="cos-status-box__title cos-error-title">
-        {t('public~Error loading events')}
-      </div>
-      <div className="cos-status-box__detail pf-v5-u-text-align-center">
-        {t('public~An error occurred during event retrieval. Attempting to reconnect...')}
-      </div>
-    </Box>
+    <MsgBox title={t('public~Error loading events')}>
+      {t('public~An error occurred during event retrieval. Attempting to reconnect...')}
+    </MsgBox>
   );
 };
 

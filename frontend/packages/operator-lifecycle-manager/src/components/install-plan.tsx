@@ -152,12 +152,9 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 const EmptyMsg: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <MsgBox
-      title={t('olm~No InstallPlans found')}
-      detail={t(
-        'olm~InstallPlans are created automatically by subscriptions or manually using the CLI.',
-      )}
-    />
+    <MsgBox title={t('olm~No InstallPlans found')}>
+      {t('olm~InstallPlans are created automatically by subscriptions or manually using the CLI.')}
+    </MsgBox>
   );
 };
 
@@ -512,10 +509,9 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
     </>
   ) : (
     <div className="co-m-pane__body">
-      <MsgBox
-        title={t('olm~No components resolved')}
-        detail={t('olm~This InstallPlan has not been fully resolved yet.')}
-      />
+      <MsgBox title={t('olm~No components resolved')}>
+        {t('olm~This InstallPlan has not been fully resolved yet.')}
+      </MsgBox>
     </div>
   );
 };

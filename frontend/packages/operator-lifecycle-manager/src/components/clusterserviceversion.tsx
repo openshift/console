@@ -590,7 +590,7 @@ const CSVListNoDataEmptyMsg = () => {
       </div>
     </>
   );
-  return <MsgBox title={t('olm~No Operators found')} detail={detail} />;
+  return <MsgBox title={t('olm~No Operators found')}>{detail}</MsgBox>;
 };
 
 export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps> = ({
@@ -1222,10 +1222,9 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({ obj, customDat
   const { subscription, subscriptions, subscriptionsLoaded, subscriptionsLoadError } =
     customData ?? {};
   const EmptyMsg = () => (
-    <MsgBox
-      title={t('olm~No Operator Subscription')}
-      detail={t('olm~This Operator will not receive updates.')}
-    />
+    <MsgBox title={t('olm~No Operator Subscription')}>
+      {t('olm~This Operator will not receive updates.')}
+    </MsgBox>
   );
 
   return (

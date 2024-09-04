@@ -1991,5 +1991,6 @@
   "Disable": "Disable",
   "default": "default",
   "Disabled": "Disabled",
-  "Enabled": "Enabled"
+  "Enabled": "Enabled",
+  "Please check that the OperatorHub is running and that you have created a valid CatalogSource.": "Please check that the OperatorHub is running and that you have created a valid CatalogSource."
 }

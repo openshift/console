@@ -153,7 +153,7 @@ describe('InstallPlansList', () => {
     const MsgComponent = wrapper.find<any>(Table).props().EmptyMsg;
     const msgWrapper = shallow(<MsgComponent />);
     expect(msgWrapper.find(MsgBox).props().title).toEqual('No InstallPlans found');
-    expect(msgWrapper.find(MsgBox).props().detail).toEqual(
+    expect(msgWrapper.find(MsgBox)).toHaveTextContent(
       'InstallPlans are created automatically by subscriptions or manually using the CLI.',
     );
   });
@@ -259,7 +259,7 @@ describe('InstallPlanPreview', () => {
   it('calls `k8sPatch` to set `approved: true` when button is clicked', (done) => {
     jest
       .spyOn(k8sResourceModule, 'k8sPatch')
-      .mockImplementation((model, data) => Promise.resolve(data));
+      .mockImplementation((_model, data) => Promise.resolve(data));
 
     spyAndExpect(spyOn(k8sResourceModule, 'k8sPatch'))(Promise.resolve(testInstallPlan))
       .then(([model, installPlan]) => {

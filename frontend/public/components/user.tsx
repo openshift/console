@@ -33,7 +33,7 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
+  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
       startImpersonate('User', obj.metadata.name);
@@ -127,7 +127,7 @@ const NoDataEmptyMsgDetail = () => {
 
 const NoDataEmptyMsg = () => {
   const { t } = useTranslation();
-  return <MsgBox title={t('public~No Users found')} detail={<NoDataEmptyMsgDetail />} />;
+  return <MsgBox title={t('public~No Users found')}>{<NoDataEmptyMsgDetail />}</MsgBox>;
 };
 
 export const UserList: React.FC = (props) => {
@@ -225,7 +225,7 @@ type UserKebabProps = {
 const UserDetailsPage_: React.FC<UserKebabDispatchProps> = ({ startImpersonate, ...props }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
+  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
       startImpersonate('User', obj.metadata.name);

@@ -23,6 +23,7 @@ import {
   detailsPage,
   navFactory,
   ExternalLinkWithCopy,
+  MsgBox,
 } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 import {
@@ -483,9 +484,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
         </div>
       )}
       {_.isEmpty(route.status.ingress) ? (
-        <div className="cos-status-box">
-          <div className="pf-v5-u-text-align-center">{t('public~No route status')}</div>
-        </div>
+        <MsgBox>{t('public~No route status')}</MsgBox>
       ) : (
         <div className="co-m-pane__body">
           <RouteIngressStatus route={route} />

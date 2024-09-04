@@ -1,4 +1,11 @@
 import * as React from 'react';
+import {
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
@@ -8,7 +15,6 @@ import {
   DOC_URL_RED_HAT_MARKETPLACE,
   ExternalLink,
   Firehose,
-  MsgBox,
   PageHeading,
   skeletonCatalog,
   StatusBox,
@@ -225,22 +231,22 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
       loadError={loadError}
       label={t('olm~Resources')}
       EmptyMsg={() => (
-        <MsgBox
-          title={t('olm~No OperatorHub items found')}
-          detail={
-            <span>
-              <Trans ns="olm">
-                Please check that the OperatorHub is running and that you have created a valid
-                CatalogSource. For more information about OperatorHub, please click{' '}
-                <ExternalLink
-                  href="https://github.com/operator-framework/operator-marketplace"
-                  text={t('olm~here')}
-                />
-                .
-              </Trans>
-            </span>
-          }
-        />
+        <EmptyState>
+          <EmptyStateHeader title={t('olm~No OperatorHub items found')} />
+          <EmptyStateBody>
+            {t(
+              'Please check that the OperatorHub is running and that you have created a valid CatalogSource.',
+            )}
+          </EmptyStateBody>
+          <EmptyStateFooter>
+            <EmptyStateActions>
+              <ExternalLink
+                href="https://github.com/operator-framework/operator-marketplace"
+                text={t('olm~More info')}
+              />
+            </EmptyStateActions>
+          </EmptyStateFooter>
+        </EmptyState>
       )}
     >
       <OperatorHubTileView items={uniqueItems} namespace={namespace} />
