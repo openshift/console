@@ -1,5 +1,4 @@
 export * from './AccessDenied';
-export * from './Box';
 export * from './EmptyBox';
 export * from './LoadError';
 export * from './Loading';
