@@ -25,7 +25,7 @@ import {
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources } from './import-submit-utils';
-import { BaseFormData, GitImportFormData } from './import-types';
+import { BaseFormData, BuildOptions, GitImportFormData } from './import-types';
 import { detectGitType, validationSchema } from './import-validation-utils';
 import ImportSampleForm from './ImportSampleForm';
 
@@ -103,6 +103,7 @@ const ImportSamplePage: React.FC = () => {
         image: true,
         config: true,
       },
+      option: BuildOptions.BUILDS,
     },
     import: {
       showEditImportStrategy: true,
