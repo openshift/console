@@ -17,20 +17,20 @@ import {
   Alert,
   Button,
   Checkbox,
+  Dropdown,
+  DropdownItem,
+  DropdownList,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
+  MenuToggle,
+  MenuToggleElement,
   InputGroup,
   TextInput,
   EmptyStateHeader,
   InputGroupItem,
 } from '@patternfly/react-core';
-import {
-  DropdownItem as DropdownItemDeprecated,
-  Dropdown as DropdownDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-} from '@patternfly/react-core/deprecated';
 import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
 import classNames from 'classnames';
 import * as _ from 'lodash';
@@ -135,13 +135,13 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
     };
 
     const dropdownItems = spans.map((s) => (
-      <DropdownItemDeprecated
+      <DropdownItem
         className="query-browser__span-dropdown-item"
         key={s}
         onClick={() => setSpan(s, true)}
       >
         {s}
-      </DropdownItemDeprecated>
+      </DropdownItem>
     ));
 
     return (
@@ -158,18 +158,21 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
             />
           </InputGroupItem>
           <InputGroupItem>
-            <DropdownDeprecated
-              dropdownItems={dropdownItems}
+            <Dropdown
               isOpen={isOpen}
               onSelect={setClosed}
-              position="right"
-              toggle={
-                <DropdownToggleDeprecated
+              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                <MenuToggle
+                  ref={toggleRef}
+                  onClick={setIsOpen}
+                  isExpanded={isOpen}
                   aria-label={t('public~graph timespan')}
-                  onToggle={setIsOpen}
                 />
-              }
-            />
+              )}
+              popperProps={{ position: 'right' }}
+            >
+              <DropdownList>{dropdownItems}</DropdownList>
+            </Dropdown>
           </InputGroupItem>
         </InputGroup>
         <Button
