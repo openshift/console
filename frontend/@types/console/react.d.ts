@@ -7,5 +7,11 @@ declare module 'react' {
   }
 
   // Type def for a childless FunctionComponent
-  type FCC<P> = (props: P) => ReactElement | null;
+  interface FCC<P = {}> {
+    (props: P, context?: any): ReactElement | null;
+    propTypes?: FunctionComponent<P>['propTypes'];
+    contextTypes?: FunctionComponent<P>['contextTypes'];
+    defaultProps?: FunctionComponent<P>['defaultProps'];
+    displayName?: FunctionComponent<P>['displayName'];
+  }
 }

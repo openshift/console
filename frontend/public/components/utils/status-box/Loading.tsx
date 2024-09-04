@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-export const Loading: React.FC<LoadingProps> = ({ className }) => (
+export const Loading: React.FCC<LoadingProps> = ({ className }) => (
   <div
     className={classNames('co-m-loader co-an-fade-in-out', className)}
     data-test="loading-indicator"
