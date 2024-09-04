@@ -6,7 +6,6 @@ import { configure, render } from '@testing-library/react';
 import * as React from 'react';
 import {
   AccessDenied,
-  Box,
   EmptyBox,
   LoadError,
   Loading,
@@ -18,18 +17,9 @@ import {
 
 configure({ testIdAttribute: 'data-test' });
 
-describe('Box', () => {
-  it('should render its children', () => {
-    const { getByText } = render(<Box>my-children</Box>);
-
-    //assertion
-    getByText('my-children');
-  });
-});
-
 describe('LoadError', () => {
   it('should render info with label and message', () => {
-    const { getByText } = render(<LoadError label="test-label" message="test-message" />);
+    const { getByText } = render(<LoadError label="test-label">test-message</LoadError>);
     getByText('Error Loading test-label: test-message');
   });
 
@@ -69,9 +59,9 @@ describe('LoadingBox', () => {
     getByTestId('loading-indicator');
   });
 
-  it('should render message', () => {
-    const { getByText } = render(<LoadingBox message="test-message" />);
-    getByText('test-message');
+  it('should render children', () => {
+    const { getByText } = render(<LoadingBox>test-child</LoadingBox>);
+    getByText('test-child');
   });
 });
 
@@ -93,15 +83,15 @@ describe('MsgBox', () => {
     getByText('test-title');
   });
 
-  it('should render detail', () => {
-    const { getByText } = render(<MsgBox detail="test-detail" />);
-    getByText('test-detail');
+  it('should render children', () => {
+    const { getByText } = render(<MsgBox>test-child</MsgBox>);
+    getByText('test-child');
   });
 });
 
 describe('AccessDenied', () => {
   it('should render message', () => {
-    const { getByText } = render(<AccessDenied message="test-message" />);
+    const { getByText } = render(<AccessDenied>test-message</AccessDenied>);
     getByText('test-message');
   });
 });

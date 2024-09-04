@@ -1,13 +1,16 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { Alert } from '@patternfly/react-core';
 import {
   IncompleteDataError,
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
-import { EmptyBox, AccessDenied, LoadError, LoadingBox } from '.';
+import { AccessDenied } from './AccessDenied';
+import { LoadError } from './LoadError';
+import { LoadingBox } from './LoadingBox';
+import { EmptyBox } from './EmptyBox';
 
 const Data: React.FC<DataProps> = ({
   NoDataEmptyMsg,
@@ -52,7 +55,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
       );
     }
     if (status === 403) {
-      return <AccessDenied message={loadError.message} />;
+      return <AccessDenied>{loadError.message}</AccessDenied>;
     }
 
     if (loadError instanceof IncompleteDataError && !_.isEmpty(data)) {
@@ -87,17 +90,11 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
       );
     }
 
-    return (
-      <LoadError
-        message={loadError.message}
-        label={props.label}
-        className="loading-box loading-box__errored"
-      />
-    );
+    return <LoadError label={props.label}>{loadError.message}</LoadError>;
   }
 
   if (!loaded) {
-    return skeleton ? <>{skeleton}</> : <LoadingBox className="loading-box loading-box__loading" />;
+    return skeleton ? <>{skeleton}</> : <LoadingBox />;
   }
   return <Data data={data} {...dataProps} />;
 };
