@@ -57,6 +57,7 @@ export const listPage = {
     },
   },
   rows: {
+    getFirstElementName: () => cy.get('[data-test-rows="resource-row"] a').first(),
     shouldBeLoaded: () => {
       cy.get('[data-test-rows="resource-row"]').should('be.visible');
     },
