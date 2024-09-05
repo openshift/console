@@ -30,12 +30,12 @@ describe('LoadError', () => {
 
   it('should render with retry button', () => {
     const { getByText } = render(<LoadError label="test-label" />);
-    getByText('try again');
+    getByText('Try again');
   });
 
   it('should render without retry button', () => {
     const { queryByText } = render(<LoadError label="test-label" canRetry={false} />);
-    expect(queryByText('try again')).toBeNull();
+    expect(queryByText('Try again')).toBeNull();
   });
 });
 

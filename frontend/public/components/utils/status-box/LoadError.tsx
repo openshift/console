@@ -1,39 +1,24 @@
 import * as React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import {
-  Button,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateHeader,
-} from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Button, EmptyStateVariant } from '@patternfly/react-core';
+import { MsgBox } from '.';
 
 export const LoadError: React.FC<LoadErrorProps> = ({ label, children, canRetry = true }) => {
   const { t } = useTranslation();
+  const retry = canRetry && (
+    <Button
+      type="button"
+      onClick={window.location.reload.bind(window.location)}
+      variant="link"
+      isInline
+    >
+      {t('Try again')}
+    </Button>
+  );
   return (
-    <EmptyState>
-      <EmptyStateHeader titleText={t('public~Error Loading {{label}}', { label })} />
-      {children && <EmptyStateBody>{children}</EmptyStateBody>}
-      {canRetry && (
-        <EmptyStateFooter>
-          <EmptyStateActions>
-            <Trans ns="public">
-              Please{' '}
-              <Button
-                type="button"
-                onClick={window.location.reload.bind(window.location)}
-                variant="link"
-                isInline
-              >
-                try again
-              </Button>
-              .
-            </Trans>
-          </EmptyStateActions>
-        </EmptyStateFooter>
-      )}
-    </EmptyState>
+    <MsgBox primaryActions={retry} title={t('public~Error loading {{label}}', { label })}>
+      {children}
+    </MsgBox>
   );
 };
 LoadError.displayName = 'LoadError';

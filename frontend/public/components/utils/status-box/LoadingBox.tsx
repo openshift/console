@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { Loading } from './Loading';
+import { MsgBox } from './MsgBox';
 
 export const LoadingBox: React.FC = ({ children }) => (
-  <EmptyState data-test="loading-box">
-    <EmptyStateBody>
-      <Loading />
-      {children}
-    </EmptyStateBody>
-  </EmptyState>
+  <MsgBox>
+    <Loading />
+    {children}
+  </MsgBox>
 );
 LoadingBox.displayName = 'LoadingBox';

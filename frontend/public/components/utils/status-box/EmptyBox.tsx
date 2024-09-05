@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { EmptyState, EmptyStateBody } from '@patternfly/react-core';
+import { MsgBox } from './MsgBox';
 
 export const EmptyBox: React.FCC<EmptyBoxProps> = ({ label }) => {
   const { t } = useTranslation();
   return (
-    <EmptyState>
-      <EmptyStateBody data-test="empty-box-body">
-        {label ? t('public~No {{label}} found', { label }) : t('public~Not found')}
-      </EmptyStateBody>
-    </EmptyState>
+    <MsgBox dataTest="empty-box">
+      {label ? t('public~No {{label}} found', { label }) : t('public~Not found')}
+    </MsgBox>
   );
 };
 EmptyBox.displayName = 'EmptyBox';
