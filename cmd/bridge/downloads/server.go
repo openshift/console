@@ -1,19 +1,23 @@
-package downloadsserver
+package main
 
 import (
-	"strings"
-	"net/http"
-	"fmt"
-	"os"
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	"io"
+	"os"
 	"path/filepath"
-	"io/ioutil"
+	"strings"
 )
 
+type artifactFileSpec struct {
+	arch            string
+	operatingSystem string
+	path            string
+}
+
 // credits to https://www.arthurkoziel.com/writing-tar-gz-files-in-go/
-func addToArchive(tw *tar.Writer, filename string) error {
+func addFileToArchive(tw *tar.Writer, filename string) error {
 	// Open the file which will be written into the archive
 	file, err := os.Open(filename)
 	if err != nil {
@@ -21,7 +25,7 @@ func addToArchive(tw *tar.Writer, filename string) error {
 	}
 	defer file.Close()
 
-	// Get FileInfo about our file providing file size, mode, etc.
+	// Get file information
 	info, err := file.Stat()
 	if err != nil {
 		return err
@@ -34,9 +38,7 @@ func addToArchive(tw *tar.Writer, filename string) error {
 	}
 
 	// Use full path as name (FileInfoHeader only takes the basename)
-	// If we don't do this the directory strucuture would
-	// not be preserved
-	// https://golang.org/src/archive/tar/common.go?#L626
+	// https://golang.org/src/archive/tar/common.go?#L639
 	header.Name = filename
 
 	// Write file header to the tar archive
@@ -57,25 +59,19 @@ func addToArchive(tw *tar.Writer, filename string) error {
 func createArchive(tarName string, path string) error {
 	tarFile, err := os.Create(tarName)
 	if err != nil {
-		fmt.Println("Error creating tar file:", err)
 		return err
 	}
-	defer tarFile.Close() 
-	// new writers for gzip and tar
-	gw := gzip.NewWriter(tarFile)
-	defer gw.Close()   
-	tw := tar.NewWriter(tarFile)
-	defer tw.Close()   
+	defer tarFile.Close()
 
-	err = addToArchive(tw, path)
-	if err != nil {
-		return err
-	}
-	
-	return nil
+	gw := gzip.NewWriter(tarFile)
+	defer gw.Close()
+	tw := tar.NewWriter(tarFile)
+	defer tw.Close()
+
+	return addFileToArchive(tw, path)
 }
- 	
-func writeIndex(path string, message string) error {
+
+func createHTMLFile(path string, message string) error {
 	content := strings.Join([]string{
 		"<!doctype html>",
 		"<html lang=\"en\">",
@@ -88,56 +84,43 @@ func writeIndex(path string, message string) error {
 		"</html>",
 		"",
 	}, "\n")
-	return ioutil.WriteFile(path, []byte(content), 0644)
+	return os.WriteFile(path, []byte(content), 0644)
 }
 
-func start() {
-	//file, err := os.Open("text.txt") // For read access.
-	//check(err)
-	//data := make([]byte, 100)
-	//count, err := file.Read(data)
-	//check(err)
-	//fmt.Printf("read %d bytes: %q\n", count, data[:count])
-	
-	//f, err := os.CreateTemp("", "example")
-	//check(err)
-	//fmt.Println("Temp file name:", f.Name())
-	//defer os.Remove(f.Name())
-	//writeIndex("index.html", "Hello, World!")
-    //_, err = f.Write([]byte{1, 2, 3, 4})
-    //check(err)
-	fmt.Println("Hello, World!")
+func start() error {
+	f, err := os.CreateTemp("", "example")
+	if err != nil {
+		return err
+	}
+	fmt.Println("Temp file name:", f.Name())
+	defer os.Remove(f.Name())
 
-
-	//createArchive("hehe.tar.gz", []string{"index.html"})
 	tempDir, err := os.MkdirTemp("", "sampledir")
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		return err
+	}
 	defer os.RemoveAll(tempDir)
-    fmt.Println("serving from ", tempDir)
+	fmt.Println("serving from ", tempDir)
 	os.Chdir(tempDir)
 	fname := filepath.Join(tempDir, "file1")
-    err = os.WriteFile(fname, []byte("Hello, Gophers!"), 0666)
-    if err != nil {
-        panic(err)
-    }
-	
+	err = os.WriteFile(fname, []byte("Hello, Gophers!"), 0666)
+	if err != nil {
+		return err
+	}
 	architectures := []string{"amd64", "arm64", "ppc64le", "s390x"}
 	for _, arch := range architectures {
-		os.Mkdir(arch, 0755)
+		err = os.Mkdir(arch, 0755)
+		if err != nil {
+			return err
+		}
 	}
-	if err != nil {
-        panic(err)
-    }
+
 	content := []string{"<a href=\"oc-license\">license</a>"}
+
+	// symlink file in the temporary directory that points to the openshift license
 	os.Symlink("/usr/share/openshift/LICENSE", "oc-license")
 
-	specs := []struct {
-		arch            string
-		operatingSystem string
-		path            string
-	}{
+	specs := []artifactFileSpec{
 		{
 			arch:            "amd64",
 			operatingSystem: "linux",
@@ -189,14 +172,14 @@ func start() {
 		//fmt.Printf("target: %s\n", targetPath)
 		//fmt.Printf("dir: %s\n", dirPath)
 		//fmt.Printf("Base name without extension (baseRoot): %s\n", baseRoot)
-    	//fmt.Printf("Extension: %s\n\n", extension)
+		//fmt.Printf("Extension: %s\n\n", extension)
 		//fmt.Printf("Archive path root: %s\n", archivePathRoot)
-		createArchive(archivePathRoot + ".tar", targetPath)
+		createArchive(archivePathRoot+".tar", targetPath)
 		content = append(content, fmt.Sprintf("<a href=\"%s\">oc (%s %s)</a> (<a href=\"%s.tar\">tar</a> <a href=\"%s.zip\">zip</a>)",
-        targetPath, spec.arch, spec.operatingSystem, archivePathRoot, archivePathRoot))
+			targetPath, spec.arch, spec.operatingSystem, archivePathRoot, archivePathRoot))
 	}
 	fmt.Println(content)
-	
+
 	// Walk the temporary directory and create index files for each directory
 	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -216,7 +199,7 @@ func start() {
 			rootLink := strings.Replace(relPath, string(filepath.Separator), "/", -1)
 
 			// Write index for the current directory
-			writeIndex(
+			createHTMLFile(
 				filepath.Join(path, "index.html"),
 				fmt.Sprintf("<p>Directory listings are disabled. See <a href=\"%s\">here</a> for available content.</p>", rootLink),
 			)
@@ -224,7 +207,7 @@ func start() {
 
 		return nil
 	})
-	if err != nil {	
+	if err != nil {
 		fmt.Println("Error walking the path : ", err)
 	}
 
@@ -236,23 +219,31 @@ func start() {
 	message += "</ul>\n"
 
 	// Write the index file
-	err = writeIndex(filepath.Join(tempDir, "index.html"), message)
+	err = createHTMLFile(filepath.Join(tempDir, "index.html"), message)
 	if err != nil {
 		fmt.Println("Error writing index file: ", err)
 	}
-	
+
 	// Serve files from the temporary directory
-    http.Handle("/", http.FileServer(http.Dir(tempDir)))
+	//http.Handle("/", http.FileServer(http.Dir(tempDir)))
 
-    // Define the address to listen on
-    addr := ":8080"
+	// Define the port to listen on
+	//port := ":8081"
 
-    // Listen for incoming connections
-    fmt.Println("Server started. Listening on port", addr)
-    if err := http.ListenAndServe(addr, nil); err != nil {
-        fmt.Println("ListenAndServe: ", err)
-    }
+	// Listen for incoming connections
+	//fmt.Println("Server started. Listening on port", port)
+	//if err := http.ListenAndServe(port, nil); err != nil {
+	//	fmt.Println("ListenAndServe: ", err)
+	//}
 	//const PORT = 8080
 	//http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {fmt.Fprintf(w, "This is simple http request handler")})
 	//http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
+	return nil
+}
+
+func main() {
+	err := start()
+	if err != nil {
+		fmt.Println("Error starting the server: ", err)
+	}
 }
