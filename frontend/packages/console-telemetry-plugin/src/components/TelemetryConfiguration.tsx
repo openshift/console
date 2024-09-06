@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { FormHelperText, FormSection } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-} from '@patternfly/react-core/deprecated';
+  FormHelperText,
+  FormSection,
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { CLUSTER_TELEMETRY_ANALYTICS, useTelemetry } from '@console/shared/src';
@@ -67,28 +71,47 @@ const TelemetryAnalyticsSelect: React.FC<{
 
   const [isOpen, setIsOpen] = React.useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={() => setIsOpen(!isOpen)}
+      isExpanded={isOpen}
+      isDisabled={disabled}
+      isFullWidth
+    >
+      {options.find((option) => option.value === selection)?.title ||
+        t('console-telemetry-plugin~Select option')}
+    </MenuToggle>
+  );
+
   return (
     <div data-test="telemetry-dropdown">
-      <SelectDeprecated
-        disabled={disabled}
+      <Select
+        toggle={toggle}
         isOpen={isOpen}
-        selections={selection}
-        onToggle={(_event, isExpanded) => setIsOpen(isExpanded)}
-        onSelect={() => setIsOpen(false)}
-        placeholderText={t('console-telemetry-plugin~Select option')}
+        onSelect={(_, selectedValue: TelemetryAnalyticsSelectOptions) => {
+          if (selectedValue && !disabled) {
+            onChange(selectedValue);
+          }
+          setIsOpen(false);
+        }}
+        onOpenChange={(open) => setIsOpen(open)}
       >
-        {options.map((option) => (
-          <SelectOptionDeprecated
-            key={option.value}
-            value={option.value}
-            description={option.description}
-            onClick={() => onChange(option)}
-            data-test={`telemetry-dropdown-option-${option.title}`}
-          >
-            {option.title}
-          </SelectOptionDeprecated>
-        ))}
-      </SelectDeprecated>
+        <SelectList>
+          {options.map((option) => (
+            <SelectOption
+              key={option.value}
+              value={option}
+              description={option.description}
+              data-test={`telemetry-dropdown-option-${option.title}`}
+              isSelected={option.isSelected}
+            >
+              {option.title}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
     </div>
   );
 };
