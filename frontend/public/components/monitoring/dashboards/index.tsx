@@ -13,11 +13,11 @@ import {
   CardHeader,
   CardTitle,
   Tooltip,
+  Select,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
 } from '@patternfly/react-core';
-import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-} from '@patternfly/react-core/deprecated';
 import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
 import { AngleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-right-icon';
 import * as React from 'react';
@@ -29,6 +29,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
+import { SingleTypeaheadDropdown } from '@console/internal/components/utils/single-typeahead-dropdown';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
@@ -134,79 +135,17 @@ const evaluateTemplate = (
 
 const NamespaceContext = React.createContext('');
 
-const FilterSelect: React.FC<FilterSelectProps> = ({
-  items,
-  onChange,
-  OptionComponent,
-  selectedKey,
-}) => {
-  const { t } = useTranslation();
-
-  const [isOpen, , open, close] = useBoolean(false);
-  const [filterText, setFilterText] = React.useState<string>();
-
-  const onSelect = (e, v: string): void => {
-    onChange(v);
-    close();
-    setFilterText(undefined);
-  };
-
-  const onToggle = (_event, isExpanded: boolean) => {
-    if (isExpanded) {
-      open();
-    } else {
-      close();
-      setFilterText(undefined);
-    }
-  };
-
-  // filterText is lower-cased before being saved in state
-  const filteredItems = filterText
-    ? _.pickBy(items, (v) => v.toLowerCase().includes(filterText))
-    : items;
-
-  return (
-    <SelectDeprecated
-      className="monitoring-dashboards__variable-dropdown"
-      hasInlineFilter={_.size(items) > 1}
-      inlineFilterPlaceholderText={t('public~Filter options')}
-      isOpen={isOpen}
-      onFilter={() => null}
-      onSelect={onSelect}
-      onToggle={onToggle}
-      onTypeaheadInputChanged={(v) => setFilterText(v.toLowerCase())}
-      placeholderText={
-        Object.keys(items).includes(selectedKey) ? (
-          isIntervalVariable(selectedKey) ? (
-            'Auto interval'
-          ) : (
-            items[selectedKey]
-          )
-        ) : (
-          <>
-            <RedExclamationCircleIcon /> {t('public~Select a dashboard from the dropdown')}
-          </>
-        )
-      }
-    >
-      {_.map(filteredItems, (v, k) => (
-        <OptionComponent key={k} itemKey={k} />
-      ))}
-    </SelectDeprecated>
-  );
-};
-
-const VariableOption = ({ itemKey }) =>
-  isIntervalVariable(itemKey) ? (
-    <Tooltip content={itemKey}>
-      <SelectOptionDeprecated key={itemKey} value={itemKey}>
+const VariableOption = ({ value, isSelected, ...rest }) =>
+  isIntervalVariable(String(value)) ? (
+    <Tooltip content={value}>
+      <SelectOption value={value} isSelected={isSelected || false}>
         Auto interval
-      </SelectOptionDeprecated>
+      </SelectOption>
     </Tooltip>
   ) : (
-    <SelectOptionDeprecated key={itemKey} value={itemKey}>
-      {itemKey === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? 'All' : itemKey}
-    </SelectOptionDeprecated>
+    <SelectOption value={value} isSelected={isSelected || false} {...rest}>
+      {value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? 'All' : value}
+    </SelectOption>
   );
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace }) => {
@@ -332,21 +271,28 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
         {name}
       </label>
       {isError ? (
-        <SelectDeprecated
-          isDisabled={true}
-          onToggle={() => {}}
-          placeholderText={
-            <>
+        <Select
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
+              ref={toggleRef}
+              className="monitoring-dashboards__dropdown-button"
+              isDisabled={true}
+              onClick={(e) => e.preventDefault()}
+            >
               <RedExclamationCircleIcon /> {t('public~Error loading options')}
-            </>
-          }
+            </MenuToggle>
+          )}
+          onToggle={() => {}}
         />
       ) : (
-        <FilterSelect
+        <SingleTypeaheadDropdown
           items={items}
           onChange={onChange}
           OptionComponent={VariableOption}
           selectedKey={variable.value}
+          hideClearButton
+          resizeToFit
+          placeholder={t('public~Select a dashboard from the dropdown')}
         />
       )}
     </div>
@@ -384,20 +330,21 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
     const allTags = _.flatMap(items, 'tags');
     const uniqueTags = _.uniq(allTags);
 
-    const OptionComponent = ({ itemKey }) => (
-      <SelectOptionDeprecated
-        className="monitoring-dashboards__dashboard_dropdown_item"
-        value={itemKey}
-      >
-        {items[itemKey]?.title}
-        {items[itemKey]?.tags?.map((tag, i) => (
-          <Tag
-            color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
-            key={i}
-            text={tag}
-          />
-        ))}
-      </SelectOptionDeprecated>
+    const OptionComponent = ({ value, isSelected, ...rest }) => (
+      <SelectOption value={value} isSelected={isSelected || false} {...rest}>
+        <div className="monitoring-dashboards__dashboard_dropdown_item">
+          <span>{items[value]?.title}</span>
+          <div className="monitoring-dashboards__dashboard_dropdown_tags">
+            {items[value]?.tags?.map((tag, i) => (
+              <Tag
+                color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
+                key={i}
+                text={tag}
+              />
+            ))}
+          </div>
+        </div>
+      </SelectOption>
     );
 
     const selectItems = _.mapValues(items, 'title');
@@ -413,11 +360,13 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
         >
           {t('public~Dashboard')}
         </label>
-        <FilterSelect
+        <SingleTypeaheadDropdown
           items={selectItems}
           onChange={onChange}
           OptionComponent={OptionComponent}
           selectedKey={selectedKey}
+          hideClearButton
+          resizeToFit
         />
       </div>
     );
@@ -918,13 +867,6 @@ type Variable = {
   options?: string[];
   query?: string;
   value?: string;
-};
-
-type FilterSelectProps = {
-  items: { [key: string]: string };
-  onChange: (v: string) => void;
-  OptionComponent: React.FC<{ itemKey: string }>;
-  selectedKey: string;
 };
 
 type VariableDropdownProps = {

@@ -148,7 +148,8 @@
   flex-direction: column;
   margin-right: 20px;
 
-  .monitoring-dashboards__dashboard_dropdown_item {
+  .monitoring-dashboards__dashboard_dropdown_item,
+  .monitoring-dashboards__dashboard_dropdown_tags {
     display: flex;
     justify-content: space-between;
   }
