@@ -72,7 +72,9 @@ const Lightspeed: React.FC = () => {
   };
   const onDismissClick = () => {
     setIsOpen(false);
-    history.push('/user-preferences');
+    history.push(
+      '/user-preferences/general?spotlight=[data-test="console.hideLightspeedButton%20field"]',
+    );
   };
 
   const title = t('console-app~Red Hat OpenShift Lightspeed');
