@@ -1,9 +1,11 @@
 import * as React from 'react';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { global_palette_green_500 as greenColor } from '@patternfly/react-tokens';
 import i18n from 'i18next';
@@ -39,38 +41,46 @@ const PipelineQuickSearchVersionDropdown: React.FC<PipelineQuickSearchVersionDro
     }
     return acc;
   }, {});
-  return (
-    <DropdownDeprecated
-      data-test="task-version"
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
       className="opp-quick-search-details__version-dropdown"
-      dropdownItems={Object.keys(versionItems).map((key) => (
-        <DropdownItemDeprecated
-          component="button"
-          key={key}
-          label={versionItems[key]}
-          onClick={(e) => {
-            e.stopPropagation();
-            onChange(key);
-            setOpen(false);
-          }}
-        >
-          <div className="opp-quick-search-details__version-dropdown-item">
-            {versionItems[key]}
-            {isSelectedVersionInstalled(item, key) && <CheckCircleIcon color={greenColor.value} />}
-          </div>
-        </DropdownItemDeprecated>
-      ))}
+      onClick={toggleIsOpen}
+      isExpanded={isOpen}
+      ref={toggleRef}
+      isDisabled={versions.length === 1}
+      data-test="task-version"
+    >
+      {versionItems[selectedVersion]}
+    </MenuToggle>
+  );
+
+  return (
+    <Select
+      className="opp-quick-search-details__version-dropdown"
       isOpen={isOpen}
-      toggle={
-        <DropdownToggleDeprecated
-          isDisabled={versions.length === 1}
-          data-test="task-version-toggle"
-          onToggle={toggleIsOpen}
-        >
-          {versionItems[selectedVersion]}
-        </DropdownToggleDeprecated>
-      }
-    />
+      onSelect={(_, value: string) => {
+        if (value) {
+          onChange(value);
+        }
+        setOpen(false);
+      }}
+      toggle={toggle}
+      onOpenChange={(open) => setOpen(open)}
+    >
+      <SelectList>
+        {Object.keys(versionItems).map((key) => (
+          <SelectOption key={key} label={versionItems[key]} value={key}>
+            <div className="opp-quick-search-details__version-dropdown-item">
+              {versionItems[key]}
+              {isSelectedVersionInstalled(item, key) && (
+                <CheckCircleIcon color={greenColor.value} />
+              )}
+            </div>
+          </SelectOption>
+        ))}
+      </SelectList>
+    </Select>
   );
 };
 
