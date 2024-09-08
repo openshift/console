@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-} from '@patternfly/react-core/deprecated';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from '@console/internal/components/autocomplete';
@@ -29,46 +30,48 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
   const { t } = useTranslation();
 
   const onToggle = (_event, open: boolean) => setOpen(open);
-  const onSelect = (event: React.SyntheticEvent) => {
-    setSelected((event.target as HTMLInputElement).name as NameLabelFilterValues);
-    setOpen(!isOpen);
-  };
-  const dropdownItems = [
-    <DropdownItemDeprecated key="name-action" name={NameLabelFilterValues.Name} component="button">
-      {t(NameLabelFilterValues.Name)}
-    </DropdownItemDeprecated>,
-    <DropdownItemDeprecated
-      key="label-action"
-      name={NameLabelFilterValues.Label}
-      component="button"
-    >
-      {t(NameLabelFilterValues.Label)}
-    </DropdownItemDeprecated>,
-  ];
+  const dropdownItems = [NameLabelFilterValues.Name, NameLabelFilterValues.Label];
 
   const handleInputValue = (value: string) => {
     onChange(selected, value, false);
   };
 
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      id="toggle-id"
+      ref={toggleRef}
+      onClick={(_event) => {
+        onToggle(_event, !isOpen);
+      }}
+      isDisabled={isDisabled}
+    >
+      <>
+        <FilterIcon className="span--icon__right-margin" /> {t(selected)}
+      </>
+    </MenuToggle>
+  );
+
   return (
     <div className="pf-v5-c-input-group">
-      <DropdownDeprecated
-        onSelect={onSelect}
-        toggle={
-          <DropdownToggleDeprecated
-            isDisabled={isDisabled}
-            id="toggle-id"
-            onToggle={onToggle}
-            toggleIndicator={CaretDownIcon}
-          >
-            <>
-              <FilterIcon className="span--icon__right-margin" /> {t(selected)}
-            </>
-          </DropdownToggleDeprecated>
-        }
+      <Select
+        onSelect={(_event, value: NameLabelFilterValues) => {
+          if (value) {
+            setSelected(value as NameLabelFilterValues);
+          }
+          setOpen(false);
+        }}
+        toggle={toggle}
         isOpen={isOpen}
-        dropdownItems={dropdownItems}
-      />
+        onOpenChange={(open) => setOpen(open)}
+      >
+        <SelectList>
+          {dropdownItems.map((item) => (
+            <SelectOption key={item} value={item} isSelected={selected === item}>
+              {t(item)}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
       {selected === NameLabelFilterValues.Label ? (
         <AutocompleteInput
           onSuggestionSelect={(label) => {
