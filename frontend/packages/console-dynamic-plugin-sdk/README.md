@@ -31,6 +31,37 @@ provided by Console to its dynamic plugins.
 _[OpenShift Console Dynamic Plugins feature page][console-doc-feature-page]_ - A high-level overview of
 dynamic plugins in relation to OLM operators and cluster administration.
 
+## Plugin project references
+
+If you're new to dynamic plugins, we suggest to clone the [Console plugin template][console-plugin-template]
+repo and follow its instructions on setting up a local plugin development environment. We recommend running
+the Console application via container image to avoid having to build Console locally.
+
+The [CronTab plugin](https://github.com/openshift/console-crontab-plugin) is a sample plugin that uses the
+`CronTab` Custom Resource Definition (CRD) from
+[Kubernetes documentation](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
+and implements basic CRD operations such as creating, editing and deleting.
+
+The [Console demo plugin][console-demo-plugin] located in the Console repo is primarily meant for testing
+the current Console plugin SDK features.
+
+Here is a list of real world dynamic plugins that may serve as a further reference point:
+
+| Plugin Name | Git Repo |
+| ----------- | -------- |
+| `kubevirt-plugin` (KubeVirt) | https://github.com/kubevirt-ui/kubevirt-plugin |
+| `networking-console-plugin` (OpenShift Networking) | https://github.com/openshift/networking-console-plugin |
+| `netobserv-plugin` (Network Observability) | https://github.com/netobserv/network-observability-console-plugin |
+| `odf-console` (OpenShift Data Foundation) | https://github.com/red-hat-storage/odf-console/tree/master/plugins/odf |
+| `odf-multicluster-console` (ODF MultiCluster Orchestrator) | https://github.com/red-hat-storage/odf-console/tree/master/plugins/mco |
+| `pipelines-console-plugin` (OpenShift Pipelines) | https://github.com/openshift-pipelines/console-plugin |
+| `acm` (Red Hat Advanced Cluster Management) | https://github.com/stolostron/console/tree/main/frontend/plugins/acm |
+| `mce` (MultiCluster Engine for Kubernetes) | https://github.com/stolostron/console/tree/main/frontend/plugins/mce |
+| `ossmconsole` (OpenShift Service Mesh) | https://github.com/kiali/openshift-servicemesh-plugin |
+
+There's also the [Cat Facts Operator](https://github.com/RyanMillerC/cat-facts-operator) which serves
+as a reference point for writing an OLM operator that ships with its own Console dynamic plugin.
+
 ## Distributable SDK package overview
 
 | Package Name | Description |
@@ -536,3 +567,5 @@ For more information on OpenShift Internationalization, see the console [Interna
 [console-doc-api]: ./docs/api.md
 [console-doc-feature-page]: https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md
 [console-pf-upgrade-notes]: ./upgrade-PatternFly.md
+[console-plugin-template]: https://github.com/openshift/console-plugin-template
+[console-demo-plugin]: ../../../dynamic-demo-plugin/README.md
