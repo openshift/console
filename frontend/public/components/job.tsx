@@ -75,6 +75,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
   const { type, completions } = getJobTypeAndCompletions(job);
   const resourceKind = referenceFor(job);
   const context = { [resourceKind]: job };
+  const { t } = useTranslation();
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -91,7 +92,10 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Link to={`/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
-          {job.status.succeeded || 0} of {completions}
+          {t('public~{{jobsSucceeded}} of {{completions}}', {
+            jobsSucceeded: job.status.succeeded || 0,
+            completions,
+          })}
         </Link>
       </TableData>
       <TableData className={tableColumnClasses[4]}>{type}</TableData>

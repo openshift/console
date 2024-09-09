@@ -1496,6 +1496,7 @@
   "Unknown error submitting": "提交未知错误",
   "Select all filters": "清除所有过滤器",
   "{{selectedCount}} of {{itemCount}}": "{{selectedCount}}（共 {{itemCount}}）",
+  "{{jobsSucceeded}} of {{completions}}": "{{jobsSucceeded}}（共 {{completions}}) ",
   "Item_one": "项",
   "Item_other": "项",
   "Search": "搜索",
