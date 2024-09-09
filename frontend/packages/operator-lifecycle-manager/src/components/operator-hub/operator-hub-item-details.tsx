@@ -35,7 +35,7 @@ import { defaultChannelNameFor } from '../index';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
 import { CloudServiceTokenWarningAlert } from './operator-hub-subscribe';
 import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
-import { InfraFeatures, OperatorHubItem } from './index';
+import { InfrastructureFeature, OperatorHubItem } from './index';
 
 // t('olm~Basic Install'),
 // t('olm~Seamless Upgrades'),
@@ -377,7 +377,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             <div className="co-catalog-page__overlay-description">
               {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
                 showCSTokenWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
+                infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth) && (
                   <CloudServiceTokenWarningAlert
                     title={t('olm~Cluster in STS Mode')}
                     message={t(
@@ -388,7 +388,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 )}
               {isAzureWIFCluster(cloudCredentials, infrastructure, authentication) &&
                 showCSTokenWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.tokenAuth) && (
+                infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth) && (
                   <CloudServiceTokenWarningAlert
                     title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
                     message={t(
@@ -399,7 +399,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 )}
               {isGCPWIFCluster(cloudCredentials, infrastructure, authentication) &&
                 showCSTokenWarn &&
-                infraFeatures?.find((i) => i === InfraFeatures.tokenAuthGCP) && (
+                infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuthGCP) && (
                   <CloudServiceTokenWarningAlert
                     title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
                     message={t(
