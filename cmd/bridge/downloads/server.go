@@ -282,7 +282,7 @@ func start() error {
 	// Write the index file
 	err = createHTMLFile(filepath.Join(tempDir, "index.html"), message)
 	if err != nil {
-		fmt.Println("Error writing index file: ", err)
+		return err
 	}
 
 	// Serve files from the temporary directory
@@ -294,10 +294,10 @@ func start() error {
 	// Listen for incoming connections
 	fmt.Println("Server started. Listening on port", port)
 	if err := http.ListenAndServe(port, nil); err != nil {
-		fmt.Println("ListenAndServe: ", err)
+		return err
 	}
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "This is simple http request handler") })
-	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	//http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "This is simple http request handler") })
+	//http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	return nil
 }
 
