@@ -59,7 +59,9 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
   );
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<string>(getAccessModeOptions()[0].title);
+  const [selected, setSelected] = React.useState<string>(
+    getAccessModeOptions().find((mode) => mode.value === pvcInitialAccessMode[0]).title,
+  );
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
