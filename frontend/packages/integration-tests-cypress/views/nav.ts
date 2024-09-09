@@ -9,7 +9,7 @@ export const nav = {
           .click()
           .byLegacyTestID('perspective-switcher-menu-option')
           .contains(newPerspective)
-          .click(),
+          .click({ force: true }),
     },
     clusters: {
       shouldHaveText: (text: string) => cy.byLegacyTestID('cluster-dropdown-toggle').contains(text),
