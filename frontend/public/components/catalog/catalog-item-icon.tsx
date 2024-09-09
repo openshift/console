@@ -4,7 +4,6 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
 import { TemplateKind, PartialObjectMetadata } from '../../module/k8s';
-import * as threeScaleImg from '../../imgs/logos/3scale.svg';
 import * as aerogearImg from '../../imgs/logos/aerogear.svg';
 import * as amqImg from '../../imgs/logos/amq.svg';
 import * as angularjsImg from '../../imgs/logos/angularjs.svg';
@@ -14,8 +13,8 @@ import * as beakerImg from '../../imgs/logos/beaker.svg';
 import * as buildIconImg from '../../imgs/logos/build-icon.svg';
 import * as camelImg from '../../imgs/logos/camel.svg';
 import * as capedwarfImg from '../../imgs/logos/capedwarf.svg';
-import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
 import * as cassandraImg from '../../imgs/logos/cassandra.svg';
+import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
 import * as clojureImg from '../../imgs/logos/clojure.svg';
 import * as codeigniterImg from '../../imgs/logos/codeigniter.svg';
 import * as cordovaImg from '../../imgs/logos/cordova.png';
@@ -31,17 +30,19 @@ import * as elasticImg from '../../imgs/logos/elastic.svg';
 import * as erlangImg from '../../imgs/logos/erlang.svg';
 import * as fedoraImg from '../../imgs/logos/fedora.svg';
 import * as freebsdImg from '../../imgs/logos/freebsd.svg';
-import * as gitImg from '../../imgs/logos/git.svg';
-import * as githubImg from '../../imgs/logos/github.svg';
-import * as gitlabImg from '../../imgs/logos/gitlab.svg';
 import * as giteaImg from '../../imgs/logos/gitea.svg';
+import * as githubImg from '../../imgs/logos/github.svg';
+import * as gitImg from '../../imgs/logos/git.svg';
+import * as gitlabImg from '../../imgs/logos/gitlab.svg';
 import * as glassfishImg from '../../imgs/logos/glassfish.svg';
+import * as goGopherImg from '../../imgs/logos/go-gopher.svg';
 import * as goLangImg from '../../imgs/logos/golang.svg';
 import * as grailsImg from '../../imgs/logos/grails.svg';
 import * as hadoopImg from '../../imgs/logos/hadoop.svg';
 import * as haproxyImg from '../../imgs/logos/haproxy.svg';
 import * as helmImg from '../../imgs/logos/helm.svg';
 import * as infinispanImg from '../../imgs/logos/infinispan.svg';
+import * as intellijImg from '../../imgs/logos/intellij.svg';
 import * as jbossImg from '../../imgs/logos/jboss.svg';
 import * as jenkinsImg from '../../imgs/logos/jenkins.svg';
 import * as jettyImg from '../../imgs/logos/jetty.svg';
@@ -49,7 +50,6 @@ import * as joomlaImg from '../../imgs/logos/joomla.svg';
 import * as jrubyImg from '../../imgs/logos/jruby.svg';
 import * as jsImg from '../../imgs/logos/js.svg';
 import * as knativeImg from '../../imgs/logos/knative.svg';
-import * as serverlessFuncImage from '../../imgs/logos/serverlessfx.svg';
 import * as kubevirtImg from '../../imgs/logos/kubevirt.svg';
 import * as laravelImg from '../../imgs/logos/laravel.svg';
 import * as loadBalancerImg from '../../imgs/logos/load-balancer.svg';
@@ -62,10 +62,10 @@ import * as mysqlDatabaseImg from '../../imgs/logos/mysql-database.svg';
 import * as nginxImg from '../../imgs/logos/nginx.svg';
 import * as nodejsImg from '../../imgs/logos/nodejs.svg';
 import * as openjdkImg from '../../imgs/logos/openjdk.svg';
-import * as redhatImg from '../../imgs/logos/redhat.svg';
 import * as openlibertyImg from '../../imgs/logos/openliberty.svg';
 import * as openshiftImg from '../../imgs/logos/openshift.svg';
 import * as openstackImg from '../../imgs/logos/openstack.svg';
+import * as operatorImg from '../../imgs/logos/operator.svg';
 import * as otherLinuxImg from '../../imgs/logos/other-linux.svg';
 import * as otherUnknownImg from '../../imgs/logos/other-unknown.svg';
 import * as perlImg from '../../imgs/logos/perl.svg';
@@ -79,6 +79,7 @@ import * as quarkusImg from '../../imgs/logos/quarkus.svg';
 import * as rabbitmqImg from '../../imgs/logos/rabbitmq.svg';
 import * as railsImg from '../../imgs/logos/rails.svg';
 import * as reactImg from '../../imgs/logos/react.svg';
+import * as redhatImg from '../../imgs/logos/redhat.svg';
 import * as redisImg from '../../imgs/logos/redis.svg';
 import * as rhIntegrationImg from '../../imgs/logos/rh-integration.svg';
 import * as rhSpringBoot from '../../imgs/logos/rh-spring-boot.svg';
@@ -86,22 +87,24 @@ import * as rhTomcatImg from '../../imgs/logos/rh-tomcat.svg';
 import * as rubyImg from '../../imgs/logos/ruby.svg';
 import * as rustImg from '../../imgs/logos/rust.svg';
 import * as scalaImg from '../../imgs/logos/scala.svg';
+import * as serverlessFuncImage from '../../imgs/logos/serverlessfx.svg';
 import * as shadowmanImg from '../../imgs/logos/shadowman.svg';
-import * as springImg from '../../imgs/logos/spring.svg';
 import * as springBootImg from '../../imgs/logos/spring-boot.svg';
+import * as springImg from '../../imgs/logos/spring.svg';
 import * as ssoImg from '../../imgs/logos/sso.svg';
 import * as stackoverflowImg from '../../imgs/logos/stackoverflow.svg';
 import * as suseImg from '../../imgs/logos/suse.svg';
 import * as symfonyImg from '../../imgs/logos/symfony.svg';
+import * as threeScaleImg from '../../imgs/logos/3scale.svg';
 import * as tomcatImg from '../../imgs/logos/tomcat.svg';
 import * as ubuntuImg from '../../imgs/logos/ubuntu.svg';
 import * as vertxImg from '../../imgs/logos/vertx.svg';
+import * as vscodeImg from '../../imgs/logos/vscode.svg';
 import * as wildflyImg from '../../imgs/logos/wildfly.svg';
 import * as windowsImg from '../../imgs/logos/windows.svg';
 import * as wordpressImg from '../../imgs/logos/wordpress.svg';
 import * as xamarinImg from '../../imgs/logos/xamarin.svg';
 import * as zendImg from '../../imgs/logos/zend.svg';
-import * as operatorImg from '../../imgs/logos/operator.svg';
 
 const logos = new Map<string, any>()
   .set('icon-3scale', threeScaleImg)
@@ -132,11 +135,11 @@ const logos = new Map<string, any>()
   .set('icon-fedora', fedoraImg)
   .set('icon-freebsd', freebsdImg)
   .set('icon-git', gitImg)
+  .set('icon-gitea', giteaImg)
   .set('icon-github', githubImg)
   .set('icon-gitlab', gitlabImg)
-  .set('icon-gitea', giteaImg)
   .set('icon-glassfish', glassfishImg)
-  .set('icon-go-gopher', goLangImg)
+  .set('icon-go-gopher', goGopherImg)
   .set('icon-golang', goLangImg)
   .set('icon-grails', grailsImg)
   .set('icon-hadoop', hadoopImg)
@@ -144,6 +147,7 @@ const logos = new Map<string, any>()
   .set('icon-helm', helmImg)
   .set('icon-httpd', apacheImg)
   .set('icon-infinispan', infinispanImg)
+  .set('icon-intellij', intellijImg)
   .set('icon-java', openjdkImg)
   .set('icon-jboss', jbossImg)
   .set('icon-jenkins', jenkinsImg)
@@ -192,8 +196,8 @@ const logos = new Map<string, any>()
   .set('icon-scala', scalaImg)
   .set('icon-serverless-function', serverlessFuncImage)
   .set('icon-shadowman', shadowmanImg)
-  .set('icon-spring', springImg)
   .set('icon-spring-boot', springBootImg)
+  .set('icon-spring', springImg)
   .set('icon-sso', ssoImg)
   .set('icon-stackoverflow', stackoverflowImg)
   .set('icon-suse', suseImg)
@@ -201,6 +205,7 @@ const logos = new Map<string, any>()
   .set('icon-tomcat', tomcatImg)
   .set('icon-ubuntu', ubuntuImg)
   .set('icon-vertx', vertxImg)
+  .set('icon-vscode', vscodeImg)
   .set('icon-wildfly', wildflyImg)
   .set('icon-windows', windowsImg)
   .set('icon-wordpress', wordpressImg)
