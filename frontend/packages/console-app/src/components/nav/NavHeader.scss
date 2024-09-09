@@ -1,10 +1,10 @@
 @import '~@patternfly/patternfly/sass-utilities/all';
 @import '~@console/internal/style/vars';
 
-.oc-nav-header {
+.pf-v5-c-nav .oc-nav-header {
   border-bottom: 1px solid var(--pf-v5-global--BackgroundColor--dark-200);
-  padding: 0.6rem var(--pf-v5-global--spacer--sm);
   margin-top: var(--pf-v5-global--spacer--sm);
+  padding: 0.6rem var(--pf-v5-global--spacer--sm);
 
   :where(.pf-v5-theme-dark) & {
     // Match --pf-v5-c-nav__item--before--BorderColor
@@ -16,65 +16,56 @@
     padding-right: var(--pf-v5-global--spacer--md);
   }
 
-  &__icon {
-    margin-right: var(--pf-v5-global--spacer--sm);
+  .pf-v5-c-menu {
+     --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
+     padding: var(--pf-v5-global--spacer--sm) 0;
+     :where(.pf-v5-theme-dark) & {
+       --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-300);
+     }
   }
 
-  &__dropdown-toggle--is-empty {
-    cursor: default !important;
+  .pf-v5-c-menu__item {
+    color: var(--pf-v5-global--Color--100);
+    padding: var(--pf-v5-global--spacer--sm);
+    &::after,&::before {
+      border-style: hidden;
+    }
   }
-  .pf-v5-c-dropdown {
-    --pf-v5-c-dropdown__menu-item--PaddingLeft: 7px;
-    width: 100%;
-    cursor: pointer;
+
+  .pf-v5-c-menu__item,
+  .pf-v5-c-menu__list-item {
+    &:hover,&:active,&:focus,&:focus-within {
+    --pf-v5-c-menu__list-item--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
+    --pf-v5-c-menu__list-item--Color: var(--pf-v5-global--Color--100, inherit);
+      :where(.pf-v5-theme-dark) & {
+        background-color: var(--pf-global--BackgroundColor--400);
+      }
+    }
+  }
+
+  .pf-v5-c-menu-toggle {
+    &::after, &::before {
+      border-style: hidden;
+    }
+
+    :where(.pf-v5-theme-dark) & {
+      --pf-v5-c-menu-toggle--BackgroundColor: transparent;
+    }
 
     &.pf-m-expanded {
-      .pf-v5-c-dropdown__toggle {
-        background-color: var(--pf-v5-global--BackgroundColor--dark-200);
-        :where(.pf-v5-theme-dark) & {
-          background-color: var(--pf-v5-global--BackgroundColor--dark-300);
-        }
+      --pf-v5-c-menu-toggle--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-200);
+      :where(.pf-v5-theme-dark) & {
+        background-color: var(--pf-v5-global--BackgroundColor--dark-300);
       }
     }
-  }
 
-  .pf-v5-c-dropdown__toggle {
-    :where(.pf-v5-theme-dark) & {
-      background-color: var(--pf-v5-c-page__sidebar--BackgroundColor);
-    }
-  }
-
-  .pf-v5-c-dropdown__menu-item,
-  // For Edge
-  .pf-v5-c-dropdown__toggle {
-    h1 {
-      font-size: $co-side-nav-font-size;
-    }
-  }
-
-  .pf-v5-c-dropdown__toggle {
-    font-size: $co-side-nav-font-size;
-    justify-content: space-between;
-    width: 100%;
-
-    .pf-c-dropdown__toggle-icon {
-      color: var(--pf-v5-global--Color--light-100);
+    .pf-v5-c-title.pf-m-md {
+      font-family: var(--pf-v5-global--FontFamily--text);  // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
       font-size: $co-side-nav-section-font-size;
     }
+  }
 
-    .pf-v5-c-title {
-      color: var(--pf-v5-global--Color--light-100);
-      &.pf-m-md {
-        font-size: $co-side-nav-section-font-size;
-        font-family: var(
-          --pf-v5-global--FontFamily--text
-        ); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
-      }
-    }
-
-    // Needed until https://github.com/patternfly/patternfly-design/issues/1068 is resolved
-    &:before {
-      border: none;
-    }
+  &__menu-toggle--is-empty {
+    cursor: default !important;
   }
 }
