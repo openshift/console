@@ -80,6 +80,8 @@ const getBaseTopologyDataModel = (
             item,
             TYPE_WORKLOAD,
             getImageForIconClass(`icon-openshift`),
+            undefined,
+            resources,
           );
           typedDataModel.nodes.push(
             getTopologyNodeItem(resource, TYPE_WORKLOAD, data, WorkloadModelProps),
