@@ -1534,7 +1534,7 @@
         "documentationLink": { "$codeRef": "storageProvisionerDocs.GLUSTER" },
         "parameters": {
           "resturl": {
-            "name": "Gluster REST/Heketi URL",
+            "name": "%console-app~Gluster REST/Heketi URL%",
             "required": true
           },
           "restuser": {
@@ -1657,7 +1657,7 @@
           },
           "user": {
             "name": "%console-app~User%",
-            "hintText": "User"
+            "hintText": "%console-app~User%"
           },
           "group": {
             "name": "%console-app~Group%",
@@ -1685,13 +1685,13 @@
         "documentationLink": { "$codeRef": "storageProvisionerDocs.VSPHERE" },
         "parameters": {
           "diskformat": {
-            "name": "Disk format",
+            "name": "%console-app~Disk format%",
             "values": {
               "thin": "thin",
               "zeroedthick": "zeroed thick",
               "eagerzeroedthick": "eager zeroed thick"
             },
-            "hintText": "Select disk format"
+            "hintText": "%console-app~Select disk format%"
           },
           "datastore": {
             "name": "%console-app~Datastore%",
@@ -1712,13 +1712,13 @@
         "documentationLink": { "$codeRef": "storageProvisionerDocs.PORTWORX_VOLUME" },
         "parameters": {
           "fs": {
-            "name": "Filesystem",
+            "name": "%console-app~Filesystem%",
             "values": {
               "none": "none",
               "xfs": "xfs",
               "ext4": "ext4"
             },
-            "hintText": "Select Filesystem"
+            "hintText": "%console-app~Select Filesystem%"
           },
           "block_size": {
             "name": "%console-app~Block size%",
@@ -1801,7 +1801,7 @@
           "secretRef": {
             "name": "%console-app~Secret reference%",
             "required": true,
-            "hintText": "Reference to a configured Secret object"
+            "hintText": "%console-app~Reference to a configured Secret object%"
           },
           "readOnly": {
             "name": "%console-app~Read Only%",
