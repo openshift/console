@@ -30,7 +30,7 @@
       "insertAfter": "usermanagement"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // Disable per https://issues.redhat.com/browse/OCPBUGS-41637
     }
   },
   {
@@ -43,7 +43,7 @@
       "href": "/ecosystem/catalog"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // Disable per https://issues.redhat.com/browse/OCPBUGS-41637
     }
   },
   {
