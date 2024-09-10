@@ -20,6 +20,8 @@
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "네트워크 유형을 선택하려면 <0>OpenShift Virtualization Operator</0> 또는 <3>SR-IOV Network Operator </3>를 클러스터에 설치해야 합니다.",
   "Create": "만들기",
   "Cancel": "취소",
+  "Assigns IP addresses from this subnet to Pods and VirtualMachines.": "이 서브넷의 IP 주소를 Pod 및 VirtualMachines에 할당합니다.",
+  "Tech preview": "기술 프리뷰",
   "Resource name": "리소스 이름",
   "VLAN tag number": "VLAN 태그 번호",
   "IP address management": "IP 주소 관리",
@@ -28,5 +30,7 @@
   "Bridge mapping": "브리지 매핑",
   "Physical network name. Bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.": "물리적 네트워크 이름. 브리지 매핑은 물리적 네트워크 이름과 Open vSwitch 브리지 간에 매핑하려면 클러스터 노드에 구성해야 합니다.",
   "MTU": "MTU",
-  "VLAN": "VLAN"
+  "VLAN": "VLAN",
+  "Invalid subnet format": "잘못된 서브넷 형식",
+  "Invalid IP address or subnet format": "잘못된 IP 주소 또는 서브넷 형식"
 }

@@ -12,10 +12,10 @@
   "Name": "Nombre",
   "Namespace": "Espacio de nombres",
   "Created": "Creado",
-  "Service Bindings is deprecated with OpenShift 4.15 and will be removed from a future release, currently planned as {{productName}} 4.18.": "",
-  "Service Bindings are deprecated": "",
-  "Service Bindings is deprecated with {{productName}} 4.15": "",
-  "Feature development of Service Binding Operator is deprecated in {{productName}} 4.15.": "",
-  "Service Bindings can still be created and shown in the OpenShift web console, but will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "",
-  "Web console support will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": ""
+  "Service Bindings is deprecated with OpenShift 4.15 and will be removed from a future release, currently planned as {{productName}} 4.18.": "Los enlaces de servicio están obsoletos con OpenShift 4.15 y se eliminarán en una versión futura, actualmente planificada como {{productName}} 4.18.",
+  "Service Bindings are deprecated": "Los enlaces de servicio están obsoletos",
+  "Service Bindings is deprecated with {{productName}} 4.15": "Los enlaces de servicio están obsoletos con {{productName}} 4.15",
+  "Feature development of Service Binding Operator is deprecated in {{productName}} 4.15.": "El desarrollo de funciones del operador de enlace de servicio está obsoleto en {{productName}} 4.15.",
+  "Service Bindings can still be created and shown in the OpenShift web console, but will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "Los enlaces de servicio aún se pueden crear y mostrar en la consola web de OpenShift, pero se eliminarán en una versión futura, actualmente planificada como {{productName}} 4.18. Debe migrar siempre que sea posible.",
+  "Web console support will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "La compatibilidad con la consola web se eliminará a partir de una versión futura, actualmente planificada como {{productName}} 4.18. Debe migrar siempre que sea posible."
 }

@@ -1,4 +1,8 @@
 {
   "Ecosystem": "生态系统",
-  "Installed Extensions": "安装的扩展"
+  "Extension Catalog": "扩展目录",
+  "Installed Extensions": "安装的扩展",
+  "Extension Catalog items": "扩展目录项",
+  "No Extension Catalog items found": "没有找到扩展目录项",
+  "Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.": "检查 OLM v1 是否已配置，并且至少创建了一个有效的 ClusterCatalog。"
 }

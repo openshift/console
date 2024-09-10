@@ -1,4 +1,8 @@
 {
   "Ecosystem": "에코시스템",
-  "Installed Extensions": "설치된 확장 프로그램"
+  "Extension Catalog": "확장 카탈로그",
+  "Installed Extensions": "설치된 확장 프로그램",
+  "Extension Catalog items": "확장 카탈로그 항목",
+  "No Extension Catalog items found": "확장 카탈로그 항목을 찾을 수 없음",
+  "Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.": "OLM v1이 구성되어 있고 유효한 ClusterCatalog가 하나 이상 생성되었는지 확인합니다."
 }

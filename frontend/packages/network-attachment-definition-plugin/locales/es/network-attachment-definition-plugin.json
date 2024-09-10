@@ -1,6 +1,7 @@
 {
   "No {{label}} found": "No se encontró {{label}}",
   "Create {{label}}": "Crear {{label}}",
+  "Learn how to use {{label}}": "Aprenda a utilizar {{label}}",
   "NetworkAttachmentDefinition details": "Detalles de NetworkAttachmentDefinition",
   "Type": "Tipo",
   "Details": "Detalles",
@@ -19,6 +20,8 @@
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "El <0>Operador de virtualización OpenShift</0> u <3>Operador de red SR-IOV</3> deben instalarse en el clúster para poder elegir el tipo de red.",
   "Create": "Crear",
   "Cancel": "Cancelar",
+  "Assigns IP addresses from this subnet to Pods and VirtualMachines.": "Asigna direcciones IP de esta subred a pods y máquinas virtuales.",
+  "Tech preview": "Vista previa de tecnología",
   "Resource name": "Nombre del recurso",
   "VLAN tag number": "Número de etiqueta VLAN",
   "IP address management": "Gestión de direcciones IP",
@@ -27,5 +30,7 @@
   "Bridge mapping": "Mapeo de puentes",
   "Physical network name. Bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.": "Nombre de la red física. Se debe configurar una asignación de puentes en los nodos del clúster para asignar entre los nombres de redes físicas y los puentes Open vSwitch.",
   "MTU": "MTU",
-  "VLAN": "VLAN"
+  "VLAN": "VLAN",
+  "Invalid subnet format": "Formato de subred no válido",
+  "Invalid IP address or subnet format": "Dirección IP o formato de subred no válidos"
 }

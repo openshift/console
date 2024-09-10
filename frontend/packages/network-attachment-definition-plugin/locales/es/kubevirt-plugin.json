@@ -1,7 +1,7 @@
 {
   "No {{label}} found": "No se encontró {{label}}",
   "Create {{label}}": "Crear {{label}}",
-  "Learn how to use {{label}}": "",
+  "Learn how to use {{label}}": "Aprenda a utilizar {{label}}",
   "NetworkAttachmentDefinition details": "Detalles de NetworkAttachmentDefinition",
   "Type": "Tipo",
   "Details": "Detalles",
