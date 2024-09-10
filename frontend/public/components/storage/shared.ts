@@ -117,6 +117,10 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
     Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
     partialMatch: true,
   },
+  'file.csi.azure.com': {
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
+  },
 });
 
 export const getAccessModeOptions = () => [
