@@ -1,0 +1,68 @@
+import * as React from 'react';
+import { Text, TextVariants } from '@patternfly/react-core';
+import { SortByDirection } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import { RowFunctionArgs, Table, TableData } from '@console/internal/components/factory';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+
+const EventTypeHeaders = (t: TFunction) => () => {
+  return [
+    {
+      id: 'attributes',
+      title: t('knative-plugin~Attributes'),
+    },
+    {
+      id: 'values',
+      title: t('knative-plugin~Values'),
+    },
+  ];
+};
+
+export const EventTypeRow: React.FC<RowFunctionArgs<{ key: string; value: string }>> = ({
+  obj,
+}) => {
+  return (
+    <>
+      <TableData columnID="attributes">{obj.key}</TableData>
+      <TableData columnID="values">{obj.value}</TableData>
+    </>
+  );
+};
+
+interface EventTypeProps {
+  eventType: K8sResourceKind;
+}
+
+const EventType: React.FC<EventTypeProps> = ({ eventType }) => {
+  const { t } = useTranslation();
+
+  const specAttributes = ['type', 'source', 'schema'];
+
+  const rows = specAttributes
+    .filter((a) => eventType.spec.hasOwnProperty(a))
+    .map((a) => {
+      return { key: a, value: eventType.spec[a] };
+    });
+
+  return (
+    <>
+      {eventType.spec.description ? eventType.spec.description : ''}
+      <div style={{ marginTop: 'var(--pf-v5-global--spacer--md)' }}>
+        <Text component={TextVariants.h3}>{t('knative-plugin~Event details')}</Text>
+      </div>
+      <Table
+        data={rows}
+        defaultSortField={'attributes'}
+        defaultSortOrder={SortByDirection.asc}
+        aria-label={t('knative-plugin~Event')}
+        Header={EventTypeHeaders(t)}
+        Row={EventTypeRow}
+        loaded
+        virtualize
+      />
+    </>
+  );
+};
+
+export default EventType;

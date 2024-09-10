@@ -471,6 +471,36 @@
     }
   },
   {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Events",
+      "title": "%knative-plugin~Events%",
+      "catalogDescription": "%knative-plugin~​​Events available that can be consumed with Serverless Functions or regular Deployments.%",
+      "typeDescription": "%knative-plugin~​​**Events** available that can be consumed with Serverless Functions or regular Deployments.%",
+      "filters": [
+        {
+          "label": "%knative-plugin~Provider%",
+          "attribute": "provider"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "Events",
+      "title": "%knative-plugin~Events%",
+      "provider": { "$codeRef": "catalog.eventTypeProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": false,
@@ -655,6 +685,20 @@
       "label": "%knative-plugin~Event Sink%",
       "description": "%knative-plugin~Create an Event sink to receive incoming events from a particular source%",
       "icon": { "$codeRef": "icons.eventSinkIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "DEVELOPER_CATALOG", "FLAG_KNATIVE_EVENTING_ENABLED"]
+    },
+    "properties": {
+      "id": "knative-event-type",
+      "groupId": "eventing",
+      "href": "/catalog/ns/:namespace?catalogType=Events",
+      "label": "%knative-plugin~Events%",
+      "description": "%knative-plugin~​​Events available that can be consumed with Serverless Functions or regular Deployments%",
+      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
     }
   },
   {
