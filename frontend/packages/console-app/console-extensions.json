@@ -598,7 +598,7 @@
         "falseValue": false,
         "defaultValue": false
       },
-      "insertAfter": "console.preferredCreateEditMethod"
+      "insertAfter": "console.preferredPerspective"
     },
     "flags": {
       "required": [

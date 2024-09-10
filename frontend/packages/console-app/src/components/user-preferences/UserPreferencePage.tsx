@@ -23,6 +23,8 @@ import {
   isModifiedEvent,
   orderExtensionBasedOnInsertBeforeAndAfter,
   PageLayout,
+  useQueryParams,
+  Spotlight,
 } from '@console/shared';
 import { USER_PREFERENCES_BASE_URL } from './const';
 import {
@@ -98,6 +100,15 @@ const UserPreferencePage: React.FC = () => {
     return [tabs, tabContents];
   }, [activeTabId, sortedUserPreferenceGroups, sortedUserPreferenceItems]);
 
+  const queryParams = useQueryParams();
+  const spotlight = decodeURIComponent(queryParams.get('spotlight'));
+  const [spotlightElement, setSpotlightElement] = React.useState<Element>(null);
+
+  React.useEffect(() => {
+    const element = document.querySelector(spotlight);
+    setSpotlightElement(element);
+  }, [spotlight, userPreferenceItemResolved, userPreferenceTabContents]);
+
   // utils and callbacks
   const handleTabClick = (event: React.MouseEvent<HTMLElement>, eventKey: string) => {
     if (isModifiedEvent(event)) {
@@ -138,6 +149,7 @@ const UserPreferencePage: React.FC = () => {
             </div>
             <div className="co-user-preference-page-content__tab-content">
               {userPreferenceTabContents}
+              {spotlight && spotlightElement && <Spotlight selector={spotlight} interactive />}
             </div>
           </div>
         ) : (
