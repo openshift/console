@@ -98,7 +98,7 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-topology-headless
   yarn run test-cypress-pipelines-headless
   yarn run test-cypress-shipwright-headless
-  # yarn run test-cypress-webterminal-headless
+  yarn run test-cypress-webterminal-headless
   exit;
 fi
 
