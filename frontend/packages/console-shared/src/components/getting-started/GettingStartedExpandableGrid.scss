@@ -1,60 +1,77 @@
 .ocs-getting-started-expandable-grid {
-    --min-column-width: 220px;
-  
+  --min-column-width: 220px;
+
+  // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
+  &__header.pf-v5-c-card__header {
+    // Use padding sm instead of lg to fix alignment of the KebabToggle action button.
+    padding-right: var(--pf-v5-global--spacer--sm);
+  }
+  &__tooltip {
+    white-space: pre-line;
+  }
+  &__tooltip-icon {
+    margin-left: var(--pf-v5-global--spacer--sm);
+  }
+
+  // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
+  &__content.pf-v5-c-card__body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--min-column-width), 1fr));
+
+    // Keep only additional spacing at the bottom. Horizontal spacing is added to the child elements.
+    padding: 0 0 calc(var(--pf-v5-c-card--child--PaddingBottom) / 2) 0;
+    // Hide the border on the right side of the content. Works together wie negative margin below.
+    overflow: hidden;
+    padding-top: 0 !important;
+
     // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
-    &__header.pf-v5-c-card__header {
-      // Use padding sm instead of lg to fix alignment of the KebabToggle action button.
-      padding-right: var(--pf-v5-global--spacer--sm);
-    }
-    &__tooltip {
-      white-space: pre-line;
-    }
-    &__tooltip-icon {
-      margin-left: var(--pf-v5-global--spacer--sm);
-    }
-  
-    // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
-    &__content.pf-v5-c-card__body {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(var(--min-column-width), 1fr));
-  
-      // Keep only additional spacing at the bottom. Horizontal spacing is added to the child elements.
-      padding: 0 0 calc(var(--pf-v5-c-card--child--PaddingBottom) / 2) 0;
-      // Hide the border on the right side of the content. Works together wie negative margin below.
-      overflow: hidden;
-      padding-top: 0 !important;
-  
-      // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
-      > .pf-v5-l-flex.pf-m-grow.pf-m-column {
-        // Show a divider on the right side and hide them in the latest column.
-        border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-        margin-right: calc(-1 * var(--pf-v5-global--BorderWidth--sm));
-        // Padding around the card. Vertical spacing is splitted on the card and the grid.
-        padding-top: calc(var(--pf-v5-c-card--first-child--PaddingTop) / 2);
-        padding-bottom: calc(var(--pf-v5-c-card--child--PaddingBottom) / 2);
-        padding-left: var(--pf-v5-c-card--child--PaddingLeft);
-        padding-right: var(--pf-v5-c-card--child--PaddingRight);
-      }
+    > .pf-v5-l-flex.pf-m-grow.pf-m-column {
+      // Show a divider on the right side and hide them in the latest column.
+      border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+      margin-right: calc(-1 * var(--pf-v5-global--BorderWidth--sm));
+      // Padding around the card. Vertical spacing is splitted on the card and the grid.
+      padding-top: calc(var(--pf-v5-c-card--first-child--PaddingTop) / 2);
+      padding-bottom: calc(var(--pf-v5-c-card--child--PaddingBottom) / 2);
+      padding-left: var(--pf-v5-c-card--child--PaddingLeft);
+      padding-right: var(--pf-v5-c-card--child--PaddingRight);
     }
   }
-  
-  .ocs-getting-started-expandable-section {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
-    &__toggle-text {
-      color: var(--pf-v5-global--Color--dark-100);
-      &.is-dark {
-        color: var(--pf-v5-global--Color--light-100);
-      }
-      font-size: var(--pf-v5-global--icon--FontSize--md);
-      font-weight: var(--pf-v5-global--FontWeight--bold);
+}
+
+.ocs-getting-started-expandable-section {
+  width: 100%;
+  background-color: var(--pf-v5-global--BackgroundColor--100);
+  &__toggle-text {
+    color: var(--pf-v5-global--Color--dark-100);
+    &.is-dark {
+      color: var(--pf-v5-global--Color--light-100);
     }
+    font-size: var(--pf-v5-global--icon--FontSize--md);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
   }
-  
-  .pf-v5-c-expandable-section__toggle {
-    align-items: center;
-  }
-  
-  .pf-v5-c-expandable-section__content {
-    padding: 0 !important;
-  }
-  
+}
+
+.pf-v5-c-expandable-section__toggle {
+  align-items: center;
+  width: inherit;
+}
+
+.pf-v5-c-expandable-section__toggle-text {
+  width: inherit;
+}
+
+.pf-v5-c-expandable-section__content {
+  padding: 0 !important;
+}
+
+.ocs-getting-started-expandable-section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ocs-getting-started-close-icon {
+  cursor: pointer;
+  margin-left: auto;
+  color: var(--pf-v5-global--Color--dark-100);
+}
