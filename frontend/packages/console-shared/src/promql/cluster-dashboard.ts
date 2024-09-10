@@ -5,7 +5,6 @@ export enum OverviewQuery {
   MEMORY_TOTAL = 'MEMORY_TOTAL',
   MEMORY_UTILIZATION = 'MEMORY_UTILIZATION',
   MEMORY_REQUESTS = 'MEMORY_REQUESTS',
-  NODE_MEMORY_OVERCOMMIT = 'NODE_MEMORY_OVERCOMMIT',
   NETWORK_UTILIZATION = 'NETWORK_UTILIZATION',
   NETWORK_IN_UTILIZATION = 'NETWORK_IN_UTILIZATION',
   NETWORK_OUT_UTILIZATION = 'NETWORK_OUT_UTILIZATION',
@@ -401,9 +400,6 @@ const overviewQueries = {
       )
     `,
   ),
-  [OverviewQuery.NODE_MEMORY_OVERCOMMIT]: _.template(
-    `sum by (instance)(((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) + (node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) ) / node_memory_MemTotal_bytes ) * 100`,
-  ),
 };
 
 export const getMultilineQueries = (
@@ -470,8 +466,5 @@ export const getUtilizationQueries = (nodeType: string) => ({
   },
   [OverviewQuery.POD_UTILIZATION]: {
     utilization: overviewQueries[OverviewQuery.POD_UTILIZATION]({ nodeType }),
-  },
-  [OverviewQuery.NODE_MEMORY_OVERCOMMIT]: {
-    utilization: overviewQueries[OverviewQuery.NODE_MEMORY_OVERCOMMIT]({ nodeType }),
   },
 });

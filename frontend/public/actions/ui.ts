@@ -80,7 +80,6 @@ export type NodeMetrics = {
   totalMemory: MetricValuesByName;
   usedStorage: MetricValuesByName;
   totalStorage: MetricValuesByName;
-  memoryOvercommit: MetricValuesByName;
 };
 
 export type PVCMetrics = {
