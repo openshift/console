@@ -8,23 +8,28 @@ import {
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   GettingStartedExpandableGrid,
+  GettingStartedShowState,
   QuickStartGettingStartedCard,
+  useGettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
 
 import { ClusterSetupGettingStartedCard } from './cluster-setup-getting-started-card';
 import { ExploreAdminFeaturesGettingStartedCard } from './explore-admin-features-getting-started-card';
+import { USER_SETTINGS_KEY } from './constants';
 
 import './getting-started-section.scss';
 
 export const GettingStartedSection: React.FC = () => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
+  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(USER_SETTINGS_KEY);
+
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserSettings<boolean>(
     GETTING_STARTED_USER_SETTINGS_KEY_CLUSTER_DASHBOARD,
     true,
   );
 
-  if (!openshiftFlag) {
+  if (!openshiftFlag || !showStateLoaded || showState !== GettingStartedShowState.SHOW) {
     return null;
   }
 
@@ -33,6 +38,7 @@ export const GettingStartedSection: React.FC = () => {
       <GettingStartedExpandableGrid
         isOpen={isGettingStartedSectionOpen}
         setIsOpen={setIsGettingStartedSectionOpen}
+        setShowState={setShowState}
       >
         <ClusterSetupGettingStartedCard />
         <QuickStartGettingStartedCard
