@@ -235,6 +235,7 @@ func (c *completedOptions) ApplyTo(
 		srv.InternalProxiedK8SClientConfig,
 		useSecureCookies,
 		sessionConfig,
+		srv.AuthMetrics,
 	)
 
 	if err != nil {
@@ -252,6 +253,7 @@ func (c *completedOptions) getAuthenticator(
 	k8sClientConfig *rest.Config,
 	useSecureCookies bool,
 	sessionConfig *session.CompletedOptions,
+	authMetrics *auth.Metrics,
 ) (auth.Authenticator, error) {
 
 	if c.AuthType == flagvalues.AuthTypeDisabled {
@@ -318,6 +320,7 @@ func (c *completedOptions) getAuthenticator(
 		CookieAuthenticationKey: sessionConfig.CookieAuthenticationKey,
 
 		K8sConfig: k8sClientConfig,
+		Metrics:   authMetrics,
 	}
 
 	if c.LogoutRedirectURL != nil {

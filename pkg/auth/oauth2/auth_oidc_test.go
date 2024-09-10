@@ -39,6 +39,10 @@ const (
 	testNewRefreshToken   = "new-refresh-token"
 )
 
+var (
+	defaultRestClientConfig = http.RoundTripper(nil)
+)
+
 // mockOIDCProvider serves so that we are able to serve basic discovery endpoints
 // such as the JWKs and OIDC discovery.
 // It's also capable of signing tokens so that these can be used in testing and
@@ -285,7 +289,7 @@ func Test_oidcAuth_login(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(),
+				auth.NewMetrics(defaultRestClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -396,7 +400,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(),
+				auth.NewMetrics(defaultRestClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -520,7 +524,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
-				auth.NewMetrics(),
+				auth.NewMetrics(defaultRestClientConfig),
 			)
 			require.NoError(t, err)
 
@@ -573,7 +577,7 @@ func BenchmarkRefreshSession(b *testing.B) {
 	for _, userNum := range numUsers {
 		b.Run(fmt.Sprintf("BenchmarkRefreshSession-Users=%d", userNum), func(b *testing.B) {
 			b.StopTimer()
-			authMetrics := auth.NewMetrics()
+			authMetrics := auth.NewMetrics(defaultRestClientConfig)
 			o, err := newOIDCAuth(
 				context.Background(),
 				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
