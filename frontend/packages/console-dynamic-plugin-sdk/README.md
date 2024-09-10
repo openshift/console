@@ -35,7 +35,7 @@ dynamic plugins in relation to OLM operators and cluster administration.
 
 If you're new to dynamic plugins, we suggest to clone the [Console plugin template][console-plugin-template]
 repo and follow its instructions on setting up a local plugin development environment. We recommend running
-the Console application via container image to avoid having to build Console locally.
+the Console application with a container image to avoid having to build Console locally.
 
 The [CronTab plugin](https://github.com/openshift/console-crontab-plugin) is a sample plugin that uses the
 `CronTab` Custom Resource Definition (CRD) from
