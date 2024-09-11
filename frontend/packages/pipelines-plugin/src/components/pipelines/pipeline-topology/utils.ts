@@ -648,3 +648,15 @@ export const getWhenExpressionDiamondState = (
   }
   return { tooltipContent, diamondColor };
 };
+
+export const getTooltipContent = (statusReason: ComputedStatus): string => {
+  switch (statusReason) {
+    case ComputedStatus.Succeeded:
+    case ComputedStatus.Failed:
+      return i18n.t('pipelines-plugin~When expression was met');
+    case ComputedStatus.Skipped:
+      return i18n.t('pipelines-plugin~When expression was not met');
+    default:
+      return i18n.t('pipelines-plugin~When expression');
+  }
+};
