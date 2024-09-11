@@ -23,7 +23,7 @@ import {
   FieldLevelHelp,
   Kebab,
   LoadingInline,
-  MsgBox,
+  ConsoleEmptyState,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -297,11 +297,11 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
       Header={SubscriptionTableHeader}
       Row={SubscriptionTableRow}
       EmptyMsg={() => (
-        <MsgBox title={t('olm~No Subscriptions found')}>
+        <ConsoleEmptyState title={t('olm~No Subscriptions found')}>
           {t(
             'olm~Each Namespace can subscribe to a single channel of a package for automatic updates.',
           )}
-        </MsgBox>
+        </ConsoleEmptyState>
       )}
       virtualize
     />

@@ -14,7 +14,7 @@ import { RoleBindingsPage } from './RBAC';
 import {
   Kebab,
   KebabAction,
-  MsgBox,
+  ConsoleEmptyState,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -87,7 +87,7 @@ const UsersHelpText = () => {
 
 const EmptyMsg = () => {
   const { t } = useTranslation();
-  return <MsgBox title={t('public~No Users found')} />;
+  return <ConsoleEmptyState title={t('public~No Users found')} />;
 };
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
@@ -127,7 +127,11 @@ const NoDataEmptyMsgDetail = () => {
 
 const NoDataEmptyMsg = () => {
   const { t } = useTranslation();
-  return <MsgBox title={t('public~No Users found')}>{<NoDataEmptyMsgDetail />}</MsgBox>;
+  return (
+    <ConsoleEmptyState title={t('public~No Users found')}>
+      {<NoDataEmptyMsgDetail />}
+    </ConsoleEmptyState>
+  );
 };
 
 export const UserList: React.FC = (props) => {

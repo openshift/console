@@ -31,7 +31,7 @@ import ListPageHeader from '@console/internal/components/factory/ListPage/ListPa
 import {
   Kebab,
   LabelList,
-  MsgBox,
+  ConsoleEmptyState,
   ResourceSummary,
   SectionHeading,
   Timestamp,
@@ -300,15 +300,15 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       data={data}
       EmptyMsg={() =>
         noAPIsFound ? (
-          <MsgBox title={t('olm~No provided APIs defined')}>
+          <ConsoleEmptyState title={t('olm~No provided APIs defined')}>
             {t('olm~This application was not properly installed or configured.')}
-          </MsgBox>
+          </ConsoleEmptyState>
         ) : (
-          <MsgBox title={t('olm~No operands found')}>
+          <ConsoleEmptyState title={t('olm~No operands found')}>
             {t(
               'olm~Operands are declarative components used to define the behavior of the application.',
             )}
-          </MsgBox>
+          </ConsoleEmptyState>
         )
       }
       aria-label="Operands"

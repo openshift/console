@@ -21,7 +21,7 @@ import {
 import { errorModal } from '@console/internal/components/modals';
 import {
   SectionHeading,
-  MsgBox,
+  ConsoleEmptyState,
   ResourceLink,
   ResourceKebab,
   Kebab,
@@ -152,9 +152,9 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 const EmptyMsg: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <MsgBox title={t('olm~No InstallPlans found')}>
+    <ConsoleEmptyState title={t('olm~No InstallPlans found')}>
       {t('olm~InstallPlans are created automatically by subscriptions or manually using the CLI.')}
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 };
 
@@ -509,9 +509,9 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
     </>
   ) : (
     <div className="co-m-pane__body">
-      <MsgBox title={t('olm~No components resolved')}>
+      <ConsoleEmptyState title={t('olm~No components resolved')}>
         {t('olm~This InstallPlan has not been fully resolved yet.')}
-      </MsgBox>
+      </ConsoleEmptyState>
     </div>
   );
 };

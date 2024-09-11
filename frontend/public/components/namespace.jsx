@@ -4,17 +4,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import {
-  Alert,
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  Tooltip,
-  EmptyStateActions,
-  EmptyStateHeader,
-  EmptyStateFooter,
-} from '@patternfly/react-core';
+import { Alert, Button, Tooltip, EmptyStateActions } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 // FIXME upgrading redux types is causing many errors at this time
@@ -64,7 +54,7 @@ import {
   Kebab,
   LabelList,
   LoadingInline,
-  MsgBox,
+  ConsoleEmptyState,
   ResourceIcon,
   ResourceKebab,
   ResourceLink,
@@ -423,17 +413,13 @@ export const NamespacesList = (props) => {
     [tableColumns],
   );
   const NamespaceNotFoundMessage = () => (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText={<>{t('public~No namespaces found')}</>}
-        icon={<EmptyStateIcon icon={SearchIcon} />}
-        headingLevel="h2"
-      />
-      <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStateFooter>
-        <EmptyStateActions />
-      </EmptyStateFooter>
-    </EmptyState>
+    <ConsoleEmptyState
+      title={t('public~No namespaces found')}
+      icon={SearchIcon}
+      primaryActions={<EmptyStateActions />}
+    >
+      {t('public~No results match the filter criteria.')}
+    </ConsoleEmptyState>
   );
 
   return (
@@ -801,23 +787,19 @@ export const ProjectList = ({ data, ...tableProps }) => {
   }
 
   const ProjectEmptyMessage = () => (
-    <MsgBox title={t('public~Welcome to OpenShift')}>
+    <ConsoleEmptyState title={t('public~Welcome to OpenShift')}>
       {<OpenShiftGettingStarted canCreate={canCreate} />}
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 
   const ProjectNotFoundMessage = () => (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText={<>{t('public~No projects found')}</>}
-        icon={<EmptyStateIcon icon={SearchIcon} />}
-        headingLevel="h2"
-      />
-      <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStateFooter>
-        <EmptyStateActions />
-      </EmptyStateFooter>
-    </EmptyState>
+    <ConsoleEmptyState
+      title={t('public~No projects found')}
+      icon={SearchIcon}
+      primaryActions={<EmptyStateActions />}
+    >
+      {t('public~No results match the filter criteria.')}
+    </ConsoleEmptyState>
   );
 
   return (

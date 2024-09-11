@@ -27,7 +27,7 @@ import {
 import {
   Firehose,
   HorizontalNav,
-  MsgBox,
+  ConsoleEmptyState,
   NodeLink,
   PageHeading,
   resourcePath,
@@ -111,12 +111,12 @@ const Ports: React.FC<PortsProps> = ({ ports }) => {
   const { t } = useTranslation();
   if (!ports || !ports.length) {
     return (
-      <MsgBox
+      <ConsoleEmptyState
         className="co-sysevent-stream__status-box-empty"
         title={t('public~No ports have been exposed')}
       >
         {t('public~Ports allow for traffic to enter this container')}
-      </MsgBox>
+      </ConsoleEmptyState>
     );
   }
 
@@ -144,12 +144,12 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
   const { t } = useTranslation();
   if (!volumeMounts || !volumeMounts.length) {
     return (
-      <MsgBox
+      <ConsoleEmptyState
         className="co-sysevent-stream__status-box-empty"
         title={t('public~No volumes have been mounted')}
       >
         {t('public~Volumes allow data to be shared as files with the pod')}
-      </MsgBox>
+      </ConsoleEmptyState>
     );
   }
 
@@ -188,12 +188,12 @@ const Env: React.FC<EnvProps> = ({ env }) => {
   const { t } = useTranslation();
   if (!env || !env.length) {
     return (
-      <MsgBox
+      <ConsoleEmptyState
         className="co-sysevent-stream__status-box-empty"
         title={t('public~No variables have been set')}
       >
         {t('public~An easy way to pass configuration values')}
-      </MsgBox>
+      </ConsoleEmptyState>
     );
   }
 

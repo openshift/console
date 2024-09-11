@@ -36,7 +36,13 @@ import {
   referenceForModel,
   K8sResourceKindReference,
 } from '../module/k8s';
-import { LoadingBox, MsgBox, ResourceIcon, setQueryArgument, AsyncComponent } from './utils';
+import {
+  LoadingBox,
+  ConsoleEmptyState,
+  ResourceIcon,
+  setQueryArgument,
+  AsyncComponent,
+} from './utils';
 import confirmNavUnpinModal from '@console/app/src/components/nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
@@ -333,9 +339,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           })}
         </Accordion>
         {selectedItems.size === 0 && (
-          <MsgBox title={t('public~No resources selected')}>
+          <ConsoleEmptyState title={t('public~No resources selected')}>
             {<p>{t('public~Select one or more resources from the dropdown.')}</p>}
-          </MsgBox>
+          </ConsoleEmptyState>
         )}
       </PageSection>
     </>

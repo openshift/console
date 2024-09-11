@@ -17,7 +17,7 @@ import {
   ResourceLink,
   ResourceIcon,
   Kebab,
-  MsgBox,
+  ConsoleEmptyState,
   HintBlock,
   useAccessReview,
 } from '@console/internal/components/utils';
@@ -152,8 +152,8 @@ describe('InstallPlansList', () => {
   it('passes custom empty message for table', () => {
     const MsgComponent = wrapper.find<any>(Table).props().EmptyMsg;
     const msgWrapper = shallow(<MsgComponent />);
-    expect(msgWrapper.find(MsgBox).props().title).toEqual('No InstallPlans found');
-    expect(msgWrapper.find(MsgBox)).toHaveTextContent(
+    expect(msgWrapper.find(ConsoleEmptyState).props().title).toEqual('No InstallPlans found');
+    expect(msgWrapper.find(ConsoleEmptyState)).toHaveTextContent(
       'InstallPlans are created automatically by subscriptions or manually using the CLI.',
     );
   });
@@ -236,7 +236,7 @@ describe('InstallPlanPreview', () => {
     const wrapper = shallow(
       <InstallPlanPreview obj={{ ...obj, status: { ...obj.status, plan: [] } }} />,
     );
-    expect(wrapper.find(MsgBox).exists()).toBe(true);
+    expect(wrapper.find(ConsoleEmptyState).exists()).toBe(true);
   });
 
   it('renders button to approve install plan if requires approval', () => {

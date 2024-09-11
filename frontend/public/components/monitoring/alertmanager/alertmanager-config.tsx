@@ -26,7 +26,7 @@ import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config
 import { K8sResourceKind } from '../../../module/k8s';
 import { Table, TableData, TextFilter, RowFunctionArgs } from '../../factory';
 import { confirmModal, createAlertRoutingModal } from '../../modals';
-import { Firehose, Kebab, MsgBox, SectionHeading, StatusBox } from '../../utils';
+import { Firehose, ConsoleEmptyState, Kebab, SectionHeading, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -346,7 +346,9 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
   );
 
   const EmptyMsg = () => (
-    <MsgBox title={t('public~No Receivers match filter {{filterValue}}', { filterValue })} />
+    <ConsoleEmptyState
+      title={t('public~No Receivers match filter {{filterValue}}', { filterValue })}
+    />
   );
   const ReceiverTableHeader = () => {
     return [

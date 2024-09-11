@@ -56,10 +56,10 @@ export const operatorsPO = {
   installOperators: {
     title: 'h1.co-m-pane__heading',
     operatorsNameRow: 'div[aria-label="Installed Operators"] td:nth-child(1) h1',
-    noOperatorsFound: '[data-test="msg-box-title"]',
-    noOperatorsDetails: '[data-test="msg-box-body"]',
+    noOperatorsFound: '[data-test="console-empty-state-title"]',
+    noOperatorsDetails: '[data-test="console-empty-state-body"]',
     search: 'input[data-test-id="item-filter"]',
-    noOperatorFoundMessage: 'div[data-test="msg-box-title"]',
+    noOperatorFoundMessage: 'div[data-test="console-empty-state-title"]',
     knativeServingLink: '[title="knativeservings.operator.knative.dev"]',
     knativeEventingLink: '[title="knativeeventings.operator.knative.dev"]',
     knativeKafkaLink: '[title="knativekafkas.operator.serverless.openshift.io"]',

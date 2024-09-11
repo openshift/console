@@ -1,16 +1,17 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import {
-  EmptyState,
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
   EmptyStateVariant,
+  EmptyState,
+  EmptyStateProps,
 } from '@patternfly/react-core';
 
-export const MsgBox: React.FC<MsgBoxProps> = ({
+export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
   children,
   Icon,
   primaryActions,
@@ -18,7 +19,7 @@ export const MsgBox: React.FC<MsgBoxProps> = ({
   title,
   ...props
 }) => {
-  const dataTest = props.dataTest || 'msg-box';
+  const dataTest = props.dataTest || 'console-empty-state';
   const variant = props.variant || EmptyStateVariant.xs;
   const header = (title || Icon) && (
     <EmptyStateHeader
@@ -48,16 +49,16 @@ export const MsgBox: React.FC<MsgBoxProps> = ({
     </EmptyStateFooter>
   );
   return (
-    <EmptyState variant={variant} data-test={dataTest}>
+    <EmptyState variant={variant} data-test={dataTest} {...props}>
       {header}
       {body}
       {footer}
     </EmptyState>
   );
 };
-MsgBox.displayName = 'MsgBox';
+ConsoleEmptyState.displayName = 'ConsoleEmptyState';
 
-type MsgBoxProps = {
+type ConsoleEmptyStateProps = Partial<EmptyStateProps> & {
   className?: string;
   dataTest?: string;
   Icon?: React.ComponentType;

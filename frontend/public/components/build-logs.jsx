@@ -5,7 +5,7 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
   LOG_SOURCE_WAITING,
-  MsgBox,
+  ConsoleEmptyState,
   ResourceLog,
 } from './utils';
 import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
@@ -26,7 +26,7 @@ const PipelineLogMessage = ({ build }) => {
     </>
   );
 
-  return <MsgBox title={t('public~See Jenkins log')}>{detail}</MsgBox>;
+  return <ConsoleEmptyState title={t('public~See Jenkins log')}>{detail}</ConsoleEmptyState>;
 };
 
 const buildPhaseToLogSourceStatus = (phase) => {

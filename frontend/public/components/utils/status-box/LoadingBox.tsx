@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Loading } from './Loading';
-import { MsgBox } from './MsgBox';
+import { ConsoleEmptyState } from './ConsoleEmptyState';
 
 export const LoadingBox: React.FC = ({ children }) => (
-  <MsgBox>
+  <ConsoleEmptyState>
     <Loading />
     {children}
-  </MsgBox>
+  </ConsoleEmptyState>
 );
 LoadingBox.displayName = 'LoadingBox';

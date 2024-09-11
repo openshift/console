@@ -45,7 +45,7 @@ import {
   Kebab,
   KebabAction,
   KebabOption,
-  MsgBox,
+  ConsoleEmptyState,
   navFactory,
   Page,
   RequireCreatePermission,
@@ -565,7 +565,7 @@ const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
 
 const CSVListEmptyMsg = () => {
   const { t } = useTranslation();
-  return <MsgBox title={t('olm~No Operators found')} />;
+  return <ConsoleEmptyState title={t('olm~No Operators found')} />;
 };
 
 const CSVListNoDataEmptyMsg = () => {
@@ -590,7 +590,7 @@ const CSVListNoDataEmptyMsg = () => {
       </div>
     </>
   );
-  return <MsgBox title={t('olm~No Operators found')}>{detail}</MsgBox>;
+  return <ConsoleEmptyState title={t('olm~No Operators found')}>{detail}</ConsoleEmptyState>;
 };
 
 export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps> = ({
@@ -1222,9 +1222,9 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({ obj, customDat
   const { subscription, subscriptions, subscriptionsLoaded, subscriptionsLoadError } =
     customData ?? {};
   const EmptyMsg = () => (
-    <MsgBox title={t('olm~No Operator Subscription')}>
+    <ConsoleEmptyState title={t('olm~No Operator Subscription')}>
       {t('olm~This Operator will not receive updates.')}
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 
   return (

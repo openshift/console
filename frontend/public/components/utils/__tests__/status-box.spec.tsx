@@ -11,7 +11,7 @@ import {
   Loading,
   LoadingBox,
   LoadingInline,
-  MsgBox,
+  ConsoleEmptyState,
   StatusBox,
 } from '../status-box';
 
@@ -79,12 +79,12 @@ describe('EmptyBox', () => {
 
 describe('MsgBox', () => {
   it('should render title', () => {
-    const { getByText } = render(<MsgBox title="test-title" />);
+    const { getByText } = render(<ConsoleEmptyState title="test-title" />);
     getByText('test-title');
   });
 
   it('should render children', () => {
-    const { getByText } = render(<MsgBox>test-child</MsgBox>);
+    const { getByText } = render(<ConsoleEmptyState>test-child</ConsoleEmptyState>);
     getByText('test-child');
   });
 });

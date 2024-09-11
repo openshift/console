@@ -23,7 +23,7 @@ import {
   detailsPage,
   navFactory,
   ExternalLinkWithCopy,
-  MsgBox,
+  ConsoleEmptyState,
 } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 import {
@@ -484,7 +484,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
         </div>
       )}
       {_.isEmpty(route.status.ingress) ? (
-        <MsgBox>{t('public~No route status')}</MsgBox>
+        <ConsoleEmptyState>{t('public~No route status')}</ConsoleEmptyState>
       ) : (
         <div className="co-m-pane__body">
           <RouteIngressStatus route={route} />

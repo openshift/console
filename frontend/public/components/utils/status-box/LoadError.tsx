@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, EmptyStateVariant } from '@patternfly/react-core';
-import { MsgBox } from '.';
+import { Button } from '@patternfly/react-core';
+import { ConsoleEmptyState } from './ConsoleEmptyState';
 
 export const LoadError: React.FC<LoadErrorProps> = ({ label, children, canRetry = true }) => {
   const { t } = useTranslation();
@@ -16,9 +16,12 @@ export const LoadError: React.FC<LoadErrorProps> = ({ label, children, canRetry 
     </Button>
   );
   return (
-    <MsgBox primaryActions={retry} title={t('public~Error loading {{label}}', { label })}>
+    <ConsoleEmptyState
+      primaryActions={retry}
+      title={t('public~Error loading {{label}}', { label })}
+    >
       {children}
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 };
 LoadError.displayName = 'LoadError';

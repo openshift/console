@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MsgBox } from './MsgBox';
+import { ConsoleEmptyState } from './ConsoleEmptyState';
 
 export const EmptyBox: React.FCC<EmptyBoxProps> = ({ label }) => {
   const { t } = useTranslation();
   return (
-    <MsgBox dataTest="empty-box">
+    <ConsoleEmptyState dataTest="empty-box">
       {label ? t('public~No {{label}} found', { label }) : t('public~Not found')}
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 };
 EmptyBox.displayName = 'EmptyBox';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as restrictedSignImg from '../../../imgs/restricted-sign.svg';
 import { Alert, Flex, FlexItem } from '@patternfly/react-core';
-import { MsgBox } from '.';
+import { ConsoleEmptyState } from './ConsoleEmptyState';
 
 const RestrictedSignIcon = () => (
   <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
@@ -11,7 +11,7 @@ const RestrictedSignIcon = () => (
 export const AccessDenied: React.FC = ({ children }) => {
   const { t } = useTranslation();
   return (
-    <MsgBox
+    <ConsoleEmptyState
       data-test="access-denied"
       Icon={RestrictedSignIcon}
       title={t('public~Restricted access')}
@@ -32,7 +32,7 @@ export const AccessDenied: React.FC = ({ children }) => {
           </FlexItem>
         )}
       </Flex>
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 };
 AccessDenied.displayName = 'AccessDenied';

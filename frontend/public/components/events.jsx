@@ -26,7 +26,7 @@ import { FLAGS } from '@console/shared/src/constants';
 import {
   Dropdown,
   Loading,
-  MsgBox,
+  ConsoleEmptyState,
   PageHeading,
   ResourceIcon,
   ResourceLink,
@@ -310,13 +310,13 @@ export const EventsList = (props) => {
 
 export const NoEvents = () => {
   const { t } = useTranslation();
-  return <MsgBox>{t('public~No events')}</MsgBox>;
+  return <ConsoleEmptyState>{t('public~No events')}</ConsoleEmptyState>;
 };
 
 export const NoMatchingEvents = ({ allCount }) => {
   const { t } = useTranslation();
   return (
-    <MsgBox title={t('public~No matching events')}>
+    <ConsoleEmptyState title={t('public~No matching events')}>
       {allCount >= maxMessages
         ? t('public~{{count}}+ event exist, but none match the current filter', {
             count: maxMessages,
@@ -324,16 +324,16 @@ export const NoMatchingEvents = ({ allCount }) => {
         : t('public~{{count}} event exist, but none match the current filter', {
             count: allCount,
           })}
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 };
 
 export const ErrorLoadingEvents = () => {
   const { t } = useTranslation();
   return (
-    <MsgBox title={t('public~Error loading events')}>
+    <ConsoleEmptyState title={t('public~Error loading events')}>
       {t('public~An error occurred during event retrieval. Attempting to reconnect...')}
-    </MsgBox>
+    </ConsoleEmptyState>
   );
 };
 

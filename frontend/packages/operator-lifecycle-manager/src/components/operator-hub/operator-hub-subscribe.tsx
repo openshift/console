@@ -21,7 +21,7 @@ import {
   getURLSearchParams,
   history,
   isManaged,
-  MsgBox,
+  ConsoleEmptyState,
   NsDropdown,
   PageHeading,
   ResourceIcon,
@@ -359,7 +359,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   if (!supportsSingle && !supportsGlobal) {
     return (
-      <MsgBox
+      <ConsoleEmptyState
         title={t("olm~{{item}} can't be installed", {
           item: channels?.[0]?.currentCSVDesc?.displayName,
         })}
@@ -367,7 +367,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         {t(
           'olm~The Operator does not support to be made available in a single namespace (OwnNamespace installMode) or global installation (AllNamespaces installMode).  Use the CLI to install this Operator instead.',
         )}
-      </MsgBox>
+      </ConsoleEmptyState>
     );
   }
 
