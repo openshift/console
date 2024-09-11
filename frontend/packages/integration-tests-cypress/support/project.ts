@@ -34,7 +34,10 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
 });
 
 Cypress.Commands.add('createProjectWithCLI', (name: string) => {
-  cy.exec(`oc new-project ${name}`);
+  cy.exec(`oc new-project ${name}`).then(function (result) {
+    // /cy.wait(3000);
+    cy.log(result.stdout || result.stderr);
+  });
 });
 
 Cypress.Commands.add('deleteProject', (name: string) => {
