@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useClusterBuildStrategy } from '@console/dev-console/src/utils/shipwright-build-hook';
 import { ImportStrategy } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
-import { SelectInputField, SelectInputOption } from '@console/shared/src';
+import { SingleDropdownField, SelectInputOption } from '@console/shared/src';
 import {
   ClusterBuildStrategy,
   ReadableClusterBuildStrategies,
@@ -61,7 +60,7 @@ export const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({
   );
 
   return strategyLoaded ? (
-    <SelectInputField
+    <SingleDropdownField
       data-test-id="cluster-build-strategy-field"
       name="build.clusterBuildStrategy"
       label={t('devconsole~Cluster Build Strategy')}
@@ -74,8 +73,6 @@ export const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({
       )}
       getLabelFromValue={(value: string) => t(ReadableClusterBuildStrategies[value])}
       options={clusterBuildStrategyOptions}
-      variant={SelectVariantDeprecated.single}
-      hideClearButton
       toggleOnSelection
     />
   ) : (

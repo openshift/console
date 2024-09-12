@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SelectVariant } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -8,7 +7,7 @@ import { getActiveNamespace } from '@console/internal/actions/ui';
 import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
 import { CLUSTER_PIPELINE_NS, FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
-import { SelectInputField, SelectInputOption, useFlag } from '@console/shared';
+import { SingleDropdownField, SelectInputOption, useFlag } from '@console/shared';
 import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../../const';
 import {
   isPreferredStrategyAvailable,
@@ -104,11 +103,10 @@ export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStra
   );
 
   return strategyLoaded ? (
-    <SelectInputField
+    <SingleDropdownField
       name={fieldName}
       label={t('devconsole~Build option')}
       options={selectInputOptions}
-      variant={SelectVariant.single}
       onChange={onChange}
       isDisabled={isDisabled}
       getLabelFromValue={(value: string) => t(ReadableBuildOptions[value])}
@@ -119,7 +117,6 @@ export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStra
           </Trans>
         </p>
       }
-      hideClearButton
       toggleOnSelection
     />
   ) : (
