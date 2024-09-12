@@ -16,6 +16,7 @@ import (
 
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
+	artifactsserver "github.com/openshift/console/cmd/bridge/config/downloads"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
@@ -23,7 +24,6 @@ import (
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
-	downloadsServer "github.com/openshift/console/cmd/bridge/downloads/server"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
 )
@@ -80,8 +80,14 @@ func main() {
 	fDownloads := fs.Bool("downloads-server", false, "Bridge will run as a downloads server, that is serving the CLI artifacts.")
 
 	if *fDownloads {
-		// run downloads server
-		downloadsServer.start()
+		klog.Infof("Listening on port 8081 for artifacts requests...")
+		// run artifacts server
+		artServer := artifactsserver.NewArtifactsServer("8081")
+		if err := artServer.Start(); err != nil {
+			klog.Fatalf("Failed to start artifacts downloads server: %v", err)
+			os.Exit(1)
+		}
+
 	}
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")

@@ -18,6 +18,11 @@ type artifactFileSpec struct {
 	path            string
 }
 
+type ArtifactsServer struct {
+	port string
+	spec []artifactFileSpec
+}
+
 var specs = []artifactFileSpec{
 	{
 		arch:            "amd64",
@@ -62,6 +67,13 @@ var simpleSpec = []artifactFileSpec{
 		operatingSystem: "linux",
 		path:            "/tmp/test/amd64/linux/a",
 	},
+}
+
+func NewArtifactsServer(port string) *ArtifactsServer {
+	return &ArtifactsServer{
+		port: port,
+		spec: simpleSpec,
+	}
 }
 
 // credits to https://www.arthurkoziel.com/writing-tar-gz-files-in-go/
@@ -257,7 +269,7 @@ func generateDirContents(tempDir string) ([]string, error) {
 	return content, nil
 }
 
-func start() error {
+func createArtifactsHTTPServer() error {
 	tempDir, err := configureTempDir()
 	if err != nil {
 		return err
@@ -286,18 +298,28 @@ func start() error {
 	}
 
 	// Serve files from the temporary directory
-	http.Handle("/", http.FileServer(http.Dir(tempDir)))
+	downloadsHandler := http.Handle("/", http.FileServer(http.Dir(tempDir)))
+
+	httpsrv := &http.Server{
+		Addr:    "localhost:8081",
+		Handler: downloadsHandler,
+	}
 
 	// Define the port to listen on
 	port := ":8081"
+	//errCh := make(chan error)
 
 	// Listen for incoming connections
 	fmt.Println("Server started. Listening on port", port)
-	if err := http.ListenAndServe(port, nil); err != nil {
+	if err := httpsrv.ListenAndServe(); err != nil {
 		return err
 	}
-	//http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "This is simple http request handler") })
-	//http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	//select {
+	//case err := <-errCh:
+	//	// If there was an error with ListenAndServe, handle it here
+	//	return err
+	//}
+
 	return nil
 }
 
