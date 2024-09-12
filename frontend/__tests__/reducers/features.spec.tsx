@@ -51,6 +51,7 @@ describe('featureReducer', () => {
         CONSOLE_YAML_SAMPLE: undefined,
         CONSOLE_QUICKSTART: undefined,
         CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED: undefined,
+        CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED: undefined,
         LIGHTSPEED_IS_AVAILABLE_TO_INSTALL: undefined,
       }),
     );

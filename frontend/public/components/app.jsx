@@ -162,10 +162,19 @@ const App = (props) => {
     const lightspeedButtonCapability = window.SERVER_FLAGS?.capabilities?.find(
       (capability) => capability.name === 'LightspeedButton',
     );
+    const gettingStartedBannerCapability = window.SERVER_FLAGS?.capabilities?.find(
+      (capability) => capability.name === 'GettingStartedBanner',
+    );
     dispatch(
       setFlag(
         FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
-        lightspeedButtonCapability?.visibility?.state === 'Enabled' ? true : false,
+        lightspeedButtonCapability?.visibility?.state === 'Enabled',
+      ),
+    );
+    dispatch(
+      setFlag(
+        FLAGS.CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED,
+        gettingStartedBannerCapability?.visibility?.state === 'Enabled',
       ),
     );
     dispatch(setFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL, errorMessage === ''));
@@ -471,8 +480,13 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     setPluginVersionsChanged(true);
   }
 
+  const consoleCapabilitiesChanged = !_.isEqual(
+    prevUpdateData?.capabilities,
+    updateData?.capabilities,
+  );
   const consoleCommitChanged = prevUpdateData?.consoleCommit !== updateData?.consoleCommit;
-  if (stateInitialized && consoleCommitChanged && !consoleChanged) {
+
+  if (stateInitialized && (consoleCommitChanged || consoleCapabilitiesChanged) && !consoleChanged) {
     setConsoleChanged(true);
   }
 
