@@ -4,10 +4,12 @@ import {
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,7 +30,7 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const activePerspective = getActivePerspective(namespace);
 
-  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+  const [isOpen, toggleIsOpen, setOpen, setClosed] = useBoolean(false);
   const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
 
   const timespan = useSelector(({ observe }: RootState) =>
@@ -71,6 +73,23 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
     '2w': t('public~Last {{count}} week', { count: 2 }),
   };
 
+  const selectedKey =
+    endTime || endTimeFromParams
+      ? CUSTOM_TIME_RANGE_KEY
+      : formatPrometheusDuration(_.toNumber(timeSpanFromParams) || timespan);
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      id="monitoring-time-range-dropdown"
+      onClick={toggleIsOpen}
+      isExpanded={isOpen}
+      ref={toggleRef}
+      className="monitoring-dashboards__dropdown-button"
+    >
+      {items[selectedKey]}
+    </MenuToggle>
+  );
+
   return (
     <>
       <CustomTimeRangeModal
@@ -85,31 +104,26 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
         >
           {t('public~Time range')}
         </label>
-        <DropdownDeprecated
+        <Select
           className="monitoring-dashboards__variable-dropdown"
-          dropdownItems={_.map(items, (name, key) => (
-            <DropdownItemDeprecated component="button" key={key} onClick={() => onChange(key)}>
-              {name}
-            </DropdownItemDeprecated>
-          ))}
           isOpen={isOpen}
-          onSelect={setClosed}
-          toggle={
-            <DropdownToggleDeprecated
-              className="monitoring-dashboards__dropdown-button"
-              id="monitoring-time-range-dropdown"
-              onToggle={toggleIsOpen}
-            >
-              {
-                items[
-                  endTime || endTimeFromParams
-                    ? CUSTOM_TIME_RANGE_KEY
-                    : formatPrometheusDuration(_.toNumber(timeSpanFromParams) || timespan)
-                ]
-              }
-            </DropdownToggleDeprecated>
-          }
-        />
+          onSelect={(_event, value) => {
+            if (value) {
+              onChange(value);
+            }
+            setClosed();
+          }}
+          toggle={toggle}
+          onOpenChange={(open) => (open ? setOpen() : setClosed())}
+        >
+          <SelectList>
+            {_.map(items, (name, key) => (
+              <SelectOption key={key} value={key} isSelected={selectedKey === key}>
+                {name}
+              </SelectOption>
+            ))}
+          </SelectList>
+        </Select>
       </div>
     </>
   );
