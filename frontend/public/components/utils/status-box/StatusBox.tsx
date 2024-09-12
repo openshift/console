@@ -7,9 +7,7 @@ import {
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
-import { AccessDenied } from './AccessDenied';
-import { EmptyBox } from './EmptyBox';
-import { LoadError, LoadingBox } from '.';
+import { AccessDenied, EmptyBox, LoadError, LoadingBox } from '.';
 
 const Data: React.FC<DataProps> = ({
   NoDataEmptyMsg,

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as cx from 'classnames';
 import {
   EmptyStateActions,
   EmptyStateBody,
@@ -10,6 +9,7 @@ import {
   EmptyState,
   EmptyStateProps,
 } from '@patternfly/react-core';
+import * as cx from 'classnames';
 
 export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
   children,

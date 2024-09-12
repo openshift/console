@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { ConsoleEmptyState } from './ConsoleEmptyState';
 
 export const EmptyBox: React.FCC<EmptyBoxProps> = ({ label }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <ConsoleEmptyState dataTest="empty-box">
-      {label ? t('public~No {{label}} found', { label }) : t('public~Not found')}
+      {label ? t('No {{label}} found', { label }) : t('Not found')}
     </ConsoleEmptyState>
   );
 };

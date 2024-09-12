@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ConsoleEmptyState } from '@console/internal/components/utils/status-box/ConsoleEmptyState';
+import { ConsoleEmptyState } from '../empty-state';
 
 export const LoadError: React.FC<LoadErrorProps> = ({ label, children, canRetry = true }) => {
   const { t } = useTranslation('console-shared');

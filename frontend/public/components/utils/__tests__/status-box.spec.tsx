@@ -4,40 +4,9 @@ import {
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { configure, render } from '@testing-library/react';
 import * as React from 'react';
-import { AccessDenied, EmptyBox, ConsoleEmptyState, StatusBox } from '../status-box';
+import { StatusBox } from '../status-box';
 
 configure({ testIdAttribute: 'data-test' });
-
-describe('EmptyBox', () => {
-  it('should render without label', () => {
-    const { getByText } = render(<EmptyBox />);
-    getByText('Not found');
-  });
-
-  it('should render with label', () => {
-    const { getByText } = render(<EmptyBox label="test-label" />);
-    getByText('No test-label found');
-  });
-});
-
-describe('MsgBox', () => {
-  it('should render title', () => {
-    const { getByText } = render(<ConsoleEmptyState title="test-title" />);
-    getByText('test-title');
-  });
-
-  it('should render children', () => {
-    const { getByText } = render(<ConsoleEmptyState>test-child</ConsoleEmptyState>);
-    getByText('test-child');
-  });
-});
-
-describe('AccessDenied', () => {
-  it('should render message', () => {
-    const { getByText } = render(<AccessDenied>test-message</AccessDenied>);
-    getByText('test-message');
-  });
-});
 
 describe('StatusBox', () => {
   it('should render 404: Not Found if the loadError status is 404', () => {
