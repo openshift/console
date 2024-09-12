@@ -3,9 +3,7 @@ Feature: Shipwright builds table view
               As a user, I want check my Shipwright Build and see latest BuildRun of each in a relevant table.
 
         Background:
-            Given user has installed OpenShift Pipelines Operator
-              And user has installed Shipwright Operator
-              And user is at developer perspective
+            Given user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
               And user has created shipwright builds
               And user is at Builds page

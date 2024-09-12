@@ -3,9 +3,7 @@ Feature: Shipwright builds table view
               As a user, I want to create a Shipwright build using Create Shipwright build form
 
         Background:
-            Given user has installed Shipwright Operator
-              And user is at Builds page
-              And user is at developer perspective
+            Given user is at developer perspective
               And user has created or selected namespace "aut-create-shipwright-build-form"
               And user has created shipwright builds
               And user is at Builds page
