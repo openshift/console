@@ -1,13 +1,14 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 import {
   IncompleteDataError,
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
-import { AccessDenied, EmptyBox, LoadError, LoadingBox } from '.';
+import { AccessDenied, EmptyBox } from '../empty-state';
+import { LoadError, LoadingBox } from '../loading';
 
 const Data: React.FC<DataProps> = ({
   NoDataEmptyMsg,
@@ -38,16 +39,14 @@ Data.displayName = 'Data';
 
 export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   const { loadError, loaded, skeleton, data, ...dataProps } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   if (loadError) {
     const status = _.get(loadError, 'response.status');
     if (status === 404) {
       return (
         <div className="co-m-pane__body">
-          <h1 className="co-m-pane__heading co-m-pane__heading--center">
-            {t('public~404: Not Found')}
-          </h1>
+          <h1 className="co-m-pane__heading co-m-pane__heading--center">{t('404: Not Found')}</h1>
         </div>
       );
     }
@@ -62,7 +61,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
             variant="info"
             isInline
             title={t(
-              'public~{{labels}} content is not available in the catalog at this time due to loading failures.',
+              '{{labels}} content is not available in the catalog at this time due to loading failures.',
               {
                 labels: new Intl.ListFormat(getLastLanguage() || 'en', {
                   style: 'long',
@@ -80,7 +79,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
       return (
         <Data data={data} {...dataProps}>
           <div className="co-m-timeout-error text-muted">
-            {t('public~Timed out fetching new data. The data below is stale.')}
+            {t('Timed out fetching new data. The data below is stale.')}
           </div>
           {props.children}
         </Data>

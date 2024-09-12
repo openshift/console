@@ -1,10 +1,10 @@
+import * as React from 'react';
+import { configure, render } from '@testing-library/react';
 import {
   IncompleteDataError,
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-import { configure, render } from '@testing-library/react';
-import * as React from 'react';
-import { StatusBox } from '../status-box';
+import { StatusBox } from '..';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -19,7 +19,7 @@ describe('StatusBox', () => {
       <StatusBox loadError={{ message: 'test-message', response: { status: 403 } }} />,
     );
 
-    getByText("You don't have access to this section due to cluster policy.");
+    getByText("You don't have access to this section due to cluster policy");
     getByText('test-message');
   });
 
