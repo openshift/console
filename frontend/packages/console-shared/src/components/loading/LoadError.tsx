@@ -1,25 +1,17 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
-import { ConsoleEmptyState } from './ConsoleEmptyState';
+import { useTranslation } from 'react-i18next';
+import { ConsoleEmptyState } from '@console/internal/components/utils/status-box/ConsoleEmptyState';
 
 export const LoadError: React.FC<LoadErrorProps> = ({ label, children, canRetry = true }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const retry = canRetry && (
-    <Button
-      type="button"
-      onClick={window.location.reload.bind(window.location)}
-      variant="link"
-      isInline
-    >
+    <Button type="button" onClick={() => window.location.reload()} variant="link" isInline>
       {t('Try again')}
     </Button>
   );
   return (
-    <ConsoleEmptyState
-      primaryActions={retry}
-      title={t('public~Error loading {{label}}', { label })}
-    >
+    <ConsoleEmptyState primaryActions={retry} title={t('Error loading {{label}}', { label })}>
       {children}
     </ConsoleEmptyState>
   );

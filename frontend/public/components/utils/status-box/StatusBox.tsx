@@ -8,9 +8,8 @@ import {
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 import { AccessDenied } from './AccessDenied';
-import { LoadError } from './LoadError';
-import { LoadingBox } from './LoadingBox';
 import { EmptyBox } from './EmptyBox';
+import { LoadError, LoadingBox } from '.';
 
 const Data: React.FC<DataProps> = ({
   NoDataEmptyMsg,

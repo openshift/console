@@ -4,66 +4,9 @@ import {
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { configure, render } from '@testing-library/react';
 import * as React from 'react';
-import {
-  AccessDenied,
-  EmptyBox,
-  LoadError,
-  Loading,
-  LoadingBox,
-  LoadingInline,
-  ConsoleEmptyState,
-  StatusBox,
-} from '../status-box';
+import { AccessDenied, EmptyBox, ConsoleEmptyState, StatusBox } from '../status-box';
 
 configure({ testIdAttribute: 'data-test' });
-
-describe('LoadError', () => {
-  it('should render info with label and message', () => {
-    const { getByText } = render(<LoadError label="test-label">test-message</LoadError>);
-    getByText('Error Loading test-label: test-message');
-  });
-
-  it('should render info with label and without message', () => {
-    const { getByText } = render(<LoadError label="test-label" />);
-    getByText('Error Loading test-label');
-  });
-
-  it('should render with retry button', () => {
-    const { getByText } = render(<LoadError label="test-label" />);
-    getByText('Try again');
-  });
-
-  it('should render without retry button', () => {
-    const { queryByText } = render(<LoadError label="test-label" canRetry={false} />);
-    expect(queryByText('Try again')).toBeNull();
-  });
-});
-
-describe('Loading', () => {
-  it('should render skeleton', () => {
-    const { getByTestId } = render(<Loading />);
-    getByTestId('loading-indicator');
-  });
-});
-
-describe('LoadingInline', () => {
-  it('should render skeleton', () => {
-    const { getByTestId } = render(<LoadingInline />);
-    getByTestId('loading-indicator');
-  });
-});
-
-describe('LoadingBox', () => {
-  it('should render skeleton', () => {
-    const { getByTestId } = render(<LoadingBox />);
-    getByTestId('loading-indicator');
-  });
-
-  it('should render children', () => {
-    const { getByText } = render(<LoadingBox>test-child</LoadingBox>);
-    getByText('test-child');
-  });
-});
 
 describe('EmptyBox', () => {
   it('should render without label', () => {

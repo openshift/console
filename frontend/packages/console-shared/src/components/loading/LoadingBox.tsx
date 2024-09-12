@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { ConsoleEmptyState } from '@console/internal/components/utils/status-box/ConsoleEmptyState';
 import { Loading } from './Loading';
-import { ConsoleEmptyState } from './ConsoleEmptyState';
 
 export const LoadingBox: React.FC = ({ children }) => (
   <ConsoleEmptyState>
