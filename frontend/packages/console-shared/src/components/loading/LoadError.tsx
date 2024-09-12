@@ -5,13 +5,21 @@ import { ConsoleEmptyState } from '../empty-state';
 
 export const LoadError: React.FC<LoadErrorProps> = ({ label, children, canRetry = true }) => {
   const { t } = useTranslation('console-shared');
-  const retry = canRetry && (
-    <Button type="button" onClick={() => window.location.reload()} variant="link" isInline>
-      {t('Try again')}
-    </Button>
-  );
+  const actions = canRetry
+    ? [
+        <Button
+          key="try-again"
+          type="button"
+          onClick={() => window.location.reload()}
+          variant="link"
+          isInline
+        >
+          {t('Try again')}
+        </Button>,
+      ]
+    : [];
   return (
-    <ConsoleEmptyState primaryActions={retry} title={t('Error loading {{label}}', { label })}>
+    <ConsoleEmptyState primaryActions={actions} title={t('Error loading {{label}}', { label })}>
       {children}
     </ConsoleEmptyState>
   );

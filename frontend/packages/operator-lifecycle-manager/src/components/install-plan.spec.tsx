@@ -153,7 +153,7 @@ describe('InstallPlansList', () => {
     const MsgComponent = wrapper.find<any>(Table).props().EmptyMsg;
     const msgWrapper = shallow(<MsgComponent />);
     expect(msgWrapper.find(ConsoleEmptyState).props().title).toEqual('No InstallPlans found');
-    expect(msgWrapper.find(ConsoleEmptyState)).toHaveTextContent(
+    expect(msgWrapper.find(ConsoleEmptyState).children().text()).toEqual(
       'InstallPlans are created automatically by subscriptions or manually using the CLI.',
     );
   });

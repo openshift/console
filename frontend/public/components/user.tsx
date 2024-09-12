@@ -129,7 +129,7 @@ const NoDataEmptyMsg = () => {
   const { t } = useTranslation();
   return (
     <ConsoleEmptyState title={t('public~No Users found')}>
-      {<NoDataEmptyMsgDetail />}
+      <NoDataEmptyMsgDetail />
     </ConsoleEmptyState>
   );
 };

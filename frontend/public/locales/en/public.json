@@ -1213,12 +1213,14 @@
   "Display name": "Display name",
   "No display name": "No display name",
   "{{cores}} cores": "{{cores}} cores",
-  "No namespaces found": "No namespaces found",
+  "No Namespaces found": "No Namespaces found",
+  "No results were found for the requested Namespaces.": "No results were found for the requested Namespaces.",
+  "No matching Namespaces": "No matching Namespaces",
   "No results match the filter criteria.": "No results match the filter criteria.",
   "Namespaces": "Namespaces",
   "Projects": "Projects",
   "Welcome to OpenShift": "Welcome to OpenShift",
-  "No projects found": "No projects found",
+  "No matching Projects": "No matching Projects",
   "by name or display name": "by name or display name",
   "Project": "Project",
   "Error loading default pull Secrets": "Error loading default pull Secrets",
@@ -1980,6 +1982,5 @@
   "Disable": "Disable",
   "default": "default",
   "Disabled": "Disabled",
-  "Enabled": "Enabled",
-  "Please check that the OperatorHub is running and that you have created a valid CatalogSource.": "Please check that the OperatorHub is running and that you have created a valid CatalogSource."
+  "Enabled": "Enabled"
 }

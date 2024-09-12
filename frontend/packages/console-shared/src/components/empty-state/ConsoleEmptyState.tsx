@@ -19,7 +19,7 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
   title,
   ...props
 }) => {
-  const dataTest = props.dataTest || 'console-empty-state';
+  const dataTest = props['data-test'] || 'console-empty-state';
   const variant = props.variant || EmptyStateVariant.xs;
   const header = (title || Icon) && (
     <EmptyStateHeader
@@ -36,12 +36,12 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
   );
   const footer = (primaryActions || secondaryActions) && (
     <EmptyStateFooter data-test={`${dataTest}-footer`}>
-      {primaryActions && (
+      {primaryActions?.length > 0 && (
         <EmptyStateActions data-test={`${dataTest}-primary-actions`}>
           {primaryActions}
         </EmptyStateActions>
       )}
-      {secondaryActions && (
+      {secondaryActions?.length > 0 && (
         <EmptyStateActions data-test={`${dataTest}-secondary-actions`}>
           {secondaryActions}
         </EmptyStateActions>
@@ -60,10 +60,10 @@ ConsoleEmptyState.displayName = 'ConsoleEmptyState';
 
 type ConsoleEmptyStateProps = Partial<EmptyStateProps> & {
   className?: string;
-  dataTest?: string;
+  'data-test'?: string;
   Icon?: React.ComponentType;
-  primaryActions?: React.ReactElement;
-  secondaryActions?: React.ReactElement;
+  primaryActions?: React.ReactElement[];
+  secondaryActions?: React.ReactElement[];
   title?: string | React.ReactElement;
   variant?: EmptyStateVariant;
 };

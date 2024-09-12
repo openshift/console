@@ -5,7 +5,7 @@ import { ConsoleEmptyState } from './ConsoleEmptyState';
 export const EmptyBox: React.FCC<EmptyBoxProps> = ({ label }) => {
   const { t } = useTranslation('console-shared');
   return (
-    <ConsoleEmptyState dataTest="empty-box">
+    <ConsoleEmptyState data-test="empty-box">
       {label ? t('No {{label}} found', { label }) : t('Not found')}
     </ConsoleEmptyState>
   );

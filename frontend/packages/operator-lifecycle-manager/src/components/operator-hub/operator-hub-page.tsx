@@ -1,11 +1,4 @@
 import * as React from 'react';
-import {
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateHeader,
-} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
@@ -27,6 +20,7 @@ import {
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { iconFor } from '..';
 import {
@@ -78,6 +72,22 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
     `Error parsing valid subscription from PackageManifest "${pkg.metadata.name}":`,
     error,
   );
+
+const OperatorHubEmptyState = () => {
+  const { t } = useTranslation('olm');
+  const actions = [
+    <ExternalLink
+      key="more-info"
+      href="https://github.com/operator-framework/operator-marketplace"
+      text={t('More info')}
+    />,
+  ];
+  return (
+    <ConsoleEmptyState title={t('No OperatorHub items found')} primaryActions={actions}>
+      {t('Check that the OperatorHub is running and that you have created a valid CatalogSource.')}
+    </ConsoleEmptyState>
+  );
+};
 
 export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   loaded,
@@ -230,24 +240,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
       loaded={loaded}
       loadError={loadError}
       label={t('olm~Resources')}
-      EmptyMsg={() => (
-        <EmptyState>
-          <EmptyStateHeader title={t('olm~No OperatorHub items found')} />
-          <EmptyStateBody>
-            {t(
-              'Please check that the OperatorHub is running and that you have created a valid CatalogSource.',
-            )}
-          </EmptyStateBody>
-          <EmptyStateFooter>
-            <EmptyStateActions>
-              <ExternalLink
-                href="https://github.com/operator-framework/operator-marketplace"
-                text={t('olm~More info')}
-              />
-            </EmptyStateActions>
-          </EmptyStateFooter>
-        </EmptyState>
-      )}
+      EmptyMsg={OperatorHubEmptyState}
     >
       <OperatorHubTileView items={uniqueItems} namespace={namespace} />
     </StatusBox>
