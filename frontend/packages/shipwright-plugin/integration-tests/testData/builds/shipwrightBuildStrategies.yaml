@@ -11,7 +11,7 @@
 #
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: buildah
@@ -192,7 +192,7 @@ spec:
         - quay.io
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: buildkit
@@ -340,7 +340,7 @@ spec:
         - $(params.secrets[*])
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: buildpacks-v3-heroku
@@ -376,7 +376,7 @@ spec:
           memory: 65Mi
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: buildpacks-v3
@@ -416,7 +416,7 @@ spec:
 # This Build Strategy will intentionally fail if the image has any
 # critical CVEs. It will not be pushed into the destination registry
 # if any critical vulnerabilities are found.
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: kaniko-trivy
@@ -517,7 +517,7 @@ spec:
           mountPath: /kaniko/oci-image-layout
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: kaniko
@@ -579,7 +579,7 @@ spec:
           mountPath: /kaniko/oci-image-layout
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: ko
@@ -694,7 +694,7 @@ spec:
           memory: 65Mi
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: source-to-image-redhat
@@ -826,7 +826,7 @@ spec:
         - quay.io
 
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: BuildStrategy
 metadata:
   name: source-to-image
