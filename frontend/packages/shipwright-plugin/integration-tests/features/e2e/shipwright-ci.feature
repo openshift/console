@@ -47,8 +47,8 @@ Feature: Shipwright build details page
               And user clicks on Filter
              Then user will see "Pending", "Running", "Succeeded", "Failed" and "Unknown" options
 
-
-        @regression
+        # Disabling the test due to the BUG : https://issues.redhat.com/browse/OCPBUGS-41944
+        @regression @broken-test
         Scenario: Shipwright build runs details page: SWB-01-TC06
             Given user is at Shipwright Builds details page for build "buildpack-nodejs-build-heroku"
              When user clicks on "BuildRuns" tab in the Developer perspective
@@ -66,8 +66,8 @@ Feature: Shipwright build details page
               And user clicks on Event tab
              Then user will see events steaming
 
-
-        @regression
+        # Disabling the test due to the BUG : https://issues.redhat.com/browse/OCPBUGS-41945
+        @regression @broken-test
         Scenario: Checking error for failed build runs : SWB-01-TC08
             Given user is at Shipwright Builds run page "buildpack-nodejs-build-heroku"
               And user has a failed build run
