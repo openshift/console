@@ -1,11 +1,10 @@
-package main
+package downloads
 
 import (
 	"archive/tar"
 	"archive/zip"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,9 +17,10 @@ type artifactFileSpec struct {
 	path            string
 }
 
-type ArtifactsServer struct {
-	port string
-	spec []artifactFileSpec
+type ArtifactsConfig struct {
+	Port    string
+	Spec    []artifactFileSpec
+	TempDir string
 }
 
 var specs = []artifactFileSpec{
@@ -61,25 +61,28 @@ var specs = []artifactFileSpec{
 	},
 }
 
-var simpleSpec = []artifactFileSpec{
-	{
-		arch:            "amd64",
-		operatingSystem: "linux",
-		path:            "/tmp/test/amd64/linux/a",
-	},
-}
-
-func NewArtifactsServer(port string) *ArtifactsServer {
-	return &ArtifactsServer{
-		port: port,
-		spec: simpleSpec,
+func NewArtifactsConfig(port uint) (*ArtifactsConfig, error) {
+	tempDir, err := os.MkdirTemp("", "artifacts")
+	if err != nil {
+		return nil, err
 	}
+
+	fmt.Println("Serving from ", tempDir)
+	artifactsConfig := ArtifactsConfig{
+		Port:    fmt.Sprint(port),
+		Spec:    specs,
+		TempDir: tempDir,
+	}
+	err = artifactsConfig.configureFileStructure()
+	if err != nil {
+		return nil, err
+	}
+
+	return &artifactsConfig, nil
 }
 
 // credits to https://www.arthurkoziel.com/writing-tar-gz-files-in-go/
 func addFileToTar(tw *tar.Writer, filename string) error {
-	fmt.Println("Adding to tar archive: ", filename)
-
 	// Open the archive
 	file, err := os.Open(filename)
 	if err != nil {
@@ -115,8 +118,6 @@ func addFileToTar(tw *tar.Writer, filename string) error {
 }
 
 func addFileToZip(zw *zip.Writer, filename string) error {
-	//fmt.Println("Adding to zip archive:", filename)
-
 	// Open the archive
 	file, err := os.Open(filename)
 	if err != nil {
@@ -190,22 +191,7 @@ func createHTMLFile(path string, message string) error {
 	return os.WriteFile(path, []byte(content), 0644)
 }
 
-func configureTempDir() (string, error) {
-	tempDir, err := os.MkdirTemp("", "artifacts")
-	if err != nil {
-		return "", err
-	}
-
-	//fmt.Println("Serving from ", tempDir)
-	err = os.Chdir(tempDir)
-	if err != nil {
-		return "", err
-	}
-	return tempDir, nil
-}
-
 func createDir(dir string) error {
-	//fmt.Println("Creating directory: ", dir, "\n")
 	_, err := os.Stat(dir)
 	if os.IsNotExist(err) {
 		err := os.Mkdir(dir, 0755)
@@ -216,29 +202,27 @@ func createDir(dir string) error {
 	return nil
 }
 
-func generateDirContents(tempDir string) ([]string, error) {
-	// generates content of the root html file and creates the necessary directories, files and archives
-	// returns the content of the root html file
+func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) ([]string, error) {
 	content := []string{"<a href=\"oc-license\">license</a>"}
 
+	// create subdirectories for the artifacts
 	for _, spec := range simpleSpec {
 		basename := filepath.Base(spec.path)
-		relativeArtifactPath := filepath.Join(spec.arch, spec.operatingSystem, basename)
-		archDir := filepath.Join(tempDir, spec.arch)
-		osDir := filepath.Join(tempDir, spec.arch, spec.operatingSystem)
+		artifactPath := filepath.Join(artifactsConfig.TempDir, spec.arch, spec.operatingSystem, basename)
+		archDir := filepath.Join(artifactsConfig.TempDir, spec.arch)
+		osDir := filepath.Join(artifactsConfig.TempDir, spec.arch, spec.operatingSystem)
 
-		// create subdirectory for the architecture if they don't exist
+		// create subdirectory for the architecture
 		err := createDir(archDir)
 		if err != nil {
 			return nil, err
 		}
-
 		createHTMLFile(
 			filepath.Join(archDir, "index.html"),
 			fmt.Sprintf("<p>Directory listings are disabled. See <a href=\"/private/%s\">here</a> for available content.</p>", tempDir),
 		)
 
-		// create subdirectory for the architecture and operating system if they don't exist
+		// create subdirectory for the operating system
 		err = createDir(osDir)
 		if err != nil {
 			return nil, err
@@ -248,38 +232,29 @@ func generateDirContents(tempDir string) ([]string, error) {
 			fmt.Sprintf("<p>Directory listings are disabled. See <a href=\"/private/%s\">here</a> for available content.</p>", tempDir),
 		)
 
-		err = os.Symlink(spec.path, relativeArtifactPath)
+		err = os.Symlink(spec.path, artifactPath)
 		if err != nil {
 			return nil, err
 		}
 
-		//fmt.Printf("mydir: %s\n", tempDir)
-		//fmt.Printf("path: %s\n", spec.path)
-		//fmt.Printf("relativeArtifactPath: %s\n", relativeArtifactPath)
-		//fmt.Printf("dir: %s\n", filepath.Join(spec.arch, spec.operatingSystem))
-		err = createArchives(relativeArtifactPath)
+		err = createArchives(artifactPath)
 		if err != nil {
 			return nil, err
 		}
 
 		content = append(content, fmt.Sprintf("<a href=\"%s\">oc (%s %s)</a> (<a href=\"%s.tar\">tar</a> <a href=\"%s.zip\">zip</a>)",
-			relativeArtifactPath, spec.arch, spec.operatingSystem, relativeArtifactPath, relativeArtifactPath))
+			artifactPath, spec.arch, spec.operatingSystem, artifactPath, artifactPath))
 	}
 
 	return content, nil
 }
 
-func createArtifactsHTTPServer() error {
-	tempDir, err := configureTempDir()
-	if err != nil {
-		return err
-	}
-	defer os.RemoveAll(tempDir)
-
+func (artifactsConfig *ArtifactsConfig) configureFileStructure() error {
 	// symlink file in the temporary directory that points to the openshift license
-	os.Symlink("/usr/share/openshift/LICENSE", "oc-license")
+	os.Symlink("/usr/share/openshift/LICENSE", filepath.Join(artifactsConfig.TempDir, "oc-license"))
 
-	content, err := generateDirContents(tempDir)
+	// generates content of the root html file and creates directories, files and archives for artifacts
+	content, err := artifactsConfig.generateDirFileContents(artifactsConfig.TempDir)
 	if err != nil {
 		return err
 	}
@@ -291,41 +266,11 @@ func createArtifactsHTTPServer() error {
 	}
 	message += "</ul>\n"
 
-	// Write the index file
-	err = createHTMLFile(filepath.Join(tempDir, "index.html"), message)
+	// create the root html file
+	err = createHTMLFile(filepath.Join(artifactsConfig.TempDir, "index.html"), message)
 	if err != nil {
 		return err
 	}
-
-	// Serve files from the temporary directory
-	downloadsHandler := http.Handle("/", http.FileServer(http.Dir(tempDir)))
-
-	httpsrv := &http.Server{
-		Addr:    "localhost:8081",
-		Handler: downloadsHandler,
-	}
-
-	// Define the port to listen on
-	port := ":8081"
-	//errCh := make(chan error)
-
-	// Listen for incoming connections
-	fmt.Println("Server started. Listening on port", port)
-	if err := httpsrv.ListenAndServe(); err != nil {
-		return err
-	}
-	//select {
-	//case err := <-errCh:
-	//	// If there was an error with ListenAndServe, handle it here
-	//	return err
-	//}
 
 	return nil
-}
-
-func main() {
-	err := start()
-	if err != nil {
-		fmt.Println("Error starting the server: ", err)
-	}
 }

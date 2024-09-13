@@ -16,7 +16,7 @@ import (
 
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
-	artifactsserver "github.com/openshift/console/cmd/bridge/config/downloads"
+	"github.com/openshift/console/cmd/bridge/config/downloads"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
@@ -78,17 +78,6 @@ func main() {
 
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 	fDownloads := fs.Bool("downloads-server", false, "Bridge will run as a downloads server, that is serving the CLI artifacts.")
-
-	if *fDownloads {
-		klog.Infof("Listening on port 8081 for artifacts requests...")
-		// run artifacts server
-		artServer := artifactsserver.NewArtifactsServer("8081")
-		if err := artServer.Start(); err != nil {
-			klog.Fatalf("Failed to start artifacts downloads server: %v", err)
-			os.Exit(1)
-		}
-
-	}
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
@@ -609,6 +598,31 @@ func main() {
 		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
+	}
+
+	if *fDownloads {
+		klog.Infof("Listening on port 8081 for artifacts requests...")
+		// run artifacts server
+		artifactsConfig, err := downloads.NewArtifactsConfig(8081)
+		if err != nil {
+			klog.Fatalf("Failed to configure artifacts: %v", err)
+			os.Exit(1)
+		}
+		defer os.RemoveAll(artifactsConfig.TempDir)
+		go func() {
+			// Listen for incoming connections
+			fmt.Println("Server started. Listening on port:", artifactsConfig.Port)
+			// Serve files from the temporary directory
+			http.Handle("/", http.FileServer(http.Dir(artifactsConfig.TempDir)))
+
+			downlsrv := &http.Server{
+				Addr:    fmt.Sprintf("localhost:%s", artifactsConfig.Port),
+				Handler: http.FileServer(http.Dir(artifactsConfig.TempDir)),
+			}
+			if err = downlsrv.ListenAndServe(); err != nil {
+				fmt.Println(err)
+			}
+		}()
 	}
 
 	consoleHandler, err := srv.HTTPHandler()
