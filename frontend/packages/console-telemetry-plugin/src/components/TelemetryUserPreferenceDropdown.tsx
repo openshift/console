@@ -7,7 +7,6 @@ import {
 } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import {
-  CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_SETTING_KEY,
   USER_TELEMETRY_ANALYTICS,
   useTelemetry,
@@ -92,25 +91,22 @@ const TelemetryUserPreferenceDropdown: React.FC = () => {
 
   return (
     <div className="pf-v5-c-form">
-      {(window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN ||
-        window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT) && (
-        <FormGroup fieldId="telemetry" label={t('console-telemetry-plugin~Telemetry')}>
-          <TelemetryAnalyticsSelect
-            disabled={!window.SERVER_FLAGS.telemetry?.STATE}
-            value={currentUserPreferenceTelemetryValue}
-            onChange={onChange}
-          />
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem>
-                {t(
-                  'console-telemetry-plugin~Select a option whether to send telemetry events or not.',
-                )}
-              </HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        </FormGroup>
-      )}
+      <FormGroup fieldId="telemetry" label={t('console-telemetry-plugin~Telemetry')}>
+        <TelemetryAnalyticsSelect
+          disabled={!window.SERVER_FLAGS.telemetry?.STATE}
+          value={currentUserPreferenceTelemetryValue}
+          onChange={onChange}
+        />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t(
+                'console-telemetry-plugin~Select a option whether to send telemetry events or not.',
+              )}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
     </div>
   );
 };
