@@ -24,8 +24,8 @@ Feature: Shipwright build details page
               And user will see "BuildStrategies" horizontal link tab
               And user will see "ClusterBuildStrategies" horizontal link tab
 
-
-        @regression
+        # Disabling the test due to the BUG : https://issues.redhat.com/browse/OCPBUGS-41945
+        @regression @broken-test
         Scenario: Shipwright build details page: SWB-01-TC03
             Given user is on Builds navigation in Developer perspective
               And user clicks on "buildpack-nodejs-build-heroku" build
