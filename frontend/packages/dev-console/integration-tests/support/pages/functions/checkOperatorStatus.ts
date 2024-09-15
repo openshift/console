@@ -38,6 +38,14 @@ export const checkWebterminalOperatorStatus = (retries: number = 5) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
+        // log all pods in the namespace
+        cy.exec(`oc get pods --show-labels -n ${namespace}`, {
+          failOnNonZeroExit: false,
+        }).then(function (resultlog) {
+          cy.log(`Success: ${resultlog.stdout}`);
+          cy.log(resultlog.stderr);
+        });
+
         cy.log(result.stderr);
         cy.wait(30000);
         checkWebterminalOperatorStatus(retries - 1);
