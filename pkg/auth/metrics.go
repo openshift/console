@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -43,11 +44,12 @@ const (
 )
 
 type Metrics struct {
-	loginRequests        prometheus.Counter
-	loginSuccessful      *prometheus.CounterVec
-	loginFailures        *prometheus.CounterVec
-	logoutRequests       *prometheus.CounterVec
-	tokenRefreshRequests *prometheus.CounterVec
+	loginRequests                 prometheus.Counter
+	loginSuccessful               *prometheus.CounterVec
+	loginFailures                 *prometheus.CounterVec
+	logoutRequests                *prometheus.CounterVec
+	tokenRefreshRequests          *prometheus.CounterVec
+	anonymousInternalProxiedK8SRT http.RoundTripper
 }
 
 func (m *Metrics) GetCollectors() []prometheus.Collector {
@@ -82,11 +84,10 @@ func (m *Metrics) loginSuccessfulSync(k8sConfig *rest.Config, ls *sessions.Login
 	ctx := context.TODO()
 	configWithBearerToken := &rest.Config{
 		Host:        k8sConfig.Host,
-		Transport:   k8sConfig.Transport,
+		Transport:   m.anonymousInternalProxiedK8SRT,
 		BearerToken: ls.AccessToken(),
 		Timeout:     30 * time.Second,
 	}
-
 	role := UnknownLoginRole
 
 	if isKubeAdmin, err := m.isKubeAdmin(ctx, configWithBearerToken); isKubeAdmin && err == nil {
@@ -179,8 +180,9 @@ func (m *Metrics) isKubeAdmin(ctx context.Context, config *rest.Config) (bool, e
 	return isKubeAdmin, nil
 }
 
-func NewMetrics() *Metrics {
+func NewMetrics(anonymousInternalProxiedK8SRT http.RoundTripper) *Metrics {
 	m := new(Metrics)
+	m.anonymousInternalProxiedK8SRT = anonymousInternalProxiedK8SRT
 
 	m.loginRequests = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: "console",

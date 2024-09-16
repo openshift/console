@@ -166,6 +166,7 @@ type Server struct {
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
 	InternalProxiedK8SClientConfig      *rest.Config
+	AnonymousInternalProxiedK8SRT       http.RoundTripper
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
 	KnativeChannelCRDLister             ResourceLister
@@ -195,6 +196,7 @@ type Server struct {
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
 	UserSettingsLocation                string
+	AuthMetrics                         *auth.Metrics
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -239,10 +241,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	internalProxiedDynamic, err := dynamic.NewForConfig(s.InternalProxiedK8SClientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to set up a dynamic client: %w", err)
-	}
-	anonymousInternalProxiedK8SRT, err := rest.TransportFor(rest.AnonymousClientConfig(s.InternalProxiedK8SClientConfig))
-	if err != nil {
-		return nil, fmt.Errorf("failed to set up an anonymous roundtripper: %w", err)
 	}
 
 	mux := http.NewServeMux()
@@ -466,7 +464,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	// Knative
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
 	knativeHandler := knative.NewKnativeHandler(
-		anonymousInternalProxiedK8SRT,
+		s.AnonymousInternalProxiedK8SRT,
 		k8sProxyURL,
 		trimURLPrefix,
 	)
@@ -485,7 +483,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	)
 
 	// User settings
-	userSettingHandler := usersettings.NewUserSettingsHandler(internalProxiedK8SClient, anonymousInternalProxiedK8SRT, k8sProxyURL)
+	userSettingHandler := usersettings.NewUserSettingsHandler(internalProxiedK8SClient, s.AnonymousInternalProxiedK8SRT, k8sProxyURL)
 
 	handle("/api/console/user-settings", authHandlerWithUser(userSettingHandler.HandleUserSettings))
 
@@ -592,6 +590,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	usageMetrics.MonitorUsers(internalProxiedK8SClient)
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
+	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
+
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
 		authHandler(func(w http.ResponseWriter, r *http.Request) {
 			promhttp.Handler().ServeHTTP(w, r)
