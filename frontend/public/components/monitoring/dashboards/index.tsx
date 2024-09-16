@@ -255,12 +255,15 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
     return null;
   }
 
-  const items = variable.includeAll
-    ? { [MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY]: 'All' }
-    : {};
-  _.each(variable.options, (option) => {
-    items[option] = option;
-  });
+  const items = (variable.includeAll
+    ? [{ value: MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY, children: 'All' }]
+    : []
+  ).concat(
+    _.map(variable.options, (option) => ({
+      value: option,
+      children: option,
+    })),
+  );
 
   return (
     <div
@@ -347,7 +350,10 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
       </SelectOption>
     );
 
-    const selectItems = _.mapValues(items, 'title');
+    const selectItems = _.map(items, (item, key) => ({
+      value: key,
+      children: item.title,
+    }));
 
     return (
       <div

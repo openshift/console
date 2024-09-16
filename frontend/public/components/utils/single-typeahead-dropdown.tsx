@@ -19,7 +19,7 @@ import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
 
 export type SingleTypeaheadDropdownProps = {
   /** The items to display in the dropdown */
-  items: { [key: string]: string };
+  items: SelectOptionProps[];
   /** The component to use render the dropdown options */
   OptionComponent: React.FC<SelectOptionProps>;
   /** The function to call when the selected item changes */
@@ -32,6 +32,8 @@ export type SingleTypeaheadDropdownProps = {
   hideClearButton?: boolean;
   /** Whether to resize the dropdown to fit the selected item */
   resizeToFit?: boolean;
+  /** Whether to enable creating new items */
+  enableCreateNew?: boolean;
 
   /** Additional props to pass to MenuToggle */
   menuToggleProps?: MenuToggleProps;
@@ -42,12 +44,12 @@ export type SingleTypeaheadDropdownProps = {
 /**
  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
  *
- * @param {String} text The text to be rendered.
- * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
+ * @param {String} text - The text to be rendered.
+ * @param {String} font - The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
  *
  * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
  */
-const getTextWidth = (text: string, font: string) => {
+const getTextWidth = (text: string, font: string): number => {
   // re-use canvas object for better performance
   const canvas: HTMLCanvasElement =
     // @ts-ignore
@@ -66,33 +68,34 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
   selectedKey,
   placeholder,
   hideClearButton = false,
+  enableCreateNew = false,
   resizeToFit = false,
   menuToggleProps = {},
   selectProps = {},
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
-  const initialSelectOptions: SelectOptionProps[] = React.useMemo(() => {
-    return _.map(items, (v, k) => ({ value: k, children: v }));
-  }, [items]);
-  const [inputValue, setInputValue] = React.useState<string>(items[selectedKey] || '');
+  const selectedValue = React.useMemo(() => items.find((i) => i.value === selectedKey), [
+    items,
+    selectedKey,
+  ]);
+  const [inputValue, setInputValue] = React.useState<string>(selectedValue?.children || '');
   const [filterValue, setFilterValue] = React.useState<string>('');
-  const [selectOptions, setSelectOptions] = React.useState<SelectOptionProps[]>(
-    initialSelectOptions,
-  );
+  const [selectOptions, setSelectOptions] = React.useState<SelectOptionProps[]>(items);
   const [focusedItemIndex, setFocusedItemIndex] = React.useState<number | null>(null);
   const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
   const textInputRef = React.useRef<HTMLInputElement>();
 
   const ID_PREFIX = _.uniqueId('select-typeahead-'); // for aria to work, ids have to be unique
-  const NO_RESULTS = 'no-results';
+  const NO_RESULTS = 'typeahead-dropdown__no-results';
+  const CREATE_NEW = 'typeahead-dropdown__create-new';
 
   React.useEffect(() => {
-    let newSelectOptions: SelectOptionProps[] = initialSelectOptions;
+    let newSelectOptions: SelectOptionProps[] = items;
 
     // Filter menu items based on the text input value when one exists
     if (filterValue) {
-      newSelectOptions = initialSelectOptions.filter((menuItem) =>
+      newSelectOptions = items.filter((menuItem) =>
         String(menuItem.children).toLowerCase().includes(filterValue.toLowerCase()),
       );
 
@@ -144,14 +147,21 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined,
   ) => {
-    if (value && value !== NO_RESULTS) {
+    if (enableCreateNew && filterValue && value === CREATE_NEW) {
+      if (!selectOptions.some((item) => item.children === filterValue)) {
+        setSelectOptions([...selectOptions, { value: filterValue, children: filterValue }]);
+      }
+      selectOption(filterValue, filterValue);
+      setFilterValue('');
+      closeMenu();
+    } else if (value && value !== NO_RESULTS) {
       selectOption(value, items[value]);
     }
   };
 
   React.useEffect(() => {
-    setInputValue(items[selectedKey] || '');
-  }, [selectedKey, items]);
+    setInputValue(selectedValue?.children || '');
+  }, [selectedValue]);
 
   const onTextInputChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
     setInputValue(value);
@@ -252,8 +262,12 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
 
   const selectedItemWidth = React.useMemo(() => {
     // hardcoded as canvas can't access CSS variables scoped to the component
-    return resizeToFit && selectedKey && getTextWidth(items[selectedKey], '14px RedHatText');
-  }, [resizeToFit, selectedKey, items]);
+    return (
+      resizeToFit &&
+      selectedValue &&
+      getTextWidth(String(selectedValue.children), '14px RedHatText')
+    );
+  }, [resizeToFit, selectedValue, items]);
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
@@ -325,9 +339,19 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
           />
         ))}
         {_.isEmpty(selectOptions) && filterValue && (
-          <SelectOption isDisabled={true} isAriaDisabled={true} value={NO_RESULTS}>
-            {t(`public~No results found`)}
-          </SelectOption>
+          <>
+            {!enableCreateNew && (
+              <SelectOption isDisabled={true} isAriaDisabled={true} value={NO_RESULTS}>
+                {t(`public~No results found`)}
+              </SelectOption>
+            )}
+
+            {enableCreateNew && (
+              <SelectOption value={CREATE_NEW}>
+                {t(`public~Create new option {{option}}`, { option: filterValue })}
+              </SelectOption>
+            )}
+          </>
         )}
       </SelectList>
     </Select>

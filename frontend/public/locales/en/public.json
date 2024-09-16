@@ -1778,6 +1778,7 @@
   "This cluster is not supported.": "This cluster is not supported.",
   "For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.": "For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.",
   "Filter options": "Filter options",
+  "Create new option {{option}}": "Create new option {{option}}",
   "Error Loading {{label}}: {{message}}": "Error Loading {{label}}: {{message}}",
   "Error Loading {{label}}": "Error Loading {{label}}",
   "Please <2>try again</2>.": "Please <2>try again</2>.",
