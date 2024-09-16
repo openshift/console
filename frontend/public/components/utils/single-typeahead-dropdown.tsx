@@ -20,10 +20,14 @@ import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
 export type SingleTypeaheadDropdownProps = {
   /** The items to display in the dropdown */
   items: SelectOptionProps[];
-  /** The component to use render the dropdown options */
-  OptionComponent: React.FC<SelectOptionProps>;
   /** The function to call when the selected item changes */
   onChange: (v: string) => void;
+  /** The function to call when the selected item is cleared */
+  onClear?: (v: string) => void;
+  /** The function to call when an item is created */
+  onCreate?: (v: string) => void;
+  /** The function to call when the input value changes */
+  onInputChange?: (v: string) => void;
   /** The key of the selected item */
   selectedKey: string;
   /** The placeholder text to display in the input */
@@ -34,11 +38,13 @@ export type SingleTypeaheadDropdownProps = {
   resizeToFit?: boolean;
   /** Whether to enable creating new items */
   enableCreateNew?: boolean;
+  /** The component to use render the dropdown options */
+  OptionComponent?: React.FC<SelectOptionProps>;
 
   /** Additional props to pass to MenuToggle */
-  menuToggleProps?: MenuToggleProps;
+  menuToggleProps?: Partial<MenuToggleProps>;
   /** Additional props to pass to Select */
-  selectProps?: SelectProps;
+  selectProps?: Partial<SelectProps>;
 };
 
 /**
@@ -64,24 +70,35 @@ const getTextWidth = (text: string, font: string): number => {
 export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = ({
   items,
   onChange,
-  OptionComponent = SelectOption,
+  onClear,
+  onCreate,
+  onInputChange,
   selectedKey,
   placeholder,
   hideClearButton = false,
-  enableCreateNew = false,
   resizeToFit = false,
+  enableCreateNew = false,
+  OptionComponent,
   menuToggleProps = {},
   selectProps = {},
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
-  const selectedValue = React.useMemo(() => items.find((i) => i.value === selectedKey), [
-    items,
+  const [selectOptions, setSelectOptions] = React.useState<SelectOptionProps[]>(items);
+
+  React.useEffect(() => {
+    setSelectOptions([...selectOptions, ..._.differenceBy(items, selectOptions, 'value')]);
+  }, [items]);
+
+  const selectedValue = React.useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
+    selectOptions,
     selectedKey,
   ]);
   const [inputValue, setInputValue] = React.useState<string>(selectedValue?.children || '');
   const [filterValue, setFilterValue] = React.useState<string>('');
-  const [selectOptions, setSelectOptions] = React.useState<SelectOptionProps[]>(items);
+  const [filteredSelectOptions, setFilteredSelectOptions] = React.useState<SelectOptionProps[]>(
+    items,
+  );
   const [focusedItemIndex, setFocusedItemIndex] = React.useState<number | null>(null);
   const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
   const textInputRef = React.useRef<HTMLInputElement>();
@@ -91,13 +108,24 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
   const CREATE_NEW = 'typeahead-dropdown__create-new';
 
   React.useEffect(() => {
-    let newSelectOptions: SelectOptionProps[] = items;
+    let newSelectOptions: SelectOptionProps[] = selectOptions;
 
     // Filter menu items based on the text input value when one exists
     if (filterValue) {
-      newSelectOptions = items.filter((menuItem) =>
+      newSelectOptions = selectOptions.filter((menuItem) =>
         String(menuItem.children).toLowerCase().includes(filterValue.toLowerCase()),
       );
+
+      // If no option matches the filter exactly, display creation option
+      if (enableCreateNew && !selectOptions.some((option) => option.value === inputValue)) {
+        newSelectOptions = [
+          ...newSelectOptions,
+          {
+            children: t('public~Create new option "{{option}}"', { option: inputValue }),
+            value: CREATE_NEW,
+          },
+        ];
+      }
 
       // Open the menu when the input value changes and the new value is not empty
       if (!isOpen) {
@@ -105,15 +133,15 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
       }
     }
 
-    setSelectOptions(newSelectOptions);
+    setFilteredSelectOptions(newSelectOptions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue]);
 
-  const createItemId = (value: any) => `${ID_PREFIX}-${String(value).replace(' ', '-')}`;
+  const createItemId = (value: any) => `${ID_PREFIX}-option-${String(value).replace(' ', '-')}`;
 
   const setActiveAndFocusedItem = (itemIndex: number) => {
     setFocusedItemIndex(itemIndex);
-    const focusedItem = selectOptions[itemIndex];
+    const focusedItem = filteredSelectOptions[itemIndex];
     setActiveItemId(createItemId(focusedItem.value));
   };
 
@@ -147,25 +175,27 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined,
   ) => {
-    if (enableCreateNew && filterValue && value === CREATE_NEW) {
-      if (!selectOptions.some((item) => item.children === filterValue)) {
+    if (enableCreateNew && value === CREATE_NEW) {
+      if (!selectOptions.some((item) => item.value === filterValue)) {
         setSelectOptions([...selectOptions, { value: filterValue, children: filterValue }]);
+        onCreate && onCreate(filterValue);
       }
       selectOption(filterValue, filterValue);
-      setFilterValue('');
-      closeMenu();
+      resetActiveAndFocusedItem();
     } else if (value && value !== NO_RESULTS) {
-      selectOption(value, items[value]);
+      const selectedOption = selectOptions.find((i) => i.value === value);
+      selectOption(value, selectedOption?.children ?? selectedOption?.value ?? '');
     }
   };
 
   React.useEffect(() => {
-    setInputValue(selectedValue?.children || '');
+    setInputValue(selectedValue?.children ?? selectedValue?.value ?? '');
   }, [selectedValue]);
 
   const onTextInputChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
     setInputValue(value);
     setFilterValue(value);
+    onInputChange && onInputChange(value);
 
     resetActiveAndFocusedItem();
   };
@@ -177,39 +207,39 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
       setIsOpen(true);
     }
 
-    if (selectOptions.every((option) => option.isDisabled)) {
+    if (filteredSelectOptions.every((option) => option.isDisabled)) {
       return;
     }
 
     if (key === 'ArrowUp') {
       // When no index is set or at the first index, focus to the last, otherwise decrement focus index
       if (focusedItemIndex === null || focusedItemIndex === 0) {
-        indexToFocus = selectOptions.length - 1;
+        indexToFocus = filteredSelectOptions.length - 1;
       } else {
         indexToFocus = focusedItemIndex - 1;
       }
 
       // Skip disabled options
-      while (selectOptions[indexToFocus].isDisabled) {
+      while (filteredSelectOptions[indexToFocus].isDisabled) {
         indexToFocus--;
         if (indexToFocus === -1) {
-          indexToFocus = selectOptions.length - 1;
+          indexToFocus = filteredSelectOptions.length - 1;
         }
       }
     }
 
     if (key === 'ArrowDown') {
       // When no index is set or at the last index, focus to the first, otherwise increment focus index
-      if (focusedItemIndex === null || focusedItemIndex === selectOptions.length - 1) {
+      if (focusedItemIndex === null || focusedItemIndex === filteredSelectOptions.length - 1) {
         indexToFocus = 0;
       } else {
         indexToFocus = focusedItemIndex + 1;
       }
 
       // Skip disabled options
-      while (selectOptions[indexToFocus].isDisabled) {
+      while (filteredSelectOptions[indexToFocus].isDisabled) {
         indexToFocus++;
-        if (indexToFocus === selectOptions.length) {
+        if (indexToFocus === filteredSelectOptions.length) {
           indexToFocus = 0;
         }
       }
@@ -219,7 +249,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
   };
 
   const onInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const focusedItem = focusedItemIndex !== null ? selectOptions[focusedItemIndex] : null;
+    const focusedItem = focusedItemIndex !== null ? filteredSelectOptions[focusedItemIndex] : null;
 
     switch (event.key) {
       case 'Enter':
@@ -229,7 +259,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
           focusedItem.value !== NO_RESULTS &&
           !focusedItem.isAriaDisabled
         ) {
-          selectOption(focusedItem.value, focusedItem.children as string);
+          onSelect(null, focusedItem.value);
         }
 
         if (!isOpen) {
@@ -258,6 +288,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     setFilterValue('');
     resetActiveAndFocusedItem();
     textInputRef?.current?.focus();
+    onClear && onClear(selectedKey);
   };
 
   const selectedItemWidth = React.useMemo(() => {
@@ -282,7 +313,10 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
           value={inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          onKeyDown={onInputKeyDown}
+          onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {
+            ev.key === 'Enter' && ev.preventDefault(); // prevent accidental form submission
+            onInputKeyDown(ev);
+          }}
           id={`${ID_PREFIX}-input`}
           autoComplete="off"
           innerRef={textInputRef}
@@ -292,9 +326,10 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
           isExpanded={isOpen}
           aria-controls={`${ID_PREFIX}-listbox`}
           style={
+            // need to use max to account for min-width of the input element in PF
             resizeToFit
               ? {
-                  width: `calc(${selectedItemWidth}px + var(--pf-v5-c-text-input-group__text-input--PaddingLeft) + var(--pf-v5-c-text-input-group__text-input--PaddingRight))`,
+                  width: `max(calc(${selectedItemWidth}px + var(--pf-v5-c-text-input-group__text-input--PaddingLeft) + var(--pf-v5-c-text-input-group__text-input--PaddingRight)), var(--pf-v5-c-text-input-group__text-input--MinWidth))`,
                 }
               : {}
           }
@@ -324,34 +359,32 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
         open ? setIsOpen(true) : closeMenu();
       }}
       toggle={toggle}
-      shouldFocusFirstItemOnOpen={false}
+      // FIXME(jaclee): uncomment this line when PF5 is updated
+      // shouldFocusFirstItemOnOpen={false}
       {...selectProps}
     >
       <SelectList id={`${ID_PREFIX}-listbox`}>
-        {selectOptions.map((v, k) => (
-          <OptionComponent
-            key={k}
-            isSelected={selectedKey === v.value}
-            isFocused={focusedItemIndex === k}
-            id={createItemId(k)}
-            value={v.value}
-            {...v}
-          />
-        ))}
-        {_.isEmpty(selectOptions) && filterValue && (
-          <>
-            {!enableCreateNew && (
-              <SelectOption isDisabled={true} isAriaDisabled={true} value={NO_RESULTS}>
-                {t(`public~No results found`)}
-              </SelectOption>
-            )}
+        {filteredSelectOptions.map((v, k) => {
+          const SelectOptionComponent =
+            v.value === CREATE_NEW ? SelectOption : OptionComponent ?? SelectOption;
 
-            {enableCreateNew && (
-              <SelectOption value={CREATE_NEW}>
-                {t(`public~Create new option {{option}}`, { option: filterValue })}
-              </SelectOption>
-            )}
-          </>
+          return (
+            <SelectOptionComponent
+              key={k}
+              isSelected={selectedKey === v.value}
+              isFocused={focusedItemIndex === k}
+              id={createItemId(k)}
+              value={v.value}
+              {...v}
+            >
+              {v.children || v.value}
+            </SelectOptionComponent>
+          );
+        })}
+        {_.isEmpty(filteredSelectOptions) && filterValue && !enableCreateNew && (
+          <SelectOption isDisabled={true} isAriaDisabled={true} value={NO_RESULTS}>
+            {t(`public~No results found`)}
+          </SelectOption>
         )}
       </SelectList>
     </Select>
