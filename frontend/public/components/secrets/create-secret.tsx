@@ -156,7 +156,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const [error, setError] = React.useState();
   const [stringData, setStringData] = React.useState(
     _.mapValues(_.get(props.obj, 'data'), (value) => {
-      return value ? Base64.atob(value) : '';
+      return value ? Base64.decode(value) : '';
     }),
   );
   const [base64StringData, setBase64StringData] = React.useState({});
@@ -185,7 +185,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     setInProgress(true);
     const data = {
       ..._.mapValues(stringData, (value) => {
-        return Base64.btoa(value);
+        return Base64.encode(value);
       }),
       ...base64StringData,
     };
@@ -1098,7 +1098,7 @@ class GenericSecretFormWithTranslation extends React.Component<
         uid: _.uniqueId(),
         entry: {
           key,
-          value: isBinary ? Base64.btoa(value) : value,
+          value: isBinary ? Base64.encode(value) : value,
           isBase64: isBinary,
           isBinary,
         },
