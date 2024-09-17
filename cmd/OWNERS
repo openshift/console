@@ -1,7 +1,8 @@
 reviewers:
-  - florkbr
+  - TheRealJon
   - jhadvig
 approvers:
-  - florkbr
+  - TheRealJon
+  - jhadvig
 labels:
   - component/backend
