@@ -7,18 +7,17 @@ import { useServicesWatcher } from './useServicesWatcher';
 export const useRoutesWatcher = (
   resource: K8sResourceKind,
 ): { loaded: boolean; loadError: string; routes: RouteKind[] } => {
-  const { namespace } = resource.metadata;
   const watchedServices = useServicesWatcher(resource);
   const [allRoutes, loaded, loadError] = useK8sWatchResource<RouteKind[]>({
     isList: true,
     kind: 'Route',
-    namespace,
+    namespace: resource?.metadata?.namespace,
   });
 
   const servicesNames = React.useMemo(
     () =>
       !watchedServices.loadError && watchedServices.loaded
-        ? watchedServices.services.map((s) => s.metadata.name)
+        ? watchedServices.services.map((s) => s.metadata?.name)
         : [],
     [watchedServices.loadError, watchedServices.loaded, watchedServices.services],
   );
