@@ -17,6 +17,8 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const canListPackageManifest = useFlag(FLAGS.CAN_LIST_PACKAGE_MANIFEST);
   const canListOperatorGroup = useFlag(FLAGS.CAN_LIST_OPERATOR_GROUP);
   const lightspeedIsAvailable = useFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL);
+  const showLightSpeedLink =
+    canListPackageManifest && canListOperatorGroup && lightspeedIsAvailable;
   const parsed = semver.parse(useOpenShiftVersion());
   // Show only major and minor version.
   const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
@@ -29,26 +31,26 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
         href:
           '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
       },
-      {
-        id: 'new-translations',
-        title: t('public~French and Spanish now available'),
-        description: t('public~Console language options now include French and Spanish.'),
-        href: '/user-preferences/language',
-      },
+      ...(showLightSpeedLink
+        ? [
+            {
+              id: 'lightspeed',
+              title: t('public~OpenShift Lightspeed'),
+              description: t('public~Your personal AI helper.'),
+              href: lightspeedOperatorURL,
+            },
+          ]
+        : [
+            {
+              id: 'new-translations',
+              title: t('public~French and Spanish now available'),
+              description: t('public~Console language options now include French and Spanish.'),
+              href: '/user-preferences/language',
+            },
+          ]),
     ],
-    [t],
+    [showLightSpeedLink, t],
   );
-
-  React.useEffect(() => {
-    if (canListPackageManifest && canListOperatorGroup && lightspeedIsAvailable) {
-      links.splice(1, 1, {
-        id: 'lightspeed',
-        title: t('public~OpenShift Lightspeed'),
-        description: t('public~Your personal AI helper.'),
-        href: lightspeedOperatorURL,
-      });
-    }
-  }, [canListPackageManifest, canListOperatorGroup, lightspeedIsAvailable, links, t]);
 
   const moreLink: GettingStartedLink = {
     id: 'whats-new',
