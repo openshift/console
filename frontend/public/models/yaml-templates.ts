@@ -972,6 +972,23 @@ spec:
 `,
   )
   .setIn(
+    [referenceForModel(k8sModels.ConsolePluginModel), 'default'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: example
+spec:
+  backend:
+    service:
+      name: my-backend-service
+      namespace: default
+      port: 443
+    type: Service
+  displayName: myConsolePlugin
+`,
+  )
+  .setIn(
     [referenceForModel(k8sModels.ConsoleLinkModel), 'default'],
     `
 apiVersion: console.openshift.io/v1
