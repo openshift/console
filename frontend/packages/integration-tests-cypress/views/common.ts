@@ -10,6 +10,9 @@ export const selectActionsMenuOption = (actionsMenuOption: string) => {
 export const projectDropdown = {
   shouldExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('exist'),
   selectProject: (projectName: string) => {
+    // TODO - remove and fix properly
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
     cy.byLegacyTestID('namespace-bar-dropdown').contains('Project:').click();
     cy.byTestID('showSystemSwitch').check();
     cy.byTestID('dropdown-menu-item-link').contains(projectName).click();

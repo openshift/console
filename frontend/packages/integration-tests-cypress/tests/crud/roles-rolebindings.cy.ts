@@ -107,9 +107,6 @@ describe('Roles and RoleBindings', () => {
     cy.login();
     guidedTour.close();
     cy.createProjectWithCLI(testName);
-    // TODO - remove and fix properly
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
     createExampleRoles();
     createExampleRoleBindings();
   });
