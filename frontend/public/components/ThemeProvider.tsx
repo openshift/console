@@ -7,6 +7,9 @@ const THEME_SYSTEM_DEFAULT = 'systemDefault';
 const THEME_DARK_CLASS = 'pf-v5-theme-dark';
 const THEME_DARK_CLASS_LEGACY = 'pf-theme-dark'; // legacy class name needed to support PF4
 const THEME_DARK = 'dark';
+const THEME_LIGHT = 'light';
+
+type PROCESSED_THEME = typeof THEME_DARK | typeof THEME_LIGHT;
 
 export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => {
   let systemTheme: string;
@@ -32,18 +35,25 @@ export const ThemeProvider: React.FC<{}> = ({ children }) => {
     THEME_SYSTEM_DEFAULT,
     true,
   );
+  const [processedTheme, setProcessedTheme] = React.useState<PROCESSED_THEME>(
+    localTheme as PROCESSED_THEME,
+  );
+
   const mqListener = React.useCallback(
     (e) => {
       if (e.matches) {
         htmlTagElement?.classList.add(THEME_DARK_CLASS);
         htmlTagElement?.classList.add(THEME_DARK_CLASS_LEGACY);
+        setProcessedTheme(THEME_DARK);
       } else {
         htmlTagElement?.classList.remove(THEME_DARK_CLASS);
         htmlTagElement?.classList.remove(THEME_DARK_CLASS_LEGACY);
+        setProcessedTheme(THEME_LIGHT);
       }
     },
     [htmlTagElement],
   );
+
   React.useEffect(() => {
     const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
     if (theme === THEME_SYSTEM_DEFAULT) {
@@ -57,8 +67,8 @@ export const ThemeProvider: React.FC<{}> = ({ children }) => {
 
   React.useEffect(() => {
     themeLoaded && localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
+    themeLoaded && setProcessedTheme(theme as PROCESSED_THEME);
   }, [theme, themeLoaded]);
 
-  const value = themeLoaded ? theme : localTheme;
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={processedTheme}>{children}</ThemeContext.Provider>;
 };
