@@ -10,11 +10,9 @@ export const selectActionsMenuOption = (actionsMenuOption: string) => {
 export const projectDropdown = {
   shouldExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('exist'),
   selectProject: (projectName: string) => {
-    cy.visit(`/k8s/ns/${projectName}/rbac.authorization.k8s.io~v1~Role`);
-    // commented out due to flakiness tied to the dropdown and selection of a new project
-    // cy.byLegacyTestID('namespace-bar-dropdown').contains('Project:').click();
-    // cy.byTestID('showSystemSwitch').check();
-    // cy.byTestID('dropdown-menu-item-link').contains(projectName).click();
+    cy.byLegacyTestID('namespace-bar-dropdown').contains('Project:').click();
+    cy.byTestID('showSystemSwitch').check();
+    cy.byTestID('dropdown-menu-item-link').contains(projectName).click();
   },
   shouldContain: (name: string) =>
     // eslint-disable-next-line cypress/no-unnecessary-waiting
