@@ -177,9 +177,9 @@ export interface SelectInputOption {
 export interface SelectInputFieldProps extends FieldProps {
   ariaLabel?: string;
   options: SelectInputOption[];
-  placeholderText?: React.ReactNode;
   isDisabled?: boolean;
   toggleOnSelection?: boolean;
+  placeholderText?: string;
   onChange?: (selection: string) => void;
 }
 
@@ -195,7 +195,7 @@ export interface MultiTypeaheadFieldProps extends SelectInputFieldProps {
   getLabelFromValue?: (value: string) => string;
 }
 
-export interface SelectTypeaheadDropdownProps extends SelectInputFieldProps {
+export interface SingleTypeaheadFieldProps extends SelectInputFieldProps {
   hasOnCreateOption?: boolean;
   hideClearButton?: boolean;
   isCreatable?: boolean;

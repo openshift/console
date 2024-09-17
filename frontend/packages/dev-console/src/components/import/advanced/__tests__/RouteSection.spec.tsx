@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { SelectInputField } from '@console/shared/src';
+import { SingleTypeaheadField } from '@console/shared/src';
 import { Resources } from '../../import-types';
 import PortInputField from '../../route/PortInputField';
 import RouteSection from '../RouteSection';
@@ -51,7 +51,7 @@ describe('RouteSection', () => {
   it('should show the Target port field if the create route checkbox is checked ', () => {
     const component = shallow(<RouteSection {...props} />);
     expect(component.find(PortInputField).exists()).toBe(true);
-    expect(component.find(PortInputField).dive().find(SelectInputField).props().label).toEqual(
+    expect(component.find(PortInputField).dive().find(SingleTypeaheadField).props().label).toEqual(
       'Target port',
     );
   });
@@ -59,7 +59,7 @@ describe('RouteSection', () => {
   it('should also show the Target port field if the create route checkbox is not checked ', () => {
     props.route.create = false;
     const component = shallow(<RouteSection {...props} />);
-    expect(component.find(PortInputField).dive().find(SelectInputField).props().label).toEqual(
+    expect(component.find(PortInputField).dive().find(SingleTypeaheadField).props().label).toEqual(
       'Target port',
     );
   });
