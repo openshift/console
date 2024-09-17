@@ -4,6 +4,7 @@ import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
@@ -12,6 +13,7 @@ import { TaskRunKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { useTaskRun } from '../pipelineruns/hooks/usePipelineRuns';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../pipelines/const';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRunEvents from './events/TaskRunEvents';
 import TaskRunDetails from './TaskRunDetails';
@@ -22,9 +24,10 @@ import './TaskRunDetailsPage.scss';
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, namespace, name } = props;
   const { t } = useTranslation();
+  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
   const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
-  const [taskRun, loaded, error] = useTaskRun(namespace, name);
+  const [taskRun, loaded, error] = useTaskRun(namespace, name, IS_PIPELINE_OPERATOR_VERSION_1_16);
   const resourceTitleFunc = (obj: TaskRunKind): string | JSX.Element => {
     return (
       <div className="taskrun-details-page">

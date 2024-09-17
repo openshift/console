@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineModel, PipelineRunModel } from '../../../models';
 import { ComputedStatus, PipelineWithLatest, TaskRunKind } from '../../../types';
 import { TaskStatus } from '../../../utils/pipeline-augment';
@@ -14,6 +15,7 @@ import { getPipelineRunStatus } from '../../../utils/pipeline-utils';
 import { useTaskRuns } from '../../pipelineruns/hooks/useTaskRuns';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatusContent from '../../pipelineruns/status/PipelineRunStatusContent';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../const';
 import { tableColumnClasses } from './pipeline-table';
 import PipelineRowKebabActions from './PipelineRowKebabActions';
 
@@ -31,6 +33,7 @@ type PipelineRowWithoutTaskRunsProps = {
 
 type PipelineRowWithTaskRunsProps = {
   obj: PipelineWithLatest;
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean;
 };
 
 const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
@@ -112,13 +115,14 @@ const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> = Re
 );
 
 const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> = React.memo(
-  ({ obj }) => {
+  ({ obj, IS_PIPELINE_OPERATOR_VERSION_1_16 }) => {
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.latestRun.metadata.namespace,
       obj.latestRun.metadata.name,
       undefined,
       `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`,
+      IS_PIPELINE_OPERATOR_VERSION_1_16,
     );
     InFlightStoreForTaskRunsForPLR[cacheKey] = false;
     if (taskRunsLoaded) {
@@ -135,38 +139,51 @@ const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> = Rea
   },
 );
 
-const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> = React.memo(({ obj }) => {
-  let PLRTaskRuns: TaskRunKind[];
-  let taskRunsLoaded: boolean;
-  const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
-  const result = TASKRUNSFORPLRCACHE[cacheKey];
-  if (result) {
-    PLRTaskRuns = result;
-    taskRunsLoaded = true;
-  } else if (InFlightStoreForTaskRunsForPLR[cacheKey]) {
-    PLRTaskRuns = [];
-    taskRunsLoaded = true;
-    InFlightStoreForTaskRunsForPLR[cacheKey] = true;
-  } else {
-    return <PipelineRowWithTaskRunsFetch obj={obj} />;
-  }
-  return (
-    <PipelineRowTable
-      obj={obj}
-      PLRTaskRuns={PLRTaskRuns}
-      taskRunsLoaded={taskRunsLoaded}
-      taskRunStatusObj={undefined}
-    />
-  );
-});
+const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> = React.memo(
+  ({ obj, IS_PIPELINE_OPERATOR_VERSION_1_16 }) => {
+    let PLRTaskRuns: TaskRunKind[];
+    let taskRunsLoaded: boolean;
+    const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
+    const result = TASKRUNSFORPLRCACHE[cacheKey];
+    if (result) {
+      PLRTaskRuns = result;
+      taskRunsLoaded = true;
+    } else if (InFlightStoreForTaskRunsForPLR[cacheKey]) {
+      PLRTaskRuns = [];
+      taskRunsLoaded = true;
+      InFlightStoreForTaskRunsForPLR[cacheKey] = true;
+    } else {
+      return (
+        <PipelineRowWithTaskRunsFetch
+          obj={obj}
+          IS_PIPELINE_OPERATOR_VERSION_1_16={IS_PIPELINE_OPERATOR_VERSION_1_16}
+        />
+      );
+    }
+    return (
+      <PipelineRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        taskRunStatusObj={undefined}
+      />
+    );
+  },
+);
 
 const PipelineRow: React.FC<RowFunctionArgs<PipelineWithLatest>> = ({ obj }) => {
   const plrStatus = pipelineRunStatus(obj.latestRun);
+  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
   if (
     plrStatus === ComputedStatus.Cancelled &&
     (obj?.latestRun?.status?.childReferences ?? []).length > 0
   ) {
-    return <PipelineRowWithTaskRuns obj={obj} />;
+    return (
+      <PipelineRowWithTaskRuns
+        obj={obj}
+        IS_PIPELINE_OPERATOR_VERSION_1_16={IS_PIPELINE_OPERATOR_VERSION_1_16}
+      />
+    );
   }
 
   const taskRunStatusObj = getPipelineRunStatus(obj.latestRun);
