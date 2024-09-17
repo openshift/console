@@ -9,7 +9,11 @@ import { ResourceDropdownField, getFieldId } from '@console/shared';
 import { getSinkableResources } from '../../../utils/get-knative-resources';
 import { craftResourceKey } from '../pub-sub-utils';
 
-const PubSubSubscriber: React.FC = () => {
+type PubSubSubscriberProps = {
+  autoSelect?: boolean;
+};
+
+const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, validateForm, setStatus } = useFormikContext<
     FormikValues
@@ -21,15 +25,15 @@ const PubSubSubscriber: React.FC = () => {
     (selectedValue, target) => {
       const modelResource = target?.props?.model;
       if (selectedValue) {
-        setFieldTouched('spec.subscriber.ref.name', true);
-        setFieldValue('spec.subscriber.ref.name', selectedValue);
+        setFieldTouched('formData.spec.subscriber.ref.name', true);
+        setFieldValue('formData.spec.subscriber.ref.name', selectedValue);
         if (modelResource) {
           const { apiGroup = 'core', apiVersion, kind } = modelResource;
           const sinkApiversion = `${apiGroup}/${apiVersion}`;
-          setFieldValue('spec.subscriber.ref.apiVersion', sinkApiversion);
-          setFieldTouched('spec.subscriber.ref.apiVersion', true);
-          setFieldValue('spec.subscriber.ref.kind', kind);
-          setFieldTouched('spec.subscriber.ref.kind', true);
+          setFieldValue('formData.spec.subscriber.ref.apiVersion', sinkApiversion);
+          setFieldTouched('formData.spec.subscriber.ref.apiVersion', true);
+          setFieldValue('formData.spec.subscriber.ref.kind', kind);
+          setFieldTouched('formData.spec.subscriber.ref.kind', true);
         }
         validateForm();
       }
@@ -65,8 +69,8 @@ const PubSubSubscriber: React.FC = () => {
         </>
       )}
       <ResourceDropdownField
-        name="spec.subscriber.ref.name"
-        resources={getSinkableResources(values.metadata.namespace)}
+        name="formData.spec.subscriber.ref.name"
+        resources={getSinkableResources(values.formData.metadata.namespace)}
         dataSelector={['metadata', 'name']}
         fullWidth
         required
@@ -75,10 +79,10 @@ const PubSubSubscriber: React.FC = () => {
         autocompleteFilter={autocompleteFilter}
         onChange={onSubscriberChange}
         customResourceKey={craftResourceKey}
-        autoSelect
         disabled={resourceAlert}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
+        autoSelect={autoSelect}
       />
     </FormGroup>
   );

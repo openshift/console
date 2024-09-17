@@ -32,7 +32,7 @@ const PubSubModal: React.FC<Props> = ({
   values,
 }) => {
   const { t } = useTranslation();
-  const dirty = values?.metadata?.name && values?.spec?.subscriber?.ref?.name;
+  const dirty = values?.formData?.metadata?.name && values?.formData?.spec?.subscriber?.ref?.name;
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
       <ModalTitle>{labelTitle}</ModalTitle>
@@ -40,7 +40,7 @@ const PubSubModal: React.FC<Props> = ({
         <FormSection fullWidth>
           <InputField
             type={TextInputTypes.text}
-            name="metadata.name"
+            name="formData.metadata.name"
             label={t('knative-plugin~Name')}
             required
           />
