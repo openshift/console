@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
-import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +7,7 @@ import { AsyncComponent } from '@console/internal/components/utils/async';
 import {
   DropdownField,
   InputField,
-  SelectInputField,
+  SingleTypeaheadField,
   SelectInputOption,
   CodeEditorField,
 } from '@console/shared/src/components';
@@ -78,12 +77,10 @@ const RequestPane: React.FC<FormikProps<FormikValues>> = ({ setFieldValue, value
           fullWidth
           required
         />
-        <SelectInputField
+        <SingleTypeaheadField
           name="request.contentType"
           label={t('knative-plugin~Content-Type')}
           options={contentTypeItems}
-          variant={SelectVariantDeprecated.typeahead}
-          isInputValuePersisted
           toggleOnSelection
           hideClearButton
           required
