@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { SelectInputField, SelectInputOption } from '@console/shared';
+import { SingleTypeaheadField, SelectInputOption } from '@console/shared';
 import { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
 
 interface PortInputFieldProps {
@@ -25,7 +24,7 @@ const PortInputField: React.FC<PortInputFieldProps> = ({ defaultPort }) => {
   const placeholderPort = ports[0]?.containerPort || defaultPort;
 
   return (
-    <SelectInputField
+    <SingleTypeaheadField
       data-test-id="target-port-field"
       name="route.unknownTargetPort"
       label={t('devconsole~Target port')}
@@ -33,9 +32,6 @@ const PortInputField: React.FC<PortInputFieldProps> = ({ defaultPort }) => {
       placeholderText={placeholderPort.toString()}
       helpText={t('devconsole~Target port for traffic.')}
       options={portOptions}
-      variant={SelectVariantDeprecated.typeahead}
-      isInputValuePersisted
-      noResultsFoundText={t('devconsole~No results found')}
       toggleOnSelection
     />
   );
