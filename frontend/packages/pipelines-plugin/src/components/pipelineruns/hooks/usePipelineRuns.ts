@@ -26,6 +26,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     name?: string;
   },
   cacheKey?: string,
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const etcdRunsRef = React.useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
@@ -97,12 +98,12 @@ const useRuns = <Kind extends K8sResourceCommon>(
   const [trResources, trLoaded, trError, trGetNextPage] = (groupVersionKind ===
     PipelineRunGroupVersionKind
     ? useTRPipelineRuns
-    : useTRTaskRuns)(queryTr ? namespace : null, trOptions, cacheKey) as [
-    [],
-    boolean,
-    unknown,
-    GetNextPage,
-  ];
+    : useTRTaskRuns)(
+    queryTr ? namespace : null,
+    trOptions,
+    cacheKey,
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
+  ) as [[], boolean, unknown, GetNextPage];
 
   return React.useMemo(() => {
     const rResources =
@@ -142,8 +143,15 @@ export const usePipelineRuns = (
     selector?: Selector;
     limit?: number;
   },
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
-  useRuns<PipelineRunKind>(PipelineRunGroupVersionKind, namespace, options);
+  useRuns<PipelineRunKind>(
+    PipelineRunGroupVersionKind,
+    namespace,
+    options,
+    undefined,
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
+  );
 
 export const useTaskRuns = (
   namespace: string,
@@ -152,12 +160,20 @@ export const useTaskRuns = (
     limit?: number;
   },
   cacheKey?: string,
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
-  useRuns<TaskRunKind>(TaskRunGroupVersionKind, namespace, options, cacheKey);
+  useRuns<TaskRunKind>(
+    TaskRunGroupVersionKind,
+    namespace,
+    options,
+    cacheKey,
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
+  );
 
 export const usePipelineRun = (
   namespace: string,
   pipelineRunName: string,
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [PipelineRunKind, boolean, string] => {
   const result = (usePipelineRuns(
     namespace,
@@ -168,6 +184,7 @@ export const usePipelineRun = (
       }),
       [pipelineRunName],
     ),
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
   ) as unknown) as [PipelineRunKind[], boolean, string];
 
   return React.useMemo(() => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]], [
@@ -178,6 +195,7 @@ export const usePipelineRun = (
 export const useTaskRun = (
   namespace: string,
   taskRunName: string,
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [TaskRunKind, boolean, string] => {
   const result = (useTaskRuns(
     namespace,
@@ -188,6 +206,8 @@ export const useTaskRun = (
       }),
       [taskRunName],
     ),
+    undefined,
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
   ) as unknown) as [TaskRunKind[], boolean, string];
 
   return React.useMemo(() => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]], [

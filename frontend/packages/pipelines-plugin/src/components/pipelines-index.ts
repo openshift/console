@@ -4,4 +4,5 @@ export * from './conditions';
 export * from './pipelines-lists';
 export * from './repository';
 export { useIsTektonV1VersionPresent } from './pipelines/utils/pipeline-operator';
+export { useIsPipelineOperatorVersion_1_16 } from './pipelines/utils/pipeline-operator';
 export { LogURLRedirect } from './LogURLRedirect';

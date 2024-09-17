@@ -6,6 +6,7 @@ import { SemVer } from 'semver';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Timestamp, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
@@ -21,7 +22,10 @@ import {
   pipelineRunTitleFilterReducer,
 } from '../../../utils/pipeline-filter-reducer';
 import { getPipelineRunStatus, pipelineRunDuration } from '../../../utils/pipeline-utils';
-import { chainsSignedAnnotation } from '../../pipelines/const';
+import {
+  chainsSignedAnnotation,
+  FLAG_PIPELINES_OPERATOR_VERSION_1_16,
+} from '../../pipelines/const';
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
@@ -150,12 +154,14 @@ const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps
 
 const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
   ({ obj, operatorVersion }) => {
+    const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
     const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.metadata.namespace,
       obj.metadata.name,
       undefined,
       `${obj.metadata.namespace}-${obj.metadata.name}`,
+      IS_PIPELINE_OPERATOR_VERSION_1_16,
     );
     InFlightStoreForTaskRunsForPLR[cacheKey] = false;
     if (taskRunsLoaded) {

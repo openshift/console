@@ -6,9 +6,11 @@ import { ListPageWrapper } from '@console/internal/components/factory';
 import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared/src';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const';
 import { PipelineRunModel } from '../../../models';
 import { useGetPipelineRuns } from '../../pipelineruns/hooks/useTektonResults';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../const';
 import PipelineAugmentRuns, { filters } from './PipelineAugmentRuns';
 import PipelineList from './PipelineList';
 
@@ -21,6 +23,7 @@ interface PipelineAugmentRunsWrapperProps {
 
 const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (props) => {
   const { t } = useTranslation();
+  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
   const activePerspective = useActivePerspective()[0];
   const [, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
     PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY,
@@ -28,6 +31,8 @@ const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (p
   );
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] = useGetPipelineRuns(
     props.namespace,
+    undefined,
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
   );
   const resources = {
     data: pipelineRuns,
