@@ -6,10 +6,12 @@ import {
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 
 import { useBoolean } from './hooks/useBoolean';
 
@@ -22,10 +24,10 @@ type Props = {
 };
 
 const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
-  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+  const [isOpen, toggleIsOpen, setOpen, setClosed] = useBoolean(false);
   const { t } = useTranslation();
 
-  const onChange = React.useCallback(
+  const onSelect = React.useCallback(
     (v: string) => setInterval(v === OFF_KEY ? null : parsePrometheusDuration(v)),
     [setInterval],
   );
@@ -45,26 +47,39 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
 
   const selectedKey = interval === null ? OFF_KEY : formatPrometheusDuration(interval);
 
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      id={`${id}-dropdown`}
+      onClick={toggleIsOpen}
+      isExpanded={isOpen}
+      ref={toggleRef}
+      className="monitoring-dashboards__dropdown-button"
+    >
+      {intervalOptions[selectedKey]}
+    </MenuToggle>
+  );
+
   return (
-    <DropdownDeprecated
-      dropdownItems={_.map(intervalOptions, (name, key) => (
-        <DropdownItemDeprecated component="button" key={key} onClick={() => onChange(key)}>
-          {name}
-        </DropdownItemDeprecated>
-      ))}
+    <Select
       isOpen={isOpen}
-      onSelect={setClosed}
-      toggle={
-        <DropdownToggleDeprecated
-          className="monitoring-dashboards__dropdown-button"
-          id={`${id}-dropdown`}
-          onToggle={toggleIsOpen}
-        >
-          {intervalOptions[selectedKey]}
-        </DropdownToggleDeprecated>
-      }
+      onSelect={(_event, value: string) => {
+        if (value) {
+          onSelect(value);
+        }
+        setClosed();
+      }}
+      toggle={toggle}
       className="monitoring-dashboards__variable-dropdown"
-    />
+      onOpenChange={(open) => (open ? setOpen() : setClosed())}
+    >
+      <SelectList>
+        {_.map(intervalOptions, (name, key) => (
+          <SelectOption key={key} value={key} isSelected={key === selectedKey}>
+            {name}
+          </SelectOption>
+        ))}
+      </SelectList>
+    </Select>
   );
 };
 
