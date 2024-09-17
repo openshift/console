@@ -20,6 +20,8 @@
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "ネットワークタイプを選択するには、<0>OpenShift Virtualization Operator</0> または <3>SR-IOV Network Operator</3> がクラスターにインストールされている必要があります。",
   "Create": "作成",
   "Cancel": "キャンセル",
+  "Assigns IP addresses from this subnet to Pods and VirtualMachines.": "このサブネットから Pod と VirtualMachine に IP アドレスを割り当てます。",
+  "Tech preview": "テクノロジープレビュー",
   "Resource name": "リソース名",
   "VLAN tag number": "VLAN タグ番号",
   "IP address management": "IP アドレス管理",
@@ -28,5 +30,7 @@
   "Bridge mapping": "ブリッジマッピング",
   "Physical network name. Bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.": "物理ネットワーク名。物理ネットワーク名と Open vSwitch ブリッジの間をマッピングするには、クラスターノード上にブリッジマッピングを設定する必要があります。",
   "MTU": "MTU",
-  "VLAN": "VLAN"
+  "VLAN": "VLAN",
+  "Invalid subnet format": "無効なサブネット形式",
+  "Invalid IP address or subnet format": "無効な IP アドレスまたはサブネット形式"
 }

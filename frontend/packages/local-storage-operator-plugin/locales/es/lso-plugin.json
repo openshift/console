@@ -23,6 +23,8 @@
   "Node Selector": "Selector de nodos",
   "Local Volume Discovery": "Descubrimiento de volumen local",
   "Allows you to discover the available disks on all available nodes": "Le permite descubrir los discos disponibles en todos los nodos disponibles.",
+  "All disk type may include HDD disks. Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.": "Todos los tipos de discos pueden incluir discos HDD. Data Foundation no admite discos HDD como dispositivos locales. Seleccione SSD si planea utilizar Data Foundation.",
+  "Data Foundation does not support HDD disks as local devices. Select SSD if you plan to use Data Foundation.": "Data Foundation no admite discos HDD como dispositivos locales. Seleccione SSD si planea utilizar Data Foundation.",
   "LocalVolumeSet Name": "Nombre de LocalVolumeSet",
   "StorageClass Name": "Nombre de StorageClass",
   "Filter Disks By": "Filtrar discos por",

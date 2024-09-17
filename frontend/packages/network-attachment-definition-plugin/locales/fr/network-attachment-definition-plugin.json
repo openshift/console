@@ -20,6 +20,8 @@
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "L’<0>opérateur de virtualisation OpenShift</0> ou l’<3>opérateur réseau SR-IOV</3> doit être installé sur le cluster, afin de choisir le type de réseau.",
   "Create": "Créer",
   "Cancel": "Annuler",
+  "Assigns IP addresses from this subnet to Pods and VirtualMachines.": "Attribue des adresses IP de ce sous-réseau aux pods et aux machines virtuelles.",
+  "Tech preview": "Aperçu technique",
   "Resource name": "Nom de la ressource",
   "VLAN tag number": "Numéro de balise VLAN",
   "IP address management": "Gestion des adresses IP",
@@ -28,5 +30,7 @@
   "Bridge mapping": "Mappage de ponts",
   "Physical network name. Bridge mapping must be configured on cluster nodes to map between physical network names and Open vSwitch bridges.": "Nom du réseau physique. Un mappage de ponts doit être configuré sur les nœuds du cluster pour mapper les noms de réseaux physiques et les ponts Open vSwitch.",
   "MTU": "MTU",
-  "VLAN": "VLAN"
+  "VLAN": "VLAN",
+  "Invalid subnet format": "Format de sous-réseau non valide",
+  "Invalid IP address or subnet format": "Adresse IP ou format de sous-réseau non valide"
 }
