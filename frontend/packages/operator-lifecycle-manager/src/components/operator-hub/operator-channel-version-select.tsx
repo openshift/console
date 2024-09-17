@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
 import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Alert,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { setQueryArgument } from '@console/internal/components/utils';
@@ -21,14 +24,19 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
   const { t } = useTranslation();
   const channels = React.useMemo(() => packageManifest?.status.channels ?? [], [packageManifest]);
   const [isChannelSelectOpen, setIsChannelSelectOpen] = React.useState(false);
-  const onToggleChannel = () => setIsChannelSelectOpen(!isChannelSelectOpen);
   const { setDeprecatedChannel } = useDeprecatedOperatorWarnings();
   channels.sort((a, b) => -alphanumericCompare(a.name, b.name));
 
-  const channelSelectOptions = channels.map((ch) => (
-    <SelectOptionDeprecated key={ch.name} id={ch.name} value={ch.name}>
+  const getChannelLabel = (ch) => (
+    <>
       {ch.name} {ch?.deprecation && <DeprecatedOperatorWarningIcon deprecation={ch?.deprecation} />}
-    </SelectOptionDeprecated>
+    </>
+  );
+
+  const channelSelectOptions = channels.map((ch) => (
+    <SelectOption key={ch.name} id={ch.name} value={ch.name}>
+      {getChannelLabel(ch)}
+    </SelectOption>
   ));
 
   React.useEffect(() => {
@@ -41,25 +49,33 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
     );
   }, [selectedUpdateChannel, channels, setDeprecatedChannel]);
 
-  const handleChannelSelection = (_c, newSelected: string) => {
-    setUpdateChannel(newSelected);
-    setIsChannelSelectOpen(false);
-    setUpdateVersion('');
-  };
-
   return (
     <>
-      <SelectDeprecated
-        className="co-operator-channel__select"
-        aria-label={t('olm~Select a channel')}
-        onToggle={onToggleChannel}
+      <Select
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={(open) => setIsChannelSelectOpen(open)}
+            isExpanded={isChannelSelectOpen}
+            isDisabled={!packageManifest}
+            isFullWidth
+            aria-label={t('olm~Select a channel')}
+            className="co-operator-channel__select"
+          >
+            {getChannelLabel(channels.find((f) => f.name === selectedUpdateChannel))}
+          </MenuToggle>
+        )}
+        onSelect={(event: React.MouseEvent | React.ChangeEvent, value: string) => {
+          setUpdateChannel(value);
+          setIsChannelSelectOpen(false);
+          setUpdateVersion('');
+        }}
+        selected={selectedUpdateChannel || '-'}
+        onOpenChange={(isOpen) => setIsChannelSelectOpen(isOpen)}
         isOpen={isChannelSelectOpen}
-        selections={selectedUpdateChannel || '-'}
-        onSelect={handleChannelSelection}
-        isDisabled={!packageManifest}
       >
-        {channelSelectOptions}
-      </SelectDeprecated>
+        <SelectList>{channelSelectOptions}</SelectList>
+      </Select>
     </>
   );
 };
@@ -90,8 +106,6 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
     );
   }, [channels, selectedUpdateChannel]);
 
-  const onToggleVersion = () => setIsVersionSelectOpen(!isVersionSelectOpen);
-
   const selectedUpdateVersion = updateVersion || defaultVersionForChannel;
 
   // Return all versions associated with selectedUpdateChannel
@@ -100,14 +114,17 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
     [channels, selectedUpdateChannel],
   );
 
-  const handleVersionSelection = (_v, newSelection) => {
-    setUpdateVersion(newSelection);
-    setIsVersionSelectOpen(false);
-  };
+  const getVersionLabel = (v) => (
+    <>
+      {v?.version}{' '}
+      {v?.deprecation && <DeprecatedOperatorWarningIcon deprecation={v?.deprecation} />}
+    </>
+  );
+
   const versionSelectOptions = selectedChannelVersions.map((v) => (
-    <SelectOptionDeprecated key={v.version} id={v.version} value={v.version}>
-      {v.version} {v?.deprecation && <DeprecatedOperatorWarningIcon deprecation={v?.deprecation} />}
-    </SelectOptionDeprecated>
+    <SelectOption key={v.version} id={v.version} value={v.version}>
+      {getVersionLabel(v)}
+    </SelectOption>
   ));
 
   React.useEffect(() => {
@@ -122,17 +139,32 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
 
   return (
     <>
-      <SelectDeprecated
-        className="co-operator-version__select"
-        aria-label={t('olm~Select a version')}
-        onToggle={onToggleVersion}
+      <Select
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={(open) => setIsVersionSelectOpen(open)}
+            isExpanded={isVersionSelectOpen}
+            isDisabled={!packageManifest}
+            isFullWidth
+            aria-label={t('olm~Select a version')}
+            className="co-operator-version__select"
+          >
+            {getVersionLabel(
+              selectedChannelVersions.find((v) => v.version === selectedUpdateVersion),
+            )}
+          </MenuToggle>
+        )}
+        onSelect={(event: React.MouseEvent | React.ChangeEvent, value: string) => {
+          setUpdateVersion(value);
+          setIsVersionSelectOpen(false);
+        }}
+        selected={selectedUpdateVersion}
+        onOpenChange={(isOpen) => setIsVersionSelectOpen(isOpen)}
         isOpen={isVersionSelectOpen}
-        selections={selectedUpdateVersion}
-        onSelect={handleVersionSelection}
-        isDisabled={!packageManifest}
       >
-        {versionSelectOptions}
-      </SelectDeprecated>
+        <SelectList>{versionSelectOptions}</SelectList>
+      </Select>
 
       {showVersionAlert && selectedUpdateVersion !== defaultVersionForChannel && (
         <Alert

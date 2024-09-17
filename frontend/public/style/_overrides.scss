@@ -378,7 +378,7 @@ ul {
   list-style: disc;
 }
 // And here we explicitly remove it from PF components, except for the List component.
-:where([class^="pf-"]:not(.pf-v5-c-list, .pf-c-list)) {
+:where([class^='pf-']:not(.pf-v5-c-list, .pf-c-list)) {
   @at-root :is(ul, ol)#{&} {
     list-style: none !important;
   }
@@ -405,7 +405,8 @@ ul {
 
 .properties-side-panel-pf-property-value {
   .pf-v5-c-alert__title,
-  .pf-v5-c-select__toggle {
+  .pf-v5-c-menu__item-text,
+  .pf-v5-c-menu-toggle {
     font-size: $font-size-base;
   }
 }
