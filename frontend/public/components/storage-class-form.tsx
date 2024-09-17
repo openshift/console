@@ -660,7 +660,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <Dropdown
               title={t('public~Select Provisioner')}
               autocompleteFilter={autocompleteFilter}
-              autocompletePlaceholder={'Select Provisioner'}
+              autocompletePlaceholder={t('public~Select Provisioner')}
               items={_.mapValues(storageTypes.current, 'provisioner')}
               dropDownClassName="dropdown--full-width"
               menuClassName="dropdown-menu--text-wrap"
