@@ -7,11 +7,16 @@ import {
   EmptyStateVariant,
   EmptyStateHeader,
   EmptyStateFooter,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  Select as SelectDeprecated,
-  SelectOption as SelectOptionDeprecated,
-} from '@patternfly/react-core/deprecated';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
@@ -78,59 +83,70 @@ const LogControls: React.FC<LogControlsProps> = ({
   const options = (items) =>
     items.map((value) => {
       return (
-        <SelectOptionDeprecated
+        <SelectOption
           key={value}
           value={value}
           className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
-        />
+        >
+          {value}
+        </SelectOption>
       );
     });
   const { t } = useTranslation();
-  const logLabel = t('public~Select a log file');
+
   return (
-    <div className="co-toolbar">
-      <div className="co-toolbar__group co-toolbar__group--left">
-        <div className="co-toolbar__item">
-          <SelectDeprecated
-            aria-label={t('public~Select a path')}
-            onToggle={onTogglePath}
-            onSelect={onChangePath}
-            selections={path}
-            isOpen={isPathOpen}
-          >
-            {options(pathItems)}
-          </SelectDeprecated>
-        </div>
-        {isJournal && <NodeLogsFilterUnit onChangeUnit={onChangeUnit} unit={unit} />}
-        {!isJournal && (
-          <div className="co-toolbar__item">
-            {isLoadingFilenames ? (
-              <LoadingInline />
-            ) : (
-              logFilenamesExist && (
-                <SelectDeprecated
-                  aria-label={logLabel}
-                  placeholderText={logLabel}
-                  onToggle={onToggleFilename}
-                  onSelect={onChangeFilename}
-                  selections={logFilename}
-                  isOpen={isFilenameOpen}
-                  className="co-node-logs__log-select"
+    <Toolbar className="co-toolbar-empty-state">
+      <ToolbarContent>
+        <ToolbarGroup>
+          <ToolbarItem>
+            <Select
+              onSelect={onChangePath}
+              selected={path}
+              isOpen={isPathOpen}
+              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                <MenuToggle
+                  ref={toggleRef}
+                  onClick={onTogglePath}
+                  aria-label={t('public~Select a path')}
                 >
-                  {options(logFilenames)}
-                </SelectDeprecated>
-              )
-            )}
-          </div>
-        )}
-        {showSearch && (
-          <div className="co-toolbar__item">
-            <LogViewerSearch placeholder={t('public~Search')} minSearchChars={0} />
-          </div>
-        )}
-      </div>
-      <div className="co-toolbar__group co-toolbar__group--right">
-        <div className="co-toolbar__item">
+                  {path}
+                </MenuToggle>
+              )}
+            >
+              <SelectList>{options(pathItems)}</SelectList>
+            </Select>
+          </ToolbarItem>
+          {isJournal && <NodeLogsFilterUnit onChangeUnit={onChangeUnit} unit={unit} />}
+          {!isJournal && (
+            <ToolbarItem>
+              {isLoadingFilenames ? (
+                <LoadingInline />
+              ) : (
+                logFilenamesExist && (
+                  <Select
+                    onSelect={onChangeFilename}
+                    selected={logFilename}
+                    isOpen={isFilenameOpen}
+                    className="co-node-logs__log-select"
+                    toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                      <MenuToggle ref={toggleRef} onClick={onToggleFilename}>
+                        {logFilename || t('public~Select a log file')}
+                      </MenuToggle>
+                    )}
+                  >
+                    <SelectList>{options(logFilenames)}</SelectList>
+                  </Select>
+                )
+              )}
+            </ToolbarItem>
+          )}
+          {showSearch && (
+            <ToolbarItem>
+              <LogViewerSearch placeholder={t('public~Search')} minSearchChars={0} />
+            </ToolbarItem>
+          )}
+        </ToolbarGroup>
+        <ToolbarItem className="pf-v5-u-flex-fill pf-v5-u-align-self-center pf-v5-u-justify-content-flex-end">
           <Checkbox
             label={t('public~Wrap lines')}
             id="wrapLogLines"
@@ -140,9 +156,9 @@ const LogControls: React.FC<LogControlsProps> = ({
               setWrapLines(checked);
             }}
           />
-        </div>
-      </div>
-    </div>
+        </ToolbarItem>
+      </ToolbarContent>
+    </Toolbar>
   );
 };
 
