@@ -43,9 +43,11 @@ Given('user can see terminal icon on masthead', () => {
 
 When('user clicks on the Web Terminal icon on the Masthead', () => {
   webTerminalPage.clickOpenCloudShellBtn();
+  cy.get('cos-status-box cos-status-box--loading').should('not.exist');
 });
 
 Then('user will see the terminal window', () => {
+  cy.wait(15000);
   webTerminalPage.verifyConnectionRediness();
 });
 

@@ -43,4 +43,13 @@ export const webTerminalPage = {
     cy.alertTitleShouldContain('Close terminal?');
     cy.byTestID('confirm-action').click();
   },
+
+  deleteTerminalInstanceActionMenu: () => {
+    cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
+    cy.byLegacyTestID('action-items').should('be.visible');
+    cy.byTestActionID('Delete DevWorkspace').should('be.visible').click();
+    cy.get('[aria-label="Modal"]').should('be.visible');
+    cy.byTestID('confirm-action').click();
+    cy.byTestID('empty-box').should('be.visible');
+  },
 };

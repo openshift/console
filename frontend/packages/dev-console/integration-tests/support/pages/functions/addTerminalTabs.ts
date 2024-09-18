@@ -1,4 +1,4 @@
-import { webTerminalPO } from '../../pageObjects/web-terminal-po';
+import { webTerminalPO } from '../../pageObjects/webterminal-po';
 
 export const addTerminals = (n: number) => {
   for (let i = 0; i < n; i++) {

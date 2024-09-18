@@ -51,6 +51,45 @@ export const checkWebterminalOperatorStatus = (retries: number = 5) => {
   }
 };
 
+export const checkDevWorkspaceOperatorStatus = (retries: number = 5) => {
+  const namespace = operatorNamespaces.DevWorkspaceOperator;
+  const controllerResourceName = 'devworkspace-controller';
+  const serverResourceName = 'devworkspace-webhook-server';
+
+  if (retries === 0) {
+    throw new Error('Failed to install devworkspace operator - Pod timeout');
+  } else {
+    cy.exec(
+      `oc wait --for=condition=ready pod -l app.kubernetes.io/name=${controllerResourceName} -n ${namespace} --timeout=300s`,
+      {
+        failOnNonZeroExit: false,
+      },
+    ).then(function (result) {
+      if (result.stdout.includes('condition met')) {
+        cy.log(`Success: ${result.stdout}`);
+      } else {
+        cy.log(result.stderr);
+        cy.wait(30000);
+        checkDevWorkspaceOperatorStatus(retries - 1);
+      }
+    });
+    cy.exec(
+      `oc wait --for=condition=ready pod -l app.kubernetes.io/name=${serverResourceName} -n ${namespace} --timeout=300s`,
+      {
+        failOnNonZeroExit: false,
+      },
+    ).then(function (result) {
+      if (result.stdout.includes('condition met')) {
+        cy.log(`Success: ${result.stdout}`);
+      } else {
+        cy.log(result.stderr);
+        cy.wait(30000);
+        checkDevWorkspaceOperatorStatus(retries - 1);
+      }
+    });
+  }
+};
+
 export const checkShipwrightOperatorStatus = (retries: number = 5) => {
   const namespace = operatorNamespaces.ShipwrightOperator;
   const resourceName = operatorSubscriptions.ShipwrightOperator;
