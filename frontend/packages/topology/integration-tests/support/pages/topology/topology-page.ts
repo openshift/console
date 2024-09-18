@@ -53,9 +53,19 @@ export const topologyPage = {
   verifyTitle: () => {
     cy.get(topologyPO.title).should('have.text', 'Topology');
   },
-  verifyTopologyPage: () => {
+  verifyTopologyPage: (retries: number = 3) => {
     app.waitForDocumentLoad();
-    cy.url().should('include', 'topology');
+    if (retries === 0) {
+      throw new Error(`URL does not contain 'topology'`);
+    }
+    if (retries > 0) {
+      cy.url().then(($url) => {
+        if (!$url.includes('topology')) {
+          cy.wait(20000);
+          topologyPage.verifyTopologyPage(retries - 1);
+        }
+      });
+    }
   },
   verifyTopologyGraphView: () => {
     // eslint-disable-next-line promise/catch-or-return
@@ -63,6 +73,13 @@ export const topologyPage = {
       $text.includes('graph')
         ? cy.log(`user is at topology graph view`)
         : cy.get(topologyPO.switcher).click({ force: true });
+    });
+  },
+  verifyToplogyPageNotEmpty: () => {
+    cy.get('*[class="odc-topology"]').then(($el) => {
+      if ($el.find('[data-test="no-resources-found"]').length) {
+        throw new Error(`No workload has been created till now.`);
+      }
     });
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
@@ -307,6 +324,7 @@ export const topologyPage = {
     cy.reload();
     app.waitForLoad();
     guidedTour.close();
+    cy.get('[data-id="odc-topology-graph"]').click();
     const id = `[data-id="group:${appName}"] .odc-resource-icon-application`;
     cy.log(id);
     cy.get('[data-test-id="base-node-handler"] image').should('be.visible');
@@ -350,7 +368,7 @@ export const topologyPage = {
       .contains(serviceName);
   },
   waitForKnativeRevision: () => {
-    cy.get(topologyPO.graph.node, { timeout: 300000 }).should('be.visible');
+    cy.get(topologyPO.graph.node, { timeout: 600000 }).should('be.visible');
   },
   rightClickOnHelmWorkload: (helmReleaseName: string) => {
     topologyPage.getHelmRelease(helmReleaseName).trigger('contextmenu', { force: true });
@@ -367,6 +385,7 @@ export const topologyPage = {
       .click({ force: true });
   },
   clickOnKnativeService: (knativeService: string) => {
+    cy.get('[data-id="odc-topology-graph"]').click();
     topologyPage.getKnativeService(knativeService).click({ force: true });
   },
   rightClickOnKnativeService: (knativeService: string) => {

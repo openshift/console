@@ -1,8 +1,13 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { installKnativeOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
-  cy.login();
+  cy.exec('../../../../contrib/create-user.sh');
+  const bridgePasswordIDP: string = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
+  const bridgePasswordUsername: string = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
+  const bridgePasswordPassword: string = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
+  cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
   cy.document().its('readyState').should('eq', 'complete');
   installKnativeOperatorUsingCLI();
   //  To ignore the resizeObserverLoopErrors on CI, adding below code
@@ -15,6 +20,7 @@ before(() => {
     }
     cy.log('uncaught:exception', err, runnable, promise);
   });
+  guidedTour.close();
 });
 
 beforeEach(() => {
@@ -23,7 +29,17 @@ beforeEach(() => {
 
 after(() => {
   const namespaces: string[] = Cypress.env('NAMESPACES') || [];
-  cy.exec(`oc delete namespace ${namespaces.join(' ')}`, { failOnNonZeroExit: false });
+  let start = 0;
+  cy.then(() => {
+    start = performance.now();
+  });
+
+  cy.exec(`oc delete namespace ${namespaces.join(' ')}`, {
+    failOnNonZeroExit: false,
+  }).then((result) => {
+    cy.log(result.stdout);
+    cy.log(`duration: ${performance.now() - start}`);
+  });
   // cy.logout();
 });
 
