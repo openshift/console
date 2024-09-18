@@ -5,7 +5,7 @@ Feature: Web Terminal for Admin user
 
         Background:
             Given user has logged in as admin user
-              And user has installed Web Terminal operator
+              # And user has created or selected namespace "aut-terminal"
 
         @smoke @odc-6745
         Scenario: Create new project and use Web Terminal: WT-02-TC01
