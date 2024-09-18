@@ -1502,6 +1502,7 @@
   "Unknown error submitting": "Erreur inconnue lors de l’envoi",
   "Select all filters": "Sélectionner tous les filtres",
   "{{selectedCount}} of {{itemCount}}": "{{selectedCount}} sur {{itemCount}}",
+  "{{jobsSucceeded}} of {{completions}}": "{{jobsSucceeded}} sur {{completions}}",
   "Item_one": "élément",
   "Item_other": "éléments",
   "Search": "Recherche",

@@ -699,6 +699,7 @@
   "Template": "Template",
   "(generated if empty)": "(generated if empty)",
   "Edit parallelism": "Edit parallelism",
+  "{{jobsSucceeded}} of {{completions}}": "{{jobsSucceeded}} of {{completions}}",
   "Job status": "Job status",
   "Succeeded pods": "Succeeded pods",
   "Active pods": "Active pods",

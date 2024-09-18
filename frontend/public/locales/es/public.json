@@ -1502,6 +1502,7 @@
   "Unknown error submitting": "Error desconocido al enviar",
   "Select all filters": "Seleccionar todos los filtros",
   "{{selectedCount}} of {{itemCount}}": "{{selectedCount}} de {{itemCount}}",
+  "{{jobsSucceeded}} of {{completions}}": "{{jobsSucceeded}} de {{completions}}",
   "Item_one": "Artículo",
   "Item_other": "Artículos",
   "Search": "Buscar",

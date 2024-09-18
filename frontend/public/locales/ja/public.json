@@ -1502,6 +1502,7 @@
   "Unknown error submitting": "不明な送信エラー",
   "Select all filters": "すべてのフィルターを選択",
   "{{selectedCount}} of {{itemCount}}": "{{selectedCount}}/{{itemCount}}",
+  "{{jobsSucceeded}} of {{completions}}": "{{jobsSucceeded}}/{{completions}}",
   "Item_one": "アイテム",
   "Item_other": "アイテム",
   "Search": "検索",

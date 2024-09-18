@@ -1502,6 +1502,7 @@
   "Unknown error submitting": "알 수 없는 오류 제출",
   "Select all filters": "모든 필터 선택",
   "{{selectedCount}} of {{itemCount}}": "{{selectedCount}} / {{itemCount}}",
+  "{{jobsSucceeded}} of {{completions}}": "{{jobsSucceeded}} / {{completions}}",
   "Item_one": "항목",
   "Item_other": "항목",
   "Search": "검색",
