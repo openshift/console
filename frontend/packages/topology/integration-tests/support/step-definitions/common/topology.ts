@@ -44,11 +44,13 @@ Then('user is able to see workload {string} in topology page list view', (worklo
 });
 
 Then('user is able to see workload {string} in topology page', (workloadName: string) => {
+  topologyPage.waitForLoad();
+  topologyPage.verifyToplogyPageNotEmpty();
   topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });
 
 Then('user will be redirected to Topology page', () => {
-  topologyPage.verifyTopologyPage();
+  topologyPage.verifyTopologyPage(5);
 });
 
 When('user clicks on workload {string}', (workloadName: string) => {
