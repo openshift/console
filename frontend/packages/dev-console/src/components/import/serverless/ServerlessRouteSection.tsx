@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
-import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -8,7 +7,7 @@ import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { DomainMappingModel } from '@console/knative-plugin/src';
-import { SelectInputField } from '@console/shared';
+import { MultiTypeaheadField } from '@console/shared';
 import { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import {
   getAllOtherDomainMappingInUse,
@@ -73,17 +72,15 @@ const ServerlessRouteSection: React.FC = () => {
     <>
       {domainMappingLoaded || domainMappingLoadErr ? (
         <>
-          <SelectInputField
+          <MultiTypeaheadField
             data-test-id="domain-mapping-field"
             name="serverless.domainMapping"
             label={t('devconsole~Domain mapping')}
             ariaLabel={t('devconsole~Domain mapping')}
-            variant={SelectVariantDeprecated.typeaheadMulti}
             options={domainMappingResources}
             placeholderText={t('devconsole~Add domain')}
             helpText={t('devconsole~Enter custom domain to map to the Knative service')}
             isCreatable
-            hasOnCreateOption
           />
           {hasOtherKsvcDomainMappings(serverless.domainMapping) && (
             <Alert

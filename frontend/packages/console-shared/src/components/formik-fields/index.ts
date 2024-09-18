@@ -22,6 +22,7 @@ export { default as DynamicFormField } from './DynamicFormField';
 export { default as SyncedEditorField } from './SyncedEditorField';
 export { default as SelectInputField } from './SelectInputField';
 export { default as SingleDropdownField } from './SingleDropdownField';
+export { default as MultiTypeaheadField } from './MultiTypeaheadField';
 export { default as SelectorInputField } from './SelectorInputField';
 export * from './field-utils';
 export * from './field-types';

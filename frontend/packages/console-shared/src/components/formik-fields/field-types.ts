@@ -200,3 +200,17 @@ export interface SelectInputFieldProps extends FieldProps {
   onChange?: (selection: string) => void;
   getLabelFromValue?: (value: string) => string;
 }
+
+export interface MultiTypeaheadFieldProps extends FieldProps {
+  ariaLabel?: string;
+  options: SelectInputOption[];
+  placeholderText?: string;
+  isCreatable?: boolean;
+  isDisabled?: boolean;
+  isInputValuePersisted?: boolean;
+  noResultsFoundText?: string;
+  toggleOnSelection?: boolean;
+  hideClearButton?: boolean;
+  onChange?: (selection: string) => void;
+  getLabelFromValue?: (value: string) => string;
+}
