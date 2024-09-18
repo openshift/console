@@ -17,10 +17,10 @@ type IconProps = {
 };
 
 const Icon: React.FC<IconProps> = ({ label, url }) => (
-  <>
+  <div className="odc-icon-dropdown__item">
     <img src={url} width="24" height="24" alt="" className="icon" />
     {label}
-  </>
+  </div>
 );
 
 const iconLabelAutocompleteFilter = (text: string, item: React.ReactElement<IconProps>) =>
