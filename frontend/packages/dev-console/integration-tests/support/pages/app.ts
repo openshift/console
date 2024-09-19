@@ -281,7 +281,7 @@ export const projectNameSpace = {
         }).then(($ele) => {
           if ($ele.text().includes('kube:admin')) {
             cy.get('tr[data-test-rows="resource-row"]').should('have.length.at.least', 1);
-          } else {
+          } else if ($ele.text() !== 'Auth disabled') {
             cy.get('[data-test="empty-message"]').should('have.text', 'No Projects found');
           }
         });
