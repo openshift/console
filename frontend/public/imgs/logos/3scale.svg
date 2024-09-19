@@ -1,1 +1,88 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><style>.cls-1{fill:#d71e00;}.cls-2{fill:#c21a00;}.cls-3{fill:#fff;}</style></defs><title>Logo</title><g id="Layer_1" data-name="Layer 1"><circle class="cls-1" cx="50" cy="50" r="50" transform="translate(-20.71 50) rotate(-45)"/><path class="cls-2" d="M85.36,14.64A50,50,0,0,1,14.64,85.36Z"/><path class="cls-3" d="M50.25,30.83a2.69,2.69,0,1,0-2.68-2.69A2.65,2.65,0,0,0,50.25,30.83ZM43.36,39.4a3.35,3.35,0,0,0,3.32,3.34,3.34,3.34,0,0,0,0-6.67A3.35,3.35,0,0,0,43.36,39.4Zm3.92,9.89A2.68,2.68,0,1,0,44.6,52,2.7,2.7,0,0,0,47.28,49.29ZM32.63,29.65a3.26,3.26,0,1,0-3.24-3.26A3.26,3.26,0,0,0,32.63,29.65ZM40.53,34a2.77,2.77,0,0,0,0-5.53,2.79,2.79,0,0,0-2.76,2.77A2.85,2.85,0,0,0,40.53,34Zm1.76-9.31a4.4,4.4,0,1,0-4.38-4.4A4.37,4.37,0,0,0,42.29,24.71ZM32.78,49a7,7,0,1,0-7-7A7,7,0,0,0,32.78,49Zm32.13-7.7a4.23,4.23,0,0,0,4.3,4.31,4.31,4.31,0,1,0-4.3-4.31Zm6.9,10.06a3.08,3.08,0,1,0,3.08-3.09A3.09,3.09,0,0,0,71.81,51.38ZM73.9,34.77a4.31,4.31,0,1,0-4.3-4.31A4.28,4.28,0,0,0,73.9,34.77ZM52.16,45.06a3.65,3.65,0,1,0,3.65-3.66A3.64,3.64,0,0,0,52.16,45.06ZM55,22a3.17,3.17,0,0,0,3.16-3.17A3.23,3.23,0,0,0,55,15.63,3.17,3.17,0,0,0,55,22Zm-.47,10.09A5.37,5.37,0,0,0,60,37.54a5.48,5.48,0,1,0-5.45-5.48ZM66.25,25.5a2.69,2.69,0,1,0-2.68-2.69A2.65,2.65,0,0,0,66.25,25.5ZM45.7,63.1a3.42,3.42,0,1,0-3.41-3.42A3.43,3.43,0,0,0,45.7,63.1Zm14,11.19a4.4,4.4,0,1,0,4.38,4.4A4.37,4.37,0,0,0,59.73,74.29ZM62.3,50.51a9.2,9.2,0,1,0,9.16,9.2A9.22,9.22,0,0,0,62.3,50.51ZM50.1,66.77a2.69,2.69,0,1,0,2.68,2.69A2.7,2.7,0,0,0,50.1,66.77ZM81.25,41.12a2.7,2.7,0,0,0-2.68,2.69,2.65,2.65,0,0,0,2.68,2.69,2.69,2.69,0,0,0,0-5.37ZM44.49,76.47a3.73,3.73,0,0,0-3.73,3.74,3.77,3.77,0,1,0,3.73-3.74ZM79.06,56.72a4,4,0,1,0,4,4A4,4,0,0,0,79.06,56.72Zm-6,11.78A3.09,3.09,0,0,0,70,71.6a3,3,0,0,0,3.08,3.09,3.09,3.09,0,0,0,0-6.19ZM28.3,68a4.16,4.16,0,0,0-4.14,4.15A4.21,4.21,0,0,0,28.3,76.3a4.15,4.15,0,0,0,0-8.3Zm-8.22-9a3,3,0,1,0,3,3A3.05,3.05,0,0,0,20.08,59Zm1.84-9.74a3,3,0,1,0,3,3A3.05,3.05,0,0,0,21.91,49.22ZM22.37,42a3.24,3.24,0,1,0-3.24,3.26A3.26,3.26,0,0,0,22.37,42ZM43.11,70.2a3.8,3.8,0,0,0-3.81-3.74,3.73,3.73,0,0,0-3.73,3.74A3.8,3.8,0,0,0,39.3,74,3.87,3.87,0,0,0,43.11,70.2ZM37.56,58.43a4.68,4.68,0,0,0-4.62-4.64,4.63,4.63,0,0,0-4.62,4.64,4.58,4.58,0,0,0,4.62,4.64A4.63,4.63,0,0,0,37.56,58.43ZM23.11,33.82a2.52,2.52,0,1,0-2.51-2.52A2.53,2.53,0,0,0,23.11,33.82Z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?><svg id="uuid-0d793a03-fc60-4b5c-9470-514d99efbf87" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38"><title>Red Hat 3scale API Management icon</title>
+<desc>application programming interface, application services</desc>
+<metadata><?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 8.0-c001 1.000000, 0000/00/00-00:00:00        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:cq="http://www.day.com/jcr/cq/1.0"
+            xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+            xmlns:xmpRights="http://ns.adobe.com/xap/1.0/rights/">
+         <xmp:rhcc-effective-on>2024-03-01T15:26:26.336Z</xmp:rhcc-effective-on>
+         <xmp:rhcc-metadata-complete-moderator>pending</xmp:rhcc-metadata-complete-moderator>
+         <xmp:rhcc-translation-id>TRAe3f3d730-4638-45e2-bbfc-4d34064f6939</xmp:rhcc-translation-id>
+         <xmp:brand-content-type>Icon</xmp:brand-content-type>
+         <xmp:CreateDate>2024-03-01T15:26:26.336Z</xmp:CreateDate>
+         <xmp:rhcc-effective-on-set-on-upload>true</xmp:rhcc-effective-on-set-on-upload>
+         <xmp:rhcc-metadata-complete-uploader>pending</xmp:rhcc-metadata-complete-uploader>
+         <xmp:rhcc-file-last-modified>2024-03-21T00:39:55.425Z</xmp:rhcc-file-last-modified>
+         <xmp:rhcc-audience>rhcc-audience:internal</xmp:rhcc-audience>
+         <xmp:rhcc-rights-restricted>no</xmp:rhcc-rights-restricted>
+         <xmp:brand-content-subtype>Technology icon</xmp:brand-content-subtype>
+         <xmp:rhcc-derivative-id>DERe3f3d730-4638-45e2-bbfc-4d34064f6939</xmp:rhcc-derivative-id>
+         <xmp:brand-logo-color>Standard</xmp:brand-logo-color>
+         <xmp:rhcc-notify-portal-subscribers-on-change>yes</xmp:rhcc-notify-portal-subscribers-on-change>
+         <xmp:rhcc-product>
+            <rdf:Bag>
+               <rdf:li>rhcc-product:red-hat-3scale-api-management</rdf:li>
+            </rdf:Bag>
+         </xmp:rhcc-product>
+         <xmp:brand-subtype>
+            <rdf:Bag>
+               <rdf:li>Technology icon</rdf:li>
+            </rdf:Bag>
+         </xmp:brand-subtype>
+         <dc:format>image/svg+xml</dc:format>
+         <dc:modified>2024-05-10T13:41:53.622Z</dc:modified>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">Red Hat 3scale API Management icon</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <dc:description>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">application programming interface, application services</rdf:li>
+            </rdf:Alt>
+         </dc:description>
+         <cq:lastReplicationAction_scene7>Activate</cq:lastReplicationAction_scene7>
+         <cq:lastReplicationAction_publish>Activate</cq:lastReplicationAction_publish>
+         <cq:lastReplicated_publish>2024-05-10T13:42:11.138Z</cq:lastReplicated_publish>
+         <cq:lastReplicatedBy>workflow-process-service</cq:lastReplicatedBy>
+         <cq:lastReplicationAction>Activate</cq:lastReplicationAction>
+         <cq:lastReplicatedBy_publish>workflow-process-service</cq:lastReplicatedBy_publish>
+         <cq:isDelivered>false</cq:isDelivered>
+         <cq:lastReplicated>2024-05-10T13:42:11.138Z</cq:lastReplicated>
+         <cq:lastReplicatedBy_scene7>workflow-process-service</cq:lastReplicatedBy_scene7>
+         <cq:lastReplicated_scene7>2024-05-10T13:42:11.138Z</cq:lastReplicated_scene7>
+         <tiff:ImageLength>38</tiff:ImageLength>
+         <tiff:ImageWidth>38</tiff:ImageWidth>
+         <xmpRights:UsageTerms>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">Use technology icons to represent Red Hat products and components. Do not remove the icon from the bounding shape.</rdf:li>
+            </rdf:Alt>
+         </xmpRights:UsageTerms>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                         
+<?xpacket end="w"?></metadata>
+<defs><style>.uuid-6783b8f1-3340-4b95-b47b-be491d902680{fill:#e00;}.uuid-f84a3fc3-c473-4734-877b-54d769d15b04{fill:#fff;}.uuid-df5fc6ae-4b6b-4ae1-854b-251108ec99a5{fill:#4d4d4d;}</style></defs><rect x="1" y="1" width="36" height="36" rx="9" ry="9"/><path class="uuid-df5fc6ae-4b6b-4ae1-854b-251108ec99a5" d="m28,2.25c4.27338,0,7.75,3.47664,7.75,7.75v18c0,4.27336-3.47662,7.75-7.75,7.75H10c-4.27338,0-7.75-3.47664-7.75-7.75V10c0-4.27336,3.47662-7.75,7.75-7.75h18m0-1.25H10C5.02942,1,1,5.02943,1,10v18c0,4.97057,4.02942,9,9,9h18c4.97058,0,9-4.02943,9-9V10c0-4.97057-4.02942-9-9-9h0Z"/><path class="uuid-6783b8f1-3340-4b95-b47b-be491d902680" d="m25.5,22.875c-.95294,0-1.75159.6344-2.02039,1.5h-1.85461v-2.375c0-.34521-.28027-.625-.625-.625s-.625.27979-.625.625v3c0,.34521.28027.625.625.625h2.47961c.2688.8656,1.0675,1.5,2.02039,1.5,1.17188,0,2.125-.95312,2.125-2.125s-.95312-2.125-2.125-2.125Zm0,3c-.48242,0-.875-.39258-.875-.875s.39258-.875.875-.875.875.39258.875.875-.39258.875-.875.875Z"/><path class="uuid-6783b8f1-3340-4b95-b47b-be491d902680" d="m21,16.625c.34473,0,.625-.27979.625-.625v-2.375h1.91443c.32098.76703,1.07837,1.30762,1.96057,1.30762,1.17188,0,2.125-.95312,2.125-2.125s-.95312-2.125-2.125-2.125c-1.02362,0-1.87982.72736-2.0802,1.69238h-2.4198c-.34473,0-.625.27979-.625.625v3c0,.34521.28027.625.625.625Zm4.5-4.69238c.48242,0,.875.39258.875.875s-.39258.875-.875.875-.875-.39258-.875-.875.39258-.875.875-.875Z"/><path class="uuid-6783b8f1-3340-4b95-b47b-be491d902680" d="m29,16.83643h-3c-.34473,0-.625.27979-.625.625v.91357h-2.375c-.34473,0-.625.27979-.625.625s.28027.625.625.625h2.375v.83643c0,.34521.28027.625.625.625h3c.34473,0,.625-.27979.625-.625v-3c0-.34521-.28027-.625-.625-.625Zm-.625,3h-1.75v-1.75h1.75v1.75Z"/><path class="uuid-6783b8f1-3340-4b95-b47b-be491d902680" d="m12.625,20.46143v-.83643h2.375c.34473,0,.625-.27979.625-.625s-.28027-.625-.625-.625h-2.375v-.91357c0-.34521-.28027-.625-.625-.625h-3c-.34473,0-.625.27979-.625.625v3c0,.34521.28027.625.625.625h3c.34473,0,.625-.27979.625-.625Zm-1.25-.625h-1.75v-1.75h1.75v1.75Z"/><path class="uuid-6783b8f1-3340-4b95-b47b-be491d902680" d="m17,21.375c-.34473,0-.625.27979-.625.625v2.375h-1.85455c-.2688-.8656-1.0675-1.5-2.02045-1.5-1.17188,0-2.125.95312-2.125,2.125s.95312,2.125,2.125,2.125c.95288,0,1.75165-.6344,2.02045-1.5h2.47955c.34473,0,.625-.27979.625-.625v-3c0-.34521-.28027-.625-.625-.625Zm-4.5,4.5c-.48242,0-.875-.39258-.875-.875s.39258-.875.875-.875.875.39258.875.875-.39258.875-.875.875Z"/><path class="uuid-6783b8f1-3340-4b95-b47b-be491d902680" d="m17,12.375h-2.41974c-.20038-.96503-1.05664-1.69238-2.08026-1.69238-1.17188,0-2.125.95312-2.125,2.125s.95312,2.125,2.125,2.125c.8822,0,1.63959-.54059,1.96057-1.30762h1.91443v2.375c0,.34521.28027.625.625.625s.625-.27979.625-.625v-3c0-.34521-.28027-.625-.625-.625Zm-4.5,1.30762c-.48242,0-.875-.39258-.875-.875s.39258-.875.875-.875.875.39258.875.875-.39258.875-.875.875Z"/><path class="uuid-f84a3fc3-c473-4734-877b-54d769d15b04" d="m19,23.125c-2.27441,0-4.125-1.85059-4.125-4.125s1.85059-4.125,4.125-4.125,4.125,1.85059,4.125,4.125-1.85059,4.125-4.125,4.125Zm0-7c-1.58496,0-2.875,1.28955-2.875,2.875s1.29004,2.875,2.875,2.875,2.875-1.28955,2.875-2.875-1.29004-2.875-2.875-2.875Z"/></svg>
