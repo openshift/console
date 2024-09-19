@@ -2,6 +2,7 @@ import { TFunction } from 'i18next';
 import * as yup from 'yup';
 import { nameRegex } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { isInteger } from '../../utils/yup-validation-util';
 
 export const hpaValidationSchema = (t: TFunction) =>
   yup.object({
@@ -24,7 +25,7 @@ export const hpaValidationSchema = (t: TFunction) =>
         spec: yup.object({
           minReplicas: yup
             .number()
-            .integer(t('devconsole~Minimum Pods must be an integer.'))
+            .test(isInteger(t('devconsole~Minimum Pods must be an integer.')))
             .min(1, t('devconsole~Minimum Pods must greater than or equal to 1.'))
             .test(
               'test-less-than-max',
@@ -36,7 +37,11 @@ export const hpaValidationSchema = (t: TFunction) =>
             ),
           maxReplicas: yup
             .number()
-            .integer(t('devconsole~Maximum Pods must be an integer.'))
+            .test(isInteger(t('devconsole~Maximum Pods must be an integer.')))
+            .max(
+              Number.MAX_SAFE_INTEGER,
+              t('devconsole~Value is larger than maximum value allowed.'),
+            )
             .test(
               'test-greater-than-min',
               t('devconsole~Maximum Pods should be greater than or equal to Minimum Pods.'),
