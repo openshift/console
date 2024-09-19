@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"path/filepath"
 	"runtime"
 
 	"io/ioutil"
@@ -601,8 +602,11 @@ func main() {
 	}
 
 	if *fDownloads {
+		// TODO handle the arguments to the artifacts config from the command line
+		// TODO temporarily hardcoding the port and the path to the artifactsFileSpec.json
 		// run artifacts server
-		artifactsConfig, err := downloads.NewArtifactsConfig("8081")
+		_, filename, _, _ := runtime.Caller(0)
+		artifactsConfig, err := downloads.NewArtifactsConfig("8081", filepath.Join(filepath.Dir(filename), "config/downloads/artifactsFileSpec.json"))
 		if err != nil {
 			klog.Fatalf("Failed to configure artifacts: %v", err)
 			os.Exit(1)
@@ -616,9 +620,7 @@ func main() {
 				Addr:    fmt.Sprintf("localhost:%s", artifactsConfig.Port),
 				Handler: http.FileServer(http.Dir(artifactsConfig.TempDir)),
 			}
-			if err = downlsrv.ListenAndServe(); err != nil {
-				fmt.Println(err)
-			}
+			klog.Fatal(downlsrv.ListenAndServe())
 		}()
 	}
 

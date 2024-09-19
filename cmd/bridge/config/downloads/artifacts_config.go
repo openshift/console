@@ -3,6 +3,7 @@ package downloads
 import (
 	"archive/tar"
 	"archive/zip"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -16,11 +17,11 @@ import (
 type HtmlPageData struct {
 	Heading                  string
 	SubdirectoriesPathToRoot string
-	Items                    []ListItem
+	Items                    []ListItemLink
 }
 
-type ListItem struct {
-	Type   string // "link" or "license"
+type ListItemLink struct {
+	Type   string // "link to artifacts" or "license link"
 	URL    string
 	Name   string
 	TarURL string
@@ -29,57 +30,20 @@ type ListItem struct {
 
 // specification of the artifacts to be served
 type artifactFileSpec struct {
-	arch            string
-	operatingSystem string
-	path            string
+	Arch            string
+	OperatingSystem string
+	Path            string
 }
 
 type ArtifactsConfig struct {
-	Port         string
-	Spec         []artifactFileSpec
-	TempDir      string
-	TemplateHTML *template.Template
+	Port            string
+	Spec            []artifactFileSpec
+	TempDir         string
+	TemplateHTML    *template.Template
+	PathToOCLicense string
 }
 
-var specs = []artifactFileSpec{
-	{
-		arch:            "amd64",
-		operatingSystem: "linux",
-		path:            "/usr/share/openshift/linux_amd64/oc",
-	},
-	{
-		arch:            "amd64",
-		operatingSystem: "mac",
-		path:            "/usr/share/openshift/mac/oc",
-	},
-	{
-		arch:            "amd64",
-		operatingSystem: "windows",
-		path:            "/usr/share/openshift/windows/oc.exe",
-	},
-	{
-		arch:            "arm64",
-		operatingSystem: "linux",
-		path:            "/usr/share/openshift/linux_arm64/oc",
-	},
-	{
-		arch:            "arm64",
-		operatingSystem: "mac",
-		path:            "/usr/share/openshift/mac_arm64/oc",
-	},
-	{
-		arch:            "ppc64le",
-		operatingSystem: "linux",
-		path:            "/usr/share/openshift/linux_ppc64le/oc",
-	},
-	{
-		arch:            "s390x",
-		operatingSystem: "linux",
-		path:            "/usr/share/openshift/linux_s390x/oc",
-	},
-}
-
-var templateStringHTML = `<!DOCTYPE html>
+const templateStringHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -102,8 +66,38 @@ var templateStringHTML = `<!DOCTYPE html>
 </body>
 </html>`
 
-func NewArtifactsConfig(port string) (*ArtifactsConfig, error) {
+// load artifacts to be served from given path
+func loadArtifacts(path string) ([]artifactFileSpec, error) {
+	specs := []artifactFileSpec{}
+	// open the JSON spec config file
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// convert to artifactFileSpec
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&specs)
+	if err != nil {
+		return nil, err
+	}
+
+	// check if the specs are empty
+	if len(specs) == 0 {
+		return nil, fmt.Errorf("no artifacts to serve")
+	}
+
+	return specs, nil
+}
+
+func NewArtifactsConfig(port string, specsFilePath string) (*ArtifactsConfig, error) {
 	tempDir, err := os.MkdirTemp("", "artifacts")
+	if err != nil {
+		return nil, err
+	}
+
+	specs, err := loadArtifacts(specsFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -123,6 +117,7 @@ func NewArtifactsConfig(port string) (*ArtifactsConfig, error) {
 	if err != nil {
 		return nil, err
 	}
+	artifactsConfig.PathToOCLicense = "/usr/share/openshift/LICENSE"
 	klog.Infof("Artifacts server configuration initialized, serving from %s", tempDir)
 
 	return &artifactsConfig, nil
@@ -249,8 +244,8 @@ func createDir(dir string) error {
 	return nil
 }
 
-func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) ([]ListItem, error) {
-	content := []ListItem{
+func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) ([]ListItemLink, error) {
+	content := []ListItemLink{
 		{
 			Type: "license",
 			URL:  "oc-license",
@@ -259,10 +254,10 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 
 	// create subdirectories for the artifacts
 	for _, spec := range artifactsConfig.Spec {
-		basename := filepath.Base(spec.path)
-		artifactPath := filepath.Join(artifactsConfig.TempDir, spec.arch, spec.operatingSystem, basename)
-		archDir := filepath.Join(artifactsConfig.TempDir, spec.arch)
-		osDir := filepath.Join(artifactsConfig.TempDir, spec.arch, spec.operatingSystem)
+		basename := filepath.Base(spec.Path)
+		artifactPath := filepath.Join(artifactsConfig.TempDir, spec.Arch, spec.OperatingSystem, basename)
+		archDir := filepath.Join(artifactsConfig.TempDir, spec.Arch)
+		osDir := filepath.Join(artifactsConfig.TempDir, spec.Arch, spec.OperatingSystem)
 
 		// create subdirectory for the architecture
 		err := createDir(archDir)
@@ -274,7 +269,7 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 			HtmlPageData{
 				Heading:                  "",
 				SubdirectoriesPathToRoot: tempDir,
-				Items:                    []ListItem{},
+				Items:                    []ListItemLink{},
 			},
 		)
 		if err != nil {
@@ -291,14 +286,14 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 			HtmlPageData{
 				Heading:                  "",
 				SubdirectoriesPathToRoot: tempDir,
-				Items:                    []ListItem{},
+				Items:                    []ListItemLink{},
 			},
 		)
 		if err != nil {
 			return nil, err
 		}
 
-		err = os.Symlink(spec.path, artifactPath)
+		err = os.Symlink(spec.Path, artifactPath)
 		if err != nil {
 			return nil, err
 		}
@@ -309,10 +304,10 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 		}
 
 		// append new entry in the list of links to artifacts
-		content = append(content, ListItem{
+		content = append(content, ListItemLink{
 			Type:   "link",
 			URL:    artifactPath,
-			Name:   fmt.Sprintf("%s %s", spec.arch, spec.operatingSystem),
+			Name:   fmt.Sprintf("%s %s", spec.Arch, spec.OperatingSystem),
 			TarURL: fmt.Sprintf("%s.tar", artifactPath),
 			ZipURL: fmt.Sprintf("%s.zip", artifactPath),
 		})
@@ -323,7 +318,7 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 
 func (artifactsConfig *ArtifactsConfig) setupArtifactsDirectory() error {
 	// symlink file in the temporary directory that points to the openshift license
-	os.Symlink("/usr/share/openshift/LICENSE", filepath.Join(artifactsConfig.TempDir, "oc-license"))
+	os.Symlink(artifactsConfig.PathToOCLicense, filepath.Join(artifactsConfig.TempDir, "oc-license"))
 
 	// generates content of the root html file and creates directories, files and archives for artifacts
 	content, err := artifactsConfig.generateDirFileContents(artifactsConfig.TempDir)
