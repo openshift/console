@@ -35,9 +35,23 @@ const InteractiveSpotlight: React.FC<InteractiveSpotlightProps> = ({ element }) 
     width,
   };
 
-  if (!isInViewport(element)) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-  }
+  const [clicked, setClicked] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!clicked) {
+      if (!isInViewport(element)) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      }
+      const handleClick = () => setClicked(true);
+      document.addEventListener('click', handleClick);
+      return () => {
+        document.removeEventListener('click', handleClick);
+      };
+    }
+    return () => {};
+  }, [element, clicked]);
+
+  if (clicked) return null;
 
   return (
     <Popper reference={element} placement="top-start" popperOptions={popperOptions}>
