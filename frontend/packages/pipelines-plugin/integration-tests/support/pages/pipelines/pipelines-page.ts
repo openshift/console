@@ -185,9 +185,14 @@ export const pipelinesPage = {
 
   verifyPipelineTableColumns: () => {
     cy.get(pipelinesPO.pipelinesTable.columnNames).each(($el) => {
-      expect(['Name', 'Last run', 'Task status', 'Last run status', 'Last run time', '']).toContain(
-        $el.text(),
-      );
+      expect([
+        'Name',
+        'Last run',
+        'Task status',
+        'Last run status',
+        'Last run time',
+        'Actions',
+      ]).toContain($el.text());
     });
   },
 

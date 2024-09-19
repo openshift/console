@@ -12,7 +12,7 @@
     "sourceMap": true,
     "noUnusedLocals": true,
     "typeRoots": ["node_modules/@types", "@types"],
-    "types": ["node", "jest", "cypress-axe", "console"]
+    "types": ["node", "jest", "console"]
   },
   "exclude": [
     ".yarn",

@@ -91,6 +91,7 @@ const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children })
 const App = (props) => {
   const { contextProviderExtensions } = props;
 
+  const { t } = useTranslation();
   const location = useLocation();
   const params = useParams();
 
@@ -261,7 +262,7 @@ const App = (props) => {
           <CloudShell />
           <GuidedTour />
         </div>
-        <div id="modal-container" role="dialog" aria-modal="true" />
+        <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />

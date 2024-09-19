@@ -21,7 +21,7 @@ export const tableFunctions = {
   },
 
   selectKebabMenu: (name: string) => {
-    cy.get('div[role="grid"]').within(() => {
+    cy.get('.co-virtualized-table').within(() => {
       cy.get('tr td:nth-child(1)').each(($el, index) => {
         if ($el.text().includes(name)) {
           cy.get('tbody tr').eq(index).find('[data-test-id="kebab-button"]').click({ force: true });

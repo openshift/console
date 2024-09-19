@@ -247,7 +247,7 @@ export const pipelineRunDetailsPO = {
 
 export const pipelineRunsPO = {
   pipelineRunsTable: {
-    table: 'div[role="grid"]',
+    table: '.co-virtualized-table',
     pipelineRunName: 'tr td:nth-child(1)',
     status: '[data-test="status-text"]',
     resultTable: '[role="grid"]',
@@ -261,12 +261,12 @@ export const pipelinesPO = {
   pipelinesTab: '[data-test-id="horizontal-link-Pipelines"]',
   repositoriesTab: '[data-test-id="horizontal-link-Repositories"]',
   pipelinesTable: {
-    table: 'div[role="grid"]',
+    table: '.co-virtualized-table',
     pipelineName: 'tr td:nth-child(1)',
     pipelineRunName: 'tr td:nth-child(2)',
     kebabMenu: '[data-test-id="kebab-button"]',
-    columnValues: '[aria-label="Pipelines"] tbody tr td',
-    columnNames: 'div[aria-label="Pipelines"] thead tr th',
+    columnValues: '.co-virtualized-table tbody tr td',
+    columnNames: '.co-virtualized-table thead tr th',
     pipelineRunIcon: '[title="PipelineRun"]',
     lastRunStatus: '[data-test="status-text"]',
   },

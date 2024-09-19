@@ -416,8 +416,8 @@ export const kebabMenu = {
     cy.get('input[data-test-id="item-filter"]').should('be.visible').clear().type(name);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
-    cy.get('div[role="grid"]').should('be.visible');
-    cy.get('div[role="grid"]').within(() => {
+    cy.get('.co-virtualized-table').should('be.visible');
+    cy.get('.co-virtualized-table').within(() => {
       cy.get('tr td:nth-child(1)').each(($el, index) => {
         if ($el.text().includes(name)) {
           cy.get('tbody tr')
