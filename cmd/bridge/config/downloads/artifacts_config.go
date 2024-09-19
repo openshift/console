@@ -7,8 +7,17 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
+	"text/template"
 )
+
+//TODO remove print statements
+
+// HtmlPageData holds the data we want to pass to the template
+type HtmlPageData struct {
+	Heading                  string
+	SubdirectoriesPathToRoot string
+	Items                    []string
+}
 
 // specification of the artifacts to be served
 type artifactFileSpec struct {
@@ -18,9 +27,10 @@ type artifactFileSpec struct {
 }
 
 type ArtifactsConfig struct {
-	Port    string
-	Spec    []artifactFileSpec
-	TempDir string
+	Port         string
+	Spec         []artifactFileSpec
+	TempDir      string
+	TemplateHTML *template.Template
 }
 
 var specs = []artifactFileSpec{
@@ -61,6 +71,25 @@ var specs = []artifactFileSpec{
 	},
 }
 
+var templateStringHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    {{ if .Heading }} <h1>{{ .Heading }}</h1> {{ end }}
+	{{ if .SubdirectoriesPathToRoot }}<p>Directory listings are disabled. See <a href="/private/{{ .SubdirectoriesPathToRoot }}">here</a> for available content.</p> {{ end }}
+	{{ if .Items }}
+	<ul>
+		{{ range .Items }}
+			<li>{{ . }}</li>
+		{{ end }}
+	</ul>
+	{{ end }}
+</body>
+</html>`
+
 func NewArtifactsConfig(port uint) (*ArtifactsConfig, error) {
 	tempDir, err := os.MkdirTemp("", "artifacts")
 	if err != nil {
@@ -68,10 +97,17 @@ func NewArtifactsConfig(port uint) (*ArtifactsConfig, error) {
 	}
 
 	fmt.Println("Serving from ", tempDir)
+
+	templateHTML, err := template.New("artifacts").Parse(templateStringHTML)
+	if err != nil {
+		return nil, err
+	}
+
 	artifactsConfig := ArtifactsConfig{
-		Port:    fmt.Sprint(port),
-		Spec:    specs,
-		TempDir: tempDir,
+		Port:         fmt.Sprint(port),
+		Spec:         specs,
+		TempDir:      tempDir,
+		TemplateHTML: templateHTML,
 	}
 	err = artifactsConfig.configureFileStructure()
 	if err != nil {
@@ -175,20 +211,20 @@ func createArchives(pathToTargetFile string) error {
 	return nil
 }
 
-func createHTMLFile(path string, message string) error {
-	content := strings.Join([]string{
-		"<!doctype html>",
-		"<html lang=\"en\">",
-		"<head>",
-		"  <meta charset=\"utf-8\">",
-		"</head>",
-		"<body>",
-		"  " + message,
-		"</body>",
-		"</html>",
-		"",
-	}, "\n")
-	return os.WriteFile(path, []byte(content), 0644)
+func (artifactsConfig *ArtifactsConfig) createHTMLFile(path string, data HtmlPageData) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// generate HTML file from the data based on the template
+	err = artifactsConfig.TemplateHTML.Execute(file, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func createDir(dir string) error {
@@ -206,7 +242,7 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 	content := []string{"<a href=\"oc-license\">license</a>"}
 
 	// create subdirectories for the artifacts
-	for _, spec := range simpleSpec {
+	for _, spec := range artifactsConfig.Spec {
 		basename := filepath.Base(spec.path)
 		artifactPath := filepath.Join(artifactsConfig.TempDir, spec.arch, spec.operatingSystem, basename)
 		archDir := filepath.Join(artifactsConfig.TempDir, spec.arch)
@@ -217,20 +253,34 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 		if err != nil {
 			return nil, err
 		}
-		createHTMLFile(
+		err = artifactsConfig.createHTMLFile(
 			filepath.Join(archDir, "index.html"),
-			fmt.Sprintf("<p>Directory listings are disabled. See <a href=\"/private/%s\">here</a> for available content.</p>", tempDir),
+			HtmlPageData{
+				Heading:                  "",
+				SubdirectoriesPathToRoot: tempDir,
+				Items:                    []string{},
+			},
 		)
+		if err != nil {
+			return nil, err
+		}
 
 		// create subdirectory for the operating system
 		err = createDir(osDir)
 		if err != nil {
 			return nil, err
 		}
-		createHTMLFile(
+		err = artifactsConfig.createHTMLFile(
 			filepath.Join(osDir, "index.html"),
-			fmt.Sprintf("<p>Directory listings are disabled. See <a href=\"/private/%s\">here</a> for available content.</p>", tempDir),
+			HtmlPageData{
+				Heading:                  "",
+				SubdirectoriesPathToRoot: tempDir,
+				Items:                    []string{},
+			},
 		)
+		if err != nil {
+			return nil, err
+		}
 
 		err = os.Symlink(spec.path, artifactPath)
 		if err != nil {
@@ -249,6 +299,7 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 	return content, nil
 }
 
+// TODO improve the naming of the function
 func (artifactsConfig *ArtifactsConfig) configureFileStructure() error {
 	// symlink file in the temporary directory that points to the openshift license
 	os.Symlink("/usr/share/openshift/LICENSE", filepath.Join(artifactsConfig.TempDir, "oc-license"))
@@ -259,15 +310,11 @@ func (artifactsConfig *ArtifactsConfig) configureFileStructure() error {
 		return err
 	}
 
-	// construct the list of links
-	message := "<ul>\n"
-	for _, entry := range content {
-		message += (fmt.Sprintf("  <li>%s</li>\n", entry))
-	}
-	message += "</ul>\n"
-
-	// create the root html file
-	err = createHTMLFile(filepath.Join(artifactsConfig.TempDir, "index.html"), message)
+	err = artifactsConfig.createHTMLFile(filepath.Join(artifactsConfig.TempDir, "index.html"), HtmlPageData{
+		Heading:                  "",
+		SubdirectoriesPathToRoot: "",
+		Items:                    content,
+	})
 	if err != nil {
 		return err
 	}
