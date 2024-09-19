@@ -601,9 +601,8 @@ func main() {
 	}
 
 	if *fDownloads {
-		klog.Infof("Listening on port 8081 for artifacts requests...")
 		// run artifacts server
-		artifactsConfig, err := downloads.NewArtifactsConfig(8081)
+		artifactsConfig, err := downloads.NewArtifactsConfig("8081")
 		if err != nil {
 			klog.Fatalf("Failed to configure artifacts: %v", err)
 			os.Exit(1)
@@ -611,9 +610,7 @@ func main() {
 		defer os.RemoveAll(artifactsConfig.TempDir)
 		go func() {
 			// Listen for incoming connections
-			fmt.Println("Server started. Listening on port:", artifactsConfig.Port)
-			// Serve files from the temporary directory
-			http.Handle("/", http.FileServer(http.Dir(artifactsConfig.TempDir)))
+			klog.Infof("Server started. Listening on port:%s", artifactsConfig.Port)
 
 			downlsrv := &http.Server{
 				Addr:    fmt.Sprintf("localhost:%s", artifactsConfig.Port),
