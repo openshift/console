@@ -91,7 +91,10 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
       if (isCreatable && !initialSelectOptions.some((option) => option.value === inputValue)) {
         newSelectOptions = [
           ...newSelectOptions,
-          { children: `Create new option "${inputValue}"`, value: CREATE_NEW },
+          {
+            children: t('console-shared~Create new option "{{option}}"', { option: inputValue }),
+            value: CREATE_NEW,
+          },
         ];
       }
 
