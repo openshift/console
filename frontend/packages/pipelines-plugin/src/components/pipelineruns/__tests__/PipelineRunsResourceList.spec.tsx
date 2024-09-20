@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { ListPage } from '../../ListPage';
 import { PIPELINE_GA_VERSION } from '../../pipelines/const';
 import * as operatorUtils from '../../pipelines/utils/pipeline-operator';
@@ -10,19 +9,12 @@ import PipelineRunsResourceList from '../PipelineRunsResourceList';
 
 type PipelineRunsResourceListProps = React.ComponentProps<typeof PipelineRunsResourceList>;
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
-  useFlag: jest.fn(),
-}));
-
-const useFlagMock = useFlag as jest.Mock;
-
 describe('PipelineRunsResourceList:', () => {
   let pipelineRunsResourceListProps: PipelineRunsResourceListProps;
   let wrapper: ShallowWrapper<PipelineRunsResourceListProps>;
   jest.spyOn(tektonResultsHooks, 'useGetPipelineRuns').mockReturnValue([[], true, '']);
 
   beforeEach(() => {
-    useFlagMock.mockReturnValue(true);
     pipelineRunsResourceListProps = {
       hideBadge: false,
       canCreate: false,

@@ -3,7 +3,6 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineRunModel } from '../../../models';
 import {
   pipelineRunFilterReducer,
@@ -13,7 +12,6 @@ import { ListFilterId, ListFilterLabels } from '../../../utils/pipeline-utils';
 import { ListPage } from '../../ListPage';
 import { usePipelineRuns } from '../../pipelineruns/hooks/usePipelineRuns';
 import PipelineRunsList from '../../pipelineruns/list-page/PipelineRunList';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../const';
 import { PipelineDetailsTabProps } from './types';
 
 export const runFilters = (t: TFunction): RowFilter[] => {
@@ -36,7 +34,6 @@ export const runFilters = (t: TFunction): RowFilter[] => {
 const PipelineRuns: React.FC<PipelineDetailsTabProps> = (props) => {
   const { t } = useTranslation();
   const { obj } = props;
-  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
   const selector = React.useMemo(() => {
     return {
       matchLabels: { 'tekton.dev/pipeline': obj.metadata.name },
@@ -47,7 +44,6 @@ const PipelineRuns: React.FC<PipelineDetailsTabProps> = (props) => {
     {
       selector,
     },
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
   );
   const resources = React.useMemo(
     () => ({

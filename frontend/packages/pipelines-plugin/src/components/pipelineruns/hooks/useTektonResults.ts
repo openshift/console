@@ -3,8 +3,10 @@ import { uniqBy } from 'lodash';
 import { K8sResourceCommon, Selector } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../../pipelines/const';
 import { RepositoryLabels, RepositoryFields } from '../../repository/consts';
 import {
   getPipelineRuns,
@@ -27,8 +29,8 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [Kind[], boolean, unknown, GetNextPage] => {
+  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
   const [nextPageToken, setNextPageToken] = React.useState<string>(null);
   const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
 
@@ -116,35 +118,17 @@ export const useTRPipelineRuns = (
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
-  useTRRuns<PipelineRunKind>(
-    getPipelineRuns,
-    namespace,
-    options,
-    cacheKey,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
-  );
+  useTRRuns<PipelineRunKind>(getPipelineRuns, namespace, options, cacheKey);
 
 export const useTRTaskRuns = (
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
-  useTRRuns<TaskRunKind>(
-    getTaskRuns,
-    namespace,
-    options,
-    cacheKey,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
-  );
+  useTRRuns<TaskRunKind>(getTaskRuns, namespace, options, cacheKey);
 
-export const useGetPipelineRuns = (
-  ns: string,
-  options?: { name: string; kind: string },
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
-) => {
+export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: string }) => {
   let selector: Selector;
 
   if (options?.kind === 'Pipeline') {
@@ -160,8 +144,6 @@ export const useGetPipelineRuns = (
     options && {
       selector,
     },
-    undefined,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
   );
   const [k8sPlrs, k8sPlrsLoaded, k8sPlrsLoadError] = useK8sWatchResource<PipelineRunKind[]>({
     isList: true,

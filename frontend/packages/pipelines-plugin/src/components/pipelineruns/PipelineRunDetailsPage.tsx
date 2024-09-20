@@ -4,7 +4,6 @@ import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
@@ -14,7 +13,7 @@ import { PipelineRunKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
-import { chainsSignedAnnotation, FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../pipelines/const';
+import { chainsSignedAnnotation } from '../pipelines/const';
 import { useDevPipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
@@ -31,14 +30,7 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, namespace, name } = props;
   const { t } = useTranslation();
   const operatorVersion = usePipelineOperatorVersion(namespace);
-  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
-  const [taskRuns] = useTaskRuns(
-    namespace,
-    name,
-    undefined,
-    undefined,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
-  );
+  const [taskRuns] = useTaskRuns(namespace, name);
   const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineRunKebabActions(operatorVersion, taskRuns, true),
   );
@@ -63,11 +55,7 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
     );
   };
 
-  const [pipelineRun, loaded, error] = usePipelineRun(
-    namespace,
-    name,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
-  );
+  const [pipelineRun, loaded, error] = usePipelineRun(namespace, name);
 
   return (
     <DetailsPage
