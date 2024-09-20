@@ -3,8 +3,7 @@ Feature: Shipwright build details page
               As a user, I want check my Shipwright Build and see all related BuildRuns in a second tab.
 
         Background:
-            Given user has installed Shipwright Operator
-              And user is at developer perspective
+            Given user is at developer perspective
               And user has created or selected namespace "aut-shipwright-build-details"
               And user has created shipwright builds
 

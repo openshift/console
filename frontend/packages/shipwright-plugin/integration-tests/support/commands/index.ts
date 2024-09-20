@@ -5,4 +5,4 @@ import '../../../../integration-tests-cypress/support/login';
 import '../../../../integration-tests-cypress/support/project';
 import '../../../../integration-tests-cypress/support/index';
 import '@console/dev-console/integration-tests/support/commands/app';
-import '@console/dev-console/integration-tests/support/commands/hooks';
+import './hooks';
