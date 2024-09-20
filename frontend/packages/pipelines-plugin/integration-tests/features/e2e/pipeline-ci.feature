@@ -5,8 +5,7 @@ Feature: Entire pipeline flow from Builder page
 
         @pre-condition
         Scenario: Background Steps
-            Given user has logged in as a basic user
-              And user is at developer perspective
+            Given user is at developer perspective
               And user has created or selected namespace "pipeline-flow"
 
 

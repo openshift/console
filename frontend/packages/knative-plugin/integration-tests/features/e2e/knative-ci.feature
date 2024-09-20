@@ -24,8 +24,7 @@ Feature: Perform actions on knative service and revision
 
         @manual
         Scenario Outline: Create knative workload using Container image with extrenal registry on Add page: KN-05-TC05
-            Given user has logged in as a basic user
-              And user is at developer perspective
+            Given user is at developer perspective
               And user has created or selected namespace "knative-ci"
               And user is at Add page
               And user is at Deploy Image page
