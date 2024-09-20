@@ -11,12 +11,10 @@ import {
   TableColumnsType,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import { ListPage } from '../../ListPage';
 import { useTaskRuns } from '../../pipelineruns/hooks/useTaskRuns';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../../pipelines/const';
 import { runFilters as taskRunFilters } from '../../pipelines/detail-page-tabs/PipelineRuns';
 import TaskRunsHeader from './TaskRunsHeader';
 import TaskRunsList from './TaskRunsList';
@@ -38,16 +36,9 @@ const TaskRunsListPage: React.FC<
   const searchParams = getURLSearchParams();
   const kind = searchParams?.kind;
   const ns = namespace || params?.ns;
-  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
   const badge = usePipelineTechPreviewBadge(ns);
   const trForPlr = props.selector && props.selector?.matchLabels?.['tekton.dev/pipelineRun'];
-  const [taskRuns, taskRunsLoaded, taskRunsLoadError, getNextPage] = useTaskRuns(
-    ns,
-    trForPlr,
-    undefined,
-    undefined,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
-  );
+  const [taskRuns, taskRunsLoaded, taskRunsLoadError, getNextPage] = useTaskRuns(ns, trForPlr);
 
   const taskRunsResource = {
     [referenceForModel(TaskRunModel)]: {

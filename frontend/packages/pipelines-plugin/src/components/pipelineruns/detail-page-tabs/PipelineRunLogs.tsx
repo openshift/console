@@ -6,12 +6,11 @@ import { withTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineRunModel } from '../../../models';
 import { ComputedStatus, PipelineRunKind, PipelineTask, TaskRunKind } from '../../../types';
 import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { taskRunStatus } from '../../../utils/pipeline-utils';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_16, TektonResourceLabel } from '../../pipelines/const';
+import { TektonResourceLabel } from '../../pipelines/const';
 import { ColoredStatusIcon } from '../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import { ErrorDetailsWithStaticLog } from '../logs/log-snippet-types';
@@ -228,16 +227,9 @@ export const PipelineRunLogsWithActiveTask: React.FC<PipelineRunLogsWithActiveTa
   obj,
 }) => {
   const location = useLocation();
-  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
   const params = new URLSearchParams(location.search);
   const activeTask = params?.get('taskName');
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(
-    obj?.metadata?.namespace,
-    obj?.metadata?.name,
-    undefined,
-    undefined,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
-  );
+  const [taskRuns, taskRunsLoaded] = useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name);
 
   return (
     taskRunsLoaded && <PipelineRunLogs obj={obj} activeTask={activeTask} taskRuns={taskRuns} />

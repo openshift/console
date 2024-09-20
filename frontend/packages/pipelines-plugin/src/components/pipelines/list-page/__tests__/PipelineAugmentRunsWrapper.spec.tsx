@@ -3,7 +3,6 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { ListPageWrapper } from '@console/internal/components/factory';
 import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import { useUserSettings } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import * as tektonResultsHooks from '../../../pipelineruns/hooks/useTektonResults';
 import PipelineAugmentRunsWrapper from '../PipelineAugmentRunsWrapper';
@@ -17,11 +16,6 @@ jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
-  useFlag: jest.fn(),
-}));
-
-const useFlagMock = useFlag as jest.Mock;
 const mockUserSettings = useUserSettings as jest.Mock;
 
 describe('Pipeline Augment Run Wrapper', () => {
@@ -30,7 +24,6 @@ describe('Pipeline Augment Run Wrapper', () => {
   jest.spyOn(tektonResultsHooks, 'useGetPipelineRuns').mockReturnValue([[], true, '']);
 
   beforeEach(() => {
-    useFlagMock.mockReturnValue(true);
     mockUserSettings.mockReturnValue(['pipelines', jest.fn(), true]);
     pipelineAugmentRunsWrapperProps = {
       pipeline: {
