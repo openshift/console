@@ -29,12 +29,23 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
 
   const getChannelLabel = (ch) => (
     <>
-      {ch.name} {ch?.deprecation && <DeprecatedOperatorWarningIcon deprecation={ch?.deprecation} />}
+      {ch.name}{' '}
+      {ch?.deprecation && (
+        <DeprecatedOperatorWarningIcon
+          deprecation={ch?.deprecation}
+          dataTest="deprecated-operator-warning-channel-icon"
+        />
+      )}
     </>
   );
 
   const channelSelectOptions = channels.map((ch) => (
-    <SelectOption key={ch.name} id={ch.name} value={ch.name}>
+    <SelectOption
+      key={ch.name}
+      id={ch.name}
+      value={ch.name}
+      data-test={`channel-option-${ch.name}`}
+    >
       {getChannelLabel(ch)}
     </SelectOption>
   ));
@@ -61,6 +72,7 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
             isFullWidth
             aria-label={t('olm~Select a channel')}
             className="co-operator-channel__select"
+            data-test="operator-channel-select-toggle"
           >
             {getChannelLabel(channels.find((f) => f.name === selectedUpdateChannel))}
           </MenuToggle>
@@ -117,12 +129,22 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
   const getVersionLabel = (v) => (
     <>
       {v?.version}{' '}
-      {v?.deprecation && <DeprecatedOperatorWarningIcon deprecation={v?.deprecation} />}
+      {v?.deprecation && (
+        <DeprecatedOperatorWarningIcon
+          deprecation={v?.deprecation}
+          dataTest="deprecated-operator-warning-version-icon"
+        />
+      )}
     </>
   );
 
   const versionSelectOptions = selectedChannelVersions.map((v) => (
-    <SelectOption key={v.version} id={v.version} value={v.version}>
+    <SelectOption
+      key={v.version}
+      id={v.version}
+      value={v.version}
+      data-test={`version-option-${v.name}`}
+    >
       {getVersionLabel(v)}
     </SelectOption>
   ));
@@ -149,6 +171,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
             isFullWidth
             aria-label={t('olm~Select a version')}
             className="co-operator-version__select"
+            data-test="operator-version-select-toggle"
           >
             {getVersionLabel(
               selectedChannelVersions.find((v) => v.version === selectedUpdateVersion),

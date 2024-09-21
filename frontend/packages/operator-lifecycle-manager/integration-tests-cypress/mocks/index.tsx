@@ -311,3 +311,40 @@ export const testCatalogSource = {
     },
   },
 };
+
+export const testDeprecatedCatalogSource = {
+  kind: 'CatalogSource',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  metadata: {
+    name: 'test-community-operator-deprecation',
+    namespace: 'openshift-marketplace',
+  },
+  spec: {
+    displayName: 'Community Operators for testing deprecation',
+    image: 'quay.io/cajieh0/deprecation-catalog',
+    publisher: 'OLM community',
+    sourceType: 'grpc',
+    updateStrategy: {
+      registryPoll: {
+        interval: '10m',
+      },
+    },
+  },
+};
+
+export const testDeprecatedSubscription = {
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'Subscription',
+  metadata: {
+    name: 'kiali',
+    namespace: 'openshift-operators',
+  },
+  spec: {
+    source: 'test-community-operator-deprecation',
+    sourceNamespace: 'openshift-marketplace',
+    name: 'kiali',
+    startingCSV: 'kiali-operator.v1.68.0',
+    channel: 'alpha',
+    installPlanApproval: 'Manual',
+  },
+};

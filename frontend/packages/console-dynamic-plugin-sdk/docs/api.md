@@ -202,6 +202,7 @@ Component for displaying a yellow triangle exclamation icon.
 | `className` | (optional) additional class name for the component |
 | `title` | (optional) icon title |
 | `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl') |
+| `dataTest` | (optional) icon test id |
 
 
 
