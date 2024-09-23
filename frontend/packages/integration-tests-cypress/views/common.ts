@@ -13,6 +13,7 @@ export const projectDropdown = {
     // TODO - remove and fix properly
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
+    cy.reload();
     cy.byLegacyTestID('namespace-bar-dropdown').contains('Project:').click();
     cy.byTestID('showSystemSwitch').check();
     cy.byTestID('dropdown-menu-item-link').contains(projectName).click();
