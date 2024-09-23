@@ -525,6 +525,7 @@ Then, run `yarn i18n` to update the JSON files in the `locales` folder of the pl
 ### Step 2: Request a Phrase Translation Memory System (TMS) user account
 
 i. Request an account from the localization team for the console plugin project.
+
 ii. Create a Project Template to include the supported language in the Phrase TMS portal. Refer to the [Phrase Project Templates ](https://support.phrase.com/hc/en-us/articles/5709647439772-Project-Templates-TMS) on how to create/update the Project Template. You must have Phrase project owner permissions to perform this task. The localization team can help with creating the Project Template and setup.
 
 ### Step 3: Create utility scripts to automate i18n-related tasks
