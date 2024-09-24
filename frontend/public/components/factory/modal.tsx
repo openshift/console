@@ -10,8 +10,12 @@ import { Modal } from '@console/shared/src/components/modal';
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
-import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
+import {
+  CloseModal,
+  ModalComponent,
+  UnknownProps,
+} from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 /** @deprecated Use PF modals instead */
 export const ModalWrapper: React.FC<ModalWrapperProps> = ({ className, children, onClose }) => {
@@ -22,37 +26,44 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({ className, children,
   );
 };
 
-// Update this to be like https://github.com/openshift/hac-dev/blob/0d8b02111b7adc39f4ba22ef3bf6776f6b1fdce8/src/components/modal/createModalLauncher.tsx
-/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
-export const createModalLauncher: ModalComponent<CreateModalLauncherProps & ModalComponentProps> = (
-  Component: React.ComponentType,
-) => ({ closeModal, modalClassName, close, cancel, ...props }) => {
-  const getModalContainer = () => {
-    const handleClose = (e: KeyboardEvent | React.MouseEvent) => {
-      closeModal?.(e);
-      close?.();
-    };
-    const handleCancel = (e: KeyboardEvent | React.MouseEvent) => {
-      cancel?.();
-      handleClose(e);
-    };
-
-    return (
-      <Provider store={store}>
-        <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-          <CompatRouter>
-            <ModalWrapper onClose={closeModal} className={modalClassName}>
-              <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-            </ModalWrapper>
-          </CompatRouter>
-        </Router>
-      </Provider>
-    );
+type DeprecatedModalLauncherProps = ModalComponentProps &
+  CreateModalLauncherProps & {
+    closeModal?: CloseModal;
   };
 
-  // return createModal(getModalContainer);
-  const launcher = useModal();
-  return launcher<CreateModalLauncherProps & ModalComponentProps>(getModalContainer, {});
+type DeprecatedModalLauncher<P = UnknownProps> = (componentProps: Partial<P>) => void;
+
+/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
+export const createModalLauncher = <P extends DeprecatedModalLauncherProps>(
+  Component: ModalComponent<P>,
+): DeprecatedModalLauncher<P & CreateModalLauncherProps> => {
+  return ({ closeModal, modalClassName, close, cancel, ...props }) => {
+    const launcher = useModal();
+    const getModalContainer = React.useCallback(() => {
+      const handleClose = () => {
+        closeModal?.();
+        close?.();
+      };
+      const handleCancel = () => {
+        cancel?.();
+        handleClose();
+      };
+
+      return (
+        <Provider store={store}>
+          <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
+            <CompatRouter>
+              <ModalWrapper onClose={closeModal} className={modalClassName}>
+                <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+              </ModalWrapper>
+            </CompatRouter>
+          </Router>
+        </Provider>
+      );
+    }, [cancel, close, closeModal, modalClassName, props]);
+
+    return React.useCallback(() => launcher<P>(getModalContainer), [getModalContainer, launcher]);
+  };
 };
 
 /** @deprecated Use PF modals instead */
