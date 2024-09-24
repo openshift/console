@@ -24,7 +24,7 @@ export const removeTaskModal = (taskName: string, onRemove: ModalCallback) => {
         })}
       />
     ),
-    buttonText: i18next.t('pipelines-plugin~Remove'),
+    btnText: i18next.t('pipelines-plugin~Remove'),
     executeFn: () => {
       onRemove();
       return Promise.resolve();

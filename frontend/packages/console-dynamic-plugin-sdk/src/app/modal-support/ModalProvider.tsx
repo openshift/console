@@ -1,11 +1,15 @@
 import * as React from 'react';
 
-type CloseModal = () => void;
+export type CloseModal = () => void;
 
-type UnknownProps = { [key: string]: unknown };
+export type UnknownProps = { [key: string]: unknown };
+
 export type ModalComponent<P = UnknownProps> = React.FC<P & { closeModal: CloseModal }>;
 
-export type LaunchModal = <P = UnknownProps>(component: ModalComponent<P>, extraProps: P) => void;
+export type LaunchModal = <P = UnknownProps>(
+  component: ModalComponent<P>,
+  componentProps?: P,
+) => void;
 
 type ModalContextValue = {
   launchModal: LaunchModal;
@@ -34,7 +38,7 @@ export const ModalProvider: React.FC = ({ children }) => {
 
   return (
     <ModalContext.Provider value={{ launchModal, closeModal }}>
-      {isOpen && !!Component && <Component {...componentProps} closeModal={closeModal} />}
+      {isOpen && !!Component && <Component {...(componentProps ?? {})} closeModal={closeModal} />}
       {children}
     </ModalContext.Provider>
   );

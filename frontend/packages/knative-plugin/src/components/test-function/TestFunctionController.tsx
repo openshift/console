@@ -41,6 +41,6 @@ const TestFunctionController: React.FC<TestFunctionControllerProps> = (props) =>
 
 type Props = TestFunctionControllerProps & ModalComponentProps;
 
-export const testFunctionModalLauncher = createModalLauncher<Props>(TestFunctionController, false);
+export const testFunctionModalLauncher = createModalLauncher<Props>(TestFunctionController);
 
 export default TestFunctionController;
