@@ -174,6 +174,29 @@ import { MonitoringIcon } from '@patternfly/react-icons/dist/esm/icons/monitorin
 import { MonitoringIcon } from '@patternfly/react-icons';
 ```
 
+## Content Security Policy
+
+Console application uses [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+(CSP) in order to detect and mitigate certain types of attacks. By default, the list of allowed
+[CSP sources](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/Sources)
+includes the document origin `'self'` as well as Console webpack dev server when running off-cluster.
+
+All dynamic plugin assets _should_ be loaded via `/api/plugins/<plugin-name>` Bridge endpoint which
+matches the `'self'` CSP source of Console application.
+
+See `cspSources` and `cspDirectives` in
+[`pkg/server/server.go`](https://github.com/openshift/console/blob/master/pkg/server/server.go)
+for details on the current Console CSP implementation.
+
+### Changes in Console CSP
+
+This section documents notable changes in the Console Content Security Policy.
+
+#### Console 4.18.x
+
+Console CSP is deployed in report-only mode. CSP violations will be logged in the browser console
+but the associated CSP directives will not be enforced.
+
 ## Plugin metadata
 
 Older versions of webpack `ConsoleRemotePlugin` assumed that the plugin metadata is specified via
