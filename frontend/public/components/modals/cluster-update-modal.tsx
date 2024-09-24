@@ -255,7 +255,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
             {t('public~Update options')}
             <FieldLevelHelp>
               {t(
-                "public~Full cluster update allows you to update all your Nodes, but takes longer. Partial cluster update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule, but you'll need to resume the non-control plane Node updates within 60 days to avoid failure.",
+                "public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule, but you'll need to resume the non-control plane Node updates within 60 days to avoid failure.",
               )}
             </FieldLevelHelp>
           </label>
@@ -284,7 +284,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                   isInline
                   isPlain
                   title={t(
-                    'public~Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Partial cluster update" below.',
+                    'public~Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
                     { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                   )}
                   data-test="update-cluster-modal-paused-nodes-warning"
@@ -297,7 +297,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
             isChecked={upgradeType === upgradeTypes.Partial}
             name={upgradeTypes.Partial}
             onChange={() => handleUpgradeTypeChange(upgradeTypes.Partial)}
-            label={t('public~Partial cluster update')}
+            label={t('public~Control plane only update')}
             id={upgradeTypes.Partial}
             value={upgradeTypes.Partial}
             description={t(
