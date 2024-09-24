@@ -563,11 +563,13 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, struct {
-			ConsoleCommit string   `json:"consoleCommit"`
-			Plugins       []string `json:"plugins"`
+			ConsoleCommit string                  `json:"consoleCommit"`
+			Plugins       []string                `json:"plugins"`
+			Capabilities  []operatorv1.Capability `json:"capabilities,omitempty"`
 		}{
 			ConsoleCommit: os.Getenv("SOURCE_GIT_COMMIT"),
 			Plugins:       pluginsHandler.GetPluginsList(),
+			Capabilities:  s.Capabilities,
 		})
 	}))
 
