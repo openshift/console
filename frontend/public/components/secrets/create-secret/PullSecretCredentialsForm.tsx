@@ -5,13 +5,14 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import {
-  AUTHS_KEY,
   PullSecretCredentialEntry,
+  arrayifyPullSecret,
+  getPullSecretFileName,
+  stringifyPullSecret,
   SecretChangeData,
   SecretStringData,
   SecretType,
 } from '.';
-import { usePullSecretCredentialEntries } from './usePullSecretCredentialEntries';
 
 const newImageSecretEntry = (): PullSecretCredential => ({
   address: '',
@@ -27,39 +28,34 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   stringData,
   onError,
   secretType,
-  onFormDisable,
 }) => {
   const { t } = useTranslation();
-  const [entries, setEntries] = usePullSecretCredentialEntries(
-    secretType,
-    stringData,
-    onChange,
+  const pullSecretFileName = getPullSecretFileName(secretType);
+  const pullSecretJSON = stringData[pullSecretFileName];
+  const initialEntries = React.useMemo(() => arrayifyPullSecret(pullSecretJSON, onError), [
+    pullSecretJSON,
     onError,
+  ]);
+  const [entries, setEntries] = React.useState(
+    initialEntries.length > 0 ? initialEntries : [newImageSecretEntry()],
   );
 
-  const isDockerconfigjson = React.useMemo(() => {
-    return stringData || !!stringData[AUTHS_KEY];
-  }, [stringData]);
+  React.useEffect(() => {
+    const newPullSecretJSON = stringifyPullSecret(entries, secretType);
+    if (newPullSecretJSON !== pullSecretJSON) {
+      onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });
+    }
+  }, [entries, onChange, pullSecretFileName, pullSecretJSON, secretType]);
 
   const updateEntry = (updatedEntry, entryIndex: number) => {
     const updatedSecretEntriesArray = entries.map((entry, index) =>
       index === entryIndex ? { uid: entry.uid, ...updatedEntry } : entry,
     );
     setEntries(updatedSecretEntriesArray);
-    const secretData = isDockerconfigjson ? { [AUTHS_KEY]: entries } : entries;
-    const newDataKey = isDockerconfigjson ? '.dockerconfigjson' : '.dockercfg';
-    if (!_.isError(secretData)) {
-      onFormDisable(false);
-    }
-    onChange({
-      stringData: {
-        [newDataKey]: JSON.stringify(secretData),
-      },
-    });
   };
 
   const removeEntry = (entryIndex: number) => {
-    const updatedSecretEntriesArray = entries.filter((value, index) => index !== entryIndex);
+    const updatedSecretEntriesArray = entries.filter((_value, index) => index !== entryIndex);
     setEntries(updatedSecretEntriesArray);
   };
 
