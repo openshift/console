@@ -195,10 +195,10 @@ const Details_ = ({ flags, obj: pvc }) => {
 
   const donutData = usedMetrics
     ? [
-        { x: 'Used', y: usedCapacity.value },
-        { x: 'Available', y: availableCapacity.value },
+        { x: i18next.t('public~Used'), y: usedCapacity.value },
+        { x: i18next.t('public~Available'), y: availableCapacity.value },
       ]
-    : [{ x: 'Total', y: totalCapacity.value }];
+    : [{ x: i18next.t('public~Total'), y: totalCapacity.value }];
 
   const [pvcAlertExtensions] = useResolvedExtensions(isPVCAlert);
   const alertComponents = pvcAlertExtensions?.map(
