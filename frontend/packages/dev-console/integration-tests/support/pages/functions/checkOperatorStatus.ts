@@ -1,4 +1,9 @@
 import { operatorNamespaces, operatorSubscriptions } from '../../constants';
+import {
+  createKnativeEventingUsingCLI,
+  createKnativeKafkaUsingCLI,
+  createKnativeServingUsingCLI,
+} from './knativeSubscriptions';
 
 export const checkRedHatIntegrationCamelKOperatorStatus = (retries: number = 5) => {
   const namespace = operatorNamespaces.RedHatIntegrationCamelK;
@@ -125,8 +130,12 @@ export const checkKnativeOperatorStatus = () => {
     ).then(function (result) {
       if (result.stdout.includes('condition met')) {
         cy.log(result.stdout);
-      } else {
-        throw new Error(result.stderr);
+      } else if (resourceName === 'KnativeServing') {
+        createKnativeServingUsingCLI();
+      } else if (resourceName === 'KnativeEventing') {
+        createKnativeEventingUsingCLI();
+      } else if (resourceName === 'KnativeKafka') {
+        createKnativeKafkaUsingCLI();
       }
     });
   };

@@ -1,3 +1,4 @@
+import { guidedTour } from '../views/guided-tour';
 import { nav } from '../views/nav';
 
 declare global {
@@ -29,4 +30,5 @@ Cypress.Commands.add('initDeveloper', () => {
   cy.log('switched perspective to Developer');
   nav.sidenav.switcher.shouldHaveText('Developer');
   cy.log('Developer perspective confirmed ');
+  guidedTour.close();
 });
