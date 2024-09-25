@@ -172,6 +172,17 @@ export interface SelectInputOption {
   label?: string;
   description?: string;
   disabled?: boolean;
+  hasCheckbox?: boolean;
+}
+
+export interface SingleDropdownFieldProps extends FieldProps {
+  ariaLabel?: string;
+  options: SelectInputOption[];
+  placeholderText?: React.ReactNode;
+  isDisabled?: boolean;
+  toggleOnSelection?: boolean;
+  onChange?: (selection: string) => void;
+  getLabelFromValue?: (value: string) => string;
 }
 
 export interface SelectInputFieldProps extends FieldProps {

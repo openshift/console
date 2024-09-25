@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -12,7 +11,7 @@ import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { FlagsObject } from '@console/internal/reducers/features';
 import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
-import { SelectInputField, SelectInputOption } from '@console/shared';
+import { SingleDropdownField, SelectInputOption } from '@console/shared';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
 import { useResourceType } from './useResourceType';
@@ -102,11 +101,10 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   ) {
     return (
       <FormSection>
-        <SelectInputField
+        <SingleDropdownField
           name={fieldName}
           label={t('devconsole~Resource type')}
           options={selectInputOptions}
-          variant={SelectVariantDeprecated.single}
           onChange={onChange}
           getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
           helpText={
@@ -117,7 +115,6 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
               </Trans>
             </p>
           }
-          hideClearButton
           toggleOnSelection
         />
       </FormSection>

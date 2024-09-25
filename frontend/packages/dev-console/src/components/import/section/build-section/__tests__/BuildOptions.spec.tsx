@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as shipwrightHooks from '@console/dev-console/src/utils/shipwright-build-hook';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { SelectInputField } from '@console/shared';
+import { SingleDropdownField, SingleDropdownFieldProps } from '@console/shared';
 import { BuildOption as NamedBuildOption } from '../BuildOptions';
 import * as BuildOption from '../BuildOptions';
 
@@ -32,9 +32,13 @@ describe('BuildOptions', () => {
     spySWClusterBuildStrategy.mockReturnValue([{ s2i: true }, true]);
     spyUsePipelineAccessReview.mockReturnValue(true);
     const component = shallow(<NamedBuildOption isDisabled={false} importStrategy={0} />);
-    expect(component.find(SelectInputField).exists()).toBe(true);
-    expect(component.find(SelectInputField).props().options).toHaveLength(3);
-    expect(component.find(SelectInputField).props().options).toEqual([
+    expect(component.find(SingleDropdownField).exists()).toBe(true);
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).toHaveLength(3);
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).toEqual([
       {
         description:
           'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
@@ -67,15 +71,21 @@ describe('BuildOptions', () => {
     spySWClusterBuildStrategy.mockReturnValue([{ s2i: true }, true]);
     spyUsePipelineAccessReview.mockReturnValue(true);
     const component = shallow(<NamedBuildOption isDisabled={false} importStrategy={0} />);
-    expect(component.find(SelectInputField).exists()).toBe(true);
-    expect(component.find(SelectInputField).props().options).toHaveLength(2);
-    expect(component.find(SelectInputField).props().options).not.toContainEqual({
+    expect(component.find(SingleDropdownField).exists()).toBe(true);
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).toHaveLength(2);
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).not.toContainEqual({
       description:
         'Build configuration describes build definitions used for transforming source code into a runnable container image.',
       label: 'BuildConfig',
       value: 'BUILDS',
     });
-    expect(component.find(SelectInputField).props().options).toEqual([
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).toEqual([
       {
         description:
           'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
@@ -105,15 +115,21 @@ describe('BuildOptions', () => {
     spySWClusterBuildStrategy.mockReturnValue([{ s2i: false }, true]);
     spyUsePipelineAccessReview.mockReturnValue(false);
     const component = shallow(<NamedBuildOption isDisabled={false} importStrategy={0} />);
-    expect(component.find(SelectInputField).exists()).toBe(true);
-    expect(component.find(SelectInputField).props().options).toHaveLength(1);
-    expect(component.find(SelectInputField).props().options).not.toContainEqual({
+    expect(component.find(SingleDropdownField).exists()).toBe(true);
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).toHaveLength(1);
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).not.toContainEqual({
       description:
         'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
       label: 'Builds for OpenShift (Shipwright)',
       value: 'SHIPWRIGHT_BUILD',
     });
-    expect(component.find(SelectInputField).props().options).toEqual([
+    expect(
+      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
+    ).toEqual([
       {
         description:
           'Build configuration describes build definitions used for transforming source code into a runnable container image.',

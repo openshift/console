@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
-import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { SelectInputField, SelectInputOption } from '@console/shared/src';
+import { SingleDropdownField, SelectInputOption } from '@console/shared/src';
 import { BuildStrategyModel, ClusterBuildStrategyModel } from '../../models';
 import { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
 
@@ -103,7 +102,7 @@ const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({ namespace
 
   return (
     <FormSection>
-      <SelectInputField
+      <SingleDropdownField
         data-test-id="build-strategy-field"
         name="formData.build.strategy"
         label={t('shipwright-plugin~Build Strategy')}
@@ -115,8 +114,6 @@ const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({ namespace
           'shipwright-plugin~Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
         )}
         options={clusterBuildStrategyOptions}
-        variant={SelectVariantDeprecated.single}
-        hideClearButton
         toggleOnSelection
         required
       />
