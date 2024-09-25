@@ -32,8 +32,6 @@ WORKDIR /
 USER 1001
 CMD ["/opt/downloads/downloads",  "--config-path=/opt/downloads/artifactsFileSpec.yaml"]
 
-EXPOSE 8081
-
 LABEL \
         io.k8s.display-name="CLI Artifacts Downloads Server" \
         io.k8s.description="This is a component of OpenShift Container Platform and provides a Golang server that server 'oc' artifacts." \
