@@ -7,11 +7,11 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import * as ITOB from 'istextorbinary';
-import { KeyValueEntryFormState, SecretStringData } from './types';
+import { KeyValueEntryFormState, SecretSubFormProps } from './types';
 import { KeyValueEntryForm } from './KeyValueEntryForm';
 
 class GenericSecretFormWithTranslation extends React.Component<
-  GenericSecretFormProps & WithT,
+  SecretSubFormProps & WithT,
   GenericSecretFormState
 > {
   constructor(props) {
@@ -140,12 +140,6 @@ class GenericSecretFormWithTranslation extends React.Component<
 }
 
 export const GenericSecretForm = withTranslation()(GenericSecretFormWithTranslation);
-
-type GenericSecretFormProps = {
-  onChange: Function;
-  stringData: SecretStringData;
-  isCreate: boolean;
-};
 
 type GenericSecretFormState = {
   secretEntriesArray: {
