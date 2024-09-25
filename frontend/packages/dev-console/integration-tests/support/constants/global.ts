@@ -74,6 +74,15 @@ export enum operatorSubscriptions {
   RedHatIntegrationCamelK = 'red-hat-camel-k',
 }
 
+export enum operatorPackage {
+  PipelinesOperator = 'openshift-pipelines-operator-rh',
+  ServerlessOperator = 'serverless-operator',
+  ShipwrightOperator = 'shipwright-operator',
+  BuildsForOpenshiftOperator = 'openshift-builds-operator',
+  WebTerminalOperator = 'web-terminal',
+  RedHatIntegrationCamelK = 'red-hat-camel-k',
+}
+
 export enum authenticationType {
   BasicAuthentication = 'Basic Authentication',
   SSHKey = 'SSHKey',

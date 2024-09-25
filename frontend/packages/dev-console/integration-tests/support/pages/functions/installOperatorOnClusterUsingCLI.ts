@@ -1,4 +1,10 @@
-import { operatorNamespaces, operatorSubscriptions, operators } from '../../constants/global';
+import {
+  operatorNamespaces,
+  operatorSubscriptions,
+  operatorPackage,
+  operators,
+} from '../../constants/global';
+import { checkOperatorvailabilityStatus } from './checkOperatorHub';
 import {
   checkPipelineOperatorStatus,
   checkKnativeOperatorStatus,
@@ -123,31 +129,38 @@ export const installOperatorUsingCLI = (operator: operators) => {
 export const checkSubscriptionStatus = (operator: operators) => {
   let namespace;
   let subscriptionName;
+  let operatorPackageName;
   const resourceName = 'subscriptions.operators.coreos.com';
   const condition = 'CatalogSourcesUnhealthy=false';
 
   switch (operator) {
     case operators.PipelinesOperator:
+      operatorPackageName = operatorPackage.PipelinesOperator;
       namespace = operatorNamespaces.PipelinesOperator;
       subscriptionName = operatorSubscriptions.PipelinesOperator;
       break;
     case operators.ServerlessOperator:
+      operatorPackageName = operatorPackage.ServerlessOperator;
       namespace = operatorNamespaces.ServerlessOperator;
       subscriptionName = operatorSubscriptions.ServerlessOperator;
       break;
     case operators.ShipwrightOperator:
+      operatorPackageName = operatorPackage.ShipwrightOperator;
       namespace = operatorNamespaces.ShipwrightOperator;
       subscriptionName = operatorSubscriptions.ShipwrightOperator;
       break;
     case operators.BuildsForOpenshiftOperator:
+      operatorPackageName = operatorPackage.BuildsForOpenshiftOperator;
       namespace = operatorNamespaces.BuildsForOpenshiftOperator;
       subscriptionName = operatorSubscriptions.BuildsForOpenshiftOperator;
       break;
     case operators.WebTerminalOperator:
+      operatorPackageName = operatorPackage.WebTerminalOperator;
       namespace = operatorNamespaces.WebTerminalOperator;
       subscriptionName = operatorSubscriptions.WebTerminalOperator;
       break;
     case operators.RedHatIntegrationCamelK:
+      operatorPackageName = operatorPackage.RedHatIntegrationCamelK;
       namespace = operatorNamespaces.RedHatIntegrationCamelK;
       subscriptionName = operatorSubscriptions.RedHatIntegrationCamelK;
       break;
@@ -166,6 +179,7 @@ export const checkSubscriptionStatus = (operator: operators) => {
       checkOperatorStatus(operator);
     } else {
       cy.log(`${operator} not installed, installing...`);
+      checkOperatorvailabilityStatus(operatorPackageName);
       installOperatorUsingCLI(operator);
     }
   });
