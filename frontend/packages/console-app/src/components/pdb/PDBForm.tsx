@@ -8,6 +8,9 @@ import {
   Text,
   Title,
   ValidatedOptions,
+  Select,
+  SelectList,
+  SelectOption,
   Stack,
   StackItem,
   Split,
@@ -17,12 +20,9 @@ import {
   FormHelperText,
   FormAlert,
   Alert,
+  MenuToggle,
+  MenuToggleElement,
 } from '@patternfly/react-core';
-import {
-  Dropdown as DropdownDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-} from '@patternfly/react-core/deprecated';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +79,6 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [labels, setLabels] = React.useState([]);
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
   const [isOpen, setOpen] = React.useState(false);
-  const onToggle = (_event, open: boolean) => setOpen(open);
   const items: RequirementItems = React.useMemo(
     () => ({
       maxUnavailable: t('console-app~maxUnavailable'),
@@ -226,24 +225,34 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
             />
             <Split hasGutter>
               <SplitItem isFilled>
-                <DropdownDeprecated
-                  className="dropdown--full-width"
-                  toggle={
-                    <DropdownToggleDeprecated onToggle={onToggle}>
-                      {selectedRequirement}
-                    </DropdownToggleDeprecated>
-                  }
+                <Select
                   isOpen={isOpen}
-                  dropdownItems={Object.keys(items).map((key) => (
-                    <DropdownItemDeprecated
-                      key={key}
-                      component="button"
-                      onClick={() => handleAvailabilityRequirementKeyChange(key)}
+                  onOpenChange={(open) => setOpen(open)}
+                  selected={selectedRequirement}
+                  onSelect={(value: string) => handleAvailabilityRequirementKeyChange(value)}
+                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      isExpanded={isOpen}
+                      isFullWidth
+                      onClick={(open) => setOpen(open)}
                     >
-                      {items[key]}
-                    </DropdownItemDeprecated>
-                  ))}
-                />
+                      {selectedRequirement}
+                    </MenuToggle>
+                  )}
+                >
+                  <SelectList>
+                    {Object.keys(items).map((key) => (
+                      <SelectOption
+                        key={key}
+                        value={key}
+                        onClick={() => handleAvailabilityRequirementKeyChange(key)}
+                      >
+                        {items[key]}
+                      </SelectOption>
+                    ))}
+                  </SelectList>
+                </Select>
               </SplitItem>
               <SplitItem isFilled>
                 <TextInput
