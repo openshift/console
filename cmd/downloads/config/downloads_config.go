@@ -1,48 +1,61 @@
-package downloads
+package config
 
 import (
 	"archive/tar"
 	"archive/zip"
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"text/template"
 
+	"gopkg.in/yaml.v3"
+
 	klog "k8s.io/klog/v2"
 )
 
-// HtmlPageData holds data passed to the template
+// HtmlPageData holds data passed to the HTML template
 type HtmlPageData struct {
 	Heading                  string
 	SubdirectoriesPathToRoot string
 	Items                    []ListItemLink
 }
 
+// ListItemLink holds the data for a link in the HTML page
+// Type can be "link" or "license" to differentiate between links to artifacts and the license
 type ListItemLink struct {
-	Type   string // "link to artifacts" or "license link"
+	Type   string // "link to oc artifacts" or "license link"
 	URL    string
 	Name   string
 	TarURL string
 	ZipURL string
 }
 
-// specification of the artifacts to be served
-type artifactFileSpec struct {
-	Arch            string
-	OperatingSystem string
-	Path            string
+// ArtifactsRoot holds the the contents of an artifacts configuration file
+type ArtifactsRoot struct {
+	Artifacts []ArtifactSpec `yaml:"artifacts"`
 }
 
+// ArtifactSpec holds the specification for an artifact
+type ArtifactSpec struct {
+	Arch            string `yaml:"arch"`
+	OperatingSystem string `yaml:"operatingSystem"`
+	Path            string `yaml:"path"`
+}
+
+// ArtifactsConfig holds the configuration for the artifacts server
 type ArtifactsConfig struct {
 	Port            string
-	Spec            []artifactFileSpec
+	Spec            []ArtifactSpec
 	TempDir         string
 	TemplateHTML    *template.Template
 	PathToOCLicense string
 }
 
+const indexFileName = "index.html"
+
+// template used to generate the HTML file with links to artifacts
+// based on the provided HtmlPageData
 const templateStringHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,31 +80,30 @@ const templateStringHTML = `<!DOCTYPE html>
 </html>`
 
 // load artifacts to be served from given path
-func loadArtifacts(path string) ([]artifactFileSpec, error) {
-	specs := []artifactFileSpec{}
+func loadArtifacts(path string) ([]ArtifactSpec, error) {
+	specs := ArtifactsRoot{}
 	// open the JSON spec config file
-	file, err := os.Open(path)
+	fileBytes, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
 
-	// convert to artifactFileSpec
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&specs)
+	// unmarshal the YAML file into the ArtifactsRoot object
+	err = yaml.Unmarshal(fileBytes, &specs)
 	if err != nil {
 		return nil, err
 	}
 
 	// check if the specs are empty
-	if len(specs) == 0 {
+	if len(specs.Artifacts) == 0 {
 		return nil, fmt.Errorf("no artifacts to serve")
 	}
 
-	return specs, nil
+	return specs.Artifacts, nil
 }
 
-func NewArtifactsConfig(port string, specsFilePath string) (*ArtifactsConfig, error) {
+// NewArtifactsConfig creates a new ArtifactsConfig object
+func NewArtifactsConfig(port int, specsFilePath string) (*ArtifactsConfig, error) {
 	tempDir, err := os.MkdirTemp("", "artifacts")
 	if err != nil {
 		return nil, err
@@ -108,7 +120,7 @@ func NewArtifactsConfig(port string, specsFilePath string) (*ArtifactsConfig, er
 	}
 
 	artifactsConfig := ArtifactsConfig{
-		Port:         port,
+		Port:         fmt.Sprintf("%d", port),
 		Spec:         specs,
 		TempDir:      tempDir,
 		TemplateHTML: templateHTML,
@@ -123,7 +135,6 @@ func NewArtifactsConfig(port string, specsFilePath string) (*ArtifactsConfig, er
 	return &artifactsConfig, nil
 }
 
-// credits to https://www.arthurkoziel.com/writing-tar-gz-files-in-go/
 func addFileToTar(tw *tar.Writer, filename string) error {
 	// Open the archive
 	file, err := os.Open(filename)
@@ -194,6 +205,7 @@ func addFileToZip(zw *zip.Writer, filename string) error {
 	return nil
 }
 
+// create archives for the target file
 func createArchives(pathToTargetFile string) error {
 	// create archives in the same directory as the target file
 	tarFile, err := os.Create(pathToTargetFile + ".tar")
@@ -217,6 +229,7 @@ func createArchives(pathToTargetFile string) error {
 	return nil
 }
 
+// createHTMLFile applies HTML template with the given data to create an HTML file at the given path
 func (artifactsConfig *ArtifactsConfig) createHTMLFile(path string, data HtmlPageData) error {
 	file, err := os.Create(path)
 	if err != nil {
@@ -244,6 +257,7 @@ func createDir(dir string) error {
 	return nil
 }
 
+// generateDirFileContents generates the content of the root HTML file and creates directories, files and archives for artifacts
 func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) ([]ListItemLink, error) {
 	content := []ListItemLink{
 		{
@@ -265,7 +279,7 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 			return nil, err
 		}
 		err = artifactsConfig.createHTMLFile(
-			filepath.Join(archDir, "index.html"),
+			filepath.Join(archDir, indexFileName),
 			HtmlPageData{
 				Heading:                  "",
 				SubdirectoriesPathToRoot: tempDir,
@@ -282,7 +296,7 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 			return nil, err
 		}
 		err = artifactsConfig.createHTMLFile(
-			filepath.Join(osDir, "index.html"),
+			filepath.Join(osDir, indexFileName),
 			HtmlPageData{
 				Heading:                  "",
 				SubdirectoriesPathToRoot: tempDir,
@@ -316,6 +330,7 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 	return content, nil
 }
 
+// setupArtifactsDirectory creates the root HTML file and directories, files and archives for artifacts
 func (artifactsConfig *ArtifactsConfig) setupArtifactsDirectory() error {
 	// symlink file in the temporary directory that points to the openshift license
 	os.Symlink(artifactsConfig.PathToOCLicense, filepath.Join(artifactsConfig.TempDir, "oc-license"))
@@ -327,7 +342,7 @@ func (artifactsConfig *ArtifactsConfig) setupArtifactsDirectory() error {
 	}
 
 	// create the root html file
-	err = artifactsConfig.createHTMLFile(filepath.Join(artifactsConfig.TempDir, "index.html"), HtmlPageData{
+	err = artifactsConfig.createHTMLFile(filepath.Join(artifactsConfig.TempDir, indexFileName), HtmlPageData{
 		Heading:                  "",
 		SubdirectoriesPathToRoot: "",
 		Items:                    content,

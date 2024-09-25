@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"path/filepath"
 	"runtime"
 
 	"io/ioutil"
@@ -17,7 +16,6 @@ import (
 
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
-	"github.com/openshift/console/cmd/bridge/config/downloads"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
@@ -78,7 +76,6 @@ func main() {
 	fs.String("config", "", "The YAML config file.")
 
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
-	fDownloads := fs.Bool("downloads-server", false, "Bridge will run as a downloads server, that is serving the CLI artifacts.")
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
@@ -599,29 +596,6 @@ func main() {
 		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
-	}
-
-	if *fDownloads {
-		// TODO handle the arguments to the artifacts config from the command line
-		// TODO temporarily hardcoding the port and the path to the artifactsFileSpec.json
-		// run artifacts server
-		_, filename, _, _ := runtime.Caller(0)
-		artifactsConfig, err := downloads.NewArtifactsConfig("8081", filepath.Join(filepath.Dir(filename), "config/downloads/artifactsFileSpec.json"))
-		if err != nil {
-			klog.Fatalf("Failed to configure artifacts: %v", err)
-			os.Exit(1)
-		}
-		defer os.RemoveAll(artifactsConfig.TempDir)
-		go func() {
-			// Listen for incoming connections
-			klog.Infof("Server started. Listening on port:%s", artifactsConfig.Port)
-
-			downlsrv := &http.Server{
-				Addr:    fmt.Sprintf("localhost:%s", artifactsConfig.Port),
-				Handler: http.FileServer(http.Dir(artifactsConfig.TempDir)),
-			}
-			klog.Fatal(downlsrv.ListenAndServe())
-		}()
 	}
 
 	consoleHandler, err := srv.HTTPHandler()
