@@ -143,8 +143,8 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   const user = useSelector(getUser);
 
   React.useEffect(() => {
-    if (_.isEmpty(createdBy)) {
-      setCreatedBy(user?.metadata?.name);
+    if (!createdBy && user) {
+      setCreatedBy(user.metadata?.name || user.username);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -423,7 +423,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
           <div className="co-m-pane__body-group">
             <SectionHeading text={t('public~Info')} />
             <div className="form-group">
-              <label>{t('public~Creator')}</label>
+              <label className="co-required">{t('public~Creator')}</label>
               <TextInput
                 aria-label={t('public~Creator')}
                 onChange={(_event, v: string) => setCreatedBy(v)}
