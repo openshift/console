@@ -199,6 +199,7 @@
   "All Namespaces": "所有命名空间",
   "Project": "项目",
   "Namespace": "命名空间",
+  "Enable Autoscale": "启用自动扩展",
   "Increase the Pod count": "增加 pod 数",
   "Decrease the Pod count": "减少 pod 数",
   "No Pods found for this resource.": "没有找到此资源的 Pod。",

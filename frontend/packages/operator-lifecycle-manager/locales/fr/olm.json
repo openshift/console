@@ -1,5 +1,5 @@
 {
-  "Operator Backed": "Soutenus par un opérateur",
+  "Operator Backed": "Soutenu par un opérateur",
   "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.": "Parcourez un large éventail de services gérés installés par les administrateurs de cluster. Ces derniers peuvent personnaliser le contenu mis à disposition dans le catalogue.",
   "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "Le catalogue de services **Soutenus par un opérateur** inclut un large éventail de services gérés par des contrôleurs Kubernetes.",
   "Operator Backed Services": "Services soutenus par un opérateur",
