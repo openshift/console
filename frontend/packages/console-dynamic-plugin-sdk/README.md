@@ -177,11 +177,11 @@ import { MonitoringIcon } from '@patternfly/react-icons';
 ## Content Security Policy
 
 Console application uses [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-(CSP) in order to detect and mitigate certain types of attacks. By default, the list of allowed
+(CSP) to detect and mitigate certain types of attacks. By default, the list of allowed
 [CSP sources](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/Sources)
-includes the document origin `'self'` as well as Console webpack dev server when running off-cluster.
+includes the document origin `'self'` and Console webpack dev server when running off-cluster.
 
-All dynamic plugin assets _should_ be loaded via `/api/plugins/<plugin-name>` Bridge endpoint which
+All dynamic plugin assets _should_ be loaded using `/api/plugins/<plugin-name>` Bridge endpoint which
 matches the `'self'` CSP source of Console application.
 
 See `cspSources` and `cspDirectives` in
