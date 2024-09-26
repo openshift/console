@@ -250,6 +250,7 @@
   "Target URI:": "Target URI:",
   "No sink found for this resource.": "No sink found for this resource.",
   "Filter": "Filter",
+  "Key": "Key",
   "View all ({{revLength}})": "View all ({{revLength}})",
   "No Revisions found for this resource.": "No Revisions found for this resource.",
   "No Routes found for this resource.": "No Routes found for this resource.",
