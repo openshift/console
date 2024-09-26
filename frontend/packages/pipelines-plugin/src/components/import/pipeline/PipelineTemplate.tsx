@@ -4,7 +4,10 @@ import { useFormikContext, FormikValues } from 'formik';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ReadableResourcesNames } from '@console/dev-console/src/components/import/import-types';
+import {
+  BuildOptions,
+  ReadableResourcesNames,
+} from '@console/dev-console/src/components/import/import-types';
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { getGitService } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
@@ -184,7 +187,6 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       } else {
         setFieldValue('pipeline.template', null);
         setFieldValue('pipeline.templateSelected', '');
-        setFieldValue('pipeline.enabled', false);
         setNoTemplateForRuntime(true);
       }
     };
@@ -245,12 +247,21 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     }, 0);
   };
 
+  const handlePipelineCheckbox = (checked: boolean) => {
+    if (checked) {
+      setFieldValue('build.option', BuildOptions.PIPELINES);
+    } else {
+      setFieldValue('build.option', null);
+    }
+  };
+
   return pipeline.template ? (
     <>
       <CheckboxField
         label={t('pipelines-plugin~Add pipeline')}
         name="pipeline.enabled"
         isDisabled={isPipelineAttached}
+        onChange={handlePipelineCheckbox}
       />
       {pipeline.enabled && isPacRepo && (
         <RadioGroupField

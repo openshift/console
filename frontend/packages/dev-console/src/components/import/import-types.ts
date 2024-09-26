@@ -387,3 +387,10 @@ export interface HealthChecksFormData {
   livenessProbe: HealthCheckFormProbe;
   startupProbe?: HealthCheckFormProbe;
 }
+
+export enum BuildOptions {
+  BUILDS = 'BUILDS',
+  SHIPWRIGHT_BUILD = 'SHIPWRIGHT_BUILD',
+  PIPELINES = 'PIPELINES',
+  DISABLED = 'DISABLED',
+}
