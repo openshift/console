@@ -291,7 +291,7 @@ dl.co-inline {
 
 .co-external-link-with-copy {
   &__icon {
-    color: var(--pf-v5-global--link--Color);
+    color: var(--pf-v5-global--link--Color) !important;
     cursor: pointer;
     &:hover {
       color: var(--pf-v5-global--Color--300);
@@ -302,6 +302,7 @@ dl.co-inline {
   }
   &__copyicon {
     margin-left: var(--pf-v5-global--spacer--md);
+    padding: 0 !important;
   }
 }
 
