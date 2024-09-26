@@ -1,0 +1,14 @@
+import { V2VVMImportStatus } from '../../constants/v2v-vm-import-status';
+import { StatusBundle } from '../../types/status-bundle';
+import { VMImportKind } from '../../types/vm-import';
+
+export enum VirtualMachineImportConditionType {
+  Succeeded = 'Succeeded',
+  Valid = 'Valid',
+  MappingRulesVerified = 'MappingRulesVerified',
+  Processing = 'Processing',
+}
+
+export interface VMImportStatusBundle extends StatusBundle<V2VVMImportStatus> {
+  vmImport?: VMImportKind;
+}

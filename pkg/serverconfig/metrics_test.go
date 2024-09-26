@@ -73,11 +73,12 @@ func TestPluginMetrics(t *testing.T) {
 
 		{
 			name:              "well-known-ConsolePlugins",
-			configuredPlugins: []string{"acm", "my-plugin"},
-			consolePlugins:    []string{"acm", "my-plugin"},
+			configuredPlugins: []string{"acm", "kubevirt-plugin", "my-plugin"},
+			consolePlugins:    []string{"acm", "kubevirt-plugin", "my-plugin"},
 			expectedMetrics: `
 			console_plugins_info{name="acm",state="enabled"} 1
 			console_plugins_info{name="demo",state="enabled"} 1
+			console_plugins_info{name="kubevirt",state="enabled"} 1
 			`,
 		},
 
@@ -169,18 +170,21 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 	}{
 		{
 			name:                    "well-known-ConsolePlugins-are-removed",
-			configuredPlugins:       []string{"acm", "my-plugin"},
-			consolePluginsInitially: []string{"acm", "my-plugin"},
+			configuredPlugins:       []string{"acm", "kubevirt-plugin", "my-plugin"},
+			consolePluginsInitially: []string{"acm", "kubevirt-plugin", "my-plugin"},
 			consolePluginsUpdated:   []string{},
 			expectedMetricsInitially: `
 			console_plugins_info{name="acm",state="enabled"} 1
 			console_plugins_info{name="demo",state="enabled"} 1
+			console_plugins_info{name="kubevirt",state="enabled"} 1
 			`,
 			expectedMetricsAfterUpdate: `
 			console_plugins_info{name="acm",state="enabled"} 0
 			console_plugins_info{name="acm",state="notfound"} 1
 			console_plugins_info{name="demo",state="enabled"} 0
 			console_plugins_info{name="demo",state="notfound"} 1
+			console_plugins_info{name="kubevirt",state="enabled"} 0
+            console_plugins_info{name="kubevirt",state="notfound"} 1
 			`,
 		},
 

@@ -1,0 +1,8 @@
+// Console StyleSheets
+@import "~xterm/css/xterm.css";
+
+// Note(yaacov): Workaround bootstrap issue, checkbox and radio buttons are not alligned with input label
+// hack should be removed once bootstrap is fixed
+input[type="radio"], input[type="checkbox"] {
+    margin-top: 1px !important;
+}

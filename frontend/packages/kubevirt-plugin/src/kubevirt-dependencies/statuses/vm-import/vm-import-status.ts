@@ -1,0 +1,94 @@
+import * as _ from 'lodash';
+import { K8sResourceCondition } from '@console/dynamic-plugin-sdk';
+import { VM_IMPORT_PROGRESS_ANNOTATION } from '../../constants/v2v-import/constants';
+import { V2VVMImportStatus } from '../../constants/v2v-vm-import-status';
+import { VMImportWrapper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
+import {
+  getAnnotations,
+  getStatusConditionOfType,
+  getStatusConditions,
+} from '../../selectors/k8sCommon';
+import { isConditionStatusTrue } from '../../selectors/selectors';
+import { VMImportKind } from '../../types/vm-import';
+import { parseNumber } from '../../utils/utils';
+import { VirtualMachineImportConditionType, VMImportStatusBundle } from './types';
+
+const isV2VVMImportConversion = (vmImport?: VMImportKind): VMImportStatusBundle => {
+  if (!vmImport) {
+    return null;
+  }
+
+  const statusConditions = getStatusConditions(vmImport);
+
+  if (_.isEmpty(statusConditions)) {
+    return {
+      status: V2VVMImportStatus.PENDING,
+    };
+  }
+
+  const failedFinalStateCondType: VirtualMachineImportConditionType = [
+    VirtualMachineImportConditionType.Succeeded,
+    VirtualMachineImportConditionType.MappingRulesVerified,
+    VirtualMachineImportConditionType.Valid,
+  ].find((type) => {
+    const condition = getStatusConditionOfType(vmImport, type);
+    return condition && !isConditionStatusTrue(condition);
+  });
+
+  if (failedFinalStateCondType) {
+    const failedCond: K8sResourceCondition = getStatusConditionOfType(
+      vmImport,
+      failedFinalStateCondType,
+    );
+
+    return {
+      status: V2VVMImportStatus.ERROR,
+      message: `${new VMImportWrapper(vmImport).getResolvedVMTargetName()} could not be imported.`,
+      detailedMessage: failedCond && `${failedCond.reason}: ${failedCond.message}`,
+    };
+  }
+
+  const suceededCond: K8sResourceCondition = getStatusConditionOfType(
+    vmImport,
+    VirtualMachineImportConditionType.Succeeded,
+  );
+
+  if (suceededCond) {
+    // must be 'True' due to the check above
+    return {
+      status: V2VVMImportStatus.COMPLETE,
+      detailedMessage: `${suceededCond.reason}: ${suceededCond.message}`,
+    };
+  }
+
+  const progressingCondType: VirtualMachineImportConditionType = [
+    VirtualMachineImportConditionType.Processing,
+    VirtualMachineImportConditionType.Valid,
+    VirtualMachineImportConditionType.MappingRulesVerified,
+  ].find((type) => isConditionStatusTrue(getStatusConditionOfType(vmImport, type)));
+
+  const progressingCond: K8sResourceCondition = progressingCondType
+    ? getStatusConditionOfType(vmImport, progressingCondType)
+    : statusConditions[0];
+
+  const progress = parseNumber(getAnnotations(vmImport, {})[VM_IMPORT_PROGRESS_ANNOTATION], 0);
+
+  return {
+    status: V2VVMImportStatus.IN_PROGRESS,
+    message: `${new VMImportWrapper(vmImport).getResolvedVMTargetName()} is being imported.`,
+    detailedMessage: progressingCond && `${progressingCond.reason}: ${progressingCond.message}`,
+    progress,
+  };
+};
+
+type Parameters = {
+  vmImport?: VMImportKind;
+};
+
+export const getVMImportStatus = ({ vmImport }: Parameters): VMImportStatusBundle => {
+  const bundle = isV2VVMImportConversion(vmImport) || {
+    status: V2VVMImportStatus.UNKNOWN,
+  };
+  bundle.vmImport = vmImport;
+  return bundle;
+};

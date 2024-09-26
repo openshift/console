@@ -1,0 +1,150 @@
+[
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "kubevirtFlags.detectKubevirtVirtualMachines" }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "KUBEVIRT_CDI",
+      "model": {
+        "group": "cdi.kubevirt.io",
+        "version": "v1beta1",
+        "kind": "CDIConfig"
+      }
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.componentFactory"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "kubevirt-topology-model-factory",
+      "priority": 200,
+      "resources": {
+        "virtualmachines": {
+          "model": { "kind": "VirtualMachine", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "virtualmachineinstances": {
+          "model": { "kind": "VirtualMachineInstance", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "virtualmachinetemplates": {
+          "opts": {
+            "kind": "Template",
+            "isList": true,
+            "optional": true,
+            "selector": {
+              "matchLabels": {
+                "template.kubevirt.io/type": "base"
+              }
+            }
+          }
+        },
+        "migrations": {
+          "model": { "kind": "VirtualMachineInstanceMigration", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "dataVolumes": {
+          "model": { "kind": "DataVolume", "group": "cdi.kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "pods": {
+          "opts": {
+            "isList": true,
+            "kind": "Pod",
+            "optional": true
+          }
+        }
+      },
+      "getDataModel": {
+        "$codeRef": "topology.getDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "topology.isResourceDepicted"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-vm-details",
+      "tab": "topology-side-bar-tab-details",
+      "provider": {
+        "$codeRef": "topologySidebar.useVmSidePanelDetailsTabSection"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "topologySidebar.getVmSidePanelPodsAdapter"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/network",
+    "properties": {
+      "adapt": {
+        "$codeRef": "topologySidebar.getVmSidePanelNetworkAdapter"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "topologySidebar.getVmSideBarResourceLink" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useModifyApplicationActionProvider" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  }
+]

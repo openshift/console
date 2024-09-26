@@ -336,6 +336,7 @@ const config: Configuration = {
         { from: path.resolve(__dirname, './packages/rhoas-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/git-service/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/gitops-plugin/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './packages/kubevirt-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/metal3-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/vsphere-plugin/locales'), to: 'locales' },
         {

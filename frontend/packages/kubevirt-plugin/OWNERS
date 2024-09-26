@@ -1,0 +1,16 @@
+reviewers:
+  - vojtechszocs
+  - pcbailey
+  - gouyang
+  - metalice
+  - avivtur
+  - upalatucci
+approvers:
+  - vojtechszocs
+  - pcbailey
+  - gouyang
+  - metalice
+  - avivtur
+  - upalatucci
+labels:
+  - component/kubevirt
