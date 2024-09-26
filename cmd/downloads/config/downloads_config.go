@@ -14,25 +14,32 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
+// TODO the download of an exe file does not remove the file extension when downloading the zip or tar
 // HtmlPageData holds data passed to the HTML template
 type HtmlPageData struct {
-	Heading                  string
 	SubdirectoriesPathToRoot string
 	Items                    []ListItemLink
 }
 
+type LinkType string
+
+const (
+	Binary  LinkType = "binary"
+	License LinkType = "license"
+)
+
 // ListItemLink holds the data for a link in the HTML page
-// Type can be "link" or "license" to differentiate between links to artifacts and the license
 type ListItemLink struct {
-	Type   string // "link to oc artifacts" or "license link"
+	// Type can be "link" or "license" to differentiate between links to artifacts and the license
+	Type   LinkType
 	URL    string
 	Name   string
 	TarURL string
 	ZipURL string
 }
 
-// ArtifactsRoot holds the the contents of an artifacts configuration file
-type ArtifactsRoot struct {
+// ArtifactsConfig holds the the contents of an artifacts configuration file
+type ArtifactsConfig struct {
 	Artifacts []ArtifactSpec `yaml:"defaultArtifactsConfig"`
 }
 
@@ -44,18 +51,18 @@ type ArtifactSpec struct {
 }
 
 // ArtifactsConfig holds the configuration for the artifacts server
-type ArtifactsConfig struct {
-	Port            string
-	Spec            []ArtifactSpec
-	TempDir         string
-	TemplateHTML    *template.Template
-	PathToOCLicense string
+type DownloadsServerConfig struct {
+	Port         string
+	Spec         []ArtifactSpec
+	TempDir      string
+	TemplateHTML *template.Template
 }
 
 const indexFileName = "index.html"
+const pathToOCLicense = "/usr/share/openshift/LICENSE"
+const ocLicenseFile = "oc-license"
 
 // template used to generate the HTML file with links to artifacts
-// based on the provided HtmlPageData
 const templateStringHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,12 +70,11 @@ const templateStringHTML = `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    {{ if .Heading }} <h1>{{ .Heading }}</h1> {{ end }}
-	{{ if .SubdirectoriesPathToRoot }}<p>Directory listings are disabled. See <a href="/private/{{ .SubdirectoriesPathToRoot }}">here</a> for available content.</p> {{ end }}
+	{{ if .SubdirectoriesPathToRoot }} <p>Directory listings are disabled. See <a href="/private/{{ .SubdirectoriesPathToRoot }}">here</a> for available content.</p> {{ end }}
 	{{ if .Items }}
 	<ul>
 		{{ range .Items }}
-            {{ if eq .Type "link" }}
+            {{ if eq .Type "binary" }}
                 <li><a href="{{ .URL }}">oc ({{ .Name }})</a> (<a href="{{ .TarURL }}">tar</a> <a href="{{ .ZipURL }}">zip</a>)</li>
             {{ else if eq .Type "license" }}
                 <li><a href="{{ .URL }}">license</a></li>
@@ -80,15 +86,15 @@ const templateStringHTML = `<!DOCTYPE html>
 </html>`
 
 // load artifacts to be served from given path
-func loadArtifacts(path string) ([]ArtifactSpec, error) {
-	specs := ArtifactsRoot{}
+func loadArtifactsSpec(path string) ([]ArtifactSpec, error) {
+	specs := ArtifactsConfig{}
 	// open the JSON spec config file
 	fileBytes, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	// unmarshal the YAML file into the ArtifactsRoot object
+	// unmarshal the YAML file into the ArtifactsConfig object
 	err = yaml.Unmarshal(fileBytes, &specs)
 	if err != nil {
 		return nil, err
@@ -96,30 +102,31 @@ func loadArtifacts(path string) ([]ArtifactSpec, error) {
 
 	// check if the specs are empty
 	if len(specs.Artifacts) == 0 {
-		return nil, fmt.Errorf("no artifacts to serve")
+		return nil, fmt.Errorf("there are no artifacts to serve")
 	}
 
 	return specs.Artifacts, nil
 }
 
-// NewArtifactsConfig creates a new ArtifactsConfig object
-func NewArtifactsConfig(port int, specsFilePath string) (*ArtifactsConfig, error) {
+// NewDownloadsServerConfig creates a new ArtifactsConfig object
+func NewDownloadsServerConfig(port int, specsFilePath string) (*DownloadsServerConfig, error) {
 	tempDir, err := os.MkdirTemp("", "artifacts")
 	if err != nil {
 		return nil, err
 	}
-
-	specs, err := loadArtifacts(specsFilePath)
+	klog.Info("Create temporary directory for artifacts")
+	specs, err := loadArtifactsSpec(specsFilePath)
 	if err != nil {
 		return nil, err
 	}
+	klog.Info("Loaded artifacts configuration file")
 
 	templateHTML, err := template.New("artifacts").Parse(templateStringHTML)
 	if err != nil {
 		return nil, err
 	}
 
-	artifactsConfig := ArtifactsConfig{
+	artifactsConfig := DownloadsServerConfig{
 		Port:         fmt.Sprintf("%d", port),
 		Spec:         specs,
 		TempDir:      tempDir,
@@ -129,8 +136,7 @@ func NewArtifactsConfig(port int, specsFilePath string) (*ArtifactsConfig, error
 	if err != nil {
 		return nil, err
 	}
-	artifactsConfig.PathToOCLicense = "/usr/share/openshift/LICENSE"
-	klog.Infof("Artifacts server configuration initialized, serving from %s", tempDir)
+	klog.Infof("Downloads server configuration initialized, serving from %s", tempDir)
 
 	return &artifactsConfig, nil
 }
@@ -205,32 +211,42 @@ func addFileToZip(zw *zip.Writer, filename string) error {
 	return nil
 }
 
-// create archives for the target file
-func createArchives(pathToTargetFile string) error {
-	// create archives in the same directory as the target file
-	tarFile, err := os.Create(pathToTargetFile + ".tar")
-	if err != nil {
-		return err
+func configureArchivePath(pathToTargetFile string) string {
+	if filepath.Ext(pathToTargetFile) == ".exe" {
+		// Remove the .exe extension from the path
+		return pathToTargetFile[:len(pathToTargetFile)-4]
 	}
-	defer tarFile.Close()
-	zipFile, err := os.Create(pathToTargetFile + ".zip")
-	if err != nil {
-		return err
-	}
-	defer zipFile.Close()
+	return pathToTargetFile
+}
 
-	zw := zip.NewWriter(zipFile)
-	defer zw.Close()
-	tw := tar.NewWriter(tarFile)
-	defer tw.Close()
-	addFileToTar(tw, pathToTargetFile)
-	addFileToZip(zw, pathToTargetFile)
+// create archive for the target binary
+func createArchive(pathToTargetFile string, format string) error {
+	// create archive in the same directory as the target binary
+	pathToArchive := configureArchivePath(pathToTargetFile) + format
+
+	file, err := os.Create(pathToArchive)
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+	if format == ".tar" {
+		archiveWriter := tar.NewWriter(file)
+		addFileToTar(archiveWriter, pathToTargetFile)
+		defer archiveWriter.Close()
+	} else if format == ".zip" {
+		archiveWriter := zip.NewWriter(file)
+		addFileToZip(archiveWriter, pathToTargetFile)
+		defer archiveWriter.Close()
+	} else {
+		return fmt.Errorf("unsupported archive type")
+	}
 
 	return nil
 }
 
 // createHTMLFile applies HTML template with the given data to create an HTML file at the given path
-func (artifactsConfig *ArtifactsConfig) createHTMLFile(path string, data HtmlPageData) error {
+func (artifactsConfig *DownloadsServerConfig) createHTMLFile(path string, data HtmlPageData) error {
 	file, err := os.Create(path)
 	if err != nil {
 		return err
@@ -257,52 +273,48 @@ func createDir(dir string) error {
 	return nil
 }
 
+func (downloadsConfig *DownloadsServerConfig) handleDirCreation(dirPath string) error {
+	err := createDir(dirPath)
+	if err != nil {
+		return err
+	}
+	err = downloadsConfig.createHTMLFile(
+		filepath.Join(dirPath, indexFileName),
+		HtmlPageData{
+			SubdirectoriesPathToRoot: downloadsConfig.TempDir,
+			Items:                    []ListItemLink{},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // generateDirFileContents generates the content of the root HTML file and creates directories, files and archives for artifacts
-func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) ([]ListItemLink, error) {
+func (downloadsConfig *DownloadsServerConfig) generateDirFileContents() ([]ListItemLink, error) {
 	content := []ListItemLink{
 		{
-			Type: "license",
-			URL:  "oc-license",
+			Type: License,
+			URL:  ocLicenseFile,
 		},
 	}
 
 	// create subdirectories for the artifacts
-	for _, spec := range artifactsConfig.Spec {
+	for _, spec := range downloadsConfig.Spec {
 		basename := filepath.Base(spec.Path)
-		artifactPath := filepath.Join(artifactsConfig.TempDir, spec.Arch, spec.OperatingSystem, basename)
-		archDir := filepath.Join(artifactsConfig.TempDir, spec.Arch)
-		osDir := filepath.Join(artifactsConfig.TempDir, spec.Arch, spec.OperatingSystem)
+		artifactPath := filepath.Join(downloadsConfig.TempDir, spec.Arch, spec.OperatingSystem, basename)
+		archDir := filepath.Join(downloadsConfig.TempDir, spec.Arch)
+		osDir := filepath.Join(downloadsConfig.TempDir, spec.Arch, spec.OperatingSystem)
 
 		// create subdirectory for the architecture
-		err := createDir(archDir)
+		err := downloadsConfig.handleDirCreation(archDir)
 		if err != nil {
 			return nil, err
 		}
-		err = artifactsConfig.createHTMLFile(
-			filepath.Join(archDir, indexFileName),
-			HtmlPageData{
-				Heading:                  "",
-				SubdirectoriesPathToRoot: tempDir,
-				Items:                    []ListItemLink{},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
 		// create subdirectory for the operating system
-		err = createDir(osDir)
-		if err != nil {
-			return nil, err
-		}
-		err = artifactsConfig.createHTMLFile(
-			filepath.Join(osDir, indexFileName),
-			HtmlPageData{
-				Heading:                  "",
-				SubdirectoriesPathToRoot: tempDir,
-				Items:                    []ListItemLink{},
-			},
-		)
+		err = downloadsConfig.handleDirCreation(osDir)
 		if err != nil {
 			return nil, err
 		}
@@ -312,18 +324,23 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 			return nil, err
 		}
 
-		err = createArchives(artifactPath)
+		err = createArchive(artifactPath, ".tar")
+		if err != nil {
+			return nil, err
+		}
+		err = createArchive(artifactPath, ".zip")
 		if err != nil {
 			return nil, err
 		}
 
+		pathToArchive := configureArchivePath(artifactPath)
 		// append new entry in the list of links to artifacts
 		content = append(content, ListItemLink{
-			Type:   "link",
+			Type:   Binary,
 			URL:    artifactPath,
 			Name:   fmt.Sprintf("%s %s", spec.Arch, spec.OperatingSystem),
-			TarURL: fmt.Sprintf("%s.tar", artifactPath),
-			ZipURL: fmt.Sprintf("%s.zip", artifactPath),
+			TarURL: fmt.Sprintf("%s.tar", pathToArchive),
+			ZipURL: fmt.Sprintf("%s.zip", pathToArchive),
 		})
 	}
 
@@ -331,19 +348,18 @@ func (artifactsConfig *ArtifactsConfig) generateDirFileContents(tempDir string) 
 }
 
 // setupArtifactsDirectory creates the root HTML file and directories, files and archives for artifacts
-func (artifactsConfig *ArtifactsConfig) setupArtifactsDirectory() error {
+func (artifactsConfig *DownloadsServerConfig) setupArtifactsDirectory() error {
 	// symlink file in the temporary directory that points to the openshift license
-	os.Symlink(artifactsConfig.PathToOCLicense, filepath.Join(artifactsConfig.TempDir, "oc-license"))
+	os.Symlink(pathToOCLicense, filepath.Join(artifactsConfig.TempDir, ocLicenseFile))
 
 	// generates content of the root html file and creates directories, files and archives for artifacts
-	content, err := artifactsConfig.generateDirFileContents(artifactsConfig.TempDir)
+	content, err := artifactsConfig.generateDirFileContents()
 	if err != nil {
 		return err
 	}
 
 	// create the root html file
 	err = artifactsConfig.createHTMLFile(filepath.Join(artifactsConfig.TempDir, indexFileName), HtmlPageData{
-		Heading:                  "",
 		SubdirectoriesPathToRoot: "",
 		Items:                    content,
 	})
