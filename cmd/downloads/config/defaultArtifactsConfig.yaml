@@ -1,4 +1,4 @@
-artifacts:
+defaultArtifactsConfig:
   - arch: amd64
     operatingSystem: linux
     path: /usr/share/openshift/linux_amd64/oc

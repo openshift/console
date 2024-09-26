@@ -1,13 +1,9 @@
-FROM quay.io/openshift/origin-cli-artifacts:4.17 AS origincli
+FROM quay.io/openshift/origin-cli-artifacts:4.18 AS origincli
 
-FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.22-openshift-4.17 AS gobuilder
-# FROM golang:1.23 AS gobuilder
-
-# ADD cmd/ pkg/ .git/ go.mod go.sum build-downloads.sh vendor/ /go/src/github.com/openshift/console/
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.22-openshift-4.18 AS gobuilder
 
 ENV HOME=/go/src/github.com/openshift/console/
 RUN mkdir -p ${HOME}
-# RUN mkdir -p /tmp/artifacts
 
 COPY go.mod go.sum build-downloads.sh ${HOME}
 COPY vendor/ ${HOME}vendor/
@@ -18,8 +14,7 @@ COPY .git/ /${HOME}.git/
 WORKDIR ${HOME}
 RUN ./build-downloads.sh
 
-# FROM registry.access.redhat.com/ubi9/ubi-minimal
-FROM registry.ci.openshift.org/ocp/4.17:base-rhel9
+FROM registry.ci.openshift.org/ocp/4.18:base-rhel9
 RUN mkdir -p /opt/downloads
 
 COPY --from=gobuilder /go/src/github.com/openshift/console/bin/downloads /opt/downloads

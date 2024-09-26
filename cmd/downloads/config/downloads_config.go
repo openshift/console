@@ -33,7 +33,7 @@ type ListItemLink struct {
 
 // ArtifactsRoot holds the the contents of an artifacts configuration file
 type ArtifactsRoot struct {
-	Artifacts []ArtifactSpec `yaml:"artifacts"`
+	Artifacts []ArtifactSpec `yaml:"defaultArtifactsConfig"`
 }
 
 // ArtifactSpec holds the specification for an artifact
