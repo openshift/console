@@ -62,7 +62,11 @@ Given('user is at Topology chart view', () => {
 });
 
 When('user clicks on workload {string} to open sidebar', (workloadName: string) => {
-  topologyPage.componentNode(workloadName).click({ force: true });
+  topologyPage.verifyOrOpenSidebar(workloadName);
+});
+
+When('user opens the sidebar for {string}', (workloadName: string) => {
+  topologyPage.verifyOrOpenSidebar(workloadName);
 });
 
 When('user clicks on Action menu', () => {

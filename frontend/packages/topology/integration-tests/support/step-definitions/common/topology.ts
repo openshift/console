@@ -57,6 +57,10 @@ When('user clicks on workload {string}', (workloadName: string) => {
   topologyPage.componentNode(workloadName).click({ force: true });
 });
 
+When('user opens the sidebar for {string}', (workloadName: string) => {
+  topologyPage.verifyOrOpenSidebar(workloadName);
+});
+
 Then('user can see sidebar opens with Resources tab selected by default', () => {
   topologySidePane.verifySelectedTab('Resources');
 });

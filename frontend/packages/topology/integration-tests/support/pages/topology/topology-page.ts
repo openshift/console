@@ -17,8 +17,9 @@ import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
   verifyOrOpenSidebar: (nodeName: string) => {
-    cy.get(topologyPO.sidePane.dialog).then((dialog) => {
-      if (dialog.length !== 0) {
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get('[class="odc-topology"]').then(($body) => {
+      if ($body.find(topologyPO.sidePane.dialog).length === 0) {
         topologyPage.componentNode(nodeName).click({ force: true });
       } else {
         cy.log(`Sidebar is already open`);
@@ -95,8 +96,7 @@ export const topologyPage = {
   verifyWorkloadNotInTopologyPage: (appName: string, options?: { timeout: number }) => {
     topologyHelper.verifyWorkloadDeleted(appName, options);
   },
-  clickDisplayOptionDropdown: () =>
-    cy.get('.odc-topology-filter-dropdown__select').contains('Display options').click(),
+  clickDisplayOptionDropdown: () => cy.get('[type="button"]').contains('Display options').click(),
   checkConnectivityMode: () => cy.get(topologyPO.graph.displayOptions.connectivityMode).click(),
   checkConsumptionMode: () => cy.get(topologyPO.graph.displayOptions.consumptionMode).click(),
   verifyConnectivityModeChecked: () =>
@@ -169,24 +169,50 @@ export const topologyPage = {
         }
       });
   },
-  verifyPodCountUnchecked: () => cy.get(topologyPO.sidePane.showPodCount).should('not.be.checked'),
+  verifyPodCountUnchecked: () =>
+    cy
+      .get('[role="menuitem"]')
+      .contains('Pod count')
+      .within(() => {
+        cy.get('[type="checkbox"]').should('not.be.checked');
+      }),
   selectDisplayOption: (opt: displayOptions) => {
     topologyPage.clickDisplayOptionDropdown();
     switch (opt) {
       case displayOptions.PodCount:
-        cy.get('[id$=show-pod-count]').check();
+        cy.get('label[class$="menu__item"]')
+          .contains('Pod count')
+          .within(() => {
+            cy.get('[type="checkbox"]').check();
+          });
         break;
       case displayOptions.Labels:
-        cy.get('[id$=show-labels]').check();
+        cy.get('label[class$="menu__item"]')
+          .contains('Labels')
+          .within(() => {
+            cy.get('[type="checkbox"]').check();
+          });
         break;
       case displayOptions.ApplicationGroupings:
-        cy.get('[id$=expand-app-groups]').check();
+        cy.get('label[class$="menu__item"]')
+          .contains('Application groupings')
+          .within(() => {
+            cy.get('[type="checkbox"]').check();
+          });
         break;
       case displayOptions.HelmReleases:
-        cy.get('[id$=helmGrouping]').check();
+        cy.get('label[class$="menu__item"]')
+          .contains('Helm Releases')
+          .within(() => {
+            cy.get('[type="checkbox"]').check();
+          });
         break;
       case displayOptions.KnativeServices:
-        cy.get('[id$=knativeServices]').check();
+        cy.get('label[class$="menu__item"]')
+          .contains('Knative Services')
+          .within(() => {
+            cy.get('[type="checkbox"]').check();
+          });
         break;
       default:
         throw new Error('Option is not available');
