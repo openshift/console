@@ -24,7 +24,7 @@ import {
   StepResource,
   SubscriptionKind,
 } from '../types';
-import { getInternalObjects } from '../utils';
+import { getInternalObjects } from './operator-hub/operator-hub-utils';
 
 export const visibilityLabel = 'olm-visibility';
 
