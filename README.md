@@ -441,7 +441,7 @@ The server provides `oc` binaries from the [quay.io/repository/openshift/origin-
 After building, the server can be run directly with:
 
 ```
-./bin/downloads --host=localhost --config-path=cmd/downloads/config/defaultArtifactsConfig.yaml
+./bin/downloads --config-path=cmd/downloads/config/defaultArtifactsConfig.yaml
 ```
 Alternatively, you can use the provided Dockerfile.downloads to build an image containing the server. Use the following command to build the Docker image:
 
