@@ -136,16 +136,20 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   const [parameters, setParameters] = React.useState([]);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState('');
+  const isInitialLoad = React.useRef(true);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
-      acc[name] = value;
-      return acc;
-    }, {});
-    setParameters(object);
+    if (isInitialLoad.current && obj.loaded) {
+      const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
+        acc[name] = value;
+        return acc;
+      }, {});
+      setParameters(object);
+      isInitialLoad.current = false;
+    }
   }, [obj]);
 
   const onParameterChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
