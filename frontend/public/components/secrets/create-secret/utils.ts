@@ -140,7 +140,10 @@ export const stringifyPullSecret = (
   credentials: PullSecretCredential[],
   secretType: SecretType,
 ): string => {
-  const auths = credentials.reduce((acc, { address, username, password, email }) => {
+  const auths = (credentials ?? []).reduce((acc, { address, username, password, email }) => {
+    if (!address) {
+      return acc;
+    }
     const auth = username && password ? Base64.encode(`${username}:${password}`) : '';
     return {
       ...acc,
@@ -152,6 +155,9 @@ export const stringifyPullSecret = (
       },
     };
   }, {});
+  if (Object.keys(auths).length === 0) {
+    return '';
+  }
   return secretType === SecretType.dockercfg ? JSON.stringify(auths) : JSON.stringify({ auths });
 };
 
