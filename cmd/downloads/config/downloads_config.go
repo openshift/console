@@ -14,7 +14,6 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
-// TODO the download of an exe file does not remove the file extension when downloading the zip or tar
 // HtmlPageData holds data passed to the HTML template
 type HtmlPageData struct {
 	SubdirectoriesPathToRoot string

@@ -448,7 +448,7 @@ Alternatively, you can use the provided Dockerfile.downloads to build an image c
 ```
 docker build -f Dockerfile.downloads -t downloadsserver:latest .
 ```
-Note:  If you are running on macOS, you might need to pass the `--platform linux/amd64` flag to the Docker build command, as the origin-cli-artifacts image is not supported on macOS.
+Note: If you are running on macOS, you might need to pass the `--platform linux/amd64` flag to the Docker build command, as the origin-cli-artifacts image is not supported on macOS.
 
 To launch the server using the built image, you can run:
 
