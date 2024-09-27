@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import { LinkifyExternal, Timestamp } from './utils';
+import { ConsoleEmptyState, LinkifyExternal, Timestamp } from './utils';
 import { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
 
 /**
@@ -90,9 +90,7 @@ export const Conditions: React.FC<ConditionsProps> = ({
           <div className="co-m-table-grid__body">{rows}</div>
         </div>
       ) : (
-        <div className="cos-status-box">
-          <div className="pf-v5-u-text-align-center">{t('public~No conditions found')}</div>
-        </div>
+        <ConsoleEmptyState>{t('public~No conditions found')}</ConsoleEmptyState>
       )}
     </>
   );
