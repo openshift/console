@@ -91,6 +91,7 @@ fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-console-headless
+  yarn run test-cypress-console-component-headless
   yarn run test-cypress-dev-console-headless
   yarn run test-cypress-olm-headless
   yarn run test-cypress-helm-headless

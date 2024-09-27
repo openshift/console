@@ -36,4 +36,12 @@ module.exports = defineConfig({
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 5,
   },
+  component: {
+    devServer: {
+      framework: 'react',
+      bundler: 'webpack',
+    },
+    indexHtmlFile: 'support/component-index.html',
+    supportFile: 'support/component.js',
+  },
 });
