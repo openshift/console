@@ -73,7 +73,8 @@ export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStra
       });
     }
 
-    if (isPipelineEnabled && hasCreatePipelineAccess) {
+    // OCPBUGS-32526: Pipeline builds and Devfile import are mutually exclusive
+    if (isPipelineEnabled && hasCreatePipelineAccess && importStrategy !== ImportStrategy.DEVFILE) {
       options.push({
         label: t(ReadableBuildOptions[BuildOptions.PIPELINES]),
         value: BuildOptions.PIPELINES,
