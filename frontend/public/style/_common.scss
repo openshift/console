@@ -620,3 +620,21 @@ dl.co-inline {
 .co-overview-card__actions {
   align-self: center !important;
 }
+
+.co-m-loader--inline {
+  display: inline-block;
+  margin: 0;
+  position: static;
+}
+
+.co-m-timeout-error {
+  margin-bottom: 30px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.loading-box {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+}
