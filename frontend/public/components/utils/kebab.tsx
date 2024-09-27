@@ -409,7 +409,7 @@ const kebabFactory: KebabFactory = {
     // t('public~Create snapshot')
     labelKey: 'public~Create snapshot',
     isDisabled: obj?.status?.phase !== 'Bound',
-    tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
+    tooltip: obj?.status?.phase !== 'Bound' ? i18next.t('public~PVC is not Bound') : '',
     href: `/k8s/ns/${obj.metadata.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata.name}`,
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
@@ -417,7 +417,7 @@ const kebabFactory: KebabFactory = {
     // t('public~Clone PVC')
     labelKey: 'public~Clone PVC',
     isDisabled: obj?.status?.phase !== 'Bound',
-    tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
+    tooltip: obj?.status?.phase !== 'Bound' ? i18next.t('public~PVC is not Bound') : '',
     callback: () =>
       clonePVCModal({
         kind,
@@ -429,7 +429,7 @@ const kebabFactory: KebabFactory = {
     // t('public~Restore as new PVC')
     labelKey: 'public~Restore as new PVC',
     isDisabled: !obj?.status?.readyToUse,
-    tooltip: !obj?.status?.readyToUse ? 'Volume Snapshot is not Ready' : '',
+    tooltip: !obj?.status?.readyToUse ? i18next.t('public~Volume Snapshot is not Ready') : '',
     callback: () =>
       restorePVCModal({
         kind,
