@@ -11,9 +11,9 @@ spec:
       replicationFactor: 3
       bootstrapServers: REPLACE_WITH_COMMA_SEPARATED_KAFKA_BOOTSTRAP_SERVERS
   source:
-    enabled: false
+    enabled: true
   sink:
-    enabled: false
+    enabled: true
   channel:
     enabled: false
     bootstrapServers: REPLACE_WITH_COMMA_SEPARATED_KAFKA_BOOTSTRAP_SERVERS
