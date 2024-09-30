@@ -60,7 +60,7 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
     <CodeEditorField
       name="yamlData"
       model={ConfigMapModel}
-      showSamples={false}
+      showSamples={!configMap?.metadata?.name}
       onSave={() => handleSubmit()}
     />
   );
