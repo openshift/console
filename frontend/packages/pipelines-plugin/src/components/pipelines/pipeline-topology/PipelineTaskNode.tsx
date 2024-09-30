@@ -20,9 +20,11 @@ import { Link } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../../models';
 import { ComputedStatus, TaskKind } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_17 } from '../const';
 import {
   createStepStatus,
   StepStatus,
@@ -48,9 +50,10 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const [hover, hoverRef] = useHover();
   const taskRef = React.useRef();
   const detailsLevel = useDetailsLevel();
+  const IS_PIPELINE_OPERATOR_VERSION_1_17 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_17);
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
   let resources;
-  if (data.task?.taskRef?.kind === ClusterTaskModel.kind) {
+  if (!IS_PIPELINE_OPERATOR_VERSION_1_17 && data.task?.taskRef?.kind === ClusterTaskModel.kind) {
     resources = {
       kind: referenceForModel(ClusterTaskModel),
       name: data.task.taskRef.name,
