@@ -103,7 +103,7 @@ In order to enable the monitoring UI and see the "Observe" navigation item while
 2. `cd` to the monitoring-plugin root dir
 3. Run
   ```
-  yarn && yarn start
+  make install && make start-frontend
   ```
 4. Run Bridge in another terminal following the steps above, but set the following environment variable before starting Bridge:
   ```
