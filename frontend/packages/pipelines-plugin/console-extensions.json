@@ -1,5 +1,11 @@
 [
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_17" }
+    }
+  },
+  {
     "type": "console.model-metadata",
     "properties": {
       "model": {
@@ -137,6 +143,9 @@
       "label": "%pipelines-plugin~ClusterTask%",
       "labelPlural": "%pipelines-plugin~ClusterTasks%",
       "abbr": "CT"
+    },
+    "flags": {
+      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17"]
     }
   },
   {
@@ -226,6 +235,48 @@
       "labelPlural": "%pipelines-plugin~Repositories%",
       "abbr": "R",
       "badge": "dev"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "TektonConfig"
+      },
+      "color": "#38812f",
+      "label": "%pipelines-plugin~TektonConfig%",
+      "labelPlural": "%pipelines-plugin~TektonConfigs%",
+      "abbr": "TC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "TektonHub"
+      },
+      "color": "#38812f",
+      "label": "%pipelines-plugin~TektonHub%",
+      "labelPlural": "%pipelines-plugin~TektonHubs%",
+      "abbr": "TH"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "TektonResult"
+      },
+      "color": "#38812f",
+      "label": "%pipelines-plugin~TektonResult%",
+      "labelPlural": "%pipelines-plugin~TektonResults%",
+      "abbr": "TR"
     }
   },
   {
@@ -407,7 +458,10 @@
       "component": { "$codeRef": "tasksComponent.ClusterTaskDetailsPage" }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASK_DETAILS"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASK_DETAILS",
+        "PIPELINES_OPERATOR_VERSION_1_17"
+      ]
     }
   },
   {
@@ -632,7 +686,10 @@
       "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST",
+        "PIPELINES_OPERATOR_VERSION_1_17"
+      ]
     }
   },
   {
@@ -646,7 +703,10 @@
       "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST",
+        "PIPELINES_OPERATOR_VERSION_1_17"
+      ]
     }
   },
   {
@@ -1107,6 +1167,9 @@
         "version": "v1beta1"
       },
       "template": { "$codeRef": "yamlTemplates.newClusterTaskTemplate" }
+    },
+    "flags": {
+      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17"]
     }
   },
   {
@@ -1118,7 +1181,10 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "PIPELINES_OPERATOR_VERSION_1_17"
+      ]
     }
   },
   {
