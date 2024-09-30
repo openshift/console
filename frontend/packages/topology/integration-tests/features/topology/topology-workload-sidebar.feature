@@ -86,3 +86,14 @@ Feature: Sidebar in topology
               And user enters key as "app.openshift.io/route-disabled"
               And user enters value as "true"
              Then user can see route decorator has been hidden for workload "nodejs-ex-3"
+
+
+        @regression @OCPBUGS-37584
+        Scenario: CronJob Sidebar Details: T-14-TC08
+            Given user applies cronjob YAML
+             Then user will see cron job with name "hello" on topology page
+              And user clicks on workload "hello" to open sidebar
+              And user can see sidebar Details, Resources tabs
+              And user verifies name of the node "hello" and Action drop down present on top of the sidebar
+              And user verifies "Jobs" section is visible
+              And user verifies "Pods" section is visible
