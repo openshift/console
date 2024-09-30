@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Red Hat, Inc.
+// Copyright Red Hat
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
@@ -573,7 +572,7 @@ func getDevfileFromRegistry(id, registryURL, version string, httpTimeout *int) (
 }
 
 func getResourcesFromRegistry(id, registryURL, destDir string) error {
-	stackDir, err := ioutil.TempDir(os.TempDir(), fmt.Sprintf("registry-resources-%s", id))
+	stackDir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("registry-resources-%s", id))
 	if err != nil {
 		return fmt.Errorf("failed to create dir: %s, error: %v", stackDir, err)
 	}

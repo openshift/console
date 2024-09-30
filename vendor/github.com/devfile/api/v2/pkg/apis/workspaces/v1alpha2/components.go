@@ -41,7 +41,7 @@ const (
 type BaseComponent struct {
 }
 
-//+k8s:openapi-gen=true
+// +k8s:openapi-gen=true
 type Component struct {
 	// Mandatory name that allows referencing the component
 	// from other elements (such as commands) or from an external
