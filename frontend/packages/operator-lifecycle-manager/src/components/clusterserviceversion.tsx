@@ -291,10 +291,10 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
       {consoleOperatorConfig && canPatchConsoleOperatorConfig && (
         <dl className="co-clusterserviceversion-details__field">
           <dt>{t('olm~Console plugin', { count: csvPluginsCount })}</dt>
-          {csvPlugins.map((plugin) => (
-            <dd key={plugin} className="co-clusterserviceversion-details__field-description">
+          {csvPlugins.map((pluginName) => (
+            <dd key={pluginName} className="co-clusterserviceversion-details__field-description">
               {csvPluginsCount > 1 && (
-                <strong className="text-muted">{t('olm~{{plugin}}:', { plugin })} </strong>
+                <strong className="text-muted">{t('olm~{{plugin}}:', { pluginName })} </strong>
               )}
               <Button
                 data-test="edit-console-plugin"
@@ -304,14 +304,14 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
                   consolePluginModal({
                     consoleOperatorConfig,
                     csvPluginsCount,
-                    plugin,
+                    pluginName,
                     trusted,
                   })
                 }
                 variant="link"
               >
                 <>
-                  {isPluginEnabled(consoleOperatorConfig, plugin)
+                  {isPluginEnabled(consoleOperatorConfig, pluginName)
                     ? t('olm~Enabled')
                     : t('olm~Disabled')}{' '}
                   <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />

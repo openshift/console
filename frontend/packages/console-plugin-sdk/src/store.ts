@@ -143,6 +143,7 @@ export class PluginStore {
         Object.freeze(augmentExtension(sanitizeExtension(e), pluginID, manifest.name, index)),
       ),
       enabled: false,
+      customInfo: {},
     });
 
     (manifest.customProperties?.console?.disableStaticPlugins ?? [])
@@ -197,10 +198,14 @@ export class PluginStore {
     }
   }
 
-  private isDynamicPluginLoaded(pluginName: string) {
-    return Array.from(this.loadedDynamicPlugins.values()).some(
+  private getLoadedDynamicPlugin(pluginName: string) {
+    return Array.from(this.loadedDynamicPlugins.values()).find(
       (plugin) => plugin.manifest.name === pluginName,
     );
+  }
+
+  private isDynamicPluginLoaded(pluginName: string) {
+    return this.getLoadedDynamicPlugin(pluginName) !== undefined;
   }
 
   private isDynamicPluginFailed(pluginName: string) {
@@ -222,6 +227,26 @@ export class PluginStore {
     this.invokeListeners();
   }
 
+  setCustomDynamicPluginInfo(pluginName: string, data: CustomDynamicPluginInfo) {
+    const plugin = this.getLoadedDynamicPlugin(pluginName);
+
+    if (!plugin) {
+      console.warn(
+        `Attempt to set custom data for plugin ${pluginName} that has not been loaded yet`,
+      );
+      return;
+    }
+
+    const oldData = plugin.customInfo;
+    const newData = _.merge({}, plugin.customInfo, data);
+
+    if (!_.isEqual(oldData, newData)) {
+      plugin.customInfo = newData;
+
+      this.invokeListeners();
+    }
+  }
+
   getDynamicPluginInfo(): DynamicPluginInfo[] {
     const loadedPluginEntries = Array.from(this.loadedDynamicPlugins.entries()).reduce(
       (acc, [pluginID, plugin]) => {
@@ -230,6 +255,7 @@ export class PluginStore {
           pluginID,
           metadata: _.omit(plugin.manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: plugin.enabled,
+          ...plugin.customInfo,
         });
         return acc;
       },
@@ -296,6 +322,7 @@ type LoadedDynamicPlugin = {
   manifest: DynamicPluginManifest;
   processedExtensions: Readonly<LoadedExtension[]>;
   enabled: boolean;
+  customInfo: CustomDynamicPluginInfo;
 };
 
 type FailedDynamicPlugin = {
@@ -303,12 +330,17 @@ type FailedDynamicPlugin = {
   errorCause?: unknown;
 };
 
+type CustomDynamicPluginInfo = Partial<{
+  /** If `true`, one or more Content Security Policy violations were detected for this plugin. */
+  hasCSPViolations: boolean;
+}>;
+
 export type LoadedDynamicPluginInfo = {
   status: 'Loaded';
   pluginID: string;
   metadata: DynamicPluginMetadata;
   enabled: boolean;
-};
+} & CustomDynamicPluginInfo;
 
 export type NotLoadedDynamicPluginInfo =
   | {
