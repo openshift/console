@@ -9,6 +9,7 @@ import {
   SSHAuthSubform,
   CreateConfigSubform,
 } from '@console/internal/components/secrets/create-secret';
+import { SecretChangeData } from '@console/internal/components/secrets/create-secret/types';
 import { ButtonBar } from '@console/internal/components/utils';
 import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
 import { SecretAnnotationId } from '../../const';
@@ -19,7 +20,7 @@ const renderSecretForm = (
   stringData: {
     [key: string]: any;
   },
-  onDataChanged: (value: string) => void,
+  onDataChanged: (value: SecretChangeData) => void,
 ) => {
   switch (type) {
     case SecretType.basicAuth:
@@ -134,7 +135,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
     }
   };
 
-  const onDataChanged = (value: string) => {
+  const onDataChanged = (value: SecretChangeData) => {
     setStringData((prevState) => {
       setValues(values.type, { ...prevState, [values.type]: value });
       return { ...prevState, [values.type]: value };

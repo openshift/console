@@ -7,6 +7,7 @@ import {
   GenericSecretForm,
   SecretType,
 } from '.';
+import { SecretChangeData, SecretStringData } from './types';
 
 export const SecretSubForm: React.FC<WithTypeAbstraction<SecretSubFormProps>> = ({
   typeAbstraction,
@@ -35,6 +36,3 @@ export type SecretSubFormProps = {
   secretType: SecretType;
   isCreate: boolean;
 };
-
-type SecretChangeData = { stringData: SecretStringData; base64StringData: SecretStringData };
-type SecretStringData = { [key: string]: string };
