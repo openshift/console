@@ -6,7 +6,7 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { containsNonPrintableCharacters } from '../../utils/file-input';
+import * as ITOB from 'istextorbinary/edition-es2017';
 import { KeyValueEntryFormState, KeyValueEntryForm } from '.';
 
 class GenericSecretFormWithTranslation extends React.Component<
@@ -34,7 +34,7 @@ class GenericSecretFormWithTranslation extends React.Component<
       return [this.newGenericSecretEntry()];
     }
     return _.map(genericSecretObject, (value, key) => {
-      const isBinary = containsNonPrintableCharacters(value);
+      const isBinary = ITOB.isBinary(null, value);
       return {
         uid: _.uniqueId(),
         entry: {

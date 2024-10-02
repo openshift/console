@@ -6,7 +6,7 @@ import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-i
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
-import { containsNonPrintableCharacters } from './utils/file-input';
+import * as ITOB from 'istextorbinary/edition-es2017';
 
 export const MaskedData: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -114,7 +114,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
       );
       dl.push(
         <dd key={`${k}-v`}>
-          {containsNonPrintableCharacters(Base64.decode(data[k])) ? (
+          {ITOB.isBinary(k, Buffer.from(data[k], 'base64')) ? (
             <DownloadBinaryButton label={k} value={data[k]} />
           ) : (
             <SecretValue value={data[k]} reveal={reveal} />
