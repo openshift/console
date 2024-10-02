@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
+import { useDebounceCallback } from '@console/shared';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 
@@ -50,6 +51,8 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
       [NO_GROUPING]: t('console-shared~None'),
     };
 
+    const debouncedOnSearchKeywordChange = useDebounceCallback(onSearchKeywordChange);
+
     React.useImperativeHandle(toolbarRef, () => {
       // TODO: Remove this hack once https://github.com/patternfly/patternfly-react/issues/5168 is fixed.
       // eslint-disable-next-line react/no-find-dom-node
@@ -68,7 +71,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               type="text"
               placeholder={t('console-shared~Filter by keyword...')}
               value={searchKeyword}
-              onChange={(event, text) => onSearchKeywordChange(text)}
+              onChange={(_event, text) => debouncedOnSearchKeywordChange(text)}
               onClear={() => onSearchKeywordChange('')}
               aria-label={t('console-shared~Filter by keyword...')}
             />
