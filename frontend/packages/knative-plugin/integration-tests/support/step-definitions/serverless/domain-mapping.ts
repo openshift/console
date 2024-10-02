@@ -44,7 +44,11 @@ When('user clicks Save button', () => {
 });
 
 When('user clicks on Show advanced Routing options', () => {
-  cy.get(domainPO.contentScroll).contains('Show advanced Routing options').click();
+  cy.get(domainPO.contentScroll).contains('Show advanced Routing options').scrollIntoView();
+  cy.get(domainPO.contentScroll)
+    .contains('Show advanced Routing options')
+    .closest('button')
+    .click();
 });
 
 When('user clicks create button', () => {
@@ -90,10 +94,11 @@ When(
 );
 
 When('user removes already added custom domain mapping {string} and {string}', (d1, d2) => {
-  cy.get(domainPO.chipArea).should('be.visible').click();
-  cy.get(`[id="select-option-serverless.domainMapping-${d1}"] button`).should('be.visible').click();
-  cy.get(`[id="select-option-serverless.domainMapping-${d2}"] button`).should('be.visible').click();
-  cy.get(domainPO.chipDescribe).should('not.contain', d1).and('not.contain', d2);
+  cy.get(domainPO.menuToggle).scrollIntoView();
+  cy.get(domainPO.menuToggle).should('be.visible').click();
+  cy.get(`button[aria-label="Remove ${d1}"]`).should('be.visible').click();
+  cy.get(`button[aria-label="Remove ${d2}"]`).should('be.visible').click();
+  cy.get(domainPO.chipGroup).should('not.contain', d1).and('not.contain', d2);
 });
 
 Then(
@@ -110,7 +115,8 @@ Given('user can see knative service {string} exist in topology page', (workloadN
 });
 
 When('user removes already added custom domain mapping {string}', (d1) => {
-  cy.get(domainPO.chipArea).should('be.visible').click();
-  cy.get(`[id="select-option-serverless.domainMapping-${d1}"] button`).should('be.visible').click();
-  cy.get(domainPO.chipDescribe).should('not.contain', d1);
+  cy.get(domainPO.menuToggle).scrollIntoView();
+  cy.get(domainPO.menuToggle).should('be.visible').click();
+  cy.get(`button[id*="value-${d1}"]`).should('be.visible').click();
+  cy.get(domainPO.chipGroup).should('not.contain', d1);
 });

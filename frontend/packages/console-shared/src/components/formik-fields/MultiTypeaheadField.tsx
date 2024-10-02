@@ -266,7 +266,6 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       variant="typeahead"
-      aria-label={ariaLabel}
       onClick={onToggleClick}
       innerRef={toggleRef}
       isExpanded={isOpen}
@@ -291,6 +290,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
           {...(activeItemId && { 'aria-activedescendant': activeItemId })}
           role="combobox"
           isExpanded={isOpen}
+          aria-label={ariaLabel}
           aria-controls={`${ID_PREFIX}-listbox`}
         >
           <ChipGroup aria-label={t('console-shared~Current selections')}>
@@ -301,6 +301,9 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
                   ev.stopPropagation();
                   onSelect(selection);
                 }}
+                closeBtnAriaLabel={t('console-shared~Remove {{singularLabel}}', {
+                  singularLabel: getChildren(selection),
+                })}
               >
                 {getChildren(selection)}
               </Chip>

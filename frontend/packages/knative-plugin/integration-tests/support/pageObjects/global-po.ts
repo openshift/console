@@ -272,9 +272,8 @@ export const hpaPO = {
 
 export const domainPO = {
   domainMapping: '[aria-label="Domain mapping"]',
-  chipGroup: '[aria-label="Chip group category"]',
+  chipGroup: '.pf-m-typeahead [id*="select-multi-typeahead-"]',
   contentScroll: '[id="content-scrollable"]',
   removeLabel: '[aria-label="Remove"]',
-  chipArea: '#form-select-input-serverless-domainMapping-field',
-  chipDescribe: '[aria-describedby="form-select-input-serverless-domainMapping-field-helper"]',
+  menuToggle: '.pf-m-typeahead [aria-label="Menu toggle"]',
 };
