@@ -24,7 +24,6 @@ import (
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
-
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
 )

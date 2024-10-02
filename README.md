@@ -426,6 +426,36 @@ We support the latest versions of the following browsers:
 
 IE 11 and earlier is not supported.
 
+### CLI Artifacts Downloads Server
+
+The server provides `oc` binaries from the [quay.io/repository/openshift/origin-cli-artifacts](https://quay.io/repository/openshift/origin-cli-artifacts) image.
+
+#### To build the server:
+
+```
+./build-downloads.sh
+```
+
+#### Running the server :
+
+After building, the server can be run directly with:
+
+```
+./bin/downloads --config-path=cmd/downloads/config/defaultArtifactsConfig.yaml
+```
+Alternatively, you can use the provided Dockerfile.downloads to build an image containing the server. Use the following command to build the Docker image:
+
+```
+docker build -f Dockerfile.downloads -t downloadsserver:latest .
+```
+Note: If you are running on macOS, you might need to pass the `--platform linux/amd64` flag to the Docker build command. The origin-cli-artifacts image is not supported on macOS.
+
+To launch the server using the built image, you can run:
+
+```
+docker run -p 8081:8081 downloadsserver:latest
+```
+
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
 [[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)
