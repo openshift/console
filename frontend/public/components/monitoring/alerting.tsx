@@ -113,7 +113,6 @@ import { refreshNotificationPollers } from '../notification-drawer';
 import { SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { LoadingInline, StatusBox } from '../utils/status-box';
-import MonitoringDashboardsPage from './dashboards';
 import { fetchAlerts } from './fetch-alerts';
 import { useBoolean } from './hooks/useBoolean';
 import KebabDropdown from './kebab-dropdown';
@@ -2430,8 +2429,6 @@ export const MonitoringUI = () => (
     <Route path="" element={<Navigate to="/monitoring/alerts" replace />} />
     <Route path="alertmanagerconfig" element={<AlertmanagerConfig />} />
     <Route path="alertmanageryaml" element={<AlertmanagerYAML />} />
-    <Route path="dashboards" element={<MonitoringDashboardsPage />} />
-    <Route path="dashboards/:board" element={<MonitoringDashboardsPage />} />
     <Route path="graph" element={<PrometheusUIRedirect />} />
     <Route path="silences/~new" element={<CreateSilence />} />
     <Route path="targets/*" element={<TargetsUI />} />
