@@ -14,7 +14,6 @@ import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 
 import { checkAccess } from './rbac';
 import { KebabItems } from './kebab';
-import { ResourceName } from './resource-icon';
 
 class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -785,59 +784,4 @@ ActionsMenu.propTypes = {
     }),
   ).isRequired,
   title: PropTypes.node,
-};
-
-const containerLabel = (container) => (
-  <ResourceName name={container ? container.name : ''} kind="Container" />
-);
-
-export const ContainerDropdown = (props) => {
-  const { t } = useTranslation();
-
-  const getSpacer = (container) => {
-    const spacerBefore = new Set();
-    return container ? spacerBefore.add(container.name) : spacerBefore;
-  };
-
-  const getHeaders = (container, initContainer) => {
-    return initContainer
-      ? {
-          [container.name]: t('public~Containers'),
-          [initContainer.name]: t('public~Init containers'),
-        }
-      : {};
-  };
-
-  const { currentKey, containers, initContainers, onChange } = props;
-  if (_.isEmpty(containers) && _.isEmpty(initContainers)) {
-    return null;
-  }
-  const firstInitContainer = _.find(initContainers, { order: 0 });
-  const firstContainer = _.find(containers, { order: 0 });
-  const spacerBefore = getSpacer(firstInitContainer);
-  const headerBefore = getHeaders(firstContainer, firstInitContainer);
-  const dropdownItems = _.mapValues(_.merge(containers, initContainers), containerLabel);
-  const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
-  return (
-    <Dropdown
-      headerBefore={headerBefore}
-      items={dropdownItems}
-      spacerBefore={spacerBefore}
-      title={title}
-      onChange={onChange}
-      selectedKey={currentKey}
-    />
-  );
-};
-
-ContainerDropdown.propTypes = {
-  containers: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  currentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  initContainers: PropTypes.object,
-  onChange: PropTypes.func.isRequired,
-};
-
-ContainerDropdown.defaultProps = {
-  currentKey: '',
-  initContainers: {},
 };
