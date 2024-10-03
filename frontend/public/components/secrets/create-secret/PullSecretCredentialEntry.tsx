@@ -13,7 +13,9 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
   const { t } = useTranslation();
 
   const updateEntry = (name: string, value: string): void => {
-    const auth = username && password ? Base64.encode(`${username}:${password}`) : '';
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
+    const auth = username && password ? Base64.encode(`${trimmedUsername}:${trimmedPassword}`) : '';
     onChange(
       {
         address,
