@@ -73,7 +73,7 @@ export class ConsoleActivePluginsModule {
       }
     };
 
-    const addFilesToCompilation = (compilation: webpack.compilation.Compilation) => {
+    const addFilesToCompilation = (compilation: webpack.Compilation) => {
       this.pluginPackages.forEach((pkg) => {
         getPluginFiles(pkg).forEach((f) => {
           compilation.fileDependencies.add(f);
@@ -81,9 +81,9 @@ export class ConsoleActivePluginsModule {
       });
     };
 
-    const addErrorsToCompilation = (compilation: webpack.compilation.Compilation) => {
+    const addErrorsToCompilation = (compilation: webpack.Compilation) => {
       errors.forEach((e) => {
-        compilation.errors.push(new Error(e));
+        compilation.errors.push(new webpack.WebpackError(e));
       });
     };
 

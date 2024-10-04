@@ -8,7 +8,7 @@ import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
 import { EditYAML } from './edit-yaml';
 import withDragDropContext from './utils/drag-drop-context';
 import { DropTargetMonitor } from 'react-dnd/lib/interfaces';
-import * as ITOB from 'istextorbinary/edition-es2017';
+import * as ITOB from 'istextorbinary';
 
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
