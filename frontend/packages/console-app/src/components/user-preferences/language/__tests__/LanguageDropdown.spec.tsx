@@ -33,6 +33,10 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('../useLanguage', () => ({
+  useLanguage: jest.fn(),
+}));
+
 jest.mock('../usePreferredLanguage', () => ({
   usePreferredLanguage: jest.fn(),
 }));
@@ -74,7 +78,7 @@ describe('LanguageDropdown', () => {
 
     expect(
       (mountlanguagedropdown.find(MenuToggle).props() as { isDisabled: boolean }).isDisabled,
-    ).toBe(true); // This Fails :( test errror => "TypeError: localStorage.removeItem is not a function"
+    ).toBe(true);
   });
 
   it('should render checkbox in unchecked state and select in enabled state if user preferences have loaded and preferred language is defined', () => {
@@ -89,7 +93,7 @@ describe('LanguageDropdown', () => {
 
     expect(
       (mountlanguagedropdown.find(MenuToggle).props() as { isDisabled: boolean }).isDisabled,
-    ).toBe(false); // This passes :)
+    ).toBe(false);
   });
 
   it('should render select with value corresponding to preferred language if user preferences have loaded and preferred language is defined', () => {
