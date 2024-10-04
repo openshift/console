@@ -1,22 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DroppableFileInput, SecretSubFormProps } from '.';
+import { DroppableFileInput } from '.';
+import { SecretStringData } from './types';
 
-export const SSHAuthSubform: React.FC<SecretSubFormProps> = ({ onChange, stringData }) => {
+export const SSHAuthSubform: React.FC<SSHAuthSubformProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation();
-  const [sshPrivateKey, setSshPrivateKey] = React.useState<string>(
-    stringData['ssh-privatekey'] || '',
-  );
-  const onFileChange = (fileData) => {
+  const onFileChange = (fileData: string) => {
     const value = fileData.endsWith('\n') ? fileData : `${fileData}\n`;
-    setSshPrivateKey(value);
-    onChange({ stringData: { ...stringData, 'ssh-privatekey': value }, base64StringData: {} });
+    onChange({ 'ssh-privatekey': value });
   };
-
   return (
     <DroppableFileInput
       onChange={onFileChange}
-      inputFileData={sshPrivateKey}
+      inputFileData={stringData['ssh-privatekey'] || ''}
       id="ssh-privatekey"
       label={t('public~SSH private key')}
       inputFieldHelpText={t(
@@ -26,4 +22,9 @@ export const SSHAuthSubform: React.FC<SecretSubFormProps> = ({ onChange, stringD
       isRequired={true}
     />
   );
+};
+
+type SSHAuthSubformProps = {
+  onChange: Function;
+  stringData: SecretStringData;
 };
