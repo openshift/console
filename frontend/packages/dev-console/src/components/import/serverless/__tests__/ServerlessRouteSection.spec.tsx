@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { useFormikContext } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { SelectInputField } from '@console/shared';
+import { MultiTypeaheadField } from '@console/shared';
 import ServerlessRouteSection from '../ServerlessRouteSection';
 import { domainMappings } from './serverless-utils.data';
 
@@ -59,36 +59,36 @@ describe(' ServerlessRouteSection', () => {
     expect(component.isEmptyRender()).toBe(false);
   });
 
-  it('Should render SelectInputField if domainMappingLoaded is true', () => {
+  it('Should render MultiTypeaheadField if domainMappingLoaded is true', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
     const component = shallow(<ServerlessRouteSection />);
-    expect(component.find(SelectInputField).exists()).toBe(true);
-    expect(component.find(SelectInputField).props().options).toEqual([]);
+    expect(component.find(MultiTypeaheadField).exists()).toBe(true);
+    expect(component.find(MultiTypeaheadField).props().options).toEqual([]);
   });
 
-  it('Should render SelectInputField if domainMapping could not load', () => {
+  it('Should render MultiTypeaheadField if domainMapping could not load', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([null, null, 'err']);
     const component = shallow(<ServerlessRouteSection />);
-    expect(component.find(SelectInputField).exists()).toBe(true);
-    expect(component.find(SelectInputField).props().options).toEqual([]);
+    expect(component.find(MultiTypeaheadField).exists()).toBe(true);
+    expect(component.find(MultiTypeaheadField).props().options).toEqual([]);
   });
 
-  it('Should render SelectInputField if domainMappingLoaded is true and has data with valid options', () => {
+  it('Should render MultiTypeaheadField if domainMappingLoaded is true and has data with valid options', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([domainMappings, true]);
     const component = shallow(<ServerlessRouteSection />);
-    expect(component.find(SelectInputField).exists()).toBe(true);
-    expect(component.find(SelectInputField).props().options).toEqual([
+    expect(component.find(MultiTypeaheadField).exists()).toBe(true);
+    expect(component.find(MultiTypeaheadField).props().options).toEqual([
       { value: 'example.domain1.org (service-one)', disabled: false },
       { value: 'example.domain2.org (service-two)', disabled: false },
     ]);
   });
 
-  it('Should render SelectInputField with the domain mapping options without other ksvc info', () => {
+  it('Should render MultiTypeaheadField with the domain mapping options without other ksvc info', () => {
     const connectedDomainMapping = { ...domainMappings[0] };
     connectedDomainMapping.spec.ref.name = 'hello-openshift';
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[connectedDomainMapping], true]);
     const component = shallow(<ServerlessRouteSection />);
-    expect(component.find(SelectInputField).props().options).toEqual([
+    expect(component.find(MultiTypeaheadField).props().options).toEqual([
       { value: 'example.domain1.org', disabled: false },
     ]);
   });
@@ -136,10 +136,10 @@ describe(' ServerlessRouteSection', () => {
     expect(component.find('[data-test="domain-mapping-warning"]').exists()).toBe(true);
   });
 
-  it('Should render LoadingInline not SelectInputField if domainMapping is inflight', () => {
+  it('Should render LoadingInline not MultiTypeaheadField if domainMapping is inflight', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([null, false]);
     const component = shallow(<ServerlessRouteSection />);
-    expect(component.find(SelectInputField).exists()).toBe(false);
+    expect(component.find(MultiTypeaheadField).exists()).toBe(false);
     expect(component.find(LoadingInline).exists()).toBe(true);
   });
 });

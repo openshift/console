@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
-import { SelectVariant as SelectVariantDeprecated } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
-import { InputField, ResourceDropdownField, SelectInputField } from '@console/shared';
+import { InputField, ResourceDropdownField, MultiTypeaheadField } from '@console/shared';
 import { EVENT_SINK_KAFKA_KIND } from '../../../const';
 import { useBootstrapServers } from '../../../hooks';
 
@@ -33,17 +32,15 @@ const KafkaSinkSection: React.FC<KafkaSinkSectionProps> = ({ title, namespace, f
 
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth}>
-      <SelectInputField
+      <MultiTypeaheadField
         data-test="kafkasink-bootstrapservers-field"
         name={`formData.data.${EVENT_SINK_KAFKA_KIND}.bootstrapServers`}
         label={t('knative-plugin~Bootstrap servers')}
         ariaLabel={t('knative-plugin~Bootstrap servers')}
-        variant={SelectVariantDeprecated.typeaheadMulti}
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
         helpText={t('knative-plugin~The address of the Kafka broker')}
         isCreatable
-        hasOnCreateOption
         required
       />
       <InputField

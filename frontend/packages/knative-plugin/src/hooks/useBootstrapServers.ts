@@ -7,7 +7,7 @@ import { SelectInputOption } from '@console/shared';
 import { getBootstrapServers } from '../utils/create-eventsources-utils';
 import { kafkaBootStrapServerResourcesWatcher } from '../utils/get-knative-resources';
 
-export const useBootstrapServers = (namespace: string): [SelectInputOption[], React.ReactNode] => {
+export const useBootstrapServers = (namespace: string): [SelectInputOption[], string] => {
   const { t } = useTranslation();
   const memoResources = React.useMemo(() => kafkaBootStrapServerResourcesWatcher(namespace), [
     namespace,
@@ -18,7 +18,7 @@ export const useBootstrapServers = (namespace: string): [SelectInputOption[], Re
 
   return React.useMemo(() => {
     let bootstrapServersOptions: SelectInputOption[] = [];
-    let placeholder: React.ReactNode = '';
+    let placeholder: string = '';
     const isKafkasLoaded =
       (kafkas.loaded && !kafkas.loadError) ||
       (kafkaconnections.loaded && !kafkaconnections.loadError);
