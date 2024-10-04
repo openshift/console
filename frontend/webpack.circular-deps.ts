@@ -78,12 +78,12 @@ const getCycleEntries = (cycles: DetectedCycle[]): string => {
 const applyThresholds = (
   cycles: DetectedCycle[],
   thresholds: PresetOptions['thresholds'],
-  compilation: webpack.compilation.Compilation,
+  compilation: webpack.Compilation,
 ) => {
   const totalCycles = cycles.length;
   if (thresholds.totalCycles && totalCycles > thresholds.totalCycles) {
     compilation.errors.push(
-      new Error(
+      new webpack.WebpackError(
         `${HandleCyclesPluginName}: total cycles (${totalCycles}) exceeds threshold (${thresholds.totalCycles})`,
       ),
     );
@@ -92,17 +92,21 @@ const applyThresholds = (
   const minLengthCycles = minLengthCycleCount(cycles);
   if (thresholds.minLengthCycles && minLengthCycles > thresholds.minLengthCycles) {
     compilation.errors.push(
-      new Error(
+      new webpack.WebpackError(
         `${HandleCyclesPluginName}: min-length cycles (${minLengthCycles}) exceeds threshold (${thresholds.minLengthCycles})`,
       ),
     );
   }
 };
 
+declare type webpackPlugin =
+  | ((this: webpack.Compiler, compiler: webpack.Compiler) => void)
+  | webpack.WebpackPluginInstance;
+
 export class CircularDependencyPreset {
   constructor(private readonly options: PresetOptions) {}
 
-  apply(plugins: webpack.Plugin[]): void {
+  apply(plugins: (false | '' | 0 | webpackPlugin)[]): void {
     const cycles: DetectedCycle[] = [];
 
     plugins.push(
