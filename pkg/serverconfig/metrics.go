@@ -79,6 +79,7 @@ var knownPluginNames = map[string]MappedPluginName{
 	"odf-console":                     "odf",
 	"odf-multicluster-console":        "odf-multicluster",
 	"pipeline-console-plugin":         "pipelines",
+	"pipelines-console-plugin":        "pipelines",
 
 	// Unchanged template name from https://github.com/openshift/console-plugin-template
 	"console-plugin-template": "demo",
