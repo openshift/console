@@ -87,7 +87,7 @@ export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => 
 };
 ConfigMapData.displayName = 'ConfigMapData';
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true, id }) => {
   const { t } = useTranslation();
   if (!value) {
     return <span className="text-muted">{t('public~No value')}</span>;
@@ -95,7 +95,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 
   const decodedValue = encoded ? Base64.decode(value) : value;
   const visibleValue = reveal ? decodedValue : <MaskedData />;
-  return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} />;
+  return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} id={id} />;
 };
 SecretValue.displayName = 'SecretValue';
 
@@ -117,7 +117,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
           {containsNonPrintableCharacters(Base64.decode(data[k])) ? (
             <DownloadBinaryButton label={k} value={data[k]} />
           ) : (
-            <SecretValue value={data[k]} reveal={reveal} />
+            <SecretValue value={data[k]} reveal={reveal} id={k} />
           )}
         </dd>,
       );
@@ -176,6 +176,7 @@ type SecretValueProps = {
   value: string;
   encoded?: boolean;
   reveal: boolean;
+  id?: string;
 };
 
 type SecretDataProps = {

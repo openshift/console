@@ -2,9 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
-import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
-import { Tooltip } from '@patternfly/react-core';
-import { CopyIcon } from '@patternfly/react-icons/dist/esm/icons/copy-icon';
+import { ClipboardCopyButton } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
@@ -97,9 +95,18 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   dataTestID,
 }) => {
   const [copied, setCopied] = React.useState(false);
-
   const { t } = useTranslation();
-  const tooltipText = copied ? t('public~Copied to clipboard') : t('public~Copy to clipboard');
+
+  const clipboardCopyFunc = (event, txt) => {
+    navigator.clipboard.writeText(txt.toString());
+  };
+  const onClick = (event, txt) => {
+    clipboardCopyFunc(event, txt);
+    setCopied(true);
+  };
+
+  const copyToClipboardText = t('public~Copy to clipboard');
+  const tooltipText = copied ? t('public~Copied') : copyToClipboardText;
   const tooltipContent = [
     <span className="co-nowrap" key="nowrap">
       {tooltipText}
@@ -108,7 +115,13 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
 
   return (
     <div className={classNames(additionalClassName)}>
-      <a href={link} target="_blank" rel="noopener noreferrer" data-test-id={dataTestID}>
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        id="link-content"
+        data-test-id={dataTestID}
+      >
         {text ?? link}
         <span className="co-icon-nowrap">
           &nbsp;
@@ -118,17 +131,19 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
         </span>
       </a>
       <span className="co-icon-nowrap">
-        <Tooltip content={tooltipContent} trigger="click mouseenter focus" exitDelay={1250}>
-          <CTC text={link} onCopy={() => setCopied(true)}>
-            <span
-              onMouseEnter={() => setCopied(false)}
-              className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
-            >
-              <CopyIcon />
-              <span className="pf-v5-u-screen-reader">{t('public~Copy to clipboard')}</span>
-            </span>
-          </CTC>
-        </Tooltip>
+        <ClipboardCopyButton
+          id="clipboard-copy-button"
+          textId="link-content"
+          aria-label={copyToClipboardText}
+          onClick={(e) => onClick(e, text)}
+          exitDelay={copied ? 1250 : 600}
+          variant="plain"
+          maxWidth="120px"
+          onTooltipHidden={() => setCopied(false)}
+          className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
+        >
+          {tooltipContent}
+        </ClipboardCopyButton>
       </span>
     </div>
   );
