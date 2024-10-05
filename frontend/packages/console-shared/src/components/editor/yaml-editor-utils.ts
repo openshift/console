@@ -1,4 +1,5 @@
 import * as URL from 'url';
+import { Uri, Range } from 'monaco-editor';
 import {
   MonacoToProtocolConverter,
   ProtocolToMonacoConverter,
@@ -8,12 +9,10 @@ import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 
-const { Range } = window.monaco;
-
 export const defaultEditorOptions = { readOnly: false, scrollBeyondLastLine: false };
 
 const MODEL_URI = 'inmemory://model.yaml';
-const MONACO_URI = monaco.Uri.parse(MODEL_URI);
+const MONACO_URI = Uri.parse(MODEL_URI);
 
 const createDocument = (model) => {
   return TextDocument.create(

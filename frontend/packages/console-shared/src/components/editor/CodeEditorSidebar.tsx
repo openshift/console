@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
+import { Range, Selection } from 'monaco-editor';
 import MonacoEditor from 'react-monaco-editor';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
 import { K8sKind } from '@console/internal/module/k8s';
@@ -34,7 +35,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
 
       const selection = editor.getSelection();
-      const range = new window.monaco.Range(
+      const range = new Range(
         selection.startLineNumber,
         selection.startColumn,
         selection.endLineNumber,
@@ -55,7 +56,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
       const indentedText = indentedLines.join('\n');
 
       // Grab the selection size of what we are about to add
-      const newContentSelection = new window.monaco.Selection(
+      const newContentSelection = new Selection(
         selection.startLineNumber,
         selection.startColumn,
         selection.startLineNumber + lineCount - 1,

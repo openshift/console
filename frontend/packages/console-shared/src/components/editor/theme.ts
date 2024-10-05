@@ -5,7 +5,7 @@ import { global_BackgroundColor_light_100 as lightEditorBackground } from '@patt
 import { global_Color_dark_100 as globalColorDark100 } from '@patternfly/react-tokens/dist/js/global_Color_dark_100';
 import { global_Color_light_100 as globalColorLight100 } from '@patternfly/react-tokens/dist/js/global_Color_light_100';
 
-window.monaco.editor.defineTheme('console-light', {
+(window as any).monaco.editor.defineTheme('console-light', {
   base: 'vs',
   inherit: true,
   colors: {
@@ -22,7 +22,7 @@ window.monaco.editor.defineTheme('console-light', {
   ],
 });
 
-window.monaco.editor.defineTheme('console-dark', {
+(window as any).monaco.editor.defineTheme('console-dark', {
   base: 'vs-dark',
   inherit: true,
   colors: {

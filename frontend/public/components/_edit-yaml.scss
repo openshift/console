@@ -55,8 +55,3 @@
     display: none;
   }
 }
-
-// This can't be customized in a theme, so use CSS.
-.yaml-editor .monaco-editor .margin .current-line {
-  background-color: var(--pf-v5-global--BackgroundColor--dark-200);
-}
