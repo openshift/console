@@ -1,7 +1,12 @@
 import { sortable } from '@patternfly/react-table';
 import i18n from 'i18next';
 import { Kebab } from '@console/internal/components/utils';
-import { RepositoryLabels, RepositoryFields } from './consts';
+import {
+  RepoAnnotationFields,
+  RepositoryAnnotations,
+  RepositoryFields,
+  RepositoryLabels,
+} from './consts';
 
 export const tableColumnClasses = [
   'pf-u-w-16-on-lg pf-u-w-25-on-md',
@@ -62,7 +67,7 @@ const RepositoryPipelineRunHeader = () => {
     },
     {
       title: i18n.t('pipelines-plugin~Branch/Tag'),
-      sortField: `metadata.labels.${RepositoryLabels[RepositoryFields.BRANCH]}`,
+      sortField: `metadata.annotations.${RepositoryAnnotations[RepoAnnotationFields.BRANCH]}`,
       transforms: [sortable],
       props: { className: tableColumnClasses[7] },
     },
