@@ -15,7 +15,7 @@ if [ -d "$ARTIFACT_DIR" ]; then
 fi
 
 MAX_BYTES=3879731 # ~3.7 MiB
-VENDORS_MAIN_BYTES=$(du -b `find public/dist -type f -name 'vendors~main-chunk*js'` | cut -f1)
+VENDORS_MAIN_BYTES=$(du -b `find public/dist -type f -name 'vendors~*-bundle-*js'` | cut -f1 | sort -n | tail -1)
 DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $VENDORS_MAIN_BYTES/1024/1024}")
 MAX_DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $MAX_BYTES/1024/1024}")
 
