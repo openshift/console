@@ -53,7 +53,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
   const rows = specAttributes
     .filter((a) => loaded && eventType?.spec?.hasOwnProperty(a))
     .reduce((a, v) => ({ ...a, [v]: eventType.spec[v] }), {});
-  const { kind, apiVersion, apiGroup, labelKey } = getResourceModel();
+  const { kind, apiVersion, apiGroup } = getResourceModel();
   const getSpecForKind = (connectorSourceKind: string) => {
     let spec = {};
     if (connectorSourceKind === EventingTriggerModel.kind) {
@@ -90,6 +90,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
     },
   };
   const initialValues = {
+    editorType: 'form',
     formData: {
       apiVersion: `${apiGroup}/${apiVersion}`,
       kind,
@@ -128,10 +129,6 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
       });
   };
 
-  const labelTitle = t('knative-plugin~Add {{kind}}', {
-    kind: t(labelKey) || kind,
-  });
-
   const handleCancel = () => history.goBack();
 
   return loaded ? (
@@ -145,7 +142,6 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
         <SubscribeForm
           {...formikProps}
           filterEnabled={sourceKind === EventingBrokerModel.kind}
-          labelTitle={labelTitle}
           source={source}
           handleCancel={handleCancel}
         />

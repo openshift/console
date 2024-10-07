@@ -14,6 +14,7 @@ import {
   SyncedEditorField,
 } from '@console/shared';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
+import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {
@@ -27,7 +28,6 @@ import { convertFormToTriggerYaml, convertYamlToForm } from './subscribe-utils';
 
 export interface SubscribeFormProps {
   filterEnabled: boolean;
-  labelTitle: string;
   source: K8sResourceKind;
   handleCancel?: () => void;
 }
@@ -99,6 +99,7 @@ const SubscribeForm: React.FC<Props> = ({
             sanitizeTo: sanitizeToYaml,
           }}
           lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          noMargin
         />
       </FormBody>
       <FormFooter
@@ -111,6 +112,10 @@ const SubscribeForm: React.FC<Props> = ({
         }
         handleCancel={handleCancel}
         errorMessage={status.error}
+        handleDownload={
+          values.editorType === EditorType.YAML && (() => downloadYaml(values.yamlData))
+        }
+        sticky
       />
     </FlexForm>
   );

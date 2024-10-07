@@ -3,7 +3,8 @@ import { FormGroup, Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField, getFieldId } from '@console/shared';
 import { getSinkableResources } from '../../../utils/get-knative-resources';
@@ -18,6 +19,7 @@ const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true }
   const { values, setFieldValue, setFieldTouched, validateForm, setStatus } = useFormikContext<
     FormikValues
   >();
+  const { namespace } = values.formData.metadata;
   const [resourceAlert, setResourceAlert] = React.useState(false);
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
 
@@ -61,16 +63,17 @@ const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true }
       {resourceAlert && (
         <>
           <Alert variant="custom" title={t('knative-plugin~No Subscriber available')} isInline>
-            {t(
-              'knative-plugin~To create a Subscriber, first create a Knative Service from the Add page.',
-            )}
+            <Trans t={t} ns="knative-plugin">
+              {'To create a Subscriber, first create a Knative Service from the '}
+              <Link to={`/add/ns/${namespace}`}>{'Add page'}</Link>.
+            </Trans>
           </Alert>
           &nbsp;
         </>
       )}
       <ResourceDropdownField
         name="formData.spec.subscriber.ref.name"
-        resources={getSinkableResources(values.formData.metadata.namespace)}
+        resources={getSinkableResources(namespace)}
         dataSelector={['metadata', 'name']}
         fullWidth
         required
