@@ -42,8 +42,7 @@ const BuildConfigForm: React.FC<
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
 
-  const isNew =
-    !watchedBuildConfig?.metadata?.name || watchedBuildConfig?.metadata?.name === '~new';
+  const isNew = !watchedBuildConfig?.metadata?.name;
   const isStale =
     !isNew && watchedBuildConfig?.metadata?.resourceVersion !== values.resourceVersion;
 

@@ -62,7 +62,7 @@ const EditBuildConfig: React.FC<EditBuildConfigProps> = ({
         : parsedBuildConfig;
 
     try {
-      const isNew = !name || name === '~new';
+      const isNew = !name;
       const updatedBuildConfig: BuildConfig = isNew
         ? await k8sCreate<BuildConfig>(BuildConfigModel, changedBuildConfig)
         : await k8sUpdate<BuildConfig>(BuildConfigModel, changedBuildConfig, namespace, name);

@@ -54,7 +54,7 @@ const EditBuild: React.FC<EditBuildProps> = ({ heading, build: watchedBuild, nam
         : parsedBuild;
 
     try {
-      const isNew = !name || name === '~new';
+      const isNew = !name;
       const updatedBuildConfig: Build = isNew
         ? await k8sCreate<Build>(BuildModel, changedBuild)
         : await k8sUpdate<Build>(BuildModel, changedBuild, namespace, name);

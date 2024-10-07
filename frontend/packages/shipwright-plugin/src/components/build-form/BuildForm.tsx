@@ -44,7 +44,7 @@ const BuildForm: React.FC<BuildFormProp> = ({
 }) => {
   const { t } = useTranslation();
   const { ns } = useParams();
-  const isNew = !watchedBuild?.metadata?.name || watchedBuild?.metadata?.name === '~new';
+  const isNew = !watchedBuild?.metadata?.name;
   const isStale = !isNew && watchedBuild?.metadata?.resourceVersion !== values.resourceVersion;
 
   const namespace = watchedBuild?.metadata?.namespace || ns;

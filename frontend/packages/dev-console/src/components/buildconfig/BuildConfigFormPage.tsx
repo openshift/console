@@ -11,7 +11,7 @@ const BuildConfigFormPage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, name } = useParams();
 
-  const isNew = !name || name === '~new';
+  const isNew = !name;
   const [watchedBuildConfig, loaded, loadError] = useK8sWatchResource<BuildConfig>(
     isNew
       ? null

@@ -61,27 +61,6 @@ afterEach(() => {
 });
 
 describe('BuildConfigFormPage', () => {
-  it('should not fetch when creating a new BuildConfig (url contains name ~new)', async () => {
-    useK8sWatchResourceMock.mockReturnValue([null, true, '']);
-
-    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: '~new' });
-
-    const renderResult = render(
-      <Wrapper>
-        <BuildConfigFormPage />
-      </Wrapper>,
-    );
-    renderResult.findByText('Create BuildConfig');
-    expect(renderResult.queryByText('Edit BuildConfig')).toBeFalsy();
-    renderResult.findByText('Configure via:');
-    renderResult.findByText('Form view');
-    renderResult.findByText('YAML view');
-    renderResult.findByRole('button', { name: /Submit/ });
-
-    expect(useK8sWatchResourceMock).toHaveBeenCalledTimes(1);
-    expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
-  });
-
   it('should fetch BuildConfig and render loading until BuildConfig is loaded', () => {
     useK8sWatchResourceMock.mockReturnValue([null, false, '']);
 
