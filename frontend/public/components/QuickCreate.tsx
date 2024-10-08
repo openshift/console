@@ -91,6 +91,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
           variant="plain"
           onClick={onToggleClick}
           isExpanded={isOpen}
+          data-test="quick-create-dropdown"
         >
           <Tooltip content={t('public~Quick create')}>
             <PlusCircleIcon className="co-masthead-icon" alt="" />
@@ -112,6 +113,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
             content: t('public~Create resources from their YAML or JSON definitions'),
             position: 'left',
           }}
+          data-test="qc-import-yaml"
         >
           {t('public~Import YAML')}
         </DropdownItem>
@@ -129,6 +131,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 content: t('public~Import code from your Git repository to be built and deployed'),
                 position: 'left',
               }}
+              data-test="qc-import-from-git"
             >
               {t('public~Import from Git')}
             </DropdownItem>
@@ -146,6 +149,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 ),
                 position: 'left',
               }}
+              data-test="qc-container-images"
             >
               {t('public~Container images')}
             </DropdownItem>
