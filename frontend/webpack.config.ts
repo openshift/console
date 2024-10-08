@@ -130,14 +130,6 @@ const config: Configuration = {
   },
   module: {
     rules: [
-      // TODO: update react-dnd and remove this rule
-      // https://github.com/react-dnd/react-dnd/issues/3418
-      {
-        test: /\.m?js$/,
-        resolve: {
-          fullySpecified: false, // disable the behaviour
-        },
-      },
       {
         // Disable tree shaking on modules shared with Console dynamic plugins
         test: sharedPluginModulesTest,
