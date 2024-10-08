@@ -58,7 +58,10 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           console.warn('Error fetching Serverless Function YAML: ', err);
           setFieldError('ServerlessFunction', err.message);
         })
-        .finally(() => setLoaded(true));
+        .finally(() => {
+          setLoaded(true);
+          setFieldValue('import.knativeFuncLoaded', true);
+        });
   }, [
     setFieldValue,
     setFieldError,
