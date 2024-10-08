@@ -3,11 +3,11 @@ import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 import { Alert, AlertStates, RuleStates, SilenceStates } from '@console/dynamic-plugin-sdk';
 
 import { ActionType, ObserveAction } from '../actions/observe';
-import {
-  MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
-  MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
-} from '../components/monitoring/dashboards/types';
 import { isSilenced } from '../components/monitoring/utils';
+
+const MONITORING_DASHBOARDS_DEFAULT_TIMESPAN = 30 * 60 * 1000;
+
+const MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY = 'ALL_OPTION_KEY';
 
 export type ObserveState = ImmutableMap<string, any>;
 
