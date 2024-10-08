@@ -675,6 +675,27 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// This Content Security Policy (CSP) applies to Console web application resources.
+	// Console CSP is deployed in report-only mode via "Content-Security-Policy-Report-Only" header.
+	// See https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for details on CSP specification.
+	cspSources := "'self'"
+	if s.K8sMode == "off-cluster" {
+		// Console local development involves a webpack server running on port 8080
+		cspSources = cspSources + " http://localhost:8080 ws://localhost:8080"
+	}
+	cspDirectives := []string{
+		fmt.Sprintf("default-src %s", cspSources),
+		fmt.Sprintf("base-uri %s", cspSources),
+		fmt.Sprintf("img-src %s data:", cspSources),
+		fmt.Sprintf("font-src %s data:", cspSources),
+		fmt.Sprintf("script-src %s 'unsafe-eval'", cspSources),
+		fmt.Sprintf("style-src %s 'unsafe-inline'", cspSources),
+		"frame-src 'none'",
+		"frame-ancestors 'none'",
+		"object-src 'none'",
+	}
+	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
+
 	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
 	for plugin := range s.EnabledConsolePlugins {
 		plugins = append(plugins, plugin)

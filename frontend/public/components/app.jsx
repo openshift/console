@@ -80,6 +80,13 @@ initI18n();
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
 
+const pluginAssetBaseURL = `${document.baseURI}api/plugins/`;
+
+const getPluginNameFromResourceURL = (url) =>
+  url?.startsWith(pluginAssetBaseURL)
+    ? url.substring(pluginAssetBaseURL.length).split('/')[0]
+    : null;
+
 const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children }) => {
   const value = useValueHook();
   return <ContextProvider value={value}>{children}</ContextProvider>;
@@ -132,12 +139,63 @@ const App = (props) => {
     }
   }, []);
 
+  const onCSPViolation = React.useCallback((event) => {
+    // eslint-disable-next-line no-console
+    console.warn('Content Security Policy violation detected', event);
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/SecurityPolicyViolationEvent
+    const cspReportObject = _.pick(event, [
+      // The URI of the resource that was blocked because it violates a policy.
+      'blockedURI',
+      // The column number in the document or worker at which the violation occurred.
+      'columnNumber',
+      // Whether the user agent is configured to enforce or just report the policy violation.
+      'disposition',
+      // The URI of the document or worker in which the violation occurred.
+      'documentURI',
+      // The directive that was violated.
+      'effectiveDirective',
+      // The line number in the document or worker at which the violation occurred.
+      'lineNumber',
+      // The policy whose enforcement caused the violation.
+      'originalPolicy',
+      // The URL for the referrer of the resources whose policy was violated, or null.
+      'referrer',
+      // A sample of the resource that caused the violation, usually the first 40 characters.
+      // This will only be populated if the resource is an inline script, event handler or style.
+      'sample',
+      // If the violation occurred as a result of a script, this will be the URL of the script.
+      'sourceFile',
+      // HTTP status code of the document or worker in which the violation occurred.
+      'statusCode',
+    ]);
+
+    // Attempt to infer Console plugin name from CSP report object
+    const pluginName =
+      getPluginNameFromResourceURL(cspReportObject.blockedURI) ||
+      getPluginNameFromResourceURL(cspReportObject.sourceFile);
+
+    if (pluginName) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Content Security Policy violation seems to originate from plugin ${pluginName}`,
+      );
+    }
+  }, []);
+
   React.useEffect(() => {
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);
     };
   }, [onResize]);
+
+  React.useEffect(() => {
+    document.addEventListener('securitypolicyviolation', onCSPViolation);
+    return () => {
+      document.removeEventListener('securitypolicyviolation', onCSPViolation);
+    };
+  }, [onCSPViolation]);
 
   React.useLayoutEffect(() => {
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)

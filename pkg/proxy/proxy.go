@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -112,8 +111,7 @@ func CopyRequestHeaders(originalRequest, newRequest *http.Request) {
 }
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
-	if klog.V(3).Enabled() {
+	if klog.V(4).Enabled() {
 		klog.Infof("PROXY: %#q\n", SingleJoiningSlash(p.config.Endpoint.String(), r.URL.Path))
 	}
 
@@ -231,13 +229,13 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		errMsg := fmt.Sprintf("Failed to dial backend: '%v'", err)
 		statusCode := http.StatusBadGateway
 		if resp == nil || resp.StatusCode == 0 {
-			log.Println(errMsg)
+			klog.Error(errMsg)
 		} else {
 			statusCode = resp.StatusCode
 			if resp.Request == nil {
-				log.Printf("%s Status: '%v' (no request object)", errMsg, resp.Status)
+				klog.Errorf("%s Status: '%v' (no request object)", errMsg, resp.Status)
 			} else {
-				log.Printf("%s Status: '%v' URL: '%v'", errMsg, resp.Status, resp.Request.URL)
+				klog.Errorf("%s Status: '%v' URL: '%v'", errMsg, resp.Status, resp.Request.URL)
 			}
 		}
 		http.Error(w, errMsg, statusCode)
@@ -250,23 +248,23 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		CheckOrigin: func(r *http.Request) bool {
 			origin := r.Header["Origin"]
 			if p.config.Origin == "" {
-				log.Printf("CheckOrigin: Proxy has no configured Origin. Allowing origin %v to %v", origin, r.URL)
+				klog.Infof("CheckOrigin: Proxy has no configured Origin. Allowing origin %v to %v", origin, r.URL)
 				return true
 			}
 			if len(origin) == 0 {
-				log.Printf("CheckOrigin: No origin header. Denying request to %v", r.URL)
+				klog.Warningf("CheckOrigin: No origin header. Denying request to %v", r.URL)
 				return false
 			}
 			if p.config.Origin == origin[0] {
 				return true
 			}
-			log.Printf("CheckOrigin '%v' != '%v'", p.config.Origin, origin[0])
+			klog.Warningf("CheckOrigin '%v' != '%v'", p.config.Origin, origin[0])
 			return false
 		},
 	}
 	frontend, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Failed to upgrade websocket to client: '%v'", err)
+		klog.Errorf("Failed to upgrade websocket to client: '%v'", err)
 		return
 	}
 
