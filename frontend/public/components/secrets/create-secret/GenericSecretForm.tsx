@@ -6,17 +6,19 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { containsNonPrintableCharacters } from '../../utils/file-input';
-import { KeyValueEntryFormState, KeyValueEntryForm } from '.';
+import { KeyValueEntryFormState, KeyValueEntryForm, SecretSubFormProps } from '.';
 
 class GenericSecretFormWithTranslation extends React.Component<
-  GenericSecretFormProps & WithT,
+  SecretSubFormProps & WithT,
   GenericSecretFormState
 > {
   constructor(props) {
     super(props);
     this.state = {
-      secretEntriesArray: this.genericSecretObjectToArray(this.props.stringData),
+      secretEntriesArray: this.genericSecretObjectToArray(
+        this.props.stringData,
+        this.props.base64StringData,
+      ),
     };
     this.onDataChanged = this.onDataChanged.bind(this);
   }
@@ -29,78 +31,66 @@ class GenericSecretFormWithTranslation extends React.Component<
       uid: _.uniqueId(),
     };
   }
-  genericSecretObjectToArray(genericSecretObject) {
-    if (_.isEmpty(genericSecretObject)) {
+  genericSecretObjectToArray(stringData, base64Data) {
+    if (_.isEmpty(stringData)) {
       return [this.newGenericSecretEntry()];
     }
-    return _.map(genericSecretObject, (value, key) => {
-      const isBinary = containsNonPrintableCharacters(value);
+    return _.map(stringData, (value, key) => {
       return {
         uid: _.uniqueId(),
         entry: {
           key,
-          value: isBinary ? Base64.encode(value) : value,
-          isBase64: isBinary,
-          isBinary,
+          value,
+          isBinary: value == null && Boolean(base64Data[key]),
         },
       };
     });
   }
-  genericSecretArrayToObject(genericSecretArray) {
-    return _.reduce(
-      genericSecretArray,
-      (acc, k) =>
-        _.assign(acc, {
-          [k.entry.key]:
-            k.entry?.isBase64 || k.entry?.isBinary ? k.entry.value : Base64.encode(k.entry.value),
-        }),
-      {},
+
+  genericSecretArrayToObject(entries) {
+    return entries.reduce((acc, { entry }) => {
+      return {
+        stringData: {
+          ...acc.stringData,
+          [entry.key]: entry.isBinary ? null : entry.value,
+        },
+        base64StringData: {
+          ...acc.base64StringData,
+          [entry.key]: entry.isBinary ? entry.value : Base64.encode(entry.value),
+        },
+      };
+    }, {});
+  }
+
+  onDataChanged(secretEntriesArray) {
+    this.setState({ secretEntriesArray }, () =>
+      this.props.onChange(this.genericSecretArrayToObject(this.state.secretEntriesArray)),
     );
   }
-  onDataChanged(updatedEntry, entryID) {
-    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
+
+  updateEntry(updatedEntry, atIndex) {
+    const newEntries = [...this.state.secretEntriesArray];
     const updatedEntryData = {
-      uid: updatedSecretEntriesArray[entryID].uid,
+      uid: newEntries[atIndex].uid,
       entry: updatedEntry,
     };
-    updatedSecretEntriesArray[entryID] = updatedEntryData;
-    this.setState(
-      {
-        secretEntriesArray: updatedSecretEntriesArray,
-      },
-      () =>
-        this.props.onChange({
-          base64StringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
-        }),
-    );
+    newEntries[atIndex] = updatedEntryData;
+    this.onDataChanged(newEntries);
   }
-  removeEntry(entryID) {
-    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
-    updatedSecretEntriesArray.splice(entryID, 1);
-    this.setState(
-      {
-        secretEntriesArray: updatedSecretEntriesArray,
-      },
-      () =>
-        this.props.onChange({
-          base64StringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
-        }),
-    );
+
+  removeEntry(atIndex) {
+    const newEntries = [...this.state.secretEntriesArray];
+    newEntries.splice(atIndex, 1);
+    this.onDataChanged(newEntries);
   }
+
   addEntry() {
-    this.setState(
-      {
-        secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newGenericSecretEntry()),
-      },
-      () =>
-        this.props.onChange({
-          base64StringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
-        }),
-    );
+    this.onDataChanged([...this.state.secretEntriesArray, this.newGenericSecretEntry()]);
   }
+
   render() {
     const { t } = this.props;
-    const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
+    const formFields = _.map(this.state.secretEntriesArray, (entryData, index) => {
       return (
         <div className="co-add-remove-form__entry" key={entryData.uid}>
           {_.size(this.state.secretEntriesArray) > 1 && (
@@ -116,13 +106,14 @@ class GenericSecretFormWithTranslation extends React.Component<
               </Button>
             </div>
           )}
-          <KeyValueEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
+          <KeyValueEntryForm id={index} entry={entryData.entry} onChange={this.updateEntry} />
         </div>
       );
     });
+
     return (
       <>
-        {secretEntriesList}
+        {formFields}
         <Button
           className="co-create-secret-form__link--add-entry pf-m-link--align-left"
           onClick={() => this.addEntry()}
@@ -139,14 +130,6 @@ class GenericSecretFormWithTranslation extends React.Component<
 }
 
 export const GenericSecretForm = withTranslation()(GenericSecretFormWithTranslation);
-
-type GenericSecretFormProps = {
-  onChange: Function;
-  stringData: {
-    [key: string]: string;
-  };
-  isCreate: boolean;
-};
 
 type GenericSecretFormState = {
   secretEntriesArray: {

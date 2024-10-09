@@ -6,7 +6,7 @@ import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
 import { Alert } from '@patternfly/react-core';
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
-import { isBinary } from 'istextorbinary/edition-es2017/index';
+import * as ITOB from 'istextorbinary/edition-es2017/index';
 
 import withDragDropContext from './drag-drop-context';
 
@@ -20,6 +20,18 @@ export const containsNonPrintableCharacters = (value: string) => {
   // eslint-disable-next-line no-control-regex
   return /[\x00-\x09\x0E-\x1F]/.test(value);
 };
+
+const getFileContent = (file: File): Promise<[string, boolean]> =>
+  new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const content = reader.result;
+      const isBinary = ITOB.isBinary(file.name, content);
+      const stringContent = Buffer.from(content).toString(isBinary ? 'base64' : 'utf-8');
+      resolve([stringContent, isBinary]);
+    };
+    reader.readAsArrayBuffer(file);
+  });
 
 class FileInputWithTranslation extends React.Component<FileInputProps, FileInputState> {
   constructor(props) {
@@ -40,25 +52,15 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
       });
       return;
     }
-    let fileIsBinary = false;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const input = fileIsBinary
-        ? (reader.result as string).split(',')[1]
-        : (reader.result as string);
-      // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-      if (containsNonPrintableCharacters(input) && isBinary(null, input) && !fileIsBinary) {
-        fileIsBinary = true;
-        reader.readAsDataURL(file);
-      } else {
+    getFileContent(file)
+      .then(([fileData, fileIsBinary]) => {
         this.props.onChange({
-          fileData: input,
+          fileData,
           fileIsBinary,
           fileName: file.name,
         });
-      }
-    };
-    reader.readAsText(file, 'UTF-8');
+      })
+      .catch((e) => this.props.onChange({ errorMessage: e.toString() }));
   }
   onFileUpload(event) {
     this.readFile(event.target.files[0]);
@@ -178,9 +180,7 @@ const DroppableFileInputWithTranslation = withDragDropContext(
         inputFileName: '',
         inputFileData: this.props.inputFileData || '',
         inputFileIsBinary:
-          this.props.inputFileIsBinary ||
-          (containsNonPrintableCharacters(this.props.inputFileData) &&
-            isBinary(null, this.props.inputFileData)),
+          this.props.inputFileIsBinary || ITOB.isBinary(null, this.props.inputFileData),
       };
       this.handleFileDrop = this.handleFileDrop.bind(this);
       this.onDataChange = this.onDataChange.bind(this);
@@ -199,27 +199,29 @@ const DroppableFileInputWithTranslation = withDragDropContext(
         });
         return;
       }
-      let inputFileIsBinary = false;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const input = reader.result as string; // Note(Yaacov): we use reader.readAsText
-        // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-        if (containsNonPrintableCharacters(input) && isBinary(null, input) && !inputFileIsBinary) {
-          inputFileIsBinary = true;
-          reader.readAsBinaryString(file);
-        } else {
+      getFileContent(file)
+        .then(([inputFileData, inputFileIsBinary]) => {
           this.setState(
             {
               inputFileName: file.name,
-              inputFileData: input,
+              inputFileData,
               inputFileIsBinary,
               errorMessage: '',
             },
-            () => this.props.onChange(input, inputFileIsBinary),
+            () => this.props.onChange(inputFileData, inputFileIsBinary),
           );
-        }
-      };
-      reader.readAsText(file, 'UTF-8');
+        })
+        .catch((e) =>
+          this.setState(
+            {
+              errorMessage: e.toString(),
+              inputFileData: '',
+              inputFileName: '',
+              inputFileIsBinary: false,
+            },
+            this.props.onChange('', false),
+          ),
+        );
     }
     onDataChange(data) {
       const { fileData, fileIsBinary, fileName, errorMessage } = data;
