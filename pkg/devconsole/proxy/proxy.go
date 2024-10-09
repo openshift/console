@@ -38,7 +38,16 @@ func serve(r *http.Request) (ProxyResponse, error) {
 	var request ProxyRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to parse request: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to parse request: %v", err)
+	}
+
+	// Verify that the Request URL is safe to proxy
+	// This is a simple check to prevent SSRF attacks
+	// We only allow URLs that start with http:// or https:// or which do not end with cluster.local
+	if !strings.HasPrefix(request.Url, "http://") ||
+		!strings.HasPrefix(request.Url, "https://") ||
+		strings.HasSuffix(request.Url, "cluster.local") {
+		return ProxyResponse{}, fmt.Errorf("unauthorized URL: %s", request.Url)
 	}
 
 	if request.Method == "" {
@@ -53,7 +62,7 @@ func serve(r *http.Request) (ProxyResponse, error) {
 	}
 
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to create request: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
 	for key, values := range request.Headers {
@@ -89,12 +98,12 @@ func serve(r *http.Request) (ProxyResponse, error) {
 
 	serviceResponse, err := serviceClient.Do(serviceRequest)
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to send request: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to send request: %v", err)
 	}
 	defer serviceResponse.Body.Close()
 	serviceResponseBody, err := io.ReadAll(serviceResponse.Body)
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to read response body: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to read response body: %v", err)
 	}
 
 	return ProxyResponse{
