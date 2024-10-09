@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	authenticationv1 "k8s.io/api/authentication/v1"
+	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestNewUserSettingsMeta(t *testing.T) {
@@ -25,6 +26,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				Username:           "kube:admin",
 				UID:                "",
 				ResourceIdentifier: "kubeadmin",
+				OwnerReferences:    []meta.OwnerReference{},
 			},
 		},
 		{
@@ -38,6 +40,14 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				Username:           "kube:admin",
 				UID:                "1234",
 				ResourceIdentifier: "1234",
+				OwnerReferences: []meta.OwnerReference{
+					{
+						APIVersion: "user.openshift.io/v1",
+						Kind:       "User",
+						Name:       "kube:admin",
+						UID:        "1234",
+					},
+				},
 			},
 		},
 		{
@@ -51,6 +61,14 @@ func TestNewUserSettingsMeta(t *testing.T) {
 				Username:           "developer",
 				UID:                "1234",
 				ResourceIdentifier: "1234",
+				OwnerReferences: []meta.OwnerReference{
+					{
+						APIVersion: "user.openshift.io/v1",
+						Kind:       "User",
+						Name:       "developer",
+						UID:        "1234",
+					},
+				},
 			},
 		},
 	}
