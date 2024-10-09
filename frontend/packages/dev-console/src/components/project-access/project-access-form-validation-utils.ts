@@ -7,10 +7,6 @@ export const validationSchema = yup.object().shape({
       subject: yup.object().shape({
         name: yup.string().required(i18n.t('devconsole~Required')),
         kind: yup.string().required(i18n.t('devconsole~Required')),
-        namespace: yup.string().when('kind', {
-          is: 'ServiceAccount',
-          then: yup.string().required(i18n.t('devconsole~Required')),
-        }),
       }),
       role: yup.string().required(i18n.t('devconsole~Required')),
     }),
