@@ -13,14 +13,6 @@ import withDragDropContext from './drag-drop-context';
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
 
-export const containsNonPrintableCharacters = (value: string) => {
-  if (!value) {
-    return false;
-  }
-  // eslint-disable-next-line no-control-regex
-  return /[\x00-\x09\x0E-\x1F]/.test(value);
-};
-
 class FileInputWithTranslation extends React.Component<FileInputProps, FileInputState> {
   constructor(props) {
     super(props);
@@ -47,7 +39,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
         ? (reader.result as string).split(',')[1]
         : (reader.result as string);
       // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-      if (containsNonPrintableCharacters(input) && isBinary(null, input) && !fileIsBinary) {
+      if (isBinary(null, input) && !fileIsBinary) {
         fileIsBinary = true;
         reader.readAsDataURL(file);
       } else {
@@ -177,10 +169,7 @@ const DroppableFileInputWithTranslation = withDragDropContext(
       this.state = {
         inputFileName: '',
         inputFileData: this.props.inputFileData || '',
-        inputFileIsBinary:
-          this.props.inputFileIsBinary ||
-          (containsNonPrintableCharacters(this.props.inputFileData) &&
-            isBinary(null, this.props.inputFileData)),
+        inputFileIsBinary: this.props.inputFileIsBinary || isBinary(null, this.props.inputFileData),
       };
       this.handleFileDrop = this.handleFileDrop.bind(this);
       this.onDataChange = this.onDataChange.bind(this);
@@ -204,7 +193,7 @@ const DroppableFileInputWithTranslation = withDragDropContext(
       reader.onload = () => {
         const input = reader.result as string; // Note(Yaacov): we use reader.readAsText
         // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-        if (containsNonPrintableCharacters(input) && isBinary(null, input) && !inputFileIsBinary) {
+        if (isBinary(null, input) && !inputFileIsBinary) {
           inputFileIsBinary = true;
           reader.readAsBinaryString(file);
         } else {

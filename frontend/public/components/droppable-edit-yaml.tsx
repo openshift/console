@@ -8,7 +8,7 @@ import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
 import { EditYAML } from './edit-yaml';
 import withDragDropContext from './utils/drag-drop-context';
 import { DropTargetMonitor } from 'react-dnd/lib/interfaces';
-import { containsNonPrintableCharacters } from './utils/file-input';
+import * as ITOB from 'istextorbinary/edition-es2017';
 
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
@@ -82,19 +82,19 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
       if (file.size <= maxFileUploadSize) {
         const reader = new FileReader();
         reader.onload = () => {
-          const input = reader.result as string;
-          if (containsNonPrintableCharacters(input)) {
+          const buffer = Buffer.from(reader.result);
+          if (ITOB.isBinary(null, buffer)) {
             this.setState((previousState) => ({
               errors: [...previousState.errors, `Ignoring ${file.name}: ${fileTypeErrorMsg}`],
             }));
           } else {
-            this.addDocument(input.trim());
+            this.addDocument(buffer.toString().trim());
             if (lastFile) {
               this.setState({ fileUpload: this.fileUploadContents });
             }
           }
         };
-        reader.readAsText(file, 'UTF-8');
+        reader.readAsArrayBuffer(file);
       } else {
         this.setState((previousState) => ({
           errors: [...previousState.errors, `Ignoring ${file.name}: ${fileSizeErrorMsg}`],
