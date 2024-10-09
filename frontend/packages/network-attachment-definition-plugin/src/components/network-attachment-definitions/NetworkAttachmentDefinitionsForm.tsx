@@ -100,6 +100,12 @@ const buildConfig = (
 const getResourceName = (networkType, typeParamsData): string => {
   if (_.isEmpty(typeParamsData)) return null;
 
+  if (
+    _.isEmpty(_.get(typeParamsData, 'resourceName.value', '')) &&
+    _.isEmpty(_.get(typeParamsData, 'bridge.value', ''))
+  )
+    return null;
+
   return networkType === bridgeNetworkType
     ? `bridge.network.kubevirt.io/${_.get(typeParamsData, 'bridge.value', '')}`
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
