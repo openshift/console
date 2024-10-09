@@ -43,10 +43,11 @@ const (
 )
 
 type Metrics struct {
-	loginRequests   prometheus.Counter
-	loginSuccessful *prometheus.CounterVec
-	loginFailures   *prometheus.CounterVec
-	logoutRequests  *prometheus.CounterVec
+	loginRequests        prometheus.Counter
+	loginSuccessful      *prometheus.CounterVec
+	loginFailures        *prometheus.CounterVec
+	logoutRequests       *prometheus.CounterVec
+	tokenRefreshRequests *prometheus.CounterVec
 }
 
 func (m *Metrics) GetCollectors() []prometheus.Collector {
@@ -55,6 +56,7 @@ func (m *Metrics) GetCollectors() []prometheus.Collector {
 		m.loginSuccessful,
 		m.loginFailures,
 		m.logoutRequests,
+		m.tokenRefreshRequests,
 	}
 }
 
@@ -115,6 +117,21 @@ func (m *Metrics) LoginFailed(reason LoginFailureReason) {
 func (m *Metrics) LogoutRequested(reason LogoutReason) {
 	klog.V(4).Infof("auth.Metrics LogoutRequested with reason %q\n", reason)
 	counter, err := m.logoutRequests.GetMetricWithLabelValues(string(reason))
+	if counter != nil && err == nil {
+		counter.Inc()
+	}
+}
+
+type TokenRefreshHandledType string
+
+const (
+	TokenRefreshShortCircuit TokenRefreshHandledType = "short-circuit"
+	TokenRefreshFull         TokenRefreshHandledType = "full"
+	TokenRefreshUnknown      TokenRefreshHandledType = "unknown"
+)
+
+func (m *Metrics) TokenRefreshRequest(handled TokenRefreshHandledType) {
+	counter, err := m.tokenRefreshRequests.GetMetricWithLabelValues(string(handled))
 	if counter != nil && err == nil {
 		counter.Inc()
 	}
@@ -197,6 +214,16 @@ func NewMetrics() *Metrics {
 		Help:      "Total number of logout requests from the frontend.",
 	}, []string{"reason"})
 	m.logoutRequests.GetMetricWithLabelValues(string(UnknownLogoutReason))
+
+	m.tokenRefreshRequests = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "console",
+		Subsystem: "auth",
+		Name:      "token_refresh_requests_total",
+		Help:      "Total number of token refresh requests done in the backend",
+	}, []string{"handling"})
+	for _, handling := range []TokenRefreshHandledType{TokenRefreshShortCircuit, TokenRefreshFull, TokenRefreshUnknown} {
+		m.tokenRefreshRequests.GetMetricWithLabelValues(string(handling))
+	}
 
 	return m
 }
