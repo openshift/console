@@ -31,6 +31,7 @@ import {
   useTelemetry,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
 import { getUser } from '@console/dynamic-plugin-sdk';
@@ -52,7 +53,7 @@ import { FeedbackModal } from '@patternfly/react-user-feedback';
 import { useFeedbackLocal } from './feedback-local';
 import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
-import QuickCreate, { MobileQuickCreate } from './QuickCreate';
+import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from './QuickCreate';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
@@ -154,6 +155,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     [dispatch],
   );
 
+  const getImportYAMLPath = () => formatNamespacedRouteForResource('import', activeNamespace);
   const onFeedbackModal = () => setIsFeedbackModalOpen(true);
   const onAboutModal = (e) => {
     e.preventDefault();
@@ -511,8 +513,26 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         isSection: true,
         actions: [
           {
+            label: t('public~Import YAML'),
+            callback: (e) => {
+              e.preventDefault();
+              history.push(getImportYAMLPath());
+            },
+          },
+          {
             component: () => (
-              <MobileQuickCreate namespace={activeNamespace} className="pf-v5-c-menu__item" />
+              <QuickCreateImportFromGit
+                namespace={activeNamespace}
+                className="pf-v5-c-menu__item"
+              />
+            ),
+          },
+          {
+            component: () => (
+              <QuickCreateContainerImages
+                namespace={activeNamespace}
+                className="pf-v5-c-menu__item"
+              />
             ),
           },
           {

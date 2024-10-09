@@ -15,6 +15,8 @@ import { FLAGS } from '@console/shared/src/constants';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useNavigate } from 'react-router-dom-v5-compat';
 
+import './QuickCreate.scss';
+
 type QuickCreateProps = {
   namespace?: string;
 };
@@ -93,11 +95,14 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
           isExpanded={isOpen}
           data-test="quick-create-dropdown"
         >
-          <Tooltip content={t('public~Quick create')}>
+          <Tooltip content={t('public~Quick create')} className="co-quick-create-tooltip">
             <PlusCircleIcon className="co-masthead-icon" alt="" />
           </Tooltip>
         </MenuToggle>
       )}
+      popperProps={{
+        position: 'center',
+      }}
       shouldFocusToggleOnSelect
     >
       <DropdownList>
@@ -162,45 +167,42 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
 
 export default QuickCreate;
 
-export const MobileQuickCreate = ({ namespace, className }) => {
+export const QuickCreateImportFromGit = ({ namespace, className }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
   const canCreate = useCanCreateResource();
-  return !opeshiftStartGuideEnable ? (
-    <ul className="pf-v5-c-menu__list">
-      <li className="pf-v5-c-menu__list-item">
-        <button
-          type="button"
-          onClick={() => navigate(formatNamespacedRouteForResource('import', namespace))}
-          className={className}
-        >
-          {t('public~Import YAML')}
-        </button>
-      </li>
-      {canCreate && (
-        <>
-          <li className="pf-v5-c-menu__list-item">
-            <button
-              type="button"
-              onClick={() => navigate(getImportFromGitURL(namespace))}
-              className={className}
-            >
-              {t('public~Import from Git')}
-            </button>
-          </li>
-          <li className="pf-v5-c-menu__list-item">
-            <button
-              type="button"
-              onClick={() => navigate(getContainerImageURL(namespace))}
-              className={className}
-            >
-              {t('public~Container images')}
-            </button>
-          </li>
-        </>
-      )}
-    </ul>
-  ) : null;
+  return (
+    canCreate &&
+    !opeshiftStartGuideEnable && (
+      <button
+        type="button"
+        onClick={() => navigate(getImportFromGitURL(namespace))}
+        className={className}
+      >
+        {t('public~Import from Git')}
+      </button>
+    )
+  );
+};
+
+export const QuickCreateContainerImages = ({ namespace, className }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
+
+  const canCreate = useCanCreateResource();
+  return (
+    canCreate &&
+    !opeshiftStartGuideEnable && (
+      <button
+        type="button"
+        onClick={() => navigate(getContainerImageURL(namespace))}
+        className={className}
+      >
+        {t('public~Container images')}
+      </button>
+    )
+  );
 };
