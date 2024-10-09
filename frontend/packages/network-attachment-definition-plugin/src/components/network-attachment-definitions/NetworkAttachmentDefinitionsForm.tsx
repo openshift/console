@@ -8,8 +8,11 @@ import {
   FormHelperText,
   HelperText,
   HelperTextItem,
+  Popover,
+  PopoverPosition,
   TextInput,
 } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -32,12 +35,12 @@ import {
 } from '@console/internal/module/k8s';
 import {
   RedExclamationCircleIcon,
-  useActiveNamespace,
-  validateDNS1123SubdomainValue,
   ValidationErrorType,
+  validateDNS1123SubdomainValue,
 } from '@console/shared';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import {
+  NET_ATTACH_DEF_HEADER_LABEL,
   cnvBridgeNetworkType,
   networkTypeParams,
   networkTypes,
@@ -101,8 +104,8 @@ const getResourceName = (networkType, typeParamsData): string => {
     : `openshift.io/${_.get(typeParamsData, 'resourceName.value', '')}`;
 };
 
-const generateNADName = (name: string): string => {
-  return `${name}-${uniqueNamesGenerator({
+const generateNADName = (): string => {
+  return `network-${uniqueNamesGenerator({
     dictionaries: [adjectives, animals],
     separator: '-',
   })}`;
@@ -123,8 +126,7 @@ const createNetAttachDef = (
   setLoading(true);
   setError(null);
 
-  const nadName = generateNADName(name);
-  const config = JSON.stringify(buildConfig(nadName, networkType, typeParamsData, namespace));
+  const config = JSON.stringify(buildConfig(name, networkType, typeParamsData, namespace));
   const resourceName = getResourceName(networkType, typeParamsData);
   const annotations: NetworkAttachmentDefinitionAnnotations = {
     ...(resourceName && { 'k8s.v1.cni.cncf.io/resourceName': resourceName }),
@@ -138,7 +140,7 @@ const createNetAttachDef = (
     apiVersion: `${NetworkAttachmentDefinitionModel.apiGroup}/${NetworkAttachmentDefinitionModel.apiVersion}`,
     kind: NetworkAttachmentDefinitionModel.kind,
     metadata: {
-      name: nadName,
+      name,
       namespace,
       annotations,
     },
@@ -150,7 +152,7 @@ const createNetAttachDef = (
   k8sCreate(NetworkAttachmentDefinitionModel, newNetAttachDef)
     .then(() => {
       setLoading(false);
-      history.push(resourcePathFromModel(NetworkAttachmentDefinitionModel, nadName, namespace));
+      history.push(resourcePathFromModel(NetworkAttachmentDefinitionModel, name, namespace));
     })
     .catch((err) => {
       setError(err);
@@ -241,13 +243,13 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   // t('kubevirt-plugin~Network Type')
   // t('kubevirt-plugin~Edit YAML')
   // t('kubevirt-plugin~Networks are not project-bound. Using the same name creates a shared NAD.')
-  const { loaded, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = props;
-  const [activeNamespace] = useActiveNamespace();
+  const { loaded, resources, hasSriovNetNodePolicyCRD, hasHyperConvergedCRD, match } = props;
+  const namespace = _.get(match, 'params.ns', 'default');
   const sriovNetNodePoliciesData = _.get(resources, 'sriovnetworknodepolicies.data', []);
 
   const { t } = useTranslation();
   const [loading, setLoading] = React.useState(hasSriovNetNodePolicyCRD && !loaded);
-  const [name, setName] = React.useState('');
+  const [name, setName] = React.useState(generateNADName());
   const [description, setDescription] = React.useState('');
   const [networkType, setNetworkType] = React.useState(null);
   const [typeParamsData, setTypeParamsData] = React.useState<TypeParamsData>({});
@@ -285,18 +287,15 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
     resources,
     loaded,
   ]);
+  // t('kubevirt-plugin~Create network attachment definition')
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-        <div className="co-m-pane__name">
-          {t('kubevirt-plugin~Create Network Attachment Definition')}
-        </div>
+        <div className="co-m-pane__name">{NET_ATTACH_DEF_HEADER_LABEL}</div>
         <div className="co-m-pane__heading-link">
           <Link
-            to={`/k8s/ns/${activeNamespace}/${referenceForModel(
-              NetworkAttachmentDefinitionModel,
-            )}/~new`}
+            to={`/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new`}
             id="yaml-link"
             replace
           >
@@ -305,10 +304,24 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         </div>
       </h1>
       <Form>
-        <FormGroup fieldId="basic-settings-name">
-          <label className="control-label co-required" htmlFor="network-attachment-definition-name">
-            {t('kubevirt-plugin~Name')}
-          </label>
+        <FormGroup
+          fieldId="basic-settings-name"
+          isRequired
+          label={t('kubevirt-plugin~Name')}
+          labelIcon={
+            <Popover
+              aria-label={'Help'}
+              bodyContent={() =>
+                t(
+                  'kubevirt-plugin~Networks are not project-bound. Using the same name creates a shared NAD.',
+                )
+              }
+              position={PopoverPosition.right}
+            >
+              <HelpIcon className="network-type-options--help-icon" />
+            </Popover>
+          }
+        >
           <TextInput
             type="text"
             placeholder={name}
@@ -392,7 +405,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
                   name,
                   networkType,
                   typeParamsData,
-                  activeNamespace,
+                  namespace,
                   setError,
                   setLoading,
                 )

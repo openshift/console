@@ -1,3 +1,4 @@
+// t('kubevirt-plugin~Create Network Attachment Definition')
 export const NET_ATTACH_DEF_HEADER_LABEL = 'Create Network Attachment Definition';
 
 export const ELEMENT_TYPES = {
