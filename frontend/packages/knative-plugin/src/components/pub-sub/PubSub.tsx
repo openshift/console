@@ -51,23 +51,25 @@ const PubSub: React.FC<PubSubProps> = ({
     return spec;
   };
   const initialValues = {
-    apiVersion: `${apiGroup}/${apiVersion}`,
-    kind,
-    metadata: { name: `${sourceName}-${getRandomChars()}`, namespace },
-    spec: {
-      ...getSpecForKind(kind),
-      subscriber: {
-        ref: {
-          apiVersion: targetApiVersion,
-          kind: targetKind,
-          name: craftResourceKey(targetName, target),
+    formData: {
+      apiVersion: `${apiGroup}/${apiVersion}`,
+      kind,
+      metadata: { name: `${sourceName}-${getRandomChars()}`, namespace },
+      spec: {
+        ...getSpecForKind(kind),
+        subscriber: {
+          ref: {
+            apiVersion: targetApiVersion,
+            kind: targetKind,
+            name: craftResourceKey(targetName, target),
+          },
         },
       },
     },
   };
 
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    return k8sCreate(getResourceModel(), sanitizeResourceName(values))
+    return k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
       .then(() => {
         action.setStatus({ subscriberAvailable: true, error: '' });
         close();

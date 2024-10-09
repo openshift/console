@@ -6,10 +6,25 @@ import { useTranslation } from 'react-i18next';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { getFieldId } from '@console/shared';
 
+const formatFilterData = (filters) => {
+  let filterPairs = [];
+  for (const key in filters) {
+    if (filters.hasOwnProperty(key)) {
+      filterPairs = [...filterPairs, [key, filters[key]]];
+    }
+  }
+  return filterPairs;
+};
+
 const PubSubFilter: React.FC = () => {
   const initialValueResources = [['', '']];
-  const { setFieldValue, status } = useFormikContext<FormikValues>();
-  const [nameValue, setNameValue] = React.useState(initialValueResources);
+  const { setFieldValue, status, values } = useFormikContext<FormikValues>();
+  const filters = values.formData?.spec?.filter?.attributes;
+  const filterPairs = formatFilterData(filters);
+
+  const [nameValue, setNameValue] = React.useState(
+    filterPairs.length > 0 ? filterPairs : initialValueResources,
+  );
   const { t } = useTranslation();
   const handleNameValuePairs = React.useCallback(
     ({ nameValuePairs }) => {
@@ -22,7 +37,7 @@ const PubSubFilter: React.FC = () => {
         return updatedNameValuePairs;
       });
       setNameValue(nameValuePairs);
-      setFieldValue('spec.filter.attributes', updatedNameValuePairs);
+      setFieldValue('formData.spec.filter.attributes', updatedNameValuePairs);
     },
     [setFieldValue],
   );

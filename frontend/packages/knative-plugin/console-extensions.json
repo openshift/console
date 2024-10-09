@@ -1951,5 +1951,18 @@
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/ns/:ns/subscribe"],
+      "component": {
+        "$codeRef": "addComponent.SubscribePage"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
   }
 ]
