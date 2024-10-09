@@ -20,7 +20,7 @@ import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';
 import { StorageClass } from '../storage-class-form';
-import { provisionerAccessModeMapping, initialAccessModes, dropdownUnits } from './shared';
+import { getProvisionerModeMapping, initialAccessModes, dropdownUnits } from './shared';
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -116,7 +116,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   const handleStorageClass = (updatedStorageClass) => {
     const provisioner: string = updatedStorageClass?.provisioner || '';
     //setting message to display for various modes when a storage class of a know provisioner is selected
-    const displayMessage = provisionerAccessModeMapping[provisioner]
+    const displayMessage = getProvisionerModeMapping(provisioner)
       ? `${t('public~Access mode is set by StorageClass and cannot be changed')}`
       : `${t('public~Permissions to the mounted drive')}`;
     setAccessModeHelp(displayMessage);
