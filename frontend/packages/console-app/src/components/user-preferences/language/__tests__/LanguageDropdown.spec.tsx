@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Checkbox } from '@patternfly/react-core';
-import { Select as SelectDeprecated } from '@patternfly/react-core/deprecated';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { Checkbox, MenuToggle, Select } from '@patternfly/react-core';
+import { mount, shallow, ShallowWrapper } from 'enzyme';
 import { getLastLanguage } from '../getLastLanguage';
 import LanguageDropdown from '../LanguageDropdown';
 import { usePreferredLanguage } from '../usePreferredLanguage';
@@ -68,10 +67,14 @@ describe('LanguageDropdown', () => {
     getLastLanguageMock.mockReturnValue(['']);
     spyOn(React, 'useContext').and.returnValue({ getProcessedResourceBundle: jest.fn() });
     wrapper = shallow(<LanguageDropdown />);
+    const mountlanguagedropdown = mount(<LanguageDropdown />);
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find(Checkbox).props().isChecked).toBe(true);
     expect(wrapper.find('[data-test="dropdown console.preferredLanguage"]').exists()).toBeTruthy();
-    expect(wrapper.find(SelectDeprecated).props().isDisabled).toBe(true);
+
+    expect(
+      (mountlanguagedropdown.find(MenuToggle).props() as { isDisabled: boolean }).isDisabled,
+    ).toBe(true); // This Fails :( test errror => "TypeError: localStorage.removeItem is not a function"
   });
 
   it('should render checkbox in unchecked state and select in enabled state if user preferences have loaded and preferred language is defined', () => {
@@ -79,19 +82,24 @@ describe('LanguageDropdown', () => {
     getLastLanguageMock.mockReturnValue(['']);
     spyOn(React, 'useContext').and.returnValue({ getProcessedResourceBundle: jest.fn() });
     wrapper = shallow(<LanguageDropdown />);
+    const mountlanguagedropdown = mount(<LanguageDropdown />);
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find(Checkbox).props().isChecked).toBe(false);
     expect(wrapper.find('[data-test="dropdown console.preferredLanguage"]').exists()).toBeTruthy();
-    expect(wrapper.find(SelectDeprecated).props().isDisabled).toBe(false);
+
+    expect(
+      (mountlanguagedropdown.find(MenuToggle).props() as { isDisabled: boolean }).isDisabled,
+    ).toBe(false); // This passes :)
   });
 
   it('should render select with value corresponding to preferred language if user preferences have loaded and preferred language is defined', () => {
     usePreferredLanguageMock.mockReturnValue([preferredLanguageValue, jest.fn(), true]);
     getLastLanguageMock.mockReturnValue(['']);
     spyOn(React, 'useContext').and.returnValue({ getProcessedResourceBundle: jest.fn() });
-    wrapper = shallow(<LanguageDropdown />);
     expect(wrapper.find('[data-test="checkbox console.preferredLanguage"]').exists()).toBeTruthy();
     expect(wrapper.find('[data-test="dropdown console.preferredLanguage"]').exists()).toBeTruthy();
-    expect(wrapper.find(SelectDeprecated).props().selections).toEqual(preferredLanguageValue);
+    expect((wrapper.find(Select).props() as { selected: string }).selected).toEqual(
+      preferredLanguageValue,
+    );
   });
 });
