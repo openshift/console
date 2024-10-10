@@ -87,6 +87,7 @@
         "component": { "$codeRef": "telemetryUserPreferenceDropdown" }
       },
       "insertAfter": "console.preferredCreateEditMethod"
-    }
+    },
+    "flags": { "required": ["TELEMETRY_USER_PREFERENCE"] }
   }
 ]
