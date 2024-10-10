@@ -14,7 +14,7 @@ import { RoleBindingsPage } from './RBAC';
 import {
   Kebab,
   KebabAction,
-  MsgBox,
+  ConsoleEmptyState,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -33,7 +33,7 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
+  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
       startImpersonate('User', obj.metadata.name);
@@ -87,7 +87,7 @@ const UsersHelpText = () => {
 
 const EmptyMsg = () => {
   const { t } = useTranslation();
-  return <MsgBox title={t('public~No Users found')} />;
+  return <ConsoleEmptyState title={t('public~No Users found')} />;
 };
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
@@ -127,7 +127,11 @@ const NoDataEmptyMsgDetail = () => {
 
 const NoDataEmptyMsg = () => {
   const { t } = useTranslation();
-  return <MsgBox title={t('public~No Users found')} detail={<NoDataEmptyMsgDetail />} />;
+  return (
+    <ConsoleEmptyState title={t('public~No Users found')}>
+      <NoDataEmptyMsgDetail />
+    </ConsoleEmptyState>
+  );
 };
 
 export const UserList: React.FC = (props) => {
@@ -225,7 +229,7 @@ type UserKebabProps = {
 const UserDetailsPage_: React.FC<UserKebabDispatchProps> = ({ startImpersonate, ...props }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
+  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
       startImpersonate('User', obj.metadata.name);

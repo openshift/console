@@ -63,7 +63,7 @@ describe('Filtering and Searching', () => {
     cy.visit(`/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
     listPage.rows.shouldBeLoaded();
     listPage.filter.byName('XYZ123');
-    cy.byTestID('empty-message').should('be.visible');
+    cy.byTestID('empty-box-body').should('be.visible');
   });
 
   it('filters from Pods list', () => {

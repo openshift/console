@@ -215,7 +215,7 @@ Then('Add Parameters, Add Resources, Task should be displayed', () => {
 
 Then('{string} is not displayed on Pipelines page', (pipelineName: string) => {
   cy.get(pipelinesPO.search).clear().type(pipelineName);
-  cy.byTestID('empty-message').should('be.visible');
+  cy.byTestID('empty-box-body').should('be.visible');
 });
 
 Then('user will be redirected to Pipeline Run Details page', () => {

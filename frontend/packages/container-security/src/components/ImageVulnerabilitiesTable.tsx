@@ -2,7 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
-import { MsgBox } from '@console/internal/components/utils';
+import { ConsoleEmptyState } from '@console/internal/components/utils';
 import { Feature, Vulnerability } from '../types';
 import { getVulnerabilitySource, getVulnerabilityType } from './image-vulnerability-utils';
 import ImageVulnerabilityRow, {
@@ -20,7 +20,7 @@ const getRowProps = (vulnerability: Vulnerability) => ({
 const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (props) => {
   const { t } = useTranslation();
   const EmptyMsg = () => (
-    <MsgBox title={t('container-security~No Image vulnerabilities found')} detail="" />
+    <ConsoleEmptyState title={t('container-security~No Image vulnerabilities found')} />
   );
   const ImageVulnerabilitiesTableHeader = () => [
     {

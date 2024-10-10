@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { MsgBox } from '@console/internal/components/utils/status-box';
 import {
   K8sResourceKind,
   GroupVersionKind,
   referenceForModel,
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
 import {
@@ -29,21 +29,20 @@ export const operatorGroupFor = (obj: K8sResourceKind) =>
 
 export const NoOperatorGroupMsg: React.FC = () => {
   const { t } = useTranslation();
+  const actions = [
+    <Link
+      key="create-operator-group"
+      to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}
+    >
+      {t('olm~Create an OperatorGroup for this Namespace')}
+    </Link>,
+  ];
   return (
-    <MsgBox
-      title="Namespace Not Enabled"
-      detail={
-        <p>
-          {t(
-            'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
-          )}
-          &nbsp;
-          <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}>
-            {t('olm~Create one here.')}
-          </Link>
-        </p>
-      }
-    />
+    <ConsoleEmptyState title={t('olm~Namespace not enabled')} primaryActions={actions}>
+      {t(
+        'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
+      )}
+    </ConsoleEmptyState>
   );
 };
 

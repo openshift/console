@@ -8,7 +8,6 @@ import {
   DOC_URL_RED_HAT_MARKETPLACE,
   ExternalLink,
   Firehose,
-  MsgBox,
   PageHeading,
   skeletonCatalog,
   StatusBox,
@@ -21,6 +20,7 @@ import {
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { iconFor } from '..';
 import {
@@ -72,6 +72,22 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
     `Error parsing valid subscription from PackageManifest "${pkg.metadata.name}":`,
     error,
   );
+
+const OperatorHubEmptyState = () => {
+  const { t } = useTranslation('olm');
+  const actions = [
+    <ExternalLink
+      key="more-info"
+      href="https://github.com/operator-framework/operator-marketplace"
+      text={t('More info')}
+    />,
+  ];
+  return (
+    <ConsoleEmptyState title={t('No OperatorHub items found')} primaryActions={actions}>
+      {t('Check that the OperatorHub is running and that you have created a valid CatalogSource.')}
+    </ConsoleEmptyState>
+  );
+};
 
 export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   loaded,
@@ -224,24 +240,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
       loaded={loaded}
       loadError={loadError}
       label={t('olm~Resources')}
-      EmptyMsg={() => (
-        <MsgBox
-          title={t('olm~No OperatorHub items found')}
-          detail={
-            <span>
-              <Trans ns="olm">
-                Please check that the OperatorHub is running and that you have created a valid
-                CatalogSource. For more information about OperatorHub, please click{' '}
-                <ExternalLink
-                  href="https://github.com/operator-framework/operator-marketplace"
-                  text={t('olm~here')}
-                />
-                .
-              </Trans>
-            </span>
-          }
-        />
-      )}
+      EmptyMsg={OperatorHubEmptyState}
     >
       <OperatorHubTileView items={uniqueItems} namespace={namespace} />
     </StatusBox>

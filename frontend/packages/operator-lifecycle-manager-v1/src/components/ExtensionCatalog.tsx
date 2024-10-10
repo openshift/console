@@ -3,7 +3,7 @@ import { Page, PageSection } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import {
-  MsgBox,
+  ConsoleEmptyState,
   PageHeading,
   skeletonCatalog,
   StatusBox,
@@ -78,16 +78,11 @@ const ExtensionCatalog = () => {
           loadError={error}
           label={t('Extension Catalog items')}
           EmptyMsg={() => (
-            <MsgBox
-              title={t('No Extension Catalog items found')}
-              detail={
-                <span>
-                  {t(
-                    'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
-                  )}
-                </span>
-              }
-            />
+            <ConsoleEmptyState title={t('No Extension Catalog items found')}>
+              {t(
+                'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
+              )}
+            </ConsoleEmptyState>
           )}
         >
           <OperatorHubTileView items={legacyOpertorHubItems} namespace={namespace} />

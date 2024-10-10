@@ -74,7 +74,7 @@ describe('Visiting other routes', () => {
           {
             path:
               '/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler',
-            waitFor: () => cy.byTestID('empty-message').should('be.visible'),
+            waitFor: () => cy.byTestID('empty-box-body').should('be.visible'),
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck',

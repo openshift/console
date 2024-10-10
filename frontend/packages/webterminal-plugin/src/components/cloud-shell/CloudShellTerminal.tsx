@@ -194,10 +194,9 @@ const CloudShellTerminal: React.FC<
   // failed to init the terminal
   if (initError) {
     return (
-      <LoadError
-        message={initError}
-        label={t('webterminal-plugin~OpenShift command line terminal')}
-      />
+      <LoadError label={t('webterminal-plugin~OpenShift command line terminal')}>
+        {initError}
+      </LoadError>
     );
   }
 

@@ -4,17 +4,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import {
-  Alert,
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  Tooltip,
-  EmptyStateActions,
-  EmptyStateHeader,
-  EmptyStateFooter,
-} from '@patternfly/react-core';
+import { Alert, Button, Tooltip } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 // FIXME upgrading redux types is causing many errors at this time
@@ -64,7 +54,7 @@ import {
   Kebab,
   LabelList,
   LoadingInline,
-  MsgBox,
+  ConsoleEmptyState,
   ResourceIcon,
   ResourceKebab,
   ResourceLink,
@@ -393,6 +383,24 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
   );
 };
 
+const NamespacesNotFoundMessage = () => {
+  const { t } = useTranslation();
+  return (
+    <ConsoleEmptyState title={t('public~No Namespaces found')} Icon={SearchIcon}>
+      {t('public~No results were found for the requested Namespaces.')}
+    </ConsoleEmptyState>
+  );
+};
+
+const NamespacesEmptyMessage = () => {
+  const { t } = useTranslation();
+  return (
+    <ConsoleEmptyState title={t('public~No matching Namespaces')} Icon={SearchIcon}>
+      {t('public~No results match the filter criteria.')}
+    </ConsoleEmptyState>
+  );
+};
+
 export const NamespacesList = (props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -422,19 +430,6 @@ export const NamespacesList = (props) => {
     }),
     [tableColumns],
   );
-  const NamespaceNotFoundMessage = () => (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText={<>{t('public~No namespaces found')}</>}
-        icon={<EmptyStateIcon icon={SearchIcon} />}
-        headingLevel="h2"
-      />
-      <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStateFooter>
-        <EmptyStateActions />
-      </EmptyStateFooter>
-    </EmptyState>
-  );
 
   return (
     <Table
@@ -446,7 +441,8 @@ export const NamespacesList = (props) => {
       Row={NamespacesTableRow}
       customData={customData}
       virtualize
-      EmptyMsg={NamespaceNotFoundMessage}
+      EmptyMsg={NamespacesEmptyMessage}
+      NoDataEmptyMsg={NamespacesNotFoundMessage}
     />
   );
 };
@@ -756,13 +752,31 @@ export const ProjectsTable = (props) => {
 const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
 const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
 
+const ProjectNotFoundMessage = () => {
+  const { t } = useTranslation();
+  const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
+  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
+  const canCreate = canCreateNs || canCreateProject;
+  return (
+    <ConsoleEmptyState title={t('public~Welcome to OpenShift')}>
+      <OpenShiftGettingStarted canCreate={canCreate} />
+    </ConsoleEmptyState>
+  );
+};
+
+const ProjectEmptyMessage = () => {
+  const { t } = useTranslation();
+  return (
+    <ConsoleEmptyState title={t('public~No matching Projects')} icon={SearchIcon}>
+      {t('public~No results match the filter criteria.')}
+    </ConsoleEmptyState>
+  );
+};
+
 export const ProjectList = ({ data, ...tableProps }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
-  const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
-  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
-  const canCreate = canCreateNs || canCreateProject;
   const [tableColumns] = useUserSettingsCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
@@ -800,27 +814,6 @@ export const ProjectList = ({ data, ...tableProps }) => {
     return null;
   }
 
-  const ProjectEmptyMessage = () => (
-    <MsgBox
-      title={t('public~Welcome to OpenShift')}
-      detail={<OpenShiftGettingStarted canCreate={canCreate} />}
-    />
-  );
-
-  const ProjectNotFoundMessage = () => (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText={<>{t('public~No projects found')}</>}
-        icon={<EmptyStateIcon icon={SearchIcon} />}
-        headingLevel="h2"
-      />
-      <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-      <EmptyStateFooter>
-        <EmptyStateActions />
-      </EmptyStateFooter>
-    </EmptyState>
-  );
-
   return (
     <Table
       {...tableProps}
@@ -830,7 +823,8 @@ export const ProjectList = ({ data, ...tableProps }) => {
       data={data}
       Header={showMetrics ? headerWithMetrics : headerNoMetrics}
       Row={ProjectTableRow}
-      EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
+      NoDataEmptyMsg={ProjectNotFoundMessage}
+      EmptyMsg={ProjectEmptyMessage}
       customData={customData}
       virtualize
     />

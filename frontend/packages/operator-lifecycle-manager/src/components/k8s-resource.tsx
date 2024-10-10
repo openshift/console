@@ -13,7 +13,7 @@ import {
 import {
   ResourceLink,
   Timestamp,
-  MsgBox,
+  ConsoleEmptyState,
   FirehoseResource,
 } from '@console/internal/components/utils';
 import {
@@ -110,10 +110,9 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
       Header={ResourceTableHeader}
       Row={ResourceTableRow}
       EmptyMsg={() => (
-        <MsgBox
-          title={t('olm~No resources found')}
-          detail={t('olm~There are no Kubernetes resources used by this operand.')}
-        />
+        <ConsoleEmptyState title={t('olm~No resources found')}>
+          {t('olm~There are no Kubernetes resources used by this operand.')}
+        </ConsoleEmptyState>
       )}
       virtualize
     />

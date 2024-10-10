@@ -9,11 +9,9 @@ type TerminalLoadingBoxProps = {
 const TerminalLoadingBox: React.FC<TerminalLoadingBoxProps> = ({ message }) => {
   const { t } = useTranslation();
   return (
-    <LoadingBox
-      message={
-        message ?? t('webterminal-plugin~Connecting to your OpenShift command line terminal ...')
-      }
-    />
+    <LoadingBox>
+      {message ?? t('webterminal-plugin~Connecting to your OpenShift command line terminal ...')}
+    </LoadingBox>
   );
 };
 

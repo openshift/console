@@ -99,12 +99,7 @@ const DebugTerminalInner: React.FC<DebugTerminalInnerProps> = ({ debugPod, initi
         />
       );
     case 'Pending':
-      return (
-        <LoadingBox message={debugPod.status.phase}>
-          {debugPod.status?.containerStatuses?.[0]?.state?.waiting?.message ||
-            debugPod.status?.message}
-        </LoadingBox>
-      );
+      return <LoadingBox>{debugPod.status.phase}</LoadingBox>;
     default:
       return <LoadingBox />;
   }
@@ -219,7 +214,7 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
         ]}
       />
       {loaded && !err && <DebugTerminal podData={podData} containerName={name} />}
-      {err && <LoadingBox message={err} />}
+      {err && <LoadingBox>{err}</LoadingBox>}
       {!loaded && <LoadingBox />}
     </div>
   );

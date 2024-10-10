@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TableProps, Table } from '@console/internal/components/factory';
-import { MsgBox } from '@console/internal/components/utils';
+import { ConsoleEmptyState } from '@console/internal/components/utils';
 import HelmReleaseResourcesHeader from './HelmReleaseResourcesHeader';
 import HelmReleaseResourcesRow from './HelmReleaseResourcesRow';
 
@@ -14,7 +14,7 @@ const HelmReleaseResourcesList: React.FC<TableProps> = (props) => {
       defaultSortField="kind"
       Header={HelmReleaseResourcesHeader(t)}
       Row={HelmReleaseResourcesRow}
-      EmptyMsg={() => <MsgBox title={t('helm-plugin~No resources found')} />}
+      EmptyMsg={() => <ConsoleEmptyState title={t('helm-plugin~No resources found')} />}
       virtualize
     />
   );

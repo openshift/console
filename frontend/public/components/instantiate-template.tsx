@@ -247,13 +247,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   };
 
   if (obj.loadError) {
-    return (
-      <LoadError
-        message={obj.loadError.message}
-        label={t('public~Template')}
-        className="loading-box loading-box__errored"
-      />
-    );
+    return <LoadError label={t('public~Template')}>{obj.loadError.message}</LoadError>;
   }
 
   if (!obj.loaded) {

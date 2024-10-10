@@ -24,6 +24,6 @@ export const helmChartRepository = {
       cy.byTestActionID('Delete HelmChartRepository').click();
     }
     createForm.clickConfirm();
-    cy.byTestID('empty-message').should('be.visible');
+    cy.byTestID('empty-box-body').should('be.visible');
   },
 };

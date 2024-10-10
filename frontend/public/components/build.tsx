@@ -31,6 +31,7 @@ import {
   AsyncComponent,
   BuildHooks,
   BuildStrategy,
+  ConsoleEmptyState,
   DetailsItem,
   documentationURLs,
   ExternalLink,
@@ -395,14 +396,12 @@ export const BuildEnvironmentComponent = (props) => {
     );
   }
   return (
-    <div className="cos-status-box">
-      <div className="pf-v5-u-text-align-center">
-        {t('public~The environment variable editor does not support build strategy: {{ type }}', {
-          type: obj.spec.strategy.type,
-        })}
-        .
-      </div>
-    </div>
+    <ConsoleEmptyState>
+      {t('public~The environment variable editor does not support build strategy: {{ type }}', {
+        type: obj.spec.strategy.type,
+      })}
+      .
+    </ConsoleEmptyState>
   );
 };
 

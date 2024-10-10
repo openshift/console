@@ -20,7 +20,7 @@ import {
   Firehose,
   Kebab,
   LoadingBox,
-  MsgBox,
+  ConsoleEmptyState,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -294,10 +294,9 @@ export const CreateSubscriptionYAML: React.FC = (props) => {
         return <LoadingBox />;
       },
       () => (
-        <MsgBox
-          title={t('olm~Package not found')}
-          detail={t('olm~Cannot create a Subscription to a non-existent package.')}
-        />
+        <ConsoleEmptyState title={t('olm~Package not found')}>
+          {t('olm~Cannot create a Subscription to a non-existent package.')}
+        </ConsoleEmptyState>
       ),
     ),
   );

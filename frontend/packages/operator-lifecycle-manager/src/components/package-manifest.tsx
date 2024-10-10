@@ -13,7 +13,7 @@ import {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
-  MsgBox,
+  ConsoleEmptyState,
   Timestamp,
   ResourceLink,
   resourcePathFromModel,
@@ -109,10 +109,9 @@ export const PackageManifestTableRow: React.FC<RowFunctionArgs<
 const PackageManifestListEmptyMessage = () => {
   const { t } = useTranslation();
   return (
-    <MsgBox
-      title={t('olm~No PackageManifests Found')}
-      detail={t('olm~The CatalogSource author has not added any packages.')}
-    />
+    <ConsoleEmptyState title={t('olm~No PackageManifests Found')}>
+      {t('olm~The CatalogSource author has not added any packages.')}
+    </ConsoleEmptyState>
   );
 };
 

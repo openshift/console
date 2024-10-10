@@ -36,7 +36,13 @@ import {
   referenceForModel,
   K8sResourceKindReference,
 } from '../module/k8s';
-import { LoadingBox, MsgBox, ResourceIcon, setQueryArgument, AsyncComponent } from './utils';
+import {
+  LoadingBox,
+  ConsoleEmptyState,
+  ResourceIcon,
+  setQueryArgument,
+  AsyncComponent,
+} from './utils';
 import confirmNavUnpinModal from '@console/app/src/components/nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
@@ -118,7 +124,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     setQueryArgument('kind', [...updateItems].join(','));
   };
 
-  const updateNewItems = (filter: string, { key }: ToolbarChip) => {
+  const updateNewItems = (_filter: string, { key }: ToolbarChip) => {
     const updateItems = selectedItems;
     updateItems.has(key) ? updateItems.delete(key) : updateItems.add(key);
     setSelectedItems(updateItems);
@@ -184,7 +190,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       : updateNameFilter(value);
   };
 
-  const removeLabelFilter = (filter: string, value: string) => {
+  const removeLabelFilter = (_filter: string, value: string) => {
     const newLabels = labelFilter.filter((keepItem: string) => keepItem !== value);
     setLabelFilter(newLabels);
     setQueryArgument('q', newLabels.join(','));
@@ -333,10 +339,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           })}
         </Accordion>
         {selectedItems.size === 0 && (
-          <MsgBox
-            title={t('public~No resources selected')}
-            detail={<p>{t('public~Select one or more resources from the dropdown.')}</p>}
-          />
+          <ConsoleEmptyState title={t('public~No resources selected')}>
+            {<p>{t('public~Select one or more resources from the dropdown.')}</p>}
+          </ConsoleEmptyState>
         )}
       </PageSection>
     </>

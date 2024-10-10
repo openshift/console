@@ -55,9 +55,9 @@ describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
     cy.get('.loading-skeleton--table').should('not.exist');
     // eslint-disable-next-line promise/catch-or-return
     cy.get('body').then(($body) => {
-      if ($body.find('[data-test="msg-box-title"]').length > 0) {
+      if ($body.find('[data-test="console-empty-state-title"]').length > 0) {
         // when running test in CI on a new cluster
-        cy.byTestID('msg-box-title').should('contain', 'No Operators found');
+        cy.byTestID('console-empty-state-title').should('contain', 'No Operators found');
       } else {
         // when running test on a shared cluster
         operator.filterByName(testOperator.name);
