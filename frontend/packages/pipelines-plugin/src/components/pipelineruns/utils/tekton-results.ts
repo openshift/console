@@ -108,9 +108,10 @@ export const EQ = (left: string, right: string) => EXP(left, `"${right}"`, '==')
 export const NEQ = (left: string, right: string) => EXP(left, `"${right}"`, '!=');
 
 export enum DataType {
-  PipelineRun = 'tekton.dev/v1beta1.PipelineRun',
-  TaskRun = 'tekton.dev/v1beta1.TaskRun',
-  Log = 'results.tekton.dev/v1alpha2.Log',
+  PipelineRunV1Beta1 = 'tekton.dev/v1beta1.PipelineRun',
+  TaskRunV1Beta1 = 'tekton.dev/v1beta1.TaskRun',
+  PipelineRunV1 = 'tekton.dev/v1.PipelineRun',
+  TaskRunV1 = 'tekton.dev/v1.TaskRun',
 }
 
 export const labelsToFilter = (labels?: MatchLabels): string =>
@@ -317,10 +318,11 @@ const getFilteredPipelineRuns = (
   options?: TektonResultsOptions,
   nextPageToken?: string,
   cacheKey?: string,
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ) =>
   getFilteredRecord<PipelineRunKind>(
     namespace,
-    DataType.PipelineRun,
+    IS_PIPELINE_OPERATOR_VERSION_1_16 ? DataType.PipelineRunV1 : DataType.PipelineRunV1Beta1,
     filter,
     options,
     nextPageToken,
@@ -333,10 +335,11 @@ const getFilteredTaskRuns = (
   options?: TektonResultsOptions,
   nextPageToken?: string,
   cacheKey?: string,
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
 ) =>
   getFilteredRecord<TaskRunKind>(
     namespace,
-    DataType.TaskRun,
+    IS_PIPELINE_OPERATOR_VERSION_1_16 ? DataType.TaskRunV1 : DataType.TaskRunV1Beta1,
     filter,
     options,
     nextPageToken,
@@ -349,7 +352,16 @@ export const getPipelineRuns = (
   nextPageToken?: string,
   // supply a cacheKey only if the PipelineRun is complete and response will never change in the future
   cacheKey?: string,
-) => getFilteredPipelineRuns(namespace, '', options, nextPageToken, cacheKey);
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
+) =>
+  getFilteredPipelineRuns(
+    namespace,
+    '',
+    options,
+    nextPageToken,
+    cacheKey,
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
+  );
 
 export const getTaskRuns = (
   namespace: string,
@@ -357,7 +369,16 @@ export const getTaskRuns = (
   nextPageToken?: string,
   // supply a cacheKey only if the TaskRun is complete and response will never change in the future
   cacheKey?: string,
-) => getFilteredTaskRuns(namespace, '', options, nextPageToken, cacheKey);
+  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
+) =>
+  getFilteredTaskRuns(
+    namespace,
+    '',
+    options,
+    nextPageToken,
+    cacheKey,
+    IS_PIPELINE_OPERATOR_VERSION_1_16,
+  );
 
 const isJSONString = (str: string): boolean => {
   try {
@@ -374,26 +395,14 @@ export const consoleProxyFetchLog = <T>(proxyRequest: ProxyRequest): Promise<T> 
   });
 };
 
-const getLog = async (taskRunPath: string) => {
-  const tektonResultUrl = await getTRURLHost();
-  const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
+export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
+  if (!taskRunPath) {
+    throw404();
+  }
+  const tektonResultsAPI = await getTRURLHost();
+  const url = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
     '/records/',
     '/logs/',
   )}`;
   return consoleProxyFetchLog({ url, method: 'GET', allowInsecure: true });
 };
-
-export const getTaskRunLog = (namespace: string, taskRunName: string): Promise<string> =>
-  getFilteredRecord<any>(
-    namespace,
-    DataType.Log,
-    AND(EQ(`data.spec.resource.kind`, 'TaskRun'), EQ(`data.spec.resource.name`, taskRunName)),
-    { limit: 1 },
-  ).then((x) =>
-    x?.[1]?.records.length > 0
-      ? // eslint-disable-next-line promise/no-nesting
-        getLog(x?.[1]?.records[0].name).then((response: string) => {
-          return response;
-        })
-      : throw404(),
-  );
