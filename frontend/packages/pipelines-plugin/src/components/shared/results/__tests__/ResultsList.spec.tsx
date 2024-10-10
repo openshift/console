@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { EmptyState } from '@patternfly/react-core';
-import { Table as TableDeprecated } from '@patternfly/react-table/deprecated';
+import { Table } from '@patternfly/react-table';
 import { ShallowWrapper, shallow } from 'enzyme';
 import { ComputedStatus } from '../../../../types';
 import { taskRunWithResults } from '../../../taskruns/__tests__/taskrun-test-data';
@@ -20,7 +20,7 @@ describe('ResultsList', () => {
   });
 
   it('Should render Results Table', () => {
-    expect(resultsListWrapper.find(TableDeprecated).exists()).toBe(true);
+    expect(resultsListWrapper.find(Table).exists()).toBe(true);
     expect(resultsListWrapper.find(EmptyState).exists()).toBe(false);
   });
   it('Should render an EmptyState instead', () => {
@@ -30,7 +30,7 @@ describe('ResultsList', () => {
       results: taskRunWithResults.status.taskResults,
     };
     resultsListWrapper = shallow(<ResultsList {...resultsListProps} />);
-    expect(resultsListWrapper.find(TableDeprecated).exists()).toBe(false);
+    expect(resultsListWrapper.find(Table).exists()).toBe(false);
     expect(resultsListWrapper.find(EmptyState).exists()).toBe(true);
   });
 });
