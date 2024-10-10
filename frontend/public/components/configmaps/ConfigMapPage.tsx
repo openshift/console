@@ -11,7 +11,7 @@ import { ConfigMap } from './types';
 const ConfigMapPage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, name } = useParams();
-  const isCreateFlow: boolean = !name || name === '~new';
+  const isCreateFlow: boolean = !name;
 
   const [watchedConfigMap, loaded, loadError] = useK8sWatchResource<ConfigMap>(
     isCreateFlow

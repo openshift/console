@@ -29,7 +29,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
-  const isNew = !name || name === '~new';
+  const isNew = !name;
 
   const initialValues = React.useRef({
     editorType: EditorType.Form,

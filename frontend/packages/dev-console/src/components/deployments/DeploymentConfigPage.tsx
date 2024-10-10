@@ -13,7 +13,7 @@ const DeploymentConfigPage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, name } = useParams();
 
-  const isNew = !name || name === '~new';
+  const isNew = !name;
 
   const [watchedDeployment, loaded, loadError] = useK8sWatchResource<DeploymentKind>(
     isNew

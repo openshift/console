@@ -43,7 +43,7 @@ const EditDeploymentForm: React.FC<
 }) => {
   const { t } = useTranslation();
   const resourceType = getResourcesType(resource);
-  const isNew = !resource.metadata.name || resource.metadata.name === '~new';
+  const isNew = !resource.metadata.name;
 
   const isStale = !isNew && resource.metadata.resourceVersion !== formData.resourceVersion;
 
