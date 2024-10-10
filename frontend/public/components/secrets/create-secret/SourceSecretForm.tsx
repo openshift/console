@@ -83,6 +83,6 @@ type SourceSecretFormProps = {
   stringData: {
     [key: string]: string;
   };
-  secretType: SecretType;
-  isCreate: boolean;
+  secretType?: SecretType;
+  isCreate?: boolean;
 };
