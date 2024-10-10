@@ -53,6 +53,8 @@
   "Details": "Details",
   "Schema": "Schema",
   "Instances": "Instances",
+  "Content Security Policy violation in Console plugin": "Content Security Policy violation in Console plugin",
+  "{{pluginName}} seems to have violated Console Content Security Policy. Refer to the browser's console logs for details.": "{{pluginName}} seems to have violated Console Content Security Policy. Refer to the browser's console logs for details.",
   "Web console update is available": "Web console update is available",
   "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.",
   "Refresh web console": "Refresh web console",
