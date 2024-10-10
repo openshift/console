@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Title } from '@patternfly/react-core';
 import {
-  Dropdown as DropdownDeprecated,
-  DropdownItem as DropdownItemDeprecated,
-  DropdownToggle as DropdownToggleDeprecated,
-} from '@patternfly/react-core/deprecated';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+  Title,
+} from '@patternfly/react-core';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -36,8 +37,9 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
     perspective.properties.icon,
   ]);
   return (
-    <DropdownItemDeprecated
+    <SelectOption
       key={perspective.properties.id}
+      // Should onClick actions be moved to <Select onSelect=...
       onClick={(e: React.MouseEvent<HTMLLinkElement>) => {
         e.preventDefault();
         onClick(perspective.properties.id);
@@ -51,7 +53,7 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
         {perspective.properties.name}
       </Title>
-    </DropdownItemDeprecated>
+    </SelectOption>
   );
 };
 
@@ -117,8 +119,9 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     ...perspectiveItems,
     ...(!acmPerspectiveExtension && acmLink
       ? [
-          <DropdownItemDeprecated
+          <SelectOption
             key={ACM_LINK_ID}
+            // Should onClick actions be moved to <Select onSelect=...
             onClick={() => {
               window.location.href = acmLink.spec.href;
             }}
@@ -129,7 +132,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
               </span>
               {t('console-app~Advanced Cluster Management')}
             </Title>
-          </DropdownItemDeprecated>,
+          </SelectOption>,
         ]
       : []),
   ];
@@ -142,17 +145,20 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
           data-tour-id="tour-perspective-dropdown"
           data-quickstart-id="qs-perspective-switcher"
         >
-          <DropdownDeprecated
+          <Select
             isOpen={isPerspectiveDropdownOpen}
-            toggle={
-              <DropdownToggleDeprecated
-                className={cx({
-                  'oc-nav-header__dropdown-toggle--is-empty': perspectiveItems.length === 1,
-                })}
-                isOpen={isPerspectiveDropdownOpen}
-                onToggle={() => (perspectiveItems.length === 1 ? null : togglePerspectiveOpen())}
-                toggleIndicator={perspectiveItems.length === 1 ? null : CaretDownIcon}
+            data-test-id="perspective-switcher-menu"
+            onOpenChange={(open) => setPerspectiveDropdownOpen(open)}
+            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+              <MenuToggle
+                isFullWidth
                 data-test-id="perspective-switcher-toggle"
+                isExpanded={isPerspectiveDropdownOpen}
+                ref={toggleRef}
+                onClick={() => (perspectiveItems.length === 1 ? null : togglePerspectiveOpen())}
+                className={cx({
+                  'oc-nav-header__menu-toggle--is-empty': perspectiveItems.length === 1,
+                })}
                 icon={<LazyIcon />}
               >
                 {name && (
@@ -160,11 +166,11 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
                     {name}
                   </Title>
                 )}
-              </DropdownToggleDeprecated>
-            }
-            dropdownItems={perspectiveDropdownItems}
-            data-test-id="perspective-switcher-menu"
-          />
+              </MenuToggle>
+            )}
+          >
+            <SelectList>{perspectiveDropdownItems}</SelectList>
+          </Select>
         </div>
       )}
     </>
