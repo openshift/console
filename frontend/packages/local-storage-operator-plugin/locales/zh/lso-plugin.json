@@ -47,7 +47,7 @@
   "Role": "角色",
   "CPU": "CPU",
   "Memory": "内存",
-  "Zone": "区",
+  "Zone": "Zone（区）",
   "Select nodes for creating volume filter": "选择要创建卷过滤器的节点",
   "{{nodeCount, number}} node_one": "{{nodeCount, number}} 个节点",
   "{{nodeCount, number}} node_other": "{{nodeCount, number}} 个节点",
