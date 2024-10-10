@@ -2,5 +2,9 @@
   "name": "@console/cypress-integration-tests",
   "version": "0.0.0-fixed",
   "description": "Console integration tests to be moved into appropriate packages",
-  "private": true
+  "private": true,
+  "scripts": {
+    "test-cypress-headless": "node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
+    "test-cypress-headless-parallel": "../../node_modules/.bin/cypress-parallel -s test-cypress-headless -t 4 -d './tests/**/*.cy.ts' -n ../../node_modules/cypress-multi-reporters --reporter mocha-junit-reporter --reporter-options configFile=multi-reporter-config.json --weightsJson parallel-weights.json --verbose"
+  }
 }
