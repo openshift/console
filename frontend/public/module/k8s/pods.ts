@@ -234,8 +234,11 @@ export const podPhase = (pod: PodKind): PodPhase => {
   let phase = pod.status.phase || pod.status.reason;
 
   _.each(pod.status.initContainerStatuses, (container: ContainerStatus, i: number) => {
-    const { terminated, waiting } = container.state;
+    const { terminated, waiting, running } = container.state;
     if (terminated && terminated.exitCode === 0) {
+      return true;
+    }
+    if (running && running.startedAt) {
       return true;
     }
 
