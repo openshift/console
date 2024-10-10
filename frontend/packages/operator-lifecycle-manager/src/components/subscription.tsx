@@ -436,9 +436,8 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   const installPlan = installPlanForSubscription(installPlans, obj);
   const pkg = packageForSubscription(packageManifests, obj);
   if (new URLSearchParams(window.location.search).has('showDelete')) {
-    createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj })
-      .result.then(() => removeQueryArgument('showDelete'))
-      .catch(_.noop);
+    createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj });
+    removeQueryArgument('showDelete'); // TODO: verify
   }
   const { deprecatedPackage, deprecatedChannel, deprecatedVersion } = findDeprecatedOperator(obj);
 
