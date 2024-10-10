@@ -58,7 +58,15 @@ export const pipelineBuilderPage = {
   },
   addRedHatTask: (taskName: string) => {
     cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
-    cy.byTestID(`item-name-${taskName}-Red Hat`).click();
+    cy.get(`[data-test="item-name-${taskName}-Red Hat"]`)
+      .its('length')
+      .then((length) => {
+        if (length > 1) {
+          cy.get(`[data-test="item-name-${taskName}-Red Hat"]`).eq(1).click();
+        } else {
+          cy.get(`[data-test="item-name-${taskName}-Red Hat"]`).first().click();
+        }
+      });
     cy.byTestID('task-cta').click();
   },
   clickAddTask: () => {
