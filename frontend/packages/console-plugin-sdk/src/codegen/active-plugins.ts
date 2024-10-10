@@ -17,8 +17,30 @@ import { consolePkgScope, PluginPackage } from './plugin-resolver';
 
 const getExtensionsFilePath = (pkg: PluginPackage) => path.resolve(pkg._path, extensionsFile);
 
-const getExposedModuleFilePath = (pkg: PluginPackage, moduleName: string) =>
-  path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
+const guessFileExtension = (basePath: string) => {
+  const extensions = ['.tsx', '.ts', '.js', '.jsx'];
+
+  if (fs.existsSync(basePath)) {
+    return basePath;
+  }
+
+  for (const ext of extensions) {
+    if (fs.existsSync(`${basePath}${ext}`)) {
+      return `${basePath}${ext}`;
+    }
+  }
+
+  return basePath;
+};
+
+const getExposedModuleFilePath = (pkg: PluginPackage, moduleName: string) => {
+  const modulePath = path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
+
+  // Sometimes the module is an index.ts file, but the import path only
+  // specifies the directory. Thus we need an explicit check for the index file.
+  const indexPath = path.resolve(modulePath, 'index.ts');
+  return fs.existsSync(indexPath) ? indexPath : guessFileExtension(modulePath);
+};
 
 export type ActivePluginsModuleData = {
   /** Generated module source code. */
