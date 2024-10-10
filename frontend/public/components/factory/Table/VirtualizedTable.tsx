@@ -209,12 +209,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
           NoDataEmptyMsg={NoDataEmptyMsg}
           EmptyMsg={EmptyMsg}
         >
-          <div
-            className="co-virtualized-table"
-            role="grid"
-            aria-label={ariaLabel}
-            aria-rowcount={data?.length}
-          >
+          <div className="co-virtualized-table" aria-label={ariaLabel}>
             {csvData && (
               <Button className="co-virtualized-table--export-csv-button" onClick={downloadCsv}>
                 Export as CSV
