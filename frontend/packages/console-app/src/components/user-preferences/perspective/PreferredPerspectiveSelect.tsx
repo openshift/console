@@ -1,92 +1,106 @@
 import * as React from 'react';
-import { Skeleton } from '@patternfly/react-core';
 import {
-  SelectOption as SelectOptionDeprecated,
-  Select as SelectDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectOption,
+  Skeleton,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { usePerspectives } from '@console/shared/src';
+import { Perspective } from '@console/dynamic-plugin-sdk/src/extensions';
+import { LoadedExtension } from '@console/plugin-sdk/src';
+import { usePerspectiveExtension, usePerspectives } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
   PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
   usePreferredPerspective,
 } from './usePreferredPerspective';
 
+const PreferredPerspectiveSelectOptions: React.FC<PreferredPerspectiveSelectOptionsProps> = ({
+  perspectives,
+}) => (
+  <>
+    {perspectives
+      .sort((a, b) => {
+        const aName = a?.properties?.name || '';
+        const bName = b?.properties?.name || '';
+        return aName.localeCompare(bName);
+      })
+      .map(({ properties }) => (
+        <SelectOption
+          data-test={`${properties.id} option console.preferredPerspective `}
+          key={properties.id}
+          value={properties.id}
+        >
+          {properties.name}
+        </SelectOption>
+      ))}
+  </>
+);
+
 const PreferrredPerspectiveSelect: React.FC = () => {
-  // resources and calls to hooks
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const perspectiveExtensions = usePerspectives();
-  const allPerspectives = perspectiveExtensions.map((extension) => extension.properties);
+  const lastViewed = t('console-app~Last viewed');
+  const [isOpen, setIsOpen] = React.useState(false);
   const [
-    preferredPerspective,
-    setPreferredPerspective,
-    preferredPerspectiveLoaded,
+    preferredPerspectiveID,
+    setPreferredPerspectiveID,
+    preferredPerspectiveIDLoaded,
   ] = usePreferredPerspective();
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const loaded: boolean = preferredPerspectiveLoaded;
-  const lastViewedLabel: string = t('console-app~Last viewed');
+  const preferredPerspective = usePerspectiveExtension(preferredPerspectiveID);
+  const perspectives = usePerspectives();
 
-  const selectOptions: JSX.Element[] = React.useMemo(() => {
-    const lastPerspectiveOption = (
-      <SelectOptionDeprecated key={'lastViewed'} value={lastViewedLabel} />
-    );
-    const allPerspectiveOptions = allPerspectives
-      .sort((currPerspective, nextPerspective) => {
-        const { name: currPerspectiveName } = currPerspective;
-        const { name: nextPerspectiveName } = nextPerspective;
-        if (currPerspectiveName === nextPerspectiveName) {
-          return 0;
-        }
-        return currPerspectiveName > nextPerspectiveName ? 1 : -1;
-      })
-      .map(({ name }) => <SelectOptionDeprecated key={name} value={name} />);
-    return [lastPerspectiveOption, ...allPerspectiveOptions];
-  }, [allPerspectives, lastViewedLabel]);
+  const onToggle = () => setIsOpen((current) => !current);
+  const onSelect = React.useCallback(
+    (_, selection) => {
+      if (selection !== preferredPerspectiveID) {
+        setPreferredPerspectiveID(selection === lastViewed ? null : selection);
+        fireTelemetryEvent('User Preference Changed', {
+          property: PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
+          value: selection,
+        });
+      }
+      setIsOpen(false);
+    },
+    [fireTelemetryEvent, lastViewed, preferredPerspectiveID, setPreferredPerspectiveID],
+  );
 
-  // utils and callbacks
-  const getDropdownLabelForValue = (): string =>
-    preferredPerspective
-      ? allPerspectives.find((perspective) => perspective.id === preferredPerspective)?.name ??
-        lastViewedLabel
-      : lastViewedLabel;
-  const getDropdownValueForLabel = (selectedLabel: string): string =>
-    selectedLabel === lastViewedLabel
-      ? null
-      : allPerspectives.find((perspective) => perspective.name === selectedLabel)?.id;
-  const onToggle = (_event, isOpen: boolean) => setDropdownOpen(isOpen);
-  const onSelect = (_, selection) => {
-    const selectedValue = getDropdownValueForLabel(selection);
-    selectedValue !== preferredPerspective && setPreferredPerspective(selectedValue);
-    setDropdownOpen(false);
-    fireTelemetryEvent('User Preference Changed', {
-      property: PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
-      value: selectedValue,
-    });
-  };
+  const menuToggle = React.useCallback(
+    (toggleRef: React.Ref<MenuToggleElement>) => (
+      <MenuToggle
+        id="console.preferredPerspective"
+        data-test="console.preferredPerspective"
+        isFullWidth
+        onClick={onToggle}
+        ref={toggleRef}
+      >
+        {preferredPerspective?.properties?.name || lastViewed}
+      </MenuToggle>
+    ),
+    [preferredPerspective, lastViewed],
+  );
 
-  return loaded ? (
-    <SelectDeprecated
-      variant={SelectVariantDeprecated.single}
-      isOpen={dropdownOpen}
-      selections={getDropdownLabelForValue()}
-      toggleId={'console.preferredPerspective'}
-      onToggle={onToggle}
-      onSelect={onSelect}
-      placeholderText={t('console-app~Select a perspective')}
-      data-test={'dropdown console.preferredPerspective'}
+  return preferredPerspectiveIDLoaded ? (
+    <Select
+      data-test="select console.preferredPerspective"
+      isOpen={isOpen}
       maxHeight={300}
+      onSelect={onSelect}
+      onOpenChange={setIsOpen}
+      placeholderText={t('console-app~Select a perspective')}
+      toggle={menuToggle}
     >
-      {selectOptions}
-    </SelectDeprecated>
+      <SelectOption name={lastViewed} value={lastViewed}>
+        {lastViewed}
+      </SelectOption>
+      <PreferredPerspectiveSelectOptions perspectives={perspectives} />
+    </Select>
   ) : (
-    <Skeleton
-      height="30px"
-      width="100%"
-      data-test={'dropdown skeleton console.preferredPerspective'}
-    />
+    <Skeleton height="30px" width="100%" data-test="select skeleton console.preferredPerspective" />
   );
 };
+
+type PreferredPerspectiveSelectOptionsProps = { perspectives: LoadedExtension<Perspective>[] };
 
 export default PreferrredPerspectiveSelect;
