@@ -2,14 +2,17 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useDispatch, useSelector, connect } from 'react-redux';
+import { action } from 'typesafe-actions';
+import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
-import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-
 import {
   FLAGS,
   ALL_NAMESPACES_KEY,
@@ -20,6 +23,7 @@ import {
   SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
   useUserSettingsCompatibility,
 } from '@console/shared';
+
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
 import '@console/shared/src/components/editor/theme';
@@ -29,6 +33,7 @@ import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
+import ModalCodeReplace from './modals/replace-code-modal';
 import { checkAccess, Firehose, Loading, LoadingBox, PageHeading, resourceObjPath } from './utils';
 import {
   referenceForModel,
@@ -104,6 +109,7 @@ const EditYAMLInner = (props) => {
     redirectURL,
     clearFileUpload,
     onSave,
+    isOLSRedirected,
   } = props;
 
   const navigate = useNavigate();
@@ -119,6 +125,12 @@ const EditYAMLInner = (props) => {
   const [resourceObjects, setResourceObjects] = React.useState();
 
   const [callbackCommand, setCallbackCommand] = React.useState('');
+  const [showReplaceCodeModal, setShowReplaceCodeModal] = React.useState(false);
+  const [olsCode, setOLSCode] = React.useState('');
+  const olsCodeBlock = useSelector(getOLSCodeBlock);
+
+  const closeOLS = () => action(ActionType.CloseOLS);
+  const dispatch = useDispatch();
 
   const monacoRef = React.useRef();
   const editor = React.useRef();
@@ -249,6 +261,44 @@ const EditYAMLInner = (props) => {
     },
     [convertObjToYAMLString, initialized, props.obj],
   );
+
+  const handleCodeReplace = (_event) => {
+    if (_event.target.id === 'confirm-replace') {
+      getEditor().setValue(olsCodeBlock?.value);
+    } else if (_event.target.id === 'keep-both') {
+      getEditor().setValue(appendYAMLString(olsCodeBlock?.value));
+    }
+    setShowReplaceCodeModal(false);
+  };
+
+  const isValidYaml = (str) => {
+    if (_.isEmpty(str)) {
+      return false;
+    }
+    try {
+      safeLoad(str);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  React.useEffect(() => {
+    if (!isValidYaml(olsCodeBlock?.value) || !isOLSRedirected) {
+      return;
+    }
+
+    const currentYAML = getEditor().getValue();
+
+    if (_.isEmpty(currentYAML) || currentYAML === olsCode) {
+      getEditor().setValue(olsCodeBlock?.value);
+    } else {
+      setShowReplaceCodeModal(true);
+    }
+
+    setOLSCode(olsCodeBlock?.value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [olsCodeBlock, initialized, isOLSRedirected]);
 
   const handleError = (err, value = null) => {
     setSuccess(value);
@@ -718,6 +768,7 @@ const EditYAMLInner = (props) => {
         <div className="co-p-has-sidebar">
           <div className="co-p-has-sidebar__body">
             <div className={classNames('yaml-editor', customClass)} ref={editor}>
+              {showReplaceCodeModal && <ModalCodeReplace handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
                 ref={monacoRef}
                 options={options}
@@ -760,7 +811,10 @@ const EditYAMLInner = (props) => {
                       variant="primary"
                       id="save-changes"
                       data-test="save-changes"
-                      onClick={() => (allowMultiple ? saveAll() : save())}
+                      onClick={() => {
+                        allowMultiple ? saveAll() : save();
+                        dispatch(closeOLS());
+                      }}
                     >
                       {t('public~Create')}
                     </Button>
@@ -791,7 +845,10 @@ const EditYAMLInner = (props) => {
                     variant="secondary"
                     id="cancel"
                     data-test="cancel"
-                    onClick={() => onCancel()}
+                    onClick={() => {
+                      onCancel();
+                      dispatch(closeOLS());
+                    }}
                   >
                     {t('public~Cancel')}
                   </Button>
