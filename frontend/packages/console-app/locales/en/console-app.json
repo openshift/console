@@ -186,6 +186,7 @@
   "Edit Pod selector": "Edit Pod selector",
   "Edit tolerations": "Edit tolerations",
   "Add storage": "Add storage",
+  "Start Job": "Start Job",
   "Edit update strategy": "Edit update strategy",
   "Resume rollouts": "Resume rollouts",
   "Pause rollouts": "Pause rollouts",

@@ -3,6 +3,7 @@ export * from './deploymentconfig-provider';
 export * from './stateful-set-provider';
 export * from './daemon-set-provider';
 export * from './job-provider';
+export * from './cronjob-provider';
 export * from './service-binding-provider';
 export * from './replicaset-provider';
 export * from './replication-controllers-provider';
