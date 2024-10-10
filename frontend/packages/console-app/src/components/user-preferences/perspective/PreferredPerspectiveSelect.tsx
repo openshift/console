@@ -13,7 +13,7 @@ import {
   usePreferredPerspective,
 } from './usePreferredPerspective';
 
-const PerspectiveDropdown: React.FC = () => {
+const PreferrredPerspectiveSelect: React.FC = () => {
   // resources and calls to hooks
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
@@ -89,4 +89,4 @@ const PerspectiveDropdown: React.FC = () => {
   );
 };
 
-export default PerspectiveDropdown;
+export default PreferrredPerspectiveSelect;
