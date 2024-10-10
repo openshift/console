@@ -6,7 +6,6 @@ import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { ThIcon } from '@patternfly/react-icons/dist/esm/icons/th-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import {
   Dropdown,
@@ -21,7 +20,6 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
 import {
   ACM_LINK_ID,
   FLAGS,
@@ -55,6 +53,7 @@ import { FeedbackModal } from '@patternfly/react-user-feedback';
 import { useFeedbackLocal } from './feedback-local';
 import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
+import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from './QuickCreate';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
@@ -521,6 +520,22 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             },
           },
           {
+            component: () => (
+              <QuickCreateImportFromGit
+                namespace={activeNamespace}
+                className="pf-v5-c-menu__item"
+              />
+            ),
+          },
+          {
+            component: () => (
+              <QuickCreateContainerImages
+                namespace={activeNamespace}
+                className="pf-v5-c-menu__item"
+              />
+            ),
+          },
+          {
             component: () => <CloudShellMastheadAction className="pf-v5-c-menu__item" />,
           },
         ],
@@ -692,15 +707,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                   <BellIcon alt="" />
                 </NotificationBadge>
               )}
-              <Link
-                to={getImportYAMLPath()}
-                className="pf-v5-c-button pf-m-plain"
-                aria-label={t('public~Import YAML')}
-                data-quickstart-id="qs-masthead-import"
-                data-test="import-yaml"
-              >
-                <PlusCircleIcon className="co-masthead-icon" alt="" />
-              </Link>
+              <QuickCreate namespace={activeNamespace} />
               <CloudShellMastheadButton />
               <Dropdown
                 className="co-app-launcher"
