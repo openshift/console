@@ -2,6 +2,7 @@ import * as React from 'react';
 import { JobKind, CronJobKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { getCommonResourceActions } from '../creators/common-factory';
+import { CronJobActionFactory } from '../creators/cronjob-factory';
 import { JobActionFactory } from '../creators/job-factory';
 import { usePDBActions } from '../creators/pdb-factory';
 
@@ -26,7 +27,11 @@ export const useCronJobActionsProvider = (resource: CronJobKind) => {
   const [pdbActions] = usePDBActions(kindObj, resource);
 
   const actions = React.useMemo(
-    () => [...pdbActions, ...getCommonResourceActions(kindObj, resource)],
+    () => [
+      CronJobActionFactory.StartJob(kindObj, resource),
+      ...pdbActions,
+      ...getCommonResourceActions(kindObj, resource),
+    ],
     [kindObj, pdbActions, resource],
   );
 
