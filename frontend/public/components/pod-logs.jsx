@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import {
-  ContainerDropdown,
+  ContainerSelect,
   getQueryArgument,
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_RUNNING,
@@ -91,7 +91,7 @@ export class PodLogs extends React.Component {
     const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
     const currentContainerStatus = containerToLogSourceStatus(currentContainer);
     const containerDropdown = (
-      <ContainerDropdown
+      <ContainerSelect
         currentKey={currentKey}
         containers={containers}
         initContainers={initContainers}

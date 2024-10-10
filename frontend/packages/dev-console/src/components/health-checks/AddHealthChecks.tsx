@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import {
-  ContainerDropdown,
+  ContainerSelect,
   documentationURLs,
   getDocumentationURL,
   history,
@@ -110,7 +110,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
           <p className="odc-add-health-checks__paragraph">
             {t('devconsole~Container')} &nbsp;
             {_.size(containers) > 1 ? (
-              <ContainerDropdown
+              <ContainerSelect
                 currentKey={currentKey}
                 containers={containersByKey}
                 onChange={handleSelectContainer}

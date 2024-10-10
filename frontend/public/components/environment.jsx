@@ -12,7 +12,7 @@ import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/
 import {
   AsyncComponent,
   checkAccess,
-  ContainerDropdown,
+  ContainerSelect,
   EnvFromPair,
   EnvType,
   FieldLevelHelp,
@@ -510,7 +510,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     const envVar = currentEnvVars.getEnvVarByTypeAndIndex(containerType, containerIndex);
 
     const containerDropdown = currentEnvVars.isContainerArray ? (
-      <ContainerDropdown
+      <ContainerSelect
         currentKey={rawEnvData[containerType][containerIndex].name}
         containers={getContainersObjectForDropdown(rawEnvData.containers)}
         initContainers={getContainersObjectForDropdown(rawEnvData.initContainers)}

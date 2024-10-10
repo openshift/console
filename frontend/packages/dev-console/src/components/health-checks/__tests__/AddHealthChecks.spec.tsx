@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ContainerDropdown, ResourceLink } from '@console/internal/components/utils';
+import { ContainerSelect, ResourceLink } from '@console/internal/components/utils';
 import * as utils from '@console/internal/components/utils/rbac';
 import { FormFooter } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
@@ -42,7 +42,7 @@ describe('AddHealthCheck', () => {
 
   it('should load AddHealthCheck', () => {
     const wrapper = shallow(<AddHealthChecks {...addHealthCheckProbs} />);
-    expect(wrapper.find(ContainerDropdown).exists()).toBe(false);
+    expect(wrapper.find(ContainerSelect).exists()).toBe(false);
     expect(wrapper.find(ResourceLink).exists()).toBe(true);
     expect(wrapper.find(HealthChecks).exists()).toBe(true);
     expect(wrapper.find(FormFooter).exists()).toBe(true);

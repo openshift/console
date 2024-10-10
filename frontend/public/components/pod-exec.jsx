@@ -7,7 +7,7 @@ import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import store from '../redux';
-import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
+import { ContainerLabel, ContainerSelect, LoadingBox } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared';
 import { Terminal } from './terminal';
@@ -15,15 +15,6 @@ import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';
 import { PodModel } from '../models';
 import { isWindowsPod } from '../module/k8s/pods';
-
-const nameWithIcon = (name) => (
-  <span>
-    <span className="co-icon-space-r">
-      <ResourceIcon kind="Container" />
-    </span>
-    {name}
-  </span>
-);
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
@@ -40,7 +31,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       super(props);
       this.state = {
         open: false,
-        containers: [],
+        containers: {},
         activeContainer:
           props.initialContainer ||
           props.obj.metadata?.annotations?.['kubectl.kubernetes.io/default-container'] ||
@@ -49,7 +40,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       this.terminal = React.createRef();
       this.onResize = (rows, cols) => this.onResize_(rows, cols);
       this.onData = (d) => this.onData_(d);
-      this.onChangeContainer = (index) => this.onChangeContainer_(index);
+      this.onChangeContainer = (container) => this.onChangeContainer_(container);
     }
     connect_() {
       const {
@@ -139,19 +130,19 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-      const containers = _.get(nextProps.obj, 'spec.containers', []).map((n) => n.name);
+      const containers = _.keyBy(_.get(nextProps.obj, 'spec.containers', []), 'name');
       if (_.isEqual(containers, prevState.containers)) {
         return null;
       }
       return { containers };
     }
 
-    onChangeContainer_(index) {
-      const name = this.state.containers[index];
+    onChangeContainer_(container) {
+      const name = this.state.containers?.[container]?.name;
 
       if (!name) {
         // eslint-disable-next-line no-console
-        console.warn(`no name, how did that happen? ${index}`);
+        console.warn(`no name, how did that happen? ${container}`);
         return;
       }
       if (name === this.state.activeContainer) {
@@ -199,15 +190,14 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
             <div className="co-toolbar__group co-toolbar__group--left">
               <div className="co-toolbar__item">{t('public~Connecting to')}</div>
               <div className="co-toolbar__item">
-                {containers.length > 1 ? (
-                  <Dropdown
-                    className="co-toolbar__item-dropdown"
-                    items={_.mapValues(containers, nameWithIcon)}
-                    title={nameWithIcon(activeContainer || <LoadingInline />)}
+                {Object.keys(containers).length > 1 ? (
+                  <ContainerSelect
+                    currentKey={activeContainer}
+                    containers={this.state.containers}
                     onChange={this.onChangeContainer}
                   />
                 ) : (
-                  nameWithIcon(containers[0])
+                  <ContainerLabel name={activeContainer} />
                 )}
               </div>
             </div>
