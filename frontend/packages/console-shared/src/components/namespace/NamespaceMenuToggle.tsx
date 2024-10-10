@@ -22,7 +22,9 @@ const NamespaceMenuToggle = (props: {
       shortCut &&
       event.key === shortCut &&
       event.target.nodeName !== 'INPUT' &&
-      event.target.nodeName !== 'TEXTAREA'
+      event.target.nodeName !== 'TEXTAREA' &&
+      event.target.role !== 'textbox' &&
+      event.target.role !== 'code'
     ) {
       onToggle(true);
       event.stopPropagation();
