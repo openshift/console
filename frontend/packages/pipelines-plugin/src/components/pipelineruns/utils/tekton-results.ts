@@ -318,11 +318,13 @@ const getFilteredPipelineRuns = (
   options?: TektonResultsOptions,
   nextPageToken?: string,
   cacheKey?: string,
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
+  IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER?: boolean,
 ) =>
   getFilteredRecord<PipelineRunKind>(
     namespace,
-    IS_PIPELINE_OPERATOR_VERSION_1_16 ? DataType.PipelineRunV1 : DataType.PipelineRunV1Beta1,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER
+      ? DataType.PipelineRunV1
+      : DataType.PipelineRunV1Beta1,
     filter,
     options,
     nextPageToken,
@@ -335,11 +337,11 @@ const getFilteredTaskRuns = (
   options?: TektonResultsOptions,
   nextPageToken?: string,
   cacheKey?: string,
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
+  IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER?: boolean,
 ) =>
   getFilteredRecord<TaskRunKind>(
     namespace,
-    IS_PIPELINE_OPERATOR_VERSION_1_16 ? DataType.TaskRunV1 : DataType.TaskRunV1Beta1,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER ? DataType.TaskRunV1 : DataType.TaskRunV1Beta1,
     filter,
     options,
     nextPageToken,
@@ -352,7 +354,7 @@ export const getPipelineRuns = (
   nextPageToken?: string,
   // supply a cacheKey only if the PipelineRun is complete and response will never change in the future
   cacheKey?: string,
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
+  IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER?: boolean,
 ) =>
   getFilteredPipelineRuns(
     namespace,
@@ -360,7 +362,7 @@ export const getPipelineRuns = (
     options,
     nextPageToken,
     cacheKey,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER,
   );
 
 export const getTaskRuns = (
@@ -369,7 +371,7 @@ export const getTaskRuns = (
   nextPageToken?: string,
   // supply a cacheKey only if the TaskRun is complete and response will never change in the future
   cacheKey?: string,
-  IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
+  IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER?: boolean,
 ) =>
   getFilteredTaskRuns(
     namespace,
@@ -377,7 +379,7 @@ export const getTaskRuns = (
     options,
     nextPageToken,
     cacheKey,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER,
   );
 
 const isJSONString = (str: string): boolean => {

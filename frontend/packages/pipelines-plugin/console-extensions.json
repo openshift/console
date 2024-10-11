@@ -845,7 +845,7 @@
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_16" }
+      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_16_or_newer" }
     }
   },
   {

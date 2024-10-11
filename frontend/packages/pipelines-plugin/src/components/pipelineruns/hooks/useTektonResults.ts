@@ -6,7 +6,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_16 } from '../../pipelines/const';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_16_OR_NEWER } from '../../pipelines/const';
 import { RepositoryLabels, RepositoryFields } from '../../repository/consts';
 import {
   getPipelineRuns,
@@ -24,13 +24,15 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     options?: TektonResultsOptions,
     nextPageToken?: string,
     cacheKey?: string,
-    IS_PIPELINE_OPERATOR_VERSION_1_16?: boolean,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER?: boolean,
   ) => Promise<[Kind[], RecordsList, boolean?]>,
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
-  const IS_PIPELINE_OPERATOR_VERSION_1_16 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16);
+  const IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER = useFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_16_OR_NEWER,
+  );
   const [nextPageToken, setNextPageToken] = React.useState<string>(null);
   const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
 
@@ -61,7 +63,7 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
           options,
           nextPageToken,
           localCacheKey,
-          IS_PIPELINE_OPERATOR_VERSION_1_16,
+          IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER,
         );
         if (!disposed) {
           const token = tkPipelineRuns[1].nextPageToken;
@@ -109,7 +111,7 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     nextPageToken,
     localCacheKey,
     getRuns,
-    IS_PIPELINE_OPERATOR_VERSION_1_16,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER,
   ]);
   return result;
 };
