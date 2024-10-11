@@ -1396,6 +1396,7 @@
   "Clear history": "Clear history",
   "Recently used": "Recently used",
   "No results found": "No results found",
+  "Clear input value": "Clear input value",
   "Edit AppliedClusterResourceQuota": "Edit AppliedClusterResourceQuota",
   "Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.": "Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.",
   "Affects pods that do not have an active deadline. These pods usually include your applications.": "Affects pods that do not have an active deadline. These pods usually include your applications.",

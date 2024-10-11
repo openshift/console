@@ -413,7 +413,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                         onRowFilterSelect(value);
                       }}
                       selected={selectedRowFilters}
-                      // maxMenuHeight="60vh" // A bug in the current PatternFly version prevents usage, so CSS added in _common.scss
+                      maxMenuHeight="60vh"
                       isScrollable
                       className="co-toolbar__selector"
                     >

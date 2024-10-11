@@ -339,7 +339,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
             <Button
               variant="plain"
               onClick={onClearButtonClick}
-              aria-label={t('public~Clear query')}
+              aria-label={t('public~Clear input value')}
             >
               <TimesIcon aria-hidden />
             </Button>
@@ -359,8 +359,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
         open ? setIsOpen(true) : closeMenu();
       }}
       toggle={toggle}
-      // FIXME(jaclee): uncomment this line when PF5 is updated
-      // shouldFocusFirstItemOnOpen={false}
+      shouldFocusFirstItemOnOpen={false}
       {...selectProps}
     >
       <SelectList id={`${ID_PREFIX}-listbox`}>
