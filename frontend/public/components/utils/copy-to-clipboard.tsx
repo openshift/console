@@ -29,7 +29,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo(
     const actions = (
       <CodeBlockAction>
         <ClipboardCopyButton
-          id="clipboard-copy-button"
+          id={`clipboard-copy-button-${id}`}
           textId={`code-content-${id}`}
           aria-label={copyToClipboardText}
           onClick={(e) => onClick(e, value)}

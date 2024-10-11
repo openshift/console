@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
@@ -112,6 +113,8 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
       {tooltipText}
     </span>,
   ];
+  const textId = _.uniqueId('link-content-');
+  const displayText = text || link;
 
   return (
     <div className={classNames(additionalClassName)}>
@@ -119,10 +122,10 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        id="link-content"
+        id={textId}
         data-test-id={dataTestID}
       >
-        {text ?? link}
+        {displayText}
         <span className="co-icon-nowrap">
           &nbsp;
           <span className="co-external-link-with-copy__icon co-external-link-with-copy__externallinkicon">
@@ -132,10 +135,10 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
       </a>
       <span className="co-icon-nowrap">
         <ClipboardCopyButton
-          id="clipboard-copy-button"
-          textId="link-content"
+          id={_.uniqueId('clipboard-copy-button-')}
+          textId={textId}
           aria-label={copyToClipboardText}
-          onClick={(e) => onClick(e, text)}
+          onClick={(e) => onClick(e, displayText)}
           exitDelay={copied ? 1250 : 600}
           variant="plain"
           maxWidth="120px"
