@@ -16,7 +16,7 @@ import {
   PipelineMetricsLevel,
   PIPELINE_NAMESPACE,
   FLAG_TEKTON_V1_ENABLED,
-  FLAG_PIPELINES_OPERATOR_VERSION_1_16,
+  FLAG_PIPELINES_OPERATOR_VERSION_1_16_OR_NEWER,
 } from '../const';
 import { MetricsQueryPrefix } from '../pipeline-metrics/pipeline-metrics-utils';
 import { getPipelineMetricsLevel, usePipelineConfig } from './pipeline-config';
@@ -103,10 +103,13 @@ export const useIsTektonV1VersionPresent = (setFeatureFlag: SetFeatureFlag) => {
   setFeatureFlag(FLAG_TEKTON_V1_ENABLED, isTektonV1VersionPresent);
 };
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const useIsPipelineOperatorVersion_1_16 = (setFeatureFlag: SetFeatureFlag) => {
+export const useIsPipelineOperatorVersion_1_16_or_newer = (setFeatureFlag: SetFeatureFlag) => {
   const [activeNamespace] = useActiveNamespace();
   const operatorVersion = usePipelineOperatorVersion(activeNamespace);
-  const IS_PIPELINE_OPERATOR_VERSION_1_16 =
+  const IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER =
     operatorVersion?.major === 1 && operatorVersion?.minor >= 16;
-  setFeatureFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_16, IS_PIPELINE_OPERATOR_VERSION_1_16);
+  setFeatureFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_16_OR_NEWER,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER,
+  );
 };
