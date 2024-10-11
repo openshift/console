@@ -808,6 +808,8 @@ export type Release = {
   channels?: string[];
 };
 
+export type VersionUpdate = { version?: string; image?: string };
+
 export type ConditionalUpdate = {
   release: Release;
   conditions: K8sResourceCondition[];
@@ -842,7 +844,7 @@ type ClusterVersionStatus = {
   observedGeneration: number;
   versionHash: string;
   conditions?: ClusterVersionCondition[];
-  availableUpdates: Release[];
+  availableUpdates?: VersionUpdate[];
   conditionalUpdates?: ConditionalUpdate[];
 };
 
