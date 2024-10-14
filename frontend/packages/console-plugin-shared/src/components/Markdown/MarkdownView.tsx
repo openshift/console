@@ -267,7 +267,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     <>
       <iframe
         title={_.uniqueId('markdown-view')}
-        sandbox="allow-popups-to-escape-sandbox allow-same-origin"
+        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
         style={{ border: '0px', display: 'block', width: '100%', height: frameHeight }}
         ref={frameRef}
         onLoad={onLoad}
