@@ -1,8 +1,6 @@
 package sessions
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -11,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/securecookie"
+	consoleUtils "github.com/openshift/console/pkg/utils"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
 	utilptr "k8s.io/utils/ptr"
@@ -274,20 +273,12 @@ func addIDToken(t *oauth2.Token, idtoken string) *oauth2.Token {
 	return t
 }
 
-func randomBytes(size int) []byte {
-	b := make([]byte, size)
-	if _, err := rand.Read(b); err != nil {
-		panic(err) // rand should never fail
-	}
-	return b
-}
-
 func randomString(size int) string {
-	// each byte (8 bits) gives us 4/3 base64 (6 bits) characters
-	// we account for that conversion and add one to handle truncation
-	b64size := base64.RawURLEncoding.DecodedLen(size) + 1
-	// trim down to the original requested size since we added one above
-	return base64.RawURLEncoding.EncodeToString(randomBytes(b64size))[:size]
+	str, err := consoleUtils.RandomString(size)
+	if err != nil {
+		panic(err) // should never fail
+	}
+	return str
 }
 
 func TestCombinedSessionStore_UpdateTokens(t *testing.T) {

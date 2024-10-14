@@ -1,18 +1,16 @@
 package sessions
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"fmt"
 	"slices"
 	"sort"
 	"sync"
 	"time"
 
+	consoleUtils "github.com/openshift/console/pkg/utils"
 	"golang.org/x/oauth2"
-	"k8s.io/klog/v2"
-
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -175,12 +173,11 @@ func (ss *SessionStore) pruneSessions() {
 func loginStateSorter(a, b *LoginState) int { return a.CompareExpiry(b) }
 
 func RandomString(length int) string {
-	bytes := make([]byte, length)
-	_, err := rand.Read(bytes)
+	str, err := consoleUtils.RandomString(length)
 	if err != nil {
 		panic(fmt.Sprintf("FATAL ERROR: Unable to get random bytes for session token: %v", err))
 	}
-	return base64.StdEncoding.EncodeToString(bytes)
+	return str
 }
 
 func spliceOut(slice []*LoginState, toRemove *LoginState) []*LoginState {
