@@ -1891,5 +1891,63 @@
         "$codeRef": "nodeActions.useNodeActions"
       }
     }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "topology",
+      "perspective": "admin",
+      "section": "workloads",
+      "insertBefore": "pods",
+      "name": "%devconsole~Topology%",
+      "href": "/topology",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-topology",
+        "data-test-id": "topology-header"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "add",
+      "perspective": "admin",
+      "section": "workloads",
+      "insertAfter": "topology",
+      "name": "%devconsole~+Add%",
+      "href": "/add",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-add",
+        "data-test-id": "+Add-header"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "helm",
+      "perspective": "admin",
+      "section": "workloads",
+      "insertAfter": "add",
+      "name": "Helm",
+      "href": "/helm-releases",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-helm",
+        "data-test-id": "helm-releases-header"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "workloads",
+      "id": "WorkloadsDevSeparator",
+      "insertAfter": "helm",
+      "testID": "WorkloadsDevSeparator"
+    }
   }
 ]
