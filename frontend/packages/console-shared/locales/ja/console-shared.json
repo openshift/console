@@ -199,6 +199,7 @@
   "All Namespaces": "すべての namespace",
   "Project": "プロジェクト",
   "Namespace": "Namespace",
+  "Enable Autoscale": "自動スケーリングの有効化",
   "Increase the Pod count": "Pod 数を増やす",
   "Decrease the Pod count": "Pod 数を減らす",
   "No Pods found for this resource.": "このリソースの Pod が見つかりません。",
