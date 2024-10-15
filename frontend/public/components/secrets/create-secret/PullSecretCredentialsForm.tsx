@@ -32,36 +32,36 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   const { t } = useTranslation();
   const pullSecretFileName = getPullSecretFileName(secretType);
   const pullSecretJSON = stringData[pullSecretFileName];
-  const initialEntries = React.useMemo(() => arrayifyPullSecret(pullSecretJSON, onError), [
+  const entries = React.useMemo(() => arrayifyPullSecret(pullSecretJSON, onError), [
     pullSecretJSON,
     onError,
   ]);
-  const [entries, setEntries] = React.useState(
-    initialEntries.length > 0 ? initialEntries : [newImageSecretEntry()],
+
+  const onEntriesChanged = React.useCallback(
+    (newEntries) => {
+      const newPullSecretJSON = stringifyPullSecret(newEntries, secretType);
+      if (newPullSecretJSON !== pullSecretJSON) {
+        onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });
+      }
+    },
+    [onChange, pullSecretFileName, pullSecretJSON, secretType],
   );
 
-  React.useEffect(() => {
-    const newPullSecretJSON = stringifyPullSecret(entries, secretType);
-    if (newPullSecretJSON !== pullSecretJSON) {
-      onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });
-    }
-  }, [entries, onChange, pullSecretFileName, pullSecretJSON, secretType]);
-
   const updateEntry = (updatedEntry, entryIndex: number) => {
-    const updatedSecretEntriesArray = entries.map((entry, index) =>
+    const updatedEntries = entries.map((entry, index) =>
       index === entryIndex ? { uid: entry.uid, ...updatedEntry } : entry,
     );
-    setEntries(updatedSecretEntriesArray);
+    onEntriesChanged(updatedEntries);
   };
 
   const removeEntry = (entryIndex: number) => {
-    const updatedSecretEntriesArray = entries.filter((_value, index) => index !== entryIndex);
-    setEntries(updatedSecretEntriesArray);
+    const updatedEntries = entries.filter((_value, index) => index !== entryIndex);
+    onEntriesChanged(updatedEntries);
   };
 
   const addEntry = () => {
-    const updatedSecretsEntriesArray = [...entries, newImageSecretEntry()];
-    setEntries(updatedSecretsEntriesArray);
+    const updatedEntries = [...entries, newImageSecretEntry()];
+    onEntriesChanged(updatedEntries);
   };
 
   return (
