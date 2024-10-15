@@ -25,6 +25,27 @@ describe('Masthead', () => {
     });
   });
 
+  describe('Quick create', () => {
+    it('should open Import YAML', () => {
+      masthead.quickCreateDropdown().click();
+      cy.byTestID('qc-import-yaml').should('be.visible');
+      cy.get('[data-test="qc-import-yaml"] a').click({ force: true });
+      cy.get('[data-test-id="resource-title"]').should('include.text', 'Import YAML');
+    });
+    it('should open Import from Git', () => {
+      masthead.quickCreateDropdown().click();
+      cy.byTestID('qc-import-from-git').should('be.visible');
+      cy.get('[data-test="qc-import-from-git"] a').click({ force: true });
+      cy.get('[data-test-id="resource-title"]').should('include.text', 'Import from Git');
+    });
+    it('should open Deploy Image', () => {
+      masthead.quickCreateDropdown().click();
+      cy.byTestID('qc-container-images').should('be.visible');
+      cy.get('[data-test="qc-container-images"] a').click({ force: true });
+      cy.get('[data-test-id="resource-title"]').should('include.text', 'Deploy Image');
+    });
+  });
+
   describe('User dropdown', () => {
     it('should render the correct copy login command link', () => {
       cy.window().then((win: any) => {
