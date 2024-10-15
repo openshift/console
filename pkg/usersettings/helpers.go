@@ -8,17 +8,27 @@ import (
 	core "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, error) {
 	uid := userInfo.UID
 	name := userInfo.Username
 	resourceIdentifier := name
+	ownerReferences := []meta.OwnerReference{
+		{
+			APIVersion: "user.openshift.io/v1",
+			Kind:       "User",
+			Name:       name,
+			UID:        types.UID(uid),
+		},
+	}
 
 	if uid != "" {
 		resourceIdentifier = string(uid)
 	} else if name == "kube:admin" {
 		resourceIdentifier = "kubeadmin"
+		ownerReferences = []meta.OwnerReference{}
 	} else {
 		// to avoid issues when the username contains special characters like '@'
 		// that are not allowed in kube resource names
@@ -33,6 +43,7 @@ func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, e
 		Username:           name,
 		UID:                string(uid),
 		ResourceIdentifier: resourceIdentifier,
+		OwnerReferences:    ownerReferences,
 	}, nil
 }
 
@@ -43,7 +54,8 @@ func createRole(userSettingMeta *UserSettingMeta) *rbac.Role {
 			Kind:       "Role",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getRoleName(),
+			Name:            userSettingMeta.getRoleName(),
+			OwnerReferences: userSettingMeta.OwnerReferences,
 		},
 		Rules: []rbac.PolicyRule{
 			{
@@ -75,7 +87,8 @@ func createRoleBinding(userSettingMeta *UserSettingMeta) *rbac.RoleBinding {
 			Kind:       "RoleBinding",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getRoleBindingName(),
+			Name:            userSettingMeta.getRoleBindingName(),
+			OwnerReferences: userSettingMeta.OwnerReferences,
 		},
 		Subjects: []rbac.Subject{
 			{
@@ -99,7 +112,8 @@ func createConfigMap(userSettingMeta *UserSettingMeta) *core.ConfigMap {
 			Kind:       "ConfigMap",
 		},
 		ObjectMeta: meta.ObjectMeta{
-			Name: userSettingMeta.getConfigMapName(),
+			Name:            userSettingMeta.getConfigMapName(),
+			OwnerReferences: userSettingMeta.OwnerReferences,
 		},
 	}
 }
