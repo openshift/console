@@ -15,8 +15,10 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -25,7 +27,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
 
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
+	"github.com/openshift/console/pkg/metrics"
 )
 
 const (
@@ -117,16 +121,27 @@ func (m *mockOIDCProvider) handleToken(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if r.Form.Get("refresh_token") != testValidRefreshToken {
+		// compiling the regexp might add some latency that can be useful for
+		// benchmarking
+		refreshTokenRegEx := regexp.MustCompile(`^` + testValidRefreshToken + `([0-9]*)`)
+		matches := refreshTokenRegEx.FindStringSubmatch(r.Form.Get("refresh_token"))
+		if len(matches) == 0 {
 			http.Error(w, `{"error": "invalid_grant"}`, http.StatusBadRequest)
 			return
+		}
+
+		newValidRefreshToken := "new-refresh-token"
+		user := "testuser"
+		if len(matches) > 1 {
+			newValidRefreshToken += matches[1]
+			user += matches[1]
 		}
 
 		resp := map[string]string{
 			"access_token":  "new-access-token",
 			"token_type":    "bearer",
-			"refresh_token": "new-refresh-token",
-			"id_token":      m.signPayload(`{"sub":"testuser","exp":` + strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10) + `}`),
+			"refresh_token": newValidRefreshToken,
+			"id_token":      m.signPayload(`{"sub":"` + user + `","exp":` + strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10) + `}`),
 		}
 		var respJSON []byte
 		respJSON, err := json.Marshal(resp)
@@ -201,7 +216,7 @@ func (m *mockOIDCProvider) endpointConfig() oauth2.Endpoint {
 	}
 }
 
-func startMockProvider(t *testing.T) (*mockOIDCProvider, *url.URL, func() error) {
+func startMockProvider(t testing.TB) (*mockOIDCProvider, *url.URL, func() error) {
 	privKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	require.NoError(t, err)
 
@@ -270,6 +285,7 @@ func Test_oidcAuth_login(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
+				auth.NewMetrics(),
 			)
 			require.NoError(t, err)
 
@@ -380,6 +396,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
+				auth.NewMetrics(),
 			)
 			require.NoError(t, err)
 
@@ -503,6 +520,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 					secureCookies:         true,
 					constructOAuth2Config: testOAuth2ConfigConstructor,
 				},
+				auth.NewMetrics(),
 			)
 			require.NoError(t, err)
 
@@ -532,6 +550,105 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 			if err == nil {
 				require.Equal(t, tt.wantUserUID, got.UserID())
 			}
+		})
+	}
+}
+
+// TODO: should also test concurrent logins
+func BenchmarkRefreshSession(b *testing.B) {
+	// init the provider
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+
+	// mock provider network delays?
+	oidcProvider, providerURL, closePort := startMockProvider(b)
+	defer closePort()
+
+	// let's assume that the JS sends about 100 requests to the backend when the
+	// user reaches the page for the first time
+	const numRequests = 100
+
+	numUsers := []int{1, 10, 20, 50, 100, 200, 500, 1000}
+
+	for _, userNum := range numUsers {
+		b.Run(fmt.Sprintf("BenchmarkRefreshSession-Users=%d", userNum), func(b *testing.B) {
+			b.StopTimer()
+			authMetrics := auth.NewMetrics()
+			o, err := newOIDCAuth(
+				context.Background(),
+				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
+				&oidcConfig{
+					getClient: func() *http.Client {
+						return http.DefaultClient
+					},
+					issuerURL:             providerURL.String(),
+					clientID:              testClientID,
+					secureCookies:         true,
+					constructOAuth2Config: testOAuth2ConfigConstructor,
+				},
+				authMetrics,
+			)
+			require.NoError(b, err)
+
+			// prepare the concurrent requests
+			errChan := make(chan error, numRequests*userNum)
+			startChan := make(chan struct{}, 1)
+
+			wg := &sync.WaitGroup{}
+			for user := 0; user < userNum; user++ {
+				for i := 0; i < numRequests; i++ {
+					wg.Add(1)
+					go func(tokenSuffix int) {
+						defer wg.Done()
+
+						<-startChan
+						refreshToken := testValidRefreshToken + strconv.Itoa(tokenSuffix)
+						testCookieFactory := &testCookieFactory{
+							cookieCodecs: securecookie.CodecsFromPairs(authnKey, encryptionKey),
+							refreshToken: &refreshToken,
+						}
+						req := httptest.NewRequest("GET", "/", nil)
+						testCookieFactory.Complete(b, req)
+
+						writer := httptest.NewRecorder()
+						got, err := o.refreshSession(
+							context.Background(),
+							writer,
+							req,
+							testOAuth2ConfigConstructor(oidcProvider.endpointConfig()),
+							refreshToken,
+						)
+
+						errChan <- err
+
+						expectedRefreshToken := testNewRefreshToken + strconv.Itoa(tokenSuffix)
+						if got.RefreshToken() != expectedRefreshToken {
+							b.Errorf("expected refresh token to be %s, got %s", expectedRefreshToken, got.RefreshToken())
+						}
+					}(user)
+				}
+			}
+
+			// init ready, let's start benchmarking
+			b.ResetTimer()
+			b.StartTimer()
+			close(startChan)
+
+			wg.Wait()
+			b.StopTimer()
+
+			for i := 0; i < userNum*numRequests; i++ {
+				err := <-errChan
+				require.NoError(b, err)
+			}
+
+			expectedMetrics := metrics.RemoveComments(`
+			console_auth_token_refresh_requests_total{handling="full"} ` + strconv.Itoa(userNum) + `
+			console_auth_token_refresh_requests_total{handling="short-circuit"} ` + strconv.Itoa(userNum*(numRequests-1)) + `
+			console_auth_token_refresh_requests_total{handling="unknown"} 0
+			`)
+			gotMetrics := metrics.RemoveComments("console_auth_token_refresh_requests_total")
+			require.Equal(b, expectedMetrics, gotMetrics)
 		})
 	}
 }
@@ -597,7 +714,7 @@ func (f *testCookieFactory) WithCustomCookie(cookieName string, cookieValue map[
 	return f
 }
 
-func (f *testCookieFactory) Complete(t *testing.T, req *http.Request) *http.Request {
+func (f *testCookieFactory) Complete(t testing.TB, req *http.Request) *http.Request {
 	if f.sessionToken != nil {
 		attachCookieOrDie(t, req, sessions.SessionCookieName(),
 			map[interface{}]interface{}{
@@ -619,7 +736,7 @@ func (f *testCookieFactory) Complete(t *testing.T, req *http.Request) *http.Requ
 	return req
 }
 
-func attachCookieOrDie(t *testing.T, req *http.Request, cookieName string, cookieValue map[interface{}]interface{}, cookieCodecs []securecookie.Codec) {
+func attachCookieOrDie(t testing.TB, req *http.Request, cookieName string, cookieValue map[interface{}]interface{}, cookieCodecs []securecookie.Codec) {
 	encoded, err := securecookie.EncodeMulti(cookieName, cookieValue, cookieCodecs...)
 	require.NoError(t, err)
 	req.AddCookie(&http.Cookie{Name: cookieName, Value: encoded})
