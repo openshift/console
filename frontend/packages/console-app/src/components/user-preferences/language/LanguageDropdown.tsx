@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { Skeleton, Checkbox } from '@patternfly/react-core';
 import {
-  SelectOption as SelectOptionDeprecated,
-  Select as SelectDeprecated,
-  SelectVariant as SelectVariantDeprecated,
-} from '@patternfly/react-core/deprecated';
+  Skeleton,
+  Checkbox,
+  Select,
+  SelectList,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { supportedLocales } from './const';
@@ -17,13 +20,13 @@ const LanguageDropdown: React.FC = () => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const selectOptions: JSX.Element[] = React.useMemo(
+  const [isOpen, setIsOpen] = React.useState(false);
+  const options: JSX.Element[] = React.useMemo(
     () =>
-      Object.keys(supportedLocales).map((lang) => (
-        <SelectOptionDeprecated key={lang} value={lang}>
-          {supportedLocales[lang]}
-        </SelectOptionDeprecated>
+      Object.keys(supportedLocales).map((language) => (
+        <SelectOption key={language} value={language}>
+          {supportedLocales[language]}
+        </SelectOption>
       )),
     [],
   );
@@ -31,7 +34,6 @@ const LanguageDropdown: React.FC = () => {
   const [isUsingDefault, setIsUsingDefault] = React.useState<boolean>(!preferredLanguage);
   const checkboxLabel: string = t('console-app~Use the default browser language setting.');
 
-  const onToggle = (_event, isOpen: boolean) => setDropdownOpen(isOpen);
   const onSelect = (_, selection: string) => {
     if (selection !== preferredLanguage) {
       setPreferredLanguage(selection);
@@ -40,7 +42,7 @@ const LanguageDropdown: React.FC = () => {
         value: 'custom',
       });
     }
-    setDropdownOpen(false);
+    setIsOpen(false);
   };
 
   const onUsingDefault = (_event, checked: boolean) => {
@@ -77,21 +79,27 @@ const LanguageDropdown: React.FC = () => {
         data-test="checkbox console.preferredLanguage"
         className="co-language-dropdown__system-default-checkbox"
       />
-      <SelectDeprecated
-        variant={SelectVariantDeprecated.single}
-        isOpen={dropdownOpen}
-        selections={preferredLanguage}
-        toggleId={'console.preferredLanguage'}
-        onToggle={onToggle}
+      <Select
+        isOpen={isOpen}
+        onOpenChange={(open) => setIsOpen(open)}
+        selected={preferredLanguage}
         onSelect={onSelect}
-        placeholderText={t('console-app~Select a language')}
-        aria-label={t('console-app~Select a language')}
         data-test="dropdown console.preferredLanguage"
-        maxHeight={300}
-        isDisabled={isUsingDefault}
+        id={'console.preferredLanguage'}
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            aria-label={t('console-app~Select a language')}
+            isFullWidth
+            isDisabled={isUsingDefault}
+            ref={toggleRef}
+            onClick={(open) => setIsOpen(open)}
+          >
+            {supportedLocales[preferredLanguage] || t('console-app~Select a language')}
+          </MenuToggle>
+        )}
       >
-        {selectOptions}
-      </SelectDeprecated>
+        <SelectList>{options}</SelectList>
+      </Select>
     </>
   ) : (
     <>
