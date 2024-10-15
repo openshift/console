@@ -2,10 +2,14 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { AsyncComponent } from './utils';
 import { useTranslation } from 'react-i18next';
+import { useQueryParams } from '@console/shared';
 
 export const ImportYamlPage = () => {
   const { t } = useTranslation();
+  const queryParams = useQueryParams();
   const title = t('public~Import YAML');
+
+  const isOLSRedirected = queryParams.get('ols') === 'true';
 
   return (
     <>
@@ -18,6 +22,7 @@ export const ImportYamlPage = () => {
         create={true}
         download={false}
         header={title}
+        isOLSRedirected={isOLSRedirected}
       />
     </>
   );
