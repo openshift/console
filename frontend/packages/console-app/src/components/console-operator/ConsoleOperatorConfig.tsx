@@ -3,24 +3,22 @@ import { Alert, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import {
   ISortBy,
-  sortable,
+  OnSort,
   SortByDirection,
-  TableGridBreakpoint,
-  TableVariant,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from '@patternfly/react-table';
-import {
-  Table as TableDeprecated,
-  TableHeader as TableHeaderDeprecated,
-  TableBody as TableBodyDeprecated,
-} from '@patternfly/react-table/deprecated';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import {
   getGroupVersionKindForModel,
-  getReference,
+  getReferenceForModel,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
@@ -42,15 +40,18 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import {
-  isLoadedDynamicPluginInfo,
-  isNotLoadedDynamicPluginInfo,
-  LoadedDynamicPluginInfo,
-  NotLoadedDynamicPluginInfo,
-} from '@console/plugin-sdk/src';
+import { isLoadedDynamicPluginInfo, isNotLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, Status } from '@console/shared';
+import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, DASH, Status } from '@console/shared';
+import {
+  boolComparator,
+  localeComparator,
+  Comparator,
+} from '@console/shared/src/utils/comparators';
 
+const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
+const consolePluginGVK = getGroupVersionKindForModel(ConsolePluginModel);
+const consolePluginConcatenatedGVK = getReferenceForModel(ConsolePluginModel);
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
   ConsoleOperatorConfigModel,
 );
@@ -96,159 +97,67 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugi
   );
 };
 
-const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
+const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, loaded }) => {
   const { t } = useTranslation();
-  const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
-    isList: true,
-    kind: referenceForModel(ConsolePluginModel),
-  });
-  const [pluginInfoEntries] = useDynamicPluginInfo();
-  const [rows, setRows] = React.useState([]);
-  const [sortBy, setSortBy] = React.useState<ISortBy>({});
-  const pluginColumns = ['name', 'version', 'description', 'status'];
-  const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
-  React.useEffect(() => {
-    const placeholder = '-';
-    if (developmentMode) {
-      const data = pluginInfoEntries.filter(isLoadedDynamicPluginInfo).map((plugin) => {
-        return {
-          name: plugin.metadata.name,
-          version: plugin.metadata.version,
-          description: plugin.metadata?.customProperties?.console?.description || placeholder,
-          enabled: plugin.enabled,
-          status: plugin.status,
-        };
-      });
-      setRows(
-        data?.map((item) => {
-          return {
-            cells: [
-              {
-                title: item.name,
-              },
-              item.version,
-              item.description,
-              {
-                title: <Status status={item.status} title={item.status} />,
-              },
-              {
-                title: t('console-app~Enabled'),
-              },
-            ],
-          };
-        }),
-      );
-      return;
-    }
-    const data = consolePlugins.map((plugin) => {
-      const pluginName = plugin?.metadata?.name;
-      const loadedPluginInfo = pluginInfoEntries
-        .filter(isLoadedDynamicPluginInfo)
-        .find(
-          (i: LoadedDynamicPluginInfo) => i?.metadata?.name === pluginName,
-        ) as LoadedDynamicPluginInfo;
-      const notLoadedPluginInfo = pluginInfoEntries
-        .filter(isNotLoadedDynamicPluginInfo)
-        .find(
-          (i: NotLoadedDynamicPluginInfo) => i?.pluginName === pluginName,
-        ) as NotLoadedDynamicPluginInfo;
-      const enabled = !!obj?.spec?.plugins?.includes(pluginName);
-      if (loadedPluginInfo) {
-        return {
-          name: plugin?.metadata?.name,
-          version: loadedPluginInfo?.metadata?.version,
-          description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
-          enabled,
-          status: loadedPluginInfo?.status,
-        };
-      }
-      return {
-        name: plugin?.metadata?.name,
-        enabled,
-        status: notLoadedPluginInfo?.status,
-        errorMessage:
-          notLoadedPluginInfo?.status !== 'Pending' ? notLoadedPluginInfo?.errorMessage : undefined,
-        errorCause:
-          notLoadedPluginInfo?.status !== 'Pending'
-            ? notLoadedPluginInfo?.errorCause?.toString()
-            : undefined,
-      };
-    });
-    const sortedData = !_.isEmpty(sortBy)
-      ? data.sort((a, b) => {
-          const sortCol = pluginColumns[sortBy.index];
-          if ((a[sortCol] || placeholder) < (b[sortCol] || placeholder)) {
-            return -1;
-          }
-          if ((a[sortCol] || placeholder) > (b[sortCol] || placeholder)) {
-            return 1;
-          }
-          return 0;
-        })
-      : data;
-    if (sortBy && sortBy?.direction === SortByDirection.desc) {
-      sortedData.reverse();
-    }
-    setRows(
-      sortedData?.map((item) => {
-        return {
-          cells: [
-            {
-              title: (
-                <ResourceLink
-                  kind={referenceForModel(ConsolePluginModel)}
-                  name={item.name}
-                  hideIcon
-                />
-              ),
-            },
-            item.version || placeholder,
-            item.description || placeholder,
-            item.status
-              ? {
-                  title: (
-                    <Status status={item.status} title={item.status}>
-                      {item.errorMessage} <br /> {item.errorCause}
-                    </Status>
-                  ),
-                }
-              : placeholder,
-            {
-              title: <ConsolePluginStatus plugin={item.name} enabled={item.enabled} />,
-            },
-          ],
-        };
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [consolePlugins, pluginInfoEntries, obj, sortBy]);
-  const headers = [
-    {
-      title: t('console-app~Name'),
-      transforms: developmentMode ? [] : [sortable],
-    },
-    {
-      title: t('console-app~Version'),
-      transforms: developmentMode ? [] : [sortable],
-    },
-    {
-      title: t('console-app~Description'),
-      transforms: developmentMode ? [] : [sortable],
-    },
-    {
-      title: t('console-app~Status'),
-      transforms: developmentMode ? [] : [sortable],
-    },
-    { title: '' },
-  ];
-  const onSort = (e, index, direction) => {
-    setSortBy({
-      index,
-      direction,
-    });
-  };
+  const [sortBy, setSortBy] = React.useState<ISortBy>(() => ({
+    index: 0,
+    direction: SortByDirection.asc,
+  }));
+  const onSort = React.useCallback<OnSort>((_event, index, direction) => {
+    setSortBy({ index, direction });
+  }, []);
 
-  return consolePluginsLoaded ? (
+  const columns = React.useMemo<TableColumn[]>(
+    () => [
+      {
+        id: 'name',
+        name: t('console-app~Name'),
+        sortable: true,
+      },
+      {
+        id: 'version',
+        name: t('console-app~Version'),
+      },
+      {
+        id: 'description',
+        name: t('console-app~Description'),
+      },
+      {
+        id: 'status',
+        name: t('console-app~Status'),
+        sortable: true,
+      },
+      {
+        id: 'enabled',
+        name: t('console-app~Enabled'),
+        sortable: true,
+      },
+    ],
+    [t],
+  );
+
+  const compare = React.useCallback<Comparator<ConsolePluginTableRow>>(
+    (a, b) => {
+      const { index, direction } = sortBy;
+      const { id } = columns[index];
+      const desc = direction === SortByDirection.desc;
+      const left = (desc ? b : a)[id];
+      const right = (desc ? a : b)[id];
+      switch (id) {
+        case 'enabled':
+          return boolComparator(left, right);
+        default:
+          return localeComparator(left, right);
+      }
+    },
+    [columns, sortBy],
+  );
+
+  const sortedRows = React.useMemo(() => rows.sort(compare), [rows, compare]);
+
+  return !loaded ? (
+    <LoadingBox />
+  ) : (
     <div className="co-m-pane__body">
       {obj.spec?.managementState === 'Unmanaged' && (
         <Alert
@@ -264,9 +173,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
         <div className="co-m-pane__createLink--no-title">
           <Link
             className="co-m-primary-action"
-            to={`/k8s/cluster/${getReference(
-              getGroupVersionKindForModel(ConsolePluginModel),
-            )}/~new`}
+            to={`/k8s/cluster/${consolePluginConcatenatedGVK}/~new`}
           >
             <Button variant="primary" id="yaml-create" data-test="item-create">
               {t('public~Create {{label}}', { label: t(ConsolePluginModel.label) })}
@@ -275,26 +182,109 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
         </div>
       </RequireCreatePermission>
       {rows.length ? (
-        <TableDeprecated
-          aria-label={t('console-app~Console plugins table')}
-          cells={headers}
-          gridBreakPoint={TableGridBreakpoint.none}
-          onSort={onSort}
-          rows={rows}
-          sortBy={sortBy}
-          variant={TableVariant.compact}
-        >
-          <TableHeaderDeprecated />
-          <TableBodyDeprecated />
-        </TableDeprecated>
+        <Table aria-label="console plugins table" ouiaId="ConsolePluginsTable">
+          <Thead>
+            <Tr>
+              {columns.map(({ name, sortable }, columnIndex) => (
+                <Th sort={sortable ? { sortBy, onSort, columnIndex } : null}>{name}</Th>
+              ))}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {sortedRows.map(({ name, version, description, status, enabled }) => (
+              <Tr key={name}>
+                <Td dataLabel={columns[0].id}>
+                  <ResourceLink groupVersionKind={consolePluginGVK} name={name} hideIcon />
+                </Td>
+                <Td dataLabel={columns[1].id}>{version || DASH}</Td>
+                <Td dataLabel={columns[2].id}>{description || DASH}</Td>
+                <Td dataLabel={columns[3].id}>
+                  {status ? <Status status={status} title={status} /> : DASH}
+                </Td>
+                <Td dataLabel={columns[4].id}>
+                  {<ConsolePluginStatus plugin={name} enabled={enabled} />}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
       ) : (
         <EmptyBox label={t('console-app~console plugins')} />
       )}
     </div>
-  ) : (
-    <LoadingBox />
   );
 };
+
+const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
+  const [pluginInfo, pluginInfoLoaded] = useDynamicPluginInfo();
+  const rows = React.useMemo<ConsolePluginTableRow[]>(
+    () =>
+      !pluginInfoLoaded
+        ? []
+        : pluginInfo.filter(isLoadedDynamicPluginInfo).map((plugin) => ({
+            name: plugin.metadata.name,
+            version: plugin.metadata.version,
+            description: plugin.metadata?.customProperties?.console?.description,
+            enabled: plugin.enabled,
+            status: plugin.status,
+          })),
+    [pluginInfo, pluginInfoLoaded],
+  );
+  return <ConsolePluginsTable {...props} rows={rows} loaded={pluginInfoLoaded} />;
+};
+
+const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
+  const [pluginInfo, pluginInfoLoaded] = useDynamicPluginInfo();
+  const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsolePluginModel),
+  });
+  const enabledPlugins = React.useMemo(() => props?.obj?.spec?.plugins ?? [], [
+    props?.obj?.spec?.plugins,
+  ]);
+  const rows = React.useMemo<ConsolePluginTableRow[]>(() => {
+    if (!pluginInfoLoaded || !consolePluginsLoaded) {
+      return [];
+    }
+    return consolePlugins.map((plugin) => {
+      const pluginName = plugin?.metadata?.name;
+      const enabled = enabledPlugins.includes(pluginName);
+      const loadedPluginInfo = pluginInfo
+        .filter(isLoadedDynamicPluginInfo)
+        .find((i) => i?.metadata?.name === pluginName);
+      const notLoadedPluginInfo = pluginInfo
+        .filter(isNotLoadedDynamicPluginInfo)
+        .find((i) => i?.pluginName === pluginName);
+      if (loadedPluginInfo) {
+        return {
+          name: plugin?.metadata?.name,
+          version: loadedPluginInfo?.metadata?.version,
+          description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
+          enabled,
+          status: loadedPluginInfo?.status,
+        };
+      }
+      return {
+        name: plugin?.metadata?.name,
+        enabled,
+        status: notLoadedPluginInfo?.status,
+        errorMessage:
+          notLoadedPluginInfo?.status === 'Failed' ? notLoadedPluginInfo?.errorMessage : undefined,
+        errorCause:
+          notLoadedPluginInfo?.status === 'Failed'
+            ? notLoadedPluginInfo?.errorCause?.toString()
+            : undefined,
+      };
+    });
+  }, [pluginInfoLoaded, consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins]);
+  return (
+    <ConsolePluginsTable {...props} rows={rows} loaded={pluginInfoLoaded && consolePluginsLoaded} />
+  );
+};
+
+const ConsoleOperatorConfigPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = developmentMode
+  ? DevPluginsPage
+  : PluginsPage;
 
 export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   typeof DetailsPage
@@ -307,7 +297,7 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
       href: 'console-plugins',
       // t('console-app~Console plugins')
       nameKey: 'console-app~Console plugins',
-      component: ConsolePluginsList,
+      component: ConsoleOperatorConfigPluginsPage,
     },
   ];
 
@@ -339,11 +329,32 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   );
 };
 
+type ConsolePluginTableRow = {
+  description?: string;
+  enabled: boolean;
+  errorMessage?: string;
+  errorCause?: string;
+  name: string;
+  status: string;
+  version?: string;
+};
+
+type TableColumn = {
+  name: string;
+  id: string;
+  sortable?: boolean;
+};
+
+type ConsolePluginsTableProps = ConsoleOperatorConfigPageProps & {
+  rows: ConsolePluginTableRow[];
+  loaded: boolean;
+};
+
 type ConsolePluginStatusType = {
   enabled: boolean;
   plugin: string;
 };
 
-type ConsolePluginsListType = {
+type ConsoleOperatorConfigPageProps = {
   obj: K8sResourceKind;
 };
