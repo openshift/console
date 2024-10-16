@@ -144,7 +144,7 @@ const EditYAMLInner = (props) => {
   const onCancel = 'onCancel' in props ? props.onCancel : navigateBack;
 
   const getEditor = () => {
-    return monacoRef.current.editor;
+    return monacoRef.current?.editor;
   };
 
   const getModel = React.useCallback(
@@ -220,7 +220,7 @@ const EditYAMLInner = (props) => {
   );
 
   const appendYAMLString = React.useCallback((yaml) => {
-    const currentYAML = getEditor().getValue();
+    const currentYAML = getEditor()?.getValue();
     return _.isEmpty(currentYAML)
       ? yaml
       : `${currentYAML}${currentYAML.trim().endsWith('---') ? '\n' : '\n---\n'}${yaml}`;
@@ -255,7 +255,7 @@ const EditYAMLInner = (props) => {
 
       const yaml = convertObjToYAMLString(obj);
       displayedVersion.current = _.get(obj, 'metadata.resourceVersion');
-      getEditor().setValue(yaml);
+      getEditor()?.setValue(yaml);
       setInitialized(true);
       setStale(false);
     },
@@ -264,9 +264,9 @@ const EditYAMLInner = (props) => {
 
   const handleCodeReplace = (_event) => {
     if (_event.target.id === 'confirm-replace') {
-      getEditor().setValue(olsCodeBlock?.value);
+      getEditor()?.setValue(olsCodeBlock?.value);
     } else if (_event.target.id === 'keep-both') {
-      getEditor().setValue(appendYAMLString(olsCodeBlock?.value));
+      getEditor()?.setValue(appendYAMLString(olsCodeBlock?.value));
     }
     setShowReplaceCodeModal(false);
   };
@@ -288,10 +288,10 @@ const EditYAMLInner = (props) => {
       return;
     }
 
-    const currentYAML = getEditor().getValue();
+    const currentYAML = getEditor()?.getValue();
 
     if (_.isEmpty(currentYAML) || currentYAML === olsCode) {
-      getEditor().setValue(olsCodeBlock?.value);
+      getEditor()?.setValue(olsCodeBlock?.value);
     } else {
       setShowReplaceCodeModal(true);
     }
@@ -435,7 +435,7 @@ const EditYAMLInner = (props) => {
     if (retryObjs) {
       const yamlDocuments = retryObjs.map((obj) => convertObjToYAMLString(obj));
       setDisplayResults(false);
-      getEditor().setValue(yamlDocuments.join('---\n'));
+      getEditor()?.setValue(yamlDocuments.join('---\n'));
     }
   };
 
@@ -645,7 +645,7 @@ const EditYAMLInner = (props) => {
   }, [saving, callbackCommand]);
 
   const download = () => {
-    const data = getEditor().getValue();
+    const data = getEditor()?.getValue();
     downloadYaml(data);
   };
 
