@@ -1,9 +1,8 @@
 import * as React from 'react';
 
-export type CloseModal = () => void;
+type CloseModal = () => void;
 
-export type UnknownProps = { [key: string]: unknown };
-
+type UnknownProps = { [key: string]: unknown };
 export type ModalComponent<P = UnknownProps> = React.FC<P & { closeModal: CloseModal }>;
 
 export type LaunchModal = <P = UnknownProps>(

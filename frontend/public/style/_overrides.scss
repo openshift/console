@@ -242,18 +242,23 @@ form.pf-v5-c-form {
 }
 
 // specificity targeting form elements to override --pf-v5-global--FontSize--md
-.pf-v5-c-page {
+.pf-v5-c-page,
+.modal-dialog {
   .pf-v5-c-app-launcher,
-  .pf-v5-c-button,
   .pf-c-button,
-  .pf-v5-c-dropdown,
-  .pf-c-dropdown,
-  .pf-v5-c-dropdown__menu-item,
   .pf-c-dropdown__menu-item,
-  .pf-v5-c-dropdown__toggle,
   .pf-c-dropdown__toggle,
+  .pf-c-dropdown,
+  .pf-c-form-control,
+  .pf-v5-c-button,
+  .pf-v5-c-check__label,
+  .pf-v5-c-dropdown__menu-item,
+  .pf-v5-c-dropdown__toggle,
+  .pf-v5-c-dropdown,
   .pf-v5-c-form-control,
-  .pf-c-form-control {
+  .pf-v5-c-menu__item-text,
+  .pf-v5-c-menu-toggle__text,
+  .pf-v5-c-radio__label {
     font-size: $font-size-base;
     height: auto;
   }

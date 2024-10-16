@@ -1,44 +1,20 @@
-.modal-body {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  height: 100%;
-  padding: 0;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-}
-
 .modal-body-border {
   border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
 }
 
 .modal-body-content {
-  height: 100%;
-  padding: 0 var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
+  padding: var(--pf-v5-c-modal-box__header--body--PaddingTop) 0 0;
   p {
+    font-size: $font-size-base;
     margin-bottom: var(--pf-v5-c-content--MarginBottom);
   }
 }
 
-.modal-content {
-  background-clip: padding-box;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  // Remove focus outline from opened modal
-  outline: 0;
-  position: relative;
-}
-
 .modal-footer {
-  margin-top: 0;
-  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
-}
-
-.modal-header {
-  padding: var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--lg);
+  padding: var(--pf-v5-c-modal-box__footer--PaddingTop) 0 0;
+  .pf-v5-c-button {
+    font-size: $font-size-base !important;
+  }
 }
 
 .modal__inline-resource-link {
@@ -73,4 +49,10 @@
 
 .modal-paragraph {
   margin-bottom: var(--pf-v5-c-content--MarginBottom);
+}
+
+// this is a hack for popovers in a modal created with createModal
+.popover-within-modal.pf-v5-c-popover[data-popper-reference-hidden='true'] {
+  visibility: visible;
+  pointer-events: auto;
 }

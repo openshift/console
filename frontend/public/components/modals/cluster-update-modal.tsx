@@ -212,7 +212,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
             switchLabel={
               <>
                 {t('public~Include versions with known issues')}
-                <FieldLevelHelp>
+                <FieldLevelHelp isWithinModal>
                   {t(
                     'public~These versions are supported, but include known issues. Review the known issues before updating.',
                   )}
@@ -253,7 +253,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
         <div className="form-group">
           <label>
             {t('public~Update options')}
-            <FieldLevelHelp>
+            <FieldLevelHelp isWithinModal>
               {t(
                 "public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule, but you'll need to resume the non-control plane Node updates within 60 days to avoid failure.",
               )}

@@ -1,69 +1,89 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import { Provider } from 'react-redux';
+import * as ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
-import { ActionGroup, Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Button,
+  ModalVariant,
+  Text,
+  TextContent,
+  TextVariants,
+} from '@patternfly/react-core';
 import CloseButton from '@console/shared/src/components/close-button';
 import { Modal } from '@console/shared/src/components/modal';
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
-import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
-import {
-  CloseModal,
-  ModalComponent,
-  UnknownProps,
-} from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+
+/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
+export const createModal: CreateModal = (getModalElement) => {
+  const appContentElement = document.getElementById('app-content');
+  const containerElement = document.getElementById('modal-container');
+  const result = new Promise<void>((resolve) => {
+    const closeModal = (e?: React.SyntheticEvent) => {
+      if (e && e.stopPropagation) {
+        e.stopPropagation();
+      }
+      appContentElement.removeAttribute('aria-hidden');
+      ReactDOM.unmountComponentAtNode(containerElement);
+      resolve();
+    };
+    appContentElement.setAttribute('aria-hidden', 'true');
+    containerElement && ReactDOM.render(getModalElement(closeModal), containerElement);
+  });
+  return { result };
+};
 
 /** @deprecated Use PF modals instead */
 export const ModalWrapper: React.FC<ModalWrapperProps> = ({ className, children, onClose }) => {
   return (
-    <Modal className={className} onClose={onClose} isOpen>
+    <Modal
+      className={classNames('modal-dialog', className)}
+      isOpen
+      variant={ModalVariant.small}
+      aria-labelledby="modal-title"
+      onClose={onClose}
+    >
       {children}
     </Modal>
   );
 };
 
-type DeprecatedModalLauncherProps = ModalComponentProps &
-  CreateModalLauncherProps & {
-    closeModal?: CloseModal;
-  };
-
-type DeprecatedModalLauncher<P = UnknownProps> = (componentProps: Partial<P>) => void;
-
 /** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
-export const createModalLauncher = <P extends DeprecatedModalLauncherProps>(
-  Component: ModalComponent<P>,
-): DeprecatedModalLauncher<P & CreateModalLauncherProps> => {
-  return ({ closeModal, modalClassName, close, cancel, ...props }) => {
-    const launcher = useModal();
-    const getModalContainer = React.useCallback(() => {
-      const handleClose = () => {
-        closeModal?.();
-        close?.();
-      };
-      const handleCancel = () => {
-        cancel?.();
-        handleClose();
-      };
+export const createModalLauncher: CreateModalLauncher = (Component) => ({
+  modalClassName,
+  close,
+  cancel,
+  ...props
+}) => {
+  const getModalContainer = (onClose) => {
+    const handleClose = () => {
+      onClose?.();
+      close?.();
+    };
+    const handleCancel = () => {
+      cancel?.();
+      handleClose();
+    };
 
-      return (
-        <Provider store={store}>
-          <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-            <CompatRouter>
-              <ModalWrapper onClose={closeModal} className={modalClassName}>
-                <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-              </ModalWrapper>
-            </CompatRouter>
-          </Router>
-        </Provider>
-      );
-    }, [cancel, close, closeModal, modalClassName, props]);
-
-    return React.useCallback(() => launcher<P>(getModalContainer), [getModalContainer, launcher]);
+    return (
+      <Provider store={store}>
+        <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
+          <CompatRouter>
+            <ModalWrapper onClose={handleClose} className={modalClassName}>
+              <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+            </ModalWrapper>
+          </CompatRouter>
+        </Router>
+      </Provider>
+    );
   };
+
+  return createModal(getModalContainer);
 };
 
 /** @deprecated Use PF modals instead */
@@ -74,7 +94,7 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
 }) => (
   <div className={className}>
     <TextContent>
-      <Text component={TextVariants.h1} data-test-id="modal-title">
+      <Text component={TextVariants.h1} data-test-id="modal-title" id="modal-title">
         {children}
         {close && (
           <CloseButton
@@ -208,6 +228,11 @@ export type ModalWrapperProps = {
   onClose?: (event?: KeyboardEvent | React.MouseEvent) => void;
 };
 
+/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
+export type GetModalContainer = (onClose: (e?: React.SyntheticEvent) => void) => React.ReactElement;
+
+type CreateModal = (getModalContainer: GetModalContainer) => { result: Promise<any> };
+
 export type CreateModalLauncherProps = {
   modalClassName?: string;
 };
@@ -247,3 +272,8 @@ export type ModalSubmitFooterProps = {
   submitDanger?: boolean;
   buttonAlignment?: 'left' | 'right';
 };
+
+export type CreateModalLauncher = <P extends ModalComponentProps>(
+  C: React.ComponentType<P>,
+  modalWrapper?: boolean,
+) => (props: P & CreateModalLauncherProps) => { result: Promise<{}> };
