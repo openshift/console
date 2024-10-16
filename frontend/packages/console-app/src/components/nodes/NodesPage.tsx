@@ -678,7 +678,7 @@ const getFilters = (t: TFunction): RowFilter<NodeRowItem>[] => [
   },
 ];
 
-const NodesPage = () => {
+const NodesPage = ({ selector }) => {
   const dispatch = useDispatch();
 
   const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
@@ -694,6 +694,7 @@ const NodesPage = () => {
       version: 'v1',
     },
     isList: true,
+    selector,
   });
 
   const [csrs, csrsLoaded, csrsLoadError] = useK8sWatchResource<CertificateSigningRequestKind[]>({
