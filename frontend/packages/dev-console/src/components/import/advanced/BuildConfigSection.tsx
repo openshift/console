@@ -25,7 +25,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({
     values: {
       build,
       image: { selected: selectedImage, tag: selectedTag },
-      import: { selectedStrategy },
+      import: { selectedStrategy, knativeFuncLoaded: funcLoaded },
     },
   } = useFormikContext<FormikValues>();
   const buildConfigObj = resource || {
@@ -64,7 +64,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({
           label={t('devconsole~Launch the first build when the build configuration is created')}
         />
       )}
-      {envsLoaded ? (
+      {(selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION ? funcLoaded : envsLoaded) ? (
         <EnvironmentField
           name="build.env"
           label={t('devconsole~Environment variables (build and runtime)')}
