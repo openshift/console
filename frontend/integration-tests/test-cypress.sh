@@ -27,6 +27,7 @@ function copyArtifacts {
     echo "Copying artifacts from $(pwd)..."
     cp -r "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
     cp -r "./packages/integration-tests-cypress/parallel-weights.json" "${ARTIFACT_DIR}/gui_test_screenshots"
+    cp -r "./packages/integration-tests-cypress/runner-results" "${ARTIFACT_DIR}/gui_test_screenshots"
 
   fi
 }
