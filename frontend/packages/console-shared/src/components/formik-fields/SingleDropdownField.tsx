@@ -60,8 +60,7 @@ const SingleDropdownField: React.FC<SingleDropdownFieldProps> = ({
       isExpanded={isOpen}
       aria-label={ariaLabel}
       isFullWidth
-      // FIXME(jaclee): uncomment when PF is updated to support this prop
-      // status={isValid ? undefined : 'danger'}
+      status={isValid ? undefined : 'danger'}
     >
       {getLabelFromValue
         ? getLabelFromValue(field.value as string)

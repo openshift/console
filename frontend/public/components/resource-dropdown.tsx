@@ -155,7 +155,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     );
   }, [placeholderTextDefault, selectedOptions, t]);
 
-  const createItemId = (value: any) => `select-typeahead-${value.replace(' ', '-')}`;
+  const createItemId = (value: any) => `resource-dropdown-${value.replace(' ', '-')}`;
   // Track duplicate names so we know when to show the group.
   const kinds = resources.groupBy((m) => m.kind);
   const isDup = (kind) => kinds.get(kind).size > 1;
@@ -431,17 +431,21 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
                 onClick={onInputClick}
                 onChange={onTextInputChange}
                 onKeyDown={onInputKeyDown}
-                id="typeahead-select-input"
+                id="resource-dropdown"
                 autoComplete="off"
                 innerRef={textInputRef}
                 placeholder={placeholder}
                 {...(activeItemId && { 'aria-activedescendant': activeItemId })}
                 role="combobox"
                 isExpanded={isOpen}
-                aria-controls="select-typeahead-listbox"
+                aria-controls="resource-dropdown-listbox"
               />
               <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
-                <Button variant="plain" onClick={onClearButtonClick} aria-label="Clear input value">
+                <Button
+                  variant="plain"
+                  onClick={onClearButtonClick}
+                  aria-label={t('public~Clear input value')}
+                >
                   <TimesIcon aria-hidden />
                 </Button>
               </TextInputGroupUtilities>
@@ -454,12 +458,13 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
         onOpenChange={(open) => {
           !open && closeMenu();
         }}
-        // maxMenuHeight="60vh" // A bug in the current PatternFly version prevents usage, so CSS added in _resource-dropdown.scss
+        maxMenuHeight="60vh"
+        shouldFocusFirstItemOnOpen={false}
         isScrollable
         role="menu"
         className={classNames('co-type-selector', className)}
       >
-        <SelectList isAriaMultiselectable id="select-multi-typeahead-checkbox-listbox">
+        <SelectList isAriaMultiselectable id="resource-dropdown-listbox">
           {renderedOptions()}
         </SelectList>
       </Select>

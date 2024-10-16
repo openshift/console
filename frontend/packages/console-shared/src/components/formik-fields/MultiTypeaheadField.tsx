@@ -271,8 +271,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
       isExpanded={isOpen}
       isFullWidth
       isDisabled={isDisabled}
-      // TODO(jaclee): uncomment when PF is updated
-      // status={isValid ? 'default' : 'danger'}
+      status={isValid ? undefined : 'danger'}
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
