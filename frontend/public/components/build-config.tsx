@@ -10,7 +10,15 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { cloneBuild, startBuild } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs, TableProps } from './factory';
+import {
+  DetailsPage,
+  ListPage,
+  Table,
+  TableData,
+  RowFunctionArgs,
+  TableProps,
+  DetailsPageProps,
+} from './factory';
 import { errorModal } from './modals';
 import {
   BuildHooks,
@@ -64,12 +72,12 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   },
 });
 
-const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
+const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig, latestBuild) => {
   return {
     // t('public~Start last run')
     labelKey: 'public~Start last run',
     callback: () =>
-      cloneBuild(buildConfig.latestBuild)
+      cloneBuild(latestBuild)
         .then((clone) => {
           return redirect(resourceObjPath(clone, referenceFor(clone)));
         })
@@ -77,7 +85,7 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
           const error = err.message;
           errorModal({ error });
         }),
-    hidden: !!buildConfig.latestBuild,
+    hidden: !latestBuild,
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -89,9 +97,9 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
   };
 };
 
-const menuActions = [
+const getBuildConfigKebabActions = (latestBuild?: K8sResourceKind): KebabAction[] => [
   startBuildAction,
-  startLastBuildAction,
+  (model, resource) => startLastBuildAction(model, resource, latestBuild),
   ...Kebab.getExtensionsActionsForKind(BuildConfigModel),
   ...Kebab.factory.common,
 ];
@@ -135,9 +143,39 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const BuildConfigsDetailsPage: React.SFC = (props) => (
-  <DetailsPage {...props} kind={BuildConfigsReference} menuActions={menuActions} pages={pages} />
-);
+const getLatestBuild = (builds) => {
+  return builds.reduce((latestBuild, currentBuild) => {
+    const latestBuildTime = new Date(latestBuild?.metadata?.creationTimestamp).getTime();
+    const currentBuildTime = new Date(currentBuild.metadata.creationTimestamp).getTime();
+
+    return currentBuildTime > latestBuildTime ? currentBuild : latestBuild;
+  }, builds[0]);
+};
+
+export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const buildModel = referenceForModel(BuildModel);
+  const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
+    kind: buildModel,
+    namespace: props.namespace,
+    selector: {
+      matchLabels: {
+        'openshift.io/build-config.name': props.name,
+      },
+    },
+    isList: true,
+  });
+  const latestBuild = buildsLoaded && !buildsLoadError ? getLatestBuild(builds) : null;
+  const menuActions: KebabAction[] = getBuildConfigKebabActions(latestBuild);
+  return (
+    <DetailsPage
+      {...props}
+      kind={BuildConfigsReference}
+      menuActions={menuActions}
+      pages={pages}
+      customData={latestBuild}
+    />
+  );
+};
 BuildConfigsDetailsPage.displayName = 'BuildConfigsDetailsPage';
 
 const tableColumnClasses = [
@@ -152,6 +190,7 @@ const tableColumnClasses = [
 
 const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) => {
   const latestBuild = obj?.latestBuild;
+  const menuActions: KebabAction[] = getBuildConfigKebabActions(latestBuild);
 
   return (
     <>
