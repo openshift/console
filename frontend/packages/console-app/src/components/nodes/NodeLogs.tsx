@@ -108,6 +108,7 @@ const LogControls: React.FC<LogControlsProps> = ({
                   ref={toggleRef}
                   onClick={onTogglePath}
                   aria-label={t('public~Select a path')}
+                  data-test="select-path"
                 >
                   {path}
                 </MenuToggle>
@@ -129,7 +130,11 @@ const LogControls: React.FC<LogControlsProps> = ({
                     isOpen={isFilenameOpen}
                     className="co-node-logs__log-select"
                     toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                      <MenuToggle ref={toggleRef} onClick={onToggleFilename}>
+                      <MenuToggle
+                        ref={toggleRef}
+                        onClick={onToggleFilename}
+                        data-test="select-file"
+                      >
                         {logFilename || t('public~Select a log file')}
                       </MenuToggle>
                     )}
