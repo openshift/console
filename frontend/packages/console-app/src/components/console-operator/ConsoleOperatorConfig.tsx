@@ -52,9 +52,6 @@ import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, DASH, Status } from '
 import {
   boolComparator,
   looseSemVerComparator,
-  rBoolComparator,
-  rLooseSemVerComparator,
-  rStringComparator,
   stringComparator,
 } from '@console/shared/src/utils/comparators';
 
@@ -67,30 +64,15 @@ const consoleOperatorConfigReference: K8sResourceKindReference = referenceForMod
 
 const pluginRowComparators = [
   // name
-  {
-    asc: (a, b) => stringComparator(a.name, b.name),
-    desc: (a, b) => rStringComparator(a.name, b.name),
-  },
+  (a, b) => stringComparator(a.name, b.name),
   // version
-  {
-    asc: (a, b) => looseSemVerComparator(a.version, b.version),
-    desc: (a, b) => rLooseSemVerComparator(a.version, b.version),
-  },
+  (a, b) => looseSemVerComparator(a.version, b.version),
   // description
-  {
-    asc: (a, b) => stringComparator(a.description, b.description),
-    desc: (a, b) => rStringComparator(a.description, b.description),
-  },
+  (a, b) => stringComparator(a.description, b.description),
   // status
-  {
-    asc: (a, b) => stringComparator(a.status?.phase, b.status?.phase),
-    desc: (a, b) => rStringComparator(a.status?.phase, b.status?.phase),
-  },
+  (a, b) => stringComparator(a.status?.phase, b.status?.phase),
   // enabled
-  {
-    asc: (a, b) => boolComparator(a.enabled, b.enabled),
-    desc: (a, b) => rBoolComparator(a.enabled, b.enabled),
-  },
+  (a, b) => boolComparator(a.enabled, b.enabled),
 ];
 
 const useConsolePluginsDevListRows = (): [ConsolePluginRow[], boolean] => {
@@ -271,7 +253,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, co
 type UseConsoleTableState = <RowType = any>(
   columnNames: string[],
   rows: RowType[],
-  comparators: RowComparator<RowType>[],
+  comparators: Comparator<RowType>[],
 ) => [ConsoleTableColumn[], RowType[]];
 const useConsoleTableState: UseConsoleTableState = (columnNames, rows, comparators) => {
   const [index, setIndex] = React.useState<number | null>(null);
@@ -280,6 +262,7 @@ const useConsoleTableState: UseConsoleTableState = (columnNames, rows, comparato
     () => ({ index, direction, defaultDirection: SortByDirection.asc }),
     [index, direction],
   );
+  const desc = sortBy.direction === SortByDirection.desc;
   const onSort = React.useCallback<OnSort>((_event, newSortIndex, newSortDirection) => {
     setIndex(newSortIndex);
     setDirection(newSortDirection);
@@ -297,9 +280,10 @@ const useConsoleTableState: UseConsoleTableState = (columnNames, rows, comparato
     [columnNames, sortBy, onSort],
   );
   const sortedRows = React.useMemo(() => {
-    const comparator = comparators?.[index ?? 0]?.[direction || SortByDirection.asc];
-    return comparator ? rows.sort(comparator) : rows;
-  }, [comparators, direction, index, rows]);
+    const comparator = comparators?.[index ?? 0];
+    // Reverse arguments to the sort comparator to reverse sort order
+    return comparator ? rows.sort((a, b) => comparator(desc ? b : a, desc ? a : b)) : rows;
+  }, [comparators, desc, index, rows]);
   return [columns, sortedRows];
 };
 
@@ -412,10 +396,6 @@ type ConsolePluginsTableProps = {
 };
 
 type Comparator<T extends any = any> = (a: T, b: T) => number;
-type RowComparator<RowType = any> = {
-  asc: Comparator<RowType>;
-  desc: Comparator<RowType>;
-};
 
 type ConsoleTableColumn = {
   name: string;
