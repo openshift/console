@@ -18,6 +18,8 @@
   top: 0;
   .pf-v5-c-modal-box__body {
     margin-right: 0 !important;
+    // so select/dropdown menus are not clipped when they extend beyond the bottom of the modal
+    overflow: visible;
   }
 }
 
