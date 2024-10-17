@@ -41,6 +41,7 @@ import {
   referenceForModel,
   CertificateSigningRequestKind,
   referenceFor,
+  Selector,
 } from '@console/internal/module/k8s';
 import {
   getName,
@@ -678,7 +679,7 @@ const getFilters = (t: TFunction): RowFilter<NodeRowItem>[] => [
   },
 ];
 
-const NodesPage = () => {
+const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
 
   const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
@@ -694,6 +695,7 @@ const NodesPage = () => {
       version: 'v1',
     },
     isList: true,
+    selector,
   });
 
   const [csrs, csrsLoaded, csrsLoadError] = useK8sWatchResource<CertificateSigningRequestKind[]>({
@@ -770,6 +772,10 @@ const NodesPage = () => {
       </>
     )
   );
+};
+
+type NodesPageProps = {
+  selector?: Selector;
 };
 
 export default NodesPage;
