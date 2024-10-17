@@ -1,11 +1,10 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { Button, Popover, PopoverProps } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 
 export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(
-  ({ children, isWithinModal, popoverHasAutoWidth, testId }) => {
+  ({ children, popoverHasAutoWidth, testId }) => {
     const { t } = useTranslation();
     if (React.Children.count(children) === 0) {
       return null;
@@ -15,7 +14,6 @@ export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(
         aria-label={t('public~Help')}
         bodyContent={children}
         hasAutoWidth={popoverHasAutoWidth}
-        className={classNames({ 'popover-within-modal': isWithinModal })}
       >
         <Button
           aria-label={t('public~Help')}
@@ -33,7 +31,6 @@ export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(
 
 type FieldLevelHelpProps = {
   children: React.ReactNode;
-  isWithinModal?: boolean;
   popoverHasAutoWidth?: PopoverProps['hasAutoWidth'];
   testId?: string;
 };

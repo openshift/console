@@ -50,9 +50,3 @@
 .modal-paragraph {
   margin-bottom: var(--pf-v5-c-content--MarginBottom);
 }
-
-// this is a hack for popovers in a modal created with createModal
-.popover-within-modal.pf-v5-c-popover[data-popper-reference-hidden='true'] {
-  visibility: visible;
-  pointer-events: auto;
-}

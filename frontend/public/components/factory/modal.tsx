@@ -28,11 +28,11 @@ export const createModal: CreateModal = (getModalElement) => {
       if (e && e.stopPropagation) {
         e.stopPropagation();
       }
-      appContentElement.removeAttribute('aria-hidden');
+      appContentElement?.removeAttribute('aria-hidden');
       ReactDOM.unmountComponentAtNode(containerElement);
       resolve();
     };
-    appContentElement.setAttribute('aria-hidden', 'true');
+    appContentElement?.setAttribute('aria-hidden', 'true');
     containerElement && ReactDOM.render(getModalElement(closeModal), containerElement);
   });
   return { result };
