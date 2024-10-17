@@ -4,7 +4,7 @@ import {
   switchPerspective,
   devWorkspaceStatuses,
 } from '@console/dev-console/integration-tests/support/constants';
-import { webTerminalPO } from '@console/dev-console/integration-tests/support/pageObjects/web-terminal-po';
+import { webTerminalPO } from '@console/dev-console/integration-tests/support/pageObjects/webterminal-po';
 import {
   perspective,
   projectNameSpace,
@@ -19,6 +19,7 @@ import { operatorsPage } from '@console/dev-console/integration-tests/support/pa
 import { searchResource } from '@console/dev-console/integration-tests/support/pages/search-resources/search-page';
 
 Given('user has logged in as admin user', () => {
+  cy.login();
   perspective.switchTo(switchPerspective.Administrator);
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
 });
@@ -30,6 +31,7 @@ Given('user can see terminal icon on masthead', () => {
 
 When('user clicks on the Web Terminal icon on the Masthead', () => {
   cy.get(webTerminalPO.webTerminalIcon).click();
+  cy.get('cos-status-box cos-status-box--loading').should('not.exist');
 });
 
 When('user clicks advanced option for Timeout', () => {
@@ -38,6 +40,7 @@ When('user clicks advanced option for Timeout', () => {
 
 When('user sets timeout to 1 Minute', () => {
   cy.byLegacyTestID('Increment').click();
+  cy.get('input[aria-label="Input"]').should('not.have.value', '0');
 });
 
 When('user opens {int} additional web terminal tabs', (n: number) => {

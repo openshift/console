@@ -180,7 +180,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
         } else {
           cy.get(devNavigationMenuPO.search).click();
           cy.get('[aria-label="Options menu"]').click();
-          cy.get('[placeholder="Select Resource"]').should('be.visible').type('route');
+          cy.get('[placeholder="Resources"]').should('be.visible').type('route');
           cy.get('[data-filter-text="RTRoute"]').then(($el) => {
             if ($el.text().includes('route.openshift.io/v1')) {
               cy.wrap($el).contains('route.openshift.io/v1').click();
@@ -206,7 +206,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
         } else {
           cy.get(devNavigationMenuPO.search).click();
           cy.get('[aria-label="Options menu"]').click();
-          cy.get('[placeholder="Select Resource"]').should('be.visible').type('Deployment');
+          cy.get('[placeholder="Resources"]').should('be.visible').type('Deployment');
           cy.get('[data-filter-text="DDeployment"]').click();
           cy.get('.co-search-group__pin-toggle').should('be.visible').click();
           cy.wait(3000);
@@ -228,7 +228,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
         } else {
           cy.get(devNavigationMenuPO.search).click();
           cy.get('[aria-label="Options menu"]').click();
-          cy.get('[placeholder="Select Resource"]').should('be.visible').type('console');
+          cy.get('[placeholder="Resources"]').should('be.visible').type('console');
           cy.get('[data-filter-text="CConsole"]').then(($el) => {
             if ($el.text().includes('operator.openshift.io')) {
               cy.wrap($el).contains('operator.openshift.io').click();
