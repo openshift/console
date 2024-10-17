@@ -61,7 +61,12 @@ export const ContainerSelect: React.FC<ContainerSelectProps> = ({
       onSelect={onSelect}
       onOpenChange={(open) => setIsOpen(open)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-        <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+        <MenuToggle
+          ref={toggleRef}
+          onClick={onToggleClick}
+          isExpanded={isOpen}
+          data-test="container-select"
+        >
           <ContainerLabel name={selected} />
         </MenuToggle>
       )}
