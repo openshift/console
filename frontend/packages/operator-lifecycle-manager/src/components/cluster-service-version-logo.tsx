@@ -50,6 +50,6 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
 export type ClusterServiceVersionLogoProps = {
   displayName: string;
   icon: ClusterServiceVersionIcon | string;
-  provider: { name: string } | string;
+  provider?: { name: string } | string;
   version?: string;
 } & DeprecatedOperatorWarning;
