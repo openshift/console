@@ -7,8 +7,11 @@ import {
 import {
   QuickStartGettingStartedCard,
   GettingStartedExpandableGrid,
+  useGettingStartedShowState,
+  GettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
 import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
 import { SampleGettingStartedCard } from './SampleGettingStartedCard';
 
@@ -16,12 +19,17 @@ import './GettingStartedSection.scss';
 
 export const GettingStartedSection: React.FC = () => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+
+  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(
+    GETTING_STARTED_USER_SETTINGS_KEY,
+  );
+
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserSettings<boolean>(
     GETTING_STARTED_USER_SETTINGS_KEY_ADD_PAGE,
     true,
   );
 
-  if (!openshiftFlag) {
+  if (!openshiftFlag || !showStateLoaded || showState !== GettingStartedShowState.SHOW) {
     return null;
   }
 
@@ -30,6 +38,7 @@ export const GettingStartedSection: React.FC = () => {
       <GettingStartedExpandableGrid
         isOpen={isGettingStartedSectionOpen}
         setIsOpen={setIsGettingStartedSectionOpen}
+        setShowState={setShowState}
       >
         <SampleGettingStartedCard featured={['code-with-quarkus', 'java-springboot-basic']} />
         <QuickStartGettingStartedCard
