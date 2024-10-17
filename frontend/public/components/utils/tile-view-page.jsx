@@ -21,7 +21,7 @@ import {
   EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { getURLWithParams, VirtualizedGrid } from '@console/shared';
+import { useDebounceCallback, getURLWithParams, VirtualizedGrid } from '@console/shared';
 import { Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { isModifiedEvent } from '@console/shared/src/utils';
 
@@ -670,9 +670,9 @@ export const TileViewPage = (props) => {
     setFilterCounts(updatedState.filterCounts);
   };
 
-  const onKeywordChange = (value) => {
+  const onKeywordChange = useDebounceCallback((value) => {
     onFilterChange('keyword', null, value);
-  };
+  });
 
   const onShowAllToggle = (groupName) => {
     const updatedShow = _.clone(filterGroupsShowAll);
