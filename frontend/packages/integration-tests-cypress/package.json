@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test-cypress-headless": "node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
-    "test-cypress-headless-parallel": "../../node_modules/.bin/cypress-parallel -s test-cypress-headless -t 2 -d './tests/**/**.cy.ts' -n ./reporters/parallel-test-reporter.js --reporter mochawesome --reporter-options configFile=reporter-config.json -o reportFilename=console_report,html=true,json=true --weightsJson ./parallel-weights.json --verbose"
+    "test-cypress-headless-parallel": "../../node_modules/.bin/cypress-parallel -s test-cypress-headless -t 2 -d './tests/**/**.cy.ts' -n ../../node_modules/cypress-multi-reporters --reporter ../../node_modules/cypress-multi-reporters --reporter-options configFile=reporter-config.json --weightsJson ./parallel-weights.json --verbose"
   }
 }
 
