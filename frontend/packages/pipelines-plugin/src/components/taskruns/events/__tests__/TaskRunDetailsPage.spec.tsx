@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { DetailsPage } from '@console/internal/components/factory';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { TaskRunModel } from '../../../../models';
 import * as hookUtils from '../../../pipelines/hooks';
 import TaskRunDetailsPage from '../../TaskRunDetailsPage';
@@ -15,9 +16,16 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource',
   useK8sWatchResource: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/flag', () => ({
+  useFlag: jest.fn(),
+}));
+
+const useFlagMock = useFlag as jest.Mock;
+
 describe('TaskRunDetailsPage:', () => {
   let taskRunDetailsPageProps: TaskRunDetailsPageProps;
   beforeEach(() => {
+    useFlagMock.mockReturnValue(true);
     taskRunDetailsPageProps = {
       kind: TaskRunModel.kind,
       kindObj: TaskRunModel,
