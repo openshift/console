@@ -2,22 +2,18 @@ import * as React from 'react';
 import {
   Alert,
   AlertVariant,
-  Flex,
-  FlexItem,
   Text,
   Title,
   TitleSizes,
   FormGroup,
   ClipboardCopy,
+  ClipboardCopyVariant,
 } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
-import EditorField from '@console/dev-console/src/components/buildconfig/sections/EditorField';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { GitProvider } from '@console/git-service/src';
 import { ExternalLink } from '@console/internal/components/utils';
-import CodeEditorToolbar from '@console/shared/src/components/editor/CodeEditorToolbar';
-import CopyPipelineRunButton from '../form-fields/CopyPipelineRunButton';
 import { RepositoryFormValues } from '../types';
 
 const RepositoryOverview = () => {
@@ -85,27 +81,15 @@ const RepositoryOverview = () => {
             <code className="co-code">push.yaml</code> and add the following code:
           </Text>
         </Trans>
-        <>
-          <CodeEditorToolbar showShortcuts toolbarLinks={[]} />
-          <EditorField
-            name="yamlData"
-            height={200}
-            language="yaml"
-            theme="console"
-            options={{
-              lineHeight: 20,
-              readOnly: false,
-              minimap: { enabled: false },
-              scrollBeyondLastLine: false,
-            }}
-          />
-          <Flex style={{ marginTop: '16px' }}>
-            <FlexItem align={{ default: 'alignRight' }}>
-              {' '}
-              <CopyPipelineRunButton text={values.yamlData} />
-            </FlexItem>
-          </Flex>
-        </>
+        <ClipboardCopy
+          isCode
+          hoverTip={t('pipelines-plugin~Copy to clipboard')}
+          clickTip={t('pipelines-plugin~Copied to clipboard')}
+          variant={ClipboardCopyVariant.expansion}
+          style={{ marginTop: '.5em' }}
+        >
+          {values.yamlData}
+        </ClipboardCopy>
       </FormGroup>
       <FormGroup fieldId="step-3">
         <Title headingLevel="h4" size={TitleSizes.md}>
@@ -132,7 +116,12 @@ const RepositoryOverview = () => {
               </Trans>
             </Text>
             <Text>
-              <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied" style={{ flex: '1' }}>
+              <ClipboardCopy
+                isReadOnly
+                hoverTip={t('pipelines-plugin~Copy to clipboard')}
+                clickTip={t('pipelines-plugin~Copied to clipboard')}
+                style={{ flex: '1', marginTop: '.5em' }}
+              >
                 {values.webhook.url}
               </ClipboardCopy>
             </Text>
