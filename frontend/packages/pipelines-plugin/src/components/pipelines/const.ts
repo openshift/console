@@ -82,3 +82,4 @@ export enum PipelineMetricsLevel {
 }
 
 export const FLAG_TEKTON_V1_ENABLED = 'FLAG_TEKTON_V1_ENABLED';
+export const FLAG_PIPELINES_OPERATOR_VERSION_1_17 = 'PIPELINES_OPERATOR_VERSION_1_17';
