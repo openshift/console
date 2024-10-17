@@ -193,22 +193,12 @@ export type TableDataProps = {
   showNamespaceOverride?: boolean;
 };
 
-const TableWrapper: React.FC<TableWrapperProps> = ({
-  virtualize,
-  ariaLabel,
-  ariaRowCount,
-  ...props
-}) => {
-  return virtualize ? (
-    <div {...props} role="grid" aria-label={ariaLabel} aria-rowcount={ariaRowCount} />
-  ) : (
-    <React.Fragment {...props} />
-  );
+const TableWrapper: React.FC<TableWrapperProps> = ({ virtualize, ariaLabel, ...props }) => {
+  return virtualize ? <div {...props} aria-label={ariaLabel} /> : <React.Fragment {...props} />;
 };
 export type TableWrapperProps = {
   virtualize: boolean;
   ariaLabel: string;
-  ariaRowCount: number;
 };
 const RowMemo = React.memo<RowFunctionArgs & { Row: React.FC<RowFunctionArgs> }>(
   ({ Row, ...props }) => <Row {...props} />,
@@ -515,7 +505,6 @@ export const Table: React.FC<TableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const ariaRowCount = data && data.length;
   const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
   const renderVirtualizedTable = (scrollContainer) => (
     <WindowScroller scrollElement={scrollContainer}>
@@ -547,7 +536,7 @@ export const Table: React.FC<TableProps> = ({
     <EmptyBox label={label} />
   ) : (
     <div className={classNames({ 'co-virtualized-table': virtualize })}>
-      <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
+      <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel}>
         <PfTable
           cells={columns}
           rows={
@@ -564,7 +553,7 @@ export const Table: React.FC<TableProps> = ({
           onSelect={onSelect}
           sortBy={sortBy}
           className="pf-m-compact pf-m-border-rows"
-          role={virtualize ? 'presentation' : 'grid'}
+          role="grid"
           aria-label={virtualize ? null : ariaLabel}
         >
           <TableHeaderDeprecated role="rowgroup" />
