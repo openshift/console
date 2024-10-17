@@ -374,9 +374,12 @@ button.pf-v5-c-dropdown__menu-item.pf-m-disabled {
   pointer-events: auto;
 }
 
-#modal-container.pf-v5-c-backdrop__open {
+#modal-container {
   // PatternFly sets `overflow: hidden` which is problematic when using appendTo in <Modal>
   overflow: visible !important;
+  .pf-v5-c-modal-box__body {
+    margin-right: 0 !important;
+  }
 }
 
 .form-group--doubled-bottom-margin {

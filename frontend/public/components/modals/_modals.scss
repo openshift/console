@@ -17,8 +17,17 @@
   }
 }
 
+.modal-header {
+  // make space for the close button
+  padding-right: var(--pf-v5-c-modal-box__header--PaddingRight);
+}
+
 .modal__inline-resource-link {
   margin: 0;
+}
+
+.modal-paragraph {
+  margin-bottom: var(--pf-v5-c-content--MarginBottom);
 }
 
 .toleration-modal__field,
@@ -45,8 +54,4 @@
   @media (max-width: $screen-sm-max) {
     margin-bottom: 24px;
   }
-}
-
-.modal-paragraph {
-  margin-bottom: var(--pf-v5-c-content--MarginBottom);
 }
