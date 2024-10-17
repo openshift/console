@@ -13,7 +13,7 @@ const AnnotationsModalComponent: ModalComponent<AnnotationsModalProps> = ({
   resource,
 }) => {
   return (
-    <ModalWrapper blocking onClose={closeModal}>
+    <ModalWrapper onClose={closeModal}>
       <AnnotationsModal cancel={closeModal} close={closeModal} kind={kind} resource={resource} />
     </ModalWrapper>
   );

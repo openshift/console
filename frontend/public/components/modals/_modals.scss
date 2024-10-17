@@ -1,91 +1,46 @@
-.co-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  bottom: 0;
-  cursor: default;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: $zindex-modal;
-}
-
-.modal-dialog {
-  --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
-
-  background: var(--os-modal-dialog--BackgroundColor);
-
-  :where(.pf-v5-theme-dark) & {
-    --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--300);
-  }
-}
-
-.modal-body {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  height: 100%;
-  padding: 0;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-}
-
 .modal-body-border {
   border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
 }
 
 .modal-body-content {
-  height: 100%;
-  padding: 0 var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
+  padding: var(--pf-v5-c-modal-box__header--body--PaddingTop) 0 0;
   p {
+    font-size: $font-size-base;
     margin-bottom: var(--pf-v5-c-content--MarginBottom);
   }
 }
 
-.modal-content {
-  background-clip: padding-box;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  // Remove focus outline from opened modal
-  outline: 0;
-  position: relative;
-}
-
-.modal-dialog {
-  margin: var(--pf-v5-global--spacer--md);
-  max-width: calc(100% - var(--pf-v5-global--spacer--xl));
-  outline: 0;
-  position: relative;
-  width: 100%;
-  @media (min-width: $pf-v5-global--breakpoint--md) {
-    margin: 30px auto;
-    &:not(.modal-lg) {
-      max-width: 600px;
-    }
-  }
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    &.modal-lg {
-      // Manually set to match --pf-v5-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v5-c-modal-box
-      max-width: 70rem;
-    }
+#modal-container {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  .pf-v5-c-modal-box__body {
+    margin-right: 0 !important;
+    // so select/dropdown menus are not clipped when they extend beyond the bottom of the modal
+    overflow: visible;
   }
 }
 
 .modal-footer {
-  margin-top: 0;
-  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
+  padding: var(--pf-v5-c-modal-box__footer--PaddingTop) 0 0;
+  .pf-v5-c-button {
+    font-size: $font-size-base !important;
+  }
 }
 
 .modal-header {
-  padding: var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--lg);
+  // make space for the close button
+  padding-right: var(--pf-v5-c-modal-box__header--PaddingRight);
 }
 
 .modal__inline-resource-link {
   margin: 0;
+}
+
+.modal-paragraph {
+  margin-bottom: var(--pf-v5-c-content--MarginBottom);
 }
 
 .toleration-modal__field,
@@ -112,8 +67,4 @@
   @media (max-width: $screen-sm-max) {
     margin-bottom: 24px;
   }
-}
-
-.modal-paragraph {
-  margin-bottom: var(--pf-v5-c-content--MarginBottom);
 }

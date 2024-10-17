@@ -226,17 +226,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     right: 0;
     top: 4.75rem; // --pf-v5-c-page__header--MinHeight
 
-    .pf-v5-c-modal-box__body {
-      // Required to position scroll shadows correctly on Chrome
-      display: flex;
-      flex-direction: column;
-      margin: 0 !important;
-      --pf-v5-c-modal-box__body--PaddingTop: 0 !important;
-      --pf-v5-c-modal-box__body--PaddingRight: 0 !important;
-      --pf-v5-c-modal-box__body--PaddingLeft: 0 !important;
-      --pf-v5-c-modal-box__body--last-child--PaddingBottom: 0 !important;
-    }
-
     h1 {
       white-space: normal;
     }
