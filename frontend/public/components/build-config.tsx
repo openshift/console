@@ -77,7 +77,7 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig) => {
           const error = err.message;
           errorModal({ error });
         }),
-    hidden: !!buildConfig.latestBuild,
+    hidden: !buildConfig.latestBuild,
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
