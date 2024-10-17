@@ -17,7 +17,7 @@ import { useActiveColumns } from '@console/internal/components/factory/Table/act
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
-import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
+import { referenceForModel, VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
 import { getAnnotations } from '@console/shared';
 
 const tableColumnInfo = [
@@ -105,6 +105,7 @@ const VolumeSnapshotClassPage: React.FC<VolumeSnapshotClassPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,
+  selector,
 }) => {
   const { t } = useTranslation();
   const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotClassKind[]>({
@@ -116,6 +117,7 @@ const VolumeSnapshotClassPage: React.FC<VolumeSnapshotClassPageProps> = ({
     isList: true,
     namespaced: true,
     namespace,
+    selector,
   });
   const [data, filteredData, onFilterChange] = useListPageFilter(resources);
   const resourceKind = referenceForModel(VolumeSnapshotClassModel);
@@ -146,6 +148,7 @@ type VolumeSnapshotClassPageProps = {
   namespace?: string;
   canCreate?: boolean;
   showTitle?: boolean;
+  selector?: Selector;
 };
 
 type VolumeSnapshotClassTableProps = {
