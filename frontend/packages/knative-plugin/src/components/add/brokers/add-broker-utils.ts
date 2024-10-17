@@ -47,7 +47,7 @@ export const addBrokerInitialValues = (
     application: {
       initial: sanitizeApplicationValue(selectedApplication),
       name: sanitizeApplicationValue(selectedApplication) || EVENT_BROKER_APP,
-      selectedKey: selectedApplication,
+      selectedKey: selectedApplication || '',
     },
   };
   const initialYamlData: string = safeJSToYAML(
