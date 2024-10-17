@@ -40,7 +40,7 @@ const FilterTable: React.FC<FilterTableProps> = ({
   const { t } = useTranslation('knative-plugin');
 
   const data = {
-    columns: [t('Key'), t('Value')],
+    columns: [t('Attribute'), t('Value')],
     rows: filters.map(({ key, value }) => filterRow(key, value)),
   };
 
@@ -52,7 +52,7 @@ const FilterTable: React.FC<FilterTableProps> = ({
             <Th
               key={column}
               className={cx(
-                cx({ 'kn-filter-table__padding--left': paddingLeft && column === t('Key') }),
+                cx({ 'kn-filter-table__padding--left': paddingLeft && column === t('Attribute') }),
                 { 'kn-filter-table__row--bordered': bordered },
               )}
             >
