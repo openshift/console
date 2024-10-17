@@ -10,6 +10,17 @@
   }
 }
 
+#modal-container {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  .pf-v5-c-modal-box__body {
+    margin-right: 0 !important;
+  }
+}
+
 .modal-footer {
   padding: var(--pf-v5-c-modal-box__footer--PaddingTop) 0 0;
   .pf-v5-c-button {

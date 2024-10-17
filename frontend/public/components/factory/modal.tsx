@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Provider } from 'react-redux';
 import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
