@@ -1,4 +1,4 @@
-import { webTerminalPO } from '../../pageObjects/web-terminal-po';
+import { webTerminalPO } from '../../pageObjects/webterminal-po';
 
 export const checkTerminalIcon = (tries: number = 10) => {
   if (tries < 1) {

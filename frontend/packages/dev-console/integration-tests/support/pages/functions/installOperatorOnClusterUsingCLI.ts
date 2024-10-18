@@ -101,6 +101,10 @@ export const installOperatorUsingCLI = (operator: operators) => {
       yamlFile =
         '../../shipwright-plugin/integration-tests/testData/buildsForOpenshiftOperatorInstallation/buildsSubscription.yaml';
       break;
+    case operators.DevWorkspaceOperator:
+      yamlFile =
+        '../../webterminal-plugin/integration-tests/testData/devworkspaceOperatorSubscription.yaml';
+      break;
     case operators.WebTerminalOperator:
       yamlFile =
         '../../webterminal-plugin/integration-tests/testData/webterminalOperatorSubscription.yaml';
@@ -154,6 +158,11 @@ export const checkSubscriptionStatus = (operator: operators) => {
       namespace = operatorNamespaces.BuildsForOpenshiftOperator;
       subscriptionName = operatorSubscriptions.BuildsForOpenshiftOperator;
       break;
+    case operators.DevWorkspaceOperator:
+      operatorPackageName = operatorPackage.DevWorkspaceOperator;
+      namespace = operatorNamespaces.DevWorkspaceOperator;
+      subscriptionName = operatorSubscriptions.DevWorkspaceOperator;
+      break;
     case operators.WebTerminalOperator:
       operatorPackageName = operatorPackage.WebTerminalOperator;
       namespace = operatorNamespaces.WebTerminalOperator;
@@ -206,6 +215,7 @@ export const installBuildsForOpenshiftOperatorUsingCLI = () => {
 };
 
 export const installWebterminalOperatorUsingCLI = () => {
+  verifyAndInstallOperatorUsingCLI(operators.DevWorkspaceOperator);
   verifyAndInstallOperatorUsingCLI(operators.WebTerminalOperator);
 };
 
