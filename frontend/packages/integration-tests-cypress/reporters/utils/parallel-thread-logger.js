@@ -22,11 +22,11 @@ const formatDuration = (duration) => {
 };
 
 const formatBoxedStats = (data) => {
-  const border = `\t┌${'─'.repeat(97)}┐\n`;
-  const footer = `\t└${'─'.repeat(97)}┘\n`;
+  const border = `\t┌${'─'.repeat(94)}┐\n`;
+  const footer = `\t└${'─'.repeat(94)}┘\n`;
   const lines = Object.entries(data)
     .map(([key, value]) => {
-      return `\t│ ${key.padEnd(14)}: ${String(value).padEnd(80)}│`;
+      return `\t│ ${key.padEnd(14)}: ${String(value).padEnd(77)}│`;
     })
     .join('\n');
 
@@ -39,12 +39,12 @@ const log = (message) => {
 
 const logVideoURL = (videoURL) => {
   // Append the log message to the log file
-  log(`\n\n\t(Video)`);
+  log(`\n\n\t(Video)\n`);
   log(`\n\t - Video output: ${videoURL}`);
 };
 
 const logScreenshotURL = (screenshots) => {
-  log(`\n\t(Screenshots)`);
+  log(`\n\t(Screenshots)\n`);
   for (let i = 0; i < screenshots.length; i++) {
     log(`\n\t - Saved at path: ${screenshots[i].path}`);
   }
