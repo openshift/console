@@ -1,0 +1,230 @@
+{
+    "tests/app/admission-webhook-warning-notifications.cy.ts": {
+      "time": 43515,
+      "weight": 5
+    },
+    "tests/app/auth-multiuser-login.cy.ts": {
+      "time": 41279,
+      "weight": 5
+    },
+    "tests/app/debug-pod.cy.ts": {
+      "time": 119227,
+      "weight": 15
+    },
+    "tests/app/demo-dynamic-plugin.cy.ts": {
+      "time": 162741,
+      "weight": 21
+    },
+    "tests/app/deployments.cy.ts": {
+      "time": 41675,
+      "weight": 5
+    },
+    "tests/app/filtering-and-searching.cy.ts": {
+      "time": 47822,
+      "weight": 6
+    },
+    "tests/app/machine-config.cy.ts": {
+      "time": 24048,
+      "weight": 3
+    },
+    "tests/app/masthead.cy.ts": {
+      "time": 19450,
+      "weight": 2
+    },
+    "tests/app/node-terminal.cy.ts": {
+      "time": 36085,
+      "weight": 4
+    },
+    "tests/app/overview.cy.ts": {
+      "time": 69613,
+      "weight": 9
+    },
+    "tests/app/poll-console-updates.cy.ts": {
+      "time": 145637,
+      "weight": 18
+    },
+    "tests/app/resource-log.cy.ts": {
+      "time": 17530,
+      "weight": 2
+    },
+    "tests/cluster-settings/alertmanager/alertmanager.cy.ts": {
+      "time": 51069,
+      "weight": 6
+    },
+    "tests/cluster-settings/alertmanager/receivers/email.cy.ts": {
+      "time": 77000,
+      "weight": 1
+    },
+    "tests/cluster-settings/alertmanager/receivers/pagerduty.cy.ts": {
+      "time": 130669,
+      "weight": 17
+    },
+    "tests/cluster-settings/alertmanager/receivers/slack.cy.ts": {
+      "time": 51034,
+      "weight": 6
+    },
+    "tests/cluster-settings/alertmanager/receivers/webhook.cy.ts": {
+      "time": 43902,
+      "weight": 5
+    },
+    "tests/cluster-settings/channel-modal.cy.ts": {
+      "time": 92573,
+      "weight": 12
+    },
+    "tests/cluster-settings/cluster-settings.cy.ts": {
+      "time": 43819,
+      "weight": 5
+    },
+    "tests/cluster-settings/managed-control-plane.cy.ts": {
+      "time": 17636,
+      "weight": 2
+    },
+    "tests/cluster-settings/oauth.cy.ts": {
+      "time": 46021,
+      "weight": 5
+    },
+    "tests/cluster-settings/update-in-progress.cy.ts": {
+      "time": 49495,
+      "weight": 6
+    },
+    "tests/cluster-settings/update-modal.cy.ts": {
+      "time": 111381,
+      "weight": 14
+    },
+    "tests/cluster-settings/update-status.cy.ts": {
+      "time": 285731,
+      "weight": 37
+    },
+    "tests/cluster-settings/updates-graph.cy.ts": {
+      "time": 53906,
+      "weight": 7
+    },
+    "tests/cluster-settings/upgradeable-false.cy.ts": {
+      "time": 55096,
+      "weight": 7
+    },
+    "tests/cluster-settings/upstream-modal.cy.ts": {
+      "time": 18449,
+      "weight": 2
+    },
+    "tests/cluster-settings/worker-mcp-paused.cy.ts": {
+      "time": 50538,
+      "weight": 6
+    },
+    "tests/crd-extensions/console-cli-download.cy.ts": {
+      "time": 34660,
+      "weight": 4
+    },
+    "tests/crd-extensions/console-external-log-link.cy.ts": {
+      "time": 64814,
+      "weight": 8
+    },
+    "tests/crd-extensions/console-link.cy.ts": {
+      "time": 64140,
+      "weight": 8
+    },
+    "tests/crd-extensions/console-notification.cy.ts": {
+      "time": 40765,
+      "weight": 5
+    },
+    "tests/crd-extensions/console-yaml-sample.cy.ts": {
+      "time": 61891,
+      "weight": 8
+    },
+    "tests/crud/add-storage-crud.cy.ts": {
+      "time": 76891,
+      "weight": 10
+    },
+    "tests/crud/annotations.cy.ts": {
+      "time": 80000,
+      "weight": 2
+    },
+    "tests/crud/bulk-create-resources.cy.ts": {
+      "time": 40237,
+      "weight": 5
+    },
+    "tests/crud/customresourcedefinition.cy.ts": {
+      "time": 16341,
+      "weight": 2
+    },
+    "tests/crud/environment.cy.ts": {
+      "time": 71697,
+      "weight": 9
+    },
+    "tests/crud/image-pull-secret.cy.ts": {
+      "time": 31522,
+      "weight": 4
+    },
+    "tests/crud/labels.cy.ts": {
+      "time": 50000,
+      "weight": 2
+    },
+    "tests/crud/namespace-crud.cy.ts": {
+      "time": 83996,
+      "weight": 10
+    },
+    "tests/crud/other-routes.cy.ts": {
+      "time": 121087,
+      "weight": 15
+    },
+    "tests/crud/quotas.cy.ts": {
+      "time": 78326,
+      "weight": 10
+    },
+    "tests/crud/resource-crud.cy.ts": {
+      "time": 1095167,
+      "weight": 142
+    },
+    "tests/crud/roles-rolebindings.cy.ts": {
+      "time": 204125,
+      "weight": 26
+    },
+    "tests/crud/secrets/add-to-workload.cy.ts": {
+      "time": 42874,
+      "weight": 5
+    },
+    "tests/crud/secrets/image-pull.cy.ts": {
+      "time": 42617,
+      "weight": 5
+    },
+    "tests/crud/secrets/key-value.cy.ts": {
+      "time": 36771,
+      "weight": 4
+    },
+    "tests/crud/secrets/source.cy.ts": {
+      "time": 30668,
+      "weight": 3
+    },
+    "tests/crud/secrets/webhook.cy.ts": {
+      "time": 24616,
+      "weight": 3
+    },
+    "tests/dashboards/cluster-dashboard.cy.ts": {
+      "time": 91942,
+      "weight": 11
+    },
+    "tests/dashboards/project-dashboard.cy.ts": {
+      "time": 48544,
+      "weight": 6
+    },
+    "tests/events/events.cy.ts": {
+      "time": 24813,
+      "weight": 3
+    },
+    "tests/i18n/pseudolocalization.cy.ts": {
+      "time": 27296,
+      "weight": 3
+    },
+    "tests/storage/clone.cy.ts": {
+      "time": 260,
+      "weight": 0
+    },
+    "tests/storage/create-storage-class.cy.ts": {
+      "time": 51076,
+      "weight": 6
+    },
+    "tests/storage/snapshot.cy.ts": {
+      "time": 335,
+      "weight": 0
+    }
+  }
