@@ -335,7 +335,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	if err != nil {
 		panic(err)
 	}
-	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
+	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers(), graphql.DisableIntrospection()}
 	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
 	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
