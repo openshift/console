@@ -9,7 +9,7 @@ import { LabelsModal, LabelsModalProps } from '@console/internal/components/moda
 
 const LabelsModalComponent: ModalComponent<LabelsModalProps> = ({ closeModal, kind, resource }) => {
   return (
-    <ModalWrapper blocking onClose={closeModal}>
+    <ModalWrapper onClose={closeModal}>
       <LabelsModal cancel={closeModal} close={closeModal} kind={kind} resource={resource} />
     </ModalWrapper>
   );
