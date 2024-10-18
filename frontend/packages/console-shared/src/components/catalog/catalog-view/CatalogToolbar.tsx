@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import * as ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
+import { useDebounceCallback } from '@console/shared';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 
@@ -19,7 +19,6 @@ type CatalogToolbarProps = {
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
 };
 
-// TODO: update to use inputRef on SearchInput once https://github.com/patternfly/patternfly-react/issues/5168 is fixed.
 const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
   (
     {
@@ -33,10 +32,9 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
       onSearchKeywordChange,
       onSortOrderChange,
     },
-    toolbarRef,
+    inputRef,
   ) => {
     const { t } = useTranslation();
-    const inputRef = React.useRef<HTMLDivElement>();
 
     const catalogSortItems = {
       [CatalogSortOrder.ASC]: t('console-shared~A-Z'),
@@ -50,25 +48,21 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
       [NO_GROUPING]: t('console-shared~None'),
     };
 
-    React.useImperativeHandle(toolbarRef, () => {
-      // TODO: Remove this hack once https://github.com/patternfly/patternfly-react/issues/5168 is fixed.
-      // eslint-disable-next-line react/no-find-dom-node
-      const toolbarDOMNode = ReactDOM.findDOMNode(inputRef.current) as HTMLDivElement;
-      return toolbarDOMNode.querySelector('.pf-v5-c-search-input__text-input') as HTMLInputElement;
-    });
+    const debouncedOnSearchKeywordChange = useDebounceCallback(onSearchKeywordChange);
 
     return (
       <div className="co-catalog-page__header">
         <div className="co-catalog-page__heading text-capitalize">{title}</div>
         <div className="co-catalog-page__filter">
-          <div ref={inputRef} className="co-catalog-page__searchfilter">
+          <div className="co-catalog-page__searchfilter">
             <SearchInput
+              ref={inputRef}
               className="co-catalog-page__input"
               data-test="search-catalog"
               type="text"
               placeholder={t('console-shared~Filter by keyword...')}
               value={searchKeyword}
-              onChange={(event, text) => onSearchKeywordChange(text)}
+              onChange={(_event, text) => debouncedOnSearchKeywordChange(text)}
               onClear={() => onSearchKeywordChange('')}
               aria-label={t('console-shared~Filter by keyword...')}
             />
