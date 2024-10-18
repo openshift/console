@@ -238,6 +238,15 @@ export const eventingPO = {
     searchCatalog: '[data-test="search-catalog"]',
     eventSourceCard: '[data-test="item knative-event-source"]',
   },
+  events: {
+    pageTitle: '[data-test-id="resource-title"]',
+    subscriberDropDown: '[id="form-ns-dropdown-formData-spec-subscriber-ref-name-field"]',
+    addMore: '[data-test="add-button"]',
+    nameField: '[id="form-input-formData-metadata-name-field"]',
+    attributeName: '[data-test="pairs-list-name"]',
+    attributeValue: '[data-test="pairs-list-value"]',
+    subscribeButton: '[data-test-id="submit-button"]',
+  },
 };
 
 export const servingPO = {

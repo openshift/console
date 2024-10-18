@@ -360,6 +360,10 @@ export const eventSinkPO = {
   search: '[placeholder="Filter by keyword..."]',
 };
 
+export const eventsPO = {
+  search: '[placeholder="Filter by keyword..."]',
+};
+
 export const devFilePO = {
   form: '[data-test-id="import-devfile-form"]',
   formFields: {

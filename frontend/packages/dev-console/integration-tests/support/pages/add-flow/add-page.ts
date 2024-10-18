@@ -102,6 +102,13 @@ export const addPage = {
         detailsPage.titleShouldContain(pageTitle.Broker);
         cy.testA11y(pageTitle.Broker);
         break;
+      case 'Events':
+      case addOptions.Events:
+        cy.byTestID('item knative-event-type').click();
+        app.waitForLoad();
+        detailsPage.titleShouldContain(pageTitle.Events);
+        cy.testA11y(pageTitle.Events);
+        break;
       case 'Event Sink':
       case addOptions.EventSink:
         cy.byTestID('item knative-event-sink').click();
