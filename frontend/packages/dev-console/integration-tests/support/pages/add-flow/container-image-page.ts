@@ -8,6 +8,16 @@ export const containerImagePage = {
   enterExternalRegistryImageName: (imageName: string) => {
     cy.get(containerImagePO.imageSection.externalRegistry.imageName).type(imageName);
     containerImagePage.verifyValidatedMessage();
+    cy.request(
+      `api/kubernetes/apis/image.openshift.io/v1/namespaces/${Cypress.env(
+        'NAMESPACES',
+      )}/imagestreamimports`,
+      { failOnStatusCode: false },
+    ).then((resp) => {
+      // expect(resp.status).toEqual(200);
+      cy.log(resp.status.toString());
+      cy.log(JSON.stringify(resp));
+    });
   },
   selectProject: (projectName: string) =>
     cy.selectValueFromAutoCompleteDropDown(
