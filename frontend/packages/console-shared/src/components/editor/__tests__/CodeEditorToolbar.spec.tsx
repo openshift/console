@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
+import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '../../../hooks/ols-hook';
-import CodeEditorToolbar, { ActionType } from '../CodeEditorToolbar';
+import CodeEditorToolbar from '../CodeEditorToolbar';
 import ShortcutsLink from '../ShortcutsLink';
 
 jest.mock('react-i18next', () => ({
