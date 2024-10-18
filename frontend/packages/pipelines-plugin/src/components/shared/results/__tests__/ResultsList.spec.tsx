@@ -23,14 +23,14 @@ describe('ResultsList', () => {
     expect(resultsListWrapper.find(Table).exists()).toBe(true);
     expect(resultsListWrapper.find(EmptyState).exists()).toBe(false);
   });
-  it('Should render an EmptyState instead', () => {
+  it('Should still render Results Table even if failed', () => {
     resultsListProps = {
       status: ComputedStatus.Failed,
       resourceName: 'TaskRun',
       results: taskRunWithResults.status.taskResults,
     };
     resultsListWrapper = shallow(<ResultsList {...resultsListProps} />);
-    expect(resultsListWrapper.find(Table).exists()).toBe(false);
-    expect(resultsListWrapper.find(EmptyState).exists()).toBe(true);
+    expect(resultsListWrapper.find(Table).exists()).toBe(true);
+    expect(resultsListWrapper.find(EmptyState).exists()).toBe(false);
   });
 });
