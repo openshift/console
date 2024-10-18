@@ -524,7 +524,7 @@
       "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "userPreferences.PerspectiveDropdown" }
+        "component": { "$codeRef": "userPreferences.PreferredPerspectiveSelect" }
       },
       "insertAfter": "console.theme"
     }
