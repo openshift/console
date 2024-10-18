@@ -1,0 +1,749 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: buildah
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: image-build
+spec:
+  description: >-
+    Buildah task builds source into a container image and
+    then pushes it to a container registry.
+
+    Buildah Task builds source into a container image using Project Atomic's
+    Buildah build tool.It uses Buildah's support for building from Dockerfiles,
+    using its buildah bud command.This command executes the directives in the
+    Dockerfile to assemble a container image, then pushes that image to a
+    container registry.
+
+  params:
+    - name: IMAGE
+      description: Reference of the image buildah will produce.
+    - name: BUILDER_IMAGE
+      description: The location of the buildah builder image.
+      default: registry.redhat.io/rhel8/buildah@sha256:3c2ea396a114221575a4031d90d28c43563f7b96288374e0ba8b22de3ed97b5a
+    - name: STORAGE_DRIVER
+      description: Set buildah storage driver
+      default: vfs
+    - name: DOCKERFILE
+      description: Path to the Dockerfile to build.
+      default: ./Dockerfile
+    - name: CONTEXT
+      description: Path to the directory to use as context.
+      default: .
+    - name: TLSVERIFY
+      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+      default: "true"
+    - name: FORMAT
+      description: The format of the built container, oci or docker
+      default: "oci"
+    - name: BUILD_EXTRA_ARGS
+      description: Extra parameters passed for the build command when building images.
+      default: ""
+    - name: PUSH_EXTRA_ARGS
+      description: Extra parameters passed for the push command when pushing images.
+      type: string
+      default: ""
+    - name: SKIP_PUSH
+      description: Skip pushing the built image
+      default: "false"
+  workspaces:
+    - name: source
+    - name: dockerconfig
+      description: >-
+        An optional workspace that allows providing a .docker/config.json file
+        for Buildah to access the container registry.
+        The file should be placed at the root of the Workspace with name config.json
+        or .dockerconfigjson.
+      optional: true
+    - description: >-
+        An optional workspace that allows providing the entitlement keys
+        for Buildah to access subscription. The mounted workspace contains
+        entitlement.pem and entitlement-key.pem.
+      name: rhel-entitlement
+      optional: true
+      mountPath: /tmp/entitlement
+
+  results:
+    - name: IMAGE_DIGEST
+      description: Digest of the image just built.
+    - name: IMAGE_URL
+      description: Image repository where the built image would be pushed to
+
+  steps:
+    - name: build-and-push
+      image: $(params.BUILDER_IMAGE)
+      workingDir: $(workspaces.source.path)
+      script: |
+        ENTITLEMENT_VOLUME=""
+
+        if [[ "$(workspaces.rhel-entitlement.bound)" == "true" ]]; then
+          ENTITLEMENT_VOLUME="--volume /tmp/entitlement:/etc/pki/entitlement"
+        fi
+
+        buildah bud --storage-driver=$(params.STORAGE_DRIVER) \
+          $ENTITLEMENT_VOLUME $(params.BUILD_EXTRA_ARGS) \
+          --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) \
+          -f $(params.DOCKERFILE) -t $(params.IMAGE) $(params.CONTEXT)
+
+        [[ "$(params.SKIP_PUSH)" == "true" ]] && echo "Push skipped" && exit 0
+
+        if [[ "$(workspaces.dockerconfig.bound)" == "true" ]]; then
+
+          # if config.json exists at workspace root, we use that
+          if test -f "$(workspaces.dockerconfig.path)/config.json"; then
+            export DOCKER_CONFIG="$(workspaces.dockerconfig.path)"
+
+          # else we look for .dockerconfigjson at the root
+          elif test -f "$(workspaces.dockerconfig.path)/.dockerconfigjson"; then
+            cp "$(workspaces.dockerconfig.path)/.dockerconfigjson" "$HOME/.docker/config.json"
+            export DOCKER_CONFIG="$HOME/.docker"
+
+          # need to error out if neither files are present
+          else
+            echo "neither 'config.json' nor '.dockerconfigjson' found at workspace root"
+            exit 1
+          fi
+        fi
+
+        buildah --storage-driver=$(params.STORAGE_DRIVER) push \
+          $(params.PUSH_EXTRA_ARGS) --tls-verify=$(params.TLSVERIFY) \
+          --digestfile /tmp/image-digest $(params.IMAGE) \
+          docker://$(params.IMAGE)
+        cat /tmp/image-digest | tee $(results.IMAGE_DIGEST.path)
+        echo -n "$(params.IMAGE)" | tee $(results.IMAGE_URL.path)
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+      securityContext:
+        capabilities:
+          add: ["SETFCAP"]
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: openshift-client
+  labels:
+    app.kubernetes.io/version: "0.2"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/tags: cli
+    tekton.dev/displayName: "openshift client"
+spec:
+  workspaces:
+    - name: manifest-dir
+      optional: true
+      description: >-
+        The workspace which contains kubernetes manifests which we want to apply on the cluster.
+    - name: kubeconfig-dir
+      optional: true
+      description: >-
+        The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.
+  description: >-
+    This task runs commands against the cluster provided by user
+    and if not provided then where the Task is being executed.
+
+    OpenShift is a Kubernetes distribution from Red Hat which provides oc,
+    the OpenShift CLI that complements kubectl for simplifying deployment
+    and configuration applications on OpenShift.
+
+  params:
+    - name: SCRIPT
+      description: The OpenShift CLI arguments to run
+      type: string
+      default: "oc help"
+    - name: VERSION
+      description: The OpenShift Version to use
+      type: string
+      default: "latest"
+  steps:
+    - name: oc
+      env:
+        - name: HOME
+          value: /tekton/home
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:$(params.VERSION)
+      script: |
+        #!/usr/bin/env bash
+
+        [[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
+        cd $(workspaces.manifest-dir.path)
+
+        [[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
+        [[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
+        export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
+
+        $(params.SCRIPT)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: s2i-nodejs
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.19"
+    tekton.dev/tags: s2i, nodejs, workspace
+    tekton.dev/displayName: "s2i nodejs"
+spec:
+  description: >-
+    s2i-nodejs task clones a Git repository and builds and
+    pushes a container image using S2I and a nodejs builder image.
+
+  results:
+    - name: IMAGE_DIGEST
+      description: Digest of the image just built.
+  params:
+    - name: VERSION
+      description: The tag of nodejs imagestream for nodejs version
+      default: "latest"
+      type: string
+    - name: PATH_CONTEXT
+      description: The location of the path to run s2i from.
+      default: .
+      type: string
+    - name: TLSVERIFY
+      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+      default: "true"
+      type: string
+    - name: IMAGE
+      description: Location of the repo where image has to be pushed
+      type: string
+    - name: BUILDER_IMAGE
+      description: The location of the buildah builder image.
+      default: registry.redhat.io/rhel8/buildah@sha256:3c2ea396a114221575a4031d90d28c43563f7b96288374e0ba8b22de3ed97b5a
+    - name: SKIP_PUSH
+      description: Skip pushing the built image
+      default: "false"
+    - name: ENV_VARS
+      type: array
+      description: Environment variables to set during _build-time_.
+      default: []
+  workspaces:
+    - name: source
+      mountPath: /workspace/source
+    - name: dockerconfig
+      description: >-
+        An optional workspace that allows providing a .docker/config.json file
+        for Buildah to access the container registry.
+        The file should be placed at the root of the Workspace with name config.json.
+      optional: true
+  steps:
+    - name: generate
+      image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:6a6025914296a62fdf2092c3a40011bd9b966a6806b094d51eec5e1bd5026ef4
+      workingDir: $(workspaces.source.path)
+      args: ["$(params.ENV_VARS[*])"]
+      script: |
+        echo "Processing Build Environment Variables"
+        echo "" > /env-vars/env-file
+        for var in "$@"
+        do
+            echo "$var" >> /env-vars/env-file
+        done
+
+        s2i build $(params.PATH_CONTEXT) image-registry.openshift-image-registry.svc:5000/openshift/nodejs:$(params.VERSION) \
+        --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-vars/env-file
+      volumeMounts:
+        - name: gen-source
+          mountPath: /gen-source
+        - name: env-vars
+          mountPath: /env-vars
+      env:
+        - name: HOME
+          value: /tekton/home
+    - name: build-and-push
+      image: $(params.BUILDER_IMAGE)
+      workingDir: /gen-source
+      script: |
+        buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) \
+           --layers -f /gen-source/Dockerfile.gen -t $(params.IMAGE) .
+
+        [[ "$(params.SKIP_PUSH)" == "true" ]] && echo "Push skipped" && exit 0
+        [[ "$(workspaces.dockerconfig.bound)" == "true" ]] && export DOCKER_CONFIG="$(workspaces.dockerconfig.path)"
+        buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) \
+          --digestfile $(workspaces.source.path)/image-digest $(params.IMAGE) \
+          docker://$(params.IMAGE)
+
+        cat $(workspaces.source.path)/image-digest | tee /tekton/results/IMAGE_DIGEST
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+        - name: gen-source
+          mountPath: /gen-source
+      securityContext:
+        capabilities:
+          add: ["SETFCAP"]
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}
+    - name: env-vars
+      emptyDir: {}
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: s2i-java
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.19"
+    tekton.dev/tags: s2i, java, workspace
+    tekton.dev/displayName: "s2i java"
+spec:
+  description: >-
+    s2i-java task clones a Git repository and builds and
+    pushes a container image using S2I and a Java builder image.
+
+  results:
+    - name: IMAGE_DIGEST
+      description: Digest of the image just built.
+  params:
+    - name: VERSION
+      description: The tag of java imagestream for java version
+      default: "latest"
+      type: string
+    - name: PATH_CONTEXT
+      description: The location of the path to run s2i from
+      default: .
+      type: string
+    - name: TLSVERIFY
+      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+      default: "true"
+      type: string
+    - name: MAVEN_ARGS_APPEND
+      description: Additional Maven arguments
+      default: ""
+      type: string
+    - name: MAVEN_CLEAR_REPO
+      description: Remove the Maven repository after the artifact is built
+      default: "false"
+      type: string
+    - name: MAVEN_MIRROR_URL
+      description: The base URL of a mirror used for retrieving artifacts
+      default: ""
+      type: string
+    - name: IMAGE
+      description: Location of the repo where image has to be pushed
+      type: string
+    - name: BUILDER_IMAGE
+      description: The location of the buildah builder image.
+      default: registry.redhat.io/rhel8/buildah@sha256:3c2ea396a114221575a4031d90d28c43563f7b96288374e0ba8b22de3ed97b5a
+    - name: SKIP_PUSH
+      description: Skip pushing the built image
+      default: "false"
+    - name: ENV_VARS
+      type: array
+      description: Environment variables to set during _build-time_.
+      default: []
+  workspaces:
+    - name: source
+      mountPath: /workspace/source
+    - name: dockerconfig
+      description: >-
+        An optional workspace that allows providing a .docker/config.json file
+        for Buildah to access the container registry.
+        The file should be placed at the root of the Workspace with name config.json.
+      optional: true
+  steps:
+    - name: generate
+      image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:6a6025914296a62fdf2092c3a40011bd9b966a6806b094d51eec5e1bd5026ef4
+      workingDir: $(workspaces.source.path)
+      args: ["$(params.ENV_VARS[*])"]
+      script: |
+        echo "MAVEN_CLEAR_REPO=$(params.MAVEN_CLEAR_REPO)" > /env-vars/env-file
+
+        [[ '$(params.MAVEN_ARGS_APPEND)' != "" ]] &&
+          echo "MAVEN_ARGS_APPEND=$(params.MAVEN_ARGS_APPEND)" >> /env-vars/env-file
+
+        [[ '$(params.MAVEN_MIRROR_URL)' != "" ]] &&
+          echo "MAVEN_MIRROR_URL=$(params.MAVEN_MIRROR_URL)" >> /env-vars/env-file
+
+        echo "Processing Build Environment Variables"
+        for var in "$@"
+        do
+          echo "$var" >> /env-vars/env-file
+        done
+
+        s2i build $(params.PATH_CONTEXT) image-registry.openshift-image-registry.svc:5000/openshift/java:$(params.VERSION) \
+        --image-scripts-url image:///usr/local/s2i \
+        --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-vars/env-file
+      volumeMounts:
+        - name: gen-source
+          mountPath: /gen-source
+        - name: env-vars
+          mountPath: /env-vars
+      env:
+        - name: HOME
+          value: /tekton/home
+    - name: build-and-push
+      image: $(params.BUILDER_IMAGE)
+      workingDir: /gen-source
+      script: |
+        buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) \
+           --layers -f /gen-source/Dockerfile.gen -t $(params.IMAGE) .
+
+        [[ "$(params.SKIP_PUSH)" == "true" ]] && echo "Push skipped" && exit 0
+        [[ "$(workspaces.dockerconfig.bound)" == "true" ]] && export DOCKER_CONFIG="$(workspaces.dockerconfig.path)"
+        buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) \
+          --digestfile $(workspaces.source.path)/image-digest $(params.IMAGE) \
+          docker://$(params.IMAGE)
+
+        cat $(workspaces.source.path)/image-digest | tee /tekton/results/IMAGE_DIGEST
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+        - name: gen-source
+          mountPath: /gen-source
+      securityContext:
+        capabilities:
+          add: ["SETFCAP"]
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}
+    - name: env-vars
+      emptyDir: {}
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: kn
+  labels:
+    app.kubernetes.io/version: "0.2"
+  annotations:
+    tekton.dev/displayName: "kn"
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/categories: CLI
+    tekton.dev/tags: cli
+    tekton.dev/platforms: "linux/amd64,linux/s390x,linux/ppc64le,linux/arm64"
+spec:
+  description: >-
+    This Task performs operations on Knative resources
+    (services, revisions, routes) using kn CLI
+
+  params:
+    - name: kn-image
+      description: kn CLI container image to run this task
+      default: gcr.io/knative-releases/knative.dev/client/cmd/kn:latest
+    - name: ARGS
+      type: array
+      description: kn CLI arguments to run
+      default:
+        - "help"
+  steps:
+    - name: kn
+      env:
+        - name: HOME
+          value: /tekton/home
+      image: "$(params.kn-image)"
+      command: ["/ko-app/kn"]
+      args: ["$(params.ARGS)"]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: git-clone
+  labels:
+    app.kubernetes.io/version: "0.9"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.38.0"
+    tekton.dev/categories: Git
+    tekton.dev/tags: git
+    tekton.dev/displayName: "git clone"
+    tekton.dev/platforms: "linux/amd64,linux/s390x,linux/ppc64le,linux/arm64"
+spec:
+  description: >-
+    These Tasks are Git tasks to work with repositories used by other tasks
+    in your Pipeline.
+
+    The git-clone Task will clone a repo from the provided url into the
+    output Workspace. By default the repo will be cloned into the root of
+    your Workspace. You can clone into a subdirectory by setting this Task's
+    subdirectory param. This Task also supports sparse checkouts. To perform
+    a sparse checkout, pass a list of comma separated directory patterns to
+    this Task's sparseCheckoutDirectories param.
+  workspaces:
+    - name: output
+      description: The git repo will be cloned onto the volume backing this Workspace.
+    - name: ssh-directory
+      optional: true
+      description: |
+        A .ssh directory with private key, known_hosts, config, etc. Copied to
+        the user's home before git commands are executed. Used to authenticate
+        with the git remote when performing the clone. Binding a Secret to this
+        Workspace is strongly recommended over other volume types.
+    - name: basic-auth
+      optional: true
+      description: |
+        A Workspace containing a .gitconfig and .git-credentials file. These
+        will be copied to the user's home before any git commands are run. Any
+        other files in this Workspace are ignored. It is strongly recommended
+        to use ssh-directory over basic-auth whenever possible and to bind a
+        Secret to this Workspace over other volume types.
+    - name: ssl-ca-directory
+      optional: true
+      description: |
+        A workspace containing CA certificates, this will be used by Git to
+        verify the peer with when fetching or pushing over HTTPS.
+  params:
+    - name: url
+      description: Repository URL to clone from.
+      type: string
+    - name: revision
+      description: Revision to checkout. (branch, tag, sha, ref, etc...)
+      type: string
+      default: ""
+    - name: refspec
+      description: Refspec to fetch before checking out revision.
+      default: ""
+    - name: submodules
+      description: Initialize and fetch git submodules.
+      type: string
+      default: "true"
+    - name: depth
+      description: Perform a shallow clone, fetching only the most recent N commits.
+      type: string
+      default: "1"
+    - name: sslVerify
+      description: Set the `http.sslVerify` global git config. Setting this to `false` is not advised unless you are sure that you trust your git remote.
+      type: string
+      default: "true"
+    - name: crtFileName
+      description: file name of mounted crt using ssl-ca-directory workspace. default value is ca-bundle.crt.
+      type: string
+      default: "ca-bundle.crt"
+    - name: subdirectory
+      description: Subdirectory inside the `output` Workspace to clone the repo into.
+      type: string
+      default: ""
+    - name: sparseCheckoutDirectories
+      description: Define the directory patterns to match or exclude when performing a sparse checkout.
+      type: string
+      default: ""
+    - name: deleteExisting
+      description: Clean out the contents of the destination directory if it already exists before cloning.
+      type: string
+      default: "true"
+    - name: httpProxy
+      description: HTTP proxy server for non-SSL requests.
+      type: string
+      default: ""
+    - name: httpsProxy
+      description: HTTPS proxy server for SSL requests.
+      type: string
+      default: ""
+    - name: noProxy
+      description: Opt out of proxying HTTP/HTTPS requests.
+      type: string
+      default: ""
+    - name: verbose
+      description: Log the commands that are executed during `git-clone`'s operation.
+      type: string
+      default: "true"
+    - name: gitInitImage
+      description: The image providing the git-init binary that this Task runs.
+      type: string
+      default: "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.40.2"
+    - name: userHome
+      description: |
+        Absolute path to the user's home directory.
+      type: string
+      default: "/home/git"
+  results:
+    - name: commit
+      description: The precise commit SHA that was fetched by this Task.
+    - name: url
+      description: The precise URL that was fetched by this Task.
+    - name: committer-date
+      description: The epoch timestamp of the commit that was fetched by this Task.
+  steps:
+    - name: clone
+      image: "$(params.gitInitImage)"
+      env:
+        - name: HOME
+          value: "$(params.userHome)"
+        - name: PARAM_URL
+          value: $(params.url)
+        - name: PARAM_REVISION
+          value: $(params.revision)
+        - name: PARAM_REFSPEC
+          value: $(params.refspec)
+        - name: PARAM_SUBMODULES
+          value: $(params.submodules)
+        - name: PARAM_DEPTH
+          value: $(params.depth)
+        - name: PARAM_SSL_VERIFY
+          value: $(params.sslVerify)
+        - name: PARAM_CRT_FILENAME
+          value: $(params.crtFileName)
+        - name: PARAM_SUBDIRECTORY
+          value: $(params.subdirectory)
+        - name: PARAM_DELETE_EXISTING
+          value: $(params.deleteExisting)
+        - name: PARAM_HTTP_PROXY
+          value: $(params.httpProxy)
+        - name: PARAM_HTTPS_PROXY
+          value: $(params.httpsProxy)
+        - name: PARAM_NO_PROXY
+          value: $(params.noProxy)
+        - name: PARAM_VERBOSE
+          value: $(params.verbose)
+        - name: PARAM_SPARSE_CHECKOUT_DIRECTORIES
+          value: $(params.sparseCheckoutDirectories)
+        - name: PARAM_USER_HOME
+          value: $(params.userHome)
+        - name: WORKSPACE_OUTPUT_PATH
+          value: $(workspaces.output.path)
+        - name: WORKSPACE_SSH_DIRECTORY_BOUND
+          value: $(workspaces.ssh-directory.bound)
+        - name: WORKSPACE_SSH_DIRECTORY_PATH
+          value: $(workspaces.ssh-directory.path)
+        - name: WORKSPACE_BASIC_AUTH_DIRECTORY_BOUND
+          value: $(workspaces.basic-auth.bound)
+        - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
+          value: $(workspaces.basic-auth.path)
+        - name: WORKSPACE_SSL_CA_DIRECTORY_BOUND
+          value: $(workspaces.ssl-ca-directory.bound)
+        - name: WORKSPACE_SSL_CA_DIRECTORY_PATH
+          value: $(workspaces.ssl-ca-directory.path)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      script: |
+        #!/usr/bin/env sh
+        set -eu
+
+        if [ "${PARAM_VERBOSE}" = "true" ] ; then
+          set -x
+        fi
+
+        if [ "${WORKSPACE_BASIC_AUTH_DIRECTORY_BOUND}" = "true" ] ; then
+          cp "${WORKSPACE_BASIC_AUTH_DIRECTORY_PATH}/.git-credentials" "${PARAM_USER_HOME}/.git-credentials"
+          cp "${WORKSPACE_BASIC_AUTH_DIRECTORY_PATH}/.gitconfig" "${PARAM_USER_HOME}/.gitconfig"
+          chmod 400 "${PARAM_USER_HOME}/.git-credentials"
+          chmod 400 "${PARAM_USER_HOME}/.gitconfig"
+        fi
+
+        if [ "${WORKSPACE_SSH_DIRECTORY_BOUND}" = "true" ] ; then
+          cp -R "${WORKSPACE_SSH_DIRECTORY_PATH}" "${PARAM_USER_HOME}"/.ssh
+          chmod 700 "${PARAM_USER_HOME}"/.ssh
+          chmod -R 400 "${PARAM_USER_HOME}"/.ssh/*
+        fi
+
+        if [ "${WORKSPACE_SSL_CA_DIRECTORY_BOUND}" = "true" ] ; then
+           export GIT_SSL_CAPATH="${WORKSPACE_SSL_CA_DIRECTORY_PATH}"
+           if [ "${PARAM_CRT_FILENAME}" != "" ] ; then
+              export GIT_SSL_CAINFO="${WORKSPACE_SSL_CA_DIRECTORY_PATH}/${PARAM_CRT_FILENAME}"
+           fi
+        fi
+        CHECKOUT_DIR="${WORKSPACE_OUTPUT_PATH}/${PARAM_SUBDIRECTORY}"
+
+        cleandir() {
+          # Delete any existing contents of the repo directory if it exists.
+          #
+          # We don't just "rm -rf ${CHECKOUT_DIR}" because ${CHECKOUT_DIR} might be "/"
+          # or the root of a mounted volume.
+          if [ -d "${CHECKOUT_DIR}" ] ; then
+            # Delete non-hidden files and directories
+            rm -rf "${CHECKOUT_DIR:?}"/*
+            # Delete files and directories starting with . but excluding ..
+            rm -rf "${CHECKOUT_DIR}"/.[!.]*
+            # Delete files and directories starting with .. plus any other character
+            rm -rf "${CHECKOUT_DIR}"/..?*
+          fi
+        }
+
+        if [ "${PARAM_DELETE_EXISTING}" = "true" ] ; then
+          cleandir || true
+        fi
+
+        test -z "${PARAM_HTTP_PROXY}" || export HTTP_PROXY="${PARAM_HTTP_PROXY}"
+        test -z "${PARAM_HTTPS_PROXY}" || export HTTPS_PROXY="${PARAM_HTTPS_PROXY}"
+        test -z "${PARAM_NO_PROXY}" || export NO_PROXY="${PARAM_NO_PROXY}"
+
+        git config --global --add safe.directory "${WORKSPACE_OUTPUT_PATH}"
+        /ko-app/git-init \
+          -url="${PARAM_URL}" \
+          -revision="${PARAM_REVISION}" \
+          -refspec="${PARAM_REFSPEC}" \
+          -path="${CHECKOUT_DIR}" \
+          -sslVerify="${PARAM_SSL_VERIFY}" \
+          -submodules="${PARAM_SUBMODULES}" \
+          -depth="${PARAM_DEPTH}" \
+          -sparseCheckoutDirectories="${PARAM_SPARSE_CHECKOUT_DIRECTORIES}"
+        cd "${CHECKOUT_DIR}"
+        RESULT_SHA="$(git rev-parse HEAD)"
+        EXIT_CODE="$?"
+        if [ "${EXIT_CODE}" != 0 ] ; then
+          exit "${EXIT_CODE}"
+        fi
+        RESULT_COMMITTER_DATE="$(git log -1 --pretty=%ct)"
+        printf "%s" "${RESULT_COMMITTER_DATE}" > "$(results.committer-date.path)"
+        printf "%s" "${RESULT_SHA}" > "$(results.commit.path)"
+        printf "%s" "${PARAM_URL}" > "$(results.url.path)"
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: tkn
+  labels:
+    app.kubernetes.io/version: "0.4"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/categories: CLI
+    tekton.dev/tags: cli
+    tekton.dev/displayName: "Tekton CLI"
+    tekton.dev/platforms: "linux/amd64,linux/s390x,linux/ppc64le"
+spec:
+  workspaces:
+    - name: kubeconfig
+      description: >-
+        An optional workspace that allows you to provide a .kube/config
+        file for tkn to access the cluster. The file should be placed at
+        the root of the Workspace with name kubeconfig.
+      optional: true
+  description: >-
+    This task performs operations on Tekton resources using tkn
+
+  params:
+    - name: TKN_IMAGE
+      description: tkn CLI container image to run this task
+      default: gcr.io/tekton-releases/dogfooding/tkn@sha256:d17fec04f655551464a47dd59553c9b44cf660cc72dbcdbd52c0b8e8668c0579
+    - name: SCRIPT
+      description: tkn CLI script to execute
+      type: string
+      default: "tkn $@"
+    - name: ARGS
+      type: array
+      description: tkn CLI arguments to run
+      default: ["--help"]
+  steps:
+    - name: tkn
+      env:
+        - name: HOME
+          value: /tekton/home
+      image: "$(params.TKN_IMAGE)"
+      script: |
+        if [ "$(workspaces.kubeconfig.bound)" = "true" ] && [ -e $(workspaces.kubeconfig.path)/kubeconfig ]; then
+          export KUBECONFIG="$(workspaces.kubeconfig.path)"/kubeconfig
+        fi
+
+        eval "$(params.SCRIPT)"
+      args: ["$(params.ARGS)"]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
