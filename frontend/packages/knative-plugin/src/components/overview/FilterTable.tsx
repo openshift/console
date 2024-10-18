@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { TableVariant } from '@patternfly/react-table';
-import {
-  Table as TableDeprecated,
-  TableBody as TableBodyDeprecated,
-} from '@patternfly/react-table/deprecated';
+import { Table, Tr, Tbody, Td, Thead, Th } from '@patternfly/react-table';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import './FilterTable.scss';
 
 export type FilterTableRowProps = { key: string; value: string }[];
@@ -39,21 +36,44 @@ const FilterTable: React.FC<FilterTableProps> = ({
       ],
     };
   };
+
+  const { t } = useTranslation('knative-plugin');
+
   const data = {
-    columns: ['Key', 'Value'],
+    columns: [t('Attribute'), t('Value')],
     rows: filters.map(({ key, value }) => filterRow(key, value)),
   };
+
   return (
-    <TableDeprecated
-      className="kn-filter-table"
-      aria-label="Attributes Table"
-      variant={TableVariant.compact}
-      cells={data.columns}
-      rows={data.rows}
-      borders
-    >
-      <TableBodyDeprecated />
-    </TableDeprecated>
+    <Table className="kn-filter-table" aria-label="Attributes Table" variant="compact" borders>
+      <Thead>
+        <Tr>
+          {data.columns.map((column) => (
+            <Th
+              key={column}
+              className={cx(
+                cx({ 'kn-filter-table__padding--left': paddingLeft && column === t('Attribute') }),
+                { 'kn-filter-table__row--bordered': bordered },
+              )}
+            >
+              {column}
+            </Th>
+          ))}
+        </Tr>
+      </Thead>
+
+      <Tbody>
+        {data.rows.map((row) => (
+          <Tr key={row.cells[0]?.title}>
+            {row.cells.map((cell) => (
+              <Td key={cell?.title + row.cells[0]?.title} {...cell.props}>
+                {cell.title}
+              </Td>
+            ))}
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 
