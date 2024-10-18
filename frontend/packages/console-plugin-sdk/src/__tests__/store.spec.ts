@@ -507,7 +507,7 @@ describe('PluginStore', () => {
       expect(store.getStateForTestPurposes().listeners).toEqual([]);
     });
 
-    it('invokes the listener when extensions in use or dynamic plugin information changes', () => {
+    it('invokes all listeners when extensions in use or dynamic plugin information changes', () => {
       const store = new PluginStore([], ['TestA', 'TestB']);
 
       const listeners = [jest.fn(), jest.fn()];
@@ -595,6 +595,7 @@ describe('PluginStore', () => {
           },
         ],
         enabled: false,
+        customInfo: {},
       });
 
       expect(Object.isFrozen(testPlugin.manifest)).toBe(true);
@@ -643,6 +644,7 @@ describe('PluginStore', () => {
           },
         ],
         enabled: false,
+        customInfo: {},
       });
     });
 
@@ -970,6 +972,119 @@ describe('PluginStore', () => {
     });
   });
 
+  describe('setCustomDynamicPluginInfo', () => {
+    it('assigns the custom data to the given plugin', () => {
+      const store = new PluginStore([], ['Test']);
+
+      const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      addDynamicPluginToStore(store, manifest);
+
+      const { loadedDynamicPlugins } = store.getStateForTestPurposes();
+
+      expect(loadedDynamicPlugins.get('Test@1.2.3').customInfo).toEqual({});
+
+      expect(store.getDynamicPluginInfo()).toEqual([
+        {
+          status: 'Loaded',
+          pluginID: 'Test@1.2.3',
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
+          enabled: false,
+        },
+      ]);
+
+      store.setCustomDynamicPluginInfo('Test', { hasCSPViolations: true });
+
+      expect(loadedDynamicPlugins.get('Test@1.2.3').customInfo).toEqual({ hasCSPViolations: true });
+
+      expect(store.getDynamicPluginInfo()).toEqual([
+        {
+          status: 'Loaded',
+          pluginID: 'Test@1.2.3',
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
+          enabled: false,
+          hasCSPViolations: true,
+        },
+      ]);
+    });
+
+    it('invokes all listeners when the plugin custom data changes', () => {
+      const store = new PluginStore([], ['Test']);
+
+      addDynamicPluginToStore(
+        store,
+        getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]),
+      );
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      store.setCustomDynamicPluginInfo('Test', { hasCSPViolations: true });
+
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(1);
+      });
+    });
+
+    it('does nothing if the plugin custom data does not change', () => {
+      const store = new PluginStore([], ['Test']);
+
+      const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      addDynamicPluginToStore(store, manifest);
+
+      const { loadedDynamicPlugins } = store.getStateForTestPurposes();
+
+      store.setCustomDynamicPluginInfo('Test', { hasCSPViolations: true });
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      store.setCustomDynamicPluginInfo('Test', {});
+      store.setCustomDynamicPluginInfo('Test', { hasCSPViolations: true });
+
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(0);
+      });
+
+      expect(loadedDynamicPlugins.get('Test@1.2.3').customInfo).toEqual({ hasCSPViolations: true });
+
+      expect(store.getDynamicPluginInfo()).toEqual([
+        {
+          status: 'Loaded',
+          pluginID: 'Test@1.2.3',
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
+          enabled: false,
+          hasCSPViolations: true,
+        },
+      ]);
+    });
+
+    it('does nothing if the plugin is not loaded', () => {
+      const store = new PluginStore([], ['Test']);
+
+      const listeners = [jest.fn(), jest.fn()];
+      listeners.forEach((l) => store.subscribe(l));
+
+      const { loadedDynamicPlugins } = store.getStateForTestPurposes();
+
+      store.setCustomDynamicPluginInfo('Test', { hasCSPViolations: true });
+
+      expect(loadedDynamicPlugins.size).toBe(0);
+
+      expect(store.getDynamicPluginInfo()).toEqual([
+        {
+          status: 'Pending',
+          pluginName: 'Test',
+        },
+      ]);
+
+      listeners.forEach((l) => {
+        expect(l.mock.calls.length).toBe(0);
+      });
+    });
+  });
+
   describe('getDynamicPluginInfo', () => {
     it('returns plugin runtime information for all known dynamic plugins', () => {
       const store = new PluginStore([], ['TestA', 'TestB']);
@@ -1025,6 +1140,24 @@ describe('PluginStore', () => {
           pluginID: 'TestA@1.2.3',
           metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: true,
+        },
+        {
+          status: 'Failed',
+          pluginName: 'TestB',
+          errorMessage: 'Test error message',
+          errorCause: new Error('Boom'),
+        },
+      ]);
+
+      store.setCustomDynamicPluginInfo('TestA', { hasCSPViolations: true });
+
+      expect(store.getDynamicPluginInfo()).toEqual([
+        {
+          status: 'Loaded',
+          pluginID: 'TestA@1.2.3',
+          metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
+          enabled: true,
+          hasCSPViolations: true,
         },
         {
           status: 'Failed',

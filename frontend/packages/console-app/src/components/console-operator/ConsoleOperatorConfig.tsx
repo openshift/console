@@ -42,34 +42,47 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import {
-  isLoadedDynamicPluginInfo,
-  isNotLoadedDynamicPluginInfo,
-  LoadedDynamicPluginInfo,
-  NotLoadedDynamicPluginInfo,
-} from '@console/plugin-sdk/src';
+import { isLoadedDynamicPluginInfo, DynamicPluginInfo } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, Status } from '@console/shared';
+import {
+  consolePluginModal,
+  CONSOLE_OPERATOR_CONFIG_NAME,
+  Status,
+  GreenCheckCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
+
+const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
+const pluginColumns = ['name', 'version', 'description', 'status'];
+const placeholder = '-';
 
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
   ConsoleOperatorConfigModel,
 );
 
-const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugin }) => {
+const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProps> = ({
+  pluginName,
+  enabled,
+}) => {
   const { t } = useTranslation();
+
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   };
+
   const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>(console);
+
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
     verb: 'patch',
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
+
   const labels = enabled ? t('console-app~Enabled') : t('console-app~Disabled');
+
   return (
     <>
       {consoleOperatorConfig && canPatchConsoleOperatorConfig ? (
@@ -80,7 +93,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugi
           onClick={() =>
             consolePluginModal({
               consoleOperatorConfig,
-              plugin,
+              plugin: pluginName,
               trusted: false,
             })
           }
@@ -96,84 +109,117 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugi
   );
 };
 
+const ConsolePluginCSPStatus: React.FC<ConsolePluginCSPStatusProps> = ({ hasViolations }) => {
+  const { t } = useTranslation();
+
+  return hasViolations ? (
+    <>
+      <YellowExclamationTriangleIcon
+        className="co-icon-space-r"
+        title={t(
+          "console-app~This plugin seems to have violated Console Content Security Policy. Refer to the browser's console logs for details.",
+        )}
+      />{' '}
+      {t('console-app~Yes')}
+    </>
+  ) : (
+    <>
+      <GreenCheckCircleIcon className="co-icon-space-r" /> {t('console-app~No')}
+    </>
+  );
+};
+
+type ConsolePluginDisplayData = {
+  name: string;
+  version?: string;
+  description?: string;
+  status: 'Pending' | 'Loaded' | 'Failed';
+  enabled: boolean;
+  errorMessage?: string;
+  errorCause?: string;
+  hasCSPViolations?: boolean;
+};
+
+const getConsolePluginDisplayData = (plugin: DynamicPluginInfo): ConsolePluginDisplayData => {
+  if (isLoadedDynamicPluginInfo(plugin)) {
+    return {
+      name: plugin.metadata.name,
+      version: plugin.metadata.version,
+      description: plugin.metadata.customProperties?.console?.description,
+      status: plugin.status,
+      enabled: plugin.enabled,
+      hasCSPViolations: plugin.hasCSPViolations,
+    };
+  }
+
+  return {
+    name: plugin.pluginName,
+    status: plugin.status,
+    enabled: false,
+    errorMessage: plugin.status === 'Failed' ? plugin.errorMessage : undefined,
+    errorCause: plugin.status === 'Failed' ? plugin.errorCause?.toString() : undefined,
+  };
+};
+
 const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
   const { t } = useTranslation();
+
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
   });
+
   const [pluginInfoEntries] = useDynamicPluginInfo();
   const [rows, setRows] = React.useState([]);
   const [sortBy, setSortBy] = React.useState<ISortBy>({});
-  const pluginColumns = ['name', 'version', 'description', 'status'];
-  const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
+
   React.useEffect(() => {
-    const placeholder = '-';
+    const getFailedPluginStatusContent = (item: ConsolePluginDisplayData) =>
+      item.status === 'Failed' ? (
+        <>
+          {item.errorMessage ?? t('console-app~No error message available')}
+          <br />
+          {item.errorCause ?? t('console-app~No error cause data available')}
+        </>
+      ) : null;
+
+    const data = pluginInfoEntries.map(getConsolePluginDisplayData);
+
     if (developmentMode) {
-      const data = pluginInfoEntries.filter(isLoadedDynamicPluginInfo).map((plugin) => {
-        return {
-          name: plugin.metadata.name,
-          version: plugin.metadata.version,
-          description: plugin.metadata?.customProperties?.console?.description || placeholder,
-          enabled: plugin.enabled,
-          status: plugin.status,
-        };
-      });
       setRows(
-        data?.map((item) => {
-          return {
-            cells: [
-              {
-                title: item.name,
-              },
-              item.version,
-              item.description,
-              {
-                title: <Status status={item.status} title={item.status} />,
-              },
-              {
-                title: t('console-app~Enabled'),
-              },
-            ],
-          };
-        }),
+        data.map((item) => ({
+          cells: [
+            {
+              title: item.name,
+            },
+            item.version ?? placeholder,
+            item.description ?? placeholder,
+            {
+              title: (
+                <Status status={item.status} title={item.status}>
+                  {getFailedPluginStatusContent(item)}
+                </Status>
+              ),
+            },
+            {
+              title: item.enabled ? t('console-app~Enabled') : t('console-app~Disabled'),
+            },
+            {
+              title: <ConsolePluginCSPStatus hasViolations={item.hasCSPViolations ?? false} />,
+            },
+          ],
+        })),
       );
       return;
     }
-    const data = consolePlugins.map((plugin) => {
-      const pluginName = plugin?.metadata?.name;
-      const loadedPluginInfo = pluginInfoEntries
-        .filter(isLoadedDynamicPluginInfo)
-        .find(
-          (i: LoadedDynamicPluginInfo) => i?.metadata?.name === pluginName,
-        ) as LoadedDynamicPluginInfo;
-      const notLoadedPluginInfo = pluginInfoEntries
-        .filter(isNotLoadedDynamicPluginInfo)
-        .find(
-          (i: NotLoadedDynamicPluginInfo) => i?.pluginName === pluginName,
-        ) as NotLoadedDynamicPluginInfo;
-      const enabled = !!obj?.spec?.plugins?.includes(pluginName);
-      if (loadedPluginInfo) {
-        return {
-          name: plugin?.metadata?.name,
-          version: loadedPluginInfo?.metadata?.version,
-          description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
-          enabled,
-          status: loadedPluginInfo?.status,
-        };
-      }
-      return {
-        name: plugin?.metadata?.name,
-        enabled,
-        status: notLoadedPluginInfo?.status,
-        errorMessage:
-          notLoadedPluginInfo?.status !== 'Pending' ? notLoadedPluginInfo?.errorMessage : undefined,
-        errorCause:
-          notLoadedPluginInfo?.status !== 'Pending'
-            ? notLoadedPluginInfo?.errorCause?.toString()
-            : undefined,
-      };
+
+    data.forEach((item) => {
+      // Replace "enabled in the PluginStore" status with "enabled on the cluster" status.
+      // Note: we should add a separate column instead of having this semantic discrepancy
+      // between development (off-cluster) vs. non-development (on-cluster) environment.
+      item.enabled = !!obj?.spec?.plugins?.includes(item.name);
     });
+
     const sortedData = !_.isEmpty(sortBy)
       ? data.sort((a, b) => {
           const sortCol = pluginColumns[sortBy.index];
@@ -186,42 +232,43 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
           return 0;
         })
       : data;
+
     if (sortBy && sortBy?.direction === SortByDirection.desc) {
       sortedData.reverse();
     }
+
     setRows(
-      sortedData?.map((item) => {
-        return {
-          cells: [
-            {
-              title: (
-                <ResourceLink
-                  kind={referenceForModel(ConsolePluginModel)}
-                  name={item.name}
-                  hideIcon
-                />
-              ),
-            },
-            item.version || placeholder,
-            item.description || placeholder,
-            item.status
-              ? {
-                  title: (
-                    <Status status={item.status} title={item.status}>
-                      {item.errorMessage} <br /> {item.errorCause}
-                    </Status>
-                  ),
-                }
-              : placeholder,
-            {
-              title: <ConsolePluginStatus plugin={item.name} enabled={item.enabled} />,
-            },
-          ],
-        };
-      }),
+      sortedData.map((item) => ({
+        cells: [
+          {
+            title: (
+              <ResourceLink
+                kind={referenceForModel(ConsolePluginModel)}
+                name={item.name}
+                hideIcon
+              />
+            ),
+          },
+          item.version ?? placeholder,
+          item.description ?? placeholder,
+          {
+            title: (
+              <Status status={item.status} title={item.status}>
+                {getFailedPluginStatusContent(item)}
+              </Status>
+            ),
+          },
+          {
+            title: <ConsolePluginEnabledStatus pluginName={item.name} enabled={item.enabled} />,
+          },
+          {
+            title: <ConsolePluginCSPStatus hasViolations={item.hasCSPViolations ?? false} />,
+          },
+        ],
+      })),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [consolePlugins, pluginInfoEntries, obj, sortBy]);
+  }, [consolePlugins, pluginInfoEntries, t, obj, sortBy]);
+
   const headers = [
     {
       title: t('console-app~Name'),
@@ -239,8 +286,14 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
       title: t('console-app~Status'),
       transforms: developmentMode ? [] : [sortable],
     },
-    { title: '' },
+    {
+      title: t('console-app~Enabled'),
+    },
+    {
+      title: t('console-app~CSP violations'),
+    },
   ];
+
   const onSort = (e, index, direction) => {
     setSortBy({
       index,
@@ -288,7 +341,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
           <TableBodyDeprecated />
         </TableDeprecated>
       ) : (
-        <EmptyBox label={t('console-app~console plugins')} />
+        <EmptyBox label={t('console-app~Console plugins')} />
       )}
     </div>
   ) : (
@@ -339,9 +392,13 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   );
 };
 
-type ConsolePluginStatusType = {
+type ConsolePluginEnabledStatusProps = {
+  pluginName: string;
   enabled: boolean;
-  plugin: string;
+};
+
+type ConsolePluginCSPStatusProps = {
+  hasViolations: boolean;
 };
 
 type ConsolePluginsListType = {
