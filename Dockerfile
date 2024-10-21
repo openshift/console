@@ -1,7 +1,7 @@
 ##################################################
 #
 # go backend build
-FROM registry.ci.openshift.org/ocp/builder:rhel-8-golang-1.19-openshift-4.14 AS gobuilder
+FROM registry.ci.openshift.org/ocp/builder:rhel-8-golang-1.20-openshift-4.14 AS gobuilder
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
