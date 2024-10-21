@@ -50,8 +50,8 @@ export type SingleTypeaheadDropdownProps = {
 /**
  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
  *
- * @param {String} text - The text to be rendered.
- * @param {String} font - The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
+ * @param text - The text to be rendered.
+ * @param font - The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
  *
  * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
  */
@@ -85,11 +85,6 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectOptions, setSelectOptions] = React.useState<SelectOptionProps[]>(items);
-
-  React.useEffect(() => {
-    setSelectOptions([...selectOptions, ..._.differenceBy(items, selectOptions, 'value')]);
-  }, [items]);
-
   const selectedValue = React.useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
     selectOptions,
     selectedKey,
@@ -106,6 +101,12 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
   const ID_PREFIX = _.uniqueId('select-typeahead-'); // for aria to work, ids have to be unique
   const NO_RESULTS = 'typeahead-dropdown__no-results';
   const CREATE_NEW = 'typeahead-dropdown__create-new';
+
+  React.useEffect(() => {
+    setSelectOptions([...selectOptions, ..._.differenceBy(items, selectOptions, 'value')]);
+    inputValue === '' && setFilteredSelectOptions(selectOptions);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   React.useEffect(() => {
     let newSelectOptions: SelectOptionProps[] = selectOptions;
