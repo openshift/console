@@ -81,8 +81,7 @@ const SingleTypeaheadField: React.FC<SingleTypeaheadFieldProps> = ({
         menuToggleProps={{
           isDisabled,
           isFullWidth: true,
-          // TODO(jaclee): uncomment when PF5 is updated
-          // status: isValid ? 'default' : 'danger',
+          status: isValid ? undefined : 'danger',
         }}
         selectProps={{
           'aria-label': ariaLabel,
