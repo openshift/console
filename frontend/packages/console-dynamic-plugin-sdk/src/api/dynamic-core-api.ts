@@ -98,6 +98,7 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/int
  * @param {R} [rowData] - (optional) data specific to row
  * @param {number} [sortColumnIndex] - (optional) The index of the column to sort. The default is `0`
  * @param {SortByDirection.asc | SortByDirection.desc} [sortDirection] - (optional) The direction of the sort. The default is `SortByDirection.asc`
+ * @param {function} [onRowsRendered] - (optional) Callback invoked with information about the slice of rows that were just rendered.
  * @example
  * ```ts
  * const MachineList: React.FC<MachineListProps> = (props) => {
