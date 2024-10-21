@@ -302,6 +302,7 @@ type OperatorInstallStatusPageRouteParams = RouteParams<
 
 const OperatorInstallLogo = ({ subscription }) => {
   const { t } = useTranslation();
+  const notFound = t('olm~Not found');
   const { currentCSV, catalogNamespace, pkg } = useParams<OperatorInstallStatusPageRouteParams>();
   const [packageManifests, loaded, loadError] = useK8sWatchResource<PackageManifestKind[]>({
     groupVersionKind: {
@@ -326,19 +327,19 @@ const OperatorInstallLogo = ({ subscription }) => {
     return (
       <ClusterServiceVersionLogo
         icon={null}
-        displayName={loadError ? t('olm~Error: {{loadError}}', { loadError }) : t('olm~Not found')}
+        displayName={loadError ? t('olm~Error: {{loadError}}', { loadError }) : notFound}
       />
     );
   }
   const channels = pkgManifest?.status?.channels || [];
   const channel = channels.find((ch) => ch.currentCSV === currentCSV) || channels[0];
-  const displayName = channel?.currentCSVDesc?.displayName || 'Not found';
+  const displayName = channel?.currentCSVDesc?.displayName || notFound;
   const provider = pkgManifest?.status?.provider?.name || '';
   const startingCSV = subscription?.spec?.startingCSV;
 
   return (
     <ClusterServiceVersionLogo
-      displayName={displayName ?? 'Not found'}
+      displayName={displayName}
       icon={iconFor(pkgManifest)}
       provider={provider}
       version={startingCSV}
