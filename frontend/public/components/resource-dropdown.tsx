@@ -50,8 +50,10 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     true,
   );
   const [selectedOptions, setSelectedOptions] = React.useState(selected);
-  const [initialSelectOptions, setInitialSelectOptions] = React.useState<SelectOptionProps[]>([]);
-  const [selectOptions, setSelectOptions] = React.useState<SelectOptionProps[]>(
+  const [initialSelectOptions, setInitialSelectOptions] = React.useState<
+    ExtendedSelectOptionProps[]
+  >([]);
+  const [selectOptions, setSelectOptions] = React.useState<ExtendedSelectOptionProps[]>(
     initialSelectOptions,
   );
   const [inputValue, setInputValue] = React.useState<string>('');
@@ -91,7 +93,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   React.useEffect(() => {
     const resourcesToOption: SelectOptionProps[] = resources.toArray().map((resource) => {
       const reference = referenceForModel(resource);
-      return { value: reference, children: reference };
+      return { value: reference, children: reference, shortNames: resource.shortNames };
     });
     setInitialSelectOptions(resourcesToOption);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,8 +135,12 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
     // Filter menu items based on the text input value when one exists
     if (inputValue) {
-      newSelectOptions = initialSelectOptions.filter((menuItem) =>
-        String(menuItem.children).toLowerCase().includes(inputValue.toLowerCase()),
+      newSelectOptions = initialSelectOptions.filter(
+        (menuItem) =>
+          String(menuItem.children).toLowerCase().includes(inputValue.toLowerCase()) ||
+          menuItem.shortNames?.some((shortName) =>
+            shortName.toLowerCase().includes(inputValue.toLowerCase()),
+          ),
       );
 
       // Open the menu when the input value changes and the new value is not empty
@@ -471,6 +477,11 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     </div>
   );
 };
+
+interface ExtendedSelectOptionProps extends SelectOptionProps {
+  /** Searchable short names for the select options */
+  shortNames?: string[];
+}
 
 const resourceListDropdownStateToProps = ({ k8s }) => ({
   allModels: k8s.getIn(['RESOURCES', 'models']),
