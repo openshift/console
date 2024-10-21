@@ -7,8 +7,9 @@ reviewers:
   - cyril-ui-developer
   - Mylanos
 approvers:
+  - christoph-jerolimov
+  - cyril-ui-developer
   - invincibleJai
-  - jerolimov
   - jhadvig
   - kyoto
   - rawagner
@@ -16,4 +17,3 @@ approvers:
   - spadgett
   - vikram-raj
   - vojtechszocs
-  - cyril-ui-developer
