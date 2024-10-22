@@ -398,7 +398,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
                         <MenuToggle
                           ref={toggleRef}
-                          onClick={(open) => setIsOpen(open)}
+                          onClick={() => setIsOpen((prevIsOpen) => !prevIsOpen)}
                           isExpanded={isOpen}
                         >
                           <span>
