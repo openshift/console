@@ -294,7 +294,7 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 		a.metrics.LoginRequested()
 	}
 
-	var randData [4]byte
+	var randData [16]byte
 	if _, err := io.ReadFull(rand.Reader, randData[:]); err != nil {
 		panic(err)
 	}
