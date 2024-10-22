@@ -1,4 +1,5 @@
 import * as React from 'react';
+import uniqBy from 'lodash-es/uniqBy';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { CAMEL_K_OPERATOR_NS, GLOBAL_OPERATOR_NS } from '../const';
@@ -38,19 +39,17 @@ export const useKameletsData = (namespace: string): [K8sResourceKind[], boolean,
   }>(watchedResources);
 
   React.useEffect(() => {
-    const resDataLoaded = Object.keys(extraResources).every((key) => extraResources[key].loaded);
+    const resDataLoaded = Object.keys(extraResources).some((key) => extraResources[key].loaded);
     const resDataloadError = Object.keys(extraResources).every(
       (key) => extraResources[key].loadError,
     );
     const { kamelets: kameletsData, kameletsGlobalNs, kameletsGlobalNs2 } = extraResources;
     if (resDataLoaded) {
-      if (kameletsData.data.length > 0) {
-        setKamelets(kameletsData.data);
-      } else if (kameletsGlobalNs.data.length > 0) {
-        setKamelets(kameletsGlobalNs.data);
-      } else {
-        setKamelets(kameletsGlobalNs2.data);
-      }
+      const allKamelets = uniqBy(
+        [...kameletsData.data, ...kameletsGlobalNs.data, ...kameletsGlobalNs2.data],
+        (kamelet) => kamelet?.metadata?.uid,
+      );
+      setKamelets(allKamelets);
       setKameletsLoaded(kameletsData.loaded || kameletsGlobalNs.loaded || kameletsGlobalNs2.loaded);
     } else if (resDataloadError) {
       setKameletsLoadError(
