@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, fireEvent, configure } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { ModalCodeReplace } from '../replace-code-modal';
+import { ReplaceCodeModal } from '../replace-code-modal';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -11,7 +11,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-describe('ModalCodeReplace', () => {
+describe('ReplaceCodeModal', () => {
   const handleCodeReplaceMock = jest.fn();
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('ModalCodeReplace', () => {
   });
 
   const renderComponent = () =>
-    render(<ModalCodeReplace handleCodeReplace={handleCodeReplaceMock} />);
+    render(<ReplaceCodeModal handleCodeReplace={handleCodeReplaceMock} />);
 
   it('should render the modal with correct title and message', () => {
     const { getByText } = renderComponent();

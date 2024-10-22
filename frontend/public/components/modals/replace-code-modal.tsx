@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 
-export const ModalCodeReplace = ({ handleCodeReplace }) => {
+export const ReplaceCodeModal = ({ handleCodeReplace }) => {
   const { t } = useTranslation();
 
   return (
@@ -47,4 +47,4 @@ export const ModalCodeReplace = ({ handleCodeReplace }) => {
   );
 };
 
-export default ModalCodeReplace;
+export default ReplaceCodeModal;

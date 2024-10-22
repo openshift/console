@@ -9,7 +9,7 @@ export const ImportYamlPage = () => {
   const queryParams = useQueryParams();
   const title = t('public~Import YAML');
 
-  const isOLSRedirected = queryParams.get('ols') === 'true';
+  const isCodeImportRedirect = queryParams.get('ols') === 'true';
 
   return (
     <>
@@ -22,7 +22,7 @@ export const ImportYamlPage = () => {
         create={true}
         download={false}
         header={title}
-        isOLSRedirected={isOLSRedirected}
+        isCodeImportRedirect={isCodeImportRedirect}
       />
     </>
   );

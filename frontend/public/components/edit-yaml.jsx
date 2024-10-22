@@ -33,7 +33,7 @@ import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
-import ModalCodeReplace from './modals/replace-code-modal';
+import ReplaceCodeModal from './modals/replace-code-modal';
 import { checkAccess, Firehose, Loading, LoadingBox, PageHeading, resourceObjPath } from './utils';
 import {
   referenceForModel,
@@ -109,7 +109,7 @@ const EditYAMLInner = (props) => {
     redirectURL,
     clearFileUpload,
     onSave,
-    isOLSRedirected,
+    isCodeImportRedirect,
   } = props;
 
   const navigate = useNavigate();
@@ -284,7 +284,7 @@ const EditYAMLInner = (props) => {
   };
 
   React.useEffect(() => {
-    if (!isValidYaml(olsCodeBlock?.value) || !isOLSRedirected) {
+    if (!isValidYaml(olsCodeBlock?.value) || !isCodeImportRedirect) {
       return;
     }
 
@@ -298,7 +298,7 @@ const EditYAMLInner = (props) => {
 
     setOLSCode(olsCodeBlock?.value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [olsCodeBlock, initialized, isOLSRedirected]);
+  }, [olsCodeBlock, initialized, isCodeImportRedirect]);
 
   const handleError = (err, value = null) => {
     setSuccess(value);
@@ -768,7 +768,7 @@ const EditYAMLInner = (props) => {
         <div className="co-p-has-sidebar">
           <div className="co-p-has-sidebar__body">
             <div className={classNames('yaml-editor', customClass)} ref={editor}>
-              {showReplaceCodeModal && <ModalCodeReplace handleCodeReplace={handleCodeReplace} />}
+              {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
                 ref={monacoRef}
                 options={options}

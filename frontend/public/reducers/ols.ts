@@ -10,5 +10,6 @@ type CodeBlock = {
   value: string;
 };
 
+/* Note: Using Reducer and Selector from OLS plugin */
 export const getOLSCodeBlock = ({ plugins }: RootState): CodeBlock =>
   plugins?.ols?.get('codeBlock');
