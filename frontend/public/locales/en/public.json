@@ -1895,6 +1895,7 @@
   "ConsolePlugins": "ConsolePlugins",
   "MultiNetworkPolicy": "MultiNetworkPolicy",
   "MultiNetworkPolicies": "MultiNetworkPolicies",
+  "UserDefinedNetworks": "UserDefinedNetworks",
   "Open a support case": "Open a support case",
   "Get help from Red Hat support.": "Get help from Red Hat support.",
   "Report a bug to Red Hat": "Report a bug to Red Hat",

@@ -1313,3 +1313,20 @@ export const MultiNetworkPolicyModel: K8sKind = {
   plural: 'multi-networkpolicies',
   crd: true,
 };
+
+export const UserDefinedNetworkModel: K8sKind = {
+  abbr: 'UDN',
+  apiGroup: 'k8s.ovn.org',
+  apiVersion: 'v1',
+  id: 'userdefinednetwork',
+  kind: 'UserDefinedNetwork',
+  label: 'userdefinednetwork',
+  // t('public~MultiNetworkPolicy')
+  labelKey: 'public~UserDefinedNetwork',
+  labelPlural: 'UserDefinedNetworks',
+  // t('UserDefinedNetworks')
+  labelPluralKey: 'public~UserDefinedNetworks',
+  namespaced: true,
+  plural: 'userdefinednetworks',
+  crd: true,
+};

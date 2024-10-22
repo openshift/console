@@ -1,40 +1,36 @@
 import * as React from 'react';
 import {
-  Popover,
   Modal,
   ModalVariant,
   Button,
   Alert,
-  Select,
-  SelectOption,
-  SelectList,
-  MenuToggle,
-  MenuToggleElement,
+  Tab,
+  TabTitleText,
+  Tabs,
 } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import { k8sDeleteResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   SelectorInput,
   resourceObjPath,
   LoadingInline,
   // Dropdown,
 } from '@console/internal/components/utils';
-import { NamespaceModel, NetworkPolicyModel } from '@console/internal/models';
+import {
+  NamespaceModel,
+  NetworkPolicyModel,
+  UserDefinedNetworkModel,
+} from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
-
-const allow = 'allow';
-const deny = 'deny';
-
-const defaultDeny = {
-  apiVersion: 'networking.k8s.io/v1',
-  kind: 'NetworkPolicy',
-  spec: {
-    podSelector: null,
-  },
-};
+import './CreateProjectModal.scss';
+import DetailsNamespaceTab from './components/DetailsNamespaceTab';
+import NetworkTab from './components/NetworkTab';
+import { allow, defaultDeny, deny } from './constants';
+import useIsUDNInstalled from './useIsUDNInstalled';
+import { getUDN } from './utils';
 
 export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
   closeModal,
@@ -48,6 +44,13 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
   const [networkPolicy, setNetworkPolicy] = React.useState(allow);
   const [name, setName] = React.useState('');
   const [labels, setLabels] = React.useState([]);
+
+  const [selectedTab, setSelectedTab] = React.useState(0);
+  const [isCreatingUDN, setCreatingUDN] = React.useState(false);
+  const [udnName, setUDNName] = React.useState('');
+  const [udnSubnet, setUDNSubtnet] = React.useState('');
+
+  const isUDNCrdsInstalled = useIsUDNInstalled();
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -81,8 +84,20 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
     return k8sCreate(NamespaceModel, namespace);
   };
 
+  const createUDN = (namespaceObj) => {
+    const udn = getUDN(udnName, namespaceObj?.metadata?.name, udnSubnet);
+
+    return k8sCreate(UserDefinedNetworkModel, udn).catch((error) => {
+      k8sDeleteResource({ model: NamespaceModel, resource: namespaceObj });
+      throw Error(error);
+    });
+  };
+
   const create = async () => {
     const namespace = await createNamespace();
+
+    if (isCreatingUDN) await createUDN(namespace);
+
     if (networkPolicy === deny) {
       const policy = Object.assign({}, defaultDeny, {
         metadata: { namespace: name, name: 'default-deny' },
@@ -109,68 +124,9 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
       });
   };
 
-  const defaultNetworkPolicies = [
-    {
-      key: 'allow',
-      value: t('console-shared~No restrictions'),
-    },
-    {
-      key: 'deny',
-      value: t('console-shared~Deny all inbound traffic'),
-    },
-  ];
-
-  const selectOptions = defaultNetworkPolicies.map((option) => (
-    <SelectOption key={option.key} value={option.value}>
-      {option.value}
-    </SelectOption>
-  ));
-
-  const [isOpen, setIsOpen] = React.useState(false);
-  const defaultNetworkPolicy = defaultNetworkPolicies[0].value;
-  const [selected, setSelected] = React.useState<string>(defaultNetworkPolicy);
-
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const onSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string | number | undefined,
-  ) => {
-    setIsOpen(!isOpen);
-    setSelected(value as string);
-    if (value === defaultNetworkPolicy) {
-      setNetworkPolicy(allow);
-    } else {
-      setNetworkPolicy(deny);
-    }
-  };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-      {selected}
-    </MenuToggle>
-  );
-
-  const popoverText = () => {
-    const nameFormat = t(
-      "console-shared~A Namespace name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
-    );
-    const createNamespaceText = t(
-      "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
-    );
-    return (
-      <>
-        <p>{nameFormat}</p>
-        <p>{createNamespaceText}</p>
-      </>
-    );
-  };
-
   return (
     <Modal
-      variant={ModalVariant.small}
+      variant={isUDNCrdsInstalled ? ModalVariant.medium : ModalVariant.small}
       title={t('console-shared~Create Namespace')}
       isOpen
       onClose={closeModal}
@@ -179,9 +135,9 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
           type="submit"
           variant="primary"
           disabled={inProgress}
-          onClick={submit}
           data-test="confirm-action"
           id="confirm-action"
+          form="create-namespace-modal-form"
         >
           {t('console-shared~Create')}
         </Button>,
@@ -197,63 +153,66 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
         ...(inProgress ? [<LoadingInline />] : []),
       ]}
     >
-      <form onSubmit={submit} name="form" className="modal-content">
-        <div className="form-group">
-          <label htmlFor="input-name" className="control-label co-required">
-            {t('console-shared~Name')}
-          </label>{' '}
-          <Popover aria-label={t('console-shared~Naming information')} bodyContent={popoverText}>
-            <Button
-              className="co-button-help-icon"
-              variant="plain"
-              aria-label={t('console-shared~View naming information')}
+      <form
+        onSubmit={submit}
+        name="form"
+        id="create-namespace-modal-form"
+        className="modal-content"
+      >
+        {isUDNCrdsInstalled ? (
+          <div className="create-project-modal__tabs-container">
+            <Tabs
+              isVertical
+              role="region"
+              isBox
+              className="create-project-modal__tabs"
+              activeKey={selectedTab}
+              onSelect={(_, newTab) => setSelectedTab(newTab as number)}
             >
-              <OutlinedQuestionCircleIcon />
-            </Button>
-          </Popover>
-          <div className="modal-body__field">
-            <input
-              id="input-name"
-              data-test="input-name"
-              name="name"
-              type="text"
-              className="pf-v5-c-form-control"
-              onChange={(e) => setName(e.target.value)}
-              value={name || ''}
-              required
-            />
+              <Tab
+                className="create-project-modal__tabs-content"
+                eventKey={0}
+                title={
+                  <TabTitleText aria-label="vertical" role="region">
+                    {t('console-shared~Details')}
+                  </TabTitleText>
+                }
+              >
+                <DetailsNamespaceTab
+                  networkPolicy={networkPolicy}
+                  name={name}
+                  labels={labels}
+                  setNetworkPolicy={setNetworkPolicy}
+                  setName={setName}
+                  setLabels={setLabels}
+                />
+              </Tab>
+              <Tab
+                eventKey={1}
+                className="create-project-modal__tabs-content"
+                title={<TabTitleText>{t('console-shared~Network')}</TabTitleText>}
+              >
+                <NetworkTab
+                  isCreatingUDN={isCreatingUDN}
+                  setCreatingUDN={setCreatingUDN}
+                  udnName={udnName}
+                  setUDNName={setUDNName}
+                  udnSubnet={udnSubnet}
+                  setUDNSubtnet={setUDNSubtnet}
+                />
+              </Tab>
+            </Tabs>
           </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="tags-input" className="control-label">
-            {t('console-shared~Labels')}
-          </label>
-          <div className="modal-body__field">
-            <SelectorInput
-              labelClassName="co-m-namespace"
-              onChange={(value) => setLabels(value)}
-              tags={labels}
-            />
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="network-policy" className="control-label">
-            {t('console-shared~Default network policy')}
-          </label>
-          <div className="modal-body__field ">
-            <Select
-              id="dropdown-selectbox"
-              isOpen={isOpen}
-              selected={selected}
-              onSelect={onSelect}
-              onOpenChange={() => setIsOpen(isOpen)}
-              toggle={toggle}
-              shouldFocusToggleOnSelect
-            >
-              <SelectList>{selectOptions}</SelectList>
-            </Select>
-          </div>
-        </div>
+        ) : (
+          <DetailsNamespaceTab
+            networkPolicy={networkPolicy}
+            name={name}
+            labels={labels}
+            setNetworkPolicy={setNetworkPolicy}
+            setName={setName}
+            setLabels={setLabels}
+          />
+        )}
         {errorMessage && (
           <Alert
             isInline
