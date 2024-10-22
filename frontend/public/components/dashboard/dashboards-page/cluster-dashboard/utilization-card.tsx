@@ -236,16 +236,19 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
     return indexA - indexB;
   });
 
-  const selectOptions = sortedMCPs.map((mcp) => (
-    <SelectOption
-      hasCheckbox
-      key={mcp.metadata.name}
-      value={mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name}
-      isSelected={selectedNodes.includes(mcp.metadata.name)}
-    >
-      {mcp.metadata.name}
-    </SelectOption>
-  ));
+  const selectOptions = sortedMCPs.map((mcp) => {
+    const mcpName = mcp.metadata.name === 'master' ? 'control plane' : mcp.metadata.name;
+    return (
+      <SelectOption
+        hasCheckbox
+        key={mcp.metadata.name}
+        value={mcpName}
+        isSelected={selectedNodes.includes(mcp.metadata.name)}
+      >
+        {mcpName}
+      </SelectOption>
+    );
+  });
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
