@@ -185,8 +185,3 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 
 	return nil
 }
-
-// FIXME: do this regulary in a separate goroutine on background
-func (cs *CombinedSessionStore) PruneSessions() {
-	cs.serverStore.PruneSessions()
-}
