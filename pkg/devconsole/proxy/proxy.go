@@ -39,7 +39,7 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 	var request ProxyRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to parse request: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
 
 	if request.Method == "" {
@@ -54,7 +54,7 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 	}
 
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to create request: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
 	for key, values := range request.Headers {
@@ -63,7 +63,9 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 		}
 	}
 
-	serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	if request.AllowAuthHeader {
+		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	}
 
 	query := serviceRequest.URL.Query()
 	for key, values := range request.Queryparams {
