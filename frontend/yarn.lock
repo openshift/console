@@ -1849,18 +1849,18 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-4.139.2.tgz#c09b02e1d42e960d039ebb091393227ffe30f5f2"
   integrity sha512-d4sD2jpjv3kWR8MhlXp+GaRgZsSaEo3fZVWojyzlf004hlXPNTqYFC/1A6R+SCFmyaBmSDD510XXi3wLTsMS8Q==
 
-"@patternfly/patternfly@5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.3.0.tgz#96f2fdd78fe85577744bd7408f9d611a831c79cc"
-  integrity sha512-93uWA15bOJDgu8NF2iReWbbNtWdtM+v7iaDpK33mJChgej+whiFpGLtQPI2jFk1aVW3rDpbt4qm4OaNinpzSsg==
+"@patternfly/patternfly@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.4.0.tgz#97dc2006ba2d495ed84d2f8d7269b6e19a9f834f"
+  integrity sha512-9B33M4N0/KDyss6NpCwAhz18za7R+sXYiFrUObhGoJ1Cmg06SeScVrEAjT4yJwAClWUlKh604Af9wE4D7IF8Lg==
 
-"@patternfly/quickstarts@5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-5.3.0.tgz#0cd4c395e86a095c4026fbfccfaefe273fc89669"
-  integrity sha512-2+nKrLag8z8p9d9caQvlSMqcMGkfd8uRl54SGykpjkdp7UDT6VER/nsb4gAZkJA7udrY+yJ8EockNFY6eCiGbA==
+"@patternfly/quickstarts@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-5.4.0.tgz#c21b0bea61ef6dba8b231679af5db629ddce7a85"
+  integrity sha512-ucabjYxoLY1IqdYnhEZpIBpHwFwD1o+UhBz9kB2H3K1hAwbmAB5fRssxYMjFjhHuvWy2E0NvKoDb6jZ5AKNflA==
   dependencies:
     "@patternfly/react-catalog-view-extension" "^5.0.0"
-    dompurify "^2.2.6"
+    dompurify "^2.4.9"
     history "^5.0.0"
 
 "@patternfly/react-catalog-view-extension@5.0.0", "@patternfly/react-catalog-view-extension@^5.0.0":
@@ -7373,6 +7373,11 @@ dompurify@^2.2.6:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.0.tgz#07bb39515e491588e5756b1d3e8375b5964814e2"
   integrity sha512-VV5C6Kr53YVHGOBKO/F86OYX6/iLTw2yVSI721gKetxpHCK/V5TaLEf9ODjRgl1KLSWRMY6cUhAbv/c+IUnwQw==
+
+dompurify@^2.4.9:
+  version "2.5.7"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.5.7.tgz#6e0d36b9177db5a99f18ade1f28579db5ab839d7"
+  integrity sha512-2q4bEI+coQM8f5ez7kt2xclg1XsecaV9ASJk/54vwlfRRNQfDqJz2pzQ8t0Ix/ToBpXlVjrRIx7pFC/o8itG2Q==
 
 domutils@1.5.1:
   version "1.5.1"
