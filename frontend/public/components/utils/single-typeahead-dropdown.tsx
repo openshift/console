@@ -293,13 +293,13 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
   };
 
   const selectedItemWidth = React.useMemo(() => {
-    // hardcoded as canvas can't access CSS variables scoped to the component
+    // font is hardcoded because canvas can't read the non-global CSS variables
     return (
       resizeToFit &&
       selectedValue &&
       getTextWidth(String(selectedValue.children), '14px RedHatText')
     );
-  }, [resizeToFit, selectedValue, items]);
+  }, [resizeToFit, selectedValue]);
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
