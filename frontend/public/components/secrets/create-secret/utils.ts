@@ -103,6 +103,14 @@ const isDockerConfigJSONData = (value: PullSecretData): value is DockerConfigJSO
 const getDockerConfigData = (pullSecretData: any): DockerCfg =>
   isDockerConfigJSONData(pullSecretData) ? pullSecretData.auths : pullSecretData;
 
+export const newPullSecretCredential = (): PullSecretCredential => ({
+  address: '',
+  username: '',
+  password: '',
+  email: '',
+  uid: _.uniqueId(),
+});
+
 export const arrayifyPullSecret = (
   pullSecretJSON: string,
   onError: (e: any) => void,
@@ -110,20 +118,23 @@ export const arrayifyPullSecret = (
   try {
     const pullSecretData = pullSecretJSON ? JSON.parse(pullSecretJSON) : {};
     const dockerConfigData = getDockerConfigData(pullSecretData);
-    return Object.entries<DockerConfigCredential>(dockerConfigData ?? {}).map(([key, value]) => {
-      const decodedAuth = Base64.decode(value?.auth || '');
-      const [parsedUsername, parsedPassword] = decodedAuth?.split(':') ?? [];
-      return {
-        address: key,
-        username: parsedUsername || '',
-        password: parsedPassword || '',
-        email: value?.email || '',
-        uid: _.uniqueId(),
-      };
-    });
+    const credentials = Object.entries<DockerConfigCredential>(dockerConfigData ?? {}).map(
+      ([key, { auth, email, password, username }]) => {
+        const decodedAuth = Base64.decode(auth || '');
+        const [parsedUsername, parsedPassword] = decodedAuth?.split(':') ?? [];
+        return {
+          address: key,
+          username: parsedUsername || username || '',
+          password: parsedPassword || password || '',
+          email: email || '',
+          uid: _.uniqueId(),
+        };
+      },
+    );
+    return credentials.length > 0 ? credentials : [newPullSecretCredential()];
   } catch (err) {
     onError(`Error parsing pull secret: ${err.message}`);
-    return [];
+    return [newPullSecretCredential()];
   }
 };
 
@@ -140,9 +151,9 @@ export const stringifyPullSecret = (
       ...acc,
       [address]: {
         ...(auth ? { auth } : {}),
-        username,
-        password,
-        email,
+        ...(username ? { username } : {}),
+        ...(password ? { password } : {}),
+        ...(email ? { email } : {}),
       },
     };
   }, {});
