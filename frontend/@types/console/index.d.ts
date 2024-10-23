@@ -67,24 +67,5 @@ declare interface Window {
   Cypress?: {};
 }
 
-// TODO: Remove when upgrading to TypeScript 4.1.2+, which has a type for ListFormat and RelativeTimeFormat.
-declare namespace Intl {
-  type ListFormatOptions = {
-    localeMatcher: string;
-    type: string;
-    style: string;
-  };
-
-  class ListFormat {
-    constructor(locales?: Locale | string | undefined, options?: Partial<ListFormatOptions>);
-    public format(list?: Iterable<string>): string;
-  }
-
-  class RelativeTimeFormat {
-    constructor(locale: string);
-    format(n: number, unit: string);
-  }
-}
-
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
 declare type Diff<T, K> = Omit<T, keyof K>;
