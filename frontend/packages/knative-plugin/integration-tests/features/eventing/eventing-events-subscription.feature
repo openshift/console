@@ -9,7 +9,7 @@ Feature: Knative Events Subscription
 
         @pre-condition
         Scenario: Create Broker and Knative Service and send event to Broker: KE-07-TC01
-            Given user updates the knative-eventing CM to enable the eventtype auto create
+            Given user has updated the knative-eventing CM to enable the eventtype auto create
               And user creates "KnativeService" via the CLI in the namespace "knative-events-aut"
               And user creates "Broker" via the CLI in the namespace "knative-events-aut"
               And user sends an event to the Broker in the namespace "knative-events-aut"

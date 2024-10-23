@@ -1,4 +1,3 @@
-import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 import { catalogPO, eventsPO, topologyPO } from '../../pageObjects';
 
 export const eventsPage = {
@@ -10,32 +9,32 @@ export const eventsPage = {
     cy.get(catalogPO.sidePane.createApplication).click({ force: true });
   },
   verifySubscribeForm: () => {
-    cy.get(eventingPO.events.pageTitle).should('have.text', 'Subscribe');
+    cy.get(eventsPO.pageTitle).should('have.text', 'Subscribe');
   },
   enterTriggerName: (name: string) => {
-    cy.get(eventingPO.events.nameField).clear();
-    cy.get(eventingPO.events.nameField).type(name).should('have.value', name);
+    cy.get(eventsPO.nameField).clear();
+    cy.get(eventsPO.nameField).type(name).should('have.value', name);
   },
   selectSubscriber: (subscriberName: string) => {
-    cy.get(eventingPO.events.subscriberDropDown).click();
+    cy.get(eventsPO.subscriberDropDown).click();
     cy.get(topologyPO.graph.subscriber.filterItemLink).contains(subscriberName).click();
   },
   addAttribute: (name: string, value: string) => {
-    cy.get(eventingPO.events.addMore).click();
+    cy.get(eventsPO.addMore).click();
     // Find the input field that doesnot have any value
-    cy.get(eventingPO.events.attributeName).each(($el) => {
+    cy.get(eventsPO.attributeName).each(($el) => {
       if ($el.val() === '') {
         cy.wrap($el).type(name);
       }
     });
 
-    cy.get(eventingPO.events.attributeValue).each(($el) => {
+    cy.get(eventsPO.attributeValue).each(($el) => {
       if ($el.val() === '') {
         cy.wrap($el).type(value);
       }
     });
   },
   clickSubscribeButton: () => {
-    cy.get(eventingPO.events.subscribeButton).click();
+    cy.get(eventsPO.subscribeButton).click();
   },
 };

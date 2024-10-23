@@ -361,7 +361,14 @@ export const eventSinkPO = {
 };
 
 export const eventsPO = {
+  addMore: '[data-test="add-button"]',
+  attributeName: '[data-test="pairs-list-name"]',
+  attributeValue: '[data-test="pairs-list-value"]',
+  nameField: '[id="form-input-formData-metadata-name-field"]',
+  pageTitle: '[data-test-id="resource-title"]',
   search: '[placeholder="Filter by keyword..."]',
+  subscribeButton: '[data-test-id="submit-button"]',
+  subscriberDropDown: '[id="form-ns-dropdown-formData-spec-subscriber-ref-name-field"]',
 };
 
 export const devFilePO = {

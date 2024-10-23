@@ -11,7 +11,7 @@ import {
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 
-Given('user updates the knative-eventing CM to enable the eventtype auto create', () => {
+Given('user has updated the knative-eventing CM to enable the eventtype auto create', () => {
   cy.exec(
     `oc patch configmap config-features -p '{"data": {"eventtype-auto-create": "enabled"}}' -n knative-eventing`,
     {
