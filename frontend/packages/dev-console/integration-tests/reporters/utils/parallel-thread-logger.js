@@ -3,12 +3,12 @@ const path = require('path');
 
 const threadId = process.env.CYPRESS_THREAD || 'default';
 
-const packageName = 'integration-tests-cypress';
+const packageName = 'dev-console';
 
 // Set up a log file for this thread
 const logFilePath = path.join(
   __dirname,
-  `../../../../gui_test_screenshots/${packageName}-thread-${threadId}.txt`,
+  `../../../../../gui_test_screenshots/${packageName}-thread-${threadId}.txt`,
 );
 
 const logDir = path.dirname(logFilePath);
@@ -77,14 +77,6 @@ const logSpecResult = (result) => {
   }
   const boxedStats = formatBoxedStats(statsData);
   log(`\n\n\t(Results)\n\n${boxedStats}`);
-  const memoryUsage = process.memoryUsage();
-  log(
-    `Memory Usage: RSS: ${Math.round(memoryUsage.rss / 1024 / 1024)} MB, ` +
-      `Heap Total: ${Math.round(memoryUsage.heapTotal / 1024 / 1024)} MB, ` +
-      `Heap Used: ${Math.round(memoryUsage.heapUsed / 1024 / 1024)} MB, ` +
-      `External: ${Math.round(memoryUsage.external / 1024 / 1024)} MB, ` +
-      `Array Buffers: ${Math.round(memoryUsage.arrayBuffers / 1024 / 1024)} MB`,
-  );
 };
 
 module.exports = { logVideoURL, logScreenshotURL, logSpecResult, log };

@@ -11,12 +11,12 @@ class CustomReporter extends Mocha.reporters.Base {
     // Get the thread identifier
     const threadId = process.env.CYPRESS_THREAD || 'default';
 
-    const packageName = 'integration-tests-cypress';
+    const packageName = 'dev-console';
 
     // Set up a log file for this thread
     this.logFile = path.join(
       __dirname,
-      `../../../gui_test_screenshots/${packageName}-thread-${threadId}.txt`,
+      `../../../../gui_test_screenshots/${packageName}-thread-${threadId}.txt`,
     );
 
     const logDir = path.dirname(this.logFile);
