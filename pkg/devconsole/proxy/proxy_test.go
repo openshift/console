@@ -7,7 +7,15 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/openshift/console/pkg/auth"
 )
+
+var user = &auth.User{
+	ID:       "test-id",
+	Username: "test-user",
+	Token:    "test-token",
+}
 
 func TestProxyEndpoint(t *testing.T) {
 	tests := []struct {
@@ -26,6 +34,7 @@ func TestProxyEndpoint(t *testing.T) {
 				Headers: http.Header{
 					"Content-Type":   {"application/json"},
 					"Content-Length": {"15"},
+					"Authorization":  {user.Token},
 				},
 				Body: "Mocked response",
 			},
@@ -40,6 +49,7 @@ func TestProxyEndpoint(t *testing.T) {
 				Headers: http.Header{
 					"Content-Type":   {"application/json"},
 					"Content-Length": {"15"},
+					"Authorization":  {user.Token},
 				},
 				Body: "Mocked response",
 			},
@@ -51,6 +61,7 @@ func TestProxyEndpoint(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 				rw.Header().Add("Content-Type", "application/json")
+				rw.Header().Add("Authorization", user.Token)
 				rw.WriteHeader(http.StatusOK)
 				rw.Write([]byte("Mocked response"))
 			}))
@@ -67,7 +78,7 @@ func TestProxyEndpoint(t *testing.T) {
 				t.Errorf("Unexpected error: %v", err)
 			}
 
-			actual, err := serve(req)
+			actual, err := serve(req, user)
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
 			}
