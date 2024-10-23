@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
@@ -12,16 +11,8 @@ import {
   SecretChangeData,
   SecretStringData,
   SecretType,
+  newPullSecretCredential,
 } from '.';
-
-const newImageSecretEntry = (): PullSecretCredential => ({
-  address: '',
-  username: '',
-  password: '',
-  email: '',
-  auth: '',
-  uid: _.uniqueId(),
-});
 
 export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
   onChange,
@@ -32,37 +23,25 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   const { t } = useTranslation();
   const pullSecretFileName = getPullSecretFileName(secretType);
   const pullSecretJSON = stringData[pullSecretFileName];
-  const entries = React.useMemo(() => arrayifyPullSecret(pullSecretJSON, onError), [
-    pullSecretJSON,
-    onError,
-  ]);
+  const [entries, setEntries] = React.useState(arrayifyPullSecret(pullSecretJSON, onError));
 
-  const onEntriesChanged = React.useCallback(
-    (newEntries) => {
-      const newPullSecretJSON = stringifyPullSecret(newEntries, secretType);
-      if (newPullSecretJSON !== pullSecretJSON) {
-        onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });
-      }
-    },
-    [onChange, pullSecretFileName, pullSecretJSON, secretType],
-  );
+  React.useEffect(() => {
+    const newPullSecretJSON = stringifyPullSecret(entries, secretType);
+    if (newPullSecretJSON !== pullSecretJSON) {
+      onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });
+    }
+  }, [entries, onChange, pullSecretFileName, pullSecretJSON, secretType]);
 
-  const updateEntry = (updatedEntry, entryIndex: number) => {
-    const updatedEntries = entries.map((entry, index) =>
-      index === entryIndex ? { uid: entry.uid, ...updatedEntry } : entry,
+  const updateEntry = (updatedEntry, entryIndex: number) =>
+    setEntries((currentEntries) =>
+      currentEntries.map((entry, index) => (index === entryIndex ? updatedEntry : entry)),
     );
-    onEntriesChanged(updatedEntries);
-  };
 
-  const removeEntry = (entryIndex: number) => {
-    const updatedEntries = entries.filter((_value, index) => index !== entryIndex);
-    onEntriesChanged(updatedEntries);
-  };
+  const removeEntry = (entryIndex: number) =>
+    setEntries((currentEntries) => currentEntries.filter((_value, index) => index !== entryIndex));
 
-  const addEntry = () => {
-    const updatedEntries = [...entries, newImageSecretEntry()];
-    onEntriesChanged(updatedEntries);
-  };
+  const addEntry = () =>
+    setEntries((currentEntries) => [...currentEntries, newPullSecretCredential()]);
 
   return (
     <>
