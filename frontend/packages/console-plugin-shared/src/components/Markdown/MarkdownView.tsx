@@ -251,7 +251,6 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   React.useEffect(() => {
     if (frameRef.current && frameRef.current.contentDocument) {
       const doc = frameRef.current.contentDocument;
-
       doc.open();
       doc.write(contents);
       doc.close();
