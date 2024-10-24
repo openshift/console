@@ -63,7 +63,7 @@ Given(
 
 Given('user sends an event to the Broker in the namespace {string}', (namespace: string) => {
   cy.exec(
-    `oc run curl -n ${namespace} --image=docker.io/curlimages/curl --rm=true --restart=Never -ti \
+    `oc run curl -n ${namespace} --image=quay.io/curl/curl:latest --rm=true --restart=Never -ti \
   -- -X POST -v \
   -H "content-type: application/json" \
   -H "ce-specversion: 1.0" \
