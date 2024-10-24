@@ -70,6 +70,7 @@ type StepsWatchUrl = {
   [key: string]: {
     name: string;
     steps: { [step: string]: WatchURLStatus };
+    taskRunPath: string;
   };
 };
 
@@ -121,6 +122,7 @@ export const getDownloadAllLogsCallback = (
       acc[currTask] = {
         name: pipelineTaskName,
         steps: { ...allStepUrls },
+        taskRunPath: taskRun.metadata?.annotations?.['results.tekton.dev/record'],
       };
       return acc;
     }, {});
@@ -155,7 +157,7 @@ export const getDownloadAllLogsCallback = (
         }
       } else {
         // eslint-disable-next-line no-await-in-loop
-        allLogs += await getTaskRunLog(namespace, currTask).then(
+        allLogs += await getTaskRunLog(task.taskRunPath).then(
           (log) => `${tasks[currTask].name.toUpperCase()}\n\n${log}\n\n`,
         );
       }
