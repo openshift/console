@@ -24,6 +24,9 @@ func TestDefaultMetrics(t *testing.T) {
 		console_auth_login_successes_total{role="developer"} 0
 		console_auth_login_successes_total{role="kubeadmin"} 0
 		console_auth_logout_requests_total{reason="unknown"} 0
+		console_auth_token_refresh_requests_total{handling="full"} 0
+		console_auth_token_refresh_requests_total{handling="short-circuit"} 0
+		console_auth_token_refresh_requests_total{handling="unknown"} 0
 		`),
 		metrics.RemoveComments(metrics.FormatMetrics(m.GetCollectors()...)),
 	)
