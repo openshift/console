@@ -1,0 +1,83 @@
+@add-flow @smoke
+Feature: Create the different workloads from Add page
+              As a user, I should be able to create an Application, component or service from one of the options provided on Add page
+
+
+        Background:
+            Given user is at developer perspective
+              And user has created or selected namespace "ci-addflow-create"
+              And user is at Add page
+        Scenario: Create the Database from Add page: A-03-TC01
+             When user clicks Database card
+              And user selects "MariaDB" database on Developer Catalog
+              And user clicks Instantiate Template button on side bar
+              And user clicks create button on Instantiate Template page
+             Then user will be redirected to Topology page
+              And user is able to see workload "mariadb" in topology page
+
+        @manual
+        Scenario: Deploy git workload with devfile from topology page: A-04-TC01
+            Given user is at the Topology page
+             When user right clicks on topology empty graph
+              And user selects "Import from Git" option from Add to Project context menu
+              And user enters Git Repo URL as "https://github.com/nodeshift-starters/devfile-sample" in Import from Git form
+              And user enters workload name as "node-bulletin-board-1"
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "node-bulletin-board-1" in topology page
+
+        Scenario Outline: Create a workload from Docker file with "<resource_type>" as resource type: A-05-TC02
+            Given user is on Import from Git form
+             When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"
+              And user enters Name as "<name>" in Docker file page
+              And user selects "<resource_type>" in Resource type section
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "<name>" in topology page
+
+        Examples:
+                  | resource_type | name       |
+                  | Deployment    | dockerfile |
+
+        Scenario: Create a workload from YAML file: A-07-TC01
+            Given user is at Import YAML page
+             When user enters the "testData/add-flow/git-dc.yaml" file data to YAML Editor
+              And user clicks create button on YAML page
+              And user navigates to Topology page
+             Then user is able to see workload "shell-app" in topology page
+
+        Scenario: Upload Jar file page details: A-10-TC01
+            Given user is at Add page
+             When user clicks on the Upload JAR file card
+             Then user is able to see Upload jar file, Optional java commands, Run time Icon and Builder Image version fields displayed in JAR section
+              And Application Name, Name fields displayed in General section
+              And Advanced options sections are displayed
+              And Create button is in disabled state
+
+        Scenario Outline: Create Sample Application from Add page: GS-03-TC05
+            Given user is at Add page
+             When user clicks on the Samples card
+              And user selects "<card_name>" sample from Samples
+              And user is able to see the form header name as "<form_header>"
+              And user clicks on Create button for creating sample
+             Then user will be redirected to Topology page
+              And user is able to see workload "<workload_name>" in topology page list view
+
+        Examples:
+                  | card_name | form_header               | workload_name |
+                  | Httpd     | Create Sample application | httpd-sample  |
+                  | Basic Go  | Import from Git           | go-basic      |
+
+        @regression
+        Scenario: Quick Starts page when no Quick Start has started: QS-03-TC02
+             When user selects QuickStarts from the help menu icon on the masthead
+             Then user can see "Get started with a sample application", "Install Red Hat Developer Hub (RHDH) with a Helm Chart" and "Add health checks to your sample application" Quick Starts
+              And user can see time taken to complete the tour on the card
+
+
+        @regression
+        Scenario: Quick Starts page when Quick Start has completed: QS-03-TC03
+            Given user is at Quick Starts catalog page
+              And user has completed "Get started with a sample application" Quick Start
+             Then user can see time taken to complete the "Get started with a sample application" tour on the card
+              And user can see Complete label on "Get started with a sample application" card

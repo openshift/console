@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const wp = require('@cypress/webpack-preprocessor');
+const util = require('../reporters/utils/parallel-thread-logger');
 
 module.exports = (on, config) => {
   const options = {
@@ -25,10 +26,12 @@ module.exports = (on, config) => {
   on('task', {
     log(message) {
       console.log(message);
+      util.log(`\n\t${message}`);
       return null;
     },
     logError(message) {
       console.error(message);
+      util.log(`\n\t${message}\n`);
       return null;
     },
     logTable(data) {
@@ -42,9 +45,25 @@ module.exports = (on, config) => {
       return null;
     },
   });
+  on('after:spec', (spec, results) => {
+    if (results) {
+      util.logSpecResult(results);
+    }
+
+    if (results && results.screenshots.length) {
+      util.logScreenshotURL(results.screenshots);
+    }
+
+    if (results && results.video) {
+      util.logVideoURL(results.video);
+    }
+
+    util.log(`\n\n${'─'.repeat(100)}`);
+  });
   on('after:screenshot', (details) => {
     // Prepend "1_", "2_", etc. to screenshot filenames because they are sorted alphanumerically in CI's artifacts dir
     const pathObj = path.parse(details.path);
+
     fs.readdir(pathObj.dir, (error, files) => {
       const newPath = `${pathObj.dir}${path.sep}${files.length}_${pathObj.base}`;
       return new Promise((resolve, reject) => {

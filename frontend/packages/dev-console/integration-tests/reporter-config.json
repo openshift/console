@@ -1,5 +1,5 @@
 {
-  "reporterEnabled": "mocha-junit-reporter, mochawesome",
+  "reporterEnabled": "mocha-junit-reporter, mochawesome, reporters/parallel-test-reporter.js",
   "mochaJunitReporterReporterOptions": {
     "mochaFile": "../../../gui_test_screenshots/junit_cypress-[hash].xml",
     "toConsole": false

@@ -26,6 +26,7 @@ function copyArtifacts {
   if [ -d "$ARTIFACT_DIR" ] && [ -d "$SCREENSHOTS_DIR" ]; then
     echo "Copying artifacts from $(pwd)..."
     cp -r "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
+
   fi
 }
 
@@ -90,8 +91,8 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
 fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
-  yarn run test-cypress-console-headless
-  yarn run test-cypress-dev-console-headless
+  yarn run test-cypress-console-headless-parallel
+  yarn run test-cypress-dev-console-headless-parallel
   yarn run test-cypress-olm-headless
   yarn run test-cypress-helm-headless
   yarn run test-cypress-knative-headless
