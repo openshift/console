@@ -7,6 +7,7 @@ import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 import * as ITOB from 'istextorbinary/edition-es2017';
+import { SecretType } from './secrets/create-secret';
 
 export const MaskedData: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -99,10 +100,9 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 };
 SecretValue.displayName = 'SecretValue';
 
-export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
+export const SecretData: React.FC<SecretDataProps> = ({ data, type }) => {
   const [reveal, setReveal] = React.useState(false);
   const { t } = useTranslation();
-  const titleI18n = title || t('public~Data');
   const dl = [];
   Object.keys(data || {})
     .sort()
@@ -125,8 +125,8 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
 
   return (
     <>
-      <SectionHeading text={titleI18n}>
-        {dl.length ? (
+      <SectionHeading text={t('public~Data')}>
+        {dl.length && type !== SecretType.opaque ? (
           <Button
             type="button"
             onClick={() => setReveal(!reveal)}
@@ -181,5 +181,5 @@ type SecretValueProps = {
 
 type SecretDataProps = {
   data: KeyValueData;
-  title?: string;
+  type?: string;
 };
