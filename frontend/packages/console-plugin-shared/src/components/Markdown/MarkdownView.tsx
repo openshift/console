@@ -191,15 +191,15 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateDimensions = React.useCallback(
     _.debounce(() => {
-      if (!frameRef?.current?.contentWindow) {
+      if (!frameRef.current?.contentWindow) {
         return;
       }
       setFrameHeight(
-        frameRef?.current.contentWindow.document.body.firstElementChild.scrollHeight +
+        frameRef.current.contentWindow.document.body.firstElementChild.scrollHeight +
           (exactHeight ? 0 : 15),
       );
     }, 100),
-    [frameRef, exactHeight],
+    [exactHeight],
   );
 
   const onLoad = React.useCallback(() => {
@@ -207,7 +207,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     setLoaded(true);
   }, [updateDimensions]);
 
-  useResizeObserver(updateDimensions, frameRef?.current);
+  useResizeObserver(updateDimensions, frameRef.current);
 
   // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
   const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
@@ -249,7 +249,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
 
   // update the iframe's content
   React.useEffect(() => {
-    if (frameRef.current && frameRef.current.contentDocument) {
+    if (frameRef.current.contentDocument) {
       const doc = frameRef.current.contentDocument;
       doc.open();
       doc.write(contents);
@@ -258,7 +258,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
       // adjust height for current content
       const contentHeight = doc.body.scrollHeight;
       setFrameHeight(contentHeight);
-      updateThemeClass(frameRef?.current.contentDocument?.documentElement, theme);
+      updateThemeClass(doc.documentElement, theme);
     }
   }, [contents, theme, updateThemeClass]);
 
@@ -271,12 +271,12 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
         ref={frameRef}
         onLoad={onLoad}
       />
-      {loaded && frameRef && (
+      {loaded && (
         <RenderExtension
           markup={markup}
           selector={''}
           renderExtension={renderExtension}
-          docContext={frameRef?.current.contentDocument}
+          docContext={frameRef.current.contentDocument}
         />
       )}
     </>
