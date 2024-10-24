@@ -40,6 +40,7 @@ import (
 	"github.com/openshift/console/pkg/terminal"
 	"github.com/openshift/console/pkg/usage"
 	"github.com/openshift/console/pkg/usersettings"
+	consoleUtils "github.com/openshift/console/pkg/utils"
 	"github.com/openshift/console/pkg/version"
 
 	graphql "github.com/graph-gophers/graphql-go"
@@ -253,7 +254,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handleFunc := func(path string, handler http.HandlerFunc) { handle(path, handler) }
 
 	fn := func(loginInfo sessions.LoginJSON, successURL string, w http.ResponseWriter) {
-		jsg := struct {
+		templateData := struct {
 			sessions.LoginJSON `json:",inline"`
 			LoginSuccessURL    string `json:"loginSuccessURL"`
 			Branding           string `json:"branding"`
@@ -273,9 +274,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			os.Exit(1)
 		}
 
-		if err := tpls.ExecuteTemplate(w, tokenizerPageTemplateName, jsg); err != nil {
-			fmt.Printf("%v", err)
-			os.Exit(1)
+		if err := tpls.ExecuteTemplate(w, tokenizerPageTemplateName, templateData); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}
 
@@ -675,6 +675,11 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	indexPageScriptNonce, err := consoleUtils.RandomString(32)
+	if err != nil {
+		panic(err)
+	}
+
 	// This Content Security Policy (CSP) applies to Console web application resources.
 	// Console CSP is deployed in report-only mode via "Content-Security-Policy-Report-Only" header.
 	// See https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for details on CSP specification.
@@ -688,7 +693,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Sprintf("base-uri %s", cspSources),
 		fmt.Sprintf("img-src %s data:", cspSources),
 		fmt.Sprintf("font-src %s data:", cspSources),
-		fmt.Sprintf("script-src %s 'unsafe-eval'", cspSources),
+		fmt.Sprintf("script-src %s 'unsafe-eval' 'nonce-%s'", cspSources, indexPageScriptNonce),
 		fmt.Sprintf("style-src %s 'unsafe-inline'", cspSources),
 		"frame-src 'none'",
 		"frame-ancestors 'none'",
@@ -760,6 +765,14 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
 	}
 
+	templateData := struct {
+		ServerFlags *jsGlobals
+		ScriptNonce string
+	}{
+		ServerFlags: jsg,
+		ScriptNonce: indexPageScriptNonce,
+	}
+
 	tpl := template.New(indexPageTemplateName)
 	tpl.Delims("[[", "]]")
 	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, indexPageTemplateName))
@@ -768,7 +781,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		os.Exit(1)
 	}
 
-	if err := tpls.ExecuteTemplate(w, indexPageTemplateName, jsg); err != nil {
+	if err := tpls.ExecuteTemplate(w, indexPageTemplateName, templateData); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
