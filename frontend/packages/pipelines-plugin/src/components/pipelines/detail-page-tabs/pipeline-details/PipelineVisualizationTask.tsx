@@ -11,6 +11,7 @@ import {
   truncateMiddle,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import {
@@ -21,6 +22,7 @@ import {
   WhenExpression,
 } from '../../../../types';
 import { getRunStatusColor } from '../../../../utils/pipeline-augment';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER } from '../../const';
 import { WHEN_EXPRESSSION_DIAMOND_SIZE } from '../../pipeline-topology/const';
 import WhenExpressionDecorator from '../../pipeline-topology/WhenExpressionDecorator';
 import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils';
@@ -83,6 +85,9 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   height,
   isFinallyTask,
 }) => {
+  const IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER = useFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER,
+  );
   const taskStatus = task.status || {
     duration: '',
     reason: ComputedStatus.Idle,
@@ -124,7 +129,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   }
 
   let resources;
-  if (task.taskRef.kind === ClusterTaskModel.kind) {
+  if (!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && task.taskRef.kind === ClusterTaskModel.kind) {
     resources = [
       {
         kind: referenceForModel(ClusterTaskModel),

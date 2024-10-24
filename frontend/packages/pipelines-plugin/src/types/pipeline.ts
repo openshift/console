@@ -11,6 +11,8 @@ import {
 export type PipelineTaskRef = {
   kind?: string;
   name: string;
+  resolver?: string;
+  params?: PipelineTaskParam[];
 };
 
 export type PipelineTaskWorkspace = {

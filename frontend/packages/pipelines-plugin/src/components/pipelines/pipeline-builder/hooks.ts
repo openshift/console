@@ -42,44 +42,67 @@ import {
 } from './types';
 import { findTask, getTopLevelErrorMessage } from './utils';
 
-export const useFormikFetchAndSaveTasks = (namespace: string, validateForm: () => void) => {
+export const useFormikFetchAndSaveTasks = (
+  namespace: string,
+  validateForm: () => void,
+  IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER: boolean,
+) => {
   const { t } = useTranslation();
   const { setFieldValue, setStatus } = useFormikContext<PipelineBuilderFormikValues>();
 
-  const { namespacedTasks, clusterTasks } = useK8sWatchResources<{
-    namespacedTasks: TaskKind[];
-    clusterTasks: TaskKind[];
-  }>({
+  const resourcesToWatch = {
     namespacedTasks: {
       kind: referenceForModel(TaskModel),
       isList: true,
       namespace,
     },
-    clusterTasks: {
-      kind: referenceForModel(ClusterTaskModel),
-      isList: true,
-      namespaced: false,
-    },
-  });
-  const namespacedTaskData = namespacedTasks.loaded ? namespacedTasks.data : null;
-  const clusterTaskData = clusterTasks.loaded ? clusterTasks.data : null;
+    ...(!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && {
+      clusterTasks: {
+        kind: referenceForModel(ClusterTaskModel),
+        isList: true,
+        namespaced: false,
+      },
+    }),
+  };
+  const {
+    namespacedTasks,
+    clusterTasks: watchedClusterTasks = { loaded: true, data: [], loadError: null },
+  } = useK8sWatchResources<{
+    namespacedTasks: TaskKind[];
+    clusterTasks?: TaskKind[];
+  }>(resourcesToWatch);
 
+  const namespacedTaskData = namespacedTasks.loaded ? namespacedTasks.data : null;
+  const clusterTaskData = IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER
+    ? null
+    : watchedClusterTasks.loaded
+    ? watchedClusterTasks.data
+    : null;
   React.useEffect(() => {
     if (namespacedTaskData) {
       setFieldValue('taskResources.namespacedTasks', namespacedTaskData, false);
     }
-    if (clusterTaskData) {
+    if (!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && clusterTaskData) {
       setFieldValue('taskResources.clusterTasks', clusterTaskData, false);
     }
-    const tasksLoaded = !!namespacedTaskData && !!clusterTaskData;
+    const tasksLoaded =
+      !!namespacedTaskData && (IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER || !!clusterTaskData);
     setFieldValue('taskResources.tasksLoaded', tasksLoaded, false);
     if (tasksLoaded) {
       // Wait for Formik to fully understand the set values (thread end) and then validate again
       setTimeout(() => validateForm(), 0);
     }
-  }, [setFieldValue, namespacedTaskData, clusterTaskData, validateForm]);
+  }, [
+    setFieldValue,
+    namespacedTaskData,
+    clusterTaskData,
+    validateForm,
+    IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER,
+  ]);
 
-  const error = namespacedTasks.loadError || clusterTasks.loadError;
+  const error =
+    namespacedTasks.loadError ||
+    (!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && watchedClusterTasks.loadError);
   React.useEffect(() => {
     if (!error) return;
 
