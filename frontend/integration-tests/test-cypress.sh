@@ -84,7 +84,7 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-pipelines-nightly
   yarn run test-cypress-topology-nightly
   yarn run test-cypress-knative-nightly
-  # yarn run test-cypress-webterminal-nightly
+  yarn run test-cypress-webterminal-nightly
 
   exit $err;
 fi
@@ -98,7 +98,7 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-topology-headless
   yarn run test-cypress-pipelines-headless
   # yarn run test-cypress-shipwright-headless
-  # yarn run test-cypress-webterminal-headless
+  yarn run test-cypress-webterminal-headless
   exit;
 fi
 

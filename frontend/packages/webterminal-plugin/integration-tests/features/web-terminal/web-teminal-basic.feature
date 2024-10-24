@@ -3,9 +3,8 @@ Feature: Web Terminal
               As a basic user, I should be able to use web terminal
 
         Background:
-            Given user with basic rights has installed Web Terminal operator
+            Given user has logged in as basic user
               And user has installed webTerminal in namespace "aut-terminal-basic"
-              And user has logged in as basic user
               And user has created or selected namespace "aut-terminal-basic"
 
         @regression
