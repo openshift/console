@@ -127,6 +127,7 @@ export const PackageManifestList = (props: PackageManifestListProps) => {
     <Table
       {...props}
       aria-label="PackageManifests"
+      data-test="PackageManifestTable"
       loaded={props.loaded}
       data={props.data || []}
       filters={props.filters}

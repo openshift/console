@@ -9,6 +9,7 @@ import {
   OnRowsRendered,
 } from '@console/dynamic-plugin-sdk';
 import { TableRow } from '../table';
+import { OnSelect } from '@patternfly/react-table';
 
 type VirtualizedTableBodyProps<D, R = {}> = {
   Row: React.ComponentType<RowProps<D, R>>;
@@ -24,6 +25,7 @@ type VirtualizedTableBodyProps<D, R = {}> = {
   getRowTitle?: (obj: D) => string;
   getRowClassName?: (obj: D) => string;
   onRowsRendered?: OnRowsRendered;
+  onSelect?: OnSelect;
 };
 
 const RowMemo = React.memo<
@@ -56,6 +58,7 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
   getRowTitle,
   getRowClassName,
   onRowsRendered,
+  onSelect,
 }: VirtualizedTableBodyProps<D, R>) => {
   const cellMeasurementCache = new CellMeasurerCache({
     fixedWidth: true,
@@ -70,6 +73,8 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
       obj: data[index],
       activeColumnIDs,
       rowData,
+      index,
+      onSelect,
     };
 
     // do not render non visible elements (this excludes overscan)
