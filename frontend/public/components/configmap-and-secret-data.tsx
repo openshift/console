@@ -6,7 +6,7 @@ import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-i
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
-import * as ITOB from 'istextorbinary/edition-es2017';
+import * as ITOB from 'istextorbinary';
 
 export const MaskedData: React.FC<{}> = () => {
   const { t } = useTranslation();

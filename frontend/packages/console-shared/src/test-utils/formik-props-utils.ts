@@ -13,6 +13,7 @@ export const formikFormProps: FormikProps<FormikValues> = {
   handleReset: jest.fn(),
   handleSubmit: jest.fn(),
   getFieldProps: jest.fn(),
+  getFieldHelpers: jest.fn(),
   handleBlur: jest.fn(),
   handleChange: jest.fn(),
   initialErrors: {},
