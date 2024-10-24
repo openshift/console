@@ -10,8 +10,8 @@ import * as glob from 'glob';
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { getActivePluginsModuleData } from '@console/plugin-sdk/src/codegen/active-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
 
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -23,7 +23,6 @@ interface Configuration extends webpack.Configuration {
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const VirtualModulesPlugin = require('webpack-virtual-modules');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -34,13 +33,13 @@ const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
 
 /* Helpers */
+const staticPluginPackages = resolvePluginPackages();
 const extractCSS = new MiniCssExtractPlugin({
   filename: 'app-bundle.[name].[contenthash].css',
   // We follow BEM naming to scope CSS.
   // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
   ignoreOrder: true,
 });
-const virtualModules = new VirtualModulesPlugin();
 
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
@@ -134,6 +133,13 @@ const config: Configuration = {
         // Disable tree shaking on modules shared with Console dynamic plugins
         test: sharedPluginModulesTest,
         sideEffects: true,
+      },
+      {
+        test: path.resolve(__dirname, 'get-active-plugins.js'),
+        loader: 'val-loader',
+        options: {
+          getModuleData: () => getActivePluginsModuleData(staticPluginPackages),
+        },
       },
       {
         test: /\.js$/,
@@ -368,8 +374,6 @@ const config: Configuration = {
       ],
     }),
     extractCSS,
-    virtualModules,
-    new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),
     ...(REACT_REFRESH
       ? [
           new ReactRefreshWebpackPlugin({
@@ -388,7 +392,7 @@ if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
     exclude: /node_modules|public\/dist|\.(gql|html)$/,
     // TODO: investigate how to load the plugins registry asynchronously
-    filterModules: /^node_modules\/@console\/active-plugins\.js$/,
+    filterModules: /^get-active-plugins\.js$/,
     reportFile: '.webpack-cycles',
   }).apply(config.plugins);
 }
