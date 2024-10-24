@@ -627,7 +627,6 @@
   "Silence for": "静默",
   "Inspect": "检查",
   "View metrics for {{title}}": "查看 {{title}} 的指标数据",
-  "Dashboards": "仪表板",
   "Silences": "静默",
   "Events": "事件",
   "Select a Project to view monitoring metrics<1></1>.": "选择要查看监控指标的项目<1></1>。",

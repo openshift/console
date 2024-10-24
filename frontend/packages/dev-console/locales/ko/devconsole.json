@@ -627,7 +627,6 @@
   "Silence for": "음소거",
   "Inspect": "검사",
   "View metrics for {{title}}": "{{title}}의 메트릭 보기",
-  "Dashboards": "대시 보드",
   "Silences": "음소거",
   "Events": "이벤트",
   "Select a Project to view monitoring metrics<1></1>.": "모니터링 메트릭<1></1>을 표시할 프로젝트를 선택합니다.",

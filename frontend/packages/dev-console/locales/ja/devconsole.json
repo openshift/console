@@ -627,7 +627,6 @@
   "Silence for": "サイレンス:",
   "Inspect": "検査",
   "View metrics for {{title}}": "{{title}} のメトリクスの表示",
-  "Dashboards": "ダッシュボード",
   "Silences": "サイレンス",
   "Events": "イベント",
   "Select a Project to view monitoring metrics<1></1>.": "プロジェクトを選択してモニタリングメトリクスを表示します。<1></1>。",
