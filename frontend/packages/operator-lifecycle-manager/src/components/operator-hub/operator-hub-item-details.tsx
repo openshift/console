@@ -219,11 +219,11 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   const {
     catalogSource,
     source,
-    longDescription,
     description,
     infraFeatures,
     installed,
     isInstalling,
+    longDescription,
     marketplaceSupportWorkflow,
     obj,
     provider,
@@ -254,7 +254,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   }, [item?.obj?.status, setDeprecatedPackage]);
   const currentChannel = obj?.status.channels.find((ch) => ch.name === installChannel);
   const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations.containerImage;
-  const selectedChannelDescription = currentChannel?.currentCSVDesc.description ?? longDescription;
+  const selectedChannelDescription = currentChannel?.currentCSVDesc.description || longDescription;
   const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations.createdAt;
   const selectedChannelCapabilityLevel =
     currentChannel?.currentCSVDesc.annotations.capabilities ?? item.capabilityLevel;
