@@ -42,13 +42,9 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 		return ProxyResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
 
-	// Verify that the Request URL is safe to proxy
-	// This is a simple check to prevent SSRF attacks
-	// We only allow URLs that start with http:// or https:// or which do not end with cluster.local
-	if !strings.HasPrefix(request.Url, "http://") ||
-		!strings.HasPrefix(request.Url, "https://") ||
-		strings.HasSuffix(request.Url, "cluster.local") {
-		return ProxyResponse{}, fmt.Errorf("unauthorized URL: %s", request.Url)
+	// Validate the request URL to prevent SSRF
+	if err := validateRequestURL(request.Url); err != nil {
+		return ProxyResponse{}, fmt.Errorf("ssrf detected: %v", err)
 	}
 
 	if request.Method == "" {
