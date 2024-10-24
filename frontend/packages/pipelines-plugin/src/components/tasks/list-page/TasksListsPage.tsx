@@ -10,21 +10,25 @@ import { MenuActions, MultiTabListPage } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_17 } from '../../pipelines/const';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER } from '../../pipelines/const';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 import ClusterTasksPage from './ClusterTasksPage';
 import TasksPage from './TasksPage';
 
 const TasksListsPage: React.FC = () => {
   const { t } = useTranslation();
-  const IS_PIPELINE_OPERATOR_VERSION_1_17 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_17);
+  const IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER = useFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER,
+  );
   const { ns: namespace } = useParams();
   const badge = usePipelineTechPreviewBadge(namespace);
   const [showTitle, canCreate, hideBadge] = [false, false, true];
   const menuActions: MenuActions = {
     tasks: { model: TaskModel },
     taskRun: { model: TaskRunModel },
-    ...(!IS_PIPELINE_OPERATOR_VERSION_1_17 && { clusterTask: { model: ClusterTaskModel } }),
+    ...(!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && {
+      clusterTask: { model: ClusterTaskModel },
+    }),
   };
   const pages: Page[] = [
     {
@@ -47,7 +51,7 @@ const TasksListsPage: React.FC = () => {
         showTitle,
       },
     },
-    ...(!IS_PIPELINE_OPERATOR_VERSION_1_17
+    ...(!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER
       ? [
           {
             href: 'cluster-tasks',

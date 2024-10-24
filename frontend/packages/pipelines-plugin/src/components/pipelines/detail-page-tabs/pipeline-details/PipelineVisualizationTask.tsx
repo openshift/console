@@ -22,7 +22,7 @@ import {
   WhenExpression,
 } from '../../../../types';
 import { getRunStatusColor } from '../../../../utils/pipeline-augment';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_17 } from '../../const';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER } from '../../const';
 import { WHEN_EXPRESSSION_DIAMOND_SIZE } from '../../pipeline-topology/const';
 import WhenExpressionDecorator from '../../pipeline-topology/WhenExpressionDecorator';
 import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils';
@@ -85,7 +85,9 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   height,
   isFinallyTask,
 }) => {
-  const IS_PIPELINE_OPERATOR_VERSION_1_17 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_17);
+  const IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER = useFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER,
+  );
   const taskStatus = task.status || {
     duration: '',
     reason: ComputedStatus.Idle,
@@ -127,7 +129,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   }
 
   let resources;
-  if (!IS_PIPELINE_OPERATOR_VERSION_1_17 && task.taskRef.kind === ClusterTaskModel.kind) {
+  if (!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && task.taskRef.kind === ClusterTaskModel.kind) {
     resources = [
       {
         kind: referenceForModel(ClusterTaskModel),

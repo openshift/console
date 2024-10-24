@@ -45,7 +45,7 @@ import { findTask, getTopLevelErrorMessage } from './utils';
 export const useFormikFetchAndSaveTasks = (
   namespace: string,
   validateForm: () => void,
-  IS_PIPELINE_OPERATOR_VERSION_1_17: boolean,
+  IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER: boolean,
 ) => {
   const { t } = useTranslation();
   const { setFieldValue, setStatus } = useFormikContext<PipelineBuilderFormikValues>();
@@ -56,7 +56,7 @@ export const useFormikFetchAndSaveTasks = (
       isList: true,
       namespace,
     },
-    ...(!IS_PIPELINE_OPERATOR_VERSION_1_17 && {
+    ...(!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && {
       clusterTasks: {
         kind: referenceForModel(ClusterTaskModel),
         isList: true,
@@ -73,7 +73,7 @@ export const useFormikFetchAndSaveTasks = (
   }>(resourcesToWatch);
 
   const namespacedTaskData = namespacedTasks.loaded ? namespacedTasks.data : null;
-  const clusterTaskData = IS_PIPELINE_OPERATOR_VERSION_1_17
+  const clusterTaskData = IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER
     ? null
     : watchedClusterTasks.loaded
     ? watchedClusterTasks.data
@@ -82,11 +82,11 @@ export const useFormikFetchAndSaveTasks = (
     if (namespacedTaskData) {
       setFieldValue('taskResources.namespacedTasks', namespacedTaskData, false);
     }
-    if (!IS_PIPELINE_OPERATOR_VERSION_1_17 && clusterTaskData) {
+    if (!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && clusterTaskData) {
       setFieldValue('taskResources.clusterTasks', clusterTaskData, false);
     }
     const tasksLoaded =
-      !!namespacedTaskData && (IS_PIPELINE_OPERATOR_VERSION_1_17 || !!clusterTaskData);
+      !!namespacedTaskData && (IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER || !!clusterTaskData);
     setFieldValue('taskResources.tasksLoaded', tasksLoaded, false);
     if (tasksLoaded) {
       // Wait for Formik to fully understand the set values (thread end) and then validate again
@@ -97,12 +97,12 @@ export const useFormikFetchAndSaveTasks = (
     namespacedTaskData,
     clusterTaskData,
     validateForm,
-    IS_PIPELINE_OPERATOR_VERSION_1_17,
+    IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER,
   ]);
 
   const error =
     namespacedTasks.loadError ||
-    (!IS_PIPELINE_OPERATOR_VERSION_1_17 && watchedClusterTasks.loadError);
+    (!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && watchedClusterTasks.loadError);
   React.useEffect(() => {
     if (!error) return;
 
