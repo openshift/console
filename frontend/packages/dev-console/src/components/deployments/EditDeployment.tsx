@@ -2,16 +2,13 @@ import * as React from 'react';
 import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { usePerspectives } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { getResourcesType } from '../edit-application/edit-application-utils';
-import { handleRedirect } from '../import/import-submit-utils';
 import { Resources } from '../import/import-types';
 import EditDeploymentForm from './DeploymentForm';
 import { EditDeploymentData, EditDeploymentFormikValues } from './utils/deployment-types';
@@ -27,8 +24,6 @@ export interface EditDeploymentProps {
 
 const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
   const { t } = useTranslation();
-  const [perspective] = useActivePerspective();
-  const perspectiveExtensions = usePerspectives();
   const isNew = !name;
 
   const initialValues = React.useRef({
@@ -77,14 +72,13 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
 
     return resourceCall
       .then((res: K8sResourceKind) => {
+        const model =
+          resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel;
         if (isNew) {
-          const model =
-            resourceType === Resources.OpenShift ? DeploymentConfigModel : DeploymentModel;
           actions.setStatus({
             submitError: '',
             submitSuccess: t('devconsole~{{resource}} has been created', { resource: res.kind }),
           });
-          history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
         } else {
           const resVersion = res.metadata.resourceVersion;
           actions.setStatus({
@@ -94,8 +88,8 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
               resVersion,
             }),
           });
-          handleRedirect(namespace, perspective, perspectiveExtensions);
         }
+        history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
       })
       .catch((err) => {
         actions.setStatus({ submitSuccess: '', submitError: err.message });
