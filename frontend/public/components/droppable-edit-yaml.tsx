@@ -31,6 +31,7 @@ const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, m
 
 type DroppableEditYAMLProps = ResourceYAMLEditorProps & {
   allowMultiple?: boolean;
+  isCodeImportRedirect?: boolean;
 };
 
 // Prevents SDK users from passing additional props
@@ -130,6 +131,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
         create = false,
         onChange = () => null,
         hideHeader = false,
+        isCodeImportRedirect = false,
       } = this.props;
       const { errors, fileUpload } = this.state;
       return (
@@ -144,6 +146,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
           create={create}
           onChange={onChange}
           hideHeader={hideHeader}
+          isCodeImportRedirect={isCodeImportRedirect}
         />
       );
     }
@@ -160,6 +163,7 @@ type EditYAMLProps = {
   create?: boolean;
   onChange?: (content: string) => void;
   hideHeader?: boolean;
+  isCodeImportRedirect?: boolean;
 };
 
 export type DroppedFile = {
