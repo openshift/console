@@ -24,7 +24,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../../models';
 import { ComputedStatus, TaskKind } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_17 } from '../const';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER } from '../const';
 import {
   createStepStatus,
   StepStatus,
@@ -50,10 +50,15 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const [hover, hoverRef] = useHover();
   const taskRef = React.useRef();
   const detailsLevel = useDetailsLevel();
-  const IS_PIPELINE_OPERATOR_VERSION_1_17 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_17);
+  const IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER = useFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER,
+  );
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
   let resources;
-  if (!IS_PIPELINE_OPERATOR_VERSION_1_17 && data.task?.taskRef?.kind === ClusterTaskModel.kind) {
+  if (
+    !IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER &&
+    data.task?.taskRef?.kind === ClusterTaskModel.kind
+  ) {
     resources = {
       kind: referenceForModel(ClusterTaskModel),
       name: data.task.taskRef.name,

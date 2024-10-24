@@ -405,7 +405,7 @@ spec:
         resolver: cluster
         params:
           - name: kind
-            value: Task
+            value: task
           - name: name
             value: git-clone
           - name: namespace

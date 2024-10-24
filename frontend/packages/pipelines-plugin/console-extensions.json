@@ -2,7 +2,7 @@
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_17" }
+      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_17_or_newer" }
     }
   },
   {
@@ -145,7 +145,7 @@
       "abbr": "CT"
     },
     "flags": {
-      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17"]
+      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"]
     }
   },
   {
@@ -460,7 +460,7 @@
     "flags": {
       "disallowed": [
         "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASK_DETAILS",
-        "PIPELINES_OPERATOR_VERSION_1_17"
+        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"
       ]
     }
   },
@@ -688,7 +688,7 @@
     "flags": {
       "disallowed": [
         "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST",
-        "PIPELINES_OPERATOR_VERSION_1_17"
+        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"
       ]
     }
   },
@@ -705,7 +705,7 @@
     "flags": {
       "disallowed": [
         "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST",
-        "PIPELINES_OPERATOR_VERSION_1_17"
+        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"
       ]
     }
   },
@@ -1169,7 +1169,7 @@
       "template": { "$codeRef": "yamlTemplates.newClusterTaskTemplate" }
     },
     "flags": {
-      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17"]
+      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"]
     }
   },
   {
@@ -1183,7 +1183,7 @@
       "required": ["OPENSHIFT_PIPELINE"],
       "disallowed": [
         "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
-        "PIPELINES_OPERATOR_VERSION_1_17"
+        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"
       ]
     }
   },

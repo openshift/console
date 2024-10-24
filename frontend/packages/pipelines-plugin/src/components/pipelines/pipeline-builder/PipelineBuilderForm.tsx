@@ -15,7 +15,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
 import PipelineQuickSearch from '../../quicksearch/PipelineQuickSearch';
-import { FLAG_PIPELINES_OPERATOR_VERSION_1_17 } from '../const';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER } from '../const';
 import { STATUS_KEY_NAME_ERROR, UpdateOperationType } from './const';
 import { sanitizeToForm, sanitizeToYaml } from './form-switcher-validation';
 import { useExplicitPipelineTaskTouch, useFormikFetchAndSaveTasks } from './hooks';
@@ -43,7 +43,9 @@ type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
 
 const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const { t } = useTranslation();
-  const IS_PIPELINE_OPERATOR_VERSION_1_17 = useFlag(FLAG_PIPELINES_OPERATOR_VERSION_1_17);
+  const IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER = useFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER,
+  );
   const [selectedTask, setSelectedTask] = React.useState<SelectedBuilderTask>(null);
   const selectedTaskRef = React.useRef<SelectedBuilderTask>(null);
   selectedTaskRef.current = selectedTask;
@@ -62,7 +64,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     values: { editorType, formData, taskResources },
     validateForm,
   } = props;
-  useFormikFetchAndSaveTasks(namespace, validateForm, IS_PIPELINE_OPERATOR_VERSION_1_17);
+  useFormikFetchAndSaveTasks(namespace, validateForm, IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER);
   useExplicitPipelineTaskTouch();
 
   const statusRef = React.useRef(status);

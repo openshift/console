@@ -18,7 +18,7 @@ spec:
         resolver: cluster
         params:
           - name: kind
-            value: Task
+            value: task
           - name: name
             value: git-clone
           - name: namespace
@@ -41,7 +41,7 @@ spec:
         resolver: cluster
         params:
           - name: kind
-            value: Task
+            value: task
           - name: name
             value: s2i-java
           - name: namespace
@@ -62,7 +62,7 @@ spec:
         resolver: cluster
         params:
           - name: kind
-            value: Task
+            value: task
           - name: name
             value: openshift-client
           - name: namespace
