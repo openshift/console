@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Select as SelectDeprecated } from '@patternfly/react-core/deprecated';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { render, screen, configure } from '@testing-library/react';
 import { useExtensions } from '@console/plugin-sdk/src';
-import PerspectiveDropdown from '../PerspectiveDropdown';
+import PreferredPerspectiveSelect from '../PreferredPerspectiveSelect';
 import { usePreferredPerspective } from '../usePreferredPerspective';
 import { mockPerspectiveExtensions } from './perspective.data';
 
@@ -21,8 +20,11 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
 const useExtensionsMock = useExtensions as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
 
-describe('PerspectiveDropdown', () => {
-  let wrapper: ShallowWrapper;
+describe('PreferredPerspectiveSelect', () => {
+  configure({
+    testIdAttribute: 'data-test',
+  });
+
   const {
     id: preferredPerspectiveValue,
     name: preferredPerspectiveLabel,
@@ -35,29 +37,23 @@ describe('PerspectiveDropdown', () => {
   it('should render skeleton if user preferences have not loaded', () => {
     useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
     usePreferredPerspectiveMock.mockReturnValue(['', jest.fn(), false]);
-    wrapper = shallow(<PerspectiveDropdown />);
-    expect(
-      wrapper.find('[data-test="dropdown skeleton console.preferredPerspective"]').exists(),
-    ).toBeTruthy();
+    render(<PreferredPerspectiveSelect />);
+    expect(screen.findByTestId('select skeleton console.preferredPerspective')).toBeTruthy();
   });
 
   it('should render select with value corresponding to preferred perspective if user preferences have loaded and preferred perspective is defined', () => {
     useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
     usePreferredPerspectiveMock.mockReturnValue([preferredPerspectiveValue, jest.fn(), true]);
-    wrapper = shallow(<PerspectiveDropdown />);
-    expect(
-      wrapper.find('[data-test="dropdown console.preferredPerspective"]').exists(),
-    ).toBeTruthy();
-    expect(wrapper.find(SelectDeprecated).props().selections).toBe(preferredPerspectiveLabel);
+    render(<PreferredPerspectiveSelect />);
+    expect(screen.findByTestId('select console.preferredPerspective')).toBeTruthy();
+    expect(screen.findByText(preferredPerspectiveLabel)).toBeTruthy();
   });
 
   it('should render select with value "Last viewed" if user preferences have loaded but preferred perspective is not defined', () => {
     useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
     usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
-    wrapper = shallow(<PerspectiveDropdown />);
-    expect(
-      wrapper.find('[data-test="dropdown console.preferredPerspective"]').exists(),
-    ).toBeTruthy();
-    expect(wrapper.find(SelectDeprecated).props().selections).toEqual('Last viewed');
+    render(<PreferredPerspectiveSelect />);
+    expect(screen.findByTestId('select console.preferredPerspective"]')).toBeTruthy();
+    expect(screen.findByText('Last viewed')).toBeTruthy();
   });
 });

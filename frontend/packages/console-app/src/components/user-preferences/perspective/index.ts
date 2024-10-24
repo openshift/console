@@ -1,2 +1,2 @@
-export { default as PerspectiveDropdown } from './PerspectiveDropdown';
+export { default as PreferredPerspectiveSelect } from './PreferredPerspectiveSelect';
 export * from './usePreferredPerspective';
