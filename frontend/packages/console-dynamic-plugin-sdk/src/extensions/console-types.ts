@@ -305,6 +305,8 @@ export type RowProps<D, R extends any = {}> = {
   activeColumnIDs: Set<string>;
 };
 
+export type OnRowsRendered = (params: any) => void;
+
 export type VirtualizedTableProps<D, R extends any = {}> = {
   data: D[];
   unfilteredData: D[];
@@ -324,6 +326,7 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
   sortColumnIndex?: number;
   sortDirection?: SortByDirection;
   csvData?: string;
+  onRowsRendered?: OnRowsRendered;
 };
 
 export type VirtualizedTableFC = <D, R extends any = {}>(

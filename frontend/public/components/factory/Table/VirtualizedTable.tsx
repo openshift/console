@@ -80,6 +80,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
   sortColumnIndex,
   sortDirection,
   csvData,
+  onRowsRendered,
 }) => {
   const navigate = useNavigate();
   const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
@@ -175,6 +176,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
                 scrollTop={scrollTop}
                 width={width}
                 rowData={rowData}
+                onRowsRendered={onRowsRendered}
               />
             </div>
           )}

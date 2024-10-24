@@ -2,7 +2,12 @@ import * as React from 'react';
 import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
-import { K8sResourceCommon, TableColumn, RowProps } from '@console/dynamic-plugin-sdk';
+import {
+  K8sResourceCommon,
+  TableColumn,
+  RowProps,
+  OnRowsRendered,
+} from '@console/dynamic-plugin-sdk';
 import { TableRow } from '../table';
 
 type VirtualizedTableBodyProps<D, R = {}> = {
@@ -18,6 +23,7 @@ type VirtualizedTableBodyProps<D, R = {}> = {
   getRowId?: (obj: D) => string;
   getRowTitle?: (obj: D) => string;
   getRowClassName?: (obj: D) => string;
+  onRowsRendered?: OnRowsRendered;
 };
 
 const RowMemo = React.memo<
@@ -49,6 +55,7 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
   getRowId,
   getRowTitle,
   getRowClassName,
+  onRowsRendered,
 }: VirtualizedTableBodyProps<D, R>) => {
   const cellMeasurementCache = new CellMeasurerCache({
     fixedWidth: true,
@@ -107,6 +114,7 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
       rowRenderer={rowRenderer}
       scrollTop={scrollTop}
       width={width}
+      onRowsRendered={onRowsRendered}
     />
   );
 };

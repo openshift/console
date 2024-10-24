@@ -541,6 +541,7 @@ const MachineList: React.FC<MachineListProps> = (props) => {
 | `rowData` | (optional) data specific to row |
 | `sortColumnIndex` | (optional) The index of the column to sort. The default is `0` |
 | `sortDirection` | (optional) The direction of the sort. The default is `SortByDirection.asc` |
+| `onRowsRendered` | (optional) Callback invoked with information about the slice of rows that were just rendered. |
 
 
 
