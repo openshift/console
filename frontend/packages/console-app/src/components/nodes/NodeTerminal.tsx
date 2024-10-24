@@ -130,7 +130,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
   const nodeName = node.metadata.name;
   React.useEffect(() => {
     let namespace;
-    const name = `${nodeName}-debug`;
+    const name = `${nodeName?.replace(/\./g, '-')}-debug`;
     const deleteNamespace = async (ns) => {
       try {
         await k8sKillByName(NamespaceModel, ns);
