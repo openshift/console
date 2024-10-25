@@ -107,7 +107,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
 
     // Don't take focus if a modal was opened while the page was loading.
     if (!isModalOpen()) {
-      // this doesn't work right now because of issue with PF SearchInput
       catalogToolbarRef.current && catalogToolbarRef.current.focus({ preventScroll: true });
     }
   }, [catalogType, items.length]);
