@@ -2,6 +2,7 @@ import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { generateSecret } from '.';
+import { SecretStringData } from './types';
 
 class WebHookSecretFormWithTranslation extends React.Component<
   WebHookSecretFormProps & WithT,
@@ -70,9 +71,7 @@ class WebHookSecretFormWithTranslation extends React.Component<
 export const WebHookSecretForm = withTranslation()(WebHookSecretFormWithTranslation);
 
 type WebHookSecretFormState = {
-  stringData: {
-    [key: string]: string;
-  };
+  stringData: SecretStringData;
 };
 
 type WebHookSecretFormProps = {
@@ -80,7 +79,5 @@ type WebHookSecretFormProps = {
   onError: Function;
   onFormDisable: Function;
   secretType: string;
-  stringData: {
-    [key: string]: string;
-  };
+  stringData: SecretStringData;
 };

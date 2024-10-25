@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
+import { SecretStringData } from './types';
 
 class BasicAuthSubformWithTranslation extends React.Component<
   BasicAuthSubformProps & WithT,
@@ -84,7 +85,5 @@ type BasicAuthSubformState = {
 
 type BasicAuthSubformProps = {
   onChange: Function;
-  stringData: {
-    [key: string]: string;
-  };
+  stringData: SecretStringData;
 };
