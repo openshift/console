@@ -127,17 +127,7 @@
     "resolver": "./jest-resolver.js"
   },
   "dependencies": {
-    "@codemirror/autocomplete": "^6.0.4",
-    "@codemirror/commands": "^6.0.1",
-    "@codemirror/language": "^6.2.0",
-    "@codemirror/lint": "^6.0.0",
-    "@codemirror/search": "^6.0.0",
-    "@codemirror/state": "^6.1.0",
-    "@codemirror/view": "^6.0.3",
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@lezer/common": "^1.0.0",
-    "@lezer/highlight": "^1.0.0",
-    "@lezer/lr": "^1.0.0",
     "@patternfly-4/patternfly": "npm:@patternfly/patternfly@4.224.5",
     "@patternfly-4/quickstarts": "npm:@patternfly/quickstarts@2.4.2",
     "@patternfly-4/react-catalog-view-extension": "npm:@patternfly/react-catalog-view-extension@4.96.1",
