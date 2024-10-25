@@ -291,7 +291,6 @@
     "find-up": "4.x",
     "fork-ts-checker-webpack-plugin": "6.5.3",
     "glob": "7.x",
-    "glslify-loader": "^2.0.0",
     "graphql-tag": "^2.10.3",
     "html-webpack-plugin": "4.5.2",
     "html-webpack-skip-assets-plugin": "^1.0.4",
