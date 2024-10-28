@@ -111,7 +111,7 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
   const { t } = useTranslation();
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
-  const debugPodName = `${podData?.metadata.name}-debug-`;
+  const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
   const podToCreate = React.useMemo(() => {
     return getDebugPod(debugPodName, podData, podContainerName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
