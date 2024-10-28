@@ -10,7 +10,12 @@ import (
 
 // List of allowed URLs for SSRF protection
 var allowedURLs = []string{
+	// ArtifactHub Public API
 	"https://artifacthub.io/api/v1",
+
+	// Tekton Results installed in the cluster
+	"http://tekton-results-api-service",
+	"https://tekton-results-api-service",
 }
 
 func isAllowedURL(requestURL string) bool {
