@@ -3,11 +3,10 @@ import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
 import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
-import { Button } from '@patternfly/react-core';
+import { Button, Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 import * as ITOB from 'istextorbinary/edition-es2017';
-import { SecretType } from './secrets/create-secret';
 
 export const MaskedData: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -30,17 +29,32 @@ const downloadBinary = (key, value) => {
   saveAs(blob, key);
 };
 
-const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, value }) => {
+const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, value, revealed }) => {
   const { t } = useTranslation();
   return (
-    <Button
-      className="pf-m-link--align-left"
-      type="button"
-      onClick={() => downloadBinary(label, value)}
-      variant="link"
-    >
-      {t('public~Save file')}
-    </Button>
+    <>
+      {revealed ? (
+        <Alert
+          isInline
+          className="co-alert"
+          variant="info"
+          title={t('public~Non-printable file detected.')}
+          data-test="alert-info"
+        >
+          {t('public~File contains non-printable characters. Reveal is not available.')}
+        </Alert>
+      ) : (
+        <Button
+          type="button"
+          variant="link"
+          onClick={() => downloadBinary(label, value)}
+          data-test="download-binary"
+          disabled
+        >
+          {t('public~Save file')}
+        </Button>
+      )}
+    </>
   );
 };
 DownloadBinaryButton.displayName = 'DownloadBinaryButton';
@@ -100,55 +114,87 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 };
 SecretValue.displayName = 'SecretValue';
 
-export const SecretData: React.FC<SecretDataProps> = ({ data, type }) => {
-  const [reveal, setReveal] = React.useState(false);
+const SecretDataRevealButton: React.FC<{ reveal: boolean; onClick: () => void }> = ({
+  reveal,
+  onClick,
+}) => {
   const { t } = useTranslation();
-  const dl = [];
-  Object.keys(data || {})
-    .sort()
-    .forEach((k) => {
-      dl.push(
-        <dt i18n-not-translated="true" key={`${k}-k`} data-test="secret-data-term">
-          {k}
-        </dt>,
-      );
-      dl.push(
-        <dd key={`${k}-v`}>
-          {ITOB.isBinary(k, Buffer.from(data[k], 'base64')) ? (
-            <DownloadBinaryButton label={k} value={data[k]} />
-          ) : (
-            <SecretValue value={data[k]} reveal={reveal} id={k} />
-          )}
-        </dd>,
-      );
-    });
+  return (
+    <Button
+      type="button"
+      onClick={onClick}
+      variant="link"
+      className="pf-m-link--align-right"
+      data-test="reveal-values"
+    >
+      {reveal ? (
+        <>
+          <EyeSlashIcon className="co-icon-space-r" />
+          {t('public~Hide values')}
+        </>
+      ) : (
+        <>
+          <EyeIcon className="co-icon-space-r" />
+          {t('public~Reveal values')}
+        </>
+      )}
+    </Button>
+  );
+};
+
+export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
+  const [reveal, setReveal] = React.useState(false);
+  const [hasRevealableContent, setHasRevealableContent] = React.useState(false);
+  const { t } = useTranslation();
+
+  const dataDescriptionList = React.useMemo(() => {
+    const descriptionList = [];
+    let revealable = false;
+
+    Object.keys(data || {})
+      .sort()
+      .forEach((k) => {
+        const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+        if (!isBinary) {
+          revealable = true;
+        }
+
+        setHasRevealableContent(hasRevealableContent || !isBinary);
+        descriptionList.push(
+          <dt i18n-not-translated="true" key={`${k}-k`} data-test="secret-data-term">
+            {k}
+          </dt>,
+        );
+        descriptionList.push(
+          <dd key={`${k}-v`}>
+            {isBinary ? (
+              <DownloadBinaryButton label={k} value={data[k]} revealed={reveal} />
+            ) : (
+              <SecretValue value={data[k]} reveal={reveal} id={k} />
+            )}
+          </dd>,
+        );
+      });
+
+    if (revealable !== hasRevealableContent) {
+      setHasRevealableContent(revealable);
+    }
+
+    return descriptionList;
+  }, [data, reveal]);
 
   return (
     <>
       <SectionHeading text={t('public~Data')}>
-        {dl.length && type !== SecretType.opaque ? (
-          <Button
-            type="button"
-            onClick={() => setReveal(!reveal)}
-            variant="link"
-            className="pf-m-link--align-right"
-            data-test="reveal-values"
-          >
-            {reveal ? (
-              <>
-                <EyeSlashIcon className="co-icon-space-r" />
-                {t('public~Hide values')}
-              </>
-            ) : (
-              <>
-                <EyeIcon className="co-icon-space-r" />
-                {t('public~Reveal values')}
-              </>
-            )}
-          </Button>
+        {dataDescriptionList.length && hasRevealableContent ? (
+          <SecretDataRevealButton reveal={reveal} onClick={() => setReveal(!reveal)} />
         ) : null}
       </SectionHeading>
-      {dl.length ? <dl data-test="secret-data">{dl}</dl> : <EmptyBox label={t('public~Data')} />}
+      {dataDescriptionList.length ? (
+        <dl data-test="secret-data">{dataDescriptionList}</dl>
+      ) : (
+        <EmptyBox label={t('public~Data')} />
+      )}
     </>
   );
 };
@@ -161,6 +207,7 @@ type KeyValueData = {
 type DownloadBinaryButtonProps = {
   value: string;
   label: string;
+  revealed?: boolean;
 };
 
 type ConfigMapDataProps = {
@@ -181,5 +228,4 @@ type SecretValueProps = {
 
 type SecretDataProps = {
   data: KeyValueData;
-  type?: string;
 };
