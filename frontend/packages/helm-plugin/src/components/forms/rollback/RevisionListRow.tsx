@@ -19,6 +19,7 @@ const RevisionListRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         <Status
           status={releaseStatus(obj.info.status)}
           title={HelmReleaseStatusLabels[obj.info.status]}
+          statusTextClassName="pf-v5-u-text-truncate"
         />
       </TableData>
       <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>

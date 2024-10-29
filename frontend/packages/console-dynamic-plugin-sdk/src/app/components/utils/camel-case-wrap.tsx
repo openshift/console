@@ -2,7 +2,7 @@ import * as React from 'react';
 
 const MEMO = {};
 
-const CamelCaseWrap: React.FC<CamelCaseWrapProps> = ({ value, dataTest }) => {
+const CamelCaseWrap: React.FC<CamelCaseWrapProps> = ({ value, dataTest, ...props }) => {
   if (!value) {
     return '-';
   }
@@ -14,7 +14,7 @@ const CamelCaseWrap: React.FC<CamelCaseWrapProps> = ({ value, dataTest }) => {
   // Add word break points before capital letters (but keep consecutive capital letters together).
   const words = value.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g);
   const rendered = (
-    <span data-test={dataTest}>
+    <span data-test={dataTest} {...props}>
       {words.map((word, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <React.Fragment key={i}>
@@ -28,7 +28,7 @@ const CamelCaseWrap: React.FC<CamelCaseWrapProps> = ({ value, dataTest }) => {
   return rendered;
 };
 
-type CamelCaseWrapProps = {
+type CamelCaseWrapProps = React.HTMLProps<HTMLSpanElement> & {
   value: string;
   dataTest?: string;
 };

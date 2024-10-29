@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StatusComponentProps } from '../../../extensions/console-types';
 import PopoverStatus from './PopoverStatus';
-import StatusIconAndText from './StatusIconAndText';
+import { StatusIconAndText } from './StatusIconAndText';
 
 type GenericStatusProps = StatusComponentProps & {
   Icon: React.ComponentType<{ title?: string }>;

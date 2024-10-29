@@ -8,13 +8,12 @@ import {
   SyncAltIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-import { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
-import StatusIconAndText from './StatusIconAndText';
+import { StatusIconAndText, StatusIconAndTextProps } from './StatusIconAndText';
 
-export type StatusProps = StatusComponentProps & {
+export type StatusProps = StatusIconAndTextProps & {
   status: string;
   children?: React.ReactNode;
 };
@@ -28,6 +27,7 @@ export type StatusProps = StatusComponentProps & {
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [popoverTitle] - (optional) title for popover
  * @param {ReactNode} [children] - (optional) children for the component
+ * @param {string} [statusTextClassName] - (optional) additional class name for the status text
  * @example
  * ```tsx
  * <Status status='Warning' />
@@ -40,8 +40,15 @@ const Status: React.FC<StatusProps> = ({
   iconOnly,
   noTooltip,
   className,
+  statusTextClassName,
 }) => {
-  const statusProps = { title: title || status, iconOnly, noTooltip, className };
+  const statusProps = {
+    title: title || status,
+    iconOnly,
+    noTooltip,
+    className,
+    statusTextClassName,
+  };
   switch (status) {
     case 'New':
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
