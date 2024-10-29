@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { action } from 'typesafe-actions';
+import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '../../hooks/ols-hook';
 import { isMac, ShortcutCommand } from '../shortcuts/Shortcut';
 import ShortcutsLink from './ShortcutsLink';
@@ -15,10 +16,6 @@ import './CodeEditorToolbar.scss';
 interface CodeEditorToolbarProps {
   showShortcuts?: boolean;
   toolbarLinks?: React.ReactNodeArray;
-}
-
-export enum ActionType {
-  OpenOLS = 'openOLS',
 }
 
 const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ showShortcuts, toolbarLinks }) => {
