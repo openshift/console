@@ -73,6 +73,8 @@ const VirtualizedTable: VirtualizedTableFC = ({
   'aria-label': ariaLabel,
   gridBreakPoint = TableGridBreakpoint.none,
   onSelect,
+  allRowsSelected,
+  canSelectAll = true,
   Row,
   rowData,
   unfilteredData,
@@ -224,7 +226,8 @@ const VirtualizedTable: VirtualizedTableFC = ({
             )}
             <PfTable
               cells={columns}
-              rows={[]}
+              rows={[{ selected: allRowsSelected }]}
+              canSelectAll={canSelectAll}
               gridBreakPoint={gridBreakPoint}
               onSort={onSort}
               onSelect={onSelect}
