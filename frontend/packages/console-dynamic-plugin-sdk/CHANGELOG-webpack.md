@@ -3,6 +3,11 @@
 Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
 
+## 1.3.0 - 2024-10-30
+
+- Expose `EncodedExtension` type ([OCPBUGS-38734], [#14167])
+- Update webpack dependency to use semver range ([OCPBUGS-42985], [#14300])
+
 ## 1.2.0 - 2024-08-02
 
 - Improve control over PatternFly shared modules ([OCPBUGS-35928], [#13992])
@@ -40,6 +45,8 @@ version and PatternFly version compatibility.
 [OCPBUGS-33642]: https://issues.redhat.com/browse/OCPBUGS-33642
 [OCPBUGS-34683]: https://issues.redhat.com/browse/OCPBUGS-34683
 [OCPBUGS-35928]: https://issues.redhat.com/browse/OCPBUGS-35928
+[OCPBUGS-38734]: https://issues.redhat.com/browse/OCPBUGS-38734
+[OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -49,3 +56,5 @@ version and PatternFly version compatibility.
 [#13849]: https://github.com/openshift/console/pull/13849
 [#13893]: https://github.com/openshift/console/pull/13893
 [#13992]: https://github.com/openshift/console/pull/13992
+[#14167]: https://github.com/openshift/console/pull/14167
+[#14300]: https://github.com/openshift/console/pull/14300
