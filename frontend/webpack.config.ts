@@ -98,7 +98,7 @@ const config: Configuration = {
     },
   },
   resolve: {
-    extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   node: {
     fs: 'empty',
@@ -115,7 +115,6 @@ const config: Configuration = {
         test: sharedPluginModulesTest,
         sideEffects: true,
       },
-      { test: /\.glsl$/, loader: 'raw!glslify' },
       {
         test: /\.js$/,
         include: /node_modules\/@patternfly-4\//,
