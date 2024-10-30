@@ -7,6 +7,7 @@ import {
   GitAltIcon,
 } from '@patternfly/react-icons/dist/esm/icons';
 import { FormikValues, useFormikContext } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { GitProvider } from '@console/git-service/src';
 import GiteaIcon from '../GiteaIcon';
@@ -26,6 +27,7 @@ const GitTypeSelector: React.FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
     setFieldValue(`${fieldPrefix}git.type`, gitType, false);
     setFieldTouched(`${fieldPrefix}git.type`, true, false);
   };
+  const typeValue = _.get(values, `${fieldPrefix}git.type`);
 
   return (
     <>
@@ -37,7 +39,7 @@ const GitTypeSelector: React.FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
               title={GitReadableTypes[GitProvider.GITHUB]}
               icon={<GithubIcon />}
               onClick={() => handleGitTypeChange(GitProvider.GITHUB)}
-              isSelected={values.git.type === GitProvider.GITHUB}
+              isSelected={typeValue === GitProvider.GITHUB}
               id="git-type-github"
             />
           </FlexItem>
@@ -47,7 +49,7 @@ const GitTypeSelector: React.FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
               title={GitReadableTypes[GitProvider.GITLAB]}
               icon={<GitlabIcon />}
               onClick={() => handleGitTypeChange(GitProvider.GITLAB)}
-              isSelected={values.git.type === GitProvider.GITLAB}
+              isSelected={typeValue === GitProvider.GITLAB}
               id="git-type-gitlab"
             />
           </FlexItem>
@@ -57,7 +59,7 @@ const GitTypeSelector: React.FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
               title={GitReadableTypes[GitProvider.BITBUCKET]}
               icon={<BitbucketIcon />}
               onClick={() => handleGitTypeChange(GitProvider.BITBUCKET)}
-              isSelected={values.git.type === GitProvider.BITBUCKET}
+              isSelected={typeValue === GitProvider.BITBUCKET}
               id="git-type-bitbucket"
             />
           </FlexItem>
@@ -67,7 +69,7 @@ const GitTypeSelector: React.FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
               title={GitReadableTypes[GitProvider.GITEA]}
               icon={<GiteaIcon />}
               onClick={() => handleGitTypeChange(GitProvider.GITEA)}
-              isSelected={values.git.type === GitProvider.GITEA}
+              isSelected={typeValue === GitProvider.GITEA}
               id="git-type-gitea"
             />
           </FlexItem>
@@ -77,7 +79,7 @@ const GitTypeSelector: React.FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
               title={GitReadableTypes[GitProvider.UNSURE]}
               icon={<GitAltIcon />}
               onClick={() => handleGitTypeChange(GitProvider.UNSURE)}
-              isSelected={values.git.type === GitProvider.UNSURE}
+              isSelected={typeValue === GitProvider.UNSURE}
               id="git-type-other"
             />
           </FlexItem>
