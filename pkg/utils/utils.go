@@ -21,6 +21,9 @@ func RandomString(length int) (string, error) {
 	// we account for that conversion and add one to handle truncation
 	b64size := encoding.DecodedLen(length) + 1
 	randomBytes, err := RandomBytes(b64size)
+	if err != nil {
+		return "", err
+	}
 	// trim down to the original requested size since we added one above
-	return encoding.EncodeToString(randomBytes)[:length], err
+	return encoding.EncodeToString(randomBytes)[:length], nil
 }
