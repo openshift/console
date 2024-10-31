@@ -770,6 +770,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderEditPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -780,6 +783,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderEditPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
