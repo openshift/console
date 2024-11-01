@@ -318,6 +318,8 @@ export type VirtualizedTableProps<D, R extends any = {}> = {
   EmptyMsg?: React.ComponentType<{}>;
   scrollNode?: () => HTMLElement;
   onSelect?: OnSelect;
+  allRowsSelected?: boolean;
+  canSelectAll?: boolean;
   label?: string;
   'aria-label'?: string;
   gridBreakPoint?: TableGridBreakpoint;
