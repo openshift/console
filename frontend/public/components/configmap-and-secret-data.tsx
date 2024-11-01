@@ -3,7 +3,7 @@ import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
 import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
-import { Button, Alert } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 import * as ITOB from 'istextorbinary/edition-es2017';
@@ -29,32 +29,18 @@ const downloadBinary = (key, value) => {
   saveAs(blob, key);
 };
 
-const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, value, revealed }) => {
+const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, value }) => {
   const { t } = useTranslation();
   return (
-    <>
-      {revealed ? (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="info"
-          title={t('public~Non-printable file detected.')}
-          data-test="alert-info"
-        >
-          {t('public~File contains non-printable characters. Reveal is not available.')}
-        </Alert>
-      ) : (
-        <Button
-          type="button"
-          variant="link"
-          onClick={() => downloadBinary(label, value)}
-          data-test="download-binary"
-          disabled
-        >
-          {t('public~Save file')}
-        </Button>
-      )}
-    </>
+    <Button
+      type="button"
+      variant="link"
+      onClick={() => downloadBinary(label, value)}
+      data-test="download-binary"
+      disabled
+    >
+      {t('public~Save file')}
+    </Button>
   );
 };
 DownloadBinaryButton.displayName = 'DownloadBinaryButton';
@@ -114,10 +100,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 };
 SecretValue.displayName = 'SecretValue';
 
-const SecretDataRevealButton: React.FC<{ reveal: boolean; onClick: () => void }> = ({
-  reveal,
-  onClick,
-}) => {
+const SecretDataRevealButton: React.FC<SecretDataRevealButtonProps> = ({ reveal, onClick }) => {
   const { t } = useTranslation();
   return (
     <Button
@@ -168,7 +151,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
         descriptionList.push(
           <dd key={`${k}-v`}>
             {isBinary ? (
-              <DownloadBinaryButton label={k} value={data[k]} revealed={reveal} />
+              <DownloadBinaryButton label={k} value={data[k]} />
             ) : (
               <SecretValue value={data[k]} reveal={reveal} id={k} />
             )}
@@ -207,7 +190,6 @@ type KeyValueData = {
 type DownloadBinaryButtonProps = {
   value: string;
   label: string;
-  revealed?: boolean;
 };
 
 type ConfigMapDataProps = {
@@ -224,6 +206,11 @@ type SecretValueProps = {
   encoded?: boolean;
   reveal: boolean;
   id?: string;
+};
+
+type SecretDataRevealButtonProps = {
+  reveal: boolean;
+  onClick: () => void;
 };
 
 type SecretDataProps = {
