@@ -3,7 +3,7 @@
 Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
 
-## 1.3.0 - 2024-10-30
+## 1.3.0 - 2024-10-31
 
 - Expose `EncodedExtension` type ([OCPBUGS-38734], [#14167])
 - Update webpack dependency to use semver range ([OCPBUGS-42985], [#14300])

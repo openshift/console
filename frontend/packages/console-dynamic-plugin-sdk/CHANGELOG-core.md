@@ -3,7 +3,11 @@
 Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
 
-## 1.7.0 - 2024-10-30
+## 1.8.0 - 2024-11-04
+
+- Add `allRowsSelected` and `canSelectAll` props to `VirtualizedTable` component ([OCPBUGS-43998], [#14447])
+
+## 1.7.0 - 2024-10-31
 
 - Add `onRowsRendered` prop to `VirtualizedTable` component ([OCPBUGS-43538], [#14421])
 - Document Content Security Policy for Console web application ([CONSOLE-4263], [#14156])
@@ -69,6 +73,7 @@ version and PatternFly version compatibility.
 [OCPBUGS-36678]: https://issues.redhat.com/browse/OCPBUGS-36678
 [OCPBUGS-37426]: https://issues.redhat.com/browse/OCPBUGS-37426
 [OCPBUGS-43538]: https://issues.redhat.com/browse/OCPBUGS-43538
+[OCPBUGS-43998]: https://issues.redhat.com/browse/OCPBUGS-43998
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -90,3 +95,4 @@ version and PatternFly version compatibility.
 [#14096]: https://github.com/openshift/console/pull/14096
 [#14156]: https://github.com/openshift/console/pull/14156
 [#14421]: https://github.com/openshift/console/pull/14421
+[#14447]: https://github.com/openshift/console/pull/14447
