@@ -190,7 +190,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
       );
     default:
       return (
-        <span className={_.isEmpty(subscription?.status?.state) ? 'text-muted' : ''}>
+        <span className={!subscription?.status?.state ? 'text-muted' : ''}>
           {subscription?.status?.state || t('olm~Unknown failure')}
         </span>
       );
