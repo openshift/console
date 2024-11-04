@@ -17,7 +17,8 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     [selected, options],
   );
 
-  const onSelect = (_event: React.MouseEvent | React.ChangeEvent, selections: string[]) => {
+  const onSelect = (event: React.MouseEvent | React.ChangeEvent, selections: string[]) => {
+    event.preventDefault();
     setSelected(selections);
     onChange(selections);
   };
@@ -30,6 +31,13 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       onSelectionChange={onSelect}
       aria-label={t('console-shared~Select input')}
       aria-labelledby={id}
+      toggleProps={{
+        onKeyDown: (event: React.KeyboardEvent<any>) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+          }
+        },
+      }}
     />
   );
 };
