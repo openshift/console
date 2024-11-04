@@ -41,6 +41,15 @@ Given('user is at developer perspective', () => {
 Given('user has created or selected namespace {string}', (projectName: string) => {
   Cypress.env('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(projectName);
+  cy.exec(
+    `oc apply -f testData/installTasksInsteadOfClusterTask.yaml -n ${Cypress.env('NAMESPACE')}`,
+    {
+      failOnNonZeroExit: false,
+    },
+  ).then(function (result) {
+    cy.log(`STDOUT: ${result.stdout}`);
+    cy.log(`STDERR: ${result.stderr}`);
+  });
 });
 
 Given('user is at the Topology page', () => {
