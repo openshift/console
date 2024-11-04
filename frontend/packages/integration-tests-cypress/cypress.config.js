@@ -21,6 +21,8 @@ module.exports = defineConfig({
     runMode: 1,
     openMode: 0,
   },
+  // https://docs.cypress.io/app/references/experiments#Allow-Specific-CSP-Directives
+  experimentalCspAllowList: ['default-src', 'script-src'],
   e2e: {
     setupNodeEvents(on, config) {
       Object.assign(crypto, {
