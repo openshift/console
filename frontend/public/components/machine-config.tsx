@@ -69,33 +69,45 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
                 <TextContent>
                   <Text data-test={`config-file-path-${i}`}>{file.path}</Text>
                 </TextContent>
-                <Popover
-                  headerContent={t('public~Properties')}
-                  bodyContent={
-                    <DescriptionList isHorizontal isFluid>
-                      <DescriptionListGroup>
-                        <DescriptionListTerm>{t('public~Mode')}</DescriptionListTerm>
-                        <DescriptionListDescription>{file.mode}</DescriptionListDescription>
-                        <DescriptionListTerm>{t('public~Overwrite')}</DescriptionListTerm>
-                        <DescriptionListDescription>
-                          {file.overwrite.toString()}
-                        </DescriptionListDescription>
-                      </DescriptionListGroup>
-                    </DescriptionList>
-                  }
-                >
-                  <Button
-                    variant={ButtonVariant.plain}
-                    aria-label={'public~Info'}
-                    className="pf-v5-u-ml-sm pf-v5-u-p-0"
+                {(file.mode || file.overwrite) && (
+                  <Popover
+                    headerContent={t('public~Properties')}
+                    bodyContent={
+                      <DescriptionList isHorizontal isFluid>
+                        <DescriptionListGroup>
+                          {file.mode && (
+                            <>
+                              <DescriptionListTerm>{t('public~Mode')}</DescriptionListTerm>
+                              <DescriptionListDescription>{file.mode}</DescriptionListDescription>
+                            </>
+                          )}
+                          {file.overwrite && (
+                            <>
+                              <DescriptionListTerm>{t('public~Overwrite')}</DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {file.overwrite.toString()}
+                              </DescriptionListDescription>
+                            </>
+                          )}
+                        </DescriptionListGroup>
+                      </DescriptionList>
+                    }
                   >
-                    <BlueInfoCircleIcon />
-                  </Button>
-                </Popover>
+                    <Button
+                      variant={ButtonVariant.plain}
+                      aria-label={'public~Info'}
+                      className="pf-v5-u-ml-sm pf-v5-u-p-0"
+                    >
+                      <BlueInfoCircleIcon />
+                    </Button>
+                  </Popover>
+                )}
               </Flex>
-              <CopyToClipboard
-                value={decodeURIComponent(file.contents.source).replace(/^(data:,)/, '')}
-              />
+              {file.contents?.source && (
+                <CopyToClipboard
+                  value={decodeURIComponent(file.contents.source).replace(/^(data:,)/, '')}
+                />
+              )}
             </div>
           ))}
         </div>
