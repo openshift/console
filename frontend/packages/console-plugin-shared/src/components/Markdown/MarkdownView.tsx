@@ -191,13 +191,12 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateDimensions = React.useCallback(
     _.debounce(() => {
-      if (!frameRef.current?.contentWindow) {
-        return;
+      if (frameRef.current?.contentWindow) {
+        setFrameHeight(
+          frameRef.current.contentWindow.document.body.firstElementChild.scrollHeight +
+            (exactHeight ? 0 : 15),
+        );
       }
-      setFrameHeight(
-        frameRef.current.contentWindow.document.body.firstElementChild.scrollHeight +
-          (exactHeight ? 0 : 15),
-      );
     }, 100),
     [exactHeight],
   );
