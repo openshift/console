@@ -14,6 +14,8 @@ import {
   HelperTextItem,
   Tooltip,
   TextArea,
+  InputGroup,
+  InputGroupItem,
 } from '@patternfly/react-core';
 import { CompressIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
 /* eslint-disable import/named */
@@ -46,7 +48,6 @@ import {
   TemplateParameter,
 } from '../module/k8s';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import formStyles from '@patternfly/react-styles/css/components/Form/form';
 import { RootState } from '../redux';
 
 const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
@@ -172,29 +173,28 @@ const TemplateFormField: React.FC<TemplateFormFieldProps> = ({
 
   const InputToggle = (
     <Tooltip aria="none" aria-live="polite" content={toggleTooltipText}>
-      <button
+      <Button
         aria-label={toggleTooltipText}
         onClick={() => setIsTextArea(!isTextArea)}
-        type="button"
-        className={formStyles.formGroupLabelHelp}
+        variant="control"
       >
         {isTextArea ? <CompressIcon /> : <ExpandIcon />}
-      </button>
+      </Button>
     </Tooltip>
   );
 
   return (
-    <FormGroup
-      label={displayName || name}
-      isRequired={required}
-      fieldId={name}
-      labelIcon={InputToggle}
-    >
-      {isTextArea ? (
-        <TextArea resizeOrientation="vertical" {...commonFormProps} />
-      ) : (
-        <TextInput type="text" {...commonFormProps} />
-      )}
+    <FormGroup label={displayName || name} isRequired={required} fieldId={name}>
+      <InputGroup>
+        <InputGroupItem isFill>
+          {isTextArea ? (
+            <TextArea resizeOrientation="vertical" {...commonFormProps} />
+          ) : (
+            <TextInput type="text" {...commonFormProps} />
+          )}
+        </InputGroupItem>
+        <InputGroupItem>{InputToggle}</InputGroupItem>
+      </InputGroup>
       {description && (
         <HelperText>
           <HelperTextItem id={helpID}>{description}</HelperTextItem>
