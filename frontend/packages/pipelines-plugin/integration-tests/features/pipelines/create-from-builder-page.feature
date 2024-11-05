@@ -20,7 +20,6 @@ Feature: Create the pipeline from builder page
              When user enters pipeline name as "pl-task-from-artifacthub"
               And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
-              And user waits for "5" seconds
               And user selects "git-clone" from Artifacthub
               And user clicks on Add button
               And user selects the "git-clone" node
