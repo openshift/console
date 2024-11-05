@@ -808,7 +808,7 @@ export type Release = {
 };
 
 export type ConditionalUpdate = {
-  release: Release;
+  release: VersionUpdate;
   conditions: K8sResourceCondition[];
 };
 

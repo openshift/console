@@ -46,7 +46,15 @@ export const getSortedAvailableUpdates = (cv: ClusterVersionKind): Release[] => 
 };
 
 const getConditionalClusterUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] => {
-  return cv?.status?.conditionalUpdates || [];
+  return (
+    cv?.status?.conditionalUpdates?.map((update) => ({
+      conditions: update.conditions,
+      release: {
+        image: update.release.image,
+        version: update.release.version,
+      },
+    })) ?? []
+  );
 };
 
 export const getNotRecommendedUpdateCondition = (
