@@ -129,9 +129,7 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
               listPage.rows.shouldBeLoaded();
               listPage.filter.byName(PLUGIN_NAME);
               listPage.rows.shouldExist(PLUGIN_NAME);
-              if (!isLocalDevEnvironment && PLUGIN_PULL_SPEC) {
-                enableDemoPlugin(true);
-              }
+              enableDemoPlugin(true);
             });
         } else {
           console.log('this IS A local env, not setting the pull spec for the deployment');
