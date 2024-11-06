@@ -1,6 +1,8 @@
 # Getting Started
 
 - Guidelines related to Setup, Standards, Review process are present in [README.md](frontend/packages/dev-console/integration-tests/README.md)
+(The above link is now deprecated)
+
 
 ## Directory Structure
 
@@ -54,7 +56,7 @@ frontend/packages/helm-plugin/integration-tests/
 
 Feature file - "regression" suite - execution from Cypress Dashboard
 
-1. Update the TAGS under env section in config file [Cypress.json file](frontend/packages/helm-plugin/integration-tests/cypress.json) as
+1. Update the TAGS under env section in config file [Cypress.json file](frontend/packages/helm-plugin/integration-tests/cypress.config.js) as
    "env": { "TAGS": "@regression and not @manual and not @to-do" }
 2. In command prompt, navigate to frontend folder
 3. Execute command `yarn run test-cypress-helm` and select that particular file or run all files in cypress dashboard
