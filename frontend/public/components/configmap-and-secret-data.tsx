@@ -33,11 +33,11 @@ const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, valu
   const { t } = useTranslation();
   return (
     <Button
+      className="pf-m-link--align-left"
       type="button"
-      variant="link"
       onClick={() => downloadBinary(label, value)}
+      variant="link"
       data-test="download-binary"
-      disabled
     >
       {t('public~Save file')}
     </Button>
@@ -159,7 +159,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
         );
       });
 
-    if (revealable !== hasRevealableContent) {
+    if (revealable) {
       setHasRevealableContent(revealable);
     }
 
