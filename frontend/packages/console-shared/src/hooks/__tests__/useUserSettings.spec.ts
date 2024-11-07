@@ -64,9 +64,7 @@ const savedDataConfigMap: ConfigMapKind = {
 
 beforeEach(() => {
   jest.resetAllMocks();
-  useSelectorMock.mockImplementation((selector) =>
-    selector({ sdkCore: { user: { metadata: { uid: 'foo' } } } }),
-  );
+  useSelectorMock.mockImplementation((selector) => selector({ sdkCore: { user: { uid: 'foo' } } }));
 
   // eslint-disable-next-line no-console
   ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = consoleMock));
