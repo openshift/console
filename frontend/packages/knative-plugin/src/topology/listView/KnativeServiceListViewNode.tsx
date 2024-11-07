@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Node, observer } from '@patternfly/react-topology';
-import {
-  TopologyListViewNode,
-  TypedResourceBadgeCell,
-} from '@console/topology/src/components/list-view';
+import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
+import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
 import { getResource, getResourceKind } from '@console/topology/src/utils';
 import { isServerlessFunction } from '../knative-topology-utils';
 
