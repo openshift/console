@@ -7,13 +7,6 @@ import { perspective, navigateTo } from '@console/dev-console/integration-tests/
 import { buildPO, resourceRow } from '../../pageObjects';
 
 When('user has created shipwright builds', () => {
-  cy.exec(
-    `oc apply -n ${Cypress.env('NAMESPACE')} -f testData/builds/shipwrightBuildStrategies.yaml`,
-    {
-      failOnNonZeroExit: false,
-    },
-  );
-
   const yamlFileName = `testData/builds/shipwrightBuild.yaml`;
   cy.exec(`oc apply -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,

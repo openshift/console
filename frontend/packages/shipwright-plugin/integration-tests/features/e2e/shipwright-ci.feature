@@ -13,6 +13,38 @@ Feature: Shipwright build details page
              Then user will see Shipwright Builds
               And user will see "Succeeded", "Failed" and "Unknown" in Filter list
 
+        @smoke
+        Scenario: Shipwright Builds Table should contain all the required headers: SWB-03-TC01
+            Given user is at Builds page
+             When user clicks on "Shipwright Builds" tab in the Developer perspective
+             Then user will see "Name"
+              And user will see "Output"
+              And user will see "Last run"
+              And user will see "Last run status"
+              And user will see "Last run time"
+              And user will see "Last run duration"
+
+
+                  
+        @smoke
+        Scenario Outline: Create a Build using Create Shipwright build form: SWB-04-TC01
+            Given user is at Builds page
+             When user select create Build option
+              And user is at Create Shipwright build page
+              And user enters Name as "<name>"
+              And user enters Git Repo URL as "<git_repo_url>"
+              And user select Build Strategy option "<build_strategy>"
+              And user enters builder-image param as "<builder_image>"
+              And user enters Output image as "<output_image>"
+              And user clicks Create button
+             Then user will be redirected to "<name>" build details page
+              And user will see Strategy "<build_strategy>"
+              And user will see Source URL "<git_repo_url>"
+              And user will see Builder image "<builder_image>"
+
+        Examples:
+                  | git_repo_url                                             | name            | build_strategy  | builder_image                                                             | output_image                                                                           |
+                  | https://github.com/nodeshift-blog-examples/react-web-app | s2i-cbs-example | source-to-image | image-registry.openshift-image-registry.svc:5000/openshift/nodejs:20-ubi8 | image-registry.openshift-image-registry.svc:5000/build-examples/s2i-cbs-example:latest |
 
         @smoke
         Scenario: Shipwright page in admin perspective: SWB-01-TC02
@@ -73,3 +105,5 @@ Feature: Shipwright build details page
               And user has a failed build run
              When user clicks on Failed Status
              Then user will see pop up with error message
+
+
