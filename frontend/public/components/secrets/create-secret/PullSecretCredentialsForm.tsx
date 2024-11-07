@@ -34,7 +34,9 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
 
   const updateEntry = (updatedEntry, entryIndex: number) =>
     setEntries((currentEntries) =>
-      currentEntries.map((entry, index) => (index === entryIndex ? updatedEntry : entry)),
+      currentEntries.map(({ uid, ...entry }, index) =>
+        index === entryIndex ? { uid, ...updatedEntry } : { uid, ...entry },
+      ),
     );
 
   const removeEntry = (entryIndex: number) =>
