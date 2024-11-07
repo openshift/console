@@ -109,7 +109,7 @@
   "false": "false",
   "Select {{label}}": "{{label}} の選択",
   "Cluster does not have resource {{groupVersionKind}}": "クラスターにはリソース {{groupVersionKind}} がありません",
-  "Ask OpenShift Lightspeed": "OpenShift LightSpeed に質問する",
+  "Ask OpenShift Lightspeed": "OpenShift Lightspeed に質問する",
   "Accessibility help": "アクセシビリティーヘルプ",
   "Shortcuts": "ショートカット",
   "View all editor shortcuts": "すべてのエディターショートカットの表示",

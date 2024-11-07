@@ -258,7 +258,7 @@
   "Incompatible file type": "互換性のないファイルタイプ",
   "{{fileName}} cannot be uploaded. Only {{fileExtensions}} files are supported currently. Try another file.": "{{fileName}} をアップロードできません。現時点で、{{fileExtensions}} ファイルのみがサポートされています。別のファイルを試してください。",
   "Red Hat OpenShift Lightspeed": "Red Hat OpenShift Lightspeed",
-  "Meet Openshift Lightspeed": "Openshift Lightspeed とは",
+  "Meet OpenShift Lightspeed": "OpenShift Lightspeed とは",
   "Unlock possibilities and enhance productivity with the AI-powered assistant's expert guidance in your OpenShift web console.": "OpenShift Web コンソールで AI 対応アシスタントの専門的なガイダンスを使用することで、可能性が広がり、生産性が向上します。",
   "Benefits:": "利点:",
   "Get fast answers to questions you have related to OpenShift": "OpenShift 関連の質問に対し、迅速に回答を得ることができます",
