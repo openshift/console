@@ -109,7 +109,7 @@
   "false": "假",
   "Select {{label}}": "选择 {{label}}",
   "Cluster does not have resource {{groupVersionKind}}": "集群没有资源 {{groupVersionKind}}",
-  "Ask OpenShift Lightspeed": "询问 OpenShift LightSpeed",
+  "Ask OpenShift Lightspeed": "询问 OpenShift Lightspeed",
   "Accessibility help": "无障碍访问帮助",
   "Shortcuts": "捷径",
   "View all editor shortcuts": "查看所有编辑器快捷键",
