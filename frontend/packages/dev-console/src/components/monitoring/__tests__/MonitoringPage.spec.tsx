@@ -32,7 +32,7 @@ describe('Monitoring Page ', () => {
 
   it('should render all Tabs of Monitoring page for selected project', () => {
     spyUseAccessReview.mockReturnValue(true);
-    const expectedTabs: string[] = ['Silences', 'Events'];
+    const expectedTabs: string[] = ['Events'];
 
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'test-proj',
