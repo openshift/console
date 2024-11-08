@@ -12,9 +12,10 @@ import { craftResourceKey } from '../pub-sub-utils';
 
 type PubSubSubscriberProps = {
   autoSelect?: boolean;
+  cancel?: () => void;
 };
 
-const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true }) => {
+const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, validateForm, setStatus } = useFormikContext<
     FormikValues
@@ -65,7 +66,15 @@ const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true }
           <Alert variant="custom" title={t('knative-plugin~No Subscriber available')} isInline>
             <Trans t={t} ns="knative-plugin">
               {'To create a Subscriber, first create a Knative Service from the '}
-              <Link to={`/add/ns/${namespace}`}>{'Add page'}</Link>.
+              <Link
+                to={`/add/ns/${namespace}`}
+                onClick={() => {
+                  cancel && cancel();
+                }}
+              >
+                {'Add page'}
+              </Link>
+              .
             </Trans>
           </Alert>
           &nbsp;
