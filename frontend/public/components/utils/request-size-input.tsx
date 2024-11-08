@@ -18,7 +18,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   required,
   testID,
 }) => {
-  const parsedRequestSizeValue = parseInt(defaultRequestSizeValue, 10) || 1;
+  const parsedRequestSizeValue = parseInt(defaultRequestSizeValue, 10) || 0;
   const defaultValue = Number.isFinite(parsedRequestSizeValue) ? parsedRequestSizeValue : null;
   const [unit, setUnit] = React.useState<string>(defaultRequestSizeUnit);
   const [value, setValue] = React.useState<number>(defaultValue);
