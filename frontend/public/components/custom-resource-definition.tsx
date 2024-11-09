@@ -1,16 +1,21 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { sortable, SortByDirection, TableVariant } from '@patternfly/react-table';
 import {
-  Table as PFTable,
-  TableBody as TableBodyDeprecated,
-  TableHeader as TableHeaderDeprecated,
-} from '@patternfly/react-table/deprecated';
+  sortable,
+  SortByDirection,
+  TableVariant,
+  Table as PfTable,
+  Thead,
+  Tbody,
+  Td,
+  Th,
+  Tr,
+} from '@patternfly/react-table';
 import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { useTranslation } from 'react-i18next';
 
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage, TableData, RowFunctionArgs, Table } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -42,6 +47,7 @@ import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
+
 const { common } = Kebab.factory;
 
 const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
@@ -96,56 +102,60 @@ const EmptyVersionsMsg: React.FC<{}> = () => {
 };
 
 const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
-  const [sortBy, setSortBy] = React.useState<PFSortState>({});
+  const { t } = useTranslation();
+  const [sortBy, setSortBy] = React.useState({ index: 0, direction: SortByDirection.asc });
+  const onSort = React.useCallback(
+    (_event, index, direction) => setSortBy({ index, direction }),
+    [],
+  );
+  const compare = React.useCallback(
+    (a, b) => {
+      const { index, direction } = sortBy;
+      const descending = direction === SortByDirection.desc;
+      const left = (descending ? b : a)?.[index] ?? '';
+      const right = (descending ? a : b)?.[index] ?? '';
+      return index === 0 ? apiVersionCompare(left, right) : left.localeCompare(right);
+    },
+    [sortBy],
+  );
 
-  const compare = (a, b) => {
-    const aVal = a?.[sortBy.index] ?? '';
-    const bVal = b?.[sortBy.index] ?? '';
-    return sortBy.index === 0 ? apiVersionCompare(aVal, bVal) : aVal.localeCompare(bVal);
-  };
+  const versionRows = React.useMemo(
+    () =>
+      versions
+        .map(({ name, served, storage }: CRDVersion) => [
+          name,
+          served?.toString?.(),
+          storage?.toString?.(),
+        ])
+        .sort(compare),
+    [versions, compare],
+  );
 
-  const versionRows = _.map(versions, (version: CRDVersion) => [
-    version.name,
-    version.served.toString(),
-    version.storage.toString(),
+  const headers = React.useMemo(() => [t('public~Name'), t('public~Served'), t('public~Storage')], [
+    t,
   ]);
 
-  sortBy.direction === SortByDirection.asc
-    ? versionRows.sort(compare)
-    : versionRows.sort(compare).reverse();
-
-  const onSort = (_event, index, direction) => {
-    setSortBy({ index, direction });
-  };
-
-  const { t } = useTranslation();
-  const crdVersionTableHeaders = [
-    {
-      title: t('public~Name'),
-      transforms: [sortable],
-    },
-    {
-      title: t('public~Served'),
-      transforms: [sortable],
-    },
-    {
-      title: t('public~Storage'),
-      transforms: [sortable],
-    },
-  ];
-
   return versionRows.length > 0 ? (
-    <PFTable
-      variant={TableVariant.compact}
-      aria-label={t('public~CRD versions')}
-      cells={crdVersionTableHeaders}
-      rows={versionRows}
-      onSort={onSort}
-      sortBy={sortBy}
-    >
-      <TableHeaderDeprecated />
-      <TableBodyDeprecated />
-    </PFTable>
+    <PfTable variant={TableVariant.compact} aria-label={t('public~CRD versions')}>
+      <Thead>
+        <Tr>
+          {headers.map((header, columnIndex) => (
+            <Th key={header} sort={{ sortBy, onSort, columnIndex }}>
+              {header}
+            </Th>
+          ))}
+        </Tr>
+      </Thead>
+      <Tbody>
+        {versionRows.map(([name, served, storage]) => (
+          <Tr key={name}>
+            <Td>{name}</Td>
+            <Td>{served}</Td>
+            <Td>{storage}</Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </PfTable>
   ) : (
     <EmptyVersionsMsg />
   );
@@ -339,9 +349,4 @@ CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
 
 export type CRDVersionProps = {
   versions: CRDVersion[];
-};
-
-type PFSortState = {
-  index?: number;
-  direction?: SortByDirection;
 };
