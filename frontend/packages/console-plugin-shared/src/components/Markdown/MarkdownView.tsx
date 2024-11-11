@@ -248,7 +248,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
 
   // update the iframe's content
   React.useEffect(() => {
-    if (frameRef.current.contentDocument) {
+    if (frameRef.current?.contentDocument) {
       const doc = frameRef.current.contentDocument;
       doc.open();
       doc.write(contents);
@@ -275,7 +275,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
           markup={markup}
           selector={''}
           renderExtension={renderExtension}
-          docContext={frameRef.current.contentDocument}
+          docContext={frameRef.current?.contentDocument}
         />
       )}
     </>
