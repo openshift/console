@@ -254,6 +254,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   }, [item?.obj?.status, setDeprecatedPackage]);
   const currentChannel = obj?.status.channels.find((ch) => ch.name === installChannel);
   const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations.containerImage;
+  const selectedChannelDescription = currentChannel?.currentCSVDesc.description || longDescription;
   const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations.createdAt;
   const selectedChannelCapabilityLevel =
     currentChannel?.currentCSVDesc.annotations.capabilities ?? item.capabilityLevel;
@@ -426,7 +427,11 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 authentication={authentication}
                 infrastructure={infrastructure}
               />
-              {longDescription ? <MarkdownView content={longDescription} /> : description}
+              {selectedChannelDescription ? (
+                <MarkdownView content={selectedChannelDescription} />
+              ) : (
+                description
+              )}
             </div>
           </div>
         </div>

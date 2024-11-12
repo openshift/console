@@ -113,6 +113,7 @@ export const MarkdownView: React.FC<MarkdownProps> = ({
       : content;
     return markdownConvert(truncatedContent || emptyMsg, extensions, options);
   }, [content, emptyMsg, extensions, options, truncateContent]);
+
   const innerProps: InnerSyncMarkdownProps = {
     renderExtension: extensions?.length > 0 ? renderExtension : undefined,
     exactHeight,
@@ -183,39 +184,29 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   theme,
   updateThemeClass,
 }) => {
-  const [frame, setFrame] = React.useState<HTMLIFrameElement>();
+  const frameRef = React.useRef<HTMLIFrameElement>(null);
   const [frameHeight, setFrameHeight] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
-  const htmlTagElement = frame?.contentDocument?.documentElement;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateDimensions = React.useCallback(
     _.debounce(() => {
-      if (!frame?.contentWindow?.document?.body?.firstElementChild) {
-        return;
+      if (frameRef.current?.contentWindow) {
+        setFrameHeight(
+          frameRef.current.contentWindow.document.body.firstElementChild.scrollHeight +
+            (exactHeight ? 0 : 15),
+        );
       }
-      setFrameHeight(
-        frame.contentWindow.document.body.firstElementChild.scrollHeight + (exactHeight ? 0 : 15),
-      );
     }, 100),
-    [frame, exactHeight],
+    [exactHeight],
   );
 
   const onLoad = React.useCallback(() => {
-    if (htmlTagElement && updateThemeClass) {
-      updateThemeClass(htmlTagElement, theme);
-    }
     updateDimensions();
     setLoaded(true);
-  }, [htmlTagElement, theme, updateDimensions, updateThemeClass]);
+  }, [updateDimensions]);
 
-  React.useEffect(() => {
-    if (htmlTagElement && updateThemeClass) {
-      updateThemeClass(htmlTagElement, theme);
-    }
-  }, [frame, htmlTagElement, theme, updateThemeClass]);
-
-  useResizeObserver(updateDimensions, frame);
+  useResizeObserver(updateDimensions, frameRef.current);
 
   // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
   const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
@@ -254,22 +245,37 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   }
   </style>
   <body class="pf-m-redhat-font pf-v5-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
+
+  // update the iframe's content
+  React.useEffect(() => {
+    if (frameRef.current?.contentDocument) {
+      const doc = frameRef.current.contentDocument;
+      doc.open();
+      doc.write(contents);
+      doc.close();
+
+      // adjust height for current content
+      const contentHeight = doc.body.scrollHeight;
+      setFrameHeight(contentHeight);
+      updateThemeClass(doc.documentElement, theme);
+    }
+  }, [contents, theme, updateThemeClass]);
+
   return (
     <>
       <iframe
         title={_.uniqueId('markdown-view')}
         sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
-        srcDoc={contents}
         style={{ border: '0px', display: 'block', width: '100%', height: frameHeight }}
-        ref={setFrame}
+        ref={frameRef}
         onLoad={onLoad}
       />
-      {loaded && frame && (
+      {loaded && (
         <RenderExtension
           markup={markup}
           selector={''}
           renderExtension={renderExtension}
-          docContext={frame.contentDocument}
+          docContext={frameRef.current?.contentDocument}
         />
       )}
     </>
