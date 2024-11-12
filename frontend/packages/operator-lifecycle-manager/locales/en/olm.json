@@ -372,6 +372,8 @@
   "View Operator": "View Operator",
   "The Operator is being installed. This may take a few minutes.": "The Operator is being installed. This may take a few minutes.",
   "Once the Operator is installed the required custom resource will be available for creation.": "Once the Operator is installed the required custom resource will be available for creation.",
+  "Not found": "Not found",
+  "Error: {{loadError}}": "Error: {{loadError}}",
   "Installing...": "Installing...",
   "CatalogSource": "CatalogSource",
   "No PackageManifests Found": "No PackageManifests Found",

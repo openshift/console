@@ -13,11 +13,13 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { errorModal } from '@console/internal/components/modals';
 import {
   Firehose,
   FirehoseResult,
+  LoadingInline,
   ResourceLink,
   resourcePathFromModel,
   useAccessReview,
@@ -298,6 +300,53 @@ type OperatorInstallStatusPageRouteParams = RouteParams<
   'pkg' | 'catalogNamespace' | 'currentCSV' | 'targetNamespace'
 >;
 
+const OperatorInstallLogo = ({ subscription }) => {
+  const { t } = useTranslation();
+  const notFound = t('olm~Not found');
+  const { currentCSV, catalogNamespace, pkg } = useParams<OperatorInstallStatusPageRouteParams>();
+  const [packageManifests, loaded, loadError] = useK8sWatchResource<PackageManifestKind[]>({
+    groupVersionKind: {
+      group: PackageManifestModel.apiGroup,
+      version: PackageManifestModel.apiVersion,
+      kind: PackageManifestModel.kind,
+    },
+    selector: {
+      matchLabels: {
+        'catalog-namespace': catalogNamespace,
+      },
+    },
+    fieldSelector: `metadata.name=${pkg}`,
+    isList: true,
+  });
+  const pkgManifest = packageManifests?.[0];
+  if (!loaded) {
+    return <LoadingInline />;
+  }
+
+  if (loadError || !pkgManifest) {
+    return (
+      <ClusterServiceVersionLogo
+        icon={null}
+        displayName={loadError ? t('olm~Error: {{loadError}}', { loadError }) : notFound}
+      />
+    );
+  }
+  const channels = pkgManifest?.status?.channels || [];
+  const channel = channels.find((ch) => ch.currentCSV === currentCSV) || channels[0];
+  const displayName = channel?.currentCSVDesc?.displayName || notFound;
+  const provider = pkgManifest?.status?.provider?.name || '';
+  const startingCSV = subscription?.spec?.startingCSV;
+
+  return (
+    <ClusterServiceVersionLogo
+      displayName={displayName}
+      icon={iconFor(pkgManifest)}
+      provider={provider}
+      version={startingCSV}
+    />
+  );
+};
+
 const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }) => {
   const { t } = useTranslation();
   const { currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
@@ -378,21 +427,6 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
     );
   }
 
-  const pkgManifest = resources.packageManifest.data;
-  const channels = pkgManifest.status?.channels || [];
-  const channel = channels.find((ch) => ch.currentCSV === currentCSV) || channels[0];
-  const displayName = channel?.currentCSVDesc?.displayName || '';
-  const startingCSV = resources.subscription.data?.spec?.startingCSV;
-
-  const CSVLogo = (
-    <ClusterServiceVersionLogo
-      displayName={displayName}
-      icon={iconFor(pkgManifest)}
-      provider={pkgManifest.status?.provider?.name || ''}
-      version={startingCSV}
-    />
-  );
-
   return (
     <>
       <div className="co-operator-install-page__main">
@@ -415,7 +449,9 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
               <Card>
                 <CardBody>
                   <div className="co-operator-install-page__pkg-indicator">
-                    <div>{CSVLogo}</div>
+                    <div>
+                      <OperatorInstallLogo subscription={resources.subscription.data} />
+                    </div>
                     <div>{indicator}</div>
                   </div>
                 </CardBody>
@@ -437,9 +473,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
 };
 
 export const OperatorInstallStatusPage: React.FC<OperatorInstallPageProps> = () => {
-  const { pkg, catalogNamespace, currentCSV, targetNamespace } = useParams<
-    OperatorInstallStatusPageRouteParams
-  >();
+  const { pkg, currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
 
   const installPageResources = [
     {
@@ -467,12 +501,6 @@ export const OperatorInstallStatusPage: React.FC<OperatorInstallPageProps> = () 
       isList: true,
       optional: true,
     },
-    {
-      kind: referenceForModel(PackageManifestModel),
-      namespace: catalogNamespace,
-      name: pkg,
-      prop: 'packageManifest',
-    },
   ];
 
   return (
@@ -487,7 +515,6 @@ export type OperatorInstallPageProps = {
     clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
     subscription: FirehoseResult<SubscriptionKind>;
     installPlans: FirehoseResult<InstallPlanKind[]>;
-    packageManifest: FirehoseResult<PackageManifestKind>;
   };
 };
 type InstallSuccededMessageProps = {
