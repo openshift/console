@@ -35,6 +35,11 @@ export type DetailsItem = ExtensionDeclaration<
     title: string;
 
     /**
+     * An optional description that will appear in the title popover.
+     */
+    description?: string;
+
+    /**
      * An optional, fully-qualified path to a resource property to used as the details item
      * value. Only [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)
      * values can be rendered directly. Use the component property to handle other data types.

@@ -12,7 +12,11 @@ import {
   NotificationCategory,
   NotificationTypes,
 } from '@console/patternfly';
-import { isNotLoadedDynamicPluginInfo } from '@console/plugin-sdk';
+import {
+  isNotLoadedDynamicPluginInfo,
+  useDynamicPluginInfo,
+  DynamicPluginInfo,
+} from '@console/plugin-sdk';
 import {
   alertingErrored,
   alertingLoaded,
@@ -73,7 +77,6 @@ import {
   splitClusterVersionChannel,
   VersionUpdate,
 } from '../module/k8s';
-import { pluginStore } from '../plugins';
 import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
@@ -142,6 +145,7 @@ export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction
 const getUpdateNotificationEntries = (
   canUpgrade: boolean,
   cv: ClusterVersionKind,
+  pluginInfoEntries: DynamicPluginInfo[],
   toggleNotificationDrawer: () => void,
 ): React.ReactNode[] => {
   if (!cv || !canUpgrade) {
@@ -155,8 +159,7 @@ const getUpdateNotificationEntries = (
   const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
   const entries = [];
 
-  const dynamicPluginInfo = pluginStore.getDynamicPluginInfo();
-  const failedPlugins = dynamicPluginInfo
+  const failedPlugins = pluginInfoEntries
     .filter(isNotLoadedDynamicPluginInfo)
     .filter((plugin) => plugin.status === 'Failed');
 
@@ -237,6 +240,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const dispatch = useDispatch();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
+  const [pluginInfoEntries] = useDynamicPluginInfo();
 
   React.useEffect(() => {
     const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
@@ -328,6 +332,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
     canUpgrade,
     clusterVersion,
+    pluginInfoEntries,
     toggleNotificationDrawer,
   );
 
@@ -520,4 +525,5 @@ type AlertAccumulator = [Alert[], Alert[]];
 const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
   toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,
 });
+
 export const ConnectedNotificationDrawer = connectToNotifications(ConnectedNotificationDrawer_);

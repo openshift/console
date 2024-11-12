@@ -32,6 +32,13 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
     ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
   ]);
 
+export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
+  i?.status === 'Loaded';
+
+export const isNotLoadedDynamicPluginInfo = (
+  i: DynamicPluginInfo,
+): i is NotLoadedDynamicPluginInfo => i.status === 'Failed' || i.status === 'Pending';
+
 /**
  * Provides access to Console plugins and their extensions.
  *
@@ -291,6 +298,18 @@ export class PluginStore {
     return [...loadedPluginEntries, ...failedPluginEntries, ...pendingPluginEntries];
   }
 
+  findDynamicPluginInfo(pluginName: string): DynamicPluginInfo {
+    return this.getDynamicPluginInfo().find((entry) =>
+      isLoadedDynamicPluginInfo(entry)
+        ? entry.metadata.name === pluginName
+        : entry.pluginName === pluginName,
+    );
+  }
+
+  getDynamicPluginManifest(pluginName: string): DynamicPluginManifest {
+    return this.getLoadedDynamicPlugin(pluginName)?.manifest;
+  }
+
   getStateForTestPurposes() {
     return {
       staticPluginExtensions: this.staticPluginExtensions,
@@ -355,10 +374,3 @@ export type NotLoadedDynamicPluginInfo =
     };
 
 export type DynamicPluginInfo = LoadedDynamicPluginInfo | NotLoadedDynamicPluginInfo;
-
-export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
-  i.status === 'Loaded';
-
-export const isNotLoadedDynamicPluginInfo = (
-  i: DynamicPluginInfo,
-): i is NotLoadedDynamicPluginInfo => i.status === 'Failed' || i.status === 'Pending';

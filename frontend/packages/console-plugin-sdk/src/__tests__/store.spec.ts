@@ -1086,7 +1086,7 @@ describe('PluginStore', () => {
   });
 
   describe('getDynamicPluginInfo', () => {
-    it('returns plugin runtime information for all known dynamic plugins', () => {
+    it('returns runtime information for all known dynamic plugins', () => {
       const store = new PluginStore([], ['TestA', 'TestB']);
 
       const manifest = getPluginManifest('TestA', '1.2.3', [{ type: 'Foo', properties: {} }]);
@@ -1132,7 +1132,7 @@ describe('PluginStore', () => {
         },
       ]);
 
-      store.registerFailedDynamicPlugin('TestB', 'Test error message', new Error('Boom'));
+      store.setCustomDynamicPluginInfo('TestA', { hasCSPViolations: true });
 
       expect(store.getDynamicPluginInfo()).toEqual([
         {
@@ -1140,16 +1140,15 @@ describe('PluginStore', () => {
           pluginID: 'TestA@1.2.3',
           metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: true,
+          hasCSPViolations: true,
         },
         {
-          status: 'Failed',
+          status: 'Pending',
           pluginName: 'TestB',
-          errorMessage: 'Test error message',
-          errorCause: new Error('Boom'),
         },
       ]);
 
-      store.setCustomDynamicPluginInfo('TestA', { hasCSPViolations: true });
+      store.registerFailedDynamicPlugin('TestB', 'Test error message', new Error('Boom'));
 
       expect(store.getDynamicPluginInfo()).toEqual([
         {
@@ -1166,6 +1165,91 @@ describe('PluginStore', () => {
           errorCause: new Error('Boom'),
         },
       ]);
+    });
+  });
+
+  describe('findDynamicPluginInfo', () => {
+    it('returns runtime information for a dynamic plugin with the given name', () => {
+      const store = new PluginStore([], ['TestA', 'TestB']);
+
+      const manifest = getPluginManifest('TestA', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      expect(store.findDynamicPluginInfo('TestA')).toEqual({
+        status: 'Pending',
+        pluginName: 'TestA',
+      });
+
+      addDynamicPluginToStore(store, manifest);
+
+      expect(store.findDynamicPluginInfo('TestA')).toEqual({
+        status: 'Loaded',
+        pluginID: 'TestA@1.2.3',
+        metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
+        enabled: false,
+      });
+
+      store.setDynamicPluginEnabled('TestA@1.2.3', true);
+
+      expect(store.findDynamicPluginInfo('TestA')).toEqual({
+        status: 'Loaded',
+        pluginID: 'TestA@1.2.3',
+        metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
+        enabled: true,
+      });
+
+      store.setCustomDynamicPluginInfo('TestA', { hasCSPViolations: true });
+
+      expect(store.findDynamicPluginInfo('TestA')).toEqual({
+        status: 'Loaded',
+        pluginID: 'TestA@1.2.3',
+        metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
+        enabled: true,
+        hasCSPViolations: true,
+      });
+
+      store.registerFailedDynamicPlugin('TestB', 'Test error message', new Error('Boom'));
+
+      expect(store.findDynamicPluginInfo('TestB')).toEqual({
+        status: 'Failed',
+        pluginName: 'TestB',
+        errorMessage: 'Test error message',
+        errorCause: new Error('Boom'),
+      });
+    });
+
+    it('returns the same runtime information as getDynamicPluginInfo', () => {
+      const store = new PluginStore([], ['TestA', 'TestB']);
+
+      const manifest = getPluginManifest('TestA', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      addDynamicPluginToStore(store, manifest);
+
+      store.setDynamicPluginEnabled('TestA@1.2.3', true);
+      store.setCustomDynamicPluginInfo('TestA', { hasCSPViolations: true });
+      store.registerFailedDynamicPlugin('TestB', 'Test error message', new Error('Boom'));
+
+      expect(store.findDynamicPluginInfo('TestA')).toEqual(store.getDynamicPluginInfo()[0]);
+      expect(store.findDynamicPluginInfo('TestB')).toEqual(store.getDynamicPluginInfo()[1]);
+    });
+
+    it('returns undefined if the plugin is not known', () => {
+      const store = new PluginStore([], ['TestA', 'TestB']);
+
+      expect(store.findDynamicPluginInfo('TestC')).toBe(undefined);
+    });
+  });
+
+  describe('getDynamicPluginManifest', () => {
+    it('returns the manifest of a loaded dynamic plugin', () => {
+      const store = new PluginStore([], ['TestA', 'TestB']);
+
+      const manifest = getPluginManifest('TestA', '1.2.3', [{ type: 'Foo', properties: {} }]);
+
+      addDynamicPluginToStore(store, manifest);
+
+      expect(store.getDynamicPluginManifest('TestA')).toEqual(manifest);
+      expect(store.getDynamicPluginManifest('TestB')).toEqual(undefined);
+      expect(store.getDynamicPluginManifest('TestC')).toEqual(undefined);
     });
   });
 });

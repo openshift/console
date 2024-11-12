@@ -50,7 +50,14 @@
       "nodeStatus": "src/components/nodes/status",
       "nodeActions": "src/components/nodes/menu-actions.tsx",
       "oauthConfigDetailsPage": "src/components/oauth-config/OAuthConfigDetailsPage.tsx",
-      "multiNetworkFlag": "src/components/network-policies/multi-network-policy/multiNetworkFlag.ts"
+      "multiNetworkFlag": "src/components/network-policies/multi-network-policy/multiNetworkFlag.ts",
+      "consolePluginDescriptionDetail": "src/components/console-operator/ConsolePluginDescriptionDetail",
+      "consolePluginVersionDetail": "src/components/console-operator/ConsolePluginVersionDetail",
+      "consolePluginStatusDetail": "src/components/console-operator/ConsolePluginStatusDetail",
+      "consolePluginEnabledStatusDetail": "src/components/console-operator/ConsolePluginEnabledStatusDetail",
+      "consolePluginCSPStatusDetail": "src/components/console-operator/ConsolePluginCSPStatusDetail",
+      "consolePluginBackendDetail": "src/components/console-operator/ConsolePluginBackendDetail",
+      "consolePluginProxyDetail": "src/components/console-operator/ConsolePluginProxyDetail"
     }
   }
 }

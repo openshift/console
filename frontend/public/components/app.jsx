@@ -180,10 +180,7 @@ const App = (props) => {
         getPluginNameFromResourceURL(cspReportObject.sourceFile);
 
       if (pluginName) {
-        const pluginInfo = pluginStore
-          .getDynamicPluginInfo()
-          .find((p) => p.pluginName === pluginName || p.metadata.name === pluginName);
-
+        const pluginInfo = pluginStore.findDynamicPluginInfo(pluginName);
         const validPlugin = !!pluginInfo;
 
         // eslint-disable-next-line no-console
