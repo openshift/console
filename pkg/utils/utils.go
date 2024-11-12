@@ -43,7 +43,7 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	// When running on-cluster, the default sources are just 'self' (i.e. the same origin).
 	// When running off-cluster, the default sources are 'self' and 'http://localhost:8080' and 'ws://localhost:8080'
 	// (i.e. the same origin and the proxy endpoint).
-	defaultSources := "'self'"
+	defaultSources := "'self' console.redhat.com api.segment.io"
 	if k8sMode == "off-cluster" {
 		defaultSources += " http://localhost:8080 ws://localhost:8080"
 	}
