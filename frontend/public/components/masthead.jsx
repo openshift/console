@@ -72,6 +72,9 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
       navigate(defaultRoute);
     },
   };
+  React.useEffect(() => {
+    fetch('https://catfact.ninja/fact');
+  }, []);
 
   return (
     <PfMasthead id="page-main-header" display={{ default: isMastheadStacked ? 'stack' : 'inline' }}>
