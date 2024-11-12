@@ -456,6 +456,15 @@ To launch the server using the built image, you can run:
 docker run -p 8081:8081 downloadsserver:latest
 ```
 
+## ContentSecurityViolation Detection
+
+The console app includes code which automatically reports CSP violoations to telemetry. This
+detection and reporting logic tries to parse a dynamic plugin name from the securitypolicyviolation
+event to include in the data reported to telemetry. If we are unable to determine a plugin name in
+this way, then 'none' will be used. We also throttle violation reporting In order to prevent
+spamming our  telemetry service with repetitive data. This means identical violations will not be
+reported more than once per day.
+
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
 [[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)
