@@ -132,17 +132,15 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
 
   const dataDescriptionList = React.useMemo(() => {
     const descriptionList = [];
-    let revealable = false;
 
     Object.keys(data || {})
       .sort()
       .forEach((k) => {
         const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
-        if (!isBinary) {
-          revealable = true;
-        }
 
-        setHasRevealableContent(hasRevealableContent || !isBinary);
+        if (!isBinary) {
+          setHasRevealableContent(hasRevealableContent || !isBinary);
+        }
         descriptionList.push(
           <dt i18n-not-translated="true" key={`${k}-k`} data-test="secret-data-term">
             {k}
@@ -158,10 +156,6 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
           </dd>,
         );
       });
-
-    if (revealable) {
-      setHasRevealableContent(revealable);
-    }
 
     return descriptionList;
   }, [data, reveal]);
