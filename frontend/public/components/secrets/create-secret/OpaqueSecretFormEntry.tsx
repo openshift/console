@@ -5,38 +5,40 @@ import { DroppableFileInput } from '.';
 export const OpaqueSecretFormEntry: React.FC<KeyValueEntryFormProps> = ({
   onChange,
   entry,
-  id,
+  index,
 }) => {
   const [state, setState] = React.useState<KeyValueEntryFormState>(entry);
   const { t } = useTranslation();
 
   const onValueChange = (fileData, isBinary) => {
-    setState({
+    setState((prevState) => ({
+      ...prevState,
       value: fileData,
       isBinary,
-      ...state,
-    });
-    onChange(state, id);
+    }));
   };
 
   const onKeyChange = (event) => {
-    setState({
+    setState((prevState) => ({
+      ...prevState,
       key: event.target.value,
-      ...state,
-    });
-
-    onChange(state, id);
+    }));
   };
+
+  React.useEffect(() => {
+    onChange(state, index);
+  }, [state]);
+
   return (
     <div className="co-create-generic-secret__form">
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${id}-key`}>
+        <label className="control-label co-required" htmlFor={`${index}-key`}>
           {t('public~Key')}
         </label>
         <div>
           <input
             className="pf-v5-c-form-control"
-            id={`${id}-key`}
+            id={`${index}-key`}
             type="text"
             name="key"
             onChange={onKeyChange}
@@ -51,7 +53,7 @@ export const OpaqueSecretFormEntry: React.FC<KeyValueEntryFormProps> = ({
           <DroppableFileInput
             onChange={onValueChange}
             inputFileData={state.value}
-            id={`${id}-value`}
+            id={`${index}-value`}
             label={t('public~Value')}
             inputFieldHelpText={t(
               'public~Drag and drop file with your value here or browse to upload it.',
@@ -69,10 +71,11 @@ export type KeyValueEntryFormState = {
   isBinary?: boolean;
   key: string;
   value: string;
+  uid: string;
 };
 
 export type KeyValueEntryFormProps = {
   entry: KeyValueEntryFormState;
-  id: number;
+  index: number;
   onChange: Function;
 };
