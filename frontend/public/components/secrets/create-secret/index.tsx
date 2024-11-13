@@ -6,7 +6,7 @@ export * from './BasicAuthSubform';
 export * from './CreateSecret';
 export * from './DropableFileInput';
 export * from './EditSecret';
-export * from './GenericSecretForm';
+export * from './OpaqueSecretForm';
 export * from './OpaqueSecretFormEntry';
 export * from './PullSecretCredentialEntry';
 export * from './PullSecretCredentialsForm';
