@@ -26,6 +26,9 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
   }
   readFile(file) {
     const { t } = this.props;
+    if (!file) {
+      return;
+    }
     if (file.size > maxFileUploadSize) {
       this.props.onChange({
         errorMessage: t('public~Maximum file size exceeded. File limit is 4MB.'),
