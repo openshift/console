@@ -22,7 +22,6 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
-	consolev1 "github.com/openshift/api/console/v1"
 	operatorv1 "github.com/openshift/api/operator/v1"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
@@ -41,7 +40,7 @@ import (
 	"github.com/openshift/console/pkg/terminal"
 	"github.com/openshift/console/pkg/usage"
 	"github.com/openshift/console/pkg/usersettings"
-	consoleUtils "github.com/openshift/console/pkg/utils"
+	"github.com/openshift/console/pkg/utils"
 	"github.com/openshift/console/pkg/version"
 
 	graphql "github.com/graph-gophers/graphql-go"
@@ -671,85 +670,24 @@ func (s *Server) handleKnativeChannelCRDs(w http.ResponseWriter, r *http.Request
 	s.KnativeChannelCRDLister.HandleResources(w, r)
 }
 
-// buildCSPDirectives takes the content security policy configuration from the server and constructs
-// a complete set of directives for the Content-Security-Policy-Report-Only header.
-// The constructed directives will include the default sources and the supplied configuration.
-// buildCSPDirectives takes the content security policy configuration from the server and constructs
-// a complete set of directives for the Content-Security-Policy-Report-Only header.
-// The constructed directives will include the default sources and the supplied configuration.
-func (s *Server) buildCSPDirectives() ([]string, error) {
-	// The default sources are the sources that are allowed for all directives.
-	// When running on-cluster, the default sources are just 'self' (i.e. the same origin).
-	// When running off-cluster, the default sources are 'self' and 'http://localhost:8080' and 'ws://localhost:8080'
-	// (i.e. the same origin and the proxy endpoint).
-	defaultSources := "'self'"
-	if s.K8sMode == "off-cluster" {
-		defaultSources += " http://localhost:8080 ws://localhost:8080"
-	}
-
-	// The newCSPDirectives map is used to store the directives for each type.
-	// The keys are the types of directives (e.g. DefaultSrc, ImgSrc, etc) and the values are the sources for each type.
-	// The sources are strings that are concatenated together with a space separator.
-	newCSPDirectives := map[consolev1.DirectiveType][]string{
-		consolev1.DefaultSrc: {defaultSources},
-		consolev1.ImgSrc:     {defaultSources},
-		consolev1.FontSrc:    {defaultSources},
-		consolev1.ScriptSrc:  {defaultSources},
-		consolev1.StyleSrc:   {defaultSources},
-	}
-
-	// If the plugins are providing a content security policy configuration, parse it and add it to the directives map.
-	// The configuration is a string that is parsed into a map of directive types to sources.
-	// The sources are added to the existing sources for each type.
-	if s.ContentSecurityPolicy != "" {
-		var err error
-		parsedCSP, err := plugins.ParseContentSecurityPolicyConfig(s.ContentSecurityPolicy)
-		if err != nil {
-			return nil, err
-		}
-		for cspType, csp := range *parsedCSP {
-			newCSPDirectives[cspType] = append(newCSPDirectives[cspType], csp...)
-		}
-	}
-
-	indexPageScriptNonce, err := consoleUtils.RandomString(32)
-	if err != nil {
-		panic(err)
-	}
-
-	// Construct the CSP directives string from the newCSPDirectives map.
-	// The string is a space-separated list of directives, where each directive is a string
-	// of the form "<directive-type> <sources>".
-	// The sources are concatenated together with a space separator.
-	// The CSP directives string is returned as a slice of strings, where each string is a directive.
-	cspDirectives := []string{
-		fmt.Sprintf("base-uri %s", defaultSources),
-		fmt.Sprintf("default-src %s", strings.Join(newCSPDirectives[consolev1.DefaultSrc], " ")),
-		fmt.Sprintf("img-src %s data:", strings.Join(newCSPDirectives[consolev1.ImgSrc], " ")),
-		fmt.Sprintf("font-src %s data:", strings.Join(newCSPDirectives[consolev1.FontSrc], " ")),
-		fmt.Sprintf("script-src %s 'unsafe-eval' 'nonce-%s'", strings.Join(newCSPDirectives[consolev1.ScriptSrc], " "), indexPageScriptNonce),
-		fmt.Sprintf("style-src %s 'unsafe-inline'", strings.Join(newCSPDirectives[consolev1.StyleSrc], " ")),
-		"frame-src 'none'",
-		"frame-ancestors 'none'",
-		"object-src 'none'",
-	}
-
-	return cspDirectives, nil
-}
-
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if serverutils.IsUnsupportedBrowser(r) {
 		serverutils.SendUnsupportedBrowserResponse(w, s.Branding)
 		return
 	}
 
-	cspDirectives, err := s.buildCSPDirectives()
+	indexPageScriptNonce, err := utils.RandomString(32)
+	if err != nil {
+		panic(err)
+	}
+
+	contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
 	if err != nil {
 		klog.Fatalf("Error building Content Security Policy directives: %s", err)
 		os.Exit(1)
 	}
 
-	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
+	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(contentSecurityPolicy, "; "))
 
 	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
 	for plugin := range s.EnabledConsolePlugins {

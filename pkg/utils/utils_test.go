@@ -1,27 +1,61 @@
-package server
+package utils
 
 import (
 	"reflect"
 	"testing"
 )
 
+func TestParseContentSecurityPolicyConfig(t *testing.T) {
+	tests := []struct {
+		name    string
+		csp     string
+		wantErr bool
+	}{
+		{
+			name:    "empty string",
+			csp:     `{}`,
+			wantErr: false,
+		},
+		{
+			name:    "valid CSP",
+			csp:     `{"DefaultSrc": ["foo.bar.default"], "ScriptSrc": ["foo.bar.script"]}`,
+			wantErr: false,
+		},
+		{
+			name:    "invalid CSP",
+			csp:     `{"InvalidSrc": ["foo.bar"]}`,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := ParseContentSecurityPolicyConfig(tt.csp)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseContentSecurityPolicyConfig() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestBuildCSPDirectives(t *testing.T) {
 	tests := []struct {
 		name                  string
 		k8sMode               string
 		contentSecurityPolicy string
+		indexPageScriptNonce  string
 		want                  []string
 	}{
 		{
 			name:                  "on-cluster",
 			k8sMode:               "on-cluster",
 			contentSecurityPolicy: "",
+			indexPageScriptNonce:  "foobar",
 			want: []string{
 				"base-uri 'self'",
 				"default-src 'self'",
 				"img-src 'self' data:",
 				"font-src 'self' data:",
-				"script-src 'self' 'unsafe-eval'",
+				"script-src 'self' 'unsafe-eval' 'nonce-foobar'",
 				"style-src 'self' 'unsafe-inline'",
 				"frame-src 'none'",
 				"frame-ancestors 'none'",
@@ -32,12 +66,13 @@ func TestBuildCSPDirectives(t *testing.T) {
 			name:                  "off-cluster",
 			k8sMode:               "off-cluster",
 			contentSecurityPolicy: "",
+			indexPageScriptNonce:  "foobar",
 			want: []string{
 				"base-uri 'self' http://localhost:8080 ws://localhost:8080",
 				"default-src 'self' http://localhost:8080 ws://localhost:8080",
 				"img-src 'self' http://localhost:8080 ws://localhost:8080 data:",
 				"font-src 'self' http://localhost:8080 ws://localhost:8080 data:",
-				"script-src 'self' http://localhost:8080 ws://localhost:8080 'unsafe-eval'",
+				"script-src 'self' http://localhost:8080 ws://localhost:8080 'unsafe-eval' 'nonce-foobar'",
 				"style-src 'self' http://localhost:8080 ws://localhost:8080 'unsafe-inline'",
 				"frame-src 'none'",
 				"frame-ancestors 'none'",
@@ -45,8 +80,9 @@ func TestBuildCSPDirectives(t *testing.T) {
 			},
 		},
 		{
-			name:    "on-cluster with config",
-			k8sMode: "on-cluster",
+			name:                 "on-cluster with config",
+			k8sMode:              "on-cluster",
+			indexPageScriptNonce: "foobar",
 			contentSecurityPolicy: `
 				{
 					"DefaultSrc": ["foo.bar"],
@@ -61,7 +97,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 				"default-src 'self' foo.bar",
 				"img-src 'self' foo.bar.baz data:",
 				"font-src 'self' foo.bar.baz data:",
-				"script-src 'self' foo.bar foo.bar.baz 'unsafe-eval'",
+				"script-src 'self' foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				"style-src 'self' foo.bar foo.bar.baz 'unsafe-inline'",
 				"frame-src 'none'",
 				"frame-ancestors 'none'",
@@ -69,8 +105,9 @@ func TestBuildCSPDirectives(t *testing.T) {
 			},
 		},
 		{
-			name:    "off-cluster with config",
-			k8sMode: "off-cluster",
+			name:                 "off-cluster with config",
+			k8sMode:              "off-cluster",
+			indexPageScriptNonce: "foobar",
 			contentSecurityPolicy: `
 				{
 					"DefaultSrc": ["foo.bar"],
@@ -85,7 +122,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 				"default-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar",
 				"img-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar.baz data:",
 				"font-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar.baz data:",
-				"script-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar foo.bar.baz 'unsafe-eval'",
+				"script-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				"style-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar foo.bar.baz 'unsafe-inline'",
 				"frame-src 'none'",
 				"frame-ancestors 'none'",
@@ -96,12 +133,8 @@ func TestBuildCSPDirectives(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Server{
-				K8sMode:               tt.k8sMode,
-				ContentSecurityPolicy: tt.contentSecurityPolicy,
-			}
 
-			got, err := s.buildCSPDirectives()
+			got, err := BuildCSPDirectives(tt.k8sMode, tt.contentSecurityPolicy, tt.indexPageScriptNonce)
 			if err != nil {
 				t.Fatalf("buildCSPDirectives() error = %v", err)
 			}

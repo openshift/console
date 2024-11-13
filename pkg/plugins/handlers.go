@@ -13,8 +13,6 @@ import (
 
 	"k8s.io/klog/v2"
 
-	v1 "github.com/openshift/api/console/v1"
-
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverconfig"
 	"github.com/openshift/console/pkg/serverutils"
@@ -62,44 +60,6 @@ func ParsePluginProxyConfig(proxyConfig string) (*serverconfig.Proxy, error) {
 		return nil, fmt.Errorf(errMsg)
 	}
 	return pluginProxy, nil
-}
-
-func ParseContentSecurityPolicyConfig(csp string) (*map[v1.DirectiveType][]string, error) {
-	parsedCSP := &map[v1.DirectiveType][]string{}
-	err := json.Unmarshal([]byte(csp), parsedCSP)
-	if err != nil {
-		errMsg := fmt.Sprintf("Error unmarshaling ConsoleConfig contentSecurityPolicy field: %v", err)
-		klog.Error(errMsg)
-		return nil, fmt.Errorf(errMsg)
-	}
-
-	// Validate the keys to ensure they are all valid DirectiveTypes
-	for key := range *parsedCSP {
-		// Check if the key is a valid DirectiveType
-		if !isValidDirectiveType(key) {
-			return nil, fmt.Errorf("invalid CSP directive: %v", key)
-		}
-	}
-
-	return parsedCSP, nil
-}
-
-// Helper function to validate DirectiveTypes
-func isValidDirectiveType(d v1.DirectiveType) bool {
-	validTypes := []v1.DirectiveType{
-		v1.DefaultSrc,
-		v1.ScriptSrc,
-		v1.StyleSrc,
-		v1.ImgSrc,
-		v1.FontSrc,
-	}
-
-	for _, validType := range validTypes {
-		if d == validType {
-			return true
-		}
-	}
-	return false
 }
 
 func GetPluginProxyServiceHandlers(proxyConfig *serverconfig.Proxy, defaultTLSConfig *tls.Config, pluginProxyEndpoint string) ([]*PluginsProxyServiceHandler, error) {
