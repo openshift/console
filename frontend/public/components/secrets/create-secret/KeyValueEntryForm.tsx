@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
-import { DroppableFileInput } from '.';
+import { DroppableFileInput, KeyValueEntryFormState, KeyValueEntryFormProps } from '.';
 
 export class KeyValueEntryFormWithTranslation extends React.Component<
   KeyValueEntryFormProps & WithT,
@@ -75,16 +75,3 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
 }
 
 export const KeyValueEntryForm = withTranslation()(KeyValueEntryFormWithTranslation);
-
-export type KeyValueEntryFormState = {
-  isBase64?: boolean;
-  isBinary?: boolean;
-  key: string;
-  value: string;
-};
-
-export type KeyValueEntryFormProps = {
-  entry: KeyValueEntryFormState;
-  id: number;
-  onChange: Function;
-};

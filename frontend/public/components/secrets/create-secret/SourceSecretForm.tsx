@@ -3,6 +3,7 @@ import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { Dropdown } from '../../utils';
 import { SecretType, BasicAuthSubform, SSHAuthSubform } from '.';
+import { SecretStringData } from './types';
 
 class SourceSecretFormWithTranslation extends React.Component<
   SourceSecretFormProps & WithT,
@@ -72,17 +73,13 @@ export const SourceSecretForm = withTranslation()(SourceSecretFormWithTranslatio
 
 type SourceSecretFormState = {
   type: SecretType;
-  stringData: {
-    [key: string]: string;
-  };
+  stringData: SecretStringData;
   authType: SecretType.basicAuth | SecretType.sshAuth;
 };
 
 type SourceSecretFormProps = {
   onChange: Function;
-  stringData: {
-    [key: string]: string;
-  };
+  stringData: SecretStringData;
   secretType: SecretType;
   isCreate: boolean;
 };

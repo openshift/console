@@ -5,9 +5,8 @@ import {
   PullSecretForm,
   WebHookSecretForm,
   GenericSecretForm,
-  SecretType,
+  SecretSubFormProps,
 } from '.';
-import { SecretChangeData, SecretStringData } from './types';
 
 export const SecretSubForm: React.FC<WithTypeAbstraction<SecretSubFormProps>> = ({
   typeAbstraction,
@@ -27,12 +26,4 @@ export const SecretSubForm: React.FC<WithTypeAbstraction<SecretSubFormProps>> = 
 
 type WithTypeAbstraction<T> = T & {
   typeAbstraction: SecretTypeAbstraction;
-};
-export type SecretSubFormProps = {
-  onChange: (stringData: SecretChangeData) => void;
-  onError: (error: any) => void;
-  onFormDisable: (disable: boolean) => void;
-  stringData: SecretStringData;
-  secretType: SecretType;
-  isCreate: boolean;
 };
