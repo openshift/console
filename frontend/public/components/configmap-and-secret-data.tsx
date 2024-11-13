@@ -37,7 +37,6 @@ const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, valu
       type="button"
       onClick={() => downloadBinary(label, value)}
       variant="link"
-      data-test="download-binary"
     >
       {t('public~Save file')}
     </Button>
@@ -131,33 +130,32 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
   const { t } = useTranslation();
 
   const dataDescriptionList = React.useMemo(() => {
-    const descriptionList = [];
-
-    Object.keys(data || {})
-      .sort()
-      .forEach((k) => {
-        const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
-
-        if (!isBinary) {
-          setHasRevealableContent(hasRevealableContent || !isBinary);
-        }
-        descriptionList.push(
-          <dt i18n-not-translated="true" key={`${k}-k`} data-test="secret-data-term">
-            {k}
-          </dt>,
-        );
-        descriptionList.push(
-          <dd key={`${k}-v`}>
-            {isBinary ? (
-              <DownloadBinaryButton label={k} value={data[k]} />
-            ) : (
-              <SecretValue value={data[k]} reveal={reveal} id={k} />
-            )}
-          </dd>,
-        );
-      });
-
-    return descriptionList;
+    return data
+      ? Object.keys(data)
+          .sort()
+          .map((k) => {
+            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+            if (!isBinary) {
+              if (data[k]) {
+                setHasRevealableContent(hasRevealableContent || !isBinary);
+              }
+            }
+            return (
+              <React.Fragment key={k}>
+                <dt i18n-not-translated="true" data-test="secret-data-term">
+                  {k}
+                </dt>
+                <dd>
+                  {isBinary ? (
+                    <DownloadBinaryButton label={k} value={data[k]} />
+                  ) : (
+                    <SecretValue value={data[k]} reveal={reveal} id={k} />
+                  )}
+                </dd>
+              </React.Fragment>
+            );
+          })
+      : [];
   }, [data, reveal]);
 
   return (
