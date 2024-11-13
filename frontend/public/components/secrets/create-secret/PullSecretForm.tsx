@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dropdown } from '../../utils';
-import { PullSecretCredentialsForm, PullSecretUploadForm, SecretSubFormProps } from '.';
+import { Dropdown } from '../../utils/dropdown';
+import { PullSecretCredentialsForm } from './PullSecretCredentialsForm';
+import { PullSecretUploadForm } from './PullSecretUploadForm';
+import { SecretSubFormProps } from './types';
 
 export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,

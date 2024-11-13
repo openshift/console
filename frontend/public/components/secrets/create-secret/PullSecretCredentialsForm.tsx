@@ -3,16 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
+import { SecretStringData, SecretType, OnSecretChange } from './types';
 import {
-  PullSecretCredentialEntry,
   arrayifyPullSecret,
   getPullSecretFileName,
   stringifyPullSecret,
-  SecretChangeData,
-  SecretStringData,
-  SecretType,
   newPullSecretCredential,
-} from '.';
+} from './utils';
 
 export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
   onChange,
@@ -27,7 +25,7 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
 
   React.useEffect(() => {
     const newPullSecretJSON = stringifyPullSecret(entries, secretType);
-    if (newPullSecretJSON !== pullSecretJSON) {
+    if (newPullSecretJSON && newPullSecretJSON !== pullSecretJSON) {
       onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });
     }
   }, [entries, onChange, pullSecretFileName, pullSecretJSON, secretType]);
@@ -86,17 +84,8 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   );
 };
 
-export type PullSecretCredential = {
-  address: string;
-  username: string;
-  password: string;
-  email: string;
-  auth?: string;
-  uid: string;
-};
-
 type PullSecretCredentialsFormProps = {
-  onChange: (stringData: SecretChangeData) => void;
+  onChange: OnSecretChange;
   stringData: SecretStringData;
   onError: (error: any) => void;
   secretType: SecretType;

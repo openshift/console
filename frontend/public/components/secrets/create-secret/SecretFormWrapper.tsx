@@ -6,10 +6,12 @@ import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
-import { ButtonBar, PageHeading, resourceObjPath } from '../../utils';
+import { ButtonBar } from '../../utils/button-bar';
+import { PageHeading } from '../../utils/headings';
+import { resourceObjPath } from '../../utils/resource-link';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../factory/modal';
 import { SecretModel } from '../../../models';
-import { SecretTypeAbstraction } from './const';
+import { SecretTypeAbstraction } from './types';
 import {
   toDefaultSecretType,
   determineSecretType,

@@ -6,8 +6,8 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import * as ITOB from 'istextorbinary';
-import { KeyValueEntryFormState, SecretSubFormProps } from './types';
+import * as ITOB from 'istextorbinary/edition-es2017';
+import { KeyValueEntry, SecretSubFormProps } from './types';
 import { KeyValueEntryForm } from './KeyValueEntryForm';
 
 class GenericSecretFormWithTranslation extends React.Component<
@@ -143,7 +143,7 @@ export const GenericSecretForm = withTranslation()(GenericSecretFormWithTranslat
 
 type GenericSecretFormState = {
   secretEntriesArray: {
-    entry: KeyValueEntryFormState;
+    entry: KeyValueEntry;
     uid: string;
   }[];
 };

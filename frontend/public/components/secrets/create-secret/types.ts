@@ -32,15 +32,18 @@ export type SecretStringData = { [key: string]: string };
 
 export type OnSecretChange = (stringData: SecretChangeData) => void;
 
-export type KeyValueEntryFormState = {
+export type PullSecretCredential = {
+  address: string;
+  username: string;
+  password: string;
+  email: string;
+  auth?: string;
+  uid: string;
+};
+
+export type KeyValueEntry = {
   isBase64?: boolean;
   isBinary?: boolean;
   key: string;
   value: string;
-};
-
-export type KeyValueEntryFormProps = {
-  entry: KeyValueEntryFormState;
-  id: number;
-  onChange: Function;
 };

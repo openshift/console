@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
-import { SecretTypeAbstraction } from './const';
+import { SecretTypeAbstraction } from './types';
 import { SecretFormWrapper } from './SecretFormWrapper';
 
 export const CreateSecret = () => {

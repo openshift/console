@@ -2,8 +2,9 @@ import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { Dropdown } from '../../utils';
-import { SecretType, BasicAuthSubform, SSHAuthSubform, SecretSubFormProps } from '.';
-import { SecretStringData } from './types';
+import { BasicAuthSubform } from './BasicAuthSubform';
+import { SSHAuthSubform } from './SSHAuthSubform';
+import { SecretStringData, SecretType, SecretSubFormProps } from './types';
 
 class SourceSecretFormWithTranslation extends React.Component<
   SecretSubFormProps & WithT,

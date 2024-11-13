@@ -1,13 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  AUTHS_KEY,
-  DroppableFileInput,
-  getPullSecretFileName,
-  SecretChangeData,
-  SecretStringData,
-  SecretType,
-} from '.';
+import { OnSecretChange, SecretStringData, SecretType } from './types';
+import { AUTHS_KEY } from './const';
+import { DroppableFileInput } from './DropableFileInput';
+import { getPullSecretFileName } from './utils';
 
 export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   onChange,
@@ -65,7 +61,7 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
 };
 
 type PullSecretUploadFormProps = {
-  onChange: (stringData: SecretChangeData) => void;
+  onChange: OnSecretChange;
   stringData: SecretStringData;
   secretType: SecretType;
   onFormDisable?: (disable: boolean) => void;
