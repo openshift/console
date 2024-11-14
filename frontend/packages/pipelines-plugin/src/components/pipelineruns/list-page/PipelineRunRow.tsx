@@ -10,7 +10,7 @@ import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
 } from '../../../const';
-import * as SignedPipelinerunIcon from '../../../images/signed-badge.svg';
+import SignedPipelinerunIcon from '../../../images/signed-badge.svg';
 import { PipelineRunModel } from '../../../models';
 import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../../types';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';

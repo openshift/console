@@ -9,8 +9,8 @@ import { LaptopCodeIcon } from '@patternfly/react-icons/dist/esm/icons/laptop-co
 import { OsImageIcon } from '@patternfly/react-icons/dist/esm/icons/os-image-icon';
 import { OutlinedFileCodeIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-file-code-icon';
 import { ShareSquareIcon } from '@patternfly/react-icons/dist/esm/icons/share-square-icon';
-import * as devfileIcon from '../images/devfile.svg';
-import * as dockerfileIcon from '../images/dockerfile.svg';
+import devfileIcon from '../images/devfile.svg';
+import dockerfileIcon from '../images/dockerfile.svg';
 
 export const gitIconElement = <GitAltIcon />;
 

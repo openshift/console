@@ -44,7 +44,7 @@ import { Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
-import * as redhatLogoImg from '../imgs/logos/redhat.svg';
+import redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';

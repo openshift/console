@@ -12,7 +12,7 @@ import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
-import * as catalogImg from '../imgs/logos/catalog-icon.svg';
+import catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
   getImageForIconClass,
   getTemplateIcon,

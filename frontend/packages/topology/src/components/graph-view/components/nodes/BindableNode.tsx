@@ -8,7 +8,7 @@ import {
   WithSelectionProps,
   GraphElement,
 } from '@patternfly/react-topology';
-import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
+import openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { getTopologyResourceObject } from '../../../../utils';

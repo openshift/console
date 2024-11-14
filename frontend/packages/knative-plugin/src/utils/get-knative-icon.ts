@@ -12,12 +12,12 @@ import {
   EVENT_SOURCE_PING_KIND,
   EVENT_SINK_KAFKA_KIND,
 } from '../const';
-import * as apiServerSourceImg from '../imgs/logos/apiserversource.svg';
-import * as camelSourceImg from '../imgs/logos/camelsource.svg';
-import * as containerSourceImg from '../imgs/logos/containersource.svg';
-import * as kafkaSourceImg from '../imgs/logos/kafkasource.svg';
-import * as pingSourceImg from '../imgs/logos/pingsource.svg';
-import * as sinkBindingSourceImg from '../imgs/logos/sinkbindingsource.svg';
+import apiServerSourceImg from '../imgs/logos/apiserversource.svg';
+import camelSourceImg from '../imgs/logos/camelsource.svg';
+import containerSourceImg from '../imgs/logos/containersource.svg';
+import kafkaSourceImg from '../imgs/logos/kafkasource.svg';
+import pingSourceImg from '../imgs/logos/pingsource.svg';
+import sinkBindingSourceImg from '../imgs/logos/sinkbindingsource.svg';
 import { TYPE_EVENT_SINK } from '../topology/const';
 import { eventSinkIconSVG, eventSourceIconSVG } from './icons';
 

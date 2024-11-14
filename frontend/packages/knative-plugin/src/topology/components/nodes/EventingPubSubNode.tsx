@@ -16,7 +16,7 @@ import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { TYPE_AGGREGATE_EDGE } from '@console/topology/src/const';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
-import * as eventPubSubImg from '../../../imgs/event-pub-sub.svg';
+import eventPubSubImg from '../../../imgs/event-pub-sub.svg';
 import { TYPE_EVENT_SINK_LINK } from '../../const';
 import EventSinkSourceAnchor from '../anchors/EventSinkSourceAnchor';
 import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
