@@ -99,56 +99,75 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 };
 SecretValue.displayName = 'SecretValue';
 
-export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
-  const [reveal, setReveal] = React.useState(false);
+const SecretDataRevealButton: React.FC<SecretDataRevealButtonProps> = ({ reveal, onClick }) => {
   const { t } = useTranslation();
-  const titleI18n = title || t('public~Data');
-  const dl = [];
-  Object.keys(data || {})
-    .sort()
-    .forEach((k) => {
-      dl.push(
-        <dt i18n-not-translated="true" key={`${k}-k`} data-test="secret-data-term">
-          {k}
-        </dt>,
-      );
-      dl.push(
-        <dd key={`${k}-v`}>
-          {ITOB.isBinary(k, Buffer.from(data[k], 'base64')) ? (
-            <DownloadBinaryButton label={k} value={data[k]} />
-          ) : (
-            <SecretValue value={data[k]} reveal={reveal} id={k} />
-          )}
-        </dd>,
-      );
-    });
+  return (
+    <Button
+      type="button"
+      onClick={onClick}
+      variant="link"
+      className="pf-m-link--align-right"
+      data-test="reveal-values"
+    >
+      {reveal ? (
+        <>
+          <EyeSlashIcon className="co-icon-space-r" />
+          {t('public~Hide values')}
+        </>
+      ) : (
+        <>
+          <EyeIcon className="co-icon-space-r" />
+          {t('public~Reveal values')}
+        </>
+      )}
+    </Button>
+  );
+};
+
+export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
+  const [reveal, setReveal] = React.useState(false);
+  const [hasRevealableContent, setHasRevealableContent] = React.useState(false);
+  const { t } = useTranslation();
+
+  const dataDescriptionList = React.useMemo(() => {
+    return data
+      ? Object.keys(data)
+          .sort()
+          .map((k) => {
+            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+            if (!isBinary && data[k]) {
+              setHasRevealableContent(hasRevealableContent || !isBinary);
+            }
+            return (
+              <React.Fragment key={k}>
+                <dt i18n-not-translated="true" data-test="secret-data-term">
+                  {k}
+                </dt>
+                <dd>
+                  {isBinary ? (
+                    <DownloadBinaryButton label={k} value={data[k]} />
+                  ) : (
+                    <SecretValue value={data[k]} reveal={reveal} id={k} />
+                  )}
+                </dd>
+              </React.Fragment>
+            );
+          })
+      : [];
+  }, [data, reveal]);
 
   return (
     <>
-      <SectionHeading text={titleI18n}>
-        {dl.length ? (
-          <Button
-            type="button"
-            onClick={() => setReveal(!reveal)}
-            variant="link"
-            className="pf-m-link--align-right"
-            data-test="reveal-values"
-          >
-            {reveal ? (
-              <>
-                <EyeSlashIcon className="co-icon-space-r" />
-                {t('public~Hide values')}
-              </>
-            ) : (
-              <>
-                <EyeIcon className="co-icon-space-r" />
-                {t('public~Reveal values')}
-              </>
-            )}
-          </Button>
+      <SectionHeading text={t('public~Data')}>
+        {dataDescriptionList.length && hasRevealableContent ? (
+          <SecretDataRevealButton reveal={reveal} onClick={() => setReveal(!reveal)} />
         ) : null}
       </SectionHeading>
-      {dl.length ? <dl data-test="secret-data">{dl}</dl> : <EmptyBox label={t('public~Data')} />}
+      {dataDescriptionList.length ? (
+        <dl data-test="secret-data">{dataDescriptionList}</dl>
+      ) : (
+        <EmptyBox label={t('public~Data')} />
+      )}
     </>
   );
 };
@@ -179,7 +198,11 @@ type SecretValueProps = {
   id?: string;
 };
 
+type SecretDataRevealButtonProps = {
+  reveal: boolean;
+  onClick: () => void;
+};
+
 type SecretDataProps = {
   data: KeyValueData;
-  title?: string;
 };
