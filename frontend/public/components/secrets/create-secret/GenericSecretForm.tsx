@@ -6,7 +6,7 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import * as ITOB from 'istextorbinary/edition-es2017';
+import { isBinary } from 'istextorbinary/edition-es2017';
 import { KeyValueEntryFormState, SecretStringData } from './types';
 import { KeyValueEntryForm } from './KeyValueEntryForm';
 
@@ -35,14 +35,14 @@ class GenericSecretFormWithTranslation extends React.Component<
       return [this.newGenericSecretEntry()];
     }
     return _.map(genericSecretObject, (value, key) => {
-      const isBinary = ITOB.isBinary(null, value);
+      const isDataBinary = isBinary(null, value);
       return {
         uid: _.uniqueId(),
         entry: {
           key,
-          value: isBinary ? Base64.encode(value) : value,
-          isBase64: isBinary,
-          isBinary,
+          value: isDataBinary ? Base64.encode(value) : value,
+          isBase64: isDataBinary,
+          isDataBinary,
         },
       };
     });
@@ -53,7 +53,9 @@ class GenericSecretFormWithTranslation extends React.Component<
       (acc, k) =>
         _.assign(acc, {
           [k.entry.key]:
-            k.entry?.isBase64 || k.entry?.isBinary ? k.entry.value : Base64.encode(k.entry.value),
+            k.entry?.isBase64 || k.entry?.isDataBinary
+              ? k.entry.value
+              : Base64.encode(k.entry.value),
         }),
       {},
     );

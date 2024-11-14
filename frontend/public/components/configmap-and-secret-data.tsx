@@ -6,7 +6,7 @@ import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-i
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
-import * as ITOB from 'istextorbinary/edition-es2017';
+import { isBinary } from 'istextorbinary/edition-es2017';
 
 export const MaskedData: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -134,9 +134,9 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
       ? Object.keys(data)
           .sort()
           .map((k) => {
-            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
-            if (!isBinary && data[k]) {
-              setHasRevealableContent(hasRevealableContent || !isBinary);
+            const isDataBinary = isBinary(k, Buffer.from(data[k], 'base64'));
+            if (!isDataBinary && data[k]) {
+              setHasRevealableContent(hasRevealableContent || !isDataBinary);
             }
             return (
               <React.Fragment key={k}>
@@ -144,7 +144,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
                   {k}
                 </dt>
                 <dd>
-                  {isBinary ? (
+                  {isDataBinary ? (
                     <DownloadBinaryButton label={k} value={data[k]} />
                   ) : (
                     <SecretValue value={data[k]} reveal={reveal} id={k} />

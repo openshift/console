@@ -6,7 +6,7 @@ import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
 import { Alert } from '@patternfly/react-core';
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
-import { isBinary } from 'istextorbinary/edition-es2017/index';
+import { isBinary } from 'istextorbinary/edition-es2017';
 
 import withDragDropContext from './drag-drop-context';
 
@@ -42,7 +42,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
         ? (reader.result as string).split(',')[1]
         : (reader.result as string);
       // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-      if (isBinary(null, input) && !fileIsBinary) {
+      if (isBinary(null, reader.result as Buffer) && !fileIsBinary) {
         fileIsBinary = true;
         reader.readAsDataURL(file);
       } else {
@@ -172,7 +172,9 @@ const DroppableFileInputWithTranslation = withDragDropContext(
       this.state = {
         inputFileName: '',
         inputFileData: this.props.inputFileData || '',
-        inputFileIsBinary: this.props.inputFileIsBinary || isBinary(null, this.props.inputFileData),
+        inputFileIsBinary:
+          this.props.inputFileIsBinary ||
+          isBinary(null, Buffer.from(this.props.inputFileData, 'base64')),
       };
       this.handleFileDrop = this.handleFileDrop.bind(this);
       this.onDataChange = this.onDataChange.bind(this);
@@ -196,7 +198,7 @@ const DroppableFileInputWithTranslation = withDragDropContext(
       reader.onload = () => {
         const input = reader.result as string; // Note(Yaacov): we use reader.readAsText
         // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-        if (isBinary(null, input) && !inputFileIsBinary) {
+        if (isBinary(null, reader.result as Buffer) && !inputFileIsBinary) {
           inputFileIsBinary = true;
           reader.readAsBinaryString(file);
         } else {
