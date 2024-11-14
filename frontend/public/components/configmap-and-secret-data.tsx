@@ -135,10 +135,8 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
           .sort()
           .map((k) => {
             const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
-            if (!isBinary) {
-              if (data[k]) {
-                setHasRevealableContent(hasRevealableContent || !isBinary);
-              }
+            if (!isBinary && data[k]) {
+              setHasRevealableContent(hasRevealableContent || !isBinary);
             }
             return (
               <React.Fragment key={k}>
