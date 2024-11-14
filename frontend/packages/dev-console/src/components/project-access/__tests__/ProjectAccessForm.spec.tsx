@@ -58,6 +58,7 @@ describe('Project Access Form', () => {
       status: {},
       submitCount: 0,
       dirty: false,
+      getFieldHelpers: jest.fn(),
       getFieldProps: jest.fn(),
       handleBlur: jest.fn(),
       handleChange: jest.fn(),
