@@ -3,7 +3,7 @@ import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Table, RowFunctionArgs, TableProps } from '@console/internal/components/factory';
+import { Table, RowFunctionArgs, TableProps } from '@console/internal/components/factory/table';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
 
