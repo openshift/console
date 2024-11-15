@@ -74,6 +74,8 @@ import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 
+const CSP_VIOLATION_MESSAGE = 'Content Security Policy violation detected';
+
 initI18n();
 
 // Disable linkify 'fuzzy links' across the app.
@@ -141,7 +143,10 @@ const App = (props) => {
 
   const onCSPViolation = React.useCallback((event) => {
     // eslint-disable-next-line no-console
-    console.warn('Content Security Policy violation detected', event);
+    console.warn(CSP_VIOLATION_MESSAGE, event);
+
+    // Store CSP violation message in global variable for e2e test purposes
+    window.windowCSPWarning = CSP_VIOLATION_MESSAGE;
 
     // https://developer.mozilla.org/en-US/docs/Web/API/SecurityPolicyViolationEvent
     const cspReportObject = _.pick(event, [

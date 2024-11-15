@@ -79,6 +79,9 @@ after(() => {
     numberChecks: `${a11yTestResults.numberChecks}`,
     numberViolations: `${a11yTestResults.numberViolations}`,
   });
+  cy.window().then((win) => {
+    assert.isTrue(!win.windowCSPWarning, win.windowCSPWarning);
+  });
 });
 
 export const checkErrors = () =>
