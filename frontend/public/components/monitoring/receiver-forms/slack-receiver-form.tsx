@@ -10,7 +10,7 @@ import {
   SaveAsDefaultCheckbox,
   SendResolvedAlertsCheckbox,
   FormProps,
-} from './alert-manager-receiver-forms';
+} from './receiver-forms-utils';
 
 const GLOBAL_FIELDS = [
   'slack_api_url',

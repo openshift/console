@@ -8,7 +8,7 @@ import {
   SaveAsDefaultCheckbox,
   SendResolvedAlertsCheckbox,
   FormProps,
-} from './alert-manager-receiver-forms';
+} from './receiver-forms-utils';
 
 const SMTP_GLOBAL_FIELDS = [
   'smtp_from',

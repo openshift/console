@@ -8,7 +8,7 @@ import {
   FormProps,
   SendResolvedAlertsCheckbox,
   SaveAsDefaultCheckbox,
-} from './alert-manager-receiver-forms';
+} from './receiver-forms-utils';
 import { ExpandCollapse } from '../../utils';
 
 const GLOBAL_FIELDS = [
