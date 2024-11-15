@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { coFetch } from '../co-fetch';
+import { consoleFetch as coFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { stripBasePath } from '../components/utils/link';
 
 const {
