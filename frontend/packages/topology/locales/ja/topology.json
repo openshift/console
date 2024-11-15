@@ -125,7 +125,7 @@
   "Service port:": "サービスポート:",
   "Pod port:": "Pod ポート:",
   "Location:": "場所:",
-  "Services": "Service",
+  "Services": "Services",
   "No Services found for this resource.": "このリソースの Service が見つかりません。",
   "Routes": "Routes",
   "No Routes found for this resource.": "このリソースの Route が見つかりません。",

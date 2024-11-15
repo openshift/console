@@ -22,7 +22,7 @@
   "Resources": "リソース",
   "Deployments": "Deployments",
   "Secrets": "シークレット",
-  "Services": "Service",
+  "Services": "Services",
   "Routes": "Routes",
   "Role Bindings": "ロールバインディング",
   "Cluster Roles": "クラスターロール",
