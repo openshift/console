@@ -973,6 +973,7 @@ Adds a new details item to the default resource summary on the details page.
 | `id` | `string` | no | A unique identifier. |
 | `column` | `DetailsItemColumn` | no | Determines if the item will appear in the 'left' or 'right' column of the resource summary on<br/>the details page. Default: 'right' |
 | `title` | `string` | no | The details item title. |
+| `description` | `string` | yes | An optional description that will appear in the title popover. |
 | `path` | `string` | yes | An optional, fully-qualified path to a resource property to used as the details item<br/>value. Only [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)<br/>values can be rendered directly. Use the component property to handle other data types. |
 | `component` | `CodeRef<React.ComponentType<DetailsItemComponentProps<K8sResourceCommon, any>>>` | yes | An optional React component that will render the details item value. |
 | `sortWeight` | `number` | yes | An optional sort weight, relative to all other details items in the same column. Represented<br/>by any valid [JavaScript<br/>Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type).<br/>Items in each column are sorted independently, lowest to highest. Items without sort weights<br/>are sorted after items with sort weights. |

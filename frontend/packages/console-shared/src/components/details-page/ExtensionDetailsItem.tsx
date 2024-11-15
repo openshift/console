@@ -6,7 +6,7 @@ import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 
 export const ExtensionDetailsItem: ExtensionDetailsItemComponent = ({ extension, obj }) => {
-  const { path, title, component: Component, id } = extension.properties;
+  const { path, title, description, component: Component, id } = extension.properties;
   const sortWeight = extension.properties.sortWeight ?? 'none';
   const value = _.get(obj, path);
   if (!Component && typeof value === 'object') {
@@ -27,6 +27,7 @@ export const ExtensionDetailsItem: ExtensionDetailsItemComponent = ({ extension,
       path={path}
       label={title}
       labelClassName={`details-item__sort-weight-${sortWeight}`} // for visibility
+      description={description}
     >
       {content}
     </DetailsItem>

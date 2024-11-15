@@ -24,15 +24,15 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
     errorMessage,
     handlePromise,
     inProgress,
-    plugin,
+    pluginName,
     trusted,
   } = props;
-  const previouslyEnabled = isPluginEnabled(consoleOperatorConfig, plugin);
+  const previouslyEnabled = isPluginEnabled(consoleOperatorConfig, pluginName);
   const { t } = useTranslation();
   const [enabled, setEnabled] = React.useState(previouslyEnabled);
   const submit = (event) => {
     event.preventDefault();
-    const patch = getPluginPatch(consoleOperatorConfig, plugin, enabled);
+    const patch = getPluginPatch(consoleOperatorConfig, pluginName, enabled);
     const promise = k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch]);
     handlePromise(promise, close);
   };
@@ -41,7 +41,7 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
         {csvPluginsCount > 1
-          ? t('console-shared~Console plugin enablement - {{plugin}}', { plugin })
+          ? t('console-shared~Console plugin enablement - {{plugin}}', { pluginName })
           : t('console-shared~Console plugin enablement')}
       </ModalTitle>
       <ModalBody>
@@ -54,7 +54,12 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
                 'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
               )}
         </p>
-        <ConsolePluginRadioInputs autofocus name={plugin} enabled={enabled} onChange={setEnabled} />
+        <ConsolePluginRadioInputs
+          autofocus
+          name={pluginName}
+          enabled={enabled}
+          onChange={setEnabled}
+        />
         <ConsolePluginWarning
           previouslyEnabled={previouslyEnabled}
           enabled={enabled}
@@ -76,7 +81,7 @@ export const consolePluginModal = createModalLauncher(ConsolePluginModal);
 export type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;
   csvPluginsCount?: number;
-  plugin: string;
+  pluginName: string;
   trusted: boolean;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
