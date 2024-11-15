@@ -15,15 +15,15 @@ import {
 import { setFlag } from '@console/internal/actions/flagActions';
 import {
   documentationURLs,
-  ExternalLink,
   getDocumentationURL,
   isManaged,
-  resourceObjPath,
-  LoadingInline,
-} from '@console/internal/components/utils';
+} from '@console/internal/components/utils/documentation';
+import { ExternalLink } from '@console/internal/components/utils/link';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
+import { LoadingInline } from '@console/shared/src/components/loading/LoadingInline';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
