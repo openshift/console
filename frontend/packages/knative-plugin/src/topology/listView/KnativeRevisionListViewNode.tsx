@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
-import {
-  CpuCellComponent,
-  MemoryCellComponent,
-  StatusCellResourceStatus,
-  TopologyListViewNode,
-} from '@console/topology/src/components/list-view';
+import { CpuCellComponent } from '@console/topology/src/components/list-view/cells/CpuCell';
+import { MemoryCellComponent } from '@console/topology/src/components/list-view/cells/MemoryCell';
+import { StatusCellResourceStatus } from '@console/topology/src/components/list-view/cells/StatusCell';
+import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
 import {
   getTopologyResourceObject,
   useOverviewMetrics,
