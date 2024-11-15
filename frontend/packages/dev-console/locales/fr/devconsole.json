@@ -525,7 +525,6 @@
   "Path that the router watches to route traffic to the service.": "Chemin que le routeur surveille pour acheminer le trafic vers le service.",
   "Target port": "Port cible",
   "Target port for traffic.": "Port cible pour le trafic.",
-  "No results found": "Aucun résultat trouvé",
   "Edge": "Périphérie",
   "Passthrough": "Intermédiaire",
   "Re-encrypt": "Rechiffrer",
