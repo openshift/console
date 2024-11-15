@@ -40,7 +40,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import RelatedObjectsPage from './related-objects';
-import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings';
+import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings-messages';
 
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(
   ClusterOperatorModel,
