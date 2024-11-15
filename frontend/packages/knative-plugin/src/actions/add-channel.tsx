@@ -3,7 +3,7 @@ import i18next from 'i18next';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import * as channelIcon from '../imgs/channel.svg';
+import channelIcon from '../imgs/channel.svg';
 
 const eventChannelStyles = {
   width: '1em',

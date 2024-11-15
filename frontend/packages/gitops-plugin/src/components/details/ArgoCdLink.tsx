@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SplitItem } from '@patternfly/react-core';
 import { ExternalLink } from '@console/internal/components/utils';
-import * as argoIcon from '../../images/argo.png';
+import argoIcon from '../../images/argo.png';
 
 type ArgoCdLinkProps = {
   envName: string;

@@ -11,7 +11,7 @@ import { getImageForIconClass } from '@console/internal/components/catalog/catal
 import { ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { toTitleCase } from '@console/shared';
-import * as certifiedIcon from '../../../icons/certified.svg';
+import certifiedIcon from '../../../icons/certified.svg';
 import { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
 import { getChartRepositoryTitle } from '../../utils/helm-utils';
 import HelmReadmeLoader from '../components/HelmReadmeLoader';

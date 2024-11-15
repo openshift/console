@@ -11,7 +11,7 @@ import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import * as acmIcon from '@console/internal/imgs/ACM-icon.svg';
+import acmIcon from '@console/internal/imgs/ACM-icon.svg';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ACM_LINK_ID, usePerspectiveExtension, usePerspectives } from '@console/shared';

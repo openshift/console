@@ -12,13 +12,13 @@ import {
   Perspective,
 } from '@console/dynamic-plugin-sdk';
 import { FirehoseResult } from '@console/internal/components/utils';
-import * as denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
-import * as limitCertainAppImg from '@console/internal/imgs/network-policy-samples/2-limit-certain-apps.svg';
-import * as allowIngressImg from '@console/internal/imgs/network-policy-samples/3-allow-ingress.svg';
-import * as defaultDenyAllImg from '@console/internal/imgs/network-policy-samples/4-default-deny-all.svg';
-import * as webAllowExternalImg from '@console/internal/imgs/network-policy-samples/5-web-allow-external.svg';
-import * as webDbAllowAllNsImg from '@console/internal/imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
-import * as webAllowProductionImg from '@console/internal/imgs/network-policy-samples/7-web-allow-production.svg';
+import denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
+import limitCertainAppImg from '@console/internal/imgs/network-policy-samples/2-limit-certain-apps.svg';
+import allowIngressImg from '@console/internal/imgs/network-policy-samples/3-allow-ingress.svg';
+import defaultDenyAllImg from '@console/internal/imgs/network-policy-samples/4-default-deny-all.svg';
+import webAllowExternalImg from '@console/internal/imgs/network-policy-samples/5-web-allow-external.svg';
+import webDbAllowAllNsImg from '@console/internal/imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
+import webAllowProductionImg from '@console/internal/imgs/network-policy-samples/7-web-allow-production.svg';
 import {
   BuildConfigModel,
   ClusterRoleModel,

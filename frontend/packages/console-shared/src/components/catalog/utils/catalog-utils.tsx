@@ -11,7 +11,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { history } from '@console/internal/components/utils';
-import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
+import catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { keywordFilter } from '../../../utils/keyword-filter';
 import { CatalogType, CatalogTypeCounts } from './types';
 
