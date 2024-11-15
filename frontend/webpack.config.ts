@@ -373,9 +373,10 @@ const config: Configuration = {
 
 if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
-    exclude: /node_modules|public\/dist/,
+    exclude: /node_modules|public\/dist|\.(gql|html)$/,
+    // TODO: investigate how to load the plugins registry asynchronously
+    filterModules: /^node_modules\/@console\/active-plugins\.js$/,
     reportFile: '.webpack-cycles',
-    thresholds: { minLengthCycles: 18 },
   }).apply(config.plugins);
 }
 
