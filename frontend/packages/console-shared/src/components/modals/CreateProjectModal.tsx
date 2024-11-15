@@ -12,7 +12,7 @@ import {
   isCreateProjectModal,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
-import { setFlag } from '@console/internal/actions/features';
+import { setFlag } from '@console/internal/actions/flagActions';
 import {
   documentationURLs,
   ExternalLink,

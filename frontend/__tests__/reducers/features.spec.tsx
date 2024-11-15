@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Immutable from 'immutable';
 import * as _ from 'lodash-es';
 
-import { setFlag } from '../../public/actions/features';
+import { setFlag } from '../../public/actions/flagActions';
 import { receivedResources } from '../../public/actions/k8s';
 import { FLAGS } from '@console/shared/src/constants';
 import {
