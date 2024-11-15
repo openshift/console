@@ -6,7 +6,8 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { AUTHS_KEY, PullSecretCredentialEntry } from '.';
+import { AUTHS_KEY } from './const';
+import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
 
 class CreateConfigSubformWithTranslation extends React.Component<
   CreateConfigSubformProps & WithT,

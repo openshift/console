@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { HandlePromiseProps, withHandlePromise } from '../utils';
+import { HandlePromiseProps, withHandlePromise } from '../utils/promise-component';
 import {
   createModalLauncher,
   ModalTitle,

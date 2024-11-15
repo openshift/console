@@ -30,7 +30,8 @@ import {
   clonePVCModal,
   restorePVCModal,
 } from '../modals';
-import { asAccessReview, checkAccess, resourceObjPath, useAccessReview } from './index';
+import { asAccessReview, checkAccess, useAccessReview } from './rbac';
+import { resourceObjPath } from './resource-link';
 import {
   AccessReviewResourceAttributes,
   K8sKind,

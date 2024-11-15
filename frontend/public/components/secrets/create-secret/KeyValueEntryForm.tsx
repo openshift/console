@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
-import { DroppableFileInput, KeyValueEntryFormState, KeyValueEntryFormProps } from '.';
+import { DroppableFileInput } from './DropableFileInput';
+import { KeyValueEntryFormState, KeyValueEntryFormProps } from './types';
 
 export class KeyValueEntryFormWithTranslation extends React.Component<
   KeyValueEntryFormProps & WithT,
