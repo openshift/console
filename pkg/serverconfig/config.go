@@ -13,6 +13,8 @@ import (
 	"github.com/coreos/pkg/flagutil"
 	"gopkg.in/yaml.v2"
 	"k8s.io/klog/v2"
+
+	consolev1 "github.com/openshift/api/console/v1"
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
@@ -122,6 +124,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	if err != nil {
 		return err
 	}
+	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
 	addTelemetry(fs, config.Telemetry)
 
 	return nil
@@ -362,6 +365,18 @@ func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
 
 func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
+}
+
+func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
+	if csp != nil {
+		marshaledCSP, err := json.Marshal(csp)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig 'content-security-policy' field: %v", err)
+			return err
+		}
+		fs.Set("content-security-policy", string(marshaledCSP))
+	}
+	return nil
 }
 
 func SetIfUnset(flagVal *string, val string) {
