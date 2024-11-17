@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Alert, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResources } from '@console/dynamic-plugin-sdk';
@@ -17,6 +17,9 @@ const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePl
   const failedPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'Failed');
   const pendingPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'Pending');
   const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
+  const loadedPluginsWithCSPViolations = loadedPlugins.filter(
+    (plugin) => plugin.hasCSPViolations === true,
+  );
   const enabledPlugins = loadedPlugins.filter((plugin) => plugin.enabled === true);
   const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
 
@@ -48,6 +51,16 @@ const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePl
             </>
           }
         >
+          {loadedPluginsWithCSPViolations.length > 0 && (
+            <Alert
+              variant="warning"
+              isInline
+              isPlain
+              title={t(
+                'console-app~One or more plugins might have Content Security Policy violations.',
+              )}
+            />
+          )}
           <Link
             to={`/k8s/cluster/${referenceForModel(
               ConsoleOperatorConfigModel,
