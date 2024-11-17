@@ -11,7 +11,7 @@ import {
   TaskKind,
   TektonParam,
 } from '../../../types';
-import { sanitizePipelineParams } from '../detail-page-tabs';
+import { sanitizePipelineParams } from '../detail-page-tabs/utils';
 import { getTaskParameters } from '../resource-utils';
 import {
   getTaskErrorString,
