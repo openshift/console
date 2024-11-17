@@ -23,6 +23,7 @@ interface Configuration extends webpack.Configuration {
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -105,23 +106,13 @@ const config: Configuration = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    fallback: {
-      fs: false,
-      // eslint-disable-next-line camelcase
-      child_process: false,
-      crypto: false,
-      module: false,
-      net: false,
-      os: false,
-      path: false,
-      stream: false,
-      timers: false,
-      tty: false,
-    },
     alias: {
       prettier: false,
       'prettier/parser-yaml': false,
       ...overpassFiles,
+    },
+    fallback: {
+      net: false, // for YAML language server
     },
   },
   node: {
@@ -326,6 +317,9 @@ const config: Configuration = {
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
       globalAPI: true,
+    }),
+    new NodePolyfillPlugin({
+      additionalAliases: ['process'],
     }),
     new CopyWebpackPlugin({
       patterns: [

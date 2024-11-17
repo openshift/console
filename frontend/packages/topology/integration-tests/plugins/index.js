@@ -1,5 +1,6 @@
 const fs = require('fs');
 const webpack = require('@cypress/webpack-preprocessor');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = (on, config) => {
   const options = {
@@ -10,9 +11,13 @@ module.exports = (on, config) => {
           fs: false,
           child_process: false,
           readline: false,
-          path: false,
         },
       },
+      plugins: [
+        new NodePolyfillPlugin({
+          additionalAliases: ['process'],
+        }),
+      ],
       module: {
         rules: [
           {

@@ -185,6 +185,7 @@
     "lodash-es": "^4.17.21",
     "monaco-languageclient": "^0.13.0",
     "murmurhash-js": "1.0.x",
+    "node-polyfill-webpack-plugin": "^4.0.0",
     "openshift-logos-icon": "1.7.1",
     "pluralize": "^8.0.0",
     "point-in-svg-path": "1.0.1",
