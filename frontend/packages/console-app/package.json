@@ -57,7 +57,8 @@
       "consolePluginEnabledStatusDetail": "src/components/console-operator/ConsolePluginEnabledStatusDetail",
       "consolePluginCSPStatusDetail": "src/components/console-operator/ConsolePluginCSPStatusDetail",
       "consolePluginBackendDetail": "src/components/console-operator/ConsolePluginBackendDetail",
-      "consolePluginProxyDetail": "src/components/console-operator/ConsolePluginProxyDetail"
+      "consolePluginProxyDetail": "src/components/console-operator/ConsolePluginProxyDetail",
+      "getConsoleOperatorConfigFlag": "src/hooks/useCanGetConsoleOperatorConfig"
     }
   }
 }
