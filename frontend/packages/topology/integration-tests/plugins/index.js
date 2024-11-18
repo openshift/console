@@ -22,10 +22,7 @@ module.exports = (on, config) => {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true,
-            },
+            loader: 'esbuild-loader',
           },
           {
             test: /\.feature$/,

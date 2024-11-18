@@ -174,12 +174,10 @@ const config: Configuration = {
               ]
             : []),
           {
-            loader: 'ts-loader',
+            loader: 'esbuild-loader',
             options: {
               // Always use the root tsconfig.json. Packages might have a separate tsconfig.json for storybook.
-              configFile: path.resolve(__dirname, 'tsconfig.json'),
-              happyPackMode: true, // This implicitly enables transpileOnly! No type checking!
-              transpileOnly: true, // fork-ts-checker-webpack-plugin takes care of type checking
+              tsconfig: path.resolve(__dirname, 'tsconfig.json'),
             },
           },
         ],
