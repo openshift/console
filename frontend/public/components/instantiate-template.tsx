@@ -4,7 +4,20 @@ import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
-import { ActionGroup, Button, Divider } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Button,
+  Divider,
+  FormGroup,
+  TextInput,
+  HelperText,
+  HelperTextItem,
+  Tooltip,
+  TextArea,
+  InputGroup,
+  InputGroupItem,
+} from '@patternfly/react-core';
+import { CompressIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';
 
@@ -128,6 +141,68 @@ TemplateInfo.displayName = 'TemplateInfo';
 const stateToProps = (state: RootState) => ({
   models: state.k8s.getIn(['RESOURCES', 'models']),
 });
+
+const TemplateFormField: React.FC<TemplateFormFieldProps> = ({
+  name,
+  value,
+  displayName,
+  description,
+  onChange,
+  placeholder,
+  required,
+  helpID,
+}) => {
+  const [isTextArea, setIsTextArea] = React.useState(false);
+  const { t } = useTranslation('public');
+
+  const commonFormProps = {
+    'aria-describedby': helpID,
+    placeholder,
+    isRequired: required,
+    onChange,
+    value,
+    id: name,
+    name,
+  };
+
+  const toggleTooltipText = isTextArea
+    ? t('Compress to a single line of content. This may strip any new lines you have entered.')
+    : t(
+        'Expand to enter multiple lines of content. This is required if you need to include newline characters.',
+      );
+
+  const InputToggle = (
+    <Tooltip aria="none" aria-live="polite" content={toggleTooltipText}>
+      <Button
+        aria-label={toggleTooltipText}
+        onClick={() => setIsTextArea(!isTextArea)}
+        variant="control"
+      >
+        {isTextArea ? <CompressIcon /> : <ExpandIcon />}
+      </Button>
+    </Tooltip>
+  );
+
+  return (
+    <FormGroup label={displayName || name} isRequired={required} fieldId={name}>
+      <InputGroup>
+        <InputGroupItem isFill>
+          {isTextArea ? (
+            <TextArea resizeOrientation="vertical" {...commonFormProps} />
+          ) : (
+            <TextInput type="text" {...commonFormProps} />
+          )}
+        </InputGroupItem>
+        <InputGroupItem>{InputToggle}</InputGroupItem>
+      </InputGroup>
+      {description && (
+        <HelperText>
+          <HelperTextItem id={helpID}>{description}</HelperTextItem>
+        </HelperText>
+      )}
+    </FormGroup>
+  );
+};
 
 const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   const { preselectedNamespace: ns = '', activePerspective, perspectiveExtensions, obj } = props;
@@ -263,7 +338,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
         <TemplateInfo template={template} />
       </div>
       <div className="col-md-5 col-md-pull-7">
-        <form className="co-instantiate-template-form" onSubmit={save}>
+        <form className="pf-v5-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="namespace">
               {t('public~Namespace')}
@@ -284,30 +359,17 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
               // Only set required for parameters not generated.
               const requiredInput = requiredParam && !generate;
               return (
-                <div className="form-group" key={name}>
-                  <label
-                    className={classNames('control-label', { 'co-required': requiredInput })}
-                    htmlFor={name}
-                  >
-                    {displayName || name}
-                  </label>
-                  <input
-                    type="text"
-                    className="pf-v5-c-form-control"
-                    id={name}
-                    name={name}
-                    value={value}
-                    onChange={onParameterChanged}
-                    required={requiredInput}
-                    placeholder={placeholder}
-                    aria-describedby={helpID}
-                  />
-                  {description && (
-                    <div className="help-block" id={helpID}>
-                      {description}
-                    </div>
-                  )}
-                </div>
+                <TemplateFormField
+                  key={name}
+                  name={name}
+                  value={value}
+                  displayName={displayName}
+                  description={description}
+                  required={requiredInput}
+                  onChange={onParameterChanged}
+                  placeholder={placeholder}
+                  helpID={helpID}
+                />
               );
             },
           )}
@@ -382,4 +444,15 @@ type TemplateFormProps = ExtensionsProps & {
   preselectedNamespace: string;
   models: any;
   activePerspective: string;
+};
+
+type TemplateFormFieldProps = {
+  name: string;
+  value: string;
+  displayName: string;
+  description: string;
+  required: boolean;
+  onChange: React.ReactEventHandler;
+  placeholder: string;
+  helpID: string;
 };
