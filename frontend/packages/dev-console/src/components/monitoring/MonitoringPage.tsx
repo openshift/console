@@ -2,17 +2,11 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import {
-  HorizontalNav,
-  PageHeading,
-  history,
-  useAccessReview,
-} from '@console/internal/components/utils';
+import { HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
-import { MonitoringSilencesPage } from './alerts/monitoring-silences';
 import MonitoringEvents from './events/MonitoringEvents';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
@@ -27,23 +21,8 @@ export const PageContents: React.FC = () => {
   const params = useParams();
   const { t } = useTranslation();
   const activeNamespace = params.ns;
-  const prometheousRulesAccess = useAccessReview({
-    group: 'monitoring.coreos.com',
-    resource: 'prometheusrules',
-    verb: 'get',
-    namespace: activeNamespace,
-  });
+
   const pages = [
-    ...(prometheousRulesAccess
-      ? [
-          {
-            href: 'silences',
-            // t('devconsole~Silences')
-            nameKey: 'devconsole~Silences',
-            component: MonitoringSilencesPage,
-          },
-        ]
-      : []),
     {
       href: 'events',
       // t('devconsole~Events')

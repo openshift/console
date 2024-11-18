@@ -1299,30 +1299,6 @@
   {
     "type": "console.page/route",
     "properties": {
-      "exact": true,
-      "path": ["/dev-monitoring/ns/:ns/silences/~new"],
-      "component": { "$codeRef": "monitoring.MonitoringCreateSilencePage" }
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/dev-monitoring/ns/:ns/silences/:id"],
-      "component": { "$codeRef": "monitoring.MonitoringSilenceDetailsPage" }
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/dev-monitoring/ns/:ns/silences/:id/edit"],
-      "component": { "$codeRef": "monitoring.MonitoringEditSilencePage" }
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
       "exact": false,
       "path": ["/dev-monitoring/all-namespaces", "/dev-monitoring/ns/:ns"],
       "component": { "$codeRef": "monitoring.MonitoringPage" }
