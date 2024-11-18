@@ -35,7 +35,7 @@ import {
 } from './utils';
 import { ResourceEventStream } from './events';
 import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
-import { UpToDateMessage } from './cluster-settings/cluster-settings-messages';
+import { UpToDateMessage } from './cluster-settings/cluster-status';
 
 const pauseAction: KebabAction = (kind, obj) => ({
   // t('public~Resume updates')

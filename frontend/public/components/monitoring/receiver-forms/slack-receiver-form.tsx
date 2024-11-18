@@ -6,11 +6,9 @@ import { TextArea } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
 import { ExpandCollapse, ExternalLink } from '../../utils';
-import {
-  SaveAsDefaultCheckbox,
-  SendResolvedAlertsCheckbox,
-  FormProps,
-} from './receiver-forms-utils';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
+import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
+import { FormProps } from './receiver-form-props';
 
 const GLOBAL_FIELDS = [
   'slack_api_url',

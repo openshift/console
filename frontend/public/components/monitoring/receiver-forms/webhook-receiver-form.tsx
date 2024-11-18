@@ -4,7 +4,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ExpandCollapse } from '../../utils';
-import { SendResolvedAlertsCheckbox, FormProps } from './receiver-forms-utils';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
+import { FormProps } from './receiver-form-props';
 
 export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) => {
   const { t } = useTranslation();

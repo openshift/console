@@ -123,7 +123,7 @@ import {
   ServiceLevelLoading,
 } from '../utils/service-level';
 import { hasAvailableUpdates, hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
-import { UpdateStatus } from './cluster-settings-messages';
+import { UpdateStatus } from './cluster-status';
 
 export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 

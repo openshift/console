@@ -12,7 +12,7 @@ import {
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
-import { clearSSARFlags } from './flagActions';
+import { clearSSARFlags } from './flags';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { setClusterID, setCreateProjectMessage } from './common';
 import { subsClient } from '../graphql/client';

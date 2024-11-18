@@ -1,6 +1,5 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/shared';
 
@@ -36,36 +35,6 @@ export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
       </Tooltip>
     </label>
   );
-};
-
-export const SendResolvedAlertsCheckbox = ({ formField, formValues, dispatchFormChange }) => {
-  const { t } = useTranslation();
-  return (
-    <div className="checkbox">
-      <label className="control-label" htmlFor={formField}>
-        <input
-          type="checkbox"
-          id={formField}
-          data-test-id="send-resolved-alerts"
-          onChange={(e) =>
-            dispatchFormChange({
-              type: 'setFormValues',
-              payload: { [formField]: e.target.checked },
-            })
-          }
-          checked={formValues[formField]}
-          aria-checked={formValues[formField]}
-        />
-        {t('public~Send resolved alerts to this receiver?')}
-      </label>
-    </div>
-  );
-};
-
-export type FormProps = {
-  globals: { [key: string]: any };
-  formValues: { [key: string]: any };
-  dispatchFormChange: Function;
 };
 
 type SaveAsDefaultCheckboxProps = {

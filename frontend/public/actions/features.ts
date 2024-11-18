@@ -25,7 +25,7 @@ import {
   SSRQueryType,
 } from '../../@types/console/generated/graphql-schema';
 import { UserInfo } from '@console/internal/module/k8s';
-import { handleError, retryFlagDetection, setFlag, ssarChecks } from './flagActions';
+import { handleError, retryFlagDetection, setFlag, ssarChecks } from './flags';
 
 export const defaults = _.mapValues(FLAGS, (flag) =>
   flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,

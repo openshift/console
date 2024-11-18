@@ -1,8 +1,8 @@
-import okdLogoImg from '../imgs/okd-logo.svg';
-import openshiftLogoImg from '../imgs/openshift-logo.svg';
-import onlineLogoImg from '../imgs/openshift-online-logo.svg';
-import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
-import rosaLogoImg from '../imgs/openshift-service-on-aws-logo.svg';
+import okdLogoImg from '../../imgs/okd-logo.svg';
+import openshiftLogoImg from '../../imgs/openshift-logo.svg';
+import onlineLogoImg from '../../imgs/openshift-online-logo.svg';
+import dedicatedLogoImg from '../../imgs/openshift-dedicated-logo.svg';
+import rosaLogoImg from '../../imgs/openshift-service-on-aws-logo.svg';
 
 export const getBrandingDetails = () => {
   let logoImg, productName;
