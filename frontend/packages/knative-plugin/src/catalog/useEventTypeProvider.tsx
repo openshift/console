@@ -62,7 +62,7 @@ const normalizeEventType = (eventType: K8sResourceKind, t: TFunction): CatalogIt
     name: `${eventType.spec.type} (${provider.metadata.namespace}/${provider.metadata.name})`,
     description: eventType.spec.description,
     cta: { label: t('knative-plugin~Subscribe'), href },
-    type: 'Events',
+    type: 'EventType',
     icon: { url: iconUrl },
     creationTimestamp: eventType.metadata.creationTimestamp,
     provider: `${provider.metadata.name}`,
