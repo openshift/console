@@ -7,10 +7,21 @@ import { useFormikValidationFix } from '../../hooks';
 import { FieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, ...props }) => {
-  const [field, { touched, error }] = useField(props.name);
+interface NumberSpinnerFieldProps extends FieldProps {
+  setOutputAsIntegerFlag?: boolean;
+}
+
+const NumberSpinnerField: React.FC<NumberSpinnerFieldProps> = ({
+  name,
+  label,
+  helpText,
+  required,
+  setOutputAsIntegerFlag,
+  ...props
+}) => {
+  const [field, { touched, error }] = useField(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const fieldId = getFieldId(props.name, 'number-spinner');
+  const fieldId = getFieldId(name, 'number-spinner');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
 
@@ -19,9 +30,12 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
   const handleChange: React.ReactEventHandler<HTMLInputElement> = React.useCallback(
     (event) => {
       field.onChange(event);
-      setFieldValue(props.name, event.currentTarget.value);
+      setFieldValue(
+        name,
+        setOutputAsIntegerFlag ? _.toInteger(event.currentTarget.value) : event.currentTarget.value,
+      );
     },
-    [field, props.name, setFieldValue],
+    [field, name, setFieldValue, setOutputAsIntegerFlag],
   );
 
   return (
@@ -41,8 +55,8 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
         id={fieldId}
         data-test-id="number-spinner-field"
         changeValueBy={(operation: number) => {
-          setFieldValue(props.name, _.toInteger(field.value) + operation);
-          setFieldTouched(props.name, true);
+          setFieldValue(name, _.toInteger(field.value) + operation);
+          setFieldTouched(name, true);
         }}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
       />
