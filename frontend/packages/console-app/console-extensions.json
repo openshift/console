@@ -2020,6 +2020,22 @@
     }
   },
   {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "plugin-dependencies",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "column": "right",
+      "title": "%console-app~Dependencies%",
+      "description": "%console-app~Dependency values must be valid semver ranges. The @console/pluginAPI dependency refers to compatible OpenShift console versions. A plugin may also declare dependencies on other plugins. The plugin is not loaded if its dependencies are not met.%",
+      "component": { "$codeRef": "consolePluginDependenciesDetail" },
+      "sortWeight": 6
+    }
+  },
+  {
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "getConsoleOperatorConfigFlag" }
