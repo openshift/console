@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageComponentProps, CopyToClipboard, EmptyBox } from '@console/internal/components/utils';
+import { ResourceYAMLEditor } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { PageComponentProps, EmptyBox } from '@console/internal/components/utils';
 import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
 
 export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj }) => {
@@ -14,12 +15,18 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
   ]);
 
   return (
-    <div className="co-m-pane__body">
+    <>
       {pluginManifest ? (
-        <CopyToClipboard value={JSON.stringify(pluginManifest, null, 2)} />
+        <ResourceYAMLEditor
+          initialResource={JSON.stringify(pluginManifest, null, 2)}
+          readOnly
+          hideHeader
+        />
       ) : (
-        <EmptyBox label={t('console-app~Plugin manifest')} />
+        <div className="co-m-pane__body">
+          <EmptyBox label={t('console-app~Plugin manifest')} />
+        </div>
       )}
-    </div>
+    </>
   );
 };
