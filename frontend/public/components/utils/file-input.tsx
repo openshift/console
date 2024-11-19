@@ -42,7 +42,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
         ? (reader.result as string).split(',')[1]
         : (reader.result as string);
       // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-      if (isBinary(null, reader.result as Buffer) && !fileIsBinary) {
+      if (isBinary(null, Buffer.from(reader.result)) && !fileIsBinary) {
         fileIsBinary = true;
         reader.readAsDataURL(file);
       } else {
