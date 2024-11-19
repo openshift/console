@@ -198,7 +198,7 @@ const DroppableFileInputWithTranslation = withDragDropContext(
       reader.onload = () => {
         const input = reader.result as string; // Note(Yaacov): we use reader.readAsText
         // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-        if (isBinary(null, reader.result as Buffer) && !inputFileIsBinary) {
+        if (isBinary(null, Buffer.from(reader.result)) && !inputFileIsBinary) {
           inputFileIsBinary = true;
           reader.readAsBinaryString(file);
         } else {
