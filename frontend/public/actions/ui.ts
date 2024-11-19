@@ -11,7 +11,8 @@ import {
 } from '@console/shared/src/constants';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
-import { detectFeatures, clearSSARFlags } from './features';
+import { detectFeatures } from './features';
+import { clearSSARFlags } from './flags';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { setClusterID, setCreateProjectMessage } from './common';
 import { subsClient } from '../graphql/client';

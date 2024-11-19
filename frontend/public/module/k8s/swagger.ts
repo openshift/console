@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 
 import { STORAGE_PREFIX } from '@console/shared/src/constants';
 import { coFetchJSON } from '../../co-fetch';
-import { K8sKind, referenceForModel } from './';
+import { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 
 const SWAGGER_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-definitions`;
 

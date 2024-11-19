@@ -4,11 +4,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SectionHeading, ExpandCollapse } from '../../utils';
-import {
-  SaveAsDefaultCheckbox,
-  SendResolvedAlertsCheckbox,
-  FormProps,
-} from './alert-manager-receiver-forms';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
+import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
+import { FormProps } from './receiver-form-props';
 
 const SMTP_GLOBAL_FIELDS = [
   'smtp_from',

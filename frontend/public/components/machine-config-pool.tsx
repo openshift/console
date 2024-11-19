@@ -34,10 +34,8 @@ import {
   WorkloadPausedAlert,
 } from './utils';
 import { ResourceEventStream } from './events';
-import {
-  MachineConfigPoolsArePausedAlert,
-  UpToDateMessage,
-} from './cluster-settings/cluster-settings';
+import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
+import { UpToDateMessage } from './cluster-settings/cluster-status';
 
 const pauseAction: KebabAction = (kind, obj) => ({
   // t('public~Resume updates')

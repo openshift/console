@@ -1,5 +1,5 @@
 import { Location } from 'history';
-import { getBrandingDetails } from '../masthead';
+import { getBrandingDetails } from './branding';
 
 /**
  * Removes sensitive informations from the pathname.

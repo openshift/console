@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
-import { generateSecret } from '.';
+import { generateSecret } from './utils';
 import { SecretStringData } from './types';
 
 class WebHookSecretFormWithTranslation extends React.Component<

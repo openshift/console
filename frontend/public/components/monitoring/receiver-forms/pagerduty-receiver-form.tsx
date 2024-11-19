@@ -4,11 +4,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { RadioInput } from '../../radio';
-import {
-  FormProps,
-  SendResolvedAlertsCheckbox,
-  SaveAsDefaultCheckbox,
-} from './alert-manager-receiver-forms';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
+import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
+import { FormProps } from './receiver-form-props';
 import { ExpandCollapse } from '../../utils';
 
 const GLOBAL_FIELDS = [

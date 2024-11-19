@@ -5,7 +5,7 @@ import { mount, shallow } from 'enzyme';
 
 import { FLAGS } from '@console/shared';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { setFlag } from '@console/internal/actions/features';
+import { setFlag } from '@console/internal/actions/flags';
 import * as UIActions from '@console/internal/actions/ui';
 import {
   PrometheusGraph,

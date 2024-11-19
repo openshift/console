@@ -2,12 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ResourceLog,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
   LOG_SOURCE_WAITING,
-  ConsoleEmptyState,
-  ResourceLog,
-} from './utils';
+} from './utils/resource-log';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
 import { BuildStrategyType } from './build';
 import { BuildPhase } from '../module/k8s/builds';

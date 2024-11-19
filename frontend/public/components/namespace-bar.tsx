@@ -16,7 +16,7 @@ import {
   useFlag,
 } from '@console/shared';
 import { k8sGet } from '@console/internal/module/k8s';
-import { setFlag } from '../actions/features';
+import { setFlag } from '../actions/flags';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
 import { Firehose, FirehoseResult, removeQueryArgument } from './utils';
