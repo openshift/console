@@ -10,7 +10,7 @@ export * from './AuthSecretForm';
 export * from './BasicAuthSubform';
 export * from './SSHAuthSubform';
 export * from './GenericSecretForm';
-export * from './KeyValueEntryForm';
+export * from './OpaqueSecretFormEntry';
 export * from './EditSecret';
 export * from './CreateSecret';
 export * from './DropableFileInput';
