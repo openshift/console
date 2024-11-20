@@ -1,65 +1,65 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DroppableFileInput } from '.';
-import { KeyValueEntryFormProps, KeyValueEntryFormState } from './types';
+import { DroppableFileInput } from './DropableFileInput';
+import { OpaqueSecretFormEntryProps } from './types';
 
-export const OpaqueSecretFormEntry: React.FC<KeyValueEntryFormProps> = ({
+export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
   onChange,
   entry,
-  id,
+  index,
 }) => {
-  const [state, setState] = React.useState<KeyValueEntryFormState>(entry);
   const { t } = useTranslation();
 
-  const onValueChange = (fileData, isBinary) => {
-    setState((prevState) => ({
-      ...prevState,
+  const handleValueChange = (fileData: string, isBinary: boolean) => {
+    const updatedEntry = {
+      ...entry,
       value: fileData,
-      isBinary,
-    }));
+      isBinary_: isBinary,
+    };
+    onChange(updatedEntry, index);
   };
 
-  const onKeyChange = (event) => {
-    setState((prevState) => ({
-      ...prevState,
-      key: event.target.value,
-    }));
+  const handleKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(
+      {
+        ...entry,
+        key: event.target.value,
+      },
+      index,
+    );
   };
-
-  React.useEffect(() => {
-    onChange(state, id);
-  }, [state]);
 
   return (
     <div className="co-create-generic-secret__form">
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${id}-key`}>
+        <label className="control-label co-required" htmlFor={`${index}-key`}>
           {t('public~Key')}
         </label>
         <div>
-          <input
-            className="pf-v5-c-form-control"
-            id={`${id}-key`}
-            type="text"
-            name="key"
-            onChange={onKeyChange}
-            value={state.key}
-            data-test="secret-key"
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id={`${index}-key`}
+              type="text"
+              name="key"
+              onChange={handleKeyChange}
+              value={entry.key}
+              data-test="secret-key"
+              required
+            />
+          </span>
         </div>
       </div>
       <div className="form-group">
         <div>
           <DroppableFileInput
-            onChange={onValueChange}
-            inputFileData={state.value}
-            id={`${id}-value`}
+            onChange={handleValueChange}
+            inputFileData={entry.value}
+            id={`${index}-value`}
             label={t('public~Value')}
             inputFieldHelpText={t(
               'public~Drag and drop file with your value here or browse to upload it.',
             )}
-            inputFileIsBinary={state.isBinary}
+            inputFileIsBinary={entry.isBinary_}
           />
         </div>
       </div>
