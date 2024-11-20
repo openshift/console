@@ -3,7 +3,7 @@ import { SecretSubFormProps, SecretTypeAbstraction } from './types';
 import { AuthSecretForm } from './AuthSecretForm';
 import { PullSecretForm } from './PullSecretForm';
 import { WebHookSecretForm } from './WebHookSecretForm';
-import { GenericSecretForm } from './GenericSecretForm';
+import { OpaqueSecretForm } from './OpaqueSecretForm';
 
 export const SecretSubForm: React.FC<
   SecretSubFormProps & { typeAbstraction: SecretTypeAbstraction }
@@ -16,6 +16,6 @@ export const SecretSubForm: React.FC<
     case SecretTypeAbstraction.webhook:
       return <WebHookSecretForm {...props} />;
     default:
-      return <GenericSecretForm {...props} />;
+      return <OpaqueSecretForm {...props} />;
   }
 };
