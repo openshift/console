@@ -473,10 +473,10 @@
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "Events",
-      "title": "%knative-plugin~Events%",
-      "catalogDescription": "%knative-plugin~​​Events available that can be consumed with Serverless Functions or regular Deployments.%",
-      "typeDescription": "%knative-plugin~​​**Events** available that can be consumed with Serverless Functions or regular Deployments.%",
+      "type": "EventType",
+      "title": "%knative-plugin~Event Types%",
+      "catalogDescription": "%knative-plugin~​​Event Types available that can be consumed with Serverless Functions or regular Deployments.%",
+      "typeDescription": "%knative-plugin~​​**Event Types** available that can be consumed with Serverless Functions or regular Deployments.%",
       "filters": [
         {
           "label": "%knative-plugin~Provider%",
@@ -492,8 +492,8 @@
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "dev-catalog",
-      "type": "Events",
-      "title": "%knative-plugin~Events%",
+      "type": "EventType",
+      "title": "%knative-plugin~Event Types%",
       "provider": { "$codeRef": "catalog.eventTypeProvider" }
     },
     "flags": {
@@ -567,6 +567,20 @@
   {
     "type": "dev-console.add/action",
     "flags": {
+      "required": ["KNATIVE_EVENTING", "DEVELOPER_CATALOG", "FLAG_KNATIVE_EVENTING_ENABLED"]
+    },
+    "properties": {
+      "id": "knative-event-type",
+      "groupId": "eventing",
+      "href": "/catalog/ns/:namespace?catalogType=EventType",
+      "label": "%knative-plugin~Event Type%",
+      "description": "%knative-plugin~​​Event Types available that can be consumed with Serverless Functions or regular Deployments%",
+      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
       "required": [
         "KNATIVE_EVENTING",
         "DEVELOPER_CATALOG",
@@ -581,6 +595,25 @@
       "label": "%knative-plugin~Event Source%",
       "description": "%knative-plugin~Create an Event source to register interest in a class of events from a particular system%",
       "icon": { "$codeRef": "icons.eventSourceIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": [
+        "KNATIVE_EVENTING",
+        "DEVELOPER_CATALOG",
+        "KNATIVE_EVENT_SINK_CATALOG_TYPE",
+        "FLAG_KNATIVE_EVENTING_ENABLED"
+      ]
+    },
+    "properties": {
+      "id": "knative-event-sink",
+      "groupId": "eventing",
+      "href": "/catalog/ns/:namespace?catalogType=EventSink",
+      "label": "%knative-plugin~Event Sink%",
+      "description": "%knative-plugin~Create an Event sink to receive incoming events from a particular source%",
+      "icon": { "$codeRef": "icons.eventSinkIconSVG" }
     }
   },
   {
@@ -666,39 +699,6 @@
       "accessReview": [
         { "group": "eventing.knative.dev", "resource": "channels", "verb": "create" }
       ]
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "flags": {
-      "required": [
-        "KNATIVE_EVENTING",
-        "DEVELOPER_CATALOG",
-        "KNATIVE_EVENT_SINK_CATALOG_TYPE",
-        "FLAG_KNATIVE_EVENTING_ENABLED"
-      ]
-    },
-    "properties": {
-      "id": "knative-event-sink",
-      "groupId": "eventing",
-      "href": "/catalog/ns/:namespace?catalogType=EventSink",
-      "label": "%knative-plugin~Event Sink%",
-      "description": "%knative-plugin~Create an Event sink to receive incoming events from a particular source%",
-      "icon": { "$codeRef": "icons.eventSinkIconSVG" }
-    }
-  },
-  {
-    "type": "dev-console.add/action",
-    "flags": {
-      "required": ["KNATIVE_EVENTING", "DEVELOPER_CATALOG", "FLAG_KNATIVE_EVENTING_ENABLED"]
-    },
-    "properties": {
-      "id": "knative-event-type",
-      "groupId": "eventing",
-      "href": "/catalog/ns/:namespace?catalogType=Events",
-      "label": "%knative-plugin~Events%",
-      "description": "%knative-plugin~​​Events available that can be consumed with Serverless Functions or regular Deployments%",
-      "icon": { "$codeRef": "icons.eventSourceIconSVG" }
     }
   },
   {
