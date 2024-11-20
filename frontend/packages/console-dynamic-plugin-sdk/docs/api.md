@@ -1,79 +1,78 @@
 # OpenShift Console API
 
 1.  [useActivePerspective](#useactiveperspective)
-2.  [StatusIconAndText](#statusiconandtext)
-3.  [GreenCheckCircleIcon](#greencheckcircleicon)
-4.  [RedExclamationCircleIcon](#redexclamationcircleicon)
-5.  [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon)
-6.  [BlueInfoCircleIcon](#blueinfocircleicon)
-7.  [ErrorStatus](#errorstatus)
-8.  [InfoStatus](#infostatus)
-9.  [ProgressStatus](#progressstatus)
-10.  [SuccessStatus](#successstatus)
-11.  [checkAccess](#checkaccess)
-12.  [useAccessReview](#useaccessreview)
-13.  [useResolvedExtensions](#useresolvedextensions)
-14.  [HorizontalNav](#horizontalnav)
-15.  [VirtualizedTable](#virtualizedtable)
-16.  [TableData](#tabledata)
-17.  [useActiveColumns](#useactivecolumns)
-18.  [ListPageHeader](#listpageheader)
-19.  [ListPageCreate](#listpagecreate)
-20.  [ListPageCreateLink](#listpagecreatelink)
-21.  [ListPageCreateButton](#listpagecreatebutton)
-22.  [ListPageCreateDropdown](#listpagecreatedropdown)
-23.  [ListPageFilter](#listpagefilter)
-24.  [useListPageFilter](#uselistpagefilter)
-25.  [ResourceLink](#resourcelink)
-26.  [ResourceIcon](#resourceicon)
-27.  [useK8sModel](#usek8smodel)
-28.  [useK8sModels](#usek8smodels)
-29.  [useK8sWatchResource](#usek8swatchresource)
-30.  [useK8sWatchResources](#usek8swatchresources)
-31.  [consoleFetch](#consolefetch)
-32.  [consoleFetchJSON](#consolefetchjson)
-33.  [consoleFetchText](#consolefetchtext)
-34.  [getConsoleRequestHeaders](#getconsolerequestheaders)
-35.  [k8sGetResource](#k8sgetresource)
-36.  [k8sCreateResource](#k8screateresource)
-37.  [k8sUpdateResource](#k8supdateresource)
-38.  [k8sPatchResource](#k8spatchresource)
-39.  [k8sDeleteResource](#k8sdeleteresource)
-40.  [k8sListResource](#k8slistresource)
-41.  [k8sListResourceItems](#k8slistresourceitems)
-42.  [getAPIVersionForModel](#getapiversionformodel)
-43.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
-44.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
-45.  [StatusPopupSection](#statuspopupsection)
-46.  [StatusPopupItem](#statuspopupitem)
-47.  [Overview](#overview)
-48.  [OverviewGrid](#overviewgrid)
-49.  [InventoryItem](#inventoryitem)
-50.  [InventoryItemTitle](#inventoryitemtitle)
-51.  [InventoryItemBody](#inventoryitembody)
-52.  [InventoryItemStatus](#inventoryitemstatus)
-53.  [InventoryItemLoading](#inventoryitemloading)
-54.  [useFlag](#useflag)
-55.  [CodeEditor](#codeeditor)
-56.  [ResourceYAMLEditor](#resourceyamleditor)
-57.  [ResourceEventStream](#resourceeventstream)
-58.  [usePrometheusPoll](#useprometheuspoll)
-59.  [Timestamp](#timestamp)
-60.  [useModal](#usemodal)
-61.  [ActionServiceProvider](#actionserviceprovider)
-62.  [NamespaceBar](#namespacebar)
-63.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
-64.  [QueryBrowser](#querybrowser)
-65.  [useAnnotationsModal](#useannotationsmodal)
-66.  [useDeleteModal](#usedeletemodal)
-67.  [useLabelsModal](#uselabelsmodal)
-68.  [useActiveNamespace](#useactivenamespace)
-69.  [useUserSettings](#useusersettings)
-70.  [useQuickStartContext](#usequickstartcontext)
-71. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-72. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-73. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-74. [DEPRECATED] [YAMLEditor](#yamleditor)
+2.  [GreenCheckCircleIcon](#greencheckcircleicon)
+3.  [RedExclamationCircleIcon](#redexclamationcircleicon)
+4.  [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon)
+5.  [BlueInfoCircleIcon](#blueinfocircleicon)
+6.  [ErrorStatus](#errorstatus)
+7.  [InfoStatus](#infostatus)
+8.  [ProgressStatus](#progressstatus)
+9.  [SuccessStatus](#successstatus)
+10.  [checkAccess](#checkaccess)
+11.  [useAccessReview](#useaccessreview)
+12.  [useResolvedExtensions](#useresolvedextensions)
+13.  [HorizontalNav](#horizontalnav)
+14.  [VirtualizedTable](#virtualizedtable)
+15.  [TableData](#tabledata)
+16.  [useActiveColumns](#useactivecolumns)
+17.  [ListPageHeader](#listpageheader)
+18.  [ListPageCreate](#listpagecreate)
+19.  [ListPageCreateLink](#listpagecreatelink)
+20.  [ListPageCreateButton](#listpagecreatebutton)
+21.  [ListPageCreateDropdown](#listpagecreatedropdown)
+22.  [ListPageFilter](#listpagefilter)
+23.  [useListPageFilter](#uselistpagefilter)
+24.  [ResourceLink](#resourcelink)
+25.  [ResourceIcon](#resourceicon)
+26.  [useK8sModel](#usek8smodel)
+27.  [useK8sModels](#usek8smodels)
+28.  [useK8sWatchResource](#usek8swatchresource)
+29.  [useK8sWatchResources](#usek8swatchresources)
+30.  [consoleFetch](#consolefetch)
+31.  [consoleFetchJSON](#consolefetchjson)
+32.  [consoleFetchText](#consolefetchtext)
+33.  [getConsoleRequestHeaders](#getconsolerequestheaders)
+34.  [k8sGetResource](#k8sgetresource)
+35.  [k8sCreateResource](#k8screateresource)
+36.  [k8sUpdateResource](#k8supdateresource)
+37.  [k8sPatchResource](#k8spatchresource)
+38.  [k8sDeleteResource](#k8sdeleteresource)
+39.  [k8sListResource](#k8slistresource)
+40.  [k8sListResourceItems](#k8slistresourceitems)
+41.  [getAPIVersionForModel](#getapiversionformodel)
+42.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
+43.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
+44.  [StatusPopupSection](#statuspopupsection)
+45.  [StatusPopupItem](#statuspopupitem)
+46.  [Overview](#overview)
+47.  [OverviewGrid](#overviewgrid)
+48.  [InventoryItem](#inventoryitem)
+49.  [InventoryItemTitle](#inventoryitemtitle)
+50.  [InventoryItemBody](#inventoryitembody)
+51.  [InventoryItemStatus](#inventoryitemstatus)
+52.  [InventoryItemLoading](#inventoryitemloading)
+53.  [useFlag](#useflag)
+54.  [CodeEditor](#codeeditor)
+55.  [ResourceYAMLEditor](#resourceyamleditor)
+56.  [ResourceEventStream](#resourceeventstream)
+57.  [usePrometheusPoll](#useprometheuspoll)
+58.  [Timestamp](#timestamp)
+59.  [useModal](#usemodal)
+60.  [ActionServiceProvider](#actionserviceprovider)
+61.  [NamespaceBar](#namespacebar)
+62.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
+63.  [QueryBrowser](#querybrowser)
+64.  [useAnnotationsModal](#useannotationsmodal)
+65.  [useDeleteModal](#usedeletemodal)
+66.  [useLabelsModal](#uselabelsmodal)
+67.  [useActiveNamespace](#useactivenamespace)
+68.  [useUserSettings](#useusersettings)
+69.  [useQuickStartContext](#usequickstartcontext)
+70. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+71. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+72. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+73. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -111,40 +110,6 @@ const Component: React.FC = (props) => {
 ### Returns
 
 A tuple containing the current active perspective and setter callback.
-
-
----
-
-## `StatusIconAndText`
-
-### Summary 
-
-Component for displaying a status icon and text
-
-
-
-### Example
-
-
-```tsx
-<StatusIconAndText title={title} icon={renderIcon} />
-```
-
-
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `title` | (optional) status text |
-| `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
-| `className` | (optional) additional class name for the component |
-| `icon` | (optional) icon to be displayed |
-| `spin` | (optional) if true, icon rotates |
-
 
 
 ---

@@ -4,10 +4,9 @@ import { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
 import CamelCaseWrap from '../utils/camel-case-wrap';
 
-export type StatusIconAndTextProps = StatusComponentProps & {
+type StatusIconAndTextProps = StatusComponentProps & {
   icon?: React.ReactElement;
   spin?: boolean;
-  statusTextClassName?: string;
 };
 
 /**
@@ -23,14 +22,13 @@ export type StatusIconAndTextProps = StatusComponentProps & {
  * <StatusIconAndText title={title} icon={renderIcon} />
  * ```
  */
-export const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
+const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
   icon,
   title,
   spin,
   iconOnly,
   noTooltip,
   className,
-  statusTextClassName,
 }) => {
   if (!title) {
     return <>{DASH}</>;
@@ -49,9 +47,7 @@ export const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
             !iconOnly && 'co-icon-and-text__icon co-icon-flex-child',
           ),
         })}
-      {!iconOnly && (
-        <CamelCaseWrap value={title} dataTest="status-text" className={statusTextClassName} />
-      )}
+      {!iconOnly && <CamelCaseWrap value={title} dataTest="status-text" />}
     </span>
   );
 };
