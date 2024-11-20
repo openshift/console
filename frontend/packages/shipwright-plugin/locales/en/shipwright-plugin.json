@@ -37,6 +37,7 @@
   "Select a ConfigMap": "Select a ConfigMap",
   "Invalid YAML - {{err}}": "Invalid YAML - {{err}}",
   "Image": "Image",
+  "Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest": "Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest",
   "Parameters": "Parameters",
   "Select a Secret": "Select a Secret",
   "Push Secret": "Push Secret",
