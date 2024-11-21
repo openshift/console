@@ -358,7 +358,7 @@ export const getTriggersAndImageStreamValues = (
   return {
     ...data,
     triggers: {
-      image: imageTrigger?.paused === 'false',
+      image: imageTrigger?.paused === false,
     },
     fromImageStreamTag: !!imageTrigger,
     imageStream: {
