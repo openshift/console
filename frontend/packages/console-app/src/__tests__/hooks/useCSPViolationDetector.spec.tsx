@@ -8,8 +8,6 @@ import {
   useCSPViolationDetector,
 } from '../../hooks/useCSPVioliationDetector';
 
-process.env.NODE_ENV = 'production';
-
 // Mock Date.now so that it returns a predictable value
 const now = Date.now();
 const mockNow = jest.spyOn(Date, 'now').mockReturnValue(now);
@@ -93,6 +91,13 @@ const TestComponent = () => {
 };
 
 describe('useCSPViolationDetector', () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+  beforeAll(() => {
+    process.env.NODE_ENV = 'production';
+  });
+  afterAll(() => {
+    process.env.NODE_ENV = originalNodeEnv;
+  });
   afterEach(() => {
     mockGetItem.mockClear();
     mockSetItem.mockClear();
@@ -142,9 +147,11 @@ describe('useCSPViolationDetector', () => {
 
     mockGetItem.mockReturnValueOnce(JSON.stringify([expiredRecord]));
 
+    const origNodeEnv = process.env.NODE_ENV;
     act(() => {
       fireEvent(document, testEvent);
     });
+    process.env.NODE_ENV = origNodeEnv;
     expect(mockSetItem).toHaveBeenCalledWith(
       'console/csp_violations',
       JSON.stringify([testRecord]),
