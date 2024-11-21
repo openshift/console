@@ -40,23 +40,32 @@ func RandomString(length int) (string, error) {
 // The constructed directives will include the default sources and the supplied configuration.
 func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]string, error) {
 	// The default sources are the sources that are allowed for all directives.
-	// When running on-cluster, the default sources are just 'self' (i.e. the same origin).
-	// When running off-cluster, the default sources are 'self' and 'http://localhost:8080' and 'ws://localhost:8080'
-	// (i.e. the same origin and the proxy endpoint).
-	defaultSources := "'self' console.redhat.com api.segment.io"
+	// When running on-cluster, the default sources are just 'self' and 'console.redhat.com'.
+	// When running off-cluster, 'http://localhost:8080' and 'ws://localhost:8080' are appended to the
+	// default sources. Image source, font source, and style source only use 'self' and
+	// 'http://localhost:8080'.
+	defaultSrc := "'self' console.redhat.com"
+	imgSrc := "'self'"
+	fontSrc := "'self'"
+	scriptSrc := "'self' console.redhat.com"
+	styleSrc := "'self'"
 	if k8sMode == "off-cluster" {
-		defaultSources += " http://localhost:8080 ws://localhost:8080"
+		defaultSrc += " http://localhost:8080 ws://localhost:8080"
+		imgSrc += " http://localhost:8080"
+		fontSrc += " http://localhost:8080"
+		scriptSrc += " http://localhost:8080 ws://localhost:8080"
+		styleSrc += " http://localhost:8080"
 	}
 
 	// The newCSPDirectives map is used to store the directives for each type.
 	// The keys are the types of directives (e.g. DefaultSrc, ImgSrc, etc) and the values are the sources for each type.
 	// The sources are strings that are concatenated together with a space separator.
 	newCSPDirectives := map[consolev1.DirectiveType][]string{
-		consolev1.DefaultSrc: {defaultSources},
-		consolev1.ImgSrc:     {defaultSources},
-		consolev1.FontSrc:    {defaultSources},
-		consolev1.ScriptSrc:  {defaultSources},
-		consolev1.StyleSrc:   {defaultSources},
+		consolev1.DefaultSrc: {defaultSrc},
+		consolev1.ImgSrc:     {imgSrc},
+		consolev1.FontSrc:    {fontSrc},
+		consolev1.ScriptSrc:  {scriptSrc},
+		consolev1.StyleSrc:   {styleSrc},
 	}
 
 	// If the plugins are providing a content security policy configuration, parse it and add it to the directives map.
@@ -79,7 +88,7 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	// The sources are concatenated together with a space separator.
 	// The CSP directives string is returned as a slice of strings, where each string is a directive.
 	cspDirectives := []string{
-		fmt.Sprintf("base-uri %s", defaultSources),
+		fmt.Sprintf("base-uri %s", defaultSrc),
 		fmt.Sprintf("default-src %s", strings.Join(newCSPDirectives[consolev1.DefaultSrc], " ")),
 		fmt.Sprintf("img-src %s data:", strings.Join(newCSPDirectives[consolev1.ImgSrc], " ")),
 		fmt.Sprintf("font-src %s data:", strings.Join(newCSPDirectives[consolev1.FontSrc], " ")),
