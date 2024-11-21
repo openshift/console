@@ -363,7 +363,7 @@ export const convertBuilderFormToPipeline = (
           ? tasks
           : existingPipeline?.spec?.tasks ??
             [].map((task) => task && removeEmptyFormFields(removeListRunAfters(task, listIds))),
-      finally: finallyTasks.length > 0 ? finallyTasks : existingPipeline?.spec?.finally ?? [],
+      finally: finallyTasks,
     },
   };
 };
