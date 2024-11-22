@@ -8,9 +8,10 @@ import {
   RowFunctionArgs,
   TableProps,
   TableColumn,
-} from '@console/internal/components/factory';
+} from '@console/internal/components/factory/table';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
-import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
+import { getQueryArgument } from '@console/internal/components/utils/router';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 
 interface CustomResourceListProps {
   queryArg?: string;
