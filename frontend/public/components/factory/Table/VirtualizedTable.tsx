@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useNavigate } from 'react-router-dom-v5-compat';
+import { Button } from '@patternfly/react-core';
 import {
   TableGridBreakpoint,
   SortByDirection,
@@ -7,14 +9,17 @@ import {
   Td,
 } from '@patternfly/react-table';
 import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { TableColumn, TableDataProps, VirtualizedTableFC } from '@console/dynamic-plugin-sdk';
-
+import {
+  TableColumn,
+  TableDataProps,
+  VirtualizedTableFC,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { StatusBox } from '@console/shared/src/components/status/StatusBox';
+import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import VirtualizedTableBody from './VirtualizedTableBody';
 import TableHeader from './TableHeader';
-import { StatusBox, WithScrollContainer, EmptyBox } from '../../utils';
+import { WithScrollContainer } from '../../utils/dom-utils';
 import { sortResourceByValue } from './sort';
-import { Button } from '@patternfly/react-core';
 
 const BREAKPOINT_SM = 576;
 const BREAKPOINT_MD = 768;

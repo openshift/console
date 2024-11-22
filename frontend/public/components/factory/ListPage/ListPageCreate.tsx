@@ -18,10 +18,9 @@ import {
   ListPageCreateLinkProps,
   ListPageCreateButtonProps,
   ListPageCreateDropdownProps,
-} from '@console/dynamic-plugin-sdk';
-
-import { RequireCreatePermission } from '../../utils';
-import { transformGroupVersionKindToReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { RequireCreatePermission } from '../../utils/rbac';
+import { transformGroupVersionKindToReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 
 const CreateWithPermissions: React.FC<CreateWithPermissionsProps> = ({
   createAccessReview,

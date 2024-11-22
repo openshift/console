@@ -33,7 +33,10 @@ import { getName } from '@console/shared/src/selectors/common';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
-import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
+import {
+  RowFilter as RowFilterExt,
+  K8sResourceKindReference,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
 import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
@@ -41,21 +44,17 @@ import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
   CustomResourceDefinitionKind,
-  getClusterOperatorStatus,
-  getClusterOperatorVersion,
-  getJobTypeAndCompletions,
-  getLatestVersionForCRD,
-  getTemplateInstanceStatus,
   K8sResourceKind,
-  K8sResourceKindReference,
   PodKind,
-  podPhase,
-  podReadiness,
-  podRestarts,
   MachineKind,
   VolumeSnapshotKind,
   ClusterOperator,
-} from '../../module/k8s';
+} from '../../module/k8s/types';
+import { getClusterOperatorStatus } from '../../module/k8s/cluster-operator';
+import { getClusterOperatorVersion, getJobTypeAndCompletions } from '../../module/k8s';
+import { getLatestVersionForCRD } from '../../module/k8s/k8s';
+import { getTemplateInstanceStatus } from '../../module/k8s/template';
+import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
 import { useTableData } from './table-data-hook';
 import TableHeader from './Table/TableHeader';
 

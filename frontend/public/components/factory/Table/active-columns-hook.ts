@@ -3,10 +3,10 @@ import {
   ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  useActiveNamespace,
-  useUserSettingsCompatibility,
-} from '@console/shared';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
+} from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const useActiveColumns = <D = any>({
   columns,

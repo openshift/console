@@ -1,45 +1,41 @@
 import * as React from 'react';
 import { useLocation, useParams, Location } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
+import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { ResourceTabPage, isResourceTabPage } from '@console/plugin-sdk/src/typings/pages';
 import {
-  useExtensions,
-  ResourceTabPage,
-  isResourceTabPage,
   isDetailPageBreadCrumbs,
   DetailPageBreadCrumbs,
-} from '@console/plugin-sdk';
+} from '@console/plugin-sdk/src/typings/detail-page-bread-crumbs';
+import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
-  ResolvedExtension,
-  useResolvedExtensions,
   ResourceTabPage as DynamicResourceTabPage,
   isResourceTabPage as isDynamicResourceTabPage,
-  K8sModel,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import {
   isDetailPageBreadCrumbs as isDynamicDetailPageBreadCrumbs,
   DetailPageBreadCrumbs as DynamicDetailPageBreadCrumbs,
+} from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
+import {
   FirehoseResult,
-} from '@console/dynamic-plugin-sdk';
-import {
-  Firehose,
-  HorizontalNav,
-  PageHeading,
-  FirehoseResource,
-  KebabOptionsCreator,
-  Page,
-  AsyncComponent,
-  PageComponentProps,
-  KebabAction,
-} from '../utils';
-import {
   K8sResourceKindReference,
   K8sResourceKind,
-  K8sKind,
-  referenceForModel,
-  referenceForExtensionModel,
-} from '../../module/k8s';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { Firehose } from '../utils/firehose';
+import { HorizontalNav, Page, PageComponentProps } from '../utils/horizontal-nav';
+import { PageHeading, KebabOptionsCreator } from '../utils/headings';
+import { FirehoseResource } from '../utils/types';
+import { AsyncComponent } from '../utils/async';
+import { KebabAction } from '../utils/kebab';
+import { K8sKind } from '../../module/k8s/types';
+import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { referenceForExtensionModel } from '../../module/k8s/k8s';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';

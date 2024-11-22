@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
+import { OnSelect } from '@patternfly/react-table';
 import {
   K8sResourceCommon,
   TableColumn,
   RowProps,
   OnRowsRendered,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { TableRow } from '../table';
-import { OnSelect } from '@patternfly/react-table';
 
 type VirtualizedTableBodyProps<D, R = {}> = {
   Row: React.ComponentType<RowProps<D, R>>;

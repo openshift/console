@@ -6,32 +6,38 @@ import * as React from 'react';
 // @ts-ignore
 import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
-
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import { useDocumentListener, KEYBOARD_SHORTCUTS, useDeepCompareMemoize } from '@console/shared';
-import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
-import { ColumnLayout } from '@console/dynamic-plugin-sdk';
-
+import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
+import { KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
+import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import {
+  ColumnLayout,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404 } from '../error';
-import { K8sKind, K8sResourceCommon, referenceForModel, Selector } from '../../module/k8s';
+import { K8sKind } from '../../module/k8s/types';
+import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { Dropdown } from '../utils/dropdown';
+import { Firehose } from '../utils/firehose';
 import {
-  Dropdown,
-  Firehose,
   FirehoseResource,
   FirehoseResourcesResult,
   FirehoseResultObject,
   FirehoseResult,
-  inject,
-  kindObj,
+} from '../utils/types';
+import { inject, kindObj } from '../utils/inject';
+import {
   makeQuery,
   makeReduxID,
-  PageHeading,
-  RequireCreatePermission,
-} from '../utils';
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
+import { PageHeading } from '../utils/headings';
+import { RequireCreatePermission } from '../utils/rbac';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 
 type CreateProps = {

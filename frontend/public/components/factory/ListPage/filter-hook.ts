@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom-v5-compat';
-import { UseListPageFilter, FilterValue } from '@console/dynamic-plugin-sdk';
-
-import { useExactSearch } from '@console/app/src/components/user-preferences/search';
+import {
+  UseListPageFilter,
+  FilterValue,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { getAllTableFilters, FilterMap } from '../table-filters';
 
 const filterData = <D>(

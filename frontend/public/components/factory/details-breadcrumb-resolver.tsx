@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Location } from 'react-router-dom-v5-compat';
-import { DetailsPageBreadCrumbsHook } from '@console/plugin-sdk';
-import { K8sKind } from '@console/internal/module/k8s';
+import { DetailsPageBreadCrumbsHook } from '@console/plugin-sdk/src/typings/detail-page-bread-crumbs';
+import { K8sKind } from '../../module/k8s';
 
 type DetailsBreadcrumbResolverType = {
   useBreadcrumbs: DetailsPageBreadCrumbsHook;
