@@ -75,19 +75,13 @@ import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemet
 import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
+import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPVioliationDetector';
 
 initI18n();
 
 // Disable linkify 'fuzzy links' across the app.
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
-
-const pluginAssetBaseURL = `${document.baseURI}api/plugins/`;
-
-const getPluginNameFromResourceURL = (url) =>
-  url?.startsWith(pluginAssetBaseURL)
-    ? url.substring(pluginAssetBaseURL.length).split('/')[0]
-    : null;
 
 const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children }) => {
   const value = useValueHook();
@@ -123,9 +117,6 @@ const App = (props) => {
   const previousMobileState = React.useRef(isMobile());
   const previousDrawerInlineState = React.useRef(isLargeLayout());
 
-  const { t } = useTranslation();
-  const toastContext = useToast();
-
   const onResize = React.useCallback(() => {
     const desktop = isDesktop();
     const mobile = isMobile();
@@ -144,78 +135,7 @@ const App = (props) => {
     }
   }, []);
 
-  const onCSPViolation = React.useCallback(
-    (event) => {
-      // eslint-disable-next-line no-console
-      console.warn('Content Security Policy violation detected', event);
-
-      // https://developer.mozilla.org/en-US/docs/Web/API/SecurityPolicyViolationEvent
-      const cspReportObject = _.pick(event, [
-        // The URI of the resource that was blocked because it violates a policy.
-        'blockedURI',
-        // The column number in the document or worker at which the violation occurred.
-        'columnNumber',
-        // Whether the user agent is configured to enforce or just report the policy violation.
-        'disposition',
-        // The URI of the document or worker in which the violation occurred.
-        'documentURI',
-        // The directive that was violated.
-        'effectiveDirective',
-        // The line number in the document or worker at which the violation occurred.
-        'lineNumber',
-        // The policy whose enforcement caused the violation.
-        'originalPolicy',
-        // The URL for the referrer of the resources whose policy was violated, or null.
-        'referrer',
-        // A sample of the resource that caused the violation, usually the first 40 characters.
-        // This will only be populated if the resource is an inline script, event handler or style.
-        'sample',
-        // If the violation occurred as a result of a script, this will be the URL of the script.
-        'sourceFile',
-        // HTTP status code of the document or worker in which the violation occurred.
-        'statusCode',
-      ]);
-
-      // Attempt to infer Console plugin name from CSP report object
-      const pluginName =
-        getPluginNameFromResourceURL(cspReportObject.blockedURI) ||
-        getPluginNameFromResourceURL(cspReportObject.sourceFile);
-
-      if (pluginName) {
-        const pluginInfo = pluginStore.findDynamicPluginInfo(pluginName);
-        const validPlugin = !!pluginInfo;
-
-        // eslint-disable-next-line no-console
-        console.warn(
-          `Content Security Policy violation seems to originate from ${
-            validPlugin ? `plugin ${pluginName}` : `unknown plugin ${pluginName}`
-          }`,
-        );
-
-        if (validPlugin) {
-          const pastCSPViolations = pluginInfo.hasCSPViolations ?? false;
-
-          pluginStore.setCustomDynamicPluginInfo(pluginName, { hasCSPViolations: true });
-
-          if (!pastCSPViolations && process.env.NODE_ENV !== 'production') {
-            toastContext.addToast({
-              variant: AlertVariant.warning,
-              title: t('public~Content Security Policy violation in Console plugin'),
-              content: t(
-                "public~{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
-                {
-                  pluginName,
-                },
-              ),
-              timeout: true,
-              dismissible: true,
-            });
-          }
-        }
-      }
-    },
-    [t, toastContext],
-  );
+  useCSPViolationDetector();
 
   React.useEffect(() => {
     window.addEventListener('resize', onResize);
@@ -223,13 +143,6 @@ const App = (props) => {
       window.removeEventListener('resize', onResize);
     };
   }, [onResize]);
-
-  React.useEffect(() => {
-    document.addEventListener('securitypolicyviolation', onCSPViolation);
-    return () => {
-      document.removeEventListener('securitypolicyviolation', onCSPViolation);
-    };
-  }, [onCSPViolation]);
 
   React.useLayoutEffect(() => {
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
