@@ -79,16 +79,9 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   // User and impersonate
   const userUid = useSelector((state: RootState) => {
     const impersonateName = getImpersonate(state)?.name;
-    if (impersonateName) {
-      return impersonateName;
-    }
-    const uid = getUser(state)?.uid;
-    if (uid) {
-      return uid;
-    }
-    const username = hashNameOrKubeadmin(getUser(state)?.username);
-
-    return username || '';
+    const { uid, username } = getUser(state) ?? {};
+    const hashName = hashNameOrKubeadmin(username);
+    return impersonateName || uid || hashName || '';
   });
 
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
@@ -115,7 +108,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
 
   const configMapResource = React.useMemo(
     () =>
-      isLocalStorage
+      !userUid || isLocalStorage
         ? null
         : {
             kind: ConfigMapModel.kind,
@@ -128,7 +121,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
 
   React.useEffect(() => {
-    if (isLocalStorage) {
+    if (!userUid || isLocalStorage) {
       return;
     }
     if (
