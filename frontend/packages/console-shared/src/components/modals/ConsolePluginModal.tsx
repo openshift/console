@@ -71,6 +71,7 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
         inProgress={inProgress}
         submitText={t('public~Save')}
         cancel={cancel}
+        submitDisabled={(previouslyEnabled && enabled) || (!previouslyEnabled && !enabled)}
       />
     </form>
   );
