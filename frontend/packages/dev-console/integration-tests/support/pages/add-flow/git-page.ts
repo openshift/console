@@ -327,6 +327,16 @@ export const gitPage = {
       .parent()
       .find(gitPO.advancedOptions.buildConfig.envValue)
       .type(envValue),
+  verifyBuildConfigEnv: (envName: string, envValue: string) => {
+    cy.get(gitPO.sectionTitle)
+      .contains('Build')
+      .parent()
+      .find(`${gitPO.advancedOptions.buildConfig.envName}[value="${envName}"]`)
+      .parent()
+      .parent()
+      .find(gitPO.advancedOptions.buildConfig.envValue)
+      .should('have.value', envValue);
+  },
   verifyDeploymentOptionIsChecked: () => {
     cy.get(gitPO.advancedOptions.deployment.deploymentTriggerImage).should('be.checked');
   },
@@ -344,6 +354,16 @@ export const gitPage = {
       .parent()
       .find(gitPO.advancedOptions.deployment.envValue)
       .type(envValue),
+  verifyDeploymentEnv: (envName: string, envValue: string) => {
+    cy.get(gitPO.sectionTitle)
+      .contains('Deploy')
+      .parent()
+      .find(`${gitPO.advancedOptions.deployment.envName}[value="${envName}"]`)
+      .parent()
+      .parent()
+      .find(gitPO.advancedOptions.deployment.envValue)
+      .should('have.value', envValue);
+  },
   enterResourceLimitCPURequest: (cpuRequestValue: string) =>
     cy.get(gitPO.advancedOptions.resourceLimit.cpuRequest).type(cpuRequestValue),
   enterResourceLimitCPULimit: (cpuLimitValue: string) =>

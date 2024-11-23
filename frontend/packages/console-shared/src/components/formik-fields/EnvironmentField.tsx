@@ -26,7 +26,7 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
   const { t } = useTranslation();
   const fieldId = getFieldId(props.name, 'env-input');
   const environmentVariables = React.useMemo(() => {
-    return !_.isEmpty(envs) ? envs.map((env) => _.values(env)) : [['', '']];
+    return _.isEmpty(envs) ? [['', '']] : envs.map((env) => _.values(env));
   }, [envs]);
   const [nameValue, setNameValue] = React.useState(environmentVariables);
   const [configMaps, setConfigMaps] = React.useState({});
