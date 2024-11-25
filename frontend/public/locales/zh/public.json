@@ -1628,7 +1628,7 @@
   "Single user (RWO)": "单一用户（RWO）",
   "Shared access (RWX)": "共享的访问（RWX）",
   "Read only (ROX)": "只读（ROX）",
-  "Read write once pod (RWOP)": "Read write once pod (RWOP)",
+  "Read write once pod (RWOP)": "读写一次 pod (RWOP)",
   "Block": "块",
   "TemplateInstances": "模板实例",
   "TemplateInstance details": "模块实例详情",
