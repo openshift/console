@@ -5,20 +5,26 @@ metadata:
 spec:
   params:
     - name: param1
-      description: ''
+      description: ""
       default:
         - foo
         - bar
     - name: param2
-      description: ''
+      description: ""
       default: default1
   resources: []
   workspaces: []
   tasks:
     - name: kn
       taskRef:
-        kind: ClusterTask
-        name: kn
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: kn
+          - name: namespace
+            value: openshift-pipelines
       params:
         - name: kn-image
           value: >-

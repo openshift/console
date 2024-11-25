@@ -15,8 +15,14 @@ spec:
   tasks:
     - name: fetch-repository
       taskRef:
-        name: git-clone
-        kind: ClusterTask
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
       workspaces:
         - name: output
           workspace: workspace
@@ -32,8 +38,14 @@ spec:
 
     - name: build
       taskRef:
-        name: s2i-java-8
-        kind: ClusterTask
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: s2i-java
+          - name: namespace
+            value: openshift-pipelines
       runAfter:
         - fetch-repository
       workspaces:
@@ -47,8 +59,14 @@ spec:
 
     - name: deploy
       taskRef:
-        name: openshift-client
-        kind: ClusterTask
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: openshift-client
+          - name: namespace
+            value: openshift-pipelines
       runAfter:
         - build
       params:

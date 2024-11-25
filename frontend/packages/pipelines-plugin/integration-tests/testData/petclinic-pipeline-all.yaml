@@ -400,10 +400,16 @@ spec:
         - name: revision
           value: $(params.APP_GIT_REVISION)
         - name: deleteExisting
-          value: 'true'
+          value: "true"
       taskRef:
-        kind: ClusterTask
-        name: git-clone
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
       workspaces:
         - name: output
           workspace: app-source
@@ -427,7 +433,7 @@ spec:
     - name: build-image
       params:
         - name: TLSVERIFY
-          value: 'false'
+          value: "false"
         - name: OUTPUT_IMAGE_STREAM
           value: $(params.APP_IMAGE_STREAM)
       runAfter:
@@ -518,7 +524,7 @@ spec:
       description: The location of the path to run s2i from
       name: PATH_CONTEXT
       type: string
-    - default: 'false'
+    - default: "false"
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
       name: TLSVERIFY
       type: string
