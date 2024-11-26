@@ -698,8 +698,6 @@
   "Ingresses": "Ingresses",
   "View documentation": "View documentation",
   "Get support": "Get support",
-  "Compress to a single line of content. This may strip any new lines you have entered.": "Compress to a single line of content. This may strip any new lines you have entered.",
-  "Expand to enter multiple lines of content. This is required if you need to include newline characters.": "Expand to enter multiple lines of content. This is required if you need to include newline characters.",
   "Template": "Template",
   "(generated if empty)": "(generated if empty)",
   "Edit parallelism": "Edit parallelism",
