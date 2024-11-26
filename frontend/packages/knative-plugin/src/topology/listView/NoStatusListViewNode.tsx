@@ -1,6 +1,8 @@
 import * as React from 'react';
-import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
-import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
+import {
+  TopologyListViewNode,
+  TypedResourceBadgeCell,
+} from '@console/topology/src/components/list-view';
 import { OdcBaseNode } from '@console/topology/src/elements';
 import { getResourceKind } from '@console/topology/src/utils';
 import { EventSourceIcon, eventIconStyle } from '../../utils/icons';
