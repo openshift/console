@@ -16,9 +16,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
-import { resourceObjPath } from '@console/internal/components/utils/resource-link';
-import { SelectorInput } from '@console/internal/components/utils/selector-input';
-import { LoadingInline } from '@console/internal/components/utils/status-box';
+import {
+  SelectorInput,
+  resourceObjPath,
+  LoadingInline,
+  // Dropdown,
+} from '@console/internal/components/utils';
 import { NamespaceModel, NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 

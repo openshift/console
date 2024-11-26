@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserSettings } from '@console/shared';
 
 export const THEME_USER_SETTING_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';

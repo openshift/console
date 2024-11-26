@@ -19,13 +19,16 @@ import {
 } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { getMachinePhase } from '@console/shared/src/selectors/machine';
-import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
-import { pvcUsed } from '@console/shared/src/sorts/pvc';
-import { snapshotSize, snapshotSource } from '@console/shared/src/sorts/snapshot';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { getName } from '@console/shared/src/selectors/common';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import {
+  getMachinePhase,
+  getMachineSetInstanceType,
+  pvcUsed,
+  snapshotSize,
+  snapshotSource,
+  ALL_NAMESPACES_KEY,
+  getName,
+  useDeepCompareMemoize,
+} from '@console/shared';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
 import { RowFilter as RowFilterExt } from '@console/dynamic-plugin-sdk';
