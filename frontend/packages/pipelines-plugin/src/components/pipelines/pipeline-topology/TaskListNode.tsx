@@ -12,13 +12,19 @@ type TaskListNodeProps = {
 
 const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) => {
   const { height = 30, width = 120 } = {};
-  const { onNewTask = () => {}, onTaskSearch = () => {}, onRemoveTask = () => {} } =
-    element.getData() || {};
+  const {
+    clusterTaskList = [],
+    namespaceTaskList = [],
+    onNewTask = () => {},
+    onTaskSearch = () => {},
+    onRemoveTask = () => {},
+  } = element.getData() || {};
 
   return (
     <TaskList
       width={width}
       height={height}
+      listOptions={[...clusterTaskList, ...namespaceTaskList]}
       unselectedText={unselectedText}
       onRemoveTask={onRemoveTask}
       onNewTask={onNewTask}

@@ -29,7 +29,7 @@ type BuilderFinallyNodeProps = {
 const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
   const { t } = useTranslation();
   const { width, height } = element.getBounds();
-  const { task, namespace } = element.getData();
+  const { clusterTaskList = [], namespaceTaskList = [], task, namespace } = element.getData();
 
   const {
     addNewFinallyListNode,
@@ -129,6 +129,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             <TaskList
               width={NODE_WIDTH}
               height={NODE_HEIGHT}
+              listOptions={[...clusterTaskList, ...namespaceTaskList]}
               onRemoveTask={ivl.onRemoveTask}
               onNewTask={ivl.convertList}
               onTaskSearch={onTaskSearch}
@@ -169,6 +170,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             <TaskList
               width={NODE_WIDTH}
               height={NODE_HEIGHT}
+              listOptions={[...clusterTaskList, ...namespaceTaskList]}
               onRemoveTask={flt.onRemoveTask}
               onNewTask={flt.convertList}
               onTaskSearch={onTaskSearch}
