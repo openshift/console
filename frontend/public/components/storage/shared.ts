@@ -93,8 +93,8 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
     Block: ['ReadWriteOnce'],
   },
   'block.csi.ibm.com': {
-    Filesystem: ['ReadWriteOnce', 'ReadWriteMany'],
-    Block: ['ReadWriteOnce', 'ReadWriteMany'],
+    Filesystem: ['ReadWriteOnce'],
+    Block: ['ReadWriteOnce'],
   },
   'csi.ovirt.org': {
     Filesystem: ['ReadWriteOnce'],
