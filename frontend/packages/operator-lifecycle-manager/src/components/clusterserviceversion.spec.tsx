@@ -19,7 +19,7 @@ import {
   resourceObjPath,
   StatusBox,
 } from '@console/internal/components/utils';
-import operatorLogo from '@console/internal/imgs/operator.svg';
+import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
 import { ErrorBoundary } from '@console/shared/src/components/error';

@@ -3,13 +3,13 @@
 /// <reference path="./generated/graphql-queries.d.ts" />
 
 declare module '*.svg' {
-  const value: string;
-  export default value;
+  const value: any;
+  export = value;
 }
 
 declare module '*.png' {
   const value: any;
-  export default value;
+  export = value;
 }
 
 declare interface Window {

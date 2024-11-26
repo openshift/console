@@ -1,1 +1,2 @@
-export default 'test-file-stub';
+/* eslint-env node */
+module.exports = 'test-file-stub';
