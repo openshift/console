@@ -257,7 +257,6 @@
   "Pending plugins": "Pending plugins",
   "Loaded plugins": "Loaded plugins",
   "{{enabledCount}}/{{totalCount}} enabled": "{{enabledCount}}/{{totalCount}} enabled",
-  "One or more plugins might have Content Security Policy violations.": "One or more plugins might have Content Security Policy violations.",
   "View all": "View all",
   "Single control plane node": "Single control plane node",
   "Perspectives are enabled by default.": "Perspectives are enabled by default.",
