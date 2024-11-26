@@ -4,23 +4,19 @@ import * as _ from 'lodash-es';
 // @ts-ignore
 import { useSelector } from 'react-redux';
 
-import { getModelExtensionMetadata } from './get-resources';
+import { K8sResourceKindReference, K8sKind, getModelExtensionMetadata } from './index';
 import * as staticModels from '../../models';
 import {
-  apiVersionCompare,
-  kindForReference,
   referenceForModel,
-} from '@console/internal/module/k8s/k8s';
-import { referenceForGroupVersionKind } from './k8s-ref';
+  kindForReference,
+  apiVersionCompare,
+  referenceForGroupVersionKind,
+} from './k8s';
 import store from '../../redux';
 import { pluginStore } from '../../plugins';
 import { isModelDefinition, LoadedExtension } from '@console/plugin-sdk';
-import {
-  isModelMetadata,
-  K8sResourceKindReference,
-  ModelMetadata,
-} from '@console/dynamic-plugin-sdk';
-import { K8sKind, DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
+import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 const modelKey = (model: K8sKind): string => {
   // TODO: Use `referenceForModel` even for known API objects

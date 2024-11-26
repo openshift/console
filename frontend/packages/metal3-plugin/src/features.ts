@@ -1,5 +1,5 @@
 import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
-import { setFlag, handleError } from '@console/internal/actions/flags';
+import { setFlag, handleError } from '@console/internal/actions/features';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { InfrastructureModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';

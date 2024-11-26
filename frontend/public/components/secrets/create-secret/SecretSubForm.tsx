@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { SecretSubFormProps } from './types';
-import { SecretTypeAbstraction } from './const';
-import { SourceSecretForm } from './SourceSecretForm';
-import { PullSecretForm } from './PullSecretForm';
-import { WebHookSecretForm } from './WebHookSecretForm';
-import { GenericSecretForm } from './GenericSecretForm';
+import {
+  SourceSecretForm,
+  SecretTypeAbstraction,
+  PullSecretForm,
+  WebHookSecretForm,
+  GenericSecretForm,
+  SecretSubFormProps,
+} from '.';
 
 export const SecretSubForm: React.FC<WithTypeAbstraction<SecretSubFormProps>> = ({
   typeAbstraction,

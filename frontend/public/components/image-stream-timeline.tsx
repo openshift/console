@@ -8,11 +8,9 @@ import { K8sResourceKindReference } from '../module/k8s';
 import { ResourceLink } from './utils/resource-link';
 import { Timestamp } from './utils/timestamp';
 import { EmptyBox } from './utils/status-box';
+import { getImageStreamTagName } from './image-stream';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
-
-export const getImageStreamTagName = (imageStreamName: string, tag: string): string =>
-  `${imageStreamName}:${tag}`;
 
 const ImageStreamTimelineItem: React.FC<ImageStreamTimelineItemProps> = ({
   tag,

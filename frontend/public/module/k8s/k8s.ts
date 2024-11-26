@@ -1,13 +1,15 @@
 import * as _ from 'lodash-es';
 import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
+  CustomResourceDefinitionKind,
   GroupVersionKind,
+  K8sKind,
   K8sResourceCommon,
-  OwnerReference,
+  K8sResourceKind,
   K8sResourceKindReference,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { CustomResourceDefinitionKind, K8sKind, K8sResourceKind } from './types';
-import { modelFor } from './k8s-models';
+  OwnerReference,
+  modelFor,
+} from './index';
 import { referenceForGroupVersionKind, referenceForModel } from './k8s-ref';
 
 export * from './k8s-ref';

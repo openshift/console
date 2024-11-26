@@ -5,7 +5,7 @@ import * as classnames from 'classnames';
 import { Link } from 'react-router-dom-v5-compat';
 
 import { coFetchJSON } from '../../co-fetch';
-import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './consts';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '.';
 
 export const errorStatus = (err) => {
   if (_.get(err.response, 'ok') === false) {

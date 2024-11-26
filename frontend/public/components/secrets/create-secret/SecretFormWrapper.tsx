@@ -9,14 +9,14 @@ import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../mo
 import { ButtonBar, PageHeading, resourceObjPath } from '../../utils';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../factory/modal';
 import { SecretModel } from '../../../models';
-import { SecretTypeAbstraction } from './const';
 import {
+  SecretTypeAbstraction,
   toDefaultSecretType,
   determineSecretType,
+  SecretSubForm,
   useSecretTitle,
   useSecretDescription,
-} from './utils';
-import { SecretSubForm } from './SecretSubForm';
+} from '.';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const { isCreate, modal, onCancel } = props;

@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import { WebHookSecretKey } from '../../secret';
+import { SecretTypeAbstraction, SecretType } from '.';
 import { useTranslation } from 'react-i18next';
-import { SecretType, SecretTypeAbstraction } from './const';
 
 export const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
   switch (typeAbstraction) {

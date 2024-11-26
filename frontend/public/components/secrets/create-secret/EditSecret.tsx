@@ -5,9 +5,7 @@ import { WithT } from 'i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { K8sResourceKind } from '../../../module/k8s';
 import { Firehose, LoadingBox, StatusBox } from '../../utils';
-import { SecretTypeAbstraction } from './const';
-import { toTypeAbstraction } from './utils';
-import { SecretFormWrapper } from './SecretFormWrapper';
+import { SecretTypeAbstraction, toTypeAbstraction, SecretFormWrapper } from '.';
 
 export const SecretLoadingWrapper = withTranslation()(
   class SecretLoadingWrapper extends React.Component<

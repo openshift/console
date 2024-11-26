@@ -21,11 +21,14 @@ import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from './utils/timestamp';
-import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
+import { ImageStreamTimeline } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
+
+export const getImageStreamTagName = (imageStreamName: string, tag: string): string =>
+  `${imageStreamName}:${tag}`;
 
 export const getAnnotationTags = (specTag: any) =>
   _.get(specTag, 'annotations.tags', '').split(/\s*,\s*/);

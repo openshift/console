@@ -17,7 +17,7 @@ import {
   navFactory,
   resourceObjPath,
 } from './utils';
-import { SecretType } from './secrets/create-secret/const';
+import { SecretType } from './secrets/create-secret';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
 

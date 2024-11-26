@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { KebabItem, KebabItemAccessReview_ } from '../kebab';
-import { useAccessReview } from '../rbac';
+import { useAccessReview } from '../index';
 
-jest.mock('../rbac', () => ({
+jest.mock('../index', () => ({
   useAccessReview: jest.fn(),
 }));
 

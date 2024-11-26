@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DroppableFileInput } from './DropableFileInput';
+import { DroppableFileInput } from '.';
 import { SecretStringData } from './types';
 
 export const SSHAuthSubform: React.FC<SSHAuthSubformProps> = ({ onChange, stringData }) => {

@@ -12,18 +12,18 @@ import {
   isCreateProjectModal,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
-import { setFlag } from '@console/internal/actions/flags';
+import { setFlag } from '@console/internal/actions/features';
 import {
   documentationURLs,
+  ExternalLink,
   getDocumentationURL,
   isManaged,
-} from '@console/internal/components/utils/documentation';
-import { ExternalLink } from '@console/internal/components/utils/link';
-import { resourceObjPath } from '@console/internal/components/utils/resource-link';
+  resourceObjPath,
+  LoadingInline,
+} from '@console/internal/components/utils';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
-import { LoadingInline } from '@console/shared/src/components/loading/LoadingInline';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
