@@ -15,9 +15,6 @@ const ImageSection: React.FC<{ namespace: string }> = ({ namespace }) => {
         label={t('shipwright-plugin~Output image')}
         required
         autoComplete="off"
-        helpText={t(
-          'shipwright-plugin~Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest',
-        )}
       />
       <PushSecretSelector formContextField="formData.outputImage.secret" namespace={namespace} />
     </FormSection>
