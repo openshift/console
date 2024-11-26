@@ -810,7 +810,7 @@ export type Release = {
 export type VersionUpdate = { version?: string; image?: string };
 
 export type ConditionalUpdate = {
-  release: VersionUpdate;
+  release: Release;
   conditions: K8sResourceCondition[];
 };
 
