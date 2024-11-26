@@ -8,7 +8,6 @@ import {
   VolumeSnapshotContentModel,
   ClusterOperatorModel,
   ConsoleOperatorConfigModel,
-  ConsolePluginModel,
 } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
 import {
@@ -253,19 +252,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/user-preferences/UserPreferencePage' /* webpackChunkName: "co-user-preference" */
           )
         ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Tab',
-    properties: {
-      href: 'plugin-manifest',
-      model: ConsolePluginModel,
-      // t('console-app~Plugin manifest')
-      name: '%console-app~Plugin manifest%',
-      loader: () =>
-        import(
-          './components/console-operator/ConsolePluginManifestPage' /* webpackChunkName: "console-operator-config" */
-        ).then((m) => m.ConsolePluginManifestPage),
     },
   },
 ];

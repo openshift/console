@@ -5,7 +5,6 @@ import { isExtensionInUse, PluginStore, DynamicPluginInfo } from '../store';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 
 let subscriptionServiceInitialized = false;
-let getPluginStoreInstance: () => PluginStore = () => undefined;
 
 const extensionSubscriptions: ExtensionSubscription[] = [];
 const dynamicPluginListeners: DynamicPluginListener[] = [];
@@ -29,11 +28,10 @@ const subscribe = <T>(sub: T, subList: T[], invokeListener: VoidFunction): VoidF
 
 export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: Store<RootState>) => {
   if (subscriptionServiceInitialized) {
-    throw new Error('Plugin subscription service is already initialized');
+    throw new Error('Subscription service is already initialized');
   }
 
   subscriptionServiceInitialized = true;
-  getPluginStoreInstance = () => pluginStore;
 
   const getExtensionsInUse = () => pluginStore.getExtensionsInUse();
   const getFlags = () => reduxStore.getState().FLAGS;
@@ -119,13 +117,6 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   // Invoke listeners registered prior to initializing subscription service
   invokeAllExtensionListeners();
   invokeAllDynamicPluginListeners();
-};
-
-/**
- * Provides access to the Console `PluginStore` instance.
- */
-export const getPluginStore = (): PluginStore => {
-  return getPluginStoreInstance();
 };
 
 /**

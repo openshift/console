@@ -32,13 +32,6 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
     ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
   ]);
 
-export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
-  i?.status === 'Loaded';
-
-export const isNotLoadedDynamicPluginInfo = (
-  i: DynamicPluginInfo,
-): i is NotLoadedDynamicPluginInfo => i.status === 'Failed' || i.status === 'Pending';
-
 /**
  * Provides access to Console plugins and their extensions.
  *
@@ -150,7 +143,6 @@ export class PluginStore {
         Object.freeze(augmentExtension(sanitizeExtension(e), pluginID, manifest.name, index)),
       ),
       enabled: false,
-      customInfo: {},
     });
 
     (manifest.customProperties?.console?.disableStaticPlugins ?? [])
@@ -205,14 +197,10 @@ export class PluginStore {
     }
   }
 
-  private getLoadedDynamicPlugin(pluginName: string) {
-    return Array.from(this.loadedDynamicPlugins.values()).find(
+  private isDynamicPluginLoaded(pluginName: string) {
+    return Array.from(this.loadedDynamicPlugins.values()).some(
       (plugin) => plugin.manifest.name === pluginName,
     );
-  }
-
-  private isDynamicPluginLoaded(pluginName: string) {
-    return this.getLoadedDynamicPlugin(pluginName) !== undefined;
   }
 
   private isDynamicPluginFailed(pluginName: string) {
@@ -234,26 +222,6 @@ export class PluginStore {
     this.invokeListeners();
   }
 
-  setCustomDynamicPluginInfo(pluginName: string, data: CustomDynamicPluginInfo) {
-    const plugin = this.getLoadedDynamicPlugin(pluginName);
-
-    if (!plugin) {
-      console.warn(
-        `Attempt to set custom data for plugin ${pluginName} that has not been loaded yet`,
-      );
-      return;
-    }
-
-    const oldData = plugin.customInfo;
-    const newData = _.merge({}, plugin.customInfo, data);
-
-    if (!_.isEqual(oldData, newData)) {
-      plugin.customInfo = newData;
-
-      this.invokeListeners();
-    }
-  }
-
   getDynamicPluginInfo(): DynamicPluginInfo[] {
     const loadedPluginEntries = Array.from(this.loadedDynamicPlugins.entries()).reduce(
       (acc, [pluginID, plugin]) => {
@@ -262,7 +230,6 @@ export class PluginStore {
           pluginID,
           metadata: _.omit(plugin.manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: plugin.enabled,
-          ...plugin.customInfo,
         });
         return acc;
       },
@@ -298,18 +265,6 @@ export class PluginStore {
     return [...loadedPluginEntries, ...failedPluginEntries, ...pendingPluginEntries];
   }
 
-  findDynamicPluginInfo(pluginName: string): DynamicPluginInfo {
-    return this.getDynamicPluginInfo().find((entry) =>
-      isLoadedDynamicPluginInfo(entry)
-        ? entry.metadata.name === pluginName
-        : entry.pluginName === pluginName,
-    );
-  }
-
-  getDynamicPluginManifest(pluginName: string): DynamicPluginManifest {
-    return this.getLoadedDynamicPlugin(pluginName)?.manifest;
-  }
-
   getStateForTestPurposes() {
     return {
       staticPluginExtensions: this.staticPluginExtensions,
@@ -341,7 +296,6 @@ type LoadedDynamicPlugin = {
   manifest: DynamicPluginManifest;
   processedExtensions: Readonly<LoadedExtension[]>;
   enabled: boolean;
-  customInfo: CustomDynamicPluginInfo;
 };
 
 type FailedDynamicPlugin = {
@@ -349,17 +303,12 @@ type FailedDynamicPlugin = {
   errorCause?: unknown;
 };
 
-type CustomDynamicPluginInfo = Partial<{
-  /** If `true`, one or more Content Security Policy violations were detected for this plugin. */
-  hasCSPViolations: boolean;
-}>;
-
 export type LoadedDynamicPluginInfo = {
   status: 'Loaded';
   pluginID: string;
   metadata: DynamicPluginMetadata;
   enabled: boolean;
-} & CustomDynamicPluginInfo;
+};
 
 export type NotLoadedDynamicPluginInfo =
   | {
@@ -374,3 +323,10 @@ export type NotLoadedDynamicPluginInfo =
     };
 
 export type DynamicPluginInfo = LoadedDynamicPluginInfo | NotLoadedDynamicPluginInfo;
+
+export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
+  i.status === 'Loaded';
+
+export const isNotLoadedDynamicPluginInfo = (
+  i: DynamicPluginInfo,
+): i is NotLoadedDynamicPluginInfo => i.status === 'Failed' || i.status === 'Pending';

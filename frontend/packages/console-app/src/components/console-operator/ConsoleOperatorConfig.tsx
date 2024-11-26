@@ -40,79 +40,40 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import {
-  isLoadedDynamicPluginInfo,
-  DynamicPluginInfo,
-  isNotLoadedDynamicPluginInfo,
-} from '@console/plugin-sdk/src';
+import { isLoadedDynamicPluginInfo, isNotLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import {
-  consolePluginModal,
-  CONSOLE_OPERATOR_CONFIG_NAME,
-  DASH,
-  Status,
-  GreenCheckCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+import { consolePluginModal, CONSOLE_OPERATOR_CONFIG_NAME, DASH, Status } from '@console/shared';
 import {
   boolComparator,
   localeComparator,
   Comparator,
 } from '@console/shared/src/utils/comparators';
 
-export const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
+const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';
 const consolePluginGVK = getGroupVersionKindForModel(ConsolePluginModel);
 const consolePluginConcatenatedGVK = getReferenceForModel(ConsolePluginModel);
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
   ConsoleOperatorConfigModel,
 );
 
-export const useConsoleOperatorConfigData = () => {
+const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugin }) => {
+  const { t } = useTranslation();
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   };
-
-  const [consoleOperatorConfig, consoleOperatorConfigLoaded] = useK8sWatchResource<K8sResourceKind>(
-    console,
-  );
-
+  const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>(console);
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
     verb: 'patch',
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
-
-  return React.useMemo(
-    () => ({ consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig }),
-    [consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig],
-  );
-};
-
-export const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({
-  status,
-  errorMessage,
-}) => <Status status={status} title={status === 'Failed' ? errorMessage : undefined} />;
-
-export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProps> = ({
-  pluginName,
-  enabled,
-}) => {
-  const { t } = useTranslation();
-
-  const {
-    consoleOperatorConfig,
-    consoleOperatorConfigLoaded,
-    canPatchConsoleOperatorConfig,
-  } = useConsoleOperatorConfigData();
-
   const labels = enabled ? t('console-app~Enabled') : t('console-app~Disabled');
-
   return (
     <>
-      {consoleOperatorConfigLoaded && canPatchConsoleOperatorConfig && !developmentMode ? (
+      {consoleOperatorConfig && canPatchConsoleOperatorConfig ? (
         <Button
           data-test="edit-console-plugin"
           type="button"
@@ -120,7 +81,7 @@ export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProp
           onClick={() =>
             consolePluginModal({
               consoleOperatorConfig,
-              pluginName,
+              plugin,
               trusted: false,
             })
           }
@@ -136,36 +97,12 @@ export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProp
   );
 };
 
-export const ConsolePluginCSPStatus: React.FC<ConsolePluginCSPStatusProps> = ({
-  hasViolations,
-}) => {
-  const { t } = useTranslation();
-
-  return hasViolations ? (
-    <>
-      <YellowExclamationTriangleIcon
-        className="co-icon-space-r"
-        title={t(
-          "console-app~This plugin might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
-        )}
-      />{' '}
-      {t('console-app~Yes')}
-    </>
-  ) : (
-    <>
-      <GreenCheckCircleIcon className="co-icon-space-r" /> {t('console-app~No')}
-    </>
-  );
-};
-
 const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, loaded }) => {
   const { t } = useTranslation();
-
   const [sortBy, setSortBy] = React.useState<ISortBy>(() => ({
     index: 0,
     direction: SortByDirection.asc,
   }));
-
   const onSort = React.useCallback<OnSort>((_event, index, direction) => {
     setSortBy({ index, direction });
   }, []);
@@ -194,10 +131,6 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
         id: 'enabled',
         name: t('console-app~Enabled'),
         sortable: true,
-      },
-      {
-        id: 'csp-violations',
-        name: t('console-app~CSP violations'),
       },
     ],
     [t],
@@ -252,42 +185,31 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
         <Table aria-label="console plugins table" ouiaId="ConsolePluginsTable">
           <Thead>
             <Tr>
-              {columns.map(({ id, name, sortable }, columnIndex) => (
-                <Th key={id} sort={sortable ? { sortBy, onSort, columnIndex } : null}>
-                  {name}
-                </Th>
+              {columns.map(({ name, sortable }, columnIndex) => (
+                <Th sort={sortable ? { sortBy, onSort, columnIndex } : null}>{name}</Th>
               ))}
             </Tr>
           </Thead>
           <Tbody>
-            {sortedRows.map(
-              ({ name, version, description, status, enabled, errorMessage, hasCSPViolations }) => (
-                <Tr key={name}>
-                  <Td dataLabel={columns[0].id}>
-                    {!developmentMode ? (
-                      <ResourceLink groupVersionKind={consolePluginGVK} name={name} hideIcon />
-                    ) : (
-                      name
-                    )}
-                  </Td>
-                  <Td dataLabel={columns[1].id}>{version || DASH}</Td>
-                  <Td dataLabel={columns[2].id}>{description || DASH}</Td>
-                  <Td dataLabel={columns[3].id}>
-                    <ConsolePluginStatus status={status} errorMessage={errorMessage} />
-                  </Td>
-                  <Td dataLabel={columns[4].id}>
-                    <ConsolePluginEnabledStatus pluginName={name} enabled={enabled} />
-                  </Td>
-                  <Td dataLabel={columns[5].id}>
-                    <ConsolePluginCSPStatus hasViolations={hasCSPViolations ?? false} />
-                  </Td>
-                </Tr>
-              ),
-            )}
+            {sortedRows.map(({ name, version, description, status, enabled }) => (
+              <Tr key={name}>
+                <Td dataLabel={columns[0].id}>
+                  <ResourceLink groupVersionKind={consolePluginGVK} name={name} hideIcon />
+                </Td>
+                <Td dataLabel={columns[1].id}>{version || DASH}</Td>
+                <Td dataLabel={columns[2].id}>{description || DASH}</Td>
+                <Td dataLabel={columns[3].id}>
+                  {status ? <Status status={status} title={status} /> : DASH}
+                </Td>
+                <Td dataLabel={columns[4].id}>
+                  {<ConsolePluginStatus plugin={name} enabled={enabled} />}
+                </Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       ) : (
-        <EmptyBox label={t('console-app~Console plugins')} />
+        <EmptyBox label={t('console-app~console plugins')} />
       )}
     </div>
   );
@@ -305,7 +227,6 @@ const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
             description: plugin.metadata?.customProperties?.console?.description,
             enabled: plugin.enabled,
             status: plugin.status,
-            hasCSPViolations: plugin.hasCSPViolations,
           })),
     [pluginInfo, pluginInfoLoaded],
   );
@@ -341,7 +262,6 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
           description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
           enabled,
           status: loadedPluginInfo?.status,
-          hasCSPViolations: loadedPluginInfo?.hasCSPViolations,
         };
       }
       return {
@@ -362,7 +282,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
   );
 };
 
-const ConsoleOperatorConfigPluginsPage: React.FC<ConsoleOperatorConfigPageProps> = developmentMode
+const ConsoleOperatorConfigPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = developmentMode
   ? DevPluginsPage
   : PluginsPage;
 
@@ -370,7 +290,6 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   typeof DetailsPage
 >> = (props) => {
   const location = useLocation();
-
   const pages = [
     navFactory.details(DetailsForKind),
     navFactory.editYaml(),
@@ -410,19 +329,19 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
   );
 };
 
-export type ConsolePluginTableRow = {
-  name: string;
-  version?: string;
+type ConsolePluginTableRow = {
   description?: string;
-  status: DynamicPluginInfo['status'];
   enabled: boolean;
   errorMessage?: string;
-  hasCSPViolations?: boolean;
+  errorCause?: string;
+  name: string;
+  status: string;
+  version?: string;
 };
 
 type TableColumn = {
-  id: string;
   name: string;
+  id: string;
   sortable?: boolean;
 };
 
@@ -431,18 +350,9 @@ type ConsolePluginsTableProps = ConsoleOperatorConfigPageProps & {
   loaded: boolean;
 };
 
-type ConsolePluginStatusProps = {
-  status: DynamicPluginInfo['status'];
-  errorMessage?: string;
-};
-
-type ConsolePluginEnabledStatusProps = {
-  pluginName: string;
+type ConsolePluginStatusType = {
   enabled: boolean;
-};
-
-type ConsolePluginCSPStatusProps = {
-  hasViolations: boolean;
+  plugin: string;
 };
 
 type ConsoleOperatorConfigPageProps = {

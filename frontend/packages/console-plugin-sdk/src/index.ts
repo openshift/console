@@ -6,4 +6,3 @@ export * from './store';
 export * from './api/useExtensions';
 export * from './api/withExtensions';
 export * from './api/useDynamicPluginInfo';
-export * from './api/usePluginStore';
