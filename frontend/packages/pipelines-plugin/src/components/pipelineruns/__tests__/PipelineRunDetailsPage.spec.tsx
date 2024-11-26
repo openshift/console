@@ -3,6 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { SemVer } from 'semver';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { DetailsPage } from '@console/internal/components/factory';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineRunModel } from '../../../models';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
 import * as hookUtils from '../../pipelines/hooks';
@@ -22,10 +23,17 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource',
   useK8sWatchResource: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/flag', () => ({
+  useFlag: jest.fn(),
+}));
+
+const useFlagMock = useFlag as jest.Mock;
+
 describe('PipelineRunDetailsPage:', () => {
   let pipelineRunDetailsPageProps: PipelineRunDetailsPageProps;
   let wrapper: ShallowWrapper<PipelineRunDetailsPageProps>;
   beforeEach(() => {
+    useFlagMock.mockReturnValue(true);
     pipelineRunDetailsPageProps = {
       kind: PipelineRunModel.kind,
       kindObj: PipelineRunModel,
