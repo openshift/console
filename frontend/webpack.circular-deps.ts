@@ -10,23 +10,12 @@ import chalk from 'chalk';
 const HandleCyclesPluginName = 'HandleCyclesPlugin';
 
 type PresetOptions = {
-  /** Exclude modules that match the given regex */
-  exclude?: RegExp;
-  /** Ignores cycles that involve modules matching the given regex */
-  filterModules?: RegExp;
-  /** Path to write the cycle report to */
+  exclude: RegExp;
   reportFile: string;
-  /** Thresholds for the number of cycles detected before emitting an error */
-  thresholds?: Partial<{
-    /**
-     * Maximum number of total cycles permitted
-     * @default 0
-     */
+  thresholds: Partial<{
+    // max # of total cycles
     totalCycles: number;
-    /**
-     * Maximum number of min-length cycles (A -> B -> A) permitted
-     * @default 0
-     */
+    // max # of min-length cycles (A -> B -> A)
     minLengthCycles: number;
   }>;
 };
@@ -92,7 +81,7 @@ const applyThresholds = (
   compilation: webpack.compilation.Compilation,
 ) => {
   const totalCycles = cycles.length;
-  if (totalCycles > thresholds.totalCycles) {
+  if (thresholds.totalCycles && totalCycles > thresholds.totalCycles) {
     compilation.errors.push(
       new Error(
         `${HandleCyclesPluginName}: total cycles (${totalCycles}) exceeds threshold (${thresholds.totalCycles})`,
@@ -101,7 +90,7 @@ const applyThresholds = (
   }
 
   const minLengthCycles = minLengthCycleCount(cycles);
-  if (minLengthCycles > thresholds.minLengthCycles) {
+  if (thresholds.minLengthCycles && minLengthCycles > thresholds.minLengthCycles) {
     compilation.errors.push(
       new Error(
         `${HandleCyclesPluginName}: min-length cycles (${minLengthCycles}) exceeds threshold (${thresholds.minLengthCycles})`,
@@ -120,12 +109,7 @@ export class CircularDependencyPreset {
       new CircularDependencyPlugin({
         exclude: this.options.exclude,
         onDetected: ({ module: { resource }, paths: modulePaths }) => {
-          if (
-            !this.options.filterModules ||
-            !modulePaths.some((p) => this.options.filterModules.test(p))
-          ) {
-            cycles.push({ causedBy: resource, modulePaths });
-          }
+          cycles.push({ causedBy: resource, modulePaths });
         },
       }),
       {
@@ -147,14 +131,7 @@ export class CircularDependencyPreset {
             console.log(chalk.bold.yellow(`Detected ${cycles.length} cycles`));
             console.log(`Module cycle report written to ${chalk.bold(reportPath)}`);
 
-            applyThresholds(
-              cycles,
-              {
-                totalCycles: this.options.thresholds?.totalCycles ?? 0,
-                minLengthCycles: this.options.thresholds?.minLengthCycles ?? 0,
-              },
-              compilation,
-            );
+            applyThresholds(cycles, this.options.thresholds, compilation);
           });
         },
       },
