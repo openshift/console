@@ -21,40 +21,29 @@ import (
 )
 
 // NewSimpleFakeResourceFinder builds a super simple ResourceFinder that just iterates over the objects you provided
-func NewSimpleFakeResourceFinder(infos ...*resource.Info) *FakeResourceFinder {
-	return &FakeResourceFinder{
+func NewSimpleFakeResourceFinder(infos ...*resource.Info) ResourceFinder {
+	return &fakeResourceFinder{
 		Infos: infos,
 	}
 }
 
-func (f *FakeResourceFinder) WithError(err error) *FakeResourceFinder {
-	f.err = err
-	return f
-}
-
-type FakeResourceFinder struct {
+type fakeResourceFinder struct {
 	Infos []*resource.Info
-	err   error
 }
 
 // Do implements the interface
-func (f *FakeResourceFinder) Do() resource.Visitor {
+func (f *fakeResourceFinder) Do() resource.Visitor {
 	return &fakeResourceResult{
 		Infos: f.Infos,
-		err:   f.err,
 	}
 }
 
 type fakeResourceResult struct {
 	Infos []*resource.Info
-	err   error
 }
 
 // Visit just iterates over info
 func (r *fakeResourceResult) Visit(fn resource.VisitorFunc) error {
-	if r.err != nil {
-		return r.err
-	}
 	for _, info := range r.Infos {
 		err := fn(info, nil)
 		if err != nil {

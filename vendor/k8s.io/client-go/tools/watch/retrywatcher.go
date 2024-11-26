@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"sync"
 	"time"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -54,7 +53,6 @@ type RetryWatcher struct {
 	stopChan            chan struct{}
 	doneChan            chan struct{}
 	minRestartDelay     time.Duration
-	stopChanLock        sync.Mutex
 }
 
 // NewRetryWatcher creates a new RetryWatcher.
@@ -288,15 +286,7 @@ func (rw *RetryWatcher) ResultChan() <-chan watch.Event {
 
 // Stop implements Interface.
 func (rw *RetryWatcher) Stop() {
-	rw.stopChanLock.Lock()
-	defer rw.stopChanLock.Unlock()
-
-	// Prevent closing an already closed channel to prevent a panic
-	select {
-	case <-rw.stopChan:
-	default:
-		close(rw.stopChan)
-	}
+	close(rw.stopChan)
 }
 
 // Done allows the caller to be notified when Retry watcher stops.

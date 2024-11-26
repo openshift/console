@@ -29,7 +29,6 @@ import (
 
 	"google.golang.org/grpc/attributes"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/internal"
 	"google.golang.org/grpc/serviceconfig"
 )
 
@@ -64,18 +63,16 @@ func Get(scheme string) Builder {
 }
 
 // SetDefaultScheme sets the default scheme that will be used. The default
-// scheme is initially set to "passthrough".
+// default scheme is "passthrough".
 //
 // NOTE: this function must only be called during initialization time (i.e. in
 // an init() function), and is not thread-safe. The scheme set last overrides
 // previously set values.
 func SetDefaultScheme(scheme string) {
 	defaultScheme = scheme
-	internal.UserSetDefaultScheme = true
 }
 
-// GetDefaultScheme gets the default scheme that will be used by grpc.Dial.  If
-// SetDefaultScheme is never called, the default scheme used by grpc.NewClient is "dns" instead.
+// GetDefaultScheme gets the default scheme that will be used.
 func GetDefaultScheme() string {
 	return defaultScheme
 }
@@ -287,9 +284,9 @@ func (t Target) Endpoint() string {
 	return strings.TrimPrefix(endpoint, "/")
 }
 
-// String returns the canonical string representation of Target.
+// String returns a string representation of Target.
 func (t Target) String() string {
-	return t.URL.Scheme + "://" + t.URL.Host + "/" + t.Endpoint()
+	return t.URL.String()
 }
 
 // Builder creates a resolver that will be used to watch name resolution updates.

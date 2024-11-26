@@ -51,10 +51,14 @@ import (
 // inside an http.Handler, or writes an HTTP error to w and returns an error.
 // It requires that the http Server supports HTTP/2.
 func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []stats.Handler) (ServerTransport, error) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
+	if r.ProtoMajor != 2 {
+		msg := "gRPC requires HTTP/2"
+		http.Error(w, msg, http.StatusBadRequest)
+		return nil, errors.New(msg)
+	}
+	if r.Method != "POST" {
 		msg := fmt.Sprintf("invalid gRPC request method %q", r.Method)
-		http.Error(w, msg, http.StatusMethodNotAllowed)
+		http.Error(w, msg, http.StatusBadRequest)
 		return nil, errors.New(msg)
 	}
 	contentType := r.Header.Get("Content-Type")
@@ -63,11 +67,6 @@ func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []s
 	if !validContentType {
 		msg := fmt.Sprintf("invalid gRPC request content-type %q", contentType)
 		http.Error(w, msg, http.StatusUnsupportedMediaType)
-		return nil, errors.New(msg)
-	}
-	if r.ProtoMajor != 2 {
-		msg := "gRPC requires HTTP/2"
-		http.Error(w, msg, http.StatusHTTPVersionNotSupported)
 		return nil, errors.New(msg)
 	}
 	if _, ok := w.(http.Flusher); !ok {

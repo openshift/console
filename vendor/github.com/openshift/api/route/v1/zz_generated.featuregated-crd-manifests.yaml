@@ -5,7 +5,7 @@ routes.route.openshift.io:
   Capability: ""
   Category: ""
   FeatureGates:
-  - RouteExternalCertificate
+  - ExternalRouteCertificate
   FilenameOperatorName: ""
   FilenameOperatorOrdering: ""
   FilenameRunLevel: ""

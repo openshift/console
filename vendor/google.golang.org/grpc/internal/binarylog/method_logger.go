@@ -65,7 +65,7 @@ type TruncatingMethodLogger struct {
 	callID          uint64
 	idWithinCallGen *callIDGenerator
 
-	sink Sink // TODO(blog): make this pluggable.
+	sink Sink // TODO(blog): make this plugable.
 }
 
 // NewTruncatingMethodLogger returns a new truncating method logger.
@@ -80,7 +80,7 @@ func NewTruncatingMethodLogger(h, m uint64) *TruncatingMethodLogger {
 		callID:          idGen.next(),
 		idWithinCallGen: &callIDGenerator{},
 
-		sink: DefaultSink, // TODO(blog): make it pluggable.
+		sink: DefaultSink, // TODO(blog): make it plugable.
 	}
 }
 
@@ -397,7 +397,7 @@ func metadataKeyOmit(key string) bool {
 	switch key {
 	case "lb-token", ":path", ":authority", "content-encoding", "content-type", "user-agent", "te":
 		return true
-	case "grpc-trace-bin": // grpc-trace-bin is special because it's visible to users.
+	case "grpc-trace-bin": // grpc-trace-bin is special because it's visiable to users.
 		return false
 	}
 	return strings.HasPrefix(key, "grpc-")

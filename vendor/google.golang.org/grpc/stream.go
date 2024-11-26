@@ -23,7 +23,6 @@ import (
 	"errors"
 	"io"
 	"math"
-	"math/rand"
 	"strconv"
 	"sync"
 	"time"
@@ -35,6 +34,7 @@ import (
 	"google.golang.org/grpc/internal/balancerload"
 	"google.golang.org/grpc/internal/binarylog"
 	"google.golang.org/grpc/internal/channelz"
+	"google.golang.org/grpc/internal/grpcrand"
 	"google.golang.org/grpc/internal/grpcutil"
 	imetadata "google.golang.org/grpc/internal/metadata"
 	iresolver "google.golang.org/grpc/internal/resolver"
@@ -516,7 +516,6 @@ func (a *csAttempt) newStream() error {
 		return toRPCErr(nse.Err)
 	}
 	a.s = s
-	a.ctx = s.Context()
 	a.p = &parser{r: s, recvBufferPool: a.cs.cc.dopts.recvBufferPool}
 	return nil
 }
@@ -656,13 +655,13 @@ func (a *csAttempt) shouldRetry(err error) (bool, error) {
 		if len(sps) == 1 {
 			var e error
 			if pushback, e = strconv.Atoi(sps[0]); e != nil || pushback < 0 {
-				channelz.Infof(logger, cs.cc.channelz, "Server retry pushback specified to abort (%q).", sps[0])
+				channelz.Infof(logger, cs.cc.channelzID, "Server retry pushback specified to abort (%q).", sps[0])
 				cs.retryThrottler.throttle() // This counts as a failure for throttling.
 				return false, err
 			}
 			hasPushback = true
 		} else if len(sps) > 1 {
-			channelz.Warningf(logger, cs.cc.channelz, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+			channelz.Warningf(logger, cs.cc.channelzID, "Server retry pushback specified multiple values (%q); not retrying.", sps)
 			cs.retryThrottler.throttle() // This counts as a failure for throttling.
 			return false, err
 		}
@@ -699,7 +698,7 @@ func (a *csAttempt) shouldRetry(err error) (bool, error) {
 		if max := float64(rp.MaxBackoff); cur > max {
 			cur = max
 		}
-		dur = time.Duration(rand.Int63n(int64(cur)))
+		dur = time.Duration(grpcrand.Int63n(int64(cur)))
 		cs.numRetriesSincePushback++
 	}
 

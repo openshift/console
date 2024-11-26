@@ -21,6 +21,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 
 	"google.golang.org/grpc/balancer"
@@ -65,20 +66,19 @@ type ccBalancerWrapper struct {
 }
 
 // newCCBalancerWrapper creates a new balancer wrapper in idle state. The
-// underlying balancer is not created until the updateClientConnState() method
-// is invoked.
+// underlying balancer is not created until the switchTo() method is invoked.
 func newCCBalancerWrapper(cc *ClientConn) *ccBalancerWrapper {
 	ctx, cancel := context.WithCancel(cc.ctx)
 	ccb := &ccBalancerWrapper{
 		cc: cc,
 		opts: balancer.BuildOptions{
-			DialCreds:       cc.dopts.copts.TransportCredentials,
-			CredsBundle:     cc.dopts.copts.CredsBundle,
-			Dialer:          cc.dopts.copts.Dialer,
-			Authority:       cc.authority,
-			CustomUserAgent: cc.dopts.copts.UserAgent,
-			ChannelzParent:  cc.channelz,
-			Target:          cc.parsedTarget,
+			DialCreds:        cc.dopts.copts.TransportCredentials,
+			CredsBundle:      cc.dopts.copts.CredsBundle,
+			Dialer:           cc.dopts.copts.Dialer,
+			Authority:        cc.authority,
+			CustomUserAgent:  cc.dopts.copts.UserAgent,
+			ChannelzParentID: cc.channelzID,
+			Target:           cc.parsedTarget,
 		},
 		serializer:       grpcsync.NewCallbackSerializer(ctx),
 		serializerCancel: cancel,
@@ -96,11 +96,6 @@ func (ccb *ccBalancerWrapper) updateClientConnState(ccs *balancer.ClientConnStat
 		defer close(errCh)
 		if ctx.Err() != nil || ccb.balancer == nil {
 			return
-		}
-		name := gracefulswitch.ChildName(ccs.BalancerConfig)
-		if ccb.curBalancerName != name {
-			ccb.curBalancerName = name
-			channelz.Infof(logger, ccb.cc.channelz, "Channel switches to new LB policy %q", name)
 		}
 		err := ccb.balancer.UpdateClientConnState(*ccs)
 		if logger.V(2) && err != nil {
@@ -125,6 +120,54 @@ func (ccb *ccBalancerWrapper) resolverError(err error) {
 	})
 }
 
+// switchTo is invoked by grpc to instruct the balancer wrapper to switch to the
+// LB policy identified by name.
+//
+// ClientConn calls newCCBalancerWrapper() at creation time. Upon receipt of the
+// first good update from the name resolver, it determines the LB policy to use
+// and invokes the switchTo() method. Upon receipt of every subsequent update
+// from the name resolver, it invokes this method.
+//
+// the ccBalancerWrapper keeps track of the current LB policy name, and skips
+// the graceful balancer switching process if the name does not change.
+func (ccb *ccBalancerWrapper) switchTo(name string) {
+	ccb.serializer.Schedule(func(ctx context.Context) {
+		if ctx.Err() != nil || ccb.balancer == nil {
+			return
+		}
+		// TODO: Other languages use case-sensitive balancer registries. We should
+		// switch as well. See: https://github.com/grpc/grpc-go/issues/5288.
+		if strings.EqualFold(ccb.curBalancerName, name) {
+			return
+		}
+		ccb.buildLoadBalancingPolicy(name)
+	})
+}
+
+// buildLoadBalancingPolicy performs the following:
+//   - retrieve a balancer builder for the given name. Use the default LB
+//     policy, pick_first, if no LB policy with name is found in the registry.
+//   - instruct the gracefulswitch balancer to switch to the above builder. This
+//     will actually build the new balancer.
+//   - update the `curBalancerName` field
+//
+// Must be called from a serializer callback.
+func (ccb *ccBalancerWrapper) buildLoadBalancingPolicy(name string) {
+	builder := balancer.Get(name)
+	if builder == nil {
+		channelz.Warningf(logger, ccb.cc.channelzID, "Channel switches to new LB policy %q, since the specified LB policy %q was not registered", PickFirstBalancerName, name)
+		builder = newPickfirstBuilder()
+	} else {
+		channelz.Infof(logger, ccb.cc.channelzID, "Channel switches to new LB policy %q", name)
+	}
+
+	if err := ccb.balancer.SwitchTo(builder); err != nil {
+		channelz.Errorf(logger, ccb.cc.channelzID, "Channel failed to build new LB policy %q: %v", name, err)
+		return
+	}
+	ccb.curBalancerName = builder.Name()
+}
+
 // close initiates async shutdown of the wrapper.  cc.mu must be held when
 // calling this function.  To determine the wrapper has finished shutting down,
 // the channel should block on ccb.serializer.Done() without cc.mu held.
@@ -132,7 +175,7 @@ func (ccb *ccBalancerWrapper) close() {
 	ccb.mu.Lock()
 	ccb.closed = true
 	ccb.mu.Unlock()
-	channelz.Info(logger, ccb.cc.channelz, "ccBalancerWrapper: closing")
+	channelz.Info(logger, ccb.cc.channelzID, "ccBalancerWrapper: closing")
 	ccb.serializer.Schedule(func(context.Context) {
 		if ccb.balancer == nil {
 			return
@@ -169,7 +212,7 @@ func (ccb *ccBalancerWrapper) NewSubConn(addrs []resolver.Address, opts balancer
 	}
 	ac, err := ccb.cc.newAddrConnLocked(addrs, opts)
 	if err != nil {
-		channelz.Warningf(logger, ccb.cc.channelz, "acBalancerWrapper: NewSubConn: failed to newAddrConn: %v", err)
+		channelz.Warningf(logger, ccb.cc.channelzID, "acBalancerWrapper: NewSubConn: failed to newAddrConn: %v", err)
 		return nil, err
 	}
 	acbw := &acBalancerWrapper{
@@ -198,10 +241,6 @@ func (ccb *ccBalancerWrapper) UpdateAddresses(sc balancer.SubConn, addrs []resol
 func (ccb *ccBalancerWrapper) UpdateState(s balancer.State) {
 	ccb.cc.mu.Lock()
 	defer ccb.cc.mu.Unlock()
-	if ccb.cc.conns == nil {
-		// The CC has been closed; ignore this update.
-		return
-	}
 
 	ccb.mu.Lock()
 	if ccb.closed {
@@ -265,7 +304,7 @@ func (acbw *acBalancerWrapper) updateState(s connectivity.State, err error) {
 }
 
 func (acbw *acBalancerWrapper) String() string {
-	return fmt.Sprintf("SubConn(id:%d)", acbw.ac.channelz.ID)
+	return fmt.Sprintf("SubConn(id:%d)", acbw.ac.channelzID.Int())
 }
 
 func (acbw *acBalancerWrapper) UpdateAddresses(addrs []resolver.Address) {

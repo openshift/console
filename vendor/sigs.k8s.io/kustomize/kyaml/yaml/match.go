@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"sigs.k8s.io/kustomize/kyaml/errors"
-	yaml "sigs.k8s.io/yaml/goyaml.v3"
+	"sigs.k8s.io/kustomize/kyaml/internal/forked/github.com/go-yaml/yaml"
 )
 
 // PathMatcher returns all RNodes matching the path wrapped in a SequenceNode.

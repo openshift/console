@@ -48,15 +48,7 @@ type NodeSpec struct {
 	WorkerLatencyProfile WorkerLatencyProfileType `json:"workerLatencyProfile,omitempty"`
 }
 
-type NodeStatus struct {
-	// conditions contain the details and the current state of the nodes.config object
-	// +patchMergeKey=type
-	// +patchStrategy=merge
-	// +listType=map
-	// +listMapKey=type
-	// +optional
-	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
-}
+type NodeStatus struct{}
 
 // +kubebuilder:validation:Enum=v1;v2;""
 type CgroupMode string

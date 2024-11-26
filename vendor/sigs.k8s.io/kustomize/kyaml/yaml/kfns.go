@@ -5,7 +5,7 @@ package yaml
 
 import (
 	"sigs.k8s.io/kustomize/kyaml/errors"
-	yaml "sigs.k8s.io/yaml/goyaml.v3"
+	"sigs.k8s.io/kustomize/kyaml/internal/forked/github.com/go-yaml/yaml"
 )
 
 // AnnotationClearer removes an annotation at metadata.annotations.

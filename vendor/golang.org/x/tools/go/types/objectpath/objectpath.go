@@ -30,6 +30,7 @@ import (
 	"strings"
 
 	"golang.org/x/tools/internal/aliases"
+	"golang.org/x/tools/internal/typeparams"
 	"golang.org/x/tools/internal/typesinternal"
 )
 
@@ -394,7 +395,7 @@ func (enc *Encoder) concreteMethod(meth *types.Func) (Path, bool) {
 	// of objectpath will only be giving us origin methods, anyway, as referring
 	// to instantiated methods is usually not useful.
 
-	if meth.Origin() != meth {
+	if typeparams.OriginMethod(meth) != meth {
 		return "", false
 	}
 

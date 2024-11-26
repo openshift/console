@@ -137,7 +137,9 @@ func (p *PerHost) AddNetwork(net *net.IPNet) {
 // AddZone specifies a DNS suffix that will use the bypass proxy. A zone of
 // "example.com" matches "example.com" and all of its subdomains.
 func (p *PerHost) AddZone(zone string) {
-	zone = strings.TrimSuffix(zone, ".")
+	if strings.HasSuffix(zone, ".") {
+		zone = zone[:len(zone)-1]
+	}
 	if !strings.HasPrefix(zone, ".") {
 		zone = "." + zone
 	}
@@ -146,6 +148,8 @@ func (p *PerHost) AddZone(zone string) {
 
 // AddHost specifies a host name that will use the bypass proxy.
 func (p *PerHost) AddHost(host string) {
-	host = strings.TrimSuffix(host, ".")
+	if strings.HasSuffix(host, ".") {
+		host = host[:len(host)-1]
+	}
 	p.bypassHosts = append(p.bypassHosts, host)
 }
