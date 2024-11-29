@@ -733,6 +733,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -754,6 +757,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -764,6 +770,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderEditPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -774,6 +783,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelineBuilderEditPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -855,7 +867,7 @@
     "type": "dev-console.add/action",
     "flags": {
       "required": ["OPENSHIFT_PIPELINE_V1BETA1"],
-      "disallowed": ["FLAG_TEKTON_V1_ENABLED"]
+      "disallowed": ["FLAG_TEKTON_V1_ENABLED", "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     },
     "properties": {
       "id": "pipeline",
@@ -876,7 +888,8 @@
   {
     "type": "dev-console.add/action",
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"]
+      "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     },
     "properties": {
       "id": "pipeline",
@@ -1098,7 +1111,8 @@
       "catalogDescription": "%pipelines-plugin~Browse for openshift pipeline tasks available in the cluster.%"
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -1109,7 +1123,8 @@
       "catalogDescription": "%pipelines-plugin~Browse tekton hub tasks.%"
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -1121,7 +1136,8 @@
       "provider": { "$codeRef": "catalog.TektonTaskProvider" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -1133,7 +1149,8 @@
       "provider": { "$codeRef": "catalog.TektonHubTaskProvider" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
@@ -1145,7 +1162,8 @@
       "provider": { "$codeRef": "catalog.ArtifactHubTaskProvider" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
     }
   },
   {
