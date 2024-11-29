@@ -7,8 +7,10 @@ import {
   Popover,
   ExpandableSection,
 } from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
+import { GettingStartedShowState } from './useGettingStartedShowState';
 
 import './GettingStartedExpandableGrid.scss';
 
@@ -16,12 +18,14 @@ interface GettingStartedExpandableGridProps {
   children?: React.ReactNodeArray;
   isOpen?: boolean;
   setIsOpen?: (isOpen: boolean) => void;
+  setShowState?: (showState: GettingStartedShowState) => void;
 }
 
 export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGridProps> = ({
   children,
   isOpen,
   setIsOpen,
+  setShowState,
 }) => {
   const { t } = useTranslation();
 
@@ -34,6 +38,10 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
     </span>
   );
 
+  const handleClose = () => {
+    setShowState(GettingStartedShowState.HIDE);
+  };
+
   return (
     <ExpandableSection
       onToggle={() => setIsOpen(!isOpen)}
@@ -41,19 +49,24 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
       displaySize="lg"
       className="ocs-getting-started-expandable-section"
       toggleContent={
-        <div className="ocs-getting-started-expandable-section__toggle-text">
-          <Title headingLevel="h2" size={TitleSizes.lg} data-test="title">
-            {title}{' '}
-            <Popover bodyContent={titleTooltip} triggerAction="hover">
-              <span
-                role="button"
-                aria-label={t('console-shared~More info')}
-                className="ocs-getting-started-expandable-grid__tooltip-icon"
-              >
-                <OutlinedQuestionCircleIcon />
-              </span>
-            </Popover>
-          </Title>
+        <div className="ocs-getting-started-expandable-section__header">
+          <div className="ocs-getting-started-expandable-section__toggle-text">
+            <Title headingLevel="h2" size={TitleSizes.lg} data-test="title">
+              {title}{' '}
+              <Popover bodyContent={titleTooltip} triggerAction="hover">
+                <span
+                  role="button"
+                  aria-label={t('console-shared~More info')}
+                  className="ocs-getting-started-expandable-grid__tooltip-icon"
+                >
+                  <OutlinedQuestionCircleIcon />
+                </span>
+              </Popover>
+            </Title>
+          </div>
+          {setShowState && (
+            <TimesIcon onClick={handleClose} className="ocs-getting-started-close-icon" />
+          )}
         </div>
       }
     >
