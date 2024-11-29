@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
@@ -52,7 +53,11 @@ const EditBuild: React.FC<EditBuildProps> = ({ heading, build: watchedBuild, nam
       values.editorType === EditorType.Form
         ? convertFormDataToBuild(parsedBuild, values)
         : parsedBuild;
-
+    const buildParams = changedBuild?.spec?.paramValues;
+    const filterEmptyValueParams = buildParams?.filter(
+      (param) => !_.isEmpty(param.value) || !_.isEmpty(param.values),
+    );
+    changedBuild.spec.paramValues = filterEmptyValueParams;
     try {
       const isNew = !name;
       const updatedBuildConfig: Build = isNew
