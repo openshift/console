@@ -525,7 +525,6 @@
   "Path that the router watches to route traffic to the service.": "라우터가 트래픽을 서비스로 라우팅하기 위해 모니터링하는 경로입니다.",
   "Target port": "대상 포트",
   "Target port for traffic.": "트래픽 대상 포트입니다.",
-  "No results found": "결과 없음",
   "Edge": "Edge",
   "Passthrough": "Passthrough",
   "Re-encrypt": "Re-encrypt",
