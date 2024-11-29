@@ -153,7 +153,7 @@ export const SecretFormWrapper = withTranslation()(
         inProgress: false,
         type: defaultSecretType,
         stringData: _.mapValues(_.get(props.obj, 'data'), (value) => {
-          return value ? Base64.atob(value) : '';
+          return value ? Base64.decode(value) : '';
         }),
         disableForm: false,
       };
@@ -195,7 +195,7 @@ export const SecretFormWrapper = withTranslation()(
       this.setState({ inProgress: true });
       const data = {
         ..._.mapValues(this.state.stringData, (value) => {
-          return Base64.btoa(value);
+          return Base64.encode(value);
         }),
         ...this.state?.base64StringData,
       };
@@ -1107,7 +1107,7 @@ class GenericSecretFormWithTranslation extends React.Component<
         uid: _.uniqueId(),
         entry: {
           key,
-          value: isBinary ? Base64.btoa(value) : value,
+          value: isBinary ? Base64.encode(value) : value,
           isBase64: isBinary,
           isBinary,
         },
