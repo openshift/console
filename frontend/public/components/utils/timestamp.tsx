@@ -32,7 +32,7 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, lang: string)
 const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
 
 export const Timestamp = (props: TimestampProps) => {
-  const now = useSelector(nowStateToProps);
+  const { now } = useSelector(nowStateToProps);
 
   // Workaround for Date&Time values are not showing in supported languages onchange of language selector.
   const lang = getLastLanguage();
