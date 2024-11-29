@@ -3,6 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import { InputField, TextColumnField } from '@console/shared';
 import { BuildFormikValues, BuildParam, ModalParameter } from './types';
 
@@ -14,62 +15,94 @@ type ParametersSectionProps = {
   autoCompleteValues?: string[];
 };
 
+type ParameterFieldsProps = {
+  params: any[];
+};
+
+const ParameterFields: React.FC<ParameterFieldsProps> = ({ params }) => {
+  return (
+    <FieldArray
+      name="parameters"
+      key="parameters-row"
+      render={() =>
+        params.length > 0 && (
+          <FormSection fullWidth>
+            {params?.map((parameter: ModalParameter, index) => {
+              const name = `formData.parameters.${index}.value`;
+              const isRequired = paramIsRequired(parameter);
+              const input = (ref?) => (
+                <InputField
+                  ref={ref}
+                  name={name}
+                  type={TextInputTypes.text}
+                  label={parameter.name}
+                  helpText={parameter.description}
+                  autoComplete="off"
+                  required={isRequired}
+                />
+              );
+              return parameter.type === 'array' ? (
+                <TextColumnField
+                  name={name}
+                  label={parameter.name}
+                  helpText={parameter.description}
+                  addLabel={`Add ${parameter.name}`}
+                  data-test={`${parameter.name}-text-column-field`}
+                  key={parameter.name}
+                  required={isRequired}
+                >
+                  {({ name: arrayName, ...additionalProps }) => (
+                    <InputField
+                      name={arrayName}
+                      {...additionalProps}
+                      autoComplete="off"
+                      required={isRequired}
+                    />
+                  )}
+                </TextColumnField>
+              ) : (
+                <React.Fragment key={parameter.name}>{input()}</React.Fragment>
+              );
+            })}
+          </FormSection>
+        )
+      }
+    />
+  );
+};
+
 const ParameterSection: React.FC<ParametersSectionProps> = () => {
   const { t } = useTranslation();
   const {
     values: { formData },
   } = useFormikContext<BuildFormikValues>();
 
+  const requiredParams = formData?.parameters.filter((param) => paramIsRequired(param));
+  const optionalParams = formData?.parameters.filter((param) => !paramIsRequired(param));
+
   return (
-    <FormSection>
-      <FieldArray
-        name="parameters"
-        key="parameters-row"
-        render={() =>
-          formData?.parameters.length > 0 && (
-            <FormSection title={t('shipwright-plugin~Parameters')} fullWidth>
-              {formData?.parameters.map((parameter: ModalParameter, index) => {
-                const name = `formData.parameters.${index}.value`;
-                const isRequired = paramIsRequired(parameter);
-                const input = (ref?) => (
-                  <InputField
-                    ref={ref}
-                    name={name}
-                    type={TextInputTypes.text}
-                    label={parameter.name}
-                    helpText={parameter.description}
-                    autoComplete="off"
-                    required={isRequired}
-                  />
-                );
-                return parameter.type === 'array' ? (
-                  <TextColumnField
-                    name={name}
-                    label={parameter.name}
-                    helpText={parameter.description}
-                    addLabel={`Add ${parameter.name}`}
-                    data-test={`${parameter.name}-text-column-field`}
-                    key={parameter.name}
-                    required={isRequired}
-                  >
-                    {({ name: arrayName, ...additionalProps }) => (
-                      <InputField
-                        name={arrayName}
-                        {...additionalProps}
-                        autoComplete="off"
-                        required={isRequired}
-                      />
-                    )}
-                  </TextColumnField>
-                ) : (
-                  <React.Fragment key={parameter.name}>{input()}</React.Fragment>
-                );
-              })}
-            </FormSection>
-          )
-        }
-      />
-    </FormSection>
+    formData?.parameters.length > 0 && (
+      <FormSection title={t('shipwright-plugin~Parameters')}>
+        {requiredParams.length > 0 ? (
+          <ParameterFields params={requiredParams} />
+        ) : (
+          <small className="text-muted">
+            {t(
+              'shipwright-plugin~No required parameters are associated with the selected build strategy.',
+            )}
+          </small>
+        )}
+        {optionalParams.length > 0 && (
+          <ExpandCollapse
+            textExpanded={t('shipwright-plugin~Hide optional parameters')}
+            textCollapsed={t('shipwright-plugin~Show optional parameters')}
+            dataTest="parameters-options"
+          >
+            <ParameterFields params={optionalParams} />
+          </ExpandCollapse>
+        )}
+      </FormSection>
+    )
   );
 };
 
