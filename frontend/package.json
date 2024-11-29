@@ -191,7 +191,6 @@
     "popper.js": "^1.16.1",
     "prop-types": "15.7.x",
     "react": "^17.0.1",
-    "react-copy-to-clipboard": "5.x",
     "react-dnd": "^9.4.0",
     "react-dnd-html5-backend": "^9.4.0",
     "react-dom": "^17.0.1",
