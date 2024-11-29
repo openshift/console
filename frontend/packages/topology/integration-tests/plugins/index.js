@@ -6,11 +6,12 @@ module.exports = (on, config) => {
     webpackOptions: {
       resolve: {
         extensions: ['.ts', '.tsx', '.js'],
-      },
-      node: {
-        fs: 'empty',
-        child_process: 'empty',
-        readline: 'empty',
+        fallback: {
+          fs: false,
+          child_process: false,
+          readline: false,
+          path: false,
+        },
       },
       module: {
         rules: [
