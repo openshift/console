@@ -136,14 +136,15 @@ export const createPipelineRunForImportFlow = async (
 ): Promise<PipelineRunKind> => {
   const isServerlessFunctionPipeline =
     pipeline?.metadata?.labels?.['function.knative.dev'] === 'true';
+  const defaultPVC = isServerlessFunctionPipeline
+    ? await getServerlessFunctionDefaultPersistentVolumeClaim(pipeline?.metadata?.name)
+    : getDefaultVolumeClaimTemplate(pipeline?.metadata?.name);
   const pipelineInitialValues: StartPipelineFormValues = {
     ...convertPipelineToModalData(pipeline),
     workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
       ...workspace,
       type: VolumeTypes.VolumeClaimTemplate,
-      data: isServerlessFunctionPipeline
-        ? getServerlessFunctionDefaultPersistentVolumeClaim(pipeline?.metadata?.name)
-        : getDefaultVolumeClaimTemplate(pipeline?.metadata?.name),
+      data: defaultPVC,
     })),
     secretOpen: false,
   };
