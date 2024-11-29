@@ -22,6 +22,7 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
   const [trResults, trLoaded, trError] = useTRTaskRunLog(
     taskRun.metadata.namespace,
     taskRun.metadata.name,
+    taskRun.metadata?.annotations?.['results.tekton.dev/record'],
   );
 
   React.useEffect(() => {

@@ -915,6 +915,12 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_16_or_newer" }
+    }
+  },
+  {
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "pipelines",
