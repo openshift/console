@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
+import { OnSelect } from '@patternfly/react-table';
 import {
   K8sResourceCommon,
   TableColumn,
   RowProps,
   OnRowsRendered,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { TableRow } from '../table';
 
 type VirtualizedTableBodyProps<D, R = {}> = {
@@ -24,6 +25,7 @@ type VirtualizedTableBodyProps<D, R = {}> = {
   getRowTitle?: (obj: D) => string;
   getRowClassName?: (obj: D) => string;
   onRowsRendered?: OnRowsRendered;
+  onSelect?: OnSelect;
 };
 
 const RowMemo = React.memo<
@@ -56,6 +58,7 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
   getRowTitle,
   getRowClassName,
   onRowsRendered,
+  onSelect,
 }: VirtualizedTableBodyProps<D, R>) => {
   const cellMeasurementCache = new CellMeasurerCache({
     fixedWidth: true,
@@ -70,6 +73,8 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
       obj: data[index],
       activeColumnIDs,
       rowData,
+      index,
+      onSelect,
     };
 
     // do not render non visible elements (this excludes overscan)

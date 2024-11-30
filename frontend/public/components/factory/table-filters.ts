@@ -1,23 +1,28 @@
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
-import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
-import { getNodeRoles, getLabelsAsString } from '@console/shared';
-import { Alert, AnyRowFilter, FilterValue, Rule } from '@console/dynamic-plugin-sdk';
+import { nodeStatus } from '@console/app/src/status/node';
+import { volumeSnapshotStatus } from '@console/app/src/status/snapshot';
+import { getNodeRoles } from '@console/shared/src/selectors/node';
+import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
+import { Alert, Rule } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import {
+  AnyRowFilter,
+  FilterValue,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
-import { roleType } from '../RBAC';
+import { roleType } from '../RBAC/role';
 import {
   K8sResourceKind,
   MachineKind,
-  getClusterOperatorStatus,
-  getTemplateInstanceStatus,
   VolumeSnapshotKind,
   CustomResourceDefinitionKind,
-} from '../../module/k8s';
+} from '../../module/k8s/types';
+import { getClusterOperatorStatus } from '../../module/k8s/cluster-operator';
+import { getTemplateInstanceStatus } from '../../module/k8s/template';
 import { alertDescription } from '../monitoring/utils';
-
 import { Target } from '../monitoring/types';
-import { requesterFilter } from '@console/shared/src/components/namespace';
+import { requesterFilter } from '@console/shared/src/components/namespace/filters';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));

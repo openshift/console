@@ -1,19 +1,25 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { TableGridBreakpoint, SortByDirection } from '@patternfly/react-table';
-import {
-  Table as PfTable,
-  TableHeader as TableHeaderDeprecated,
-} from '@patternfly/react-table/deprecated';
-import * as classNames from 'classnames';
-import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { VirtualizedTableFC, TableColumn, TableDataProps } from '@console/dynamic-plugin-sdk';
-
-import VirtualizedTableBody from './VirtualizedTableBody';
-import { StatusBox, WithScrollContainer, EmptyBox } from '../../utils';
-import { sortResourceByValue } from './sort';
 import { Button } from '@patternfly/react-core';
+import {
+  TableGridBreakpoint,
+  SortByDirection,
+  Table as PfTable,
+  Td,
+} from '@patternfly/react-table';
+import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
+import {
+  TableColumn,
+  TableDataProps,
+  VirtualizedTableFC,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { StatusBox } from '@console/shared/src/components/status/StatusBox';
+import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
+import VirtualizedTableBody from './VirtualizedTableBody';
+import TableHeader from './TableHeader';
+import { WithScrollContainer } from '../../utils/dom-utils';
+import { sortResourceByValue } from './sort';
 
 const BREAKPOINT_SM = 576;
 const BREAKPOINT_MD = 768;
@@ -55,9 +61,9 @@ const isColumnVisible = <D extends any>(
 
 export const TableData: React.FC<TableDataProps> = ({ className, id, activeColumnIDs, children }) =>
   (activeColumnIDs.has(id) || id === '') && (
-    <td id={id} className={classNames('pf-v5-c-table__td', className)} role="gridcell">
+    <Td data-label={id} className={className} role="gridcell">
       {children}
-    </td>
+    </Td>
   );
 TableData.displayName = 'TableData';
 
@@ -117,7 +123,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
     [columnShift, columns, navigate],
   );
 
-  data = React.useMemo(() => {
+  const sortedData = React.useMemo(() => {
     const sortColumn = columns[sortBy.index - columnShift];
     if (!sortColumn.sort) {
       return data;
@@ -162,31 +168,6 @@ const VirtualizedTable: VirtualizedTableFC = ({
     [applySort],
   );
 
-  const renderVirtualizedTable = (scrollContainer) => (
-    <WindowScroller scrollElement={scrollContainer}>
-      {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
-        <AutoSizer disableHeight>
-          {({ width }) => (
-            <div ref={registerChild}>
-              <VirtualizedTableBody
-                Row={Row}
-                height={height}
-                isScrolling={isScrolling}
-                onChildScroll={onChildScroll}
-                data={data}
-                columns={columns}
-                scrollTop={scrollTop}
-                width={width}
-                rowData={rowData}
-                onRowsRendered={onRowsRendered}
-              />
-            </div>
-          )}
-        </AutoSizer>
-      )}
-    </WindowScroller>
-  );
-
   const downloadCsv = () => {
     // csvData should be formatted as comma-seperated values
     // (e.g. `"a","b","c", \n"d","e","f", \n"h","i","j"`)
@@ -213,35 +194,49 @@ const VirtualizedTable: VirtualizedTableFC = ({
           NoDataEmptyMsg={NoDataEmptyMsg}
           EmptyMsg={EmptyMsg}
         >
-          <div
-            className="co-virtualized-table"
-            role="grid"
-            aria-label={ariaLabel}
-            aria-rowcount={data?.length}
-          >
+          <div className="co-virtualized-table" aria-label={ariaLabel}>
             {csvData && (
               <Button className="co-virtualized-table--export-csv-button" onClick={downloadCsv}>
                 Export as CSV
               </Button>
             )}
-            <PfTable
-              cells={columns}
-              rows={[{ selected: allRowsSelected }]}
-              canSelectAll={canSelectAll}
-              gridBreakPoint={gridBreakPoint}
-              onSort={onSort}
-              onSelect={onSelect}
-              sortBy={sortBy}
-              className="pf-m-compact pf-m-border-rows"
-              role="presentation"
-            >
-              <TableHeaderDeprecated />
+            <PfTable gridBreakPoint={gridBreakPoint} className="pf-m-compact pf-m-border-rows">
+              <TableHeader
+                allRowsSelected={allRowsSelected}
+                canSelectAll={canSelectAll}
+                columns={columns}
+                onSelect={onSelect}
+                onSort={onSort}
+                sortBy={sortBy}
+              />
             </PfTable>
-            {scrollNode ? (
-              renderVirtualizedTable(scrollNode)
-            ) : (
-              <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
-            )}
+            <WithScrollContainer>
+              {(scrollContainer) => (
+                <WindowScroller scrollElement={scrollNode?.() ?? scrollContainer}>
+                  {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
+                    <AutoSizer disableHeight>
+                      {({ width }) => (
+                        <div ref={registerChild}>
+                          <VirtualizedTableBody
+                            columns={columns}
+                            data={sortedData}
+                            height={height}
+                            isScrolling={isScrolling}
+                            onChildScroll={onChildScroll}
+                            onRowsRendered={onRowsRendered}
+                            Row={Row}
+                            rowData={rowData}
+                            scrollTop={scrollTop}
+                            width={width}
+                            onSelect={onSelect}
+                          />
+                        </div>
+                      )}
+                    </AutoSizer>
+                  )}
+                </WindowScroller>
+              )}
+            </WithScrollContainer>
           </div>
         </StatusBox>
       )}

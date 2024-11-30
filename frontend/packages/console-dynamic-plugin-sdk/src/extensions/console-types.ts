@@ -303,6 +303,8 @@ export type RowProps<D, R extends any = {}> = {
   obj: D;
   rowData: R;
   activeColumnIDs: Set<string>;
+  index: number;
+  onSelect?: OnSelect;
 };
 
 export type OnRowsRendered = (params: any) => void;

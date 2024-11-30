@@ -5,10 +5,9 @@ import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
-import { useDeepCompareMemoize } from '@console/shared';
-import { RowFilter } from '@console/dynamic-plugin-sdk';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search';
-
 import { RootState } from '../../redux';
 import { tableFilters } from './table-filters';
 import { Filter } from './table';

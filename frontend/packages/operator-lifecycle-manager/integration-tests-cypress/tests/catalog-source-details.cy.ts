@@ -86,7 +86,7 @@ describe(`Interacting with CatalogSource page`, () => {
     detailsPage.sectionHeaderShouldExist('CatalogSource details');
 
     cy.byLegacyTestID('horizontal-link-Operators').click();
-    cy.get('[data-label=Name]').should('exist');
+    cy.byTestID('PackageManifestTable').should('exist');
   });
 
   it(`allows modifying registry poll interval on test catalog source`, () => {
