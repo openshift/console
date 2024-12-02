@@ -87,10 +87,7 @@ after(() => {
 
 export const checkErrors = () =>
   cy.window().then(({ windowError }) => {
-    assert.isTrue(
-      typeof windowError !== 'object' || windowError.length === 0,
-      windowError.toString(),
-    );
+    assert.isTrue(!windowError || windowError.length === 0, String(windowError));
   });
 
 export const testName = `test-${Math.random()
