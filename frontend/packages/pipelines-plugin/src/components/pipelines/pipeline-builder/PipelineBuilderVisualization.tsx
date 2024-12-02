@@ -44,7 +44,6 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
     taskResources,
     getBuilderTasksErrorGroup(errors?.formData, status),
   );
-  const taskCount = taskResources.namespacedTasks.length + taskResources.clusterTasks.length;
   const hasWhenExpression = nodesHasWhenExpression(nodes);
 
   if (status?.taskLoadingError) {
@@ -56,12 +55,6 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   }
   if (!taskResources.tasksLoaded) {
     return <LoadingBox />;
-  }
-  if (taskCount === 0 && taskGroup.tasks.length === 0) {
-    // No tasks, nothing we can do here...
-    return (
-      <Alert variant="danger" isInline title={t('pipelines-plugin~Unable to locate any tasks.')} />
-    );
   }
 
   const model = {
