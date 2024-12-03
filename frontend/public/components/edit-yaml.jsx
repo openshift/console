@@ -21,6 +21,7 @@ import {
   getResourceSidebarSamples,
   SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
   SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+  useTelemetry,
   useUserSettingsCompatibility,
 } from '@console/shared';
 
@@ -113,6 +114,7 @@ const EditYAMLInner = (props) => {
   } = props;
 
   const navigate = useNavigate();
+  const fireTelemetryEvent = useTelemetry();
   const [errors, setErrors] = React.useState(null);
   const [success, setSuccess] = React.useState(null);
   const [initialized, setInitialized] = React.useState(false);
@@ -247,6 +249,18 @@ const EditYAMLInner = (props) => {
     [appendYAMLString, allowMultiple, checkEditAccess, t],
   );
 
+  const getResourceKindfromYAML = React.useCallback(
+    (yaml) => {
+      try {
+        const obj = safeLoad(yaml);
+        return getModel(obj)?.kind;
+      } catch (e) {
+        return 'unknown';
+      }
+    },
+    [getModel],
+  );
+
   const loadYaml = React.useCallback(
     (reloaded = false, obj = props.obj) => {
       if (initialized && !reloaded) {
@@ -267,6 +281,10 @@ const EditYAMLInner = (props) => {
       getEditor()?.setValue(olsCodeBlock?.value);
     } else if (_event.target.id === 'keep-both') {
       getEditor()?.setValue(appendYAMLString(olsCodeBlock?.value));
+      fireTelemetryEvent('OLS Code Imported', {
+        triggeredFrom: olsCodeBlock?.triggeredFrom,
+        resourceType: getResourceKindfromYAML(olsCodeBlock?.value),
+      });
     }
     setShowReplaceCodeModal(false);
   };
@@ -292,6 +310,10 @@ const EditYAMLInner = (props) => {
 
     if (_.isEmpty(currentYAML) || currentYAML === olsCode) {
       getEditor()?.setValue(olsCodeBlock?.value);
+      fireTelemetryEvent('OLS Code Imported', {
+        triggeredFrom: olsCodeBlock?.triggeredFrom,
+        resourceType: getResourceKindfromYAML(olsCodeBlock?.value),
+      });
     } else {
       setShowReplaceCodeModal(true);
     }
