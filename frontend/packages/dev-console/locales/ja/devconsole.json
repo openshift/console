@@ -525,7 +525,6 @@
   "Path that the router watches to route traffic to the service.": "ルーターがトラフィックをサービスにルーティングするために監視するパス。",
   "Target port": "ターゲットポート",
   "Target port for traffic.": "トラフィックのターゲットポート。",
-  "No results found": "結果が見つかりません",
   "Edge": "Edge",
   "Passthrough": "passthrough",
   "Re-encrypt": "Re-encrypt",
