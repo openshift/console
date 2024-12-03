@@ -259,13 +259,6 @@ export const expectedBindableResources = [
   },
   {
     isList: true,
-    kind: 'rhoas.redhat.com~v1alpha1~ServiceRegistryConnection',
-    namespace: 'test',
-    optional: true,
-    prop: 'ServiceRegistryConnection',
-  },
-  {
-    isList: true,
     kind: 'postgresql.k8s.enterprisedb.io~v1~Cluster',
     namespace: 'test',
     optional: true,

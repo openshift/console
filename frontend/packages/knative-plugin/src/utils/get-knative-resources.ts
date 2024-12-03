@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
-import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
 import { GLOBAL_OPERATOR_NS, KNATIVE_SERVING_LABEL } from '../const';
 import {
   CamelKameletModel,
@@ -19,6 +18,7 @@ import {
   CamelKameletBindingModel,
   DomainMappingModel,
   KafkaSinkModel,
+  KafkaConnectionModel,
 } from '../models';
 import { Traffic } from '../types';
 import {
