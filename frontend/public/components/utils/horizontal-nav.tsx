@@ -373,10 +373,14 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
  * Component consumed by the dynamic plugin SDK
  * Changes to the underlying component has to support props used in this facade
  */
-export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({ resource, pages }) => {
+export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({
+  resource,
+  pages,
+  customData,
+}) => {
   const obj = { data: resource, loaded: true };
 
-  return <HorizontalNav obj={obj} pages={pages} noStatusBox />;
+  return <HorizontalNav obj={obj} pages={pages} customData={customData} noStatusBox />;
 };
 
 export type PodsComponentProps = {

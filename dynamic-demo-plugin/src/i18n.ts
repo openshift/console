@@ -18,5 +18,6 @@
 // t('plugin__console-demo-plugin~Sample Error Boundary Page')
 // t('plugin__console-demo-plugin~Dashboard Card')
 // t('plugin__console-demo-plugin~List Page')
+// t('plugin__console-demo-plugin~Horizontal Nav')
 // t('plugin__console-demo-plugin~K8s API')
 // t('plugin__console-demo-plugin~Modal Launchers')

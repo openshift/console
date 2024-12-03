@@ -472,9 +472,9 @@ const HomePage: React.FC = (props) => {
     const page = {
       href: '/home',
       name: 'Home',
-      component: () => <>Home</>
+      component: ({customData}) => <>{customData.color} Home</>
     }
-    return <HorizontalNav pages={[page]} />
+    return <HorizontalNav pages={[page]} customData={ color: 'Red'} />
 }
 ```
 
@@ -486,8 +486,9 @@ const HomePage: React.FC = (props) => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resource` | the resource associated with this Navigation, an object of K8sResourceCommon type |
+| `resource` | (optional) the resource associated with this Navigation, an object of K8sResourceCommon type |
 | `pages` | an array of page objects |
+| `customData` | (optional) custom data to be shared between the pages in the navigation. |
 
 
 

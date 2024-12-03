@@ -290,6 +290,7 @@ export type NavPage = {
 export type HorizontalNavProps = {
   resource?: K8sResourceCommon;
   pages: NavPage[];
+  customData?: object;
 };
 
 export type TableColumn<D> = ICell & {
