@@ -81,8 +81,9 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
           setActiveNamespace(newNamespace);
           removeQueryArgument('project-name');
         }}
-        onCreateNew={() => {
+        onCreateNew={(pluginUID) => {
           createNamespaceOrProjectModal({
+            pluginUID,
             onSubmit: (newProject) => {
               setActiveNamespace(newProject.metadata.name);
               removeQueryArgument('project-name');

@@ -36,7 +36,11 @@ import {
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import {
+  isCreateProjectModal,
+  useActivePerspective,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
 import {
   ConsoleLinkModel,
   NamespaceModel,
@@ -833,6 +837,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
 
 export const ProjectsPage = (props) => {
   const { t } = useTranslation();
+  const [createProjectModalExtensions, resolved] = useResolvedExtensions(isCreateProjectModal);
   const createProjectModal = useCreateProjectModal();
   // Skip self-subject access review for projects since they use a special project request API.
   // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
@@ -847,13 +852,37 @@ export const ProjectsPage = (props) => {
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable && canGetNS && window.screen.width >= 1200;
   const showActions = showMetrics;
+  const onCreate = React.useCallback((pluginUID) => createProjectModal({ pluginUID }), [
+    createProjectModal,
+  ]);
+  const createProps = React.useMemo(
+    () =>
+      createProjectModalExtensions.length > 1
+        ? {
+            action: onCreate,
+            items: resolved
+              ? createProjectModalExtensions.reduce(
+                  (acc, { uid, properties, pluginName }) => ({
+                    ...acc,
+                    [uid]: properties.label || t('Create {{pluginName}} Project', { pluginName }),
+                  }),
+                  {},
+                )
+              : {},
+          }
+        : {
+            onClick: () => onCreate(createProjectModalExtensions?.[0]?.uid),
+          },
+    [createProjectModalExtensions, onCreate, resolved, t],
+  );
   return (
     <ListPage
       {...props}
       rowFilters={getFilters()}
       ListComponent={ProjectList}
       canCreate={canCreateProject}
-      createHandler={() => createProjectModal()}
+      createProps={createProps}
+      createButtonText={t('public~Create Project')}
       filterLabel={t('public~by name or display name')}
       skipAccessReview
       textFilter="project-name"

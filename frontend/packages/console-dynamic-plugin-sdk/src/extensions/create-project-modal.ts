@@ -4,6 +4,7 @@ import { K8sResourceCommon } from './console-types';
 
 export type CreateProjectModalProps = {
   onSubmit?: (project: K8sResourceCommon) => void;
+  pluginUID?: string;
 };
 
 /** This extension can be used to pass a component that will be rendered in place of the standard create project modal. */
@@ -12,6 +13,8 @@ export type CreateProjectModal = ExtensionDeclaration<
   {
     /** A component to render in place of the create project modal */
     component: CodeRef<ModalComponent<CreateProjectModalProps>>;
+    /** A label to display in the create project dropdown */
+    label: string;
   }
 >;
 

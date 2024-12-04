@@ -1146,6 +1146,8 @@
   "Projects": "Projects",
   "Welcome to OpenShift": "Welcome to OpenShift",
   "No matching Projects": "No matching Projects",
+  "Create {{pluginName}} Project": "Create {{pluginName}} Project",
+  "Create Project": "Create Project",
   "by name or display name": "by name or display name",
   "Project": "Project",
   "Error loading default pull Secrets": "Error loading default pull Secrets",

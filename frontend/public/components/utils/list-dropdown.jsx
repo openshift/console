@@ -15,6 +15,7 @@ import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
+import { isCreateProjectModal, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 
 const getKey = (key, keyKind) => {
   return keyKind ? `${key}-${keyKind}` : key;
@@ -229,9 +230,19 @@ export const NsDropdown = (props) => {
   const createProjectModal = useCreateProjectModal();
   const [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
   const [model, canCreate] = useProjectOrNamespaceModel();
+  const [createProjectModalExtensions, resolved] = useResolvedExtensions(isCreateProjectModal);
 
-  const actionItems =
-    model && canCreate
+  const actionItems = React.useMemo(() => {
+    if (!resolved || !canCreate) {
+      return [];
+    }
+    if (model?.label === 'Project' && createProjectModalExtensions.length > 1) {
+      return createProjectModalExtensions.map(({ pluginName, uid, properties }) => ({
+        actionTitle: properties.label || t('public~Create {{pluginName}} Project', { pluginName }),
+        actionKey: uid,
+      }));
+    }
+    return model
       ? [
           {
             actionTitle: t('public~Create {{resourceKindLabel}}', {
@@ -241,28 +252,25 @@ export const NsDropdown = (props) => {
           },
         ]
       : [];
+  }, [canCreate, createProjectModalExtensions, model, resolved, t]);
+
+  const onSubmit = (resource) => {
+    setSelectedKey(resource.metadata.name);
+    props.onChange(resource.metadata.name, resource.kind, resource);
+  };
 
   const onChange = (actionKey, kindLabel, resource) => {
-    switch (actionKey) {
-      case 'Create_Namespace':
-        createNamespaceModal({
-          onSubmit: (newNamespace) => {
-            setSelectedKey(newNamespace.metadata.name);
-            props.onChange?.(newNamespace.metadata.name, newNamespace.kind, newNamespace);
-          },
-        });
-        break;
-      case 'Create_Project':
-        createProjectModal({
-          onSubmit: (newProject) => {
-            setSelectedKey(newProject.metadata.name);
-            props.onChange?.(newProject.metadata.name, newProject.kind, newProject);
-          },
-        });
-        break;
-      default:
-        props.onChange?.(actionKey, kindLabel, resource);
-        break;
+    const createProjectExtension = (createProjectModalExtensions ?? []).some(
+      ({ uid }) => uid === actionKey,
+    );
+    if (createProjectExtension) {
+      createProjectModal({ pluginUID: actionKey, onSubmit });
+    } else if (actionKey === 'Create_Namespace') {
+      createNamespaceModal({ onSubmit });
+    } else if (actionKey === 'Create_Project') {
+      createProjectModal({ pluginUID: createProjectModalExtensions?.[0]?.uid, onSubmit });
+    } else {
+      props.onChange?.(actionKey, kindLabel, resource);
     }
   };
 

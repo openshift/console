@@ -17,9 +17,15 @@ import {
   EmptyStateActions,
   EmptyStateHeader,
   EmptyStateFooter,
+  MenuToggle,
+  MenuToggleElement,
+  Dropdown,
+  DropdownItem,
+  DropdownList,
 } from '@patternfly/react-core';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
+import { isCreateProjectModal, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, NamespaceModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -179,6 +185,51 @@ export const NamespaceGroup: React.FC<{
   );
 };
 
+const CreateProjectAction = ({ onClick, children, isProject }) => {
+  const { t } = useTranslation();
+  const [createProjectModalExtensions, resolved] = useResolvedExtensions(isCreateProjectModal);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const onToggleClick = () => setIsOpen((c) => !c);
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
+    >
+      {children}
+    </MenuToggle>
+  );
+
+  if (!resolved) {
+    return null;
+  }
+
+  if (isProject && createProjectModalExtensions.length > 1) {
+    return (
+      <Dropdown toggle={toggle} isOpen={isOpen}>
+        <DropdownList>
+          {createProjectModalExtensions.map(({ pluginName, uid, properties }) => (
+            <DropdownItem key={uid} onClick={() => onClick(uid)}>
+              {properties.label || t('public~Create {{pluginName}} Project', { pluginName })}
+            </DropdownItem>
+          ))}
+        </DropdownList>
+      </Dropdown>
+    );
+  }
+
+  return (
+    <Button
+      variant="secondary"
+      onClick={() => onClick(isProject ? createProjectModalExtensions?.[0]?.uid : null)}
+      data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
+    >
+      {children}
+    </Button>
+  );
+};
+
 /* ****************************************** */
 
 // The items in the footer are not accessible via the keyboard.
@@ -188,31 +239,22 @@ export const Footer: React.FC<{
   canCreateNew: boolean;
   isProject?: boolean;
   setOpen: (isOpen: boolean) => void;
-  onCreateNew: () => void;
+  onCreateNew: (pluginUID: string) => void;
 }> = ({ canCreateNew, isProject, setOpen, onCreateNew }) => {
   const { t } = useTranslation();
-  return (
-    <>
-      {canCreateNew ? (
-        <MenuFooter className="co-namespace-dropdown__footer">
-          {
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setOpen(false);
-                onCreateNew();
-              }}
-              data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
-            >
-              {isProject
-                ? t('console-shared~Create Project')
-                : t('console-shared~Create Namespace')}
-            </Button>
-          }
-        </MenuFooter>
-      ) : null}
-    </>
-  );
+  return canCreateNew ? (
+    <MenuFooter className="co-namespace-dropdown__footer">
+      <CreateProjectAction
+        isProject={isProject}
+        onClick={(pluginUID) => {
+          setOpen(false);
+          onCreateNew(pluginUID);
+        }}
+      >
+        {isProject ? t('console-shared~Create Project') : t('console-shared~Create Namespace')}
+      </CreateProjectAction>
+    </MenuFooter>
+  ) : null;
 };
 
 /* ****************************************** */
@@ -223,7 +265,7 @@ const NamespaceMenu: React.FC<{
   selected?: string;
   isProjects: boolean;
   allNamespacesTitle: string;
-  onCreateNew: () => void;
+  onCreateNew: (pluginUID: string) => void;
   menuRef: React.MutableRefObject<HTMLDivElement>;
 }> = ({ setOpen, onSelect, selected, isProjects, allNamespacesTitle, onCreateNew, menuRef }) => {
   const filterRef = React.useRef(null);
@@ -443,7 +485,7 @@ type NamespaceDropdownProps = {
   disabled?: boolean;
   isProjects?: boolean; // Does this drop down contain projects.  If not, assuming namespaces
   onSelect?: (event: React.MouseEvent | React.ChangeEvent, value: string) => void;
-  onCreateNew?: () => void;
+  onCreateNew?: (pluginUID: string) => void;
   shortCut?: string;
   selected?: string;
 };

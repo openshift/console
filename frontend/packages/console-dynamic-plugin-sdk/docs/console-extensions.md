@@ -323,6 +323,7 @@ This extension can be used to pass a component that will be rendered in place of
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<ModalComponent<CreateProjectModalProps>>` | no | A component to render in place of the create project modal |
+| `label` | `string` | no | A label to display in the create project dropdown |
 
 ---
 
