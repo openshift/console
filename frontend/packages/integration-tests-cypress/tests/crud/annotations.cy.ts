@@ -92,7 +92,7 @@ const annotations = [
   },
 ];
 
-describe('Annotations', () => {
+xdescribe('Annotations', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);

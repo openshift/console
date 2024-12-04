@@ -2,6 +2,7 @@
 /* eslint-disable import/no-dynamic-require */
 const fs = require('fs');
 const webpack = require('@cypress/webpack-preprocessor');
+const util = require('../reporters/utils/parallel-thread-logger');
 
 module.exports = (on, config) => {
   const options = {
@@ -47,10 +48,12 @@ module.exports = (on, config) => {
   on('task', {
     log(message) {
       console.log(message);
+      util.log(`\n\t${message}`);
       return null;
     },
     logError(message) {
       console.error(message);
+      util.log(`\n\t${message}\n`);
       return null;
     },
     logTable(data) {
@@ -63,6 +66,21 @@ module.exports = (on, config) => {
       }
       return null;
     },
+  });
+  on('after:spec', (spec, results) => {
+    if (results) {
+      util.logSpecResult(results);
+    }
+
+    if (results && results.screenshots.length) {
+      util.logScreenshotURL(results.screenshots);
+    }
+
+    if (results && results.video) {
+      util.logVideoURL(results.video);
+    }
+
+    util.log(`\n\n${'─'.repeat(100)}`);
   });
   on('file:preprocessor', webpack(options));
   /* In a Docker container, the default size of the /dev/shm shared memory space is 64MB. This is not typically enough
