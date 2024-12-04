@@ -1,7 +1,7 @@
 {
-  "No network attachment definitions found": "No se encontraron definiciones de archivos adjuntos de red",
-  "Create network attachment definition": "Crear definición de archivo adjunto de red",
-  "Learn how to use network attachment definitions": "Aprenda a utilizar las definiciones de archivos adjuntos de red",
+  "No {{label}} found": "No se encontró {{label}}",
+  "Create {{label}}": "Crear {{label}}",
+  "Learn how to use {{label}}": "",
   "NetworkAttachmentDefinition details": "Detalles de NetworkAttachmentDefinition",
   "Type": "Tipo",
   "Details": "Detalles",
@@ -14,6 +14,7 @@
   "Network Type": "Tipo de red",
   "Edit YAML": "Editar YAML",
   "Networks are not project-bound. Using the same name creates a shared NAD.": "Las redes no están vinculadas a proyectos. Usar el mismo nombre crea un NAD compartido.",
+  "Create network attachment definition": "Crear definición de archivo adjunto de red",
   "Name": "Nombre",
   "Description": "Descripción",
   "<0>OpenShift Virtualization Operator</0> or <3>SR-IOV Network Operator </3>needs to be installed on the cluster, in order to pick the Network Type.": "El <0>Operador de virtualización OpenShift</0> u <3>Operador de red SR-IOV</3> deben instalarse en el clúster para poder elegir el tipo de red.",

@@ -1,7 +1,7 @@
 {
   "Notifications": "Notifications",
-  "{{count}} unread_one": "{{count}} non lue",
-  "{{count}} unread_other": "{{count}} non lues",
+  "{{count}} unread_one": "{{count}} non lu",
+  "{{count}} unread_other": "{{count}} non lus",
   "Close": "Fermer",
   "Warning notification:": "Notification d’avertissement :",
   "Critical notification:": "Notification critique :",

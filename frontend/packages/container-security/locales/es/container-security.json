@@ -32,7 +32,7 @@
   "Patches are available for {{fixableVulnCount, number}} vulnerabilities.": "Hay parches disponibles para {{fixableVulnCount, number}} vulnerabilidades.",
   "{{title}} vulnerabilities.": "Vulnerabilidades {{title}}.",
   "No {{isSelected}} vulnerabilities": "Sin vulnerabilidades {{isSelected}}",
-  "{{fixableCount, number}} of {{totalCount, number}} fixable": "{{fixableCount, number}} de{{totalCount, number}} con capacidad de fijarse",
+  "{{fixableCount, number}} of {{totalCount, number}} fixable": "{{fixableCount, number}} de {{totalCount, number}} con capacidad de fijarse",
   "This project's container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.": "Las imágenes de contenedores de Quay de este proyecto se analizan para identificar vulnerabilidades. Las imágenes de otros registros no se escanean.",
   "Container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.": "Se analizan imágenes de contenedores de Quay para identificar vulnerabilidades. Las imágenes de otros registros no se escanean.",
   "Vulnerable Container Images": "Imágenes de contenedores vulnerables",
