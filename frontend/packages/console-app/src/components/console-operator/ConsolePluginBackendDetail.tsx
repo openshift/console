@@ -14,7 +14,7 @@ const ConsolePluginBackendDetail: React.FC<ConsolePluginBackendDetailProps> = ({
   },
 }) =>
   // only Service is supported per the ConsolePlugin schema
-  backend.type === ServiceModel.label ? (
+  backend.type === ServiceModel.label && backend.service ? (
     <ResourceLink
       name={backend.service.name}
       namespace={backend.service.namespace}
