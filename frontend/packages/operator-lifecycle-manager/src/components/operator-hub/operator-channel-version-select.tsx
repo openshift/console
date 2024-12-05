@@ -66,7 +66,7 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
         toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
-            onClick={(open) => setIsChannelSelectOpen(open)}
+            onClick={() => setIsChannelSelectOpen((prev) => !prev)}
             isExpanded={isChannelSelectOpen}
             isDisabled={!packageManifest}
             isFullWidth
@@ -165,7 +165,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
         toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
-            onClick={(open) => setIsVersionSelectOpen(open)}
+            onClick={() => setIsVersionSelectOpen((prev) => !prev)}
             isExpanded={isVersionSelectOpen}
             isDisabled={!packageManifest}
             isFullWidth
