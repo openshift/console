@@ -71,7 +71,7 @@ PKGS_TO_CHECK=(
 
 echo -e "Checking ${COL_YELLOW}yarn.lock${COL_RESET} file for PatternFly module resolutions"
 
-if [ "$OPENSHIFT_CI" = true ]; then
+if [[ "$OPENSHIFT_CI" == "true" ]]; then
   # disable parallel execution in CI to reduce CPU usage
   for pkg in "${PKGS_TO_CHECK[@]}"; do
     check-resolution "${pkg%%:*}" "${pkg#*:}"
