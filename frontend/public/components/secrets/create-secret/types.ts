@@ -1,30 +1,27 @@
 import { SecretType } from '.';
 
+type Base64EncodedString = string;
 export type SecretStringData = { [key: string]: string };
+export type Base64StringData = { [key: string]: Base64EncodedString };
 
-type SecretChangeData = {
-  stringData: SecretStringData;
+export type SecretChangeData = {
+  stringData?: SecretStringData;
   base64StringData?: SecretStringData;
 };
 
-export type KeyValueEntryFormState = {
-  isBase64?: boolean;
+export type KeyValueEntry = {
+  uid?: string;
   isBinary?: boolean;
-  key: string;
-  value: string;
-};
-
-export type KeyValueEntryFormProps = {
-  entry: KeyValueEntryFormState;
-  id: number;
-  onChange: Function;
+  entryKey: string;
+  entryValue: string;
 };
 
 export type SecretSubFormProps = {
-  onChange: (stringData: SecretChangeData) => void;
+  onChange: (data: SecretChangeData) => void;
   onError: (error: any) => void;
   onFormDisable: (disable: boolean) => void;
   stringData: SecretStringData;
+  base64StringData: Base64StringData;
   secretType: SecretType;
   isCreate: boolean;
 };

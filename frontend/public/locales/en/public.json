@@ -1504,6 +1504,7 @@
   "Image registry credentials": "Image registry credentials",
   "Upload configuration file": "Upload configuration file",
   "Authentication type": "Authentication type",
+  "Secret contains binary data which is unsupported on this page.": "Secret contains binary data which is unsupported on this page.",
   "Unique name of the new secret.": "Unique name of the new secret.",
   "Basic authentication": "Basic authentication",
   "SSH key": "SSH key",
