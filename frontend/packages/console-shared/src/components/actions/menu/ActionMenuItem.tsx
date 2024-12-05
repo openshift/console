@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
-import { DropdownItemProps as DropdownItemPropsDeprecated } from '@patternfly/react-core/deprecated';
+import { DropdownItemProps, KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
@@ -9,7 +8,7 @@ import { useAccessReview, history } from '@console/internal/components/utils';
 
 export type ActionMenuItemProps = {
   action: Action;
-  component?: React.ComponentType<DropdownItemPropsDeprecated>;
+  component?: React.ComponentType<DropdownItemProps>;
   autoFocus?: boolean;
   onClick?: () => void;
   onEscape?: () => void;
