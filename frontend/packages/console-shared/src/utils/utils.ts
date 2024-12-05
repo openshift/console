@@ -30,6 +30,13 @@ export const createLookup = <A extends K8sResourceKind>(
   return {};
 };
 
+export const generateHash = async (algorithm: string, data: string): Promise<string> => {
+  const msgUint8 = new TextEncoder().encode(data);
+  const hashBuffer = await window.crypto.subtle.digest(algorithm, msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+};
+
 export const getRandomChars = (len = 6): string => {
   return Math.random()
     .toString(36)
