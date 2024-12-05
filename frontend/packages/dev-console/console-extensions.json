@@ -656,6 +656,21 @@
   {
     "type": "console.navigation/href",
     "properties": {
+      "id": "topology",
+      "perspective": "admin",
+      "section": "workloads",
+      "name": "%devconsole~Topology%",
+      "href": "/topology",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-topology",
+        "data-test-id": "topology-header"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
       "id": "observe",
       "perspective": "dev",
       "section": "top",
@@ -723,6 +738,24 @@
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "software-catalog",
+      "perspective": "admin",
+      "section": "home",
+      "name": "%devconsole~Software Catalog%",
+      "href": "/catalog",
+      "namespaced": true,
+      "insertAfter": "search",
+      "dataAttributes": {
+        "data-test-id": "Software-catalog-header"
+      }
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG"]
     }
   },
   {
