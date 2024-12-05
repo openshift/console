@@ -7,7 +7,6 @@ const componentForFieldType = {
   // WIP:
   // [ClusterConfigurationFieldType.text]: ClusterConfigurationTextField,
   // [ClusterConfigurationFieldType.checkbox]: ClusterConfigurationCheckboxField,
-  // [ClusterConfigurationFieldType.dropdown]: ClusterConfigurationDropdownField,
   [ClusterConfigurationFieldType.custom]: ClusterConfigurationCustomField,
 };
 

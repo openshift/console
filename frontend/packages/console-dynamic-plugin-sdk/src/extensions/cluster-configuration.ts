@@ -60,26 +60,6 @@ export type ClusterConfigurationCheckboxField = {
   path: Path;
 };
 
-export type ClusterConfigurationDropdownFieldValue = string;
-
-export type ClusterConfigurationDropdownField = {
-  type: ClusterConfigurationFieldType.dropdown;
-  defaultValue?: ClusterConfigurationDropdownFieldValue;
-  options: {
-    value: ClusterConfigurationDropdownFieldValue;
-    label: string;
-    description?: string;
-  }[];
-  /**
-   * A patch operation that is used to save if the checkbox is checked.
-   * if `update.patch.value` is not defined a true (boolean) is automatically set.
-   * If `update.patch.value` is defined is must be a string, object or array.
-   * The text value will be automatically inserted into the placeholder `$value`.
-   */
-  resource: Resource;
-  path: Path;
-};
-
 export type ClusterConfigurationCustomField = {
   type: ClusterConfigurationFieldType.custom;
   component: CodeRef<React.ComponentType<ClusterConfigurationFieldProps>>;
