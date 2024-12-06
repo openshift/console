@@ -25,13 +25,6 @@ export const AlertResource: MonitoringResource = {
   abbr: 'AL',
 };
 
-export const RuleResource: MonitoringResource = {
-  kind: 'AlertRule',
-  label: 'Alerting Rule',
-  plural: '/monitoring/alertrules',
-  abbr: 'AR',
-};
-
 export const SilenceResource: MonitoringResource = {
   kind: 'Silence',
   label: 'Silence',

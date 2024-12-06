@@ -1,12 +1,11 @@
 import * as _ from 'lodash-es';
-import { getUser, Silence, SilenceStates } from '@console/dynamic-plugin-sdk';
+import { getUser } from '@console/dynamic-plugin-sdk';
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   ActionGroup,
-  Alert,
   Button,
   MenuToggle,
   MenuToggleElement,
@@ -30,16 +29,11 @@ import { useSelector } from 'react-redux';
 
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { withFallback } from '@console/shared/src/components/error';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
 import { PageHeading, SectionHeading } from '../utils/headings';
 import { ExternalLink, getURLSearchParams } from '../utils/link';
-import { StatusBox } from '../utils/status-box';
 import { useBoolean } from './hooks/useBoolean';
-import { Silences } from './types';
-import { SilenceResource, silenceState } from './utils';
 
 const pad = (i: number): string => (i < 10 ? `0${i}` : String(i));
 
@@ -475,62 +469,6 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   );
 };
 const SilenceForm = withFallback(SilenceForm_);
-
-const EditInfo = () => {
-  const { t } = useTranslation();
-
-  return (
-    <Alert
-      className="co-alert"
-      isInline
-      title={t('public~Overwriting current silence')}
-      variant="info"
-    >
-      {t(
-        'public~When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.',
-      )}
-    </Alert>
-  );
-};
-
-export const EditSilence = () => {
-  const { t } = useTranslation();
-  const params = useParams();
-
-  const [namespace] = useActiveNamespace();
-
-  const silences: Silences = useSelector(({ observe }: RootState) =>
-    observe.get(namespace ? 'devSilences' : 'silences'),
-  );
-
-  const silence: Silence = _.find(silences?.data, { id: params.id });
-  const isExpired = silenceState(silence) === SilenceStates.Expired;
-  const defaults = _.pick(silence, [
-    'comment',
-    'createdBy',
-    'endsAt',
-    'id',
-    'matchers',
-    'startsAt',
-  ]);
-  defaults.startsAt = isExpired ? undefined : formatDate(new Date(defaults.startsAt));
-  defaults.endsAt = isExpired ? undefined : formatDate(new Date(defaults.endsAt));
-
-  return (
-    <StatusBox
-      data={silence}
-      label={SilenceResource.label}
-      loaded={silences?.loaded}
-      loadError={silences?.loadError}
-    >
-      <SilenceForm
-        defaults={defaults}
-        Info={isExpired ? undefined : EditInfo}
-        title={isExpired ? t('public~Recreate silence') : t('public~Edit silence')}
-      />
-    </StatusBox>
-  );
-};
 
 export const CreateSilence = () => {
   const { t } = useTranslation();
