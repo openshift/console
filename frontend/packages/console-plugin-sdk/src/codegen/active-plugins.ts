@@ -44,9 +44,10 @@ const guessModuleFilePath = (
 
   for (const p of indexModulePaths) {
     if (fs.existsSync(p)) {
-      diagnostics.warnings.push(
-        `The module ${basePath} refers to an index file ${p}. Index/barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`,
-      );
+      // TODO(OCPBUGS-45847): uncomment when warnings are resolved
+      // diagnostics.warnings.push(
+      //   `The module ${basePath} refers to an index file ${p}. Index/barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`,
+      // );
       return p;
     }
   }
@@ -248,7 +249,7 @@ export const getActivePluginsModuleData = (
       if (fs.existsSync(moduleFilePath) && fs.statSync(moduleFilePath).isFile()) {
         fileDependencies.push(moduleFilePath);
       } else {
-        warnings.push(
+        errors.push(
           `Exposed module '${moduleName}' in static plugin ${pkg.name} refers to non-existent file ${moduleFilePath}`,
         );
       }
