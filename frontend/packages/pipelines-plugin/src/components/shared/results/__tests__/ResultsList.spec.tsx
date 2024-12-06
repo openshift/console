@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, EmptyState } from '@patternfly/react-core';
+import { EmptyState } from '@patternfly/react-core';
 import { Table } from '@patternfly/react-table';
 import { ShallowWrapper, shallow } from 'enzyme';
 import { ComputedStatus } from '../../../../types';
@@ -23,14 +23,13 @@ describe('ResultsList', () => {
     expect(resultsListWrapper.find(Table).exists()).toBe(true);
     expect(resultsListWrapper.find(EmptyState).exists()).toBe(false);
   });
-  it('Should render Results Table with an alert if failed', () => {
+  it('Should still render Results Table even if failed', () => {
     resultsListProps = {
       status: ComputedStatus.Failed,
       resourceName: 'TaskRun',
       results: taskRunWithResults.status.taskResults,
     };
     resultsListWrapper = shallow(<ResultsList {...resultsListProps} />);
-    expect(resultsListWrapper.find(Alert).exists()).toBe(true);
     expect(resultsListWrapper.find(Table).exists()).toBe(true);
     expect(resultsListWrapper.find(EmptyState).exists()).toBe(false);
   });

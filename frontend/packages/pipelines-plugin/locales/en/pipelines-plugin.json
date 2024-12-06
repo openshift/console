@@ -430,8 +430,6 @@
   "No options matching your criteria": "No options matching your criteria",
   "No Output found": "No Output found",
   "{{resourceName}} results": "{{resourceName}} results",
-  "{{resourceName}} failed": "{{resourceName}} failed",
-  "Results may be incomplete due to failure. ": "Results may be incomplete due to failure. ",
   "No {{resourceName}} results available due to failure": "No {{resourceName}} results available due to failure",
   "Empty Directories": "Empty Directories",
   "Empty Directory ({{workspaceName}})": "Empty Directory ({{workspaceName}})",
