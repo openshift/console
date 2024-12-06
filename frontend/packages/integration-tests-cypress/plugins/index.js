@@ -14,8 +14,7 @@ module.exports = (on, config) => {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'ts-loader',
-            options: { happyPackMode: true, transpileOnly: true },
+            loader: 'esbuild-loader',
           },
         ],
       },

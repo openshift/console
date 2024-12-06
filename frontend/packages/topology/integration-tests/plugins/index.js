@@ -1,25 +1,28 @@
 const fs = require('fs');
 const webpack = require('@cypress/webpack-preprocessor');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = (on, config) => {
   const options = {
     webpackOptions: {
       resolve: {
         extensions: ['.ts', '.tsx', '.js'],
+        fallback: {
+          fs: false,
+          child_process: false,
+          readline: false,
+        },
       },
-      node: {
-        fs: 'empty',
-        child_process: 'empty',
-        readline: 'empty',
-      },
+      plugins: [
+        new NodePolyfillPlugin({
+          additionalAliases: ['process'],
+        }),
+      ],
       module: {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true,
-            },
+            loader: 'esbuild-loader',
           },
           {
             test: /\.feature$/,

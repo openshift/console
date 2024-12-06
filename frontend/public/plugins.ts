@@ -21,11 +21,11 @@ const getI18nNamespaces = () => {
   return window.SERVER_FLAGS.i18nNamespaces;
 };
 
-// The '@console/active-plugins' module is generated during a webpack build,
+// Console active plugins module has its source generated during webpack build,
 // so we use dynamic require() instead of the usual static import statement.
 const activePlugins =
   process.env.NODE_ENV !== 'test'
-    ? (require('@console/active-plugins').default as ActivePlugin[])
+    ? (require('../get-active-plugins').default as ActivePlugin[])
     : [];
 
 const dynamicPluginNames = getEnabledDynamicPluginNames();

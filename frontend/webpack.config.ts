@@ -5,13 +5,13 @@ import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import * as _crypto from 'crypto';
+import * as glob from 'glob';
 
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { getActivePluginsModuleData } from '@console/plugin-sdk/src/codegen/active-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import { ConsoleActivePluginsModule } from '@console/plugin-sdk/src/webpack/ConsoleActivePluginsModule';
 import { CircularDependencyPreset } from './webpack.circular-deps';
 
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -23,7 +23,7 @@ interface Configuration extends webpack.Configuration {
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const VirtualModulesPlugin = require('webpack-virtual-modules');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -33,30 +33,30 @@ const REACT_REFRESH = process.env.REACT_REFRESH;
 const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
 
-// A workaround fix for the breaking change in Node.js v18 due to the change in hashing algorithm.
-// This code change override the default webpack v4 default hashing algorithm -"md4".
-// This change can be remove when console UI update webpack to version 5 in the future.
-const hash = _crypto.createHash;
-Object.assign(_crypto, {
-  createHash: (): _crypto.Hash => hash('sha256'),
-});
-
 /* Helpers */
+const staticPluginPackages = resolvePluginPackages();
 const extractCSS = new MiniCssExtractPlugin({
-  filename:
-    NODE_ENV === 'production'
-      ? 'app-bundle.[name].[contenthash].css'
-      : 'app-bundle.[name].[hash].css',
+  filename: 'app-bundle.[name].[contenthash].css',
   // We follow BEM naming to scope CSS.
   // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
   ignoreOrder: true,
 });
-const virtualModules = new VirtualModulesPlugin();
 
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
 
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
+
+// Resolve to an empty module for overpass fonts included in SASS files.
+const overpassFiles = glob
+  .sync('./node_modules/@patternfly*/**/overpass*.{woff,woff2}', {
+    absolute: true,
+    noglobstar: false,
+  })
+  .reduce((acc, file) => {
+    acc[file] = false;
+    return acc;
+  }, {});
 
 const sharedPluginModulesTest = getVendorModuleRegExp(
   // Map shared module names to actual webpack modules as per shared-modules-init.ts
@@ -82,6 +82,9 @@ const config: Configuration = {
     main: ['./public/components/app.jsx', 'monaco-editor/esm/vs/editor/editor.worker.js'],
     'vendor-patternfly-4-shared': './public/vendor-patternfly-4-shared.scss',
   },
+  cache: {
+    type: 'filesystem',
+  },
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
@@ -97,16 +100,23 @@ const config: Configuration = {
       writeToDisk: true,
     },
   },
+  watchOptions: {
+    // needed to prevent ENOSPC: System limit for number of file watchers reached error
+    ignored: /node_modules/,
+  },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      prettier: false,
+      'prettier/parser-yaml': false,
+      ...overpassFiles,
+    },
+    fallback: {
+      net: false, // for YAML language server
+    },
   },
   node: {
-    fs: 'empty',
-    // eslint-disable-next-line camelcase
-    child_process: 'empty',
-    net: 'empty',
-    crypto: 'empty',
-    module: 'empty',
+    global: true, // see https://github.com/browserify/randombytes/issues/36
   },
   module: {
     rules: [
@@ -114,6 +124,13 @@ const config: Configuration = {
         // Disable tree shaking on modules shared with Console dynamic plugins
         test: sharedPluginModulesTest,
         sideEffects: true,
+      },
+      {
+        test: path.resolve(__dirname, 'get-active-plugins.js'),
+        loader: 'val-loader',
+        options: {
+          getModuleData: () => getActivePluginsModuleData(staticPluginPackages),
+        },
       },
       {
         test: /\.js$/,
@@ -138,7 +155,6 @@ const config: Configuration = {
         test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules\/(?!(bitbucket|ky|ini)\/)/,
         use: [
-          { loader: 'cache-loader' },
           // Disable thread-loader in CI
           ...(!OPENSHIFT_CI
             ? [
@@ -158,12 +174,10 @@ const config: Configuration = {
               ]
             : []),
           {
-            loader: 'ts-loader',
+            loader: 'esbuild-loader',
             options: {
               // Always use the root tsconfig.json. Packages might have a separate tsconfig.json for storybook.
-              configFile: path.resolve(__dirname, 'tsconfig.json'),
-              happyPackMode: true, // This implicitly enables transpileOnly! No type checking!
-              transpileOnly: true, // fork-ts-checker-webpack-plugin takes care of type checking
+              tsconfig: path.resolve(__dirname, 'tsconfig.json'),
             },
           },
         ],
@@ -171,14 +185,6 @@ const config: Configuration = {
       {
         test: /node_modules[\\\\|/](yaml-language-server)/,
         loader: 'umd-compat-loader',
-      },
-      {
-        test: /prettier\/parser-yaml/,
-        loader: 'null-loader',
-      },
-      {
-        test: /prettier/,
-        loader: 'null-loader',
       },
       {
         test: /node_modules[\\\\|/](vscode-json-languageservice)/,
@@ -194,7 +200,6 @@ const config: Configuration = {
               publicPath: './',
             },
           },
-          { loader: 'cache-loader' },
           ...(!OPENSHIFT_CI ? [{ loader: 'thread-loader' }] : []),
           {
             loader: 'css-loader',
@@ -222,24 +227,16 @@ const config: Configuration = {
       },
       {
         test: /\.css$/,
-        include: path.resolve(__dirname, './node_modules/monaco-editor'),
+        include: path.resolve(__dirname, 'node_modules/monaco-editor'),
         use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
         exclude: overpassTest,
-        loader: 'file-loader',
-        options: {
-          name: 'assets/[path][name].[ext]',
-          esModule: false,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/[path][name][ext]',
         },
-      },
-      {
-        // Resolve to an empty module for overpass fonts included in SASS files.
-        // This way file-loader won't parse them. Make sure this is BELOW the
-        // file-loader rule.
-        test: overpassTest,
-        loader: 'null-loader',
       },
       {
         test: /\.(graphql|gql)$/,
@@ -258,6 +255,13 @@ const config: Configuration = {
           test: /\/node_modules\//,
           priority: -10,
           enforce: true,
+          filename: (pathData) => {
+            // give a special name to initial chunk for analyze.sh
+            if ((pathData?.chunk as webpack.Chunk)?.isOnlyInitial()) {
+              return `vendors~main-chunk-[name]-[contenthash].min.js`;
+            }
+            return 'vendors~[name]-chunk-[contenthash].min.js';
+          },
         },
         'vendor-patternfly-5': {
           // modules with @patternfly/ that don't also have @patternfly-4/ in the string
@@ -267,9 +271,13 @@ const config: Configuration = {
           test: /@patternfly-4\//,
         },
         'vendor-plugins-shared': {
-          test: ({ resource = '' }) =>
-            sharedPluginModulesTest.test(resource) &&
-            !resource.includes('/node_modules/@patternfly'),
+          test(module: { resource?: string }) {
+            return (
+              module.resource &&
+              sharedPluginModulesTest.test(module.resource) &&
+              !module.resource.includes('/node_modules/@patternfly')
+            );
+          },
         },
       },
     },
@@ -307,6 +315,9 @@ const config: Configuration = {
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
       globalAPI: true,
+    }),
+    new NodePolyfillPlugin({
+      additionalAliases: ['process'],
     }),
     new CopyWebpackPlugin({
       patterns: [
@@ -355,8 +366,6 @@ const config: Configuration = {
       ],
     }),
     extractCSS,
-    virtualModules,
-    new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),
     ...(REACT_REFRESH
       ? [
           new ReactRefreshWebpackPlugin({
@@ -375,7 +384,7 @@ if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
     exclude: /node_modules|public\/dist|\.(gql|html)$/,
     // TODO: investigate how to load the plugins registry asynchronously
-    filterModules: /^node_modules\/@console\/active-plugins\.js$/,
+    filterModules: /^get-active-plugins\.js$/,
     reportFile: '.webpack-cycles',
   }).apply(config.plugins);
 }
@@ -394,7 +403,7 @@ if (ANALYZE_BUNDLE === 'true') {
 /* Production settings */
 if (NODE_ENV === 'production') {
   config.devtool = 'source-map';
-  config.output.filename = '[name]-bundle-[hash].min.js';
+  config.output.filename = '[name]-bundle-[chunkhash].min.js';
   config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
   // Causes error in --mode=production due to scope hoisting
   config.optimization.concatenateModules = false;
