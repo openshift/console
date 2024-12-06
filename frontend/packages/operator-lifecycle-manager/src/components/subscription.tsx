@@ -167,7 +167,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
   subscription,
 }) => {
   const { t } = useTranslation();
-  switch (subscription.status?.state) {
+  switch (subscription?.status?.state) {
     case SubscriptionState.SubscriptionStateUpgradeAvailable:
       return (
         <span>
@@ -175,7 +175,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
         </span>
       );
     case SubscriptionState.SubscriptionStateUpgradePending:
-      return upgradeRequiresApproval(subscription) && subscription.status.installPlanRef ? (
+      return upgradeRequiresApproval(subscription) && subscription?.status?.installPlanRef ? (
         <UpgradeApprovalLink subscription={subscription} />
       ) : (
         <span>
@@ -190,8 +190,8 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
       );
     default:
       return (
-        <span className={_.isEmpty(subscription.status.state) ? 'text-muted' : ''}>
-          {subscription.status.state || t('olm~Unknown failure')}
+        <span className={_.isEmpty(subscription?.status?.state) ? 'text-muted' : ''}>
+          {subscription?.status?.state || t('olm~Unknown failure')}
         </span>
       );
   }
