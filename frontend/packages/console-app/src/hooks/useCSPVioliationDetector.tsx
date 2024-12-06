@@ -2,8 +2,7 @@ import * as React from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { pluginStore } from '@console/internal/plugins';
-import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src/store';
+import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
 import { useToast } from '@console/shared/src/components/toast';
 import { ONE_DAY } from '@console/shared/src/constants/time';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -41,12 +40,13 @@ export const newCSPViolationReport = (
     'sourceFile',
     'statusCode',
   ]),
-  pluginName: pluginName || 'none',
+  pluginName: pluginName || '',
 });
 
 export const useCSPViolationDetector = () => {
   const { t } = useTranslation();
   const toastContext = useToast();
+  const pluginStore = usePluginStore();
   const fireTelemetryEvent = useTelemetry();
   const getRecords = React.useCallback((): CSPViolationRecord[] => {
     const serializedRecords = window.localStorage.getItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY) || '';
@@ -114,18 +114,19 @@ export const useCSPViolationDetector = () => {
         timestamp: Date.now(),
       };
       const updatedRecords = updateRecords(existingRecords, newRecord);
-      const isNewOccurrance = updatedRecords.length > existingRecords.length;
+      const isNewOccurrence = updatedRecords.length > existingRecords.length;
       const isProduction = process.env.NODE_ENV === 'production';
 
       window.localStorage.setItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY, JSON.stringify(updatedRecords));
 
-      if (isNewOccurrance && isProduction) {
+      if (isNewOccurrence && isProduction) {
         fireTelemetryEvent('CSPViolation', newRecord);
       }
 
       if (pluginName) {
         const pluginInfo = pluginStore.findDynamicPluginInfo(pluginName);
         const validPlugin = !!pluginInfo;
+        const pluginIsLoaded = validPlugin && pluginInfo.status === 'Loaded';
 
         // eslint-disable-next-line no-console
         console.warn(
@@ -136,28 +137,25 @@ export const useCSPViolationDetector = () => {
 
         if (validPlugin) {
           pluginStore.setCustomDynamicPluginInfo(pluginName, { hasCSPViolations: true });
-          if (
-            !isProduction &&
-            isLoadedDynamicPluginInfo(pluginInfo) &&
-            !pluginInfo.hasCSPViolations
-          ) {
-            toastContext.addToast({
-              variant: AlertVariant.warning,
-              title: t('public~Content Security Policy violation in Console plugin'),
-              content: t(
-                "public~{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
-                {
-                  pluginName,
-                },
-              ),
-              timeout: true,
-              dismissible: true,
-            });
-          }
+        }
+
+        if (pluginIsLoaded && !isProduction && !pluginInfo.hasCSPViolations) {
+          toastContext.addToast({
+            variant: AlertVariant.warning,
+            title: t('public~Content Security Policy violation in Console plugin'),
+            content: t(
+              "public~{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
+              {
+                pluginName,
+              },
+            ),
+            timeout: true,
+            dismissible: true,
+          });
         }
       }
     },
-    [fireTelemetryEvent, getRecords, t, toastContext, updateRecords],
+    [fireTelemetryEvent, getRecords, t, toastContext, updateRecords, pluginStore],
   );
 
   React.useEffect(() => {
