@@ -8,6 +8,9 @@ COL_YELLOW='\033[33m'
 
 resolution_errors=false
 
+# https://docs.ci.openshift.org/docs/architecture/step-registry/#step-execution-environment
+OPENSHIFT_CI=${OPENSHIFT_CI:=false}
+
 # Ensure that only one major version resolution exists for the given package in yarn.lock file.
 # Having multiple version resolutions may lead to bugs and webpack build or performance issues.
 check-resolution() {
@@ -68,9 +71,18 @@ PKGS_TO_CHECK=(
 
 echo -e "Checking ${COL_YELLOW}yarn.lock${COL_RESET} file for PatternFly module resolutions"
 
-for pkg in "${PKGS_TO_CHECK[@]}"; do
-  check-resolution "${pkg%%:*}" "${pkg#*:}"
-done
+if [[ "$OPENSHIFT_CI" == "true" ]]; then
+  # disable parallel execution in CI to reduce CPU usage
+  for pkg in "${PKGS_TO_CHECK[@]}"; do
+    check-resolution "${pkg%%:*}" "${pkg#*:}"
+  done
+else
+  for pkg in "${PKGS_TO_CHECK[@]}"; do
+    check-resolution "${pkg%%:*}" "${pkg#*:}" &
+  done
+
+  wait
+fi
 
 if [[ "$resolution_errors" == "false" ]]; then
   echo -e "${COL_GREEN}No issues detected${COL_RESET}"
