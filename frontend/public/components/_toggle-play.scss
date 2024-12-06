@@ -7,17 +7,6 @@
   padding: 0;
   width: 32px;
 
-  // play icon
-  &.co-toggle-play--inactive:before {
-    @include font-awesome-free-solid;
-    content: fa-content($fa-var-play);
-  }
-  // pause icon
-  &.co-toggle-play--active:before {
-    @include font-awesome-free-solid;
-    content: fa-content($fa-var-pause);
-  }
-
   &.co-toggle-play--active {
     border-color: var(
       --pf-v5-global--palette--green-300
