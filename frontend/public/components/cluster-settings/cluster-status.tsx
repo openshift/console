@@ -126,7 +126,7 @@ const UpdatingMessage: React.FC<CVStatusMessageProps> = ({ cv, isFailing }) => {
   return (
     <>
       <div data-test="cv-update-status-updating">
-        <SyncAltIcon className="fa-spin co-icon-space-r" />
+        <SyncAltIcon className="co-spin co-icon-space-r" />
         <UpdatingMessageText cv={cv} />
       </div>
       {isFailing && <FailingMessageText cv={cv} />}

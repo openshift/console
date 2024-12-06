@@ -635,3 +635,21 @@ dl.co-inline {
   flex: 1 0 auto;
   flex-direction: column;
 }
+
+@keyframes co-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// fa-spin kept for backwards compatibility due to usage in dynamic plugins
+.co-spin, .fa-spin {
+  animation: co-spin 2s infinite linear;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}

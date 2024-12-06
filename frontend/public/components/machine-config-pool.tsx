@@ -272,7 +272,7 @@ const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps
     case MCPUpdateStatus.Updating:
       return (
         <>
-          <SyncAltIcon className="fa-spin co-icon-space-r" />
+          <SyncAltIcon className="co-spin co-icon-space-r" />
           {t('public~Updating')}
         </>
       );
