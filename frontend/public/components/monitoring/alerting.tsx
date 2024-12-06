@@ -28,6 +28,7 @@ import {
   Alert as PFAlert,
   Breadcrumb,
   BreadcrumbItem,
+  DropdownItem,
   Button,
   Checkbox,
   Flex,
@@ -585,12 +586,12 @@ const SilencedAlertsList = ({ alerts }) => {
             <div className="dropdown-kebab-pf">
               <KebabDropdown
                 dropdownItems={[
-                  <DropdownItemDeprecated
+                  <DropdownItem
                     key="view-rule"
                     onClick={() => navigate(ruleURL(a.rule, namespace))}
                   >
                     {t('public~View alerting rule')}
-                  </DropdownItemDeprecated>,
+                  </DropdownItem>,
                 ]}
               />
             </div>
