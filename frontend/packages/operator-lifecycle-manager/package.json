@@ -14,7 +14,7 @@
       "topology": "src/components/topology",
       "topologySidebar": "src/components/topology/sidebar",
       "actions": "src/actions",
-      "install": "src/components/operator-install-page"
+      "install": "src/components/operator-install-page.tsx"
     }
   }
 }

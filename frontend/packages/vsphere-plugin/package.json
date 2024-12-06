@@ -15,8 +15,8 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
-      "vsphereStatus": "src/components/ClusterOverview/VSphereStatus",
-      "flag": "src/flag"
+      "vsphereStatus": "src/components/ClusterOverview/VSphereStatus.tsx",
+      "flag": "src/flag.ts"
     }
   }
 }

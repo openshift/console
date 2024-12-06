@@ -17,23 +17,48 @@ import { consolePkgScope, PluginPackage } from './plugin-resolver';
 
 const getExtensionsFilePath = (pkg: PluginPackage) => path.resolve(pkg._path, extensionsFile);
 
+export type ActivePluginsModuleData = {
+  /** Generated module source code. */
+  code: string;
+  /** Diagnostics collected while generating module source code. */
+  diagnostics: { errors: string[]; warnings: string[] };
+  /** Absolute file paths representing webpack file dependencies of the generated module. */
+  fileDependencies: string[];
+};
+
 /**
  * Guess the file path of the module (e.g., the extension,
  * any barrel/index file) based on the given base path.
  *
  * Returns the base path if no file is found.
  */
-const guessModuleFilePath = (basePath: string) => {
+const guessModuleFilePath = (
+  basePath: string,
+  diagnostics: ActivePluginsModuleData['diagnostics'],
+) => {
   const extensions = ['.tsx', '.ts', '.jsx', '.js'];
 
   // Sometimes the module is an index file, but the exposed module path only specifies the directory.
   // In that case, we need an explicit check for the index file.
   const indexModulePaths = ['index.ts', 'index.js'].map((i) => path.resolve(basePath, i));
 
-  const pathsToCheck = [...indexModulePaths, ...extensions.map((ext) => `${basePath}${ext}`)];
+  for (const p of indexModulePaths) {
+    if (fs.existsSync(p)) {
+      // TODO(OCPBUGS-45847): uncomment when warnings are resolved
+      // diagnostics.warnings.push(
+      //   `The module ${basePath} refers to an index file ${p}. Index/barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`,
+      // );
+      return p;
+    }
+  }
+
+  const pathsToCheck = [...extensions.map((ext) => `${basePath}${ext}`)];
 
   for (const p of pathsToCheck) {
     if (fs.existsSync(p)) {
+      diagnostics.warnings.push(
+        `The module ${basePath} refers to a file ${p}, but a file extension was not specified.`,
+      );
       return p;
     }
   }
@@ -43,24 +68,16 @@ const guessModuleFilePath = (basePath: string) => {
   return basePath;
 };
 
-const getExposedModuleFilePath = (pkg: PluginPackage, moduleName: string) => {
+const getExposedModuleFilePath = (
+  pkg: PluginPackage,
+  moduleName: string,
+  diagnostics: ActivePluginsModuleData['diagnostics'],
+) => {
   const modulePath = path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
 
-  // Check if there is a file extension (no extra guessing needed)
-  if (!path.extname(modulePath)) {
-    return guessModuleFilePath(modulePath);
-  }
-
-  return modulePath;
-};
-
-export type ActivePluginsModuleData = {
-  /** Generated module source code. */
-  code: string;
-  /** Diagnostics collected while generating module source code. */
-  diagnostics: { errors: string[]; warnings: string[] };
-  /** Absolute file paths representing webpack file dependencies of the generated module. */
-  fileDependencies: string[];
+  return path.extname(modulePath)
+    ? modulePath // Path already contains a file extension (no extra guessing needed)
+    : guessModuleFilePath(modulePath, diagnostics);
 };
 
 /**
@@ -227,12 +244,12 @@ export const getActivePluginsModuleData = (
     fileDependencies.push(getExtensionsFilePath(pkg));
 
     Object.keys(pkg.consolePlugin.exposedModules || {}).forEach((moduleName) => {
-      const moduleFilePath = getExposedModuleFilePath(pkg, moduleName);
+      const moduleFilePath = getExposedModuleFilePath(pkg, moduleName, { errors, warnings });
 
       if (fs.existsSync(moduleFilePath) && fs.statSync(moduleFilePath).isFile()) {
         fileDependencies.push(moduleFilePath);
       } else {
-        warnings.push(
+        errors.push(
           `Exposed module '${moduleName}' in static plugin ${pkg.name} refers to non-existent file ${moduleFilePath}`,
         );
       }
