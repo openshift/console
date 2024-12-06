@@ -86,7 +86,9 @@ export const fetchHelmReleases = (
   namespace: string,
   limitInfo?: boolean,
 ): Promise<HelmRelease[]> => {
-  const fetchString = `/api/helm/releases?ns=${namespace}&limitInfo=${limitInfo || false}`;
+  const fetchString = namespace
+    ? `/api/helm/releases?ns=${namespace}&limitInfo=${limitInfo || false}`
+    : `/api/helm/releases?limitInfo=${limitInfo || false}`;
   return coFetchJSON(fetchString);
 };
 

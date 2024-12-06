@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import CreateProjectListPage, {
-  CreateAProjectButton,
-} from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { PageHeading } from '@console/internal/components/utils';
 import RepositoriesPage from './RepositoriesListPage';
 
@@ -17,7 +14,7 @@ type PageContentsProps = {
 
 const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
   const { t } = useTranslation();
-  return namespace ? (
+  return (
     <>
       <PageHeading title={t('helm-plugin~Helm Repositories')} className="co-m-nav-title--row">
         <div>
@@ -33,15 +30,6 @@ const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
       </PageHeading>
       <RepositoriesPage />
     </>
-  ) : (
-    <CreateProjectListPage title={t('helm-plugin~Helm Repositories')}>
-      {(openProjectModal) => (
-        <Trans t={t} ns="helm-plugin">
-          Select a Project to view its details
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
-      )}
-    </CreateProjectListPage>
   );
 };
 
