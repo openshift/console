@@ -385,6 +385,23 @@
       "href": "/test-modal"
     }
   },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-horizontalnav",
+      "component": { "$codeRef": "navPage.default" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-horizontalnav-page",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "%plugin__console-demo-plugin~Horizontal Nav%",
+      "href": "/test-horizontalnav"
+    }
+  },
     {
     "type": "console.create-project-modal",
     "properties": {

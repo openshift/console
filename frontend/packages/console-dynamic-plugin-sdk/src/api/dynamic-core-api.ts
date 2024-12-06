@@ -63,17 +63,18 @@ export const useResolvedExtensions: UseResolvedExtensions = require('@console/dy
  * A component that creates a Navigation bar for a page.
  * Routing is handled as part of the component.
  * `console.tab/horizontalNav` can be used to add additional content to any horizontal nav.
- * @param {object} [resource] - the resource associated with this Navigation, an object of K8sResourceCommon type
+ * @param {object} [resource] - (optional) the resource associated with this Navigation, an object of K8sResourceCommon type
  * @param {NavPage[]} pages - an array of page objects
+ * @param {object} [customData] - (optional) custom data to be shared between the pages in the navigation.
  * @example
  * ```ts
  * const HomePage: React.FC = (props) => {
  *     const page = {
  *       href: '/home',
  *       name: 'Home',
- *       component: () => <>Home</>
+ *       component: ({customData}) => <>{customData.color} Home</>
  *     }
- *     return <HorizontalNav pages={[page]} />
+ *     return <HorizontalNav pages={[page]} customData={ color: 'Red'} />
  * }
  * ```
  */
