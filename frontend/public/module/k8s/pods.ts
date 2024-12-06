@@ -235,7 +235,13 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
   _.each(pod.status.initContainerStatuses, (container: ContainerStatus, i: number) => {
     const { terminated, waiting } = container.state;
+    const initContainerSpec = pod.spec.initContainers.find((c) => c.name === container.name);
+
     if (terminated && terminated.exitCode === 0) {
+      return true;
+    }
+
+    if (initContainerSpec?.restartPolicy === 'Always' && container.started) {
       return true;
     }
 
