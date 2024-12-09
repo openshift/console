@@ -15,20 +15,20 @@
 .ocs-markdown-execute-snippet {
 
   &__button {
-    & > i.fa-check {
+    & > .co-check-icon {
       display: none;
     }
 
-    & > i.fa-play {
+    & > .co-play-icon {
       display: inline;
     }
 
     &[data-executed] {
-      & > i.fa-check {
+      & > .co-check-icon {
         display: inline;
       }
 
-      & > i.fa-play {
+      & > .co-play-icon {
         display: none;
       }
     }
