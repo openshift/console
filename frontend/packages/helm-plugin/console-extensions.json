@@ -146,8 +146,8 @@
     "properties": {
       "exact": true,
       "path": [
-        "/ns/:ns/helmchartrepositories/~new/form",
-        "/ns/:ns/helmchartrepositories/:name/form",
+        "/helmchartrepositories/ns/:ns/~new/form",
+        "/helmchartrepositories/ns/:ns/:name/form",
         "/k8s/cluster/helmchartrepositories/:name/form"
       ],
       "component": { "$codeRef": "helmComponents.HelmChartRepositoryForm" }
@@ -189,7 +189,7 @@
     "properties": {
       "id": "project-helm-chart-repositories",
       "groupId": "helm-chart-repositories",
-      "href": "/ns/:namespace/helmchartrepositories/~new/form?actionOrigin=addPage",
+      "href": "/helmchartrepositories/ns/:namespace/~new/form?actionOrigin=addPage",
       "label": "%helm-plugin~Helm Chart repositories%",
       "description": "%helm-plugin~Add a Helm Chart Repository to extend the Developer Catalog%",
       "icon": { "$codeRef": "helmUtils.helmChartRepositoriesIconElement" },

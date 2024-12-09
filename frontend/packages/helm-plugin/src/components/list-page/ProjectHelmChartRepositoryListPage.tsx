@@ -10,9 +10,9 @@ const ProjectHelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof L
 ) => {
   const { t } = useTranslation();
   const createProps = {
-    to: `/ns/${
+    to: `/helmchartrepositories/ns/${
       props.namespace || 'default'
-    }/helmchartrepositories/~new/form?kind=${referenceForModel(ProjectHelmChartRepositoryModel)}`,
+    }/~new/form?kind=${referenceForModel(ProjectHelmChartRepositoryModel)}`,
   };
   return (
     <ListPage

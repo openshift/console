@@ -19,7 +19,7 @@ const LinkToCreatePHCR: React.FC = () => {
       {' '}
       <Trans ns="helm-plugin">
         Alternatively, developers can{' '}
-        <Link to={`/ns/${namespace}/helmchartrepositories/~new/form?actionOrigin=catalog`}>
+        <Link to={`/helmchartrepositories/ns/${namespace}/~new/form?actionOrigin=catalog`}>
           try to configure their own custom Helm Chart repository
         </Link>
         .

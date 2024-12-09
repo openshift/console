@@ -308,7 +308,7 @@ const kebabFactory: KebabFactory = {
         )}`;
         break;
       case ProjectHelmChartRepositoryModel.kind:
-        href = `/ns/${obj.metadata.namespace}/helmchartrepositories/${
+        href = `/helmchartrepositories/ns/${obj.metadata.namespace}/${
           obj.metadata.name
         }/form?kind=${referenceFor(obj)}`;
         break;
