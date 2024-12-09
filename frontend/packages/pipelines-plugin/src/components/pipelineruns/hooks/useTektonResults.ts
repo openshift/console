@@ -3,11 +3,11 @@ import { uniqBy } from 'lodash';
 import { K8sResourceCommon, Selector } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
-import { TektonResourceLabel } from '../../pipelines/const';
+import { FLAG_PIPELINES_OPERATOR_VERSION_1_16_OR_NEWER } from '../../pipelines/const';
 import { RepositoryLabels, RepositoryFields } from '../../repository/consts';
-import { useTaskRuns } from '../../taskruns/useTaskRuns';
 import {
   getPipelineRuns,
   TektonResultsOptions,
@@ -24,11 +24,15 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     options?: TektonResultsOptions,
     nextPageToken?: string,
     cacheKey?: string,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER?: boolean,
   ) => Promise<[Kind[], RecordsList, boolean?]>,
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
+  const IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER = useFlag(
+    FLAG_PIPELINES_OPERATOR_VERSION_1_16_OR_NEWER,
+  );
   const [nextPageToken, setNextPageToken] = React.useState<string>(null);
   const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
 
@@ -54,7 +58,13 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     let disposed = false;
     (async () => {
       try {
-        const tkPipelineRuns = await getRuns(namespace, options, nextPageToken, localCacheKey);
+        const tkPipelineRuns = await getRuns(
+          namespace,
+          options,
+          nextPageToken,
+          localCacheKey,
+          IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER,
+        );
         if (!disposed) {
           const token = tkPipelineRuns[1].nextPageToken;
           const callInflight = !!tkPipelineRuns?.[2];
@@ -95,7 +105,14 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     return () => {
       disposed = true;
     };
-  }, [namespace, options, nextPageToken, localCacheKey, getRuns]);
+  }, [
+    namespace,
+    options,
+    nextPageToken,
+    localCacheKey,
+    getRuns,
+    IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER,
+  ]);
   return result;
 };
 
@@ -148,45 +165,10 @@ export const useGetPipelineRuns = (ns: string, options?: { name: string; kind: s
   ];
 };
 
-export const useGetTaskRuns = (
-  ns: string,
-  pipelineRunName?: string,
-): [TaskRunKind[], boolean, unknown, GetNextPage] => {
-  let selector: Selector;
-  if (pipelineRunName) {
-    selector = {
-      matchLabels: {
-        [TektonResourceLabel.pipelinerun]: pipelineRunName,
-      },
-    };
-  }
-  const [k8sTaskRuns, k8sTaskRunsLoaded, k8sTaskRunsLoadError] = useTaskRuns(ns, pipelineRunName);
-  const [
-    resultTaskRuns,
-    resultTaskRunsLoaded,
-    resultTaskRunsLoadError,
-    getNextPage,
-  ] = useTRTaskRuns(
-    ns,
-    pipelineRunName && {
-      selector,
-    },
-  );
-  const mergedTaskRuns =
-    resultTaskRunsLoaded || k8sTaskRunsLoaded
-      ? uniqBy([...k8sTaskRuns, ...resultTaskRuns], (r) => r.metadata.name)
-      : [];
-  return [
-    mergedTaskRuns,
-    resultTaskRunsLoaded || k8sTaskRunsLoaded,
-    k8sTaskRunsLoadError || resultTaskRunsLoadError,
-    getNextPage,
-  ];
-};
-
 export const useTRTaskRunLog = (
   namespace: string,
   taskRunName: string,
+  taskRunPath: string,
 ): [string, boolean, unknown] => {
   const [result, setResult] = React.useState<[string, boolean, unknown]>([null, false, undefined]);
   React.useEffect(() => {
@@ -194,7 +176,7 @@ export const useTRTaskRunLog = (
     if (namespace && taskRunName) {
       (async () => {
         try {
-          const log = await getTaskRunLog(namespace, taskRunName);
+          const log = await getTaskRunLog(taskRunPath);
           if (!disposed) {
             setResult([log, true, undefined]);
           }
@@ -208,6 +190,6 @@ export const useTRTaskRunLog = (
     return () => {
       disposed = true;
     };
-  }, [namespace, taskRunName]);
+  }, [namespace, taskRunName, taskRunPath]);
   return result;
 };
