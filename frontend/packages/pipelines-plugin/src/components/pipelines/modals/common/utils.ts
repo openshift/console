@@ -151,9 +151,14 @@ export const getPipelineRunData = (
     spec: {
       ...(latestRun?.spec || {}),
       ...((latestRun?.spec.pipelineRef || pipeline) && {
-        pipelineRef: {
-          name: pipelineName,
-        },
+        pipelineRef: latestRun?.spec.pipelineRef?.resolver
+          ? {
+              resolver: latestRun.spec.pipelineRef?.resolver,
+              params: latestRun.spec.pipelineRef?.params,
+            }
+          : {
+              name: pipelineName,
+            },
       }),
       ...(params && { params }),
       workspaces,
