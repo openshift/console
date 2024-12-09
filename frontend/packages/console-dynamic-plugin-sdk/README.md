@@ -159,6 +159,12 @@ This section documents notable changes in the Console provided shared modules ac
 - All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
   Plugins should upgrade to React Router v6 via `react-router-dom-v5-compat` module.
 
+#### Console 4.19.x
+
+- Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
+  from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
+  removed in the future. Plugins should provide their own CSS to spin icons if needed.
+
 ### PatternFly dynamic modules
 
 Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package (1.0.0 and higher) include

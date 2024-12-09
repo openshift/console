@@ -289,7 +289,11 @@ $pipelineStageStatus: (
   transform: rotate(-90deg);
   width: $pipeline-circle-diameter;
   &:after {
-    @include font-awesome-free-solid;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 900;
+    text-rendering: auto;
     animation: pipeline-stage-fadeIcon $pipeline-icon-animation-time
       (
         $pipeline-line-grow-animation-time + $pipeline-semi-circle-animation-time +

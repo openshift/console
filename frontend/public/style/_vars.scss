@@ -11,9 +11,6 @@ $consoleWebDistPath: './';
 
 // == Overrides of external dependency variables
 
-// FontAwesome font path.
-$fa-font-path: $consoleWebDistPath + '/';
-
 // PatternFly 4 font path.
 $pf-v5-global--font-path: '~@patternfly/patternfly/assets/fonts';
 $table-border-color: var(--pf-v5-global--BorderColor--300);

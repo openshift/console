@@ -3,9 +3,6 @@
 
 // External dependencies (tilde tells Webpack not to use relative path).
 // Separate SCSS entrypoint here because some modules break source maps.
-@import '~openshift-logos-icon/style';
-@import '~@fortawesome/fontawesome-free/scss/fontawesome';
-@import '~@fortawesome/fontawesome-free/scss/solid';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/variables';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/catalog-item';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/catalog-tile';
