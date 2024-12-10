@@ -238,7 +238,8 @@ export const NsDropdown = (props) => {
     }
     if (model?.label === 'Project' && createProjectModalExtensions.length > 1) {
       return createProjectModalExtensions.map(({ pluginName, uid, properties }) => ({
-        actionTitle: properties.label || t('public~Create {{pluginName}} Project', { pluginName }),
+        actionTitle:
+          properties.label || t('public~Create Project using {{pluginName}}', { pluginName }),
         actionKey: uid,
       }));
     }

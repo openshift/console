@@ -13,7 +13,13 @@ export type CreateProjectModal = ExtensionDeclaration<
   {
     /** A component to render in place of the create project modal */
     component: CodeRef<ModalComponent<CreateProjectModalProps>>;
-    /** A label to display in the create project dropdown */
+    /**
+     * The label for this extension. This property is used to distinguish between multiple
+     * CreateProjectModal extensions. In such cases, the `label` property is displayed as an option
+     * in a dropdown menu in place of the normal singular Project creation buttons. If no label is
+     * defined and multiple CreateProjectModal extensions are defined, a fallback value "Create
+     * Project using <pluginName>" will be used.
+     */
     label: string;
   }
 >;

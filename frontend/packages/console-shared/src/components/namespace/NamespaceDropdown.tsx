@@ -211,7 +211,7 @@ const CreateProjectAction = ({ onClick, children, isProject }) => {
         <DropdownList>
           {createProjectModalExtensions.map(({ pluginName, uid, properties }) => (
             <DropdownItem key={uid} onClick={() => onClick(uid)}>
-              {properties.label || t('public~Create {{pluginName}} Project', { pluginName })}
+              {properties.label || t('public~Create Project using {{pluginName}}', { pluginName })}
             </DropdownItem>
           ))}
         </DropdownList>

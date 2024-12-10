@@ -864,7 +864,9 @@ export const ProjectsPage = (props) => {
               ? createProjectModalExtensions.reduce(
                   (acc, { uid, properties, pluginName }) => ({
                     ...acc,
-                    [uid]: properties.label || t('Create {{pluginName}} Project', { pluginName }),
+                    [uid]:
+                      properties.label ||
+                      t('public~Create Project using {{pluginName}}', { pluginName }),
                   }),
                   {},
                 )

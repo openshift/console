@@ -323,7 +323,7 @@ This extension can be used to pass a component that will be rendered in place of
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<ModalComponent<CreateProjectModalProps>>` | no | A component to render in place of the create project modal |
-| `label` | `string` | no | A label to display in the create project dropdown |
+| `label` | `string` | no | The label for this extension. This property is used to distinguish between multiple<br/>CreateProjectModal extensions. In such cases, the `label` property is displayed as an option<br/>in a dropdown menu in place of the normal singular Project creation buttons. If no label is<br/>defined and multiple CreateProjectModal extensions are defined, a fallback value "Create<br/>Project using <pluginName>" will be used. |
 
 ---
 
