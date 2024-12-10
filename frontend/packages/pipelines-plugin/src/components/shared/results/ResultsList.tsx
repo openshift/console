@@ -19,7 +19,7 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, resourceName, status
   return (
     <>
       <SectionHeading text={t('pipelines-plugin~{{resourceName}} results', { resourceName })} />
-      {status !== ComputedStatus.Failed ? (
+      {results.length ? (
         <Table aria-label={t('pipelines-plugin~{{resourceName}} results', { resourceName })}>
           <Thead>
             <Tr>
@@ -37,15 +37,17 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, resourceName, status
           </Tbody>
         </Table>
       ) : (
-        <Bullseye>
-          <EmptyState variant={EmptyStateVariant.full}>
-            <EmptyStateBody>
-              {t('pipelines-plugin~No {{resourceName}} results available due to failure', {
-                resourceName,
-              })}
-            </EmptyStateBody>
-          </EmptyState>
-        </Bullseye>
+        status !== ComputedStatus.Failed && (
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.full}>
+              <EmptyStateBody>
+                {t('pipelines-plugin~No {{resourceName}} results available due to failure', {
+                  resourceName,
+                })}
+              </EmptyStateBody>
+            </EmptyState>
+          </Bullseye>
+        )
       )}
     </>
   );
