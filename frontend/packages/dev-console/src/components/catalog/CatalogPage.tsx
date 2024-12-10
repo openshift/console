@@ -43,7 +43,7 @@ const CatalogPage: React.FC = () => {
                   : t('devconsole~Software Catalog')
               }
               description={t(
-                'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the developer catalog. Cluster administrators can customize the content made available in the catalog.',
+                'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the catalog. Cluster administrators can customize the content made available in the catalog.',
               )}
             />
           )}
