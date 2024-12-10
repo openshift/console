@@ -100,7 +100,7 @@ const Lightspeed: React.FC = () => {
               <StackItem>
                 <div className="lightspeed__welcome-logo" />
                 <Title headingLevel="h1" className="pf-v5-u-mb-sm">
-                  {t('console-app~Meet Openshift Lightspeed')}
+                  {t('console-app~Meet OpenShift Lightspeed')}
                 </Title>
                 <Text className="pf-v5-u-color-200 pf-v5-u-font-size-lg pf-v5-u-mb-md">
                   {t(
