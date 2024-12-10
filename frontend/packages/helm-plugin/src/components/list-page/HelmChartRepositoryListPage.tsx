@@ -8,9 +8,9 @@ import ProjectHelmChartRepositoryList from './ProjectHelmChartRepositoryList';
 const HelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
   const createProps = {
-    to: `/helmchartrepositories/ns/${
-      props.namespace || 'default'
-    }/~new/form?kind=${referenceForModel(HelmChartRepositoryModel)}&actionOrigin=search`,
+    to: `/helm-repositories/ns/${props.namespace || 'default'}/~new/form?kind=${referenceForModel(
+      HelmChartRepositoryModel,
+    )}&actionOrigin=search`,
   };
   return (
     <ListPage

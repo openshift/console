@@ -64,7 +64,7 @@ export const PageContents: React.FC = () => {
     projectHelmChartRepository: {
       label:
         projectHelmChartCreateAccess || helmChartCreateAccess ? t('helm-plugin~Repository') : null,
-      onSelection: () => `/helmchartrepositories/ns/${namespace}/~new/form`,
+      onSelection: () => `/helm-repositories/ns/${namespace}/~new/form`,
     },
   };
 

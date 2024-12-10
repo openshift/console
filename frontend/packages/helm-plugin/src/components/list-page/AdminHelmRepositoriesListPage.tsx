@@ -20,7 +20,7 @@ const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
         <div>
           <Link
             className="co-m-primary-action"
-            to={`/helmchartrepositories/ns/${namespace || 'default'}/~new/form`}
+            to={`/helm-repositories/ns/${namespace || 'default'}/~new/form`}
           >
             <Button variant="primary" id="yaml-create" data-test="item-create">
               {t('helm-plugin~Create Helm Repository')}
