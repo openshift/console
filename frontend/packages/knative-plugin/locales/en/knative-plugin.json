@@ -318,6 +318,8 @@
   "Loading bootstrap servers...": "Loading bootstrap servers...",
   "EventType": "EventType",
   "EventTypes": "EventTypes",
+  "Kafka Connection": "Kafka Connection",
+  "Kafka Connections": "Kafka Connections",
   "Resources": "Resources",
   "Open URL": "Open URL",
   "No Revisions": "No Revisions",

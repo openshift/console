@@ -460,10 +460,10 @@ docker run -p 8081:8081 downloadsserver:latest
 
 The console application automatically reports CSP violations to telemetry. This detection and
 reporting logic attempts to parse a dynamic plugin name from the securitypolicyviolation event to
-include in the data reported to telemetry. If a plugin name is not determined in  
-this way, then 'none' will be used. Additionally, violation reporting is throttled to prevent  
-spamming the telemetry service with repetitive data. Identical violations will not be  
-reported more than once a day.  
+include in the data reported to telemetry. If a plugin name is not determined in
+this way, then 'none' will be used. Additionally, violation reporting is throttled to prevent
+spamming the telemetry service with repetitive data. Identical violations will not be
+reported more than once a day.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
@@ -483,5 +483,3 @@ reported more than once a day.
 - operator-lifecycle-manager
 [[Descriptors README]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/README.md)
 [[Descriptors API Reference]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md)
-
-- [rhoas-plugin](./frontend/packages/rhoas-plugin/README.md)

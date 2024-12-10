@@ -298,3 +298,20 @@ export const KafkaSinkModel: K8sKind = {
   crd: true,
   color: knativeEventingColor.value,
 };
+
+export const KafkaConnectionModel: K8sKind = {
+  apiGroup: 'rhoas.redhat.com',
+  apiVersion: 'v1alpha1',
+  kind: 'KafkaConnection',
+  id: 'kafkaconnection',
+  plural: 'kafkaconnections',
+  label: 'Kafka Connection',
+  // t('knative-plugin~Kafka Connection')
+  labelKey: 'knative-plugin~Kafka Connection',
+  labelPlural: 'Kafka Connections',
+  // t('knative-plugin~Kafka Connections')
+  labelPluralKey: 'knative-plugin~Kafka Connections',
+  abbr: 'AKC',
+  namespaced: true,
+  crd: true,
+};

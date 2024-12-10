@@ -344,7 +344,6 @@ const config: Configuration = {
         { from: path.resolve(__dirname, './packages/webterminal-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/topology/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/helm-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/rhoas-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/git-service/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/gitops-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/metal3-plugin/locales'), to: 'locales' },

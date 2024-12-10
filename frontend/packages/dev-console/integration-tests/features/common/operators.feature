@@ -190,19 +190,6 @@ Feature: Operators
              Then user will see a modal with title "Argo CD Operator"
               And user will see a View Operator button
 
-
-        #Run RHOAS-catalog-source.yaml from dev-console/integration-tests/testData/yamls/operator-installation folder to get redhat version of RHOAS operator
-        @smoke @to-do
-        Scenario: RHOAS operator: C-01-TC19
-            Given user is at Operator Hub page
-             When user searches for "RHOAS"
-              And user clicks on RHOAS operator card on Operator Hub page
-              And user clicks install button present on the right sidebar
-              And user installs the RHOAS operator with default values
-             Then user will see a RHOAS installing modal
-              And user will see a View Operator button
-
-
         @smoke @to-do
         Scenario: Red Hat Integration - AMQ Streams operator: C-01-TC20
             Given user is at Operator Hub page

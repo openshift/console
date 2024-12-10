@@ -24,11 +24,6 @@ const mockBindableData = [
   },
   {
     group: 'rhoas.redhat.com',
-    kind: 'ServiceRegistryConnection',
-    version: 'v1alpha1',
-  },
-  {
-    group: 'rhoas.redhat.com',
     kind: 'KafkaConnection',
     version: 'v1alpha1',
   },

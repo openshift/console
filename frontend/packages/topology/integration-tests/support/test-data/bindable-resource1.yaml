@@ -30,6 +30,3 @@ status:
   - group: postgresql.k8s.enterprisedb.io
     kind: Cluster
     version: v1
-  - group: rhoas.redhat.com
-    kind: ServiceRegistryConnection
-    version: v1alpha1

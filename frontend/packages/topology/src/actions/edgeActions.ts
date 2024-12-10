@@ -12,8 +12,8 @@ import {
   TYPE_EVENT_PUB_SUB,
   TYPE_REVISION_TRAFFIC,
   TYPE_KAFKA_CONNECTION_LINK,
+  TYPE_MANAGED_KAFKA_CONNECTION,
 } from '@console/knative-plugin/src/topology/const';
-import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
 import { moveConnectionModal } from '../components/modals/MoveConnectionModal';
 import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../const';
 import { removeConnection } from '../utils';
