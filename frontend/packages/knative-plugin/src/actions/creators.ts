@@ -213,7 +213,11 @@ export const editSinkUri = (
   },
 });
 
-export const testServerlessFunction = (model: K8sKind, obj: K8sResourceKind): Action => ({
+export const testServerlessFunction = (
+  model: K8sKind,
+  obj: K8sResourceKind,
+  disabled: boolean,
+) => ({
   id: 'test-serverless-function',
   label: i18next.t('knative-plugin~Test Serverless Function'),
   cta: () =>
@@ -221,4 +225,5 @@ export const testServerlessFunction = (model: K8sKind, obj: K8sResourceKind): Ac
       obj,
     }),
   insertBefore: 'create-service-binding',
+  disabled,
 });
