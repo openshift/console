@@ -19,7 +19,7 @@ export const useHelmChartRepositoriesBreadcrumbs = (kindObj: K8sKind) => {
     kindObj,
     location,
     params,
-    'helm-releases',
+    'helm',
     'repositories',
     isAdminPerspective ? undefined : t('helm-plugin~Repositories'),
     !isAdminPerspective,

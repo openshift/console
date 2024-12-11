@@ -1168,7 +1168,6 @@
         "/deploy-image",
         "/project-details",
         "/dev-monitoring",
-        "/helm-releases",
         "/upload-jar",
         "/search-page",
         "/builds",
