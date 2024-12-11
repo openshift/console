@@ -635,3 +635,11 @@ dl.co-inline {
   flex: 1 0 auto;
   flex-direction: column;
 }
+
+.svg-logo-text {
+  fill: #fff;
+}
+
+:where(.pf-theme-dark) .svg-logo-text {
+  fill: green;
+}

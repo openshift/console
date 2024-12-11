@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
+import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
 import { getBrandingDetails } from './utils/branding';
 
@@ -36,7 +37,11 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
       </MastheadToggle>
       <MastheadMain>
         <MastheadBrand component="a" {...logoProps}>
-          <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
+          {window.SERVER_FLAGS.customLogoURL ? (
+            <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
+          ) : (
+            <ReactSVG src={details.logoImg} data-test="brand-image" />
+          )}
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
