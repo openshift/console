@@ -29,7 +29,7 @@ const InstallingNodeDecorator: React.FC<InstallingNodeDecoratorProps> = ({ conte
           className="opp-installing-node-decorator__circle"
         />
         <g transform="translate(-5, -7)">
-          <InProgressIcon className="fa-spin" />
+          <InProgressIcon className="co-spin" />
         </g>
       </g>
     </Tooltip>

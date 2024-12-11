@@ -21,7 +21,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status, disableSpin, ...
   switch (status) {
     case ComputedStatus['In Progress']:
     case ComputedStatus.Running:
-      return <SyncAltIcon {...props} className={cx({ 'fa-spin': !disableSpin })} />;
+      return <SyncAltIcon {...props} className={cx({ 'co-spin': !disableSpin })} />;
 
     case ComputedStatus.Succeeded:
       return <CheckCircleIcon {...props} />;

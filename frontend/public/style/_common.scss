@@ -1,5 +1,28 @@
 $co-external-link-padding-right: 15px;
 
+
+// Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.
+$co-icon-external-link-alt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0 -16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0 -16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34L157.7 377a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15 41 4.5 41-17V24A24 24 0 0 0 488 0z'/%3E%3C/svg%3E ");
+$co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath d='M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z'/%3E%3C/svg%3E");
+
+@mixin co-embedded-icon {
+  content: '';
+  display: inline-block;
+  vertical-align: baseline;
+  // mask an SVG with the text icon
+  background-color: currentColor;
+  color: inherit;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  height: 16px;
+  margin-left: 3px;
+  margin-right: -15px; // width + margin-left
+  position: relative;
+  top: 0;
+  width: 12px;
+}
+
 .co-breadcrumb {
   padding-bottom: var(--pf-v5-global--spacer--sm);
 }
@@ -262,15 +285,9 @@ dl.co-inline {
 // append external-link icon to <a> so that it doesn't wrap without text
 // there must be no white space between the text and the closing </a> tag holding the pseudo element
 .co-external-link::after {
-  @include font-awesome-free-solid;
-  content: fa-content($fa-var-external-link-alt);
-  font-size: 75%;
-  height: 16px;
-  margin-left: 3px;
-  margin-right: -15px; // width + margin-left
-  position: relative;
-  top: 0;
-  width: 12px;
+  @include co-embedded-icon;
+  mask-image: $co-icon-external-link-alt;
+
   .pf-v5-c-dropdown__menu-item & {
     color: $pf-v5-color-black-600;
     margin-left: 5px;
@@ -313,15 +330,8 @@ dl.co-inline {
 }
 
 .co-goto-arrow::after {
-  @include font-awesome-free-solid;
-  content: fa-content($fa-var-arrow-right);
-  font-size: 75%;
-  height: 16px;
-  margin-left: 3px;
-  margin-right: -15px; // width + margin-left
-  position: relative;
-  top: 0;
-  width: 12px;
+  @include co-embedded-icon;
+  mask-image: $co-icon-arrow-right;
 }
 
 .co-icon-flex-child {
@@ -485,38 +495,6 @@ dl.co-inline {
   max-width: 600px;
 }
 
-// Enable word-break and append pencil icon ::after so that it doesn't wrap without text
-.co-modal-btn-link {
-  outline: none;
-  padding: 0 20px 0 0;
-  white-space: normal;
-  word-break: break-all; // Firefox
-  word-break: break-word;
-  &::after {
-    @include font-awesome-free-solid;
-    color: $pf-v5-color-black-600;
-    content: fa-content($fa-var-pencil-alt);
-    line-height: 1;
-    margin-left: 5px;
-    margin-right: -20px; // width + margin-left
-    pointer-events: none;
-    position: relative;
-    right: 0;
-    width: 15px;
-  }
-  &:hover::after {
-    color: $pf-v5-color-black-700;
-  }
-}
-
-.co-modal-btn-link--inline {
-  margin: 0 8px;
-}
-
-.co-modal-btn-link--left {
-  text-align: left;
-}
-
 .co-m-pane__body-group {
   padding: 0 0 30px 0;
 }
@@ -634,4 +612,22 @@ dl.co-inline {
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
+}
+
+@keyframes co-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// fa-spin kept for backwards compatibility due to usage in dynamic plugins
+.co-spin, .fa-spin {
+  animation: co-spin 2s infinite linear;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 }

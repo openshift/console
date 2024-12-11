@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Badge } from '@patternfly/react-core';
+import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 
 const NotificationCategory: React.FC<NotificationCategoryProps> = ({
   label,
@@ -24,13 +25,7 @@ const NotificationCategory: React.FC<NotificationCategoryProps> = ({
         <Badge isRead>{count}</Badge>
       </div>
       <span className="pf-v5-c-notification-drawer__group-toggle-icon">
-        <i
-          className={classNames({
-            'fas fa-angle-down': isExpanded,
-            'fas fa-angle-right': !isExpanded,
-          })}
-          aria-hidden={!isExpanded}
-        />
+        {isExpanded ? <AngleDownIcon /> : <AngleRightIcon />}
       </span>
     </button>
     <ul className="pf-v5-c-notification-drawer__list" hidden={!isExpanded}>

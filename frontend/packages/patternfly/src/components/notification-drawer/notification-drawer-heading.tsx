@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { TimesIcon } from '@patternfly/react-icons';
 
 const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
   count,
@@ -26,7 +27,7 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
               aria-label={t('notification-drawer~Close')}
               onClick={onClose}
             >
-              <i className="fas fa-times" aria-hidden="true"></i>
+              <TimesIcon />
             </button>
           </div>
         </div>

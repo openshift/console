@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import { CheckIconConfig, CopyIconConfig, PlayIconConfig } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
 import useCloudShellAvailable from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
-
 import './showdown-extension.scss';
 
 const useInlineExecuteCommandShowdownExtension = () => {
@@ -27,7 +28,7 @@ const useInlineExecuteCommandShowdownExtension = () => {
               <button class="pf-v5-c-button pf-m-plain" type="button" aria-label="${t(
                 'console-shared~Copy to clipboard',
               )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
-                <i class="fas fa-copy" aria-hidden="true"></i>
+                ${getSvgFromPfIconConfig(CopyIconConfig)}
               </button>
             </div>
             ${
@@ -36,8 +37,8 @@ const useInlineExecuteCommandShowdownExtension = () => {
                 <button class="pf-v5-c-button pf-m-plain ocs-markdown-execute-snippet__button" type="button" aria-label="${t(
                   'console-shared~Run in Web Terminal',
                 )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupType}">
-                  <i class="fas fa-play" aria-hidden="true"></i>
-                  <i class="fas fa-check" aria-hidden="true"></i>
+                  ${getSvgFromPfIconConfig(PlayIconConfig)}
+                  ${getSvgFromPfIconConfig(CheckIconConfig)}
                 </button>
               </div>`
                 : ''

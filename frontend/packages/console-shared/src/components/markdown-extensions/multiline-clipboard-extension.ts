@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+import { CopyIconConfig } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
 import './showdown-extension.scss';
@@ -25,14 +27,14 @@ const useMultilineCopyClipboardShowdownExtension = () => {
                     <button class="pf-v5-c-button pf-m-plain" type="button" aria-label="${t(
                       'console-shared~Copy to clipboard',
                     )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
-                      <i class="fas fa-copy" aria-hidden="true"></i>
+                      ${getSvgFromPfIconConfig(CopyIconConfig)}
                     </button>
                   </div>
                 </div>
               </div>
               <div class="pf-v5-c-code-block__content">
                 <pre class="pf-v5-c-code-block__pre ocs-code-block__pre">
-                  <code class="pf-v5-c-code-block__code" 
+                  <code class="pf-v5-c-code-block__code"
                     ${MARKDOWN_SNIPPET_ID}="${groupType}">${group}</code>
                 </pre>
               </div>

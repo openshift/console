@@ -34,7 +34,7 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
   const icon = {
     new: '',
     pending: <PendingIcon />,
-    running: <SyncAltIcon className="fa-spin" />,
+    running: <SyncAltIcon className="co-spin" />,
     complete: <GreenCheckCircleIcon />,
     failed: <RedExclamationCircleIcon />,
     cancelled: <BanIcon />,

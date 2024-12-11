@@ -4,14 +4,11 @@
 // External dependency variables or mixins that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
 // IMPORTANT: Please put non-variable/mixin external dependency imports in vendor.scss!
 
-@import '~@fortawesome/fontawesome-free/scss/variables';
-
 @import 'style/base';
 
 // Mixins
 @import 'style/mixin/break-word';
 @import 'style/mixin/popover-button';
-@import 'style/mixin/font-awesome';
 @import 'style/mixin/prefix';
 @import 'style/mixin/truncate';
 @import 'style/mixin/line-clamp';
