@@ -29,9 +29,14 @@ export const getProgram = (config: tsj.Config): ts.Program => {
     console.error(formatDiagnostics(diagnostics, program.getCurrentDirectory()));
   }
 
-  const hasDiagnosticErrors = diagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
-  if (hasDiagnosticErrors) {
-    throw new Error(`Detected errors while parsing ${relativePath(config.path)}`);
+  const diagnosticsErrors = diagnostics.filter((d) => d.category === ts.DiagnosticCategory.Error);
+
+  if (diagnosticsErrors.length > 0) {
+    throw new Error(
+      `Detected errors while parsing ${relativePath(config.path ?? 'unknown')}, ${String(
+        diagnosticsErrors,
+      )}`,
+    );
   }
 
   return program;
