@@ -511,10 +511,21 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     <OperatorHubTile updateChannel={updateChannel} item={item} onClick={openOverlay} />
   );
 
-  const createLink =
+  const installParamsURL =
     detailsItem &&
     detailsItem.obj &&
-    `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}&channel=${updateChannel}&version=${updateVersion}&tokenizedAuth=${tokenizedAuth}`;
+    new URLSearchParams({
+      pkg: detailsItem.obj.metadata.name,
+      catalog: detailsItem.catalogSource,
+      catalogNamespace: detailsItem.catalogSourceNamespace,
+      targetNamespace: props.namespace,
+      channel: updateChannel,
+      version: updateVersion,
+      tokenizedAuth,
+    }).toString();
+
+  const installLink =
+    detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL.toString()}`;
 
   const uninstallLink = () =>
     detailsItem &&
@@ -645,7 +656,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                       'co-catalog-page__overlay-action',
                     )}
                     data-test-id="operator-install-btn"
-                    to={createLink}
+                    to={installLink}
                   >
                     {t('olm~Install')}
                   </Link>
