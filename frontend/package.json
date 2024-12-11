@@ -203,6 +203,7 @@
     "react-router-dom": "5.3.x",
     "react-router-dom-v5-compat": "^6.11.2",
     "react-router-hash-link": "^2.0.0",
+    "react-svg": "^16.2.0",
     "react-tagsinput": "3.19.x",
     "react-transition-group": "2.3.x",
     "react-virtualized": "9.x",

@@ -802,6 +802,13 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@babel/runtime@^7.26.0":
+  version "7.26.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.26.0.tgz#8600c2f595f277c60815256418b85356a65173c1"
+  integrity sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
 "@babel/runtime@^7.3.1", "@babel/runtime@^7.8.3":
   version "7.23.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.9.tgz#47791a15e4603bb5f905bc0753801cf21d6345f7"
@@ -2110,6 +2117,15 @@
   resolved "https://registry.yarnpkg.com/@spice-project/spice-html5/-/spice-html5-0.2.1.tgz#9452fc7435a8b1c67937d86ea3b6d6d7e0616725"
   integrity sha512-NY86i+x/0ldKK89enXghsXCzWwfb5DQ91hQFu9hbyLcAfCVn+ZKoYsw7xUWX6/HQBRrdu/4F1id7SdOwNqpG9g==
 
+"@tanem/svg-injector@^10.1.68":
+  version "10.1.68"
+  resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-10.1.68.tgz#0bd08da3c4184b055a6fe16909037c96f49e3cd1"
+  integrity sha512-UkJajeR44u73ujtr5GVSbIlELDWD/mzjqWe54YMK61ljKxFcJoPd9RBSaO7xj02ISCWUqJW99GjrS+sVF0UnrA==
+  dependencies:
+    "@babel/runtime" "^7.23.2"
+    content-type "^1.0.5"
+    tslib "^2.6.2"
+
 "@testing-library/dom@^8.0.0":
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-8.0.0.tgz#2bb994393c566aae021db86dd263ba06e8b71b38"
@@ -2717,6 +2733,11 @@
 "@types/prop-types@*", "@types/prop-types@15.5.6":
   version "15.5.6"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.6.tgz#9c03d3fed70a8d517c191b7734da2879b50ca26c"
+
+"@types/prop-types@^15.7.13":
+  version "15.7.14"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.14.tgz#1433419d73b2a7ebfc6918dcefd2ec0d5cd698f2"
+  integrity sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==
 
 "@types/qs@*":
   version "6.9.5"
@@ -5602,7 +5623,7 @@ content-type@1.0.4, content-type@^1.0.4, content-type@~1.0.4:
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.4.tgz#e138cc75e040c727b1966fe5e5f8c9aee256fe3b"
   integrity sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA==
 
-content-type@~1.0.5:
+content-type@^1.0.5, content-type@~1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.5.tgz#8b773162656d1d1086784c8f23a54ce6d73d7918"
   integrity sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==
@@ -14249,6 +14270,16 @@ react-side-effect@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-side-effect/-/react-side-effect-2.1.1.tgz#66c5701c3e7560ab4822a4ee2742dee215d72eb3"
   integrity sha512-2FoTQzRNTncBVtnzxFOk2mCpcfxQpenBMbk5kSVBg5UcPqV9fRbgY2zhb7GTWWOlpFmAxhClBDlIq8Rsubz1yQ==
+
+react-svg@^16.2.0:
+  version "16.2.0"
+  resolved "https://registry.yarnpkg.com/react-svg/-/react-svg-16.2.0.tgz#c51183b9deb3fdf0e83617977e69d7a2ffa8f34f"
+  integrity sha512-qx02E8tPEMmrs6zwaZyyDnC2CxzNWcw0AOayN4tfogVfDAsNxYxuYrcGKuzr5RrD+rdmtS2GnIzW0RG03Fgerw==
+  dependencies:
+    "@babel/runtime" "^7.26.0"
+    "@tanem/svg-injector" "^10.1.68"
+    "@types/prop-types" "^15.7.13"
+    prop-types "^15.8.1"
 
 react-tagsinput@3.19.x:
   version "3.19.0"
