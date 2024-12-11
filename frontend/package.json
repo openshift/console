@@ -127,15 +127,6 @@
     "resolver": "./jest-resolver.js"
   },
   "dependencies": {
-    "@patternfly-4/patternfly": "npm:@patternfly/patternfly@4.224.5",
-    "@patternfly-4/quickstarts": "npm:@patternfly/quickstarts@2.4.2",
-    "@patternfly-4/react-catalog-view-extension": "npm:@patternfly/react-catalog-view-extension@4.96.1",
-    "@patternfly-4/react-console": "npm:@patternfly/react-console@4.13.4",
-    "@patternfly-4/react-core": "npm:@patternfly/react-core@4.278.0",
-    "@patternfly-4/react-icons": "npm:@patternfly/react-icons@4.93.7",
-    "@patternfly-4/react-styles": "npm:@patternfly/react-styles@4.92.8",
-    "@patternfly-4/react-table": "npm:@patternfly/react-table@4.113.6",
-    "@patternfly-4/react-tokens": "npm:@patternfly/react-tokens@4.94.7",
     "@patternfly/patternfly": "^5.4.2",
     "@patternfly/quickstarts": "5.4.0",
     "@patternfly/react-catalog-view-extension": "5.0.0",

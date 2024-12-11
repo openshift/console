@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import * as glob from 'glob';
 
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
@@ -45,19 +44,6 @@ const extractCSS = new MiniCssExtractPlugin({
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
 
-const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
-
-// Resolve to an empty module for overpass fonts included in SASS files.
-const overpassFiles = glob
-  .sync('./node_modules/@patternfly*/**/overpass*.{woff,woff2}', {
-    absolute: true,
-    noglobstar: false,
-  })
-  .reduce((acc, file) => {
-    acc[file] = false;
-    return acc;
-  }, {});
-
 const sharedPluginModulesTest = getVendorModuleRegExp(
   // Map shared module names to actual webpack modules as per shared-modules-init.ts
   sharedPluginModules.map((moduleName) => {
@@ -69,10 +55,6 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
       return '@console/dynamic-plugin-sdk/src/lib-internal';
     }
 
-    if (moduleName.startsWith('@patternfly/')) {
-      return moduleName.replace(/^@patternfly\//, '@patternfly-4/');
-    }
-
     return moduleName;
   }),
 );
@@ -80,7 +62,6 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 const config: Configuration = {
   entry: {
     main: ['./public/components/app.jsx', 'monaco-editor/esm/vs/editor/editor.worker.js'],
-    'vendor-patternfly-4-shared': './public/vendor-patternfly-4-shared.scss',
   },
   cache: {
     type: 'filesystem',
@@ -109,7 +90,6 @@ const config: Configuration = {
     alias: {
       prettier: false,
       'prettier/parser-yaml': false,
-      ...overpassFiles,
     },
     fallback: {
       net: false, // for YAML language server
@@ -130,25 +110,6 @@ const config: Configuration = {
         loader: 'val-loader',
         options: {
           getModuleData: () => getActivePluginsModuleData(staticPluginPackages),
-        },
-      },
-      {
-        test: /\.js$/,
-        include: /node_modules\/@patternfly-4\//,
-        loader: 'babel-loader',
-        options: {
-          plugins: [
-            [
-              'transform-imports',
-              {
-                // Transform all @patternfly/* imports to @patternfly-4/*
-                '@patternfly\\/(\\S*)': {
-                  transform: (importName, matches) => `@patternfly-4/${matches[1]}`,
-                  skipDefaultConversion: true,
-                },
-              },
-            ],
-          ],
         },
       },
       {
@@ -232,7 +193,6 @@ const config: Configuration = {
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
-        exclude: overpassTest,
         type: 'asset/resource',
         generator: {
           filename: 'assets/[path][name][ext]',
@@ -267,9 +227,6 @@ const config: Configuration = {
           // modules with @patternfly/ that don't also have @patternfly-4/ in the string
           test: /^(?!.*@patternfly-4\/).*@patternfly\/.*/,
         },
-        'vendor-patternfly-4-shared': {
-          test: /@patternfly-4\//,
-        },
         'vendor-plugins-shared': {
           test(module: { resource?: string }) {
             return (
@@ -303,13 +260,6 @@ const config: Configuration = {
       template: './public/index.html',
       production: NODE_ENV === 'production',
       chunksSortMode: 'auto',
-      // exclude:
-      // vendor-patternfly-4-shared-chunk-<hash>.min.js (js entry for vendor-patternfly-4-shared.scss)
-      // app-bundle.vendor-patternfly-4-shared~main.<hash>.css (PF4 from the shared PF modules - we already share out PF4 css)
-      excludeAssets: [
-        /vendor-patternfly-4-shared-chunk.*\.js/,
-        /vendor-patternfly-4-shared~main.*\.css/,
-      ],
     }),
     new HtmlWebpackSkipAssetsPlugin(),
     new MonacoWebpackPlugin({

@@ -47,28 +47,28 @@ the current Console plugin SDK features.
 
 Here is a list of real world dynamic plugins that may serve as a further reference point:
 
-| Plugin Name | Git Repo |
-| ----------- | -------- |
-| `kubevirt-plugin` (KubeVirt) | https://github.com/kubevirt-ui/kubevirt-plugin |
-| `networking-console-plugin` (OpenShift Networking) | https://github.com/openshift/networking-console-plugin |
-| `netobserv-plugin` (Network Observability) | https://github.com/netobserv/network-observability-console-plugin |
-| `odf-console` (OpenShift Data Foundation) | https://github.com/red-hat-storage/odf-console/tree/master/plugins/odf |
+| Plugin Name                                                | Git Repo                                                               |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `kubevirt-plugin` (KubeVirt)                               | https://github.com/kubevirt-ui/kubevirt-plugin                         |
+| `networking-console-plugin` (OpenShift Networking)         | https://github.com/openshift/networking-console-plugin                 |
+| `netobserv-plugin` (Network Observability)                 | https://github.com/netobserv/network-observability-console-plugin      |
+| `odf-console` (OpenShift Data Foundation)                  | https://github.com/red-hat-storage/odf-console/tree/master/plugins/odf |
 | `odf-multicluster-console` (ODF MultiCluster Orchestrator) | https://github.com/red-hat-storage/odf-console/tree/master/plugins/mco |
-| `pipelines-console-plugin` (OpenShift Pipelines) | https://github.com/openshift-pipelines/console-plugin |
-| `acm` (Red Hat Advanced Cluster Management) | https://github.com/stolostron/console/tree/main/frontend/plugins/acm |
-| `mce` (MultiCluster Engine for Kubernetes) | https://github.com/stolostron/console/tree/main/frontend/plugins/mce |
-| `ossmconsole` (OpenShift Service Mesh) | https://github.com/kiali/openshift-servicemesh-plugin |
+| `pipelines-console-plugin` (OpenShift Pipelines)           | https://github.com/openshift-pipelines/console-plugin                  |
+| `acm` (Red Hat Advanced Cluster Management)                | https://github.com/stolostron/console/tree/main/frontend/plugins/acm   |
+| `mce` (MultiCluster Engine for Kubernetes)                 | https://github.com/stolostron/console/tree/main/frontend/plugins/mce   |
+| `ossmconsole` (OpenShift Service Mesh)                     | https://github.com/kiali/openshift-servicemesh-plugin                  |
 
 There's also the [Cat Facts Operator](https://github.com/RyanMillerC/cat-facts-operator) which serves
 as a reference point for writing an OLM operator that ships with its own Console dynamic plugin.
 
 ## Distributable SDK package overview
 
-| Package Name | Description |
-| ------------ | ----------- |
-| `@openshift-console/dynamic-plugin-sdk`          | Provides core APIs, types and utilities used by dynamic plugins at runtime. |
-| `@openshift-console/dynamic-plugin-sdk-webpack`  | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets. |
-| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code. |
+| Package Name                                     | Description                                                                                                                              |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `@openshift-console/dynamic-plugin-sdk`          | Provides core APIs, types and utilities used by dynamic plugins at runtime.                                                              |
+| `@openshift-console/dynamic-plugin-sdk-webpack`  | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.                                                          |
+| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code.                                                                                               |
 | `@openshift-console/plugin-shared`               | Provides reusable components and utility functions to build OCP dynamic plugins. Compatible with multiple versions of OpenShift Console. |
 
 ## OpenShift Console Versions vs SDK Versions
@@ -76,20 +76,20 @@ as a reference point for writing an OLM operator that ships with its own Console
 Not all NPM packages are fully compatible with all versions of the Console. This table will help align
 compatible versions of distributable SDK packages to versions of the OpenShift Console.
 
-| Console Version   | SDK Package                                     | Last Package Version |
-| ----------------- | ----------------------------------------------- | -------------------- |
-| 4.17.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
-| 4.16.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.1                |
-| 4.15.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.2                |
-| 4.14.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
-| 4.13.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
-| 4.12.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.18               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
+| Console Version | SDK Package                                     | Last Package Version |
+| --------------- | ----------------------------------------------- | -------------------- |
+| 4.17.x          | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
+| 4.16.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.1                |
+| 4.15.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.2                |
+| 4.14.x          | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
+| 4.13.x          | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
+| 4.12.x          | `@openshift-console/dynamic-plugin-sdk`         | 0.0.18               |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
 
 Note: this table includes Console versions which currently receive technical support, as per
 [Red Hat OpenShift Container Platform Life Cycle Policy](https://access.redhat.com/support/policy/updates/openshift).
@@ -100,13 +100,11 @@ Each Console version supports specific version(s) of [PatternFly](https://www.pa
 of CSS styling. This table will help align compatible versions of PatternFly to versions of the OpenShift
 Console.
 
-| Console Version   | PatternFly Versions | Notes                                 |
-| ----------------- | ------------------- | ------------------------------------- |
-| 4.16.x            | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
-| 4.15.x            | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
-| 4.14.x            | 4.x                 |                                       |
-| 4.13.x            | 4.x                 |                                       |
-| 4.12.x            | 4.x                 |                                       |
+| Console Version | PatternFly Versions | Notes                                 |
+| --------------- | ------------------- | ------------------------------------- |
+| 4.19.x          | 5.x                 |                                       |
+| 4.15.x - 4.18.x | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
+| 4.12.x - 4.14.x | 4.x                 |                                       |
 
 Refer to [PatternFly Upgrade Notes][console-pf-upgrade-notes] containing links to PatternFly documentation.
 
@@ -164,6 +162,7 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
+- Removed PatternFly 4.x shared modules.
 
 ### PatternFly dynamic modules
 
@@ -233,8 +232,10 @@ object, for example:
 
 ```ts
 new ConsoleRemotePlugin({
-  pluginMetadata: { /* same metadata like above */ },
-})
+  pluginMetadata: {
+    /* same metadata like above */
+  },
+});
 ```
 
 `name` serves as the plugin's unique identifier. Its value should be the same as `metadata.name`
@@ -288,8 +289,10 @@ of objects, for example:
 
 ```ts
 new ConsoleRemotePlugin({
-  extensions: [ /* same extensions like above */ ],
-})
+  extensions: [
+    /* same extensions like above */
+  ],
+});
 ```
 
 Each extension a single instance of extending the Console application's functionality. Extensions are
@@ -302,7 +305,6 @@ Extensions may contain code references pointing to specific modules exposed by t
 
 - `{ $codeRef: 'barUtils' }` - refers to `default` export of `barUtils` module
 - `{ $codeRef: 'barUtils.testHandler' }` - refers to `testHandler` export of `barUtils` module
-
 
 When loading dynamic plugins, all encoded code references `{ $codeRef: string }` are transformed into
 functions `() => Promise<T>` used to load the referenced objects on demand. Only the plugin's exposed
@@ -414,14 +416,18 @@ plugin builds, follow these steps:
 1. Make changes in Console repo. Run `yarn build` in `frontend/packages/console-dynamic-plugin-sdk`
    directory to rebuild plugin SDK files at `frontend/packages/console-dynamic-plugin-sdk/dist`.
 2. Make sure your plugin's `package.json` dependencies refer to local plugin SDK files, for example:
+
 ```json
 "@openshift-console/dynamic-plugin-sdk": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/core",
 "@openshift-console/dynamic-plugin-sdk-webpack": "file:../openshift/console/frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
 ```
+
 3. Refresh your plugin's `node_modules` whenever you change local plugin SDK files:
+
 ```sh
 rm -rf node_modules/@openshift-console && yarn --check-files
 ```
+
 4. Build your plugin as usual. The build should now use the current local plugin SDK files.
 
 ## Plugin detection and management
@@ -494,11 +500,6 @@ configs or choose other options.
 
 The list of shared modules planned for deprecation:
 
-- Console provided PatternFly 4.x shared modules
-  - `@patternfly/react-core`
-  - `@patternfly/react-table`
-  - `@patternfly/quickstarts`
-
 - Console provided React Router v5 shared modules
   - `react-router`
   - `react-router-dom`
@@ -518,17 +519,13 @@ import { useTranslation } from 'react-i18next';
 const helloWorldMessages = {
   Foo: {
     title: i18next.t('plugin__console-crontab-plugin~Foo'),
-    message: i18next.t(
-      'plugin__console-crontab-plugin~This is foo description...',
-    ),
+    message: i18next.t('plugin__console-crontab-plugin~This is foo description...'),
   },
-    Bar: {
+  Bar: {
     title: i18next.t('plugin__console-crontab-plugin~Bar'),
-    message: i18next.t(
-      'plugin__console-crontab-plugin~This is bar description...',
-    ),
+    message: i18next.t('plugin__console-crontab-plugin~This is bar description...'),
   },
-  }
+};
 
 const Header: React.FC = () => {
   const { t } = useTranslation('plugin__console-crontab-plugin');
@@ -539,14 +536,14 @@ const Header: React.FC = () => {
 For labels in `console-extensions.json`, you can use the format `%plugin__console-crontab-plugin~My Label%`. Console will replace the value with the string for the current language from the `plugin__console-crontab-plugin` namespace. For example:
 
 ```json
-  {
-    "type": "console.navigation/section",
-    "properties": {
-      "id": "admin-demo-section",
-      "perspective": "admin",
-      "name": "%plugin__console-crontab-plugin~Hello World%"
-    }
+{
+  "type": "console.navigation/section",
+  "properties": {
+    "id": "admin-demo-section",
+    "perspective": "admin",
+    "name": "%plugin__console-crontab-plugin~Hello World%"
   }
+}
 ```
 
 Then, run `yarn i18n` to update the JSON files in the `locales` folder of the plugin console after adding or updating strings.
@@ -583,8 +580,8 @@ iv. Notify the localization team of the upload and wait for a reply from them on
 
 i. Use the `PROJECT_ID` generated during the upload task, or visit the [Phrase TMS](https://cloud.memsource.com) portal. Find the URL of the previously uploaded project, then copy the `PROJECT_ID` from the URL path following `../show/<PROJECT_ID>`
 
-ii.  Use the download script created earlier in step 3 with `PROJECT_ID` to download the translated strings. Change the directory to the root of the console plugin, and then run the download script.
-For example: `yarn memsource-download -v PLUGIN_VERSION_NUMBER`.  This should download the updated locale files, which contain the translated strings in the languages that were configured earlier in the Project Template and upload utility script.
+ii. Use the download script created earlier in step 3 with `PROJECT_ID` to download the translated strings. Change the directory to the root of the console plugin, and then run the download script.
+For example: `yarn memsource-download -v PLUGIN_VERSION_NUMBER`. This should download the updated locale files, which contain the translated strings in the languages that were configured earlier in the Project Template and upload utility script.
 
 iii. Commit, review and merge the changes accordingly.
 

@@ -78,15 +78,6 @@
   }
 }
 
-// Patternfly 4 dropdown and menu groups nest a ul without a class so we have to explicitly remove list-style and padding that the console applies to all ul's by default. https://github.com/openshift/console/blob/master/frontend/public/style/_overrides.scss#L381-L390
-.pf-c-dropdown__group,
-.pf-c-select__menu-group {
-  ul {
-    list-style: none;
-    padding-left: 0;
-  }
-}
-
 // Reuse PF5 form-control styling that is modified to match our legacy components using PF4 markup
 
 .pf-v5-c-form-control {

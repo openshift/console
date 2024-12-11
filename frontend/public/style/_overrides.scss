@@ -230,7 +230,7 @@ form.pf-v5-c-form {
 
   // Restore the max-height from PageHeader to maintain backwards compatibility
   .pf-v5-c-brand {
-    max-height: var(--pf-c-page__header-brand-link--c-brand--MaxHeight);
+    max-height: 60px;
   }
 
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing
