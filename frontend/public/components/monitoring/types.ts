@@ -1,4 +1,4 @@
-import { Alert, PrometheusLabels, Silence } from '@console/dynamic-plugin-sdk';
+import { Alert, PrometheusLabels } from '@console/dynamic-plugin-sdk';
 
 export const enum AlertSource {
   Platform = 'platform',
@@ -10,12 +10,6 @@ export type MonitoringResource = {
   kind: string;
   label: string;
   plural: string;
-};
-
-export type Silences = {
-  data: Silence[];
-  loaded: boolean;
-  loadError?: string | Error;
 };
 
 export type Alerts = {
