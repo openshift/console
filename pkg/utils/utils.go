@@ -12,6 +12,22 @@ import (
 	consolev1 "github.com/openshift/api/console/v1"
 )
 
+const (
+	baseURI       = "base-uri"
+	defaultSrc    = "default-src"
+	imgSrc        = "img-src"
+	fontSrc       = "font-src"
+	scriptSrc     = "script-src"
+	styleSrc      = "style-src"
+	consoleDot    = "console.redhat.com"
+	httpLocalHost = "http://localhost:8080"
+	wsLocalHost   = "ws://localhost:8080"
+	self          = "'self'"
+	data          = "data:"
+	unsafeEval    = "'unsafe-eval'"
+	unsafeInline  = "'unsafe-inline'"
+)
+
 // Generate a cryptographically secure random array of bytes.
 func RandomBytes(length int) ([]byte, error) {
 	bytes := make([]byte, length)
@@ -38,68 +54,77 @@ func RandomString(length int) (string, error) {
 // buildCSPDirectives takes the content security policy configuration from the server and constructs
 // a complete set of directives for the Content-Security-Policy-Report-Only header.
 // The constructed directives will include the default sources and the supplied configuration.
+
 func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]string, error) {
+	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
+
 	// The default sources are the sources that are allowed for all directives.
 	// When running on-cluster, the default sources are just 'self' and 'console.redhat.com'.
 	// When running off-cluster, 'http://localhost:8080' and 'ws://localhost:8080' are appended to the
 	// default sources. Image source, font source, and style source only use 'self' and
 	// 'http://localhost:8080'.
-	defaultSrc := "'self' console.redhat.com"
-	imgSrc := "'self'"
-	fontSrc := "'self'"
-	scriptSrc := "'self' console.redhat.com"
-	styleSrc := "'self'"
+	baseUriDirective := []string{baseURI, self, consoleDot}
+	defaultSrcDirective := []string{defaultSrc, self, consoleDot}
+	imgSrcDirective := []string{imgSrc, self}
+	fontSrcDirective := []string{fontSrc, self}
+	scriptSrcDirective := []string{scriptSrc, self, consoleDot}
+	styleSrcDirective := []string{styleSrc, self}
 	if k8sMode == "off-cluster" {
-		defaultSrc += " http://localhost:8080 ws://localhost:8080"
-		imgSrc += " http://localhost:8080"
-		fontSrc += " http://localhost:8080"
-		scriptSrc += " http://localhost:8080 ws://localhost:8080"
-		styleSrc += " http://localhost:8080"
+		baseUriDirective = append(baseUriDirective, []string{httpLocalHost, wsLocalHost}...)
+		defaultSrcDirective = append(defaultSrcDirective, []string{httpLocalHost, wsLocalHost}...)
+		imgSrcDirective = append(imgSrcDirective, httpLocalHost)
+		fontSrcDirective = append(fontSrcDirective, httpLocalHost)
+		scriptSrcDirective = append(scriptSrcDirective, []string{httpLocalHost, wsLocalHost}...)
+		styleSrcDirective = append(styleSrcDirective, httpLocalHost)
 	}
 
-	// The newCSPDirectives map is used to store the directives for each type.
-	// The keys are the types of directives (e.g. DefaultSrc, ImgSrc, etc) and the values are the sources for each type.
-	// The sources are strings that are concatenated together with a space separator.
-	newCSPDirectives := map[consolev1.DirectiveType][]string{
-		consolev1.DefaultSrc: {defaultSrc},
-		consolev1.ImgSrc:     {imgSrc},
-		consolev1.FontSrc:    {fontSrc},
-		consolev1.ScriptSrc:  {scriptSrc},
-		consolev1.StyleSrc:   {styleSrc},
-	}
-
-	// If the plugins are providing a content security policy configuration, parse it and add it to the directives map.
-	// The configuration is a string that is parsed into a map of directive types to sources.
+	// If the plugins are providing a content security policy configuration, parse it and add it to
+	// the appropriate directive. The configuration is a string that is parsed into a map of directive types to sources.
 	// The sources are added to the existing sources for each type.
 	if pluginsCSP != "" {
-		var err error
 		parsedCSP, err := ParseContentSecurityPolicyConfig(pluginsCSP)
 		if err != nil {
 			return nil, err
 		}
-		for cspType, csp := range *parsedCSP {
-			newCSPDirectives[cspType] = append(newCSPDirectives[cspType], csp...)
+		for directive, sources := range *parsedCSP {
+			switch directive {
+			case consolev1.DefaultSrc:
+				defaultSrcDirective = append(defaultSrcDirective, sources...)
+			case consolev1.ImgSrc:
+				imgSrcDirective = append(imgSrcDirective, sources...)
+			case consolev1.FontSrc:
+				fontSrcDirective = append(fontSrcDirective, sources...)
+			case consolev1.ScriptSrc:
+				scriptSrcDirective = append(scriptSrcDirective, sources...)
+			case consolev1.StyleSrc:
+				styleSrcDirective = append(styleSrcDirective, sources...)
+			default:
+				klog.Warningf("ignored invalid CSP directive: %v", directive)
+			}
 		}
 	}
 
-	// Construct the CSP directives string from the newCSPDirectives map.
-	// The string is a space-separated list of directives, where each directive is a string
+	imgSrcDirective = append(imgSrcDirective, data)
+	fontSrcDirective = append(fontSrcDirective, data)
+	scriptSrcDirective = append(scriptSrcDirective, []string{unsafeEval, nonce}...)
+	styleSrcDirective = append(styleSrcDirective, unsafeInline)
+
+	// Construct the full list of directives from the aggregated sources.
+	// This array is a list of directives, where each directive is a string
 	// of the form "<directive-type> <sources>".
 	// The sources are concatenated together with a space separator.
 	// The CSP directives string is returned as a slice of strings, where each string is a directive.
-	cspDirectives := []string{
-		fmt.Sprintf("base-uri %s", defaultSrc),
-		fmt.Sprintf("default-src %s", strings.Join(newCSPDirectives[consolev1.DefaultSrc], " ")),
-		fmt.Sprintf("img-src %s data:", strings.Join(newCSPDirectives[consolev1.ImgSrc], " ")),
-		fmt.Sprintf("font-src %s data:", strings.Join(newCSPDirectives[consolev1.FontSrc], " ")),
-		fmt.Sprintf("script-src %s 'unsafe-eval' 'nonce-%s'", strings.Join(newCSPDirectives[consolev1.ScriptSrc], " "), indexPageScriptNonce),
-		fmt.Sprintf("style-src %s 'unsafe-inline'", strings.Join(newCSPDirectives[consolev1.StyleSrc], " ")),
+	return []string{
+		strings.Join(baseUriDirective, " "),
+		strings.Join(defaultSrcDirective, " "),
+		strings.Join(imgSrcDirective, " "),
+		strings.Join(fontSrcDirective, " "),
+		strings.Join(scriptSrcDirective, " "),
+		strings.Join(styleSrcDirective, " "),
 		"frame-src 'none'",
 		"frame-ancestors 'none'",
 		"object-src 'none'",
-	}
-
-	return cspDirectives, nil
+	}, nil
 }
 
 func ParseContentSecurityPolicyConfig(csp string) (*map[consolev1.DirectiveType][]string, error) {
