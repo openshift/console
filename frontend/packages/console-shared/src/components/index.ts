@@ -1,6 +1,5 @@
 export * from './badges';
 export * from './text';
-export * from './contextMenu';
 export * from './dropdown';
 export * from './form-utils';
 export * from './formik-fields';
