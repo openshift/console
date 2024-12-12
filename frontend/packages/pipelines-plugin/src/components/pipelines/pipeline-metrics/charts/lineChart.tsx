@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartLineProps, ChartProps } from '@patternfly/react-charts';
+import { ChartLineProps, ChartProps } from '@patternfly/react-charts/victory';
 import {
   Chart,
   ChartThemeColor,

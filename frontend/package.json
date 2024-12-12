@@ -216,6 +216,7 @@
     "text-encoding": "0.x",
     "typesafe-actions": "^4.2.1",
     "url-search-params-polyfill": "2.x",
+    "victory": "^37.3.4",
     "vscode-languageserver-types": "^3.10.0",
     "whatwg-fetch": "2.x",
     "xterm": "^4.10.0",

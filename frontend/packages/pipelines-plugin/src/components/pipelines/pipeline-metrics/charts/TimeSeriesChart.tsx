@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { ChartLineProps, ChartProps } from '@patternfly/react-charts';
 import {
+  ChartLineProps,
+  ChartProps,
   Chart,
   ChartAxis,
   ChartBar,

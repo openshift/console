@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import i18n from 'i18next';
-import { ChartAreaProps } from '@patternfly/react-charts';
 import {
+  ChartAreaProps,
   Chart,
   ChartArea,
   ChartAxis,
@@ -11,6 +11,7 @@ import {
   getCustomTheme,
   ChartGroup,
 } from '@patternfly/react-charts/victory';
+
 import {
   t_temp_dev_tbd as warningColor /* CODEMODS: you should update this color token, original v5 token was global_warning_color_100 */,
   t_temp_dev_tbd as dangerColor /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,

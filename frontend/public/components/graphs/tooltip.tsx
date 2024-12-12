@@ -8,8 +8,6 @@ import {
   ChartLegendTooltipContentProps,
   ChartLegendTooltipProps,
   ChartLegendTooltipLabelProps,
-} from '@patternfly/react-charts';
-import {
   ChartLegend,
   ChartLabel,
   getTheme,
@@ -21,8 +19,8 @@ import {
   getLegendTooltipDataProps,
   getLegendTooltipVisibleData,
   getLegendTooltipVisibleText,
-} from '@patternfly/react-charts/dist/js/components/ChartUtils/chart-tooltip';
-import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/js/components/ChartTheme/ChartStyles';
+} from '@patternfly/react-charts/dist/js/victory/components/ChartUtils/chart-tooltip';
+import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/js/victory/components/ChartTheme/ChartStyles';
 
 import { DataPoint } from '.';
 

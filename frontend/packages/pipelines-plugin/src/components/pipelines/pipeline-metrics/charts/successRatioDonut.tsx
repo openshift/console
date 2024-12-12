@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ChartDonutProps } from '@patternfly/react-charts';
-import { ChartDonut, ChartLabel } from '@patternfly/react-charts/victory';
+import { ChartDonutProps, ChartDonut, ChartLabel } from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 
 interface SuccessRatioDonutProps {

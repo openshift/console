@@ -4,7 +4,7 @@
 $consoleWebDistPath: './';
 
 // PatternFly variables -- imported here so they can be used throughout
-@import '~@patternfly/patternfly/sass-utilities/all';
+@import '~@patternfly/patternfly/sass-utilities/index';
 
 // Enable use within shared components and packages
 @import '../style/ancillary/bootstrap-variables';
