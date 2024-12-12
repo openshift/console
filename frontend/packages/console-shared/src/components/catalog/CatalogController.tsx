@@ -3,11 +3,7 @@ import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
-import {
-  ResolvedExtension,
-  CatalogItemType,
-  useActivePerspective,
-} from '@console/dynamic-plugin-sdk';
+import { ResolvedExtension, CatalogItemType } from '@console/dynamic-plugin-sdk';
 import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   PageHeading,
@@ -55,7 +51,6 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const [activePerspective] = useActivePerspective();
   const queryParams = useQueryParams();
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
 
@@ -111,10 +106,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     });
     const crumbs = [
       {
-        name:
-          activePerspective === 'dev'
-            ? t('console-shared~Developer Catalog')
-            : t('console-shared~Software Catalog'),
+        name: t('console-shared~Developer Catalog'),
         path: `${pathname}?${params.toString()}`,
       },
     ];
@@ -127,7 +119,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     }
 
     return crumbs;
-  }, [pathname, queryParams, t, title, type, activePerspective]);
+  }, [pathname, queryParams, t, title, type]);
 
   const selectedItem = React.useMemo(() => {
     const selectedId = queryParams.get(CatalogQueryParams.SELECTED_ID);
