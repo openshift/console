@@ -74,6 +74,11 @@
     "prepare-husky": "cd .. && husky install frontend/.husky"
   },
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "./tsconfig-jest.json"
+      }
+    },
     "moduleFileExtensions": [
       "js",
       "jsx",

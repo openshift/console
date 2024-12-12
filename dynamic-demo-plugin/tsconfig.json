@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2016",
+    "target": "es2021",
     "jsx": "react",
     "allowJs": true,
     "experimentalDecorators": true,
