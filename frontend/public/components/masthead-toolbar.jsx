@@ -76,7 +76,7 @@ const MultiClusterToolbarGroup = () => {
   const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
   return (
     !!acmPerspectiveExtension && (
-      <ToolbarGroup spacer={{ default: 'spacerNone' }}>
+      <ToolbarGroup gap={{ default: 'gapNone' }}>
         <ClusterMenu />
       </ToolbarGroup>
     )
@@ -665,11 +665,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         <ToolbarContent>
           <MultiClusterToolbarGroup />
           <ToolbarGroup
-            align={{ default: 'alignRight' }}
-            spacer={{ default: 'spacerNone' }}
+            align={{ default: 'alignEnd' }}
+            gap={{ default: 'gapNone' }}
             visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}
           >
-            <ToolbarItem spacer={{ default: 'spacerNone', lg: 'spacerLg' }}>
+            <ToolbarItem gap={{ default: 'gapNone', lg: 'gapLg' }}>
               <SystemStatusButton statuspageData={statusPageData} />
               {!_.isEmpty(launchActions) && (
                 <Dropdown
@@ -742,8 +742,8 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             <ToolbarItem>{renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
           <ToolbarGroup
-            align={{ default: 'alignRight' }}
-            spacer={{ default: 'spacerNone' }}
+            align={{ default: 'alignEnd' }}
+            gap={{ default: 'gapNone' }}
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
             <SystemStatusButton statuspageData={statusPageData} />

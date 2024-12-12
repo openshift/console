@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ChartDonutThreshold, ChartDonutUtilization } from '@patternfly/react-charts';
+import { ChartDonutThreshold, ChartDonutUtilization } from '@patternfly/react-charts/victory';
 
 import { GaugeChart } from '@console/internal/components/graphs/gauge';
 import {

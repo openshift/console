@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { global_palette_black_1000 as globalBlack1000 } from '@patternfly/react-tokens/dist/js/global_palette_black_1000';
+import {
+  t_temp_dev_tbd as globalBlack1000 /* CODEMODS: you should update this color token, original v5 token was global_palette_black_1000 */,
+} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
 import { SVGDefs } from '@patternfly/react-topology';
 
 interface SvgDropShadowFilterProps {

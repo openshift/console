@@ -3,10 +3,11 @@ import * as PropTypes from 'prop-types';
 import {
   Brand,
   Masthead as PfMasthead,
-  MastheadBrand,
+  MastheadLogo,
   MastheadContent,
   MastheadMain,
   MastheadToggle,
+  MastheadBrand,
   PageToggleButton,
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
@@ -29,14 +30,16 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
 
   return (
     <PfMasthead id="page-main-header" display={{ default: isMastheadStacked ? 'stack' : 'inline' }}>
-      <MastheadToggle>
-        <PageToggleButton onSidebarToggle={onNavToggle} isSidebarOpen={isNavOpen}>
-          <BarsIcon />
-        </PageToggleButton>
-      </MastheadToggle>
       <MastheadMain>
-        <MastheadBrand component="a" {...logoProps}>
-          <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
+        <MastheadToggle>
+          <PageToggleButton onSidebarToggle={onNavToggle} isSidebarOpen={isNavOpen}>
+            <BarsIcon />
+          </PageToggleButton>
+        </MastheadToggle>
+        <MastheadBrand data-codemods>
+          <MastheadLogo data-codemods component="a" {...logoProps}>
+            <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
+          </MastheadLogo>
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>

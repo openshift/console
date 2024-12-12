@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { Text, TextContent, TextInput, TextVariants } from '@patternfly/react-core';
+import { Content, TextInput, ContentVariants } from '@patternfly/react-core';
 import * as semver from 'semver';
 
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
@@ -43,8 +43,8 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
         {channelsExist ? t('public~Select channel') : t('public~Input channel')}
       </ModalTitle>
       <ModalBody>
-        <TextContent>
-          <Text component={TextVariants.p}>
+        <Content>
+          <Content component={ContentVariants.p}>
             {channelsExist
               ? t(
                   'public~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
@@ -52,13 +52,13 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
               : t(
                   'public~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
                 )}
-          </Text>
+          </Content>
           {!isManaged() && (
-            <Text component={TextVariants.p} className="pf-v5-u-mb-md">
+            <Content component={ContentVariants.p} className="pf-v5-u-mb-md">
               <ChannelDocLink />
-            </Text>
+            </Content>
           )}
-        </TextContent>
+        </Content>
         <div className="form-group">
           <label htmlFor="channel">{t('public~Channel')}</label>
           {channelsExist ? (

@@ -24,7 +24,7 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
   const header = (title || Icon) && (
     <EmptyStateHeader
       data-test={`${dataTest}-title`}
-      {...(Icon ? { icon: <EmptyStateIcon icon={Icon} /> } : {})}
+      {...(Icon ? { icon: Icon } : {})}
       titleText={title}
     />
   );

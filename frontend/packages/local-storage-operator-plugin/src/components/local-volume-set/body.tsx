@@ -7,8 +7,8 @@ import {
   Radio,
   ExpandableSection,
   TextInputTypes,
-  Text,
-  TextVariants,
+  Content,
+  ContentVariants,
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation, TFunction } from 'react-i18next';
@@ -114,9 +114,12 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           onChange={(_event, name: string) => dispatch({ type: 'setStorageClassName', name })}
         />
       </FormGroup>
-      <Text component={TextVariants.h3} className="lso-create-lvs__filter-volumes-text--margin">
+      <Content
+        component={ContentVariants.h3}
+        className="lso-create-lvs__filter-volumes-text--margin"
+      >
         {t('lso-plugin~Filter Disks By')}
-      </Text>
+      </Content>
       <FormGroup fieldId="create-lvs-radio-group-node-selector">
         <div id="create-lvs-radio-group-node-selector">
           <Radio

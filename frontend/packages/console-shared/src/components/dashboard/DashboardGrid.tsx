@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens/dist/js/global_breakpoint_lg';
+import { t_global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens/dist/js/t_global_breakpoint_lg';
 import { OverviewGridCard, OverviewGridProps } from '@console/dynamic-plugin-sdk';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 

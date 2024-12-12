@@ -1,12 +1,6 @@
 import * as React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
-import {
-  Button,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateHeader,
-  EmptyStateFooter,
-} from '@patternfly/react-core';
+import { Button, EmptyState, EmptyStateActions, EmptyStateFooter } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons/dist/esm/icons/rocket-icon';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -141,17 +135,16 @@ const NADListEmpty: React.FC = () => {
     );
 
   return (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText={
-          <>
-            {t('network-attachment-definition-plugin~No {{label}} found', {
-              label: NetworkAttachmentDefinitionModel.labelPlural,
-            })}
-          </>
-        }
-        headingLevel="h4"
-      />
+    <EmptyState
+      headingLevel="h4"
+      titleText={
+        <>
+          {t('network-attachment-definition-plugin~No {{label}} found', {
+            label: NetworkAttachmentDefinitionModel.labelPlural,
+          })}
+        </>
+      }
+    >
       <EmptyStateFooter>
         <Button
           data-test-id="create-nad-empty"
@@ -168,11 +161,11 @@ const NADListEmpty: React.FC = () => {
         {hasQuickStarts && (
           <EmptyStateActions>
             <Button
+              icon={<RocketIcon className="nad-quickstart-icon" />}
               data-test-id="nad-quickstart"
               variant="secondary"
               onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
             >
-              <RocketIcon className="nad-quickstart-icon" />
               {t('network-attachment-definition-plugin~Learn how to use {{label}}', {
                 label: NetworkAttachmentDefinitionModel.labelPlural,
               })}

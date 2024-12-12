@@ -160,9 +160,14 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
               <dt className="co-detail-table__section-header">{t('public~Desired count')}</dt>
               <dd>
                 {canUpdate ? (
-                  <Button variant="link" type="button" isInline onClick={editReplicas}>
+                  <Button
+                    icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+                    variant="link"
+                    type="button"
+                    isInline
+                    onClick={editReplicas}
+                  >
                     {desiredReplicasText}
-                    <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                   </Button>
                 ) : (
                   desiredReplicasText

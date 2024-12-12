@@ -132,8 +132,7 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
     setStatus(STREAM_ACTIVE);
   };
   return (
-    <Button className={className} onClick={handleClick} isBlock>
-      <OutlinedPlayCircleIcon />
+    <Button icon={<OutlinedPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
       &nbsp;{resumeText}
     </Button>
   );

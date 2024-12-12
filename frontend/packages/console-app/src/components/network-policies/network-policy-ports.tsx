@@ -60,20 +60,20 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   data-test="port-input"
                 />
                 <Button
+                  icon={<MinusCircleIcon />}
                   aria-label={t('console-app~Remove port')}
                   className="co-create-networkpolicy__remove-port"
                   onClick={() => onRemove(idx)}
                   type="button"
                   variant="plain"
                   data-test="remove-port"
-                >
-                  <MinusCircleIcon />
-                </Button>
+                />
               </div>
             );
           })}
           <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__add-port">
             <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
               className="pf-m-link--align-left"
               onClick={() => {
                 onChange([...ports, { key: _.uniqueId('port-'), port: '', protocol: 'TCP' }]);
@@ -82,7 +82,6 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
               variant="link"
               data-test="add-port"
             >
-              <PlusCircleIcon className="co-icon-space-r" />
               {t('console-app~Add port')}
             </Button>
           </div>

@@ -69,6 +69,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 data-test="ipblock-exception-input"
               />
               <Button
+                icon={<MinusCircleIcon />}
                 aria-label={t('console-app~Remove exception')}
                 className="co-create-networkpolicy__remove-exception"
                 onClick={() => {
@@ -81,13 +82,12 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 type="button"
                 variant="plain"
                 data-test="ipblock-remove-exception"
-              >
-                <MinusCircleIcon />
-              </Button>
+              />
             </div>
           ))}
           <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__add-exception">
             <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
               className="pf-m-link--align-left"
               onClick={() => {
                 ipBlock.except.push({ key: _.uniqueId('exception-'), value: '' });
@@ -97,7 +97,6 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
               variant="link"
               data-test="ipblock-add-exception"
             >
-              <PlusCircleIcon className="co-icon-space-r" />
               {t('console-app~Add exception')}
             </Button>
           </div>

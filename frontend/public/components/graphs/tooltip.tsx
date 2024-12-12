@@ -5,15 +5,17 @@ import * as React from 'react';
 import { defaults } from 'lodash';
 import { Helpers } from 'victory-core';
 import {
-  ChartLegend,
-  ChartLabel,
-  getTheme,
   ChartLegendTooltipContentProps,
-  ChartCursorTooltip,
-  ChartTooltip,
   ChartLegendTooltipProps,
   ChartLegendTooltipLabelProps,
 } from '@patternfly/react-charts';
+import {
+  ChartLegend,
+  ChartLabel,
+  getTheme,
+  ChartCursorTooltip,
+  ChartTooltip,
+} from '@patternfly/react-charts/victory';
 import {
   getLegendTooltipSize,
   getLegendTooltipDataProps,

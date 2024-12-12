@@ -94,7 +94,6 @@ export const SwitchWidget: React.FC<WidgetProps> = ({ value, id, label, onChange
       isChecked={_.isNil(value) ? false : value}
       onChange={(_event, v) => onChange(v)}
       label={labelOn as string}
-      labelOff={labelOff as string}
     />
   );
 };

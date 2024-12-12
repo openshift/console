@@ -89,7 +89,7 @@ const ServerlessRouteSection: React.FC = () => {
               isInline
               title={t('devconsole~Domain mapping(s) will be updated')}
             >
-              <div style={{ marginBottom: 'var(--pf-v5-global--spacer--sm)' }}>
+              <div style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}>
                 {t(
                   'devconsole~Warning: The following domain(s) will be removed from the associated service',
                 )}

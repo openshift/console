@@ -65,27 +65,27 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
       return (
         <>
           <Button
+            icon={
+              <span className="odc-heath-check-probe__successText">
+                <GreenCheckCircleIcon />{' '}
+                {t('devconsole~{{healthCheckProbeAdded}} added', {
+                  healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
+                })}
+              </span>
+            }
             className="odc-heath-check-probe__successButton"
             variant={ButtonVariant.plain}
             isInline
             onClick={showProbe}
-          >
-            <span className="odc-heath-check-probe__successText">
-              <GreenCheckCircleIcon />{' '}
-              {t('devconsole~{{healthCheckProbeAdded}} added', {
-                healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
-              })}
-            </span>
-          </Button>
+          />
           {!viewOnly && (
             <Tooltip content={t('devconsole~Remove')} position="right">
               <Button
+                icon={<MinusCircleIcon />}
                 className="pf-m-plain--align-left"
                 variant={ButtonVariant.plain}
                 onClick={handleDeleteProbe}
-              >
-                <MinusCircleIcon />
-              </Button>
+              />
             </Tooltip>
           )}
         </>

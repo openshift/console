@@ -96,15 +96,14 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
             <div className="col-xs-2">
               <Tooltip content={t('public~Remove')}>
                 <Button
+                  icon={<MinusCircleIcon />}
                   type="button"
                   onClick={() => removeRoutingLabel(i)}
                   aria-label={t('public~Remove')}
                   isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
                   variant="plain"
                   data-test-id="remove-routing-label"
-                >
-                  <MinusCircleIcon />
-                </Button>
+                />
               </Tooltip>
             </div>
           </div>
@@ -121,13 +120,13 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
       )}
       {!isDefaultReceiver && (
         <Button
+          icon={<PlusCircleIcon className="co-icon-space-r" />}
           className="pf-m-link--align-left"
           onClick={addRoutingLabel}
           type="button"
           variant="link"
           data-test-id="add-routing-label"
         >
-          <PlusCircleIcon className="co-icon-space-r" />
           {t('public~Add label')}
         </Button>
       )}

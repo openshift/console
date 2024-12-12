@@ -155,6 +155,7 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
 
     return (
       <Button
+        icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
         type="button"
         isInline
         data-test-id="configure-modal-btn"
@@ -166,7 +167,6 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
           memory: memory || none,
           storage: storage || none,
         })}
-        <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
       </Button>
     );
   },

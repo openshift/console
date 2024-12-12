@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, TextVariants } from '@patternfly/react-core';
+import { Form, ContentVariants } from '@patternfly/react-core';
 import { useParams } from 'react-router-dom-v5-compat';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -62,7 +62,7 @@ const CreateLocalVolumeSet: React.FC = () => {
     <>
       <div className="co-create-operand__header">
         <LocalVolumeSetHeader
-          variant={TextVariants.h1}
+          variant={ContentVariants.h1}
           className="co-create-operand__header-text"
         />
       </div>

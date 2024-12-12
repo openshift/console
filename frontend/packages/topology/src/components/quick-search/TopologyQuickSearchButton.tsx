@@ -14,6 +14,7 @@ const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }
   return (
     <Tooltip position="right" content={t('topology~Add to Project')}>
       <Button
+        icon={<QuickSearchIcon />}
         className="odc-topology-quick-search-button"
         data-test="quick-search"
         variant="plain"
@@ -22,9 +23,7 @@ const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }
           onClick();
         }}
         aria-label={t('topology~Quick search button')}
-      >
-        <QuickSearchIcon />
-      </Button>
+      />
     </Tooltip>
   );
 };

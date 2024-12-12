@@ -131,11 +131,11 @@ class Terminal_ extends React.Component {
         <div ref={this.innerRef} className="co-terminal">
           {this.isFullscreen && (
             <Button
+              icon={<CompressIcon className="co-icon-space-r" />}
               className="co-terminal-collapse-link"
               onClick={() => this.setFullscreen(false)}
               variant="link"
             >
-              <CompressIcon className="co-icon-space-r" />
               {t('public~Collapse')}
             </Button>
           )}

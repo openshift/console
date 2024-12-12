@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, ModalVariant } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useBoundingClientRect } from '../../hooks';
 import { DetailsRendererFunction } from './QuickSearchDetails';

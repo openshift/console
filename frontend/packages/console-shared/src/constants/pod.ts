@@ -1,6 +1,12 @@
-import { global_palette_purple_300 as globalPurple300 } from '@patternfly/react-tokens/dist/js/global_palette_purple_300';
-import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
-import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
+import {
+  t_temp_dev_tbd as globalPurple300 /* CODEMODS: you should update this color token, original v5 token was global_palette_purple_300 */,
+
+  t_temp_dev_tbd as globalWhite /* CODEMODS: you should update this color token, original v5 token was global_palette_white */,
+,
+  t_temp_dev_tbd as globalWarning100 /* CODEMODS: you should update this color token, original v5 token was global_warning_color_100 */,
+} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+
+
 
 export enum AllPodStatus {
   Running = 'Running',

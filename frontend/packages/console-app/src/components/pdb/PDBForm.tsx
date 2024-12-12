@@ -5,7 +5,7 @@ import {
   Form,
   TextInput,
   FormGroup,
-  Text,
+  Content,
   Title,
   ValidatedOptions,
   Select,
@@ -183,14 +183,14 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
             <FormGroup
               label={t('console-app~Labels')}
               fieldId="pdb-labels"
-              labelIcon={
+              labelHelp={
                 <FieldLevelHelp>
                   <Title headingLevel="h3">{t('console-app~Selector')}</Title>
-                  <Text className="pdb-form-popover__description">
+                  <Content component="p" className="pdb-form-popover__description">
                     {t(
                       'console-app~Label query over pods whose evictions are managed by the disruption budget. Anull selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
                     )}
-                  </Text>
+                  </Content>
                 </FieldLevelHelp>
               }
             >
@@ -221,7 +221,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
             <FormGroup
               fieldId="pdb-requirement"
               label={t('console-app~Availability requirement')}
-              labelIcon={<AvailabilityRequirementPopover />}
+              labelHelp={<AvailabilityRequirementPopover />}
             />
             <Split hasGutter>
               <SplitItem isFilled>

@@ -29,7 +29,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
       fieldId={fieldId}
       isRequired={required}
       label={label}
-      labelIcon={labelIcon}
+      labelHelp={labelIcon}
       isInline={isInline}
     >
       {options.map((option) => {

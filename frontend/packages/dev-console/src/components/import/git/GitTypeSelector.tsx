@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Tile, Flex, FlexItem, FormGroup } from '@patternfly/react-core';
+import { Flex, FlexItem, FormGroup } from '@patternfly/react-core';
+import { Tile } from '@patternfly/react-core/deprecated';
 import {
   GithubIcon,
   GitlabIcon,

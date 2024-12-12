@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, TextVariants } from '@patternfly/react-core';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -48,8 +48,8 @@ const EventType: React.FC<EventTypeProps> = ({ eventType }) => {
   return (
     <>
       {eventType.spec.description ? eventType.spec.description : ''}
-      <div style={{ marginTop: 'var(--pf-v5-global--spacer--md)' }}>
-        <Text component={TextVariants.h3}>{t('knative-plugin~Event details')}</Text>
+      <div style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
+        <Content component={ContentVariants.h3}>{t('knative-plugin~Event details')}</Content>
       </div>
       <Table
         data={rows}

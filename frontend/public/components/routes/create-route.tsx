@@ -276,12 +276,12 @@ class CreateRouteWithTranslation extends React.Component<
           {!_.isEmpty(alternateBackends) && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
+                icon={<MinusCircleIcon className="co-icon-space-r" />}
                 type="button"
                 onClick={() => this.removeAltServiceEntry(index)}
                 variant="link"
                 isInline
               >
-                <MinusCircleIcon className="co-icon-space-r" />
                 {t('public~Remove alternate Service')}
               </Button>
             </div>
@@ -412,13 +412,13 @@ class CreateRouteWithTranslation extends React.Component<
           alternateBackendsList.length + 1 < _.keys(serviceOptions).length &&
           service && (
             <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
               className="pf-m-link--align-left co-create-route__add-service-btn"
               onClick={this.addAltServiceEntry}
               type="button"
               variant="link"
               isInline
             >
-              <PlusCircleIcon className="co-icon-space-r" />
               {t('public~Add alternate Service')}
             </Button>
           )}

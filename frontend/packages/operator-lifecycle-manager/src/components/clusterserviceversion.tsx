@@ -1139,9 +1139,11 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                     }
                     maxWidth="30rem"
                   >
-                    <Button variant="plain" className="details-item__popover-button">
-                      {t('olm~Managed Namespaces')}
-                    </Button>
+                    <Button
+                      icon={t('olm~Managed Namespaces')}
+                      variant="plain"
+                      className="details-item__popover-button"
+                    />
                   </Popover>
                 </dt>
                 <dd>

@@ -14,7 +14,7 @@ import {
   SelectList,
   SelectOption,
   Toolbar,
-  ToolbarChip,
+  ToolbarLabel,
   ToolbarContent,
   ToolbarFilter,
   ToolbarGroup,
@@ -254,11 +254,11 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     <ToolbarFilter
       key={searchFilter.type}
       categoryName={translateFilterType(searchFilter.type)}
-      deleteChip={() => {
+      deleteLabel={() => {
         changeSearchFiltersState(searchFilter.type, '');
         applyTextFilter('', searchFilter.type);
       }}
-      chips={searchFiltersState[searchFilter.type] ? [searchFiltersState[searchFilter.type]] : []}
+      labels={searchFiltersState[searchFilter.type] ? [searchFiltersState[searchFilter.type]] : []}
     >
       <></>
     </ToolbarFilter>
@@ -373,21 +373,21 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   (acc, key) => (
                     <ToolbarFilter
                       key={key}
-                      chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
+                      labels={_.intersection(selectedRowFilters, filters[key]).map((item) => {
                         return {
                           key: item,
                           node: filtersNameMap[item],
                         };
                       })}
-                      deleteChip={(_filter, chip: ToolbarChip) =>
+                      deleteLabel={(_filter, chip: ToolbarLabel) =>
                         updateRowFilterSelected([chip.key])
                       }
                       categoryName={key}
-                      deleteChipGroup={() => clearAllRowFilter(key)}
-                      chipGroupCollapsedText={t('public~{{numRemaining}} more', {
+                      deleteLabelGroup={() => clearAllRowFilter(key)}
+                      labelGroupCollapsedText={t('public~{{numRemaining}} more', {
                         numRemaining: '${remaining}',
                       })}
-                      chipGroupExpandedText={t('public~Show less')}
+                      labelGroupExpandedText={t('public~Show less')}
                     >
                       {acc}
                     </ToolbarFilter>
@@ -427,20 +427,20 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
               <ToolbarItem className="co-filter-search--full-width">
                 {searchRowFilters}
                 <ToolbarFilter
-                  deleteChipGroup={() => {
+                  deleteLabelGroup={() => {
                     setLabelInputText('');
                     applyLabelFilters([]);
                   }}
-                  chips={labelSelection}
-                  deleteChip={(f, chip: string) => {
+                  labels={labelSelection}
+                  deleteLabel={(f, chip: string) => {
                     setLabelInputText('');
                     applyLabelFilters(_.difference(labelSelection, [chip]));
                   }}
                   categoryName={t('public~Label')}
                 >
                   <ToolbarFilter
-                    chips={nameInputText ? [nameInputText] : []}
-                    deleteChip={() => {
+                    labels={nameInputText ? [nameInputText] : []}
+                    deleteLabel={() => {
                       setNameInputText('');
                       applyNameFilter('');
                     }}
@@ -505,6 +505,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
             <ToolbarItem>
               <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
                 <Button
+                  icon={<ColumnsIcon />}
                   variant="plain"
                   onClick={() =>
                     createColumnManagementModal({
@@ -513,9 +514,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   }
                   aria-label={t('public~Column management')}
                   data-test="manage-columns"
-                >
-                  <ColumnsIcon />
-                </Button>
+                />
               </Tooltip>
             </ToolbarItem>
           </ToolbarGroup>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
-import { DualListSelector, FormSection } from '@patternfly/react-core';
+import { FormSection } from '@patternfly/react-core';
+import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import i18n from 'i18next';
+import { ChartAreaProps } from '@patternfly/react-charts';
 import {
   Chart,
   ChartArea,
@@ -9,10 +10,12 @@ import {
   ChartVoronoiContainer,
   getCustomTheme,
   ChartGroup,
-  ChartAreaProps,
-} from '@patternfly/react-charts';
-import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
-import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+} from '@patternfly/react-charts/victory';
+import {
+  t_temp_dev_tbd as warningColor /* CODEMODS: you should update this color token, original v5 token was global_warning_color_100 */,
+  t_temp_dev_tbd as dangerColor /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
+} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';
 import { humanizeNumber, useRefWidth, Humanize } from '../utils';

@@ -13,7 +13,6 @@ import {
   EmptyStateVariant,
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
-  EmptyStateHeader,
   Breadcrumb,
   BreadcrumbItem,
 } from '@patternfly/react-core';
@@ -402,8 +401,11 @@ ReceiversTable.displayName = 'ReceiversTable';
 const ReceiversEmptyState: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader titleText={<>{t('public~No receivers found')}</>} headingLevel="h2" />
+    <EmptyState
+      headingLevel="h2"
+      titleText={<>{t('public~No receivers found')}</>}
+      variant={EmptyStateVariant.full}
+    >
       <EmptyStateBody>
         {t(
           'public~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',

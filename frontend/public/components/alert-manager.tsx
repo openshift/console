@@ -49,9 +49,14 @@ const Details: React.SFC<DetailsProps> = (props) => {
               <dd>{spec.version}</dd>
               <dt>Replicas</dt>
               <dd>
-                <Button variant="link" type="button" isInline onClick={openReplicaCountModal}>
+                <Button
+                  icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+                  variant="link"
+                  type="button"
+                  isInline
+                  onClick={openReplicaCountModal}
+                >
                   {pluralize(spec.replicas, 'pod')}
-                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                 </Button>
               </dd>
             </dl>

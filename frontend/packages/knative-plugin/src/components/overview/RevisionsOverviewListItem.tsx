@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartLabel } from '@patternfly/react-charts';
+import { ChartLabel } from '@patternfly/react-charts/victory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
 import { PodStatus } from '@console/shared';

@@ -18,7 +18,6 @@ import {
   SearchInput,
   Title,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { useDebounceCallback, getURLWithParams, VirtualizedGrid } from '@console/shared';
@@ -784,8 +783,11 @@ export const TileViewPage = (props) => {
 
   const renderEmptyState = () => {
     return (
-      <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateHeader titleText={<>{emptyStateTitle}</>} headingLevel="h2" />
+      <EmptyState
+        headingLevel="h2"
+        titleText={<>{emptyStateTitle}</>}
+        variant={EmptyStateVariant.full}
+      >
         <EmptyStateBody>{emptyStateInfo}</EmptyStateBody>
         <EmptyStateFooter>
           <EmptyStateActions>

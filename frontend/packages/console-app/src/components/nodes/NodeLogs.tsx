@@ -5,7 +5,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  EmptyStateHeader,
   EmptyStateFooter,
   MenuToggle,
   MenuToggleElement,
@@ -365,21 +364,22 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         )}
         {isLoadingLog ? (
           !isJournal && !logFilename ? (
-            <EmptyState variant={EmptyStateVariant.full} isFullHeight>
-              <EmptyStateHeader
-                titleText={
-                  <>
-                    {isLoadingFilenames ? (
-                      <LoadingInline />
-                    ) : logFilenamesExist ? (
-                      t('public~No log file selected')
-                    ) : (
-                      t('public~No log files exist')
-                    )}
-                  </>
-                }
-                headingLevel="h2"
-              />
+            <EmptyState
+              headingLevel="h2"
+              titleText={
+                <>
+                  {isLoadingFilenames ? (
+                    <LoadingInline />
+                  ) : logFilenamesExist ? (
+                    t('public~No log file selected')
+                  ) : (
+                    t('public~No log files exist')
+                  )}
+                </>
+              }
+              variant={EmptyStateVariant.full}
+              isFullHeight
+            >
               <EmptyStateFooter>
                 {logFilenamesExist && (
                   <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>

@@ -16,14 +16,13 @@ export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(
         hasAutoWidth={popoverHasAutoWidth}
       >
         <Button
+          icon={<OutlinedQuestionCircleIcon className="co-field-level-help__icon" />}
           aria-label={t('public~Help')}
           variant="link"
           isInline
           className="co-field-level-help"
           data-test-id={testId || null}
-        >
-          <OutlinedQuestionCircleIcon className="co-field-level-help__icon" />
-        </Button>
+        />
       </Popover>
     );
   },

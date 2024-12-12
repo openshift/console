@@ -127,16 +127,16 @@ const PodRing: React.FC<PodRingProps> = ({
           <Bullseye>
             <div>
               <Button
+                icon={<AngleUpIcon style={{ fontSize: '20' }} />}
                 type="button"
                 variant="plain"
                 aria-label={t('console-shared~Increase the Pod count')}
                 title={t('console-shared~Increase the Pod count')}
                 onClick={() => handleClick(1)}
                 isBlock
-              >
-                <AngleUpIcon style={{ fontSize: '20' }} />
-              </Button>
+              />
               <Button
+                icon={<AngleDownIcon style={{ fontSize: '20' }} />}
                 type="button"
                 variant="plain"
                 aria-label={t('console-shared~Decrease the Pod count')}
@@ -144,9 +144,7 @@ const PodRing: React.FC<PodRingProps> = ({
                 onClick={() => handleClick(-1)}
                 isBlock
                 isDisabled={clickCount <= 0}
-              >
-                <AngleDownIcon style={{ fontSize: '20' }} />
-              </Button>
+              />
             </div>
           </Bullseye>
         </SplitItem>

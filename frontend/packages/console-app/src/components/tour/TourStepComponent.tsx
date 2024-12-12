@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ModalVariant } from '@patternfly/react-core';
+import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
 import StepBadge from './steps/StepBadge';

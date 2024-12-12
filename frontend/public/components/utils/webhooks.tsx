@@ -173,8 +173,12 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
       (secret: K8sResourceKind) => secret.metadata.name === secretReference,
     );
     return webhookSecret || plainSecret ? (
-      <Button variant="link" type="button" onClick={() => copyWebhookToClipboard(trigger)}>
-        <PasteIcon />
+      <Button
+        icon={<PasteIcon />}
+        variant="link"
+        type="button"
+        onClick={() => copyWebhookToClipboard(trigger)}
+      >
         &nbsp;
         {t('public~Copy URL with Secret')}
       </Button>

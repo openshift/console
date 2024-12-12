@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartDonut } from '@patternfly/react-charts';
+import { ChartDonut } from '@patternfly/react-charts/victory';
 /* eslint-disable camelcase */
 import { chart_color_blue_100 as blue100 } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
 import { chart_color_blue_200 as blue200 } from '@patternfly/react-tokens/dist/js/chart_color_blue_200';

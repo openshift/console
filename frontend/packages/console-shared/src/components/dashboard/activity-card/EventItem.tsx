@@ -23,10 +23,9 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
   const expanded = isExpanded(metadata.uid);
   return (
     <div className="co-recent-item__body">
-      <AccordionItem>
+      <AccordionItem isExpanded={expanded}>
         <AccordionToggle
           onClick={() => onToggle(metadata.uid)}
-          isExpanded={expanded}
           id={metadata.uid}
           className={classNames('co-recent-item__toggle', {
             'co-recent-item--warning': isWarning && expanded,
@@ -59,7 +58,6 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
           </div>
         </AccordionToggle>
         <AccordionContent
-          isHidden={!expanded}
           className={classNames('co-recent-item__content', {
             'co-recent-item--warning': isWarning,
           })}

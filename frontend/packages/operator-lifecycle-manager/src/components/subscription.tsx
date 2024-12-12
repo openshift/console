@@ -656,9 +656,16 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
               ) : (
                 <>
                   <div>
-                    <Button type="button" isInline onClick={approvalModal} variant="link">
+                    <Button
+                      icon={
+                        <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
+                      }
+                      type="button"
+                      isInline
+                      onClick={approvalModal}
+                      variant="link"
+                    >
                       {obj.spec.installPlanApproval || 'Automatic'}
-                      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
                     </Button>
                   </div>
                   {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&

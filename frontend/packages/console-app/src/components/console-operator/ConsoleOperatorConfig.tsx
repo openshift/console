@@ -114,6 +114,7 @@ export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProp
     <>
       {consoleOperatorConfigLoaded && canPatchConsoleOperatorConfig && !developmentMode ? (
         <Button
+          icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
           data-test="edit-console-plugin"
           type="button"
           isInline
@@ -127,7 +128,6 @@ export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProp
           variant="link"
         >
           {labels}
-          <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
         </Button>
       ) : (
         <>{labels}</>

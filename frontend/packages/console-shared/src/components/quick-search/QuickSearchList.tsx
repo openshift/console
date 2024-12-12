@@ -8,9 +8,8 @@ import {
   Split,
   SplitItem,
   Label,
-  TextContent,
-  Text,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -121,7 +120,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                       </div>
                     </DataListCell>,
                     <DataListCell
-                      style={{ paddingTop: 'var(--pf-v5-global--spacer--sm)' }}
+                      style={{ paddingTop: 'var(--pf-t--global--spacer--sm)' }}
                       width={2}
                       wrapModifier="truncate"
                       key={`${item.uid}-name`}
@@ -146,11 +145,11 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                           </Split>
                         </SplitItem>
                         <SplitItem>
-                          <TextContent
+                          <Content
                             data-test={`item-name-${item.name}-${item.provider}-secondary-label`}
                           >
-                            <Text component={TextVariants.small}>{item.provider}</Text>
-                          </TextContent>
+                            <Content component={ContentVariants.small}>{item.provider}</Content>
+                          </Content>
                         </SplitItem>
                       </Split>
                     </DataListCell>,
@@ -169,7 +168,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               id={catalogLink.catalogType}
               to={catalogLink.to}
               key={catalogLink.catalogType}
-              style={{ fontSize: 'var(--pf-v5-global--FontSize--sm)' }}
+              style={{ fontSize: 'var(--pf-t--global--font--size--sm)' }}
             >
               {catalogLink.label}
             </Link>

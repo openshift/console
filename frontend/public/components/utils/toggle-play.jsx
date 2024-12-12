@@ -21,15 +21,14 @@ class TogglePlayWithTranslation extends React.Component {
     const { t } = this.props;
     return (
       <Button
+        icon={this.props.active ? <PauseIcon /> : <PlayIcon />}
         variant="plain"
         className={togglePlayClasses}
         onClick={this.props.onClick}
         aria-label={
           this.props.active ? t('public~Pause event streaming') : t('public~Start streaming events')
         }
-      >
-        {this.props.active ? <PauseIcon /> : <PlayIcon />}
-      </Button>
+      />
     );
   }
 }

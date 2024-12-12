@@ -2,11 +2,21 @@ import { AngleDoubleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angl
 import { AngleDoubleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-up-icon';
 import { CriticalRiskIcon } from '@patternfly/react-icons/dist/esm/icons/critical-risk-icon';
 import { EqualsIcon } from '@patternfly/react-icons/dist/esm/icons/equals-icon';
-import { global_palette_blue_300 as blue300 } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { global_palette_blue_50 as blue50 } from '@patternfly/react-tokens/dist/js/global_palette_blue_50';
-import { global_palette_gold_400 as gold400 } from '@patternfly/react-tokens/dist/js/global_palette_gold_400';
-import { global_palette_orange_300 as orange300 } from '@patternfly/react-tokens/dist/js/global_palette_orange_300';
-import { global_palette_red_200 as red200 } from '@patternfly/react-tokens/dist/js/global_palette_red_200';
+import {
+  t_temp_dev_tbd as blue300 /* CODEMODS: you should update this color token, original v5 token was global_palette_blue_300 */,
+
+  t_temp_dev_tbd as blue50 /* CODEMODS: you should update this color token, original v5 token was global_palette_blue_50 */,
+,
+  t_temp_dev_tbd as gold400 /* CODEMODS: you should update this color token, original v5 token was global_palette_gold_400 */,
+,
+  t_temp_dev_tbd as orange300 /* CODEMODS: you should update this color token, original v5 token was global_palette_orange_300 */,
+,
+  t_temp_dev_tbd as red200 /* CODEMODS: you should update this color token, original v5 token was global_palette_red_200 */,
+} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+
+
+
+
 import * as _ from 'lodash';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 

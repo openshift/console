@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartDonut } from '@patternfly/react-charts';
+import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Stack, StackItem, pluralize } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import * as _ from 'lodash';

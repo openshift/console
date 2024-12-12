@@ -1,15 +1,14 @@
 import * as React from 'react';
+import { ChartLineProps, ChartProps } from '@patternfly/react-charts';
 import {
   Chart,
   ChartThemeColor,
   ChartAxis,
   ChartGroup,
   ChartLine,
-  ChartLineProps,
-  ChartProps,
   ChartTooltip,
   ChartScatter,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 import { DEFAULT_CHART_HEIGHT } from '../../const';
 
@@ -60,7 +59,8 @@ export const LineChart: React.FC<LineChartProps> = ({
       fontSize: 10,
       textAnchor: 'end',
       verticalAnchor: 'end',
-      fill: 'var(--pf-v5-global--Color--100)',
+      fill:
+        'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--Color--100 */,
     },
   };
 
@@ -90,7 +90,10 @@ export const LineChart: React.FC<LineChartProps> = ({
         tickCount={4}
         tickFormat={yTickFormat}
         style={{
-          tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
+          tickLabels: {
+            fill:
+              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--Color--100 */,
+          },
         }}
       />
       <ChartGroup>

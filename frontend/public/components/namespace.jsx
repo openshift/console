@@ -914,9 +914,14 @@ export const PullSecret = (props) => {
         </div>
       ))
     ) : (
-      <Button variant="link" type="button" isInline onClick={modal}>
+      <Button
+        icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+        variant="link"
+        type="button"
+        isInline
+        onClick={modal}
+      >
         {t('public~Not configured')}
-        <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
       </Button>
     );
   };

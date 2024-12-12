@@ -8,9 +8,7 @@ import {
   SplitItem,
   Badge,
   EmptyState,
-  EmptyStateIcon,
   EmptyStateBody,
-  EmptyStateHeader,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
@@ -79,12 +77,11 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
         headingLevel="h5"
       >
         {firingAlerts.length > 0 && (
-          <AccordionItem>
+          <AccordionItem isExpanded={expanded.includes('monitoring-alerts')}>
             <AccordionToggle
               onClick={() => {
                 onToggle('monitoring-alerts');
               }}
-              isExpanded={expanded.includes('monitoring-alerts')}
               id="monitoring-alerts"
               className="odc-monitoring-overview__alerts-toggle"
             >
@@ -99,36 +96,28 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
             <AccordionContent
               className="odc-monitoring-overview__alerts-body"
               id="monitoring-alerts-content"
-              isHidden={!expanded.includes('monitoring-alerts')}
             >
               <MonitoringOverviewAlerts alerts={firingAlerts} />
             </AccordionContent>
           </AccordionItem>
         )}
 
-        <AccordionItem>
+        <AccordionItem isExpanded={expanded.includes('metrics')}>
           <AccordionToggle
             onClick={() => {
               onToggle('metrics');
             }}
-            isExpanded={expanded.includes('metrics')}
             id="metrics"
           >
             {t('devconsole~Metrics')}
           </AccordionToggle>
-          <AccordionContent id="metrics-content" isHidden={!expanded.includes('metrics')}>
+          <AccordionContent id="metrics-content">
             {resource.kind === DeploymentConfigModel.kind ? (
-              <EmptyState>
-                <EmptyStateHeader
-                  titleText={<>{t('devconsole~No metrics found')}</>}
-                  icon={
-                    <EmptyStateIcon
-                      className="odc-monitoring-overview__empty-state-icon"
-                      icon={InfoCircleIcon}
-                    />
-                  }
-                  headingLevel="h2"
-                />
+              <EmptyState
+                headingLevel="h2"
+                icon={InfoCircleIcon}
+                titleText={<>{t('devconsole~No metrics found')}</>}
+              >
                 <EmptyStateBody>
                   {t('devconsole~Deployment Configuration metrics are not yet supported.')}
                 </EmptyStateBody>
@@ -153,17 +142,16 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem>
+        <AccordionItem isExpanded={expanded.includes('all-events')}>
           <AccordionToggle
             onClick={() => {
               onToggle('all-events');
             }}
-            isExpanded={expanded.includes('all-events')}
             id="all-events"
           >
             {t('devconsole~All events')}
           </AccordionToggle>
-          <AccordionContent id="all-events-content" isHidden={!expanded.includes('all-events')}>
+          <AccordionContent id="all-events-content">
             <MonitoringOverviewEvents events={events} />
           </AccordionContent>
         </AccordionItem>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Breadcrumb, BreadcrumbItem, Button, TextContent } from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem, Button, Content } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
@@ -136,7 +136,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
           })}
         </Breadcrumb>
       )}
-      <TextContent>
+      <Content>
         {description && (
           <p className="co-break-word co-pre-wrap">
             <LinkifyExternal>{description}</LinkifyExternal>
@@ -183,7 +183,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
             })}
           </ul>
         )}
-      </TextContent>
+      </Content>
     </>
   );
 };

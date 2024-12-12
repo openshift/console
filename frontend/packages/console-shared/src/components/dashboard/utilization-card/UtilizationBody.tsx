@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartAxis, ChartContainer } from '@patternfly/react-charts';
+import { ChartAxis, ChartContainer } from '@patternfly/react-charts/victory';
 import { Flex, FlexItem, Grid } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UtilizationBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';

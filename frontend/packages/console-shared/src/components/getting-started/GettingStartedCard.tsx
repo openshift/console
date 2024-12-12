@@ -2,8 +2,8 @@ import * as React from 'react';
 import {
   Flex,
   FlexItem,
-  Text,
-  TextVariants,
+  Content,
+  ContentVariants,
   Title,
   TitleSizes,
   Button,
@@ -74,9 +74,9 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
       </Title>
 
       {description ? (
-        <Text component={TextVariants.small} data-test="description">
+        <Content component={ContentVariants.small} data-test="description">
           {description}
-        </Text>
+        </Content>
       ) : null}
 
       <Flex direction={{ default: 'column' }} grow={{ default: 'grow' }}>
@@ -113,8 +113,10 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                 >
                   {link.description ? (
                     <>
-                      <Text className={getLinkTitleClassNames(link.external)}>{link.title}</Text>
-                      <Text component={TextVariants.small}>{link.description}</Text>
+                      <Content component="p" className={getLinkTitleClassNames(link.external)}>
+                        {link.title}
+                      </Content>
+                      <Content component={ContentVariants.small}>{link.description}</Content>
                     </>
                   ) : (
                     link.title

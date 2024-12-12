@@ -146,14 +146,14 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>
             <ToolbarFilter
-              deleteChipGroup={clearLabelFilter}
-              chips={[...labelsQuery]}
-              deleteChip={removeLabelFilter}
+              deleteLabelGroup={clearLabelFilter}
+              labels={[...labelsQuery]}
+              deleteLabel={removeLabelFilter}
               categoryName={t('topology~Label')}
             >
               <ToolbarFilter
-                chips={searchQuery.length > 0 ? [searchQuery] : []}
-                deleteChip={clearNameFilter}
+                labels={searchQuery.length > 0 ? [searchQuery] : []}
+                deleteLabel={clearNameFilter}
                 categoryName={t('topology~Name')}
               >
                 <NameLabelFilterDropdown
@@ -186,21 +186,17 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
                 }
               >
                 <Button
+                  icon={<InfoCircleIcon />}
                   variant="link"
                   className="odc-topology-filter-bar__info-icon"
                   aria-label={t('topology~Find by name')}
                   isDisabled={isDisabled}
-                >
-                  <InfoCircleIcon />
-                </Button>
+                />
               </Popover>
             </ToolbarItem>
           ) : null}
         </ToolbarGroup>
-        <ToolbarGroup
-          variant={ToolbarGroupVariant['button-group']}
-          align={{ default: 'alignRight' }}
-        >
+        <ToolbarGroup variant={ToolbarGroupVariant['action-group']} align={{ default: 'alignEnd' }}>
           <ToolbarItem>
             <ServiceBindingWarningForTopology namespace={namespace} />
           </ToolbarItem>

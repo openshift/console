@@ -13,15 +13,14 @@ const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
     <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right">
       {onSubmit && (
         <Button
+          icon={<CheckIcon />}
           type="submit"
           onClick={onSubmit}
           variant={ButtonVariant.plain}
           data-test-id="check-icon"
           style={{ padding: '0' }}
           isDisabled={isDisabled}
-        >
-          <CheckIcon />
-        </Button>
+        />
       )}
       <CloseButton
         additionalClassName="co-close-button--no-padding"

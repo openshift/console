@@ -18,7 +18,7 @@ const flexStyle: React.CSSProperties = {
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
-  margin: 'var(--pf-v5-global--spacer--md) 0',
+  margin: 'var(--pf-t--global--spacer--md)',
 };
 
 const FormSection: React.FC<FormSectionProps> = ({

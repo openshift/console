@@ -81,7 +81,12 @@ export const SearchTourText: React.FC = () => {
         {t(
           'devconsole~Add frequently accessed resources to your side navigation for quick access. Look for the',
         )}{' '}
-        <span style={{ color: 'var(--pf-v5-global--palette--blue-400)' }}>
+        <span
+          style={{
+            color:
+              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--palette--blue-400 */,
+          }}
+        >
           <PlusCircleIcon /> {t('devconsole~Add to navigation')}
         </span>{' '}
         {t('devconsole~link next to your search result.')}

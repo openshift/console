@@ -229,7 +229,7 @@ const App = (props) => {
             // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
             mainTabIndex={null}
             className="pf-c-page" // legacy pf-c-page class needed for PF4 component styling
-            header={
+            masthead={
               <Masthead
                 isNavOpen={isNavOpen}
                 onNavToggle={onNavToggle}

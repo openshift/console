@@ -140,30 +140,34 @@ const NameValueEditor_ = withDragDropContext(
               {readOnly ? null : (
                 <div className="co-toolbar__group co-toolbar__group--left">
                   <Button
+                    icon={
+                      <PlusCircleIcon
+                        data-test-id="pairs-list__add-icon"
+                        className="co-icon-space-r"
+                      />
+                    }
                     className="pf-m-link--align-left"
                     data-test="add-button"
                     onClick={this._append}
                     type="button"
                     variant="link"
                   >
-                    <PlusCircleIcon
-                      data-test-id="pairs-list__add-icon"
-                      className="co-icon-space-r"
-                    />
                     {addString ? addString : t('public~Add more')}
                   </Button>
                   {addConfigMapSecret && (
                     <>
                       <Button
+                        icon={
+                          <PlusCircleIcon
+                            data-test-id="pairs-list__add-icon"
+                            className="co-icon-space-r"
+                          />
+                        }
                         className="pf-m-link--align-left"
                         onClick={this._appendConfigMapOrSecret}
                         type="button"
                         variant="link"
                       >
-                        <PlusCircleIcon
-                          data-test-id="pairs-list__add-icon"
-                          className="co-icon-space-r"
-                        />
                         {t('public~Add from ConfigMap or Secret')}
                       </Button>
                     </>
@@ -320,13 +324,14 @@ const EnvFromEditor_ = withDragDropContext(
             <div className="col-xs-12">
               {!readOnly && (
                 <Button
+                  icon={<PlusCircleIcon />}
                   className="pf-m-link--align-left"
                   onClick={this._append}
                   type="button"
                   variant="link"
                   isDisabled={addButtonDisabled}
                 >
-                  <PlusCircleIcon />{' '}
+                  {' '}
                   {addButtonLabel || t('public~Add all from ConfigMap or Secret')}
                 </Button>
               )}
@@ -487,15 +492,14 @@ const PairElement_ = DragSource(
         const dragButton = (
           <div>
             <Button
+              icon={<GripVerticalIcon className="pairs-list__action-icon--reorder" />}
               type="button"
               className="pairs-list__action-icon"
               tabIndex="-1"
               isDisabled={disableReorder}
               variant="plain"
               aria-label={t('public~Drag to reorder')}
-            >
-              <GripVerticalIcon className="pairs-list__action-icon--reorder" />
-            </Button>
+            />
           </div>
         );
         return connectDropTarget(
@@ -552,6 +556,7 @@ const PairElement_ = DragSource(
                 <div className="col-xs-1 pairs-list__action">
                   <Tooltip content={toolTip || t('public~Remove')}>
                     <Button
+                      icon={deleteIcon}
                       type="button"
                       data-test="delete-button"
                       className={classNames({
@@ -560,9 +565,7 @@ const PairElement_ = DragSource(
                       onClick={this._onRemove}
                       isDisabled={isEmpty && !alwaysAllowRemove}
                       variant="plain"
-                    >
-                      {deleteIcon}
-                    </Button>
+                    />
                   </Tooltip>
                 </div>
               )}
@@ -658,14 +661,13 @@ const EnvFromPairElement_ = DragSource(
                 connectDragSource(
                   <div className="col-xs-1 pairs-list__action">
                     <Button
+                      icon={<GripVerticalIcon className="pairs-list__action-icon--reorder" />}
                       type="button"
                       className="pairs-list__action-icon"
                       tabIndex="-1"
                       variant="plain"
                       aria-label={t('public~Drag to reorder')}
-                    >
-                      <GripVerticalIcon className="pairs-list__action-icon--reorder" />
-                    </Button>
+                    />
                   </div>,
                 )}
               <div className="col-xs-5 pairs-list__value-pair-field">
@@ -693,14 +695,13 @@ const EnvFromPairElement_ = DragSource(
                 <div className="col-xs-1 pairs-list__action">
                   <Tooltip content={t('public~Remove')}>
                     <Button
+                      icon={deleteButton}
                       type="button"
                       data-test-id="pairs-list__delete-from-btn"
                       className="pairs-list__span-btns"
                       onClick={this._onRemove}
                       variant="plain"
-                    >
-                      {deleteButton}
-                    </Button>
+                    />
                   </Tooltip>
                 </div>
               )}

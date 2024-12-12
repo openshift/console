@@ -19,9 +19,8 @@ import {
   CardBody,
   CardHeader,
   CardTitle,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import {
   Status,
@@ -754,16 +753,16 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
       headerTitle = t('public~Pod crash loop back-off');
       const containers: ContainerSpec[] = pod.spec.containers;
       footerLinks = (
-        <TextContent>
-          <Text component={TextVariants.p}>
+        <Content>
+          <Content component={ContentVariants.p}>
             {t(
               'public~CrashLoopBackOff indicates that the application within the container is failing to start properly.',
             )}
-          </Text>
-          <Text component={TextVariants.p}>
+          </Content>
+          <Content component={ContentVariants.p}>
             {t('public~To troubleshoot, view logs and events, then debug in terminal.')}
-          </Text>
-          <Text component={TextVariants.p}>
+          </Content>
+          <Content component={ContentVariants.p}>
             <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/logs`}>
               {t('public~View logs')}
             </Link>
@@ -771,7 +770,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
             <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/events`}>
               {t('public~View events')}
             </Link>
-          </Text>
+          </Content>
           <Divider />
           {containers.map((container) => {
             if (isContainerCrashLoopBackOff(pod, container.name) && !isWindowsPod(pod)) {
@@ -791,7 +790,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
               );
             }
           })}
-        </TextContent>
+        </Content>
       );
     }
 

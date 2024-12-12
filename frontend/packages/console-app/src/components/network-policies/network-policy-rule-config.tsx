@@ -146,15 +146,14 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
                     }}
                     actions={
                       <Button
+                        icon={<TrashIcon />}
                         aria-label={t('console-app~Remove peer')}
                         className="co-create-networkpolicy__remove-peer"
                         onClick={() => removePeer(idx)}
                         type="button"
                         variant="plain"
                         data-test="remove-peer"
-                      >
-                        <TrashIcon />
-                      </Button>
+                      />
                     }
                   />
                 }

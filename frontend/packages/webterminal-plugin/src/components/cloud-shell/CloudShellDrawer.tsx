@@ -42,14 +42,13 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
       <FlexItem align={{ default: 'alignRight' }}>
         <Tooltip content={t('webterminal-plugin~Open terminal in new tab')}>
           <Button
+            icon={<ExternalLinkAltIcon />}
             variant="plain"
             component="a"
             href="/terminal"
             target="_blank"
             aria-label={t('webterminal-plugin~Open terminal in new tab')}
-          >
-            <ExternalLinkAltIcon />
-          </Button>
+          />
         </Tooltip>
         <MinimizeRestoreButton
           minimize={expanded}

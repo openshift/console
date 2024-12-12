@@ -28,7 +28,7 @@ import {
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
-import { PageSection, PageSectionVariants } from '@patternfly/react-core';
+import { PageSection } from '@patternfly/react-core';
 import { usePluginRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import CreateResource from './create-resource';
 import { TelemetryNotifier } from './global-telemetry-notifications';
@@ -816,12 +816,13 @@ const AppContents: React.FC<{}> = () => {
 
   return (
     <div id="content">
-      <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+      <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding' }}>
         <GlobalNotifications />
         {matches && <NamespaceBar />}
       </PageSection>
       <div id="content-scrollable">
         <PageSection
+          hasBodyWrapper={false}
           className="pf-v5-page__main-section--flex co-page-backdrop"
           padding={{ default: 'noPadding' }}
         >
@@ -830,7 +831,7 @@ const AppContents: React.FC<{}> = () => {
           </ErrorBoundaryPage>
         </PageSection>
       </div>
-      <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+      <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding' }}>
         <TelemetryNotifier />
       </PageSection>
     </div>

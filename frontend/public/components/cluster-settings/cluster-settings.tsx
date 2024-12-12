@@ -14,9 +14,8 @@ import {
   Progress,
   ProgressSize,
   ProgressVariant,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
@@ -174,6 +173,7 @@ export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }
   const label = cv.spec.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
+      icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
       type="button"
       isInline
       data-test-id="current-channel-update-link"
@@ -181,7 +181,6 @@ export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }
       variant="link"
     >
       {label}
-      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
     </Button>
   ) : (
     <>{label}</>
@@ -284,18 +283,18 @@ const ChannelHeader: React.FC<{}> = () => {
     <>
       {t('public~Channel')}
       <FieldLevelHelp>
-        <TextContent>
-          <Text component={TextVariants.p}>
+        <Content>
+          <Content component={ContentVariants.p}>
             {t(
               'public~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
             )}
-          </Text>
+          </Content>
           {!isManaged() && (
-            <Text component={TextVariants.p}>
+            <Content component={ContentVariants.p}>
               <ChannelDocLink />
-            </Text>
+            </Content>
           )}
-        </TextContent>
+        </Content>
       </FieldLevelHelp>
     </>
   );
@@ -1094,13 +1093,13 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
           <EmptyBox label={t('public~History')} />
         ) : (
           <>
-            <TextContent>
-              <Text component={TextVariants.p} className="help-block pf-v5-u-mb-lg">
+            <Content>
+              <Content component={ContentVariants.p} className="help-block pf-v5-u-mb-lg">
                 {t(
                   'public~There is a threshold for rendering update data which may cause gaps in the information below.',
                 )}
-              </Text>
-            </TextContent>
+              </Content>
+            </Content>
             <div className="co-table-container">
               <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
                 <thead className="pf-v5-c-table__thead">

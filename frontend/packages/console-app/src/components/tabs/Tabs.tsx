@@ -400,28 +400,35 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
                 <div className={css(styles.tabsToggle)}>
                   <div className={css(styles.tabsToggleButton)}>
                     <Button
+                      icon={
+                        <>
+                          <span className={css(styles.tabsToggleIcon)}>
+                            <AngleRightIcon arian-hidden="true" />
+                          </span>
+                          {toggleText && (
+                            <span
+                              className={css('pf-v5-c-tabs__toggle-text')}
+                              id={`${randomId}-text`}
+                            >
+                              {toggleText}
+                            </span>
+                          )}
+                        </>
+                      }
                       onClick={() => toggleTabs(!isExpandedLocal)}
                       variant="plain"
                       aria-label={toggleAriaLabel}
                       aria-expanded={isExpandedLocal}
                       id={`${randomId}-button`}
                       aria-labelledby={`${randomId}-text ${randomId}-button`}
-                    >
-                      <span className={css(styles.tabsToggleIcon)}>
-                        <AngleRightIcon arian-hidden="true" />
-                      </span>
-                      {toggleText && (
-                        <span className={css('pf-v5-c-tabs__toggle-text')} id={`${randomId}-text`}>
-                          {toggleText}
-                        </span>
-                      )}
-                    </Button>
+                    />
                   </div>
                 </div>
               )}
             </GenerateId>
           )}
           <Button
+            icon={<AngleLeftIcon />}
             className={css(
               styles.tabsScrollButton,
               isSecondary && buttonStyles.modifiers.secondary,
@@ -430,9 +437,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
             onClick={this.scrollLeft}
             disabled={disableLeftScrollButton}
             aria-hidden={disableLeftScrollButton}
-          >
-            <AngleLeftIcon />
-          </Button>
+          />
           <ul
             className={css(styles.tabsList)}
             ref={this.tabList}
@@ -441,6 +446,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
             {filteredChildren}
           </ul>
           <Button
+            icon={<AngleRightIcon />}
             className={css(
               styles.tabsScrollButton,
               isSecondary && buttonStyles.modifiers.secondary,
@@ -449,9 +455,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
             onClick={this.scrollRight}
             disabled={disableRightScrollButton}
             aria-hidden={disableRightScrollButton}
-          >
-            <AngleRightIcon />
-          </Button>
+          />
         </Component>
         {filteredChildren
           .filter(

@@ -6,16 +6,16 @@ import {
   CodeBlockCode,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   Stack,
   StackItem,
-  EmptyStateHeader,
   EmptyStateActions,
   Icon,
   Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
-import { global_danger_color_100 as globalDangerColor100 } from '@patternfly/react-tokens';
+import {
+  t_temp_dev_tbd as globalDangerColor100 /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
+} from '@patternfly/react-tokens';
 import { PageHeading } from './utils';
 import { useLocation } from 'react-router';
 
@@ -67,12 +67,12 @@ export const ErrorState: React.FC = () => {
     </Icon>
   );
   return (
-    <EmptyState variant="xs">
-      <EmptyStateHeader
-        titleText={<>{t('public~Something went wrong')}</>}
-        icon={<EmptyStateIcon icon={DangerIcon} />}
-        headingLevel="h6"
-      />
+    <EmptyState
+      headingLevel="h6"
+      icon={DangerIcon}
+      titleText={<>{t('public~Something went wrong')}</>}
+      variant="xs"
+    >
       <EmptyStateBody>
         <Stack>
           <StackItem>
@@ -130,9 +130,7 @@ export const AuthenticationErrorPage: React.FC = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <EmptyState>
-        <EmptyStateIcon icon={ExclamationCircleIcon} />
-        <Title headingLevel="h1">{title}</Title>
+      <EmptyState titleText={<Title headingLevel="h1">{title}</Title>} icon={ExclamationCircleIcon}>
         <EmptyStateBody>
           <Stack>
             <StackItem>

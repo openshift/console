@@ -48,7 +48,11 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
         width={width}
         height={height}
         fill={diamondColor}
-        stroke={isPipelineRun ? diamondColor : 'var(--pf-v5-global--BorderColor--light-100)'}
+        stroke={
+          isPipelineRun
+            ? diamondColor
+            : 'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--BorderColor--light-100 */
+        }
       />
       {appendLine && (
         <line
@@ -56,7 +60,7 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
           y1={diamondHeight / 2}
           x2={width * leftOffset}
           y2={diamondHeight / 2}
-          stroke="var(--pf-v5-global--BorderColor--light-100)"
+          stroke="var(--pf-t--temp--dev--tbd)" /* CODEMODS: original v5 color was --pf-v5-global--BorderColor--light-100 */
         />
       )}
     </g>

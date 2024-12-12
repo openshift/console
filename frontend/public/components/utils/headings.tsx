@@ -12,9 +12,8 @@ import {
   Button,
   Split,
   SplitItem,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
@@ -163,8 +162,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         style={style}
       >
         {showHeading && (
-          <Text
-            component={TextVariants.h1}
+          <Content
+            component={ContentVariants.h1}
             className={classNames('co-m-pane__heading', {
               'co-m-pane__heading--baseline': link,
               'co-m-pane__heading--center': centerText,
@@ -213,14 +212,17 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
                   : customActionMenu}
               </div>
             )}
-          </Text>
+          </Content>
         )}
         {helpText && (
-          <TextContent>
-            <Text component={TextVariants.p} className="help-block co-m-pane__heading-help-text">
+          <Content>
+            <Content
+              component={ContentVariants.p}
+              className="help-block co-m-pane__heading-help-text"
+            >
               {helpText}
-            </Text>
-          </TextContent>
+            </Content>
+          </Content>
         )}
         {props.children}
       </div>

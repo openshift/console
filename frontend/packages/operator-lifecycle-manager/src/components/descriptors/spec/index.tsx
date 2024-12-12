@@ -185,7 +185,6 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
             setErrorMessage(null);
           }}
           label={t('public~True')}
-          labelOff={t('public~False')}
         />
         &nbsp;&nbsp;
         {checked !== Boolean(value) && confirmed && <LoadingInline />}

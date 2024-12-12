@@ -743,8 +743,13 @@ const EditYAMLInner = (props) => {
   const hasSidebarContent = showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
   const sidebarLink =
     !showSidebar && hasSidebarContent ? (
-      <Button type="button" variant="link" isInline onClick={toggleSidebar}>
-        <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+      <Button
+        icon={<InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />}
+        type="button"
+        variant="link"
+        isInline
+        onClick={toggleSidebar}
+      >
         {t('public~View sidebar')}
       </Button>
     ) : null;
@@ -876,12 +881,13 @@ const EditYAMLInner = (props) => {
                   </Button>
                   {canDownload && (
                     <Button
+                      icon={<DownloadIcon />}
                       type="submit"
                       variant="secondary"
                       className="pf-v5-c-button--align-right hidden-sm hidden-xs"
                       onClick={() => download()}
                     >
-                      <DownloadIcon /> {t('public~Download')}
+                      {t('public~Download')}
                     </Button>
                   )}
                 </ActionGroup>

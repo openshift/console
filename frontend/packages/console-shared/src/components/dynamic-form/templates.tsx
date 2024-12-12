@@ -129,12 +129,12 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
             {item.hasRemove && (
               <div className="row co-dynamic-form__array-field-group-remove">
                 <Button
+                  icon={<MinusCircleIcon className="co-icon-space-r" />}
                   id={`${item.key}_remove-btn`}
                   type="button"
                   onClick={item.onDropIndexClick(item.index)}
                   variant="link"
                 >
-                  <MinusCircleIcon className="co-icon-space-r" />
                   {t('console-shared~Remove {{singularLabel}}', { singularLabel: label })}
                 </Button>
               </div>
@@ -144,8 +144,13 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
         );
       })}
       <div className="row">
-        <Button id={`${idSchema.$id}_add-btn`} type="button" onClick={onAddClick} variant="link">
-          <PlusCircleIcon className="co-icon-space-r" />
+        <Button
+          icon={<PlusCircleIcon className="co-icon-space-r" />}
+          id={`${idSchema.$id}_add-btn`}
+          type="button"
+          onClick={onAddClick}
+          variant="link"
+        >
           {t('console-shared~Add {{singularLabel}}', { singularLabel: label })}
         </Button>
       </div>

@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Radio, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Alert, Radio, Content, ContentVariants } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   documentationURLs,
@@ -235,8 +235,8 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
               variant="info"
               data-test="update-cluster-modal-not-recommended-alert"
             >
-              <TextContent>
-                <Text component={TextVariants.p}>
+              <Content>
+                <Content component={ContentVariants.p}>
                   <LinkifyExternal>
                     {desiredNotRecommendedUpdateConditions.message.split('\n').map((item) => (
                       <React.Fragment key={item}>
@@ -245,8 +245,8 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                       </React.Fragment>
                     ))}
                   </LinkifyExternal>
-                </Text>
-              </TextContent>
+                </Content>
+              </Content>
             </Alert>
           )}
         </div>

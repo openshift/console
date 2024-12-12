@@ -2,14 +2,12 @@ import * as React from 'react';
 import {
   Skeleton,
   EmptyState,
-  EmptyStateIcon,
   EmptyStateBody,
   Divider,
   Menu,
   MenuItem,
   MenuContent,
   MenuList,
-  EmptyStateHeader,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import fuzzysearch from 'fuzzysearch';
@@ -103,12 +101,12 @@ const NamespaceDropdown: React.FC = () => {
     ? t('console-app~Projects failed to load. Check your connection and reload the page.')
     : t('console-app~Namespaces failed to load. Check your connection and reload the page.');
   const loadErrorState: JSX.Element = optionsLoadError ? (
-    <EmptyState data-test={'dropdown console.preferredNamespace error'}>
-      <EmptyStateHeader
-        titleText={<>{t('console-app~Unable to load')}</>}
-        icon={<EmptyStateIcon icon={ExclamationCircleIcon} />}
-        headingLevel="h4"
-      />
+    <EmptyState
+      headingLevel="h4"
+      icon={ExclamationCircleIcon}
+      titleText={<>{t('console-app~Unable to load')}</>}
+      data-test={'dropdown console.preferredNamespace error'}
+    >
       <EmptyStateBody>{loadErrorDescription}</EmptyStateBody>
     </EmptyState>
   ) : null;

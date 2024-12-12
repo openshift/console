@@ -460,17 +460,11 @@ const FieldGroup: React.FC<FieldGroupProps> = ({ children, isExpanded = false, i
 
   return (
     <div id={`DEPRECATED_${id}_field-group`} className="co-dynamic-form__field-group">
-      <AccordionItem>
-        <AccordionToggle
-          id={`DEPRECATED_${id}_accordion-toggle`}
-          onClick={onToggle}
-          isExpanded={expanded}
-        >
+      <AccordionItem isExpanded={expanded}>
+        <AccordionToggle id={`DEPRECATED_${id}_accordion-toggle`} onClick={onToggle}>
           <label htmlFor={`DEPRECATED_${id}_accordion-content`}>{label}</label>
         </AccordionToggle>
-        <AccordionContent id={`DEPRECATED_${id}_accordion-content`} isHidden={!expanded}>
-          {children}
-        </AccordionContent>
+        <AccordionContent id={`DEPRECATED_${id}_accordion-content`}>{children}</AccordionContent>
       </AccordionItem>
     </div>
   );
@@ -830,7 +824,6 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           isChecked={(_.isNil(currentValue) ? false : currentValue) as boolean}
           onChange={(_event, value) => handleFormDataUpdate(path, value)}
           label={t('public~True')}
-          labelOff={t('public~False')}
         />
       );
     }
@@ -1018,12 +1011,12 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               {fieldLists.length > 1 && (
                 <div className="row co-array-field-group__remove">
                   <Button
+                    icon={<MinusCircleIcon className="co-icon-space-r" />}
                     type="button"
                     className="co-array-field-group__remove-btn"
                     onClick={() => removeArrayFieldGroup(fieldLists, index)}
                     variant="link"
                   >
-                    <MinusCircleIcon className="co-icon-space-r" />
                     {t('olm~Remove {{item}}', { item: singularGroupDisplayName })}
                   </Button>
                 </div>
@@ -1034,8 +1027,12 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
             </React.Fragment>
           ))}
           <div className="row">
-            <Button type="button" onClick={() => addArrayFieldGroup(fieldLists)} variant="link">
-              <PlusCircleIcon className="co-icon-space-r" />
+            <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              type="button"
+              onClick={() => addArrayFieldGroup(fieldLists)}
+              variant="link"
+            >
               {t('olm~Add {{item}}', { item: singularGroupDisplayName })}
             </Button>
           </div>

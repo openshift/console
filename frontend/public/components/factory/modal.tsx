@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
-import { ActionGroup, Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { ActionGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
 import CloseButton from '@console/shared/src/components/close-button';
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
@@ -97,8 +97,8 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
   close,
 }) => (
   <div className={className}>
-    <TextContent>
-      <Text component={TextVariants.h1} data-test-id="modal-title">
+    <Content>
+      <Content component={ContentVariants.h1} data-test-id="modal-title">
         {children}
         {close && (
           <CloseButton
@@ -108,8 +108,8 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
             }}
           />
         )}
-      </Text>
-    </TextContent>
+      </Content>
+    </Content>
   </div>
 );
 

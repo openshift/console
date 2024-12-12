@@ -8,7 +8,7 @@ import {
   PageSection,
   Stack,
   StackItem,
-  Text,
+  Content,
   Title,
   Tooltip,
 } from '@patternfly/react-core';
@@ -95,18 +95,21 @@ const Lightspeed: React.FC = () => {
     <>
       <div className="lightspeed__popover lightspeed__popover--collapsed">
         <Page>
-          <PageSection variant="light" isFilled>
+          <PageSection hasBodyWrapper={false} isFilled>
             <Stack hasGutter>
               <StackItem>
                 <div className="lightspeed__welcome-logo" />
                 <Title headingLevel="h1" className="pf-v5-u-mb-sm">
                   {t('console-app~Meet OpenShift Lightspeed')}
                 </Title>
-                <Text className="pf-v5-u-color-200 pf-v5-u-font-size-lg pf-v5-u-mb-md">
+                <Content
+                  component="p"
+                  className="pf-v5-u-color-200 pf-v5-u-font-size-lg pf-v5-u-mb-md"
+                >
                   {t(
                     "console-app~Unlock possibilities and enhance productivity with the AI-powered assistant's expert guidance in your OpenShift web console.",
                   )}
-                </Text>
+                </Content>
               </StackItem>
               <StackItem isFilled>
                 <Title headingLevel="h2" className="pf-v5-u-mb-md">
@@ -146,11 +149,11 @@ const Lightspeed: React.FC = () => {
                     isInline
                     title={t('console-app~Must have administrator access')}
                   >
-                    <Text>
+                    <Content component="p">
                       {t(
                         'console-app~Contact your administrator and ask them to install Red Hat OpenShift Lightspeed.',
                       )}
-                    </Text>
+                    </Content>
                   </Alert>
                 </StackItem>
               )}

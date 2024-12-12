@@ -322,7 +322,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
           fieldId="basic-settings-name"
           isRequired
           label={t('network-attachment-definition-plugin~Name')}
-          labelIcon={
+          labelHelp={
             <Popover
               aria-label={'Help'}
               bodyContent={() =>

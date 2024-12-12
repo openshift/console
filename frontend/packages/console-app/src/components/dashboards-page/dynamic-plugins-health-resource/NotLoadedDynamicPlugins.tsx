@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StackItem, TextList, TextListItem } from '@patternfly/react-core';
+import { StackItem, Content } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
 import { ConsolePluginModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -9,17 +9,17 @@ import { StatusPopupSection } from '@console/shared/src/components/dashboard/sta
 const NotLoadedDynamicPlugins: React.FC<NotLoadedDynamicPluginsProps> = ({ plugins, label }) => (
   <StackItem>
     <StatusPopupSection firstColumn={label}>
-      <TextList>
+      <Content component="ul">
         {plugins.map((plugin) => (
-          <TextListItem key={plugin.pluginName}>
+          <Content component="li" key={plugin.pluginName}>
             <ResourceLink
               kind={referenceForModel(ConsolePluginModel)}
               name={plugin.pluginName}
               hideIcon
             />
-          </TextListItem>
+          </Content>
         ))}
-      </TextList>
+      </Content>
     </StatusPopupSection>
   </StackItem>
 );

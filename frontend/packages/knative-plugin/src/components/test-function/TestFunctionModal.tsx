@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, ModalVariant, Title, TitleSizes } from '@patternfly/react-core';
+import { Button, Title, TitleSizes } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ModalComponentProps } from '@console/internal/components/factory/modal';

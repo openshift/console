@@ -5,8 +5,8 @@ import {
   FormGroup,
   Hint,
   HintBody,
-  Text,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
@@ -115,7 +115,7 @@ const PacOverview: React.FC<PacOverviewProps> = ({
           <FormGroup fieldId="app-overview">
             {annotations?.appName && (
               <FormGroup label={t('pipelines-plugin~App Name')} fieldId="app-name">
-                <Text component={TextVariants.small}>{annotations.appName}</Text>
+                <Content component={ContentVariants.small}>{annotations.appName}</Content>
               </FormGroup>
             )}
             <br />

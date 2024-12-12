@@ -188,8 +188,12 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
         </div>
       }
     >
-      <Button className="hidden-sm hidden-xs" type="button" variant="link">
-        <QuestionCircleIcon className="co-icon-space-r" />
+      <Button
+        icon={<QuestionCircleIcon className="co-icon-space-r" />}
+        className="hidden-sm hidden-xs"
+        type="button"
+        variant="link"
+      >
         {t('public~Do you need to work with this ImageStream outside of the web console?')}
       </Button>
     </Popover>

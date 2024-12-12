@@ -38,9 +38,10 @@ const ClouldShellMastheadAction: React.FC<Props> = ({ onClick, className, open }
           <SplitItem>
             <span
               style={{
-                color: 'var(--pf-v5-global--active-color--100)',
-                fontSize: 'var(--pf-v5-global--FontSize--xs)',
-                paddingLeft: 'var(--pf-v5-global--spacer--md)',
+                color:
+                  'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--active-color--100 */,
+                fontSize: 'var(--pf-t--global--font--size--xs)',
+                paddingLeft: 'var(--pf-t--global--spacer--md)',
               }}
             >
               <CheckIcon />

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
+import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts/victory';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +36,13 @@ const LabelComponent = ({ clusterID, ...props }) => (
       riskSorting[props.datum.id] + 1
     }`}
   >
-    <ChartLabel {...props} style={{ fill: 'var(--pf-v5-global--link--Color)' }} />
+    <ChartLabel
+      {...props}
+      style={{
+        fill:
+          'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--link--Color */,
+      }}
+    />
   </ExternalLink>
 );
 

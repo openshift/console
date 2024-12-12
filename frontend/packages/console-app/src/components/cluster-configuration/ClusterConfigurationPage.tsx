@@ -4,9 +4,7 @@ import {
   Tab,
   TabProps,
   EmptyState,
-  EmptyStateIcon,
   EmptyStateBody,
-  EmptyStateHeader,
   TabContent,
   TabContentProps,
   TabTitleText,
@@ -110,12 +108,11 @@ const ClusterConfigurationPage: React.FC = () => {
         {!loaded ? (
           <LoadingBox />
         ) : clusterConfigurationTabs.length === 0 ? (
-          <EmptyState>
-            <EmptyStateHeader
-              titleText={<>{t('console-app~Insufficient permissions')}</>}
-              icon={<EmptyStateIcon icon={LockIcon} />}
-              headingLevel="h1"
-            />
+          <EmptyState
+            headingLevel="h1"
+            icon={LockIcon}
+            titleText={<>{t('console-app~Insufficient permissions')}</>}
+          >
             <EmptyStateBody>
               {t(
                 'console-app~You do not have sufficient permissions to read any cluster configuration.',

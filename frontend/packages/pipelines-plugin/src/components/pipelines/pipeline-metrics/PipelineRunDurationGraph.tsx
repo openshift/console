@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
+import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts/victory';
 import { Bullseye, Flex, FlexItem, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import Measure from 'react-measure';

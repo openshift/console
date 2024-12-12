@@ -15,7 +15,6 @@ import {
   Switch,
   TextInput,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import fuzzysearch from 'fuzzysearch';
@@ -44,17 +43,16 @@ export const NoResults: React.FC<{
   return (
     <>
       <Divider />
-      <EmptyState>
-        <EmptyStateHeader
-          titleText={
-            <>
-              {isProjects
-                ? t('console-shared~No projects found')
-                : t('console-shared~No namespaces found')}
-            </>
-          }
-          headingLevel="h4"
-        />
+      <EmptyState
+        headingLevel="h4"
+        titleText={
+          <>
+            {isProjects
+              ? t('console-shared~No projects found')
+              : t('console-shared~No namespaces found')}
+          </>
+        }
+      >
         <EmptyStateBody>{t('console-shared~No results match the filter criteria.')}</EmptyStateBody>
         <EmptyStateFooter>
           <EmptyStateActions>

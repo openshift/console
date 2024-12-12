@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartLabel } from '@patternfly/react-charts';
+import { ChartLabel } from '@patternfly/react-charts/victory';
 import * as classNames from 'classnames';
 import i18next, { TFunction } from 'i18next';
 import * as _ from 'lodash';

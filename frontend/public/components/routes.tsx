@@ -344,8 +344,13 @@ const CustomRouteHelp: React.FC<CustomRouteHelpProps> = ({ host, routerCanonical
         </div>
       }
     >
-      <Button className="pf-m-link--align-left" type="button" variant="link">
-        <QuestionCircleIcon /> {t('public~Do you need to set up custom DNS?')}
+      <Button
+        icon={<QuestionCircleIcon />}
+        className="pf-m-link--align-left"
+        type="button"
+        variant="link"
+      >
+        {t('public~Do you need to set up custom DNS?')}
       </Button>
     </Popover>
   );
