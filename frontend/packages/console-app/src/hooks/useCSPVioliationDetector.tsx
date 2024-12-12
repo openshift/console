@@ -166,7 +166,7 @@ export const useCSPViolationDetector = () => {
   }, [reportViolation]);
 };
 
-// A subset of properties from a SecurityPolicyViolationEvent which identify a unique CSP violation
+/** A subset of properties from a SecurityPolicyViolationEvent which identify a unique CSP violation */
 type CSPViolationReportProperties =
   // The URI of the resource that was blocked because it violates a policy.
   | 'blockedURI'
@@ -192,10 +192,10 @@ type CSPViolationReportProperties =
   // HTTP status code of the document or worker in which the violation occurred.
   | 'statusCode';
 
-// A CSPViolationReport represents a unique CSP violation per plugin
+/** A CSPViolationReport represents a unique CSP violation per plugin */
 type CSPViolationReport = Pick<SecurityPolicyViolationEvent, CSPViolationReportProperties> & {
   pluginName: string;
 };
 
-// A CSPViolationRecord represents a unique CSP violation per plugin, per occurrance
+/** A CSPViolationRecord represents a unique CSP violation per plugin, per occurrance */
 type CSPViolationRecord = CSPViolationReport & { timestamp: number };
