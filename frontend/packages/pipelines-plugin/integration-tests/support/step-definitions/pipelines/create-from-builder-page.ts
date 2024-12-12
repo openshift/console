@@ -64,10 +64,6 @@ When('user enters pipeline name as {string}', (pipelineName: string) => {
   pipelineBuilderPage.enterPipelineName(pipelineName);
 });
 
-When('user selects {string} from Task drop down', (taskName: string) => {
-  pipelineBuilderPage.selectTask(taskName);
-});
-
 When('user clicks Create button on Pipeline Builder page', () => {
   pipelineBuilderPage.clickCreateButton();
 });
@@ -179,10 +175,6 @@ When('user clicks on Optional Workspace checkbox', () => {
 
 When('user enters pipeline name {string}', (pipelineName: string) => {
   pipelineBuilderPage.enterPipelineName(pipelineName);
-});
-
-And('user selects the first task as {string}', (task: string) => {
-  pipelineBuilderPage.selectTask(task);
 });
 
 And('user clicks on Add finally task', () => {
@@ -372,10 +364,6 @@ And(
   },
 );
 
-When('user selects {string} from Select task list', (task: string) => {
-  pipelineBuilderPage.selectTask(task);
-});
-
 And('user enters pipeline name as {string}', (pipelineName: string) => {
   pipelineBuilderPage.enterPipelineName(pipelineName);
 });
@@ -542,7 +530,15 @@ When('user searches {string} in quick search bar', (searchItem: string) => {
 
 When('user selects {string} from {string}', (taskName: string, publisher: string) => {
   cy.get('[aria-label="Quick search list"]').should('be.visible');
-  cy.get(`[data-test="item-name-${taskName}-${publisher}"]`).click();
+  cy.get(`[data-test="item-name-${taskName}-${publisher}"]`)
+    .its('length')
+    .then((length) => {
+      if (length > 1) {
+        cy.get(`[data-test="item-name-${taskName}-${publisher}"]`).eq(1).click();
+      } else {
+        cy.get(`[data-test="item-name-${taskName}-${publisher}"]`).first().click();
+      }
+    });
 });
 
 When('user selects {string} from git community', () => {
@@ -574,7 +570,15 @@ When('user should see the Create button enabled after installation', () => {
 When('user selects {string} from Add task quick search', (searchItem: string) => {
   cy.byTestID('task-list').click();
   cy.get(pipelineBuilderPO.formView.quickSearch).type(searchItem);
-  cy.byTestID(`item-name-${searchItem}-Red Hat`).click();
+  cy.get(`[data-test="item-name-${searchItem}-Red Hat"]`)
+    .its('length')
+    .then((length) => {
+      if (length > 1) {
+        cy.get(`[data-test="item-name-${searchItem}-Red Hat"]`).eq(1).click();
+      } else {
+        cy.get(`[data-test="item-name-${searchItem}-Red Hat"]`).first().click();
+      }
+    });
   cy.get(pipelineBuilderPO.formView.addInstallTask).click();
 });
 

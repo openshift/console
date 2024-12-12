@@ -30,12 +30,18 @@ spec:
         - name: revision
           value: $(params.GIT_REVISION)
         - name: subdirectory
-          value: ''
+          value: ""
         - name: deleteExisting
-          value: 'true'
+          value: "true"
       taskRef:
-        kind: ClusterTask
-        name: git-clone
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
       workspaces:
         - name: output
           workspace: workspace
@@ -44,7 +50,7 @@ spec:
         - name: IMAGE
           value: $(params.IMAGE_NAME)
         - name: TLSVERIFY
-          value: 'false'
+          value: "false"
         - name: PATH_CONTEXT
           value: $(params.PATH_CONTEXT)
         - name: VERSION
@@ -52,8 +58,14 @@ spec:
       runAfter:
         - fetch-repository
       taskRef:
-        kind: ClusterTask
-        name: s2i-python
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: s2i-python
+          - name: namespace
+            value: openshift-pipelines
       workspaces:
         - name: source
           workspace: workspace
@@ -64,7 +76,13 @@ spec:
       runAfter:
         - build
       taskRef:
-        kind: ClusterTask
-        name: openshift-client
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: openshift-client
+          - name: namespace
+            value: openshift-pipelines
   workspaces:
     - name: workspace
