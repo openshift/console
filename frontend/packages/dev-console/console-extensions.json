@@ -743,15 +743,15 @@
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "software-catalog",
+      "id": "developer-catalog",
       "perspective": "admin",
       "section": "home",
-      "name": "%devconsole~Software Catalog%",
+      "name": "%devconsole~Developer Catalog%",
       "href": "/catalog",
       "namespaced": true,
       "insertAfter": "search",
       "dataAttributes": {
-        "data-test-id": "Software-catalog-header"
+        "data-test-id": "developer-catalog-header"
       }
     },
     "flags": {
