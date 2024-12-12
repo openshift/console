@@ -22,7 +22,7 @@ export const getSchemaGeneratorConfig = (srcFile: string, typeName?: string): ts
 });
 
 export const getProgram = (config: tsj.Config): ts.Program => {
-  const program = tsj.createProgram(config);
+  const program = tsj.createProgram({ ...tsj.DEFAULT_CONFIG, ...config });
 
   const diagnostics = ts.sortAndDeduplicateDiagnostics(ts.getPreEmitDiagnostics(program));
   if (diagnostics.length > 0) {
@@ -33,9 +33,9 @@ export const getProgram = (config: tsj.Config): ts.Program => {
 
   if (diagnosticsErrors.length > 0) {
     throw new Error(
-      `Detected errors while parsing ${relativePath(config.path ?? 'unknown')}, ${String(
-        diagnosticsErrors,
-      )}`,
+      `Detected errors while parsing ${
+        config.path ? relativePath(config.path) : 'unknown'
+      }, ${String(diagnosticsErrors)}`,
     );
   }
 

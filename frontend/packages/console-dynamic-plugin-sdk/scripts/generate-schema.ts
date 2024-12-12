@@ -35,7 +35,7 @@ const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTy
   const annotationsReader = new tsj.ExtendedAnnotationsReader(typeChecker);
   const consoleTypeResolver = getConsoleTypeResolver(program);
 
-  const parser = tsj.createParser(program, config, (p) => {
+  const parser = tsj.createParser(program, { ...tsj.DEFAULT_CONFIG, ...config }, (p) => {
     p.addNodeParser(new ConstructorTypeParser());
 
     if (handleConsoleExtensions) {
@@ -52,7 +52,7 @@ const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTy
     }
   });
 
-  const formatter = tsj.createFormatter(config);
+  const formatter = tsj.createFormatter({ ...tsj.DEFAULT_CONFIG, ...config });
   const generator = new tsj.SchemaGenerator(program, parser, formatter, config);
 
   return generator.createSchema(typeName);

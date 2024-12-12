@@ -19,13 +19,11 @@ type PresetOptions = {
   /** Thresholds for the number of cycles detected before emitting an error */
   thresholds?: Partial<{
     /**
-     * Maximum number of total cycles permitted
-     * @default 0
+     * Maximum number of total cycles permitted. Defaults to 0
      */
     totalCycles: number;
     /**
-     * Maximum number of min-length cycles (A -> B -> A) permitted
-     * @default 0
+     * Maximum number of min-length cycles (A -\> B -\> A) permitted. Defaults to 0
      */
     minLengthCycles: number;
   }>;
