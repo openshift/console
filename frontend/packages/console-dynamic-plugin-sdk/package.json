@@ -22,7 +22,7 @@
     "@types/fs-extra": "9.x",
     "ejs": "3.x",
     "fs-extra": "9.x",
-    "ts-json-schema-generator": "0.98.0",
+    "ts-json-schema-generator": "2.3.0",
     "tsutils": "3.21.0"
   }
 }
