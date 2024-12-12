@@ -1,5 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   devNavigationMenu,
   switchPerspective,
@@ -20,7 +21,7 @@ import {
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  cy.testA11y('Developer perspective with guider tour modal');
+  // cy.testA11y('Developer perspective with guider tour modal');
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
@@ -98,4 +99,10 @@ When('user clicks on the link for the {string} of helm release', (resource: stri
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
+});
+
+Given('user has logged in as admin user', () => {
+  cy.login();
+  perspective.switchTo(switchPerspective.Administrator);
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
 });

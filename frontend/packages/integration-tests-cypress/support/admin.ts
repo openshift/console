@@ -25,7 +25,9 @@ Cypress.Commands.add('initDeveloper', () => {
   cy.log('redirect to home');
   cy.visit('/add');
   cy.byTestID('loading-indicator').should('not.exist');
+  cy.document().its('readyState').should('eq', 'complete');
   cy.log('ensure perspective switcher is set to Developer');
+  guidedTour.close();
   nav.sidenav.switcher.changePerspectiveTo('Developer');
   cy.log('switched perspective to Developer');
   nav.sidenav.switcher.shouldHaveText('Developer');
