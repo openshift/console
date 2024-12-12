@@ -2,13 +2,12 @@ import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { Dropdown } from '../../utils';
-import { SecretType } from './const';
 import { BasicAuthSubform } from './BasicAuthSubform';
 import { SSHAuthSubform } from './SSHAuthSubform';
-import { SecretStringData } from './types';
+import { SecretStringData, SecretType, SecretSubFormProps } from './types';
 
 class SourceSecretFormWithTranslation extends React.Component<
-  SourceSecretFormProps & WithT,
+  SecretSubFormProps & WithT,
   SourceSecretFormState
 > {
   constructor(props) {
@@ -77,11 +76,4 @@ type SourceSecretFormState = {
   type: SecretType;
   stringData: SecretStringData;
   authType: SecretType.basicAuth | SecretType.sshAuth;
-};
-
-type SourceSecretFormProps = {
-  onChange: Function;
-  stringData: SecretStringData;
-  secretType: SecretType;
-  isCreate: boolean;
 };

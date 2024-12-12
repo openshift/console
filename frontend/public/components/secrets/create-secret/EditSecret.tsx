@@ -3,9 +3,11 @@ import * as React from 'react';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
 import { useParams } from 'react-router-dom-v5-compat';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { K8sResourceKind } from '../../../module/k8s';
-import { Firehose, LoadingBox, StatusBox } from '../../utils';
-import { SecretTypeAbstraction } from './const';
+import { Firehose } from '../../utils/firehose';
+import { SecretTypeAbstraction } from './types';
 import { toTypeAbstraction } from './utils';
 import { SecretFormWrapper } from './SecretFormWrapper';
 

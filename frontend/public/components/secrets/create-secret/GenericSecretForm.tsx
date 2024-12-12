@@ -6,12 +6,12 @@ import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import * as ITOB from 'istextorbinary';
-import { KeyValueEntryFormState, SecretStringData } from './types';
+import { isBinary } from 'istextorbinary';
+import { KeyValueEntry, SecretSubFormProps } from './types';
 import { KeyValueEntryForm } from './KeyValueEntryForm';
 
 class GenericSecretFormWithTranslation extends React.Component<
-  GenericSecretFormProps & WithT,
+  SecretSubFormProps & WithT,
   GenericSecretFormState
 > {
   constructor(props) {
@@ -35,14 +35,14 @@ class GenericSecretFormWithTranslation extends React.Component<
       return [this.newGenericSecretEntry()];
     }
     return _.map(genericSecretObject, (value, key) => {
-      const isBinary = ITOB.isBinary(null, value);
+      const contentIsBinary = isBinary(null, value);
       return {
         uid: _.uniqueId(),
         entry: {
           key,
-          value: isBinary ? Base64.encode(value) : value,
-          isBase64: isBinary,
-          isBinary,
+          value: contentIsBinary ? Base64.encode(value) : value,
+          isBase64: contentIsBinary,
+          isBinary: contentIsBinary,
         },
       };
     });
@@ -141,15 +141,9 @@ class GenericSecretFormWithTranslation extends React.Component<
 
 export const GenericSecretForm = withTranslation()(GenericSecretFormWithTranslation);
 
-type GenericSecretFormProps = {
-  onChange: Function;
-  stringData: SecretStringData;
-  isCreate: boolean;
-};
-
 type GenericSecretFormState = {
   secretEntriesArray: {
-    entry: KeyValueEntryFormState;
+    entry: KeyValueEntry;
     uid: string;
   }[];
 };

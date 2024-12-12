@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
-import { WebHookSecretKey } from '../../secret';
 import { useTranslation } from 'react-i18next';
-import { SecretType, SecretTypeAbstraction } from './const';
+import { Base64 } from 'js-base64';
+import { WebHookSecretKey } from './const';
+import { SecretTypeAbstraction, SecretType, PullSecretCredential } from './types';
 
 export const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
   switch (typeAbstraction) {
@@ -49,7 +50,7 @@ export const determineSecretType = (stringData): SecretType => {
   return SecretType.opaque;
 };
 
-export const getImageSecretKey = (secretType: SecretType): string => {
+export const getPullSecretFileName = (secretType: SecretType): string => {
   switch (secretType) {
     case SecretType.dockercfg:
       return '.dockercfg';
@@ -94,3 +95,86 @@ export const useSecretDescription = (typeAbstraction: SecretTypeAbstraction): st
       return null;
   }
 };
+
+const isDockerConfigJSONData = (value: PullSecretData): value is DockerConfigJSON =>
+  Boolean(value?.auths);
+
+const getDockerConfigData = (pullSecretData: any): DockerCfg =>
+  isDockerConfigJSONData(pullSecretData) ? pullSecretData.auths : pullSecretData;
+
+export const newPullSecretCredential = (): PullSecretCredential => ({
+  address: '',
+  username: '',
+  password: '',
+  email: '',
+  uid: _.uniqueId(),
+});
+
+export const arrayifyPullSecret = (
+  pullSecretJSON: string,
+  onError: (e: any) => void,
+): PullSecretCredential[] => {
+  try {
+    const pullSecretData = pullSecretJSON ? JSON.parse(pullSecretJSON) : {};
+    const dockerConfigData = getDockerConfigData(pullSecretData);
+    const credentials = Object.entries<DockerConfigCredential>(dockerConfigData ?? {}).map(
+      ([key, { auth, email, password, username }]) => {
+        const decodedAuth = Base64.decode(auth || '');
+        const [parsedUsername, parsedPassword] = decodedAuth?.split(':') ?? [];
+        return {
+          address: key,
+          username: parsedUsername || username || '',
+          password: parsedPassword || password || '',
+          email: email || '',
+          uid: _.uniqueId(),
+        };
+      },
+    );
+    return credentials.length > 0 ? credentials : [newPullSecretCredential()];
+  } catch (err) {
+    onError(`Error parsing pull secret: ${err.message}`);
+    return [newPullSecretCredential()];
+  }
+};
+
+export const stringifyPullSecret = (
+  credentials: PullSecretCredential[],
+  secretType: SecretType,
+): string => {
+  const auths = (credentials ?? []).reduce((acc, { address, username, password, email }) => {
+    if (!address) {
+      return acc;
+    }
+    const auth = username && password ? Base64.encode(`${username}:${password}`) : '';
+    return {
+      ...acc,
+      [address]: {
+        ...(auth ? { auth } : {}),
+        ...(username ? { username } : {}),
+        ...(password ? { password } : {}),
+        ...(email ? { email } : {}),
+      },
+    };
+  }, {});
+  if (Object.keys(auths).length === 0) {
+    return '';
+  }
+  return secretType === SecretType.dockercfg ? JSON.stringify(auths) : JSON.stringify({ auths });
+};
+
+type DockerConfigCredential = {
+  username: string;
+  password: string;
+  email: string;
+  auth: string;
+};
+
+type DockerConfigJSON = {
+  auths: DockerCfg;
+};
+
+type DockerCfg = {
+  [key: string]: DockerConfigCredential;
+};
+
+type PullSecretData = DockerCfg | DockerConfigJSON;

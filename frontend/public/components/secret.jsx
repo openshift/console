@@ -17,11 +17,9 @@ import {
   navFactory,
   resourceObjPath,
 } from './utils';
-import { SecretType } from './secrets/create-secret/const';
+import { SecretType } from './secrets/create-secret/types';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
-
-export const WebHookSecretKey = 'WebHookSecretKey';
 
 export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;
