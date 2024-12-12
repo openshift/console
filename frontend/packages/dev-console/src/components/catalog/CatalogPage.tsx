@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
   useQueryParams,
@@ -17,7 +16,6 @@ import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateP
 const CatalogPage: React.FC = () => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
-  const [activePerspective] = useActivePerspective();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const { ns: namespace } = useParams();
   const categories = useCatalogCategories();
@@ -37,11 +35,7 @@ const CatalogPage: React.FC = () => {
               {...service}
               enableDetailsPanel
               categories={categories}
-              title={
-                activePerspective === 'dev'
-                  ? t('devconsole~Developer Catalog')
-                  : t('devconsole~Software Catalog')
-              }
+              title={t('devconsole~Developer Catalog')}
               description={t(
                 'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the catalog. Cluster administrators can customize the content made available in the catalog.',
               )}
