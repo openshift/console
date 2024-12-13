@@ -8,10 +8,6 @@ import { a11yTestResults } from './a11y';
 import './admin';
 
 declare global {
-  interface Window {
-    windowError?: string[];
-  }
-
   namespace Cypress {
     interface Chainable {
       visitAndWait(
@@ -86,8 +82,8 @@ after(() => {
 });
 
 export const checkErrors = () =>
-  cy.window().then(({ windowError }) => {
-    assert.isTrue(!windowError || windowError.length === 0, String(windowError));
+  cy.window().then((win) => {
+    assert.isTrue(!win.windowError, win.windowError);
   });
 
 export const testName = `test-${Math.random()

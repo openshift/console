@@ -591,18 +591,18 @@ graphQLReady.onReady(() => {
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
   // Used by GUI tests to check for unhandled exceptions
-  window.windowError = [];
+  window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
     const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
-    window.windowError.push(formattedMessage);
+    window.windowError = formattedMessage;
     // eslint-disable-next-line no-console
     console.error(formattedMessage, error || message);
   };
   window.onunhandledrejection = (promiseRejectionEvent) => {
     const { reason } = promiseRejectionEvent;
     const formattedMessage = `unhandled promise rejection: ${reason}`;
-    window.windowError.push(formattedMessage);
+    window.windowError = formattedMessage;
     // eslint-disable-next-line no-console
     console.error(formattedMessage, reason);
   };
