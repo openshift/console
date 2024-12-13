@@ -1,4 +1,3 @@
-import fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
 import {
@@ -9,12 +8,11 @@ import {
   PrometheusRule,
   Rule,
   Silence,
-  SilenceStates,
   PrometheusRulesResponse,
   PerspectiveType,
 } from '@console/dynamic-plugin-sdk';
 
-import { AlertSource, MonitoringResource, Target } from './types';
+import { MonitoringResource } from './types';
 
 export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
 
@@ -31,9 +29,6 @@ export const SilenceResource: MonitoringResource = {
   plural: '/monitoring/silences',
   abbr: 'SL',
 };
-
-export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
-  fuzzy(_.toLower(a), _.toLower(b));
 
 export const labelsToParams = (labels: PrometheusLabels) =>
   _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
@@ -79,10 +74,6 @@ export const getAlertsAndRules = (
   return { alerts, rules };
 };
 
-export const alertState = (a: Alert): AlertStates => a?.state;
-
-export const silenceState = (s: Silence): SilenceStates => s?.status?.state;
-
 export const silenceMatcherEqualitySymbol = (isEqual: boolean, isRegex: boolean): string => {
   if (isRegex) {
     return isEqual ? '=~' : '!~';
@@ -125,8 +116,3 @@ export const alertingRuleStateOrder = (rule: Rule): ListOrder => {
     (state) => Number.MAX_SAFE_INTEGER - (counts[state] ?? 0),
   );
 };
-
-export const targetSource = (target: Target): AlertSource =>
-  target.labels?.prometheus === 'openshift-monitoring/k8s'
-    ? AlertSource.Platform
-    : AlertSource.User;
