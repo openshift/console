@@ -6,6 +6,8 @@ export type CreateProjectModalProps = {
   onSubmit?: (project: K8sResourceCommon) => void;
 };
 
+export type UseCreateProjectModal = () => (props?: CreateProjectModalProps) => void;
+
 /** This extension can be used to pass a component that will be rendered in place of the standard create project modal. */
 export type CreateProjectModal = ExtensionDeclaration<
   'console.create-project-modal',

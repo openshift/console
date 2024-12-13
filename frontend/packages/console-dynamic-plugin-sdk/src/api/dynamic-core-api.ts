@@ -38,6 +38,7 @@ import {
   UseQuickStartContext,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
+import { UseCreateProjectModal } from '../extensions';
 
 export * from '../app/components';
 export * from './common-types';
@@ -882,6 +883,28 @@ export const useLabelsModal: UseLabelsModal = require('@console/shared/src/hooks
  */
 export const useActiveNamespace: UseActiveNamespace = require('@console/shared/src/hooks/useActiveNamespace')
   .useActiveNamespace;
+
+/**
+ * A hook that provides a callback to launch a modal for open the CreateProjectModal or CreateNamespaceModal
+ * depending on the flag OPENSHIFT.
+ *
+ * @returns A function which will launch a modal for creating a project.
+ * @example
+ * ```tsx
+ * const CreateProjectModalButton = () => {
+ *   const { t } = useTranslation();
+ *   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal()
+ *   const createProject = createNamespaceOrProjectModal({
+ *     onSubmit: (project: K8sResourceKind) => {
+ *       doSomethingWithIt(project);
+ *     },
+ *   });
+ *   return <button onClick={createProject}>{t('Create Project')}</button>
+ * }
+ * ```
+ */
+export const useCreateNamespaceOrProjectModal: UseCreateProjectModal = require('@console/shared/src/hooks/useCreateNamespaceOrProjectModal')
+  .useCreateNamespaceOrProjectModal;
 
 /**
  * Hook that provides a user setting value and a callback for setting the user setting value.

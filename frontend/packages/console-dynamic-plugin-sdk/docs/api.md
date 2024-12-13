@@ -67,12 +67,13 @@
 65.  [useDeleteModal](#usedeletemodal)
 66.  [useLabelsModal](#uselabelsmodal)
 67.  [useActiveNamespace](#useactivenamespace)
-68.  [useUserSettings](#useusersettings)
-69.  [useQuickStartContext](#usequickstartcontext)
-70. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-71. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-72. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-73. [DEPRECATED] [YAMLEditor](#yamleditor)
+68.  [useCreateNamespaceOrProjectModal](#usecreatenamespaceorprojectmodal)
+69.  [useUserSettings](#useusersettings)
+70.  [useQuickStartContext](#usequickstartcontext)
+71. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+72. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+73. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+74. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -2404,6 +2405,43 @@ const Component: React.FC = (props) => {
 ### Returns
 
 A tuple containing the current active namespace and setter callback.
+
+
+---
+
+## `useCreateNamespaceOrProjectModal`
+
+### Summary 
+
+A hook that provides a callback to launch a modal for open the CreateProjectModal or CreateNamespaceModal<br/>depending on the flag OPENSHIFT.
+
+
+
+### Example
+
+
+```tsx
+const CreateProjectModalButton = () => {
+  const { t } = useTranslation();
+  const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal()
+  const createProject = createNamespaceOrProjectModal({
+    onSubmit: (project: K8sResourceKind) => {
+      doSomethingWithIt(project);
+    },
+  });
+  return <button onClick={createProject}>{t('Create Project')}</button>
+}
+```
+
+
+
+
+
+
+
+### Returns
+
+A function which will launch a modal for creating a project.
 
 
 ---
