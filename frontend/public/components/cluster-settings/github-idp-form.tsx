@@ -168,7 +168,7 @@ export const AddGitHubPage = () => {
               {t('public~Client ID')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="text"
               onChange={(e) => setClientID(e.currentTarget.value)}
               value={clientID}
@@ -181,7 +181,7 @@ export const AddGitHubPage = () => {
               {t('public~Client secret')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="password"
               onChange={(e) => setClientSecret(e.currentTarget.value)}
               value={clientSecret}
@@ -194,7 +194,7 @@ export const AddGitHubPage = () => {
               {t('public~Hostname')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="text"
               onChange={(e) => setHostname(e.currentTarget.value)}
               value={hostname}
@@ -245,7 +245,7 @@ export const AddGitHubPage = () => {
             )}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

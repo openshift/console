@@ -3,7 +3,7 @@
   padding-left: var(--pf-v5-global--spacer--lg);
 }
 
-.pf-v5-c-expandable-section__toggle-text {
+.pf-v6-c-expandable-section__toggle-text {
   color: var(--pf-v5-global--Color--dark-100) !important;
   &.is-dark {
     color: var(--pf-v5-global--Color--light-100) !important;
@@ -12,19 +12,19 @@
   font-weight: var(--pf-v5-global--FontWeight--bold) !important;
 }
 
-.pf-v5-c-expandable-section__toggle {
+.pf-v6-c-expandable-section__toggle {
   align-items: center;
 }
 
-.pf-v5-c-expandable-section__content {
+.pf-v6-c-expandable-section__content {
   padding-bottom: 0;
 }
 
 .odc-functions-getting-started-grid {
   --min-column-width: 220px;
   box-shadow: none;
-  // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
-  &__header.pf-v5-c-card__header {
+  // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
+  &__header.pf-v6-c-card__header {
     // Use padding sm instead of lg to fix alignment of the KebabToggle action button.
     padding-right: var(--pf-v5-global--spacer--sm);
   }
@@ -35,8 +35,8 @@
     padding-left: var(--pf-v5-global--spacer--sm);
   }
 
-  // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
-  &__content.pf-v5-c-card__body {
+  // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
+  &__content.pf-v6-c-card__body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--min-column-width), 1fr));
 
@@ -45,8 +45,8 @@
     // Hide the border on the right side of the content. Works together wie negative margin below.
     overflow: hidden;
 
-    // Increase css specificity to override a generic [class*="pf-v5-c-"] rule.
-    > .pf-v5-l-flex.pf-m-column {
+    // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
+    > .pf-v6-l-flex.pf-m-column {
       // Show a divider on the right side and hide them in the latest column.
       border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
       margin-right: calc(-1 * var(--pf-v5-global--BorderWidth--sm));

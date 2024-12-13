@@ -109,8 +109,8 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
                   validated={invalidCustomURL ? 'error' : 'default'}
                 />
                 {invalidCustomURL && (
-                  <div className="pf-v5-c-form">
-                    <div className="pf-v5-c-form__helper-text pf-m-error">
+                  <div className="pf-v6-c-form">
+                    <div className="pf-v6-c-form__helper-text pf-m-error">
                       {t('public~Please enter a URL')}
                     </div>
                   </div>

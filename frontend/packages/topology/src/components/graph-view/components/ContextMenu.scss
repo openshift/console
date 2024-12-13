@@ -1,6 +1,6 @@
 .odc-topology-context-menu {
   z-index: 1050;
-  &__kebab-wrapper.pf-v5-c-dropdown__menu-item {
+  &__kebab-wrapper.pf-v6-c-dropdown__menu-item {
     --pf-v5-c-dropdown__menu-item--PaddingTop: 0;
     --pf-v5-c-dropdown__menu-item--PaddingRight: 0;
     --pf-v5-c-dropdown__menu-item--PaddingBottom: 0;
@@ -8,7 +8,7 @@
   }
 }
 
-:root:where(.pf-v5-theme-dark) .pf-v5-c-dropdown__menu-item-icon {
+:root:where(.pf-v5-theme-dark) .pf-v6-c-dropdown__menu-item-icon {
   img {
     filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }

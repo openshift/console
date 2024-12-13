@@ -8,7 +8,7 @@
   overflow-x: hidden;
   overflow-y: auto;
 
-  .pf-v5-c-empty-state {
+  .pf-v6-c-empty-state {
     --pf-v5-c-empty-state__icon--MarginBottom: 0 !important;
   }
 }
@@ -20,7 +20,7 @@
   width: 100%;
 }
 
-.co-status-card__alerts-msg.pf-v5-c-empty-state {
+.co-status-card__alerts-msg.pf-v6-c-empty-state {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -28,7 +28,7 @@
   justify-content: center;
 }
 
-.co-status-card__alerts-icon.pf-v5-c-empty-state__icon {
+.co-status-card__alerts-icon.pf-v6-c-empty-state__icon {
   --pf-v5-c-empty-state__icon--Color: $pf-v5-color-black-400;
 }
 

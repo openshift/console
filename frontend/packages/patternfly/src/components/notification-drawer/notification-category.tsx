@@ -16,19 +16,19 @@ const NotificationCategory: React.FC<NotificationCategoryProps> = ({
     })}
   >
     <button
-      className="pf-v5-c-notification-drawer__group-toggle"
+      className="pf-v6-c-notification-drawer__group-toggle"
       aria-expanded={isExpanded}
       onClick={() => onExpandContents(!isExpanded)}
     >
-      <div className="pf-v5-c-notification-drawer__group-toggle-title">{label}</div>
-      <div className="pf-v5-c-notification-drawer__group-toggle-count">
+      <div className="pf-v6-c-notification-drawer__group-toggle-title">{label}</div>
+      <div className="pf-v6-c-notification-drawer__group-toggle-count">
         <Badge isRead>{count}</Badge>
       </div>
-      <span className="pf-v5-c-notification-drawer__group-toggle-icon">
+      <span className="pf-v6-c-notification-drawer__group-toggle-icon">
         {isExpanded ? <AngleDownIcon /> : <AngleRightIcon />}
       </span>
     </button>
-    <ul className="pf-v5-c-notification-drawer__list" hidden={!isExpanded}>
+    <ul className="pf-v6-c-notification-drawer__list" hidden={!isExpanded}>
       {children}
     </ul>
   </section>

@@ -129,7 +129,7 @@ const SystemSwitch: React.FC<{
             }
             isChecked={isChecked}
             onChange={(_, value) => onChange(value)}
-            className="pf-v5-c-select__menu-item pf-m-action co-namespace-dropdown__switch"
+            className="pf-v6-c-select__menu-item pf-m-action co-namespace-dropdown__switch"
           />
         </MenuSearchInput>
       </MenuSearch>

@@ -68,7 +68,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
           <span style={{ marginRight: 'var(--pf-t--global--spacer--xs)' }}>{repoUrl}</span>
         </ExternalLink>
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'pf-v5-u-text-nowrap')}>
+      <TableData className={classNames(tableColumnClasses[2], 'pf-v6-u-text-nowrap')}>
         {syncStatuses.length > 0 ? (
           <Flex className="gop-gitops-syncStatus">
             <GitOpsSyncFragment

@@ -2,18 +2,18 @@
   --pf-v5-c-nav__list--PaddingTop: 0;
   --pf-v5-c-nav__list--PaddingBottom: 0;
 
-  .pf-v5-c-nav__section:first-child {
-    .pf-v5-c-nav__section-title {
+  .pf-v6-c-nav__section:first-child {
+    .pf-v6-c-nav__section-title {
       --pf-v5-c-nav__section-title--PaddingTop: 0;
 
       border: none;
     }
   }
-  .pf-v5-c-nav__section.no-title {
+  .pf-v6-c-nav__section.no-title {
     border-bottom: 1px solid var(--pf-v5-global--BackgroundColor--dark-200);
     padding-bottom: var(--pf-v5-global--spacer--sm);
     --pf-v5-c-nav__section--section--MarginTop: var(--pf-v5-global--spacer--sm);
-    .pf-v5-c-nav__section-title {
+    .pf-v6-c-nav__section-title {
       --pf-v5-c-nav__section-title--PaddingBottom: 0;
     }
     &:last-child {
@@ -22,7 +22,7 @@
   }
   &--dragging {
     background-color: var(--pf-v5-global--Color--200) !important;
-    .pf-v5-c-nav__link {
+    .pf-v6-c-nav__link {
       background-color: var(--pf-v5-global--Color--200) !important;
     }
     .oc-pinned-resource__unpin-button,

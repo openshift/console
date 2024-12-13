@@ -145,7 +145,7 @@ export const AddRequestHeaderPage = () => {
               {t('public~Challenge URL')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="url"
               onChange={(e) => setChallengeURL(e.currentTarget.value)}
               value={challengeURL}
@@ -163,7 +163,7 @@ export const AddRequestHeaderPage = () => {
               {t('public~Login URL')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="url"
               onChange={(e) => setLoginURL(e.currentTarget.value)}
               value={loginURL}
@@ -210,7 +210,7 @@ export const AddRequestHeaderPage = () => {
             helpText={t('public~The set of headers to check for the email address.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary">
                 {t('public~Add')}
               </Button>

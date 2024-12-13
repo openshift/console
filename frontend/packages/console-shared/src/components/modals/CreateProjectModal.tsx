@@ -177,7 +177,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
               data-test="input-name"
               name="name"
               type="text"
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               onChange={(e) => setName(e.target.value)}
               value={name || ''}
               required
@@ -193,7 +193,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
               id="input-display-name"
               name="displayName"
               type="text"
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               onChange={(e) => setDisplayName(e.target.value)}
               value={displayName || ''}
             />
@@ -207,7 +207,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
             <textarea
               id="input-description"
               name="description"
-              className="pf-v5-c-form-control pf-m-resize-both"
+              className="pf-v6-c-form-control pf-m-resize-both"
               onChange={(e) => setDescription(e.target.value)}
               value={description || ''}
             />

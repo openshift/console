@@ -184,7 +184,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         />
         {!!diskTypeValidationError && (
           <Alert
-            className="pf-v5-u-mt-md lso-disk-type__alert"
+            className="pf-v6-u-mt-md lso-disk-type__alert"
             variant={diskTypeValidationError.variant || AlertVariant.danger}
             title={diskTypeValidationError.title}
             isPlain

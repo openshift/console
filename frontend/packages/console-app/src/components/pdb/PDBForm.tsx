@@ -292,7 +292,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
           )}
           <StackItem>
             <ButtonBar errorMessage={error} inProgress={inProgress}>
-              <ActionGroup className="pf-v5-c-form">
+              <ActionGroup className="pf-v6-c-form">
                 <Button
                   type="submit"
                   id="save-changes"

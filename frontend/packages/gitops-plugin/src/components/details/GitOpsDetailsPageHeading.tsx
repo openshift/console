@@ -31,7 +31,7 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
 
   return (
     <>
-      <div className="pf-v5-c-page__main-breadcrumb">
+      <div className="pf-v6-c-page__main-breadcrumb">
         <BreadCrumbs breadcrumbs={breadcrumbs} />
       </div>
       <div className="gop-gitops-details-page-heading co-m-nav-title co-m-nav-title--breadcrumbs">

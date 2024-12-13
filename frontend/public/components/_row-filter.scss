@@ -5,7 +5,7 @@
   margin-bottom: $pf-v5-global--spacer--xl;
   position: relative;
 
-  // use pseudo element for border so that .pf-v5-c-toggle-group__item(s) overlap
+  // use pseudo element for border so that .pf-v6-c-toggle-group__item(s) overlap
   @media screen and (min-width: $pf-v5-global--breakpoint--md) {
     &::before {
       border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
@@ -20,17 +20,17 @@
     }
   }
 
-  .pf-v5-c-toggle-group {
+  .pf-v6-c-toggle-group {
     overflow: auto;
   }
 }
 
-// .pf-v5-c-toggle-group has a default border-radius
-// Since .co-row-filter wraps both .pf-v5-c-toggle-group and .co-row-filter__items with a boxed border at > 768px,
-// we move the top-right & bottom-right radius from .pf-v5-c-toggle-group__item:list-child to the right side of the .co-row-filter box.
+// .pf-v6-c-toggle-group has a default border-radius
+// Since .co-row-filter wraps both .pf-v6-c-toggle-group and .co-row-filter__items with a boxed border at > 768px,
+// we move the top-right & bottom-right radius from .pf-v6-c-toggle-group__item:list-child to the right side of the .co-row-filter box.
 @media screen and (min-width: $pf-v5-global--breakpoint--md) {
-  .co-row-filter .pf-v5-c-toggle-group__item:last-child .pf-v5-c-toggle-group__button,
-  .co-row-filter .pf-v5-c-toggle-group__item:last-child .pf-v5-c-toggle-group__button::before {
+  .co-row-filter .pf-v6-c-toggle-group__item:last-child .pf-v6-c-toggle-group__button,
+  .co-row-filter .pf-v6-c-toggle-group__item:last-child .pf-v6-c-toggle-group__button::before {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
   }

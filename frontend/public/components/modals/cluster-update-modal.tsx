@@ -226,7 +226,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
           />
           {desiredNotRecommendedUpdate && desiredNotRecommendedUpdateConditions?.message && (
             <Alert
-              className="pf-v5-u-mt-sm"
+              className="pf-v6-u-mt-sm"
               isInline
               title={t(
                 'public~Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
@@ -274,7 +274,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                 resource: NodeModel.labelPlural,
               },
             )}
-            className="pf-v5-u-mb-sm"
+            className="pf-v6-u-mb-sm"
             body={
               machineConfigPoolsLoaded &&
               pausedMCPs.length > 0 &&
@@ -304,7 +304,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
               'public~Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
               { worker: NodeTypeNames.Worker, resource: NodeModel.label },
             )}
-            className="pf-v5-u-mb-md"
+            className="pf-v6-u-mb-md"
             body={
               upgradeType === upgradeTypes.Partial && (
                 <>
@@ -318,7 +318,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                     isInline
                     isPlain
                     title={t('public~You must resume updates within 60 days to avoid failures.')}
-                    className="pf-v5-u-mb-md"
+                    className="pf-v6-u-mb-md"
                   >
                     {!isManaged() && (
                       <ExternalLink href={helpURL}>{t('public~Learn more')}</ExternalLink>

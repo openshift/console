@@ -54,7 +54,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
                 )}
           </Content>
           {!isManaged() && (
-            <Content component={ContentVariants.p} className="pf-v5-u-mb-md">
+            <Content component={ContentVariants.p} className="pf-v6-u-mb-md">
               <ChannelDocLink />
             </Content>
           )}

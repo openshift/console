@@ -203,7 +203,7 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
         </HelperText>
       </FormHelperText>
       <FormGroup label={t('webterminal-plugin~Timeout')} fieldId="timeout-value">
-        <div className="pf-v5-c-input-group">
+        <div className="pf-v6-c-input-group">
           <NumberSpinner
             onChange={onValueChange}
             changeValueBy={changeValueBy}
@@ -256,7 +256,7 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
           id="web-terminal-image"
           type="text"
           aria-label="web-terminal-image"
-          className="pf-v5-c-form-control"
+          className="pf-v6-c-form-control"
           data-test="web-terminal-image"
           isDisabled={readonly}
         />

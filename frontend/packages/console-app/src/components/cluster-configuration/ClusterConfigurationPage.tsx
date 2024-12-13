@@ -138,7 +138,7 @@ const ClusterConfigurationPage: React.FC = () => {
             </div>
             {groupNotFound ? (
               /* Similar to a TabContent */
-              <section className="co-cluster-configuration-page pf-v5-c-tab-content">
+              <section className="co-cluster-configuration-page pf-v6-c-tab-content">
                 <h1>{t('console-app~{{section}} not found', { section: activeTabId })}</h1>
               </section>
             ) : null}

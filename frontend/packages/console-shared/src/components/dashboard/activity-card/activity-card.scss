@@ -25,7 +25,7 @@
     var(--pf-v5-c-card--child--PaddingLeft);
 }
 
-.co-activity-card__recent-accordion.pf-v5-c-accordion {
+.co-activity-card__recent-accordion.pf-v6-c-accordion {
   box-shadow: none;
   padding-bottom: 0;
   padding: 0.75rem 0;
@@ -36,7 +36,7 @@
   }
 
   .co-recent-item__content {
-    .pf-v5-c-accordion {
+    .pf-v6-c-accordion {
       --pf-v5-c-accordion__expanded-content-body--PaddingRight: var(
         --pf-v5-c-card--child--PaddingRight
       );
@@ -44,12 +44,12 @@
         --pf-v5-c-card--child--PaddingLeft
       );
     }
-    .pf-v5-c-accordion__expandable-content-body {
+    .pf-v6-c-accordion__expandable-content-body {
       padding-inline-start: var(--pf-v5-c-card--child--PaddingLeft);
       padding-inline-end: var(--pf-v5-c-card--child--PaddingRight);
     }
   }
-  .co-recent-item__toggle.pf-v5-c-accordion__toggle {
+  .co-recent-item__toggle.pf-v6-c-accordion__toggle {
     --pf-v5-c-accordion__toggle--PaddingRight: var(--pf-v5-c-card--child--PaddingRight);
     --pf-v5-c-accordion__toggle--PaddingLeft: var(--pf-v5-c-card--child--PaddingLeft);
 
@@ -60,11 +60,11 @@
     border-left-color: var(--pf-v5-global--warning-color--100);
   }
 
-  .pf-v5-c-accordion__toggle {
+  .pf-v6-c-accordion__toggle {
     &,
     &:active,
     &:focus {
-      .pf-v5-c-accordion__toggle-text {
+      .pf-v6-c-accordion__toggle-text {
         font-weight: var(--pf-v5-global--FontWeight--normal) !important;
       }
     }
@@ -96,7 +96,7 @@
   margin: 1rem var(--pf-v5-c-card--child--PaddingRight) 1rem var(--pf-v5-c-card--child--PaddingLeft);
 }
 
-.co-activity-item__progress.pf-v5-c-progress {
+.co-activity-item__progress.pf-v6-c-progress {
   --pf-v5-c-progress--GridGap: 0;
 
   padding-bottom: 0.2rem;

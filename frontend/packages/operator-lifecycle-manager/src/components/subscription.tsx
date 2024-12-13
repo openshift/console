@@ -628,7 +628,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                   >
                     {obj.spec.channel || 'default'}
                     {pkg && (
-                      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
+                      <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />
                     )}
                   </Button>
                   {deprecatedChannel.deprecation && (
@@ -658,7 +658,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                   <div>
                     <Button
                       icon={
-                        <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
+                        <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />
                       }
                       type="button"
                       isInline

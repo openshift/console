@@ -5,10 +5,10 @@
   scrollbar-color: var(--pf-v5-global--BackgroundColor--light-300)
     var(--pf-v5-global--palette--white);
 
-  .pf-v5-c-table {
+  .pf-v6-c-table {
     border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
 
-    .pf-v5-c-table__check {
+    .pf-v6-c-table__check {
       /* This overrides the default overrides of checkboxes for ocs based tables */
       width: 4.6% !important;
 

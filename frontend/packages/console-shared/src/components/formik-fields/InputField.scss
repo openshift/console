@@ -7,20 +7,20 @@
   position: relative;
 
   // Disable the standard icon
-  .pf-v5-c-form-control.pf-m-success,
-  .pf-v5-c-form-control.pf-m-warning,
-  .pf-v5-c-form-control[aria-invalid='true'] {
+  .pf-v6-c-form-control.pf-m-success,
+  .pf-v6-c-form-control.pf-m-warning,
+  .pf-v6-c-form-control[aria-invalid='true'] {
     background-image: none;
   }
 
   // Add an overlay icon that also work with browser autofill 'background colors'
-  &__validation-icon.pf-v5-c-form-control {
+  &__validation-icon.pf-v6-c-form-control {
     // Align the icon on the right side
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-    // We need pf-v5-c-form-control to get the form control variables below.
+    // We need pf-v6-c-form-control to get the form control variables below.
     // But we need to unset the form-control background and border for the icon.
     background-color: transparent;
     border: 0 transparent;

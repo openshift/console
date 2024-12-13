@@ -119,7 +119,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         <DetailsItem label={t('public~Tolerations')} obj={resource} path={tolerationsPath}>
           {canUpdate ? (
             <Button
-              icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+              icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
               type="button"
               isInline
               onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
@@ -136,7 +136,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         <DetailsItem label={t('public~Annotations')} obj={resource} path="metadata.annotations">
           {canUpdate ? (
             <Button
-              icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+              icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
               data-test="edit-annotations"
               type="button"
               isInline
@@ -214,7 +214,7 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
           isDisabled={!canUpgrade}
         >
           {resource?.spec?.upstream || t('public~Default update server')}
-          {canUpgrade && <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+          {canUpgrade && <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
         </Button>
       </div>
     </DetailsItem>

@@ -26,7 +26,7 @@ const ErrorComponent: React.FC<ErrorComponentProps> = ({ title, message }) => {
       <PageHeading title={t('public~Error')} detail />
       <div className="co-m-pane__body" data-test-id="error-page">
         <PageHeading title={title} centerText />
-        {message && <div className="pf-v5-u-text-align-center">{message}</div>}
+        {message && <div className="pf-v6-u-text-align-center">{message}</div>}
       </div>
     </>
   );

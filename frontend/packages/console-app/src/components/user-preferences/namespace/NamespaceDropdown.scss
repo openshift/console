@@ -1,4 +1,4 @@
-.pf-v5-c-menu-toggle.co-user-preference__namespace-menu-toggle {
+.pf-v6-c-menu-toggle.co-user-preference__namespace-menu-toggle {
   padding: var(--pf-v5-global--spacer--form-element) var(--pf-v5-global--spacer--sm)
     var(--pf-v5-global--spacer--form-element) var(--pf-v5-global--spacer--sm) !important;
   background-color: var(--pf-v5-global--BackgroundColor--400);
@@ -6,7 +6,7 @@
   &::after {
     border-width: var(--pf-v5-global--BorderWidth--sm) !important;
   }
-  .pf-v5-c-menu-toggle__text {
+  .pf-v6-c-menu-toggle__text {
     font-size: var(--pf-v5-global--FontSize--md);
   }
 }

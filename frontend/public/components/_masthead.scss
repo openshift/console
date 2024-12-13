@@ -1,11 +1,11 @@
 .co-app-launcher {
-  .pf-v5-c-menu__item-external-icon {
+  .pf-v6-c-menu__item-external-icon {
     --pf-v5-c-menu__item-external-icon--Color: var(--pf-v5-c-menu__item-action--Color);
 
     opacity: 1;
   }
 
-  .pf-v5-c-menu__item-icon {
+  .pf-v6-c-menu__item-icon {
     height: var(--pf-v5-global--icon--FontSize--lg);
     width: var(--pf-v5-global--icon--FontSize--lg);
   }
@@ -73,6 +73,6 @@
   }
 }
 
-.pf-v5-c-masthead__content .pf-v5-c-notification-badge {
+.pf-v6-c-masthead__content .pf-v6-c-notification-badge {
   --pf-v5-c-notification-badge--m-unread--hover--after--BackgroundColor: transparent;
 }

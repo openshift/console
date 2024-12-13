@@ -162,7 +162,7 @@ const tableColumnClasses = [
   '',
   '',
   // Status is less important than Location, so hide it earlier, but maintain its position for consistency with other tables
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v5-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-u-w-16-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
@@ -312,8 +312,8 @@ const showCustomRouteHelp = (
 };
 
 const RouteTargetRow: React.FC<RouteTargetRowProps> = ({ route, target }) => (
-  <tr className="pf-v5-c-table__tr">
-    <td className="pf-v5-c-table__td">
+  <tr className="pf-v6-c-table__tr">
+    <td className="pf-v6-c-table__td">
       <ResourceLink
         kind={target.kind}
         name={target.name}
@@ -321,8 +321,8 @@ const RouteTargetRow: React.FC<RouteTargetRowProps> = ({ route, target }) => (
         title={target.name}
       />
     </td>
-    <td className="pf-v5-c-table__td">{target.weight}</td>
-    <td className="pf-v5-c-table__td">{calcTrafficPercentage(target.weight, route)}</td>
+    <td className="pf-v6-c-table__td">{target.weight}</td>
+    <td className="pf-v6-c-table__td">{calcTrafficPercentage(target.weight, route)}</td>
   </tr>
 );
 
@@ -470,15 +470,15 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
             {t('public~This route splits traffic across multiple services.')}
           </p>
           <div className="co-table-container">
-            <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v5-c-table__thead">
-                <tr className="pf-v5-c-table__tr">
-                  <th className="pf-v5-c-table__th">{t('public~Service')}</th>
-                  <th className="pf-v5-c-table__th">{t('public~Weight')}</th>
-                  <th className="pf-v5-c-table__th">{t('public~Percent')}</th>
+            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+              <thead className="pf-v6-c-table__thead">
+                <tr className="pf-v6-c-table__tr">
+                  <th className="pf-v6-c-table__th">{t('public~Service')}</th>
+                  <th className="pf-v6-c-table__th">{t('public~Weight')}</th>
+                  <th className="pf-v6-c-table__th">{t('public~Percent')}</th>
                 </tr>
               </thead>
-              <tbody className="pf-v5-c-table__tbody">
+              <tbody className="pf-v6-c-table__tbody">
                 <RouteTargetRow route={route} target={route.spec.to} />
                 {_.map(route.spec.alternateBackends, (alternate, i) => (
                   <RouteTargetRow key={i} route={route} target={alternate} />

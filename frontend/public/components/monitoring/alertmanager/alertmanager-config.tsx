@@ -89,9 +89,9 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
 };
 
 const tableColumnClasses = [
-  'pf-v5-u-w-50-on-xs pf-v5-u-w-25-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-25-on-lg',
-  'pf-v5-u-w-50-on-xs',
+  'pf-v6-u-w-50-on-xs pf-v6-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-lg',
+  'pf-v6-u-w-50-on-xs',
   Kebab.columnClass,
 ];
 
@@ -305,7 +305,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
           <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-            <PencilAltIcon className="co-icon-space-r pf-v5-c-button-icon--plain" />
+            <PencilAltIcon className="co-icon-space-r pf-v6-c-button-icon--plain" />
             {t('public~Configure')}
           </Link>
         ) : (

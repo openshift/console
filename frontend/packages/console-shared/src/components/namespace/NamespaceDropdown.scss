@@ -5,7 +5,7 @@
   max-width: 60%;
 }
 
-.pf-v5-c-menu.co-namespace-dropdown__menu {
+.pf-v6-c-menu.co-namespace-dropdown__menu {
   // Position is to ensure that the dropdown doesn't push content down when opened
   // Especially on the /topology/ns/[namespace]?view=graph page
   position: fixed;
@@ -22,7 +22,7 @@
 // more closely match the custom DropDown based drop down.
 // These are displayed side by site in the Developer view > Topology view.active.
 // Once the custom DropDown component changes to the PatternFly component, these styles can be removed.
-.pf-v5-c-menu-toggle.co-namespace-dropdown__menu-toggle {
+.pf-v6-c-menu-toggle.co-namespace-dropdown__menu-toggle {
   background-color: var(
     --co-namespace-dropdown__menu-toggle--BackgroundColor,
     inherit
@@ -59,11 +59,11 @@
 // Tracked in https://github.com/patternfly/patternfly-react/issues/6059
 
 .co-namespace-dropdown__switch {
-  .pf-v5-c-switch__label {
+  .pf-v6-c-switch__label {
     padding-right: 60px; // Ensure switch doesn't land on top of text
   }
 
-  .pf-v5-c-switch__toggle {
+  .pf-v6-c-switch__toggle {
     position: absolute;
     right: 0;
   }

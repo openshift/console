@@ -57,7 +57,7 @@ export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ erro
       </>
     );
   }
-  return <div className="co-import-yaml-status pf-v5-u-text-align-center">{StatusBlock}</div>;
+  return <div className="co-import-yaml-status pf-v6-u-text-align-center">{StatusBlock}</div>;
 };
 
 export const ImportYAMLResourceStatus: React.FC<ImportYAMLResourceStatusProps> = ({

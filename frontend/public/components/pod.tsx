@@ -190,12 +190,12 @@ const podColumnInfo = Object.freeze({
     title: 'public~Status',
   },
   ready: {
-    classes: classNames('pf-m-nowrap', 'pf-v5-u-w-10-on-lg', 'pf-v5-u-w-8-on-xl'),
+    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
     id: 'ready',
     title: 'public~Ready',
   },
   restarts: {
-    classes: classNames('pf-m-nowrap', 'pf-v5-u-w-8-on-2xl'),
+    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
     id: 'restarts',
     title: 'public~Restarts',
   },
@@ -210,17 +210,17 @@ const podColumnInfo = Object.freeze({
     title: 'public~Node',
   },
   memory: {
-    classes: classNames({ 'pf-v5-u-w-10-on-2xl': showMetrics }),
+    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
     title: 'public~Memory',
   },
   cpu: {
-    classes: classNames({ 'pf-v5-u-w-10-on-2xl': showMetrics }),
+    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
     title: 'public~CPU',
   },
   created: {
-    classes: classNames('pf-v5-u-w-10-on-2xl'),
+    classes: classNames('pf-v6-u-w-10-on-2xl'),
     id: 'created',
     title: 'public~Created',
   },

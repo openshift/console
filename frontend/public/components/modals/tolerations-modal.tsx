@@ -128,7 +128,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </div>
                     <input
                       type="text"
-                      className="pf-v5-c-form-control"
+                      className="pf-v6-c-form-control"
                       value={key}
                       onChange={(e) => change(e, i, 'key')}
                       readOnly={!isEditable(toleration)}
@@ -150,7 +150,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     ) : (
                       <input
                         type="text"
-                        className="pf-v5-c-form-control"
+                        className="pf-v6-c-form-control"
                         value={operator}
                         readOnly
                       />
@@ -163,7 +163,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </div>
                     <input
                       type="text"
-                      className="pf-v5-c-form-control"
+                      className="pf-v6-c-form-control"
                       value={value}
                       onChange={(e) => change(e, i, 'value')}
                       readOnly={!isEditable(toleration) || operator === 'Exists'}
@@ -185,7 +185,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     ) : (
                       <input
                         type="text"
-                        className="pf-v5-c-form-control"
+                        className="pf-v6-c-form-control"
                         value={effects[effect]}
                         readOnly
                       />

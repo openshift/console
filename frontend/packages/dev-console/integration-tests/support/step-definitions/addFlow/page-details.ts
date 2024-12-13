@@ -127,8 +127,8 @@ Then('user will see Detail toggle label {string}', (label: string) => {
     // find both switch labels (one for checked=on and one for unchecked=off)
     .find('span')
     // they are hidden via a CSS rule like
-    // .pf-v5-c-switch__input:not(:checked)~.pf-m-on { display: none; }
-    // .pf-v5-c-switch__input:checked~.pf-m-off { display: none; }
+    // .pf-v6-c-switch__input:not(:checked)~.pf-m-on { display: none; }
+    // .pf-v6-c-switch__input:checked~.pf-m-off { display: none; }
     .filter((_, element) => getComputedStyle(element).display !== 'none')
     .should('contain', label);
 });

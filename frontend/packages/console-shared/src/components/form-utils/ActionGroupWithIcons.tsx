@@ -10,7 +10,7 @@ const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
   isDisabled,
 }) => {
   return (
-    <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right">
+    <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right">
       {onSubmit && (
         <Button
           icon={<CheckIcon />}

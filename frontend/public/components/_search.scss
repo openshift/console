@@ -20,14 +20,14 @@
     margin-bottom: 0;
   }
   // There's no way to set a class name on this element, so use the PF4 class.
-  .pf-v5-c-accordion__expanded-content-body {
+  .pf-v6-c-accordion__expanded-content-body {
     // Left align the content with the heading on the search page.
     --pf-v5-c-accordion__expanded-content-body--PaddingRight: 0 !important;
     --pf-v5-c-accordion__expanded-content-body--PaddingLeft: 0 !important;
   }
 
-  .pf-v5-c-accordion__expanded-content-body,
-  .pf-v5-c-accordion__toggle {
+  .pf-v6-c-accordion__expanded-content-body,
+  .pf-v6-c-accordion__toggle {
     &:before {
       // The expanded state indicator blends into the left nav. Hide it.
       display: none;

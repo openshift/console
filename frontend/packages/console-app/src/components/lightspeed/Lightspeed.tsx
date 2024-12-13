@@ -99,12 +99,12 @@ const Lightspeed: React.FC = () => {
             <Stack hasGutter>
               <StackItem>
                 <div className="lightspeed__welcome-logo" />
-                <Title headingLevel="h1" className="pf-v5-u-mb-sm">
+                <Title headingLevel="h1" className="pf-v6-u-mb-sm">
                   {t('console-app~Meet OpenShift Lightspeed')}
                 </Title>
                 <Content
                   component="p"
-                  className="pf-v5-u-color-200 pf-v5-u-font-size-lg pf-v5-u-mb-md"
+                  className="pf-v6-u-color-200 pf-v6-u-font-size-lg pf-v6-u-mb-md"
                 >
                   {t(
                     "console-app~Unlock possibilities and enhance productivity with the AI-powered assistant's expert guidance in your OpenShift web console.",
@@ -112,10 +112,10 @@ const Lightspeed: React.FC = () => {
                 </Content>
               </StackItem>
               <StackItem isFilled>
-                <Title headingLevel="h2" className="pf-v5-u-mb-md">
+                <Title headingLevel="h2" className="pf-v6-u-mb-md">
                   {t('console-app~Benefits:')}
                 </Title>
-                <List isPlain isBordered className="pf-v5-u-color-200 pf-v5-u-ml-sm">
+                <List isPlain isBordered className="pf-v6-u-color-200 pf-v6-u-ml-sm">
                   <ListItem>
                     {t('console-app~Get fast answers to questions you have related to OpenShift')}
                   </ListItem>
@@ -137,7 +137,7 @@ const Lightspeed: React.FC = () => {
                 </List>
               </StackItem>
               {canInstallLightspeed ? (
-                <StackItem className="pf-v5-u-text-align-center">
+                <StackItem className="pf-v6-u-text-align-center">
                   <Button variant="primary" size="lg" onClick={onInstallClick}>
                     {t('console-app~Get started in OperatorHub')}
                   </Button>
@@ -157,7 +157,7 @@ const Lightspeed: React.FC = () => {
                   </Alert>
                 </StackItem>
               )}
-              <StackItem className="pf-v5-u-text-align-center">
+              <StackItem className="pf-v6-u-text-align-center">
                 <Button variant="link" onClick={onDismissClick}>
                   {t("console-app~Don't show again")}
                 </Button>

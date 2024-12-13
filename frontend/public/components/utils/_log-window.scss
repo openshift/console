@@ -1,9 +1,9 @@
 $color-log-window-header-bg: var(--pf-v5-global--BackgroundColor--dark-300);
 $color-log-window-text: var(--pf-v5-global--Color--light-100);
 
-.pf-v5-c-log-viewer {
+.pf-v6-c-log-viewer {
   &.pf-m-dark {
-    .pf-v5-c-log-viewer__main {
+    .pf-v6-c-log-viewer__main {
       background-color: var(--pf-v5-global--palette--black-1000);
     }
   }

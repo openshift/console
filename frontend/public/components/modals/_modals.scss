@@ -67,7 +67,7 @@
   }
   @media (min-width: $pf-v5-global--breakpoint--xl) {
     &.modal-lg {
-      // Manually set to match --pf-v5-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v5-c-modal-box
+      // Manually set to match --pf-v5-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v6-c-modal-box
       max-width: 70rem;
     }
   }

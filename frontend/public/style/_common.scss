@@ -87,7 +87,7 @@ dl.co-inline {
   flex-wrap: wrap;
   justify-content: space-between;
   .co-m-primary-action,
-  .pf-v5-c-form-control {
+  .pf-v6-c-form-control {
     margin-bottom: 10px;
   }
 }
@@ -106,7 +106,7 @@ dl.co-inline {
   }
 }
 
-// Use to left align content filters that aren't using .pf-v5-c-toolbar
+// Use to left align content filters that aren't using .pf-v6-c-toolbar
 .co-m-pane__filter-row {
   display: flex;
   flex-wrap: wrap;
@@ -192,7 +192,7 @@ dl.co-inline {
 
   // TODO: remove when $font-size-base goes away or to 16px
   // and when override `label` font-weight style from _bootstrap-residual.scss is removed
-  .pf-v5-c-switch__label {
+  .pf-v6-c-switch__label {
     font-size: $font-size-base;
     font-weight: var(--pf-v5-global--FontWeight--normal);
   }
@@ -287,11 +287,11 @@ dl.co-inline {
   @include co-embedded-icon;
   mask-image: $co-icon-external-link-alt;
 
-  .pf-v5-c-dropdown__menu-item & {
+  .pf-v6-c-dropdown__menu-item & {
     color: $pf-v5-color-black-600;
     margin-left: 5px;
   }
-  .pf-v5-c-nav__link & {
+  .pf-v6-c-nav__link & {
     color: $pf-v5-color-black-500;
     margin-left: 4px;
   }

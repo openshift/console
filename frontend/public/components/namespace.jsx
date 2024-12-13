@@ -915,7 +915,7 @@ export const PullSecret = (props) => {
       ))
     ) : (
       <Button
-        icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+        icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
         variant="link"
         type="button"
         isInline
@@ -1078,7 +1078,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
       {!_.isEmpty(links) && (
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Launcher')} />
-          <ul className="pf-v5-c-list pf-m-plain">
+          <ul className="pf-v6-c-list pf-m-plain">
             {_.map(_.sortBy(links, 'spec.text'), (link) => {
               return (
                 <li key={link.metadata.uid}>

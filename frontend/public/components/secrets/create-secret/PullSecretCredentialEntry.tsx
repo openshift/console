@@ -47,7 +47,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         </label>
         <div>
           <input
-            className="pf-v5-c-form-control"
+            className="pf-v6-c-form-control"
             id={`${id}-address`}
             aria-describedby={`${id}-address-help`}
             type="text"
@@ -69,7 +69,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         </label>
         <div>
           <input
-            className="pf-v5-c-form-control"
+            className="pf-v6-c-form-control"
             id={`${id}-username`}
             type="text"
             name="username"
@@ -87,7 +87,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         </label>
         <div>
           <input
-            className="pf-v5-c-form-control"
+            className="pf-v6-c-form-control"
             id={`${id}-password`}
             type="password"
             name="password"
@@ -105,7 +105,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         </label>
         <div>
           <input
-            className="pf-v5-c-form-control"
+            className="pf-v6-c-form-control"
             id={`${id}-email`}
             type="text"
             name="email"

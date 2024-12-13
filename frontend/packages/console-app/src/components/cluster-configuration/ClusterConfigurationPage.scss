@@ -13,13 +13,13 @@
     display: inline;
   }
 
-  .pf-v5-c-empty-state {
+  .pf-v6-c-empty-state {
     background-color: var(--pf-v5-global--BackgroundColor--100);
     flex: 1;
     align-items: flex-start;
   }
 
-  .pf-v5-c-tabs.pf-m-vertical {
+  .pf-v6-c-tabs.pf-m-vertical {
     background-color: var(--pf-v5-global--BackgroundColor--100);
 
     @media (min-width: 769px) {
@@ -36,7 +36,7 @@
   }
 
   // Fix padding which is causes the buttons to show even when isVertical prop is true
-  .pf-v5-c-tabs__scroll-button {
+  .pf-v6-c-tabs__scroll-button {
     display: none;
   }
 }
@@ -65,7 +65,7 @@
   }
 
   //workaround for patternfly bug which causes the buttons to show even when isVertical prop is true
-  .pf-v5-c-tabs__scroll-button {
+  .pf-v6-c-tabs__scroll-button {
     display: none;
   }
 }

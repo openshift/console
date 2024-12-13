@@ -34,7 +34,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           {t('public~To address')}
         </label>
         <input
-          className="pf-v5-c-form-control"
+          className="pf-v6-c-form-control"
           type="text"
           aria-describedby="email-to-help"
           id="email-to"
@@ -75,7 +75,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {t('public~From address')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="text"
               aria-describedby="email-from-help"
               id="email-from"
@@ -99,7 +99,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~SMTP smarthost')}
                 </label>
                 <input
-                  className="pf-v5-c-form-control"
+                  className="pf-v6-c-form-control"
                   type="text"
                   aria-describedby="email-smarthost-help"
                   id="email-smarthost"
@@ -123,7 +123,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~SMTP hello')}
                 </label>
                 <input
-                  className="pf-v5-c-form-control"
+                  className="pf-v6-c-form-control"
                   type="text"
                   aria-describedby="email-hello-help"
                   id="email-hello"
@@ -149,7 +149,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~Auth username')}
                 </label>
                 <input
-                  className="pf-v5-c-form-control"
+                  className="pf-v6-c-form-control"
                   type="text"
                   id="email-auth-username"
                   data-test-id="email-auth-username"
@@ -169,7 +169,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~Auth password (using LOGIN and PLAIN)')}
                 </label>
                 <input
-                  className="pf-v5-c-form-control"
+                  className="pf-v6-c-form-control"
                   type="password"
                   id="email-auth-password"
                   data-test-id="email-auth-password"
@@ -191,7 +191,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~Auth identity (using PLAIN)')}
                 </label>
                 <input
-                  className="pf-v5-c-form-control"
+                  className="pf-v6-c-form-control"
                   type="text"
                   id="email-auth-identity"
                   data-test-id="email-auth-identity"
@@ -211,7 +211,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~Auth secret (CRAM-MDS)')}
                 </label>
                 <input
-                  className="pf-v5-c-form-control"
+                  className="pf-v6-c-form-control"
                   type="password"
                   id="email-auth-secret"
                   data-test-id="email-auth-secret"
@@ -267,7 +267,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 {t('public~Body of email notifications (HTML)')}
               </label>
               <input
-                className="pf-v5-c-form-control"
+                className="pf-v6-c-form-control"
                 type="text"
                 aria-describedby="html-help"
                 id="email-html"

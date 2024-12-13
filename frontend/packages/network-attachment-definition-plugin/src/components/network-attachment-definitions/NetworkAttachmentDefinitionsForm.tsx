@@ -408,7 +408,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         </div>
 
         <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>
-          <ActionGroup className="pf-v5-c-form">
+          <ActionGroup className="pf-v6-c-form">
             <Button
               id="save-changes"
               isDisabled={!formIsValid}

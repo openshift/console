@@ -254,7 +254,7 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
     <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
       {t('public~Filter by Node type')}
       {selectedNodes.length > 0 && (
-        <Badge className="pf-v5-u-ml-sm" isRead>
+        <Badge className="pf-v6-u-ml-sm" isRead>
           {selectedNodes.length}
         </Badge>
       )}

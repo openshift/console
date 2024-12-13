@@ -150,7 +150,7 @@ const LogControls: React.FC<LogControlsProps> = ({
             </ToolbarItem>
           )}
         </ToolbarGroup>
-        <ToolbarItem className="pf-v5-u-flex-fill pf-v5-u-align-self-center pf-v5-u-justify-content-flex-end">
+        <ToolbarItem className="pf-v6-u-flex-fill pf-v6-u-align-self-center pf-v6-u-justify-content-flex-end">
           <Checkbox
             label={t('public~Wrap lines')}
             id="wrapLogLines"

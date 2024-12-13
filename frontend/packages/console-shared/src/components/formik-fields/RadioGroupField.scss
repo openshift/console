@@ -6,10 +6,10 @@
   }
 
   &:not(.ocs-radio-group-field--inline) {
-    .pf-v5-c-radio {
+    .pf-v6-c-radio {
       padding-bottom: var(--pf-v5-global--spacer--md);
     }
-    .pf-v5-c-radio:last-of-type {
+    .pf-v6-c-radio:last-of-type {
       padding-bottom: 0;
     }
     .ocs-radio-group-field__children {
@@ -21,12 +21,12 @@
     display: flex;
     align-items: center;
 
-    > .pf-v5-c-form__group-label {
+    > .pf-v6-c-form__group-label {
       padding-bottom: 0;
       margin-right: var(--pf-v5-global--spacer--md);
     }
   }
-  .pf-v5-c-radio {
+  .pf-v6-c-radio {
     &__description {
       width: 100%;
     }

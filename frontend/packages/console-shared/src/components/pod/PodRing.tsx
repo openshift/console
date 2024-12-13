@@ -110,7 +110,7 @@ const PodRing: React.FC<PodRingProps> = ({
         </div>
       </SplitItem>
       {enableAutoscaling && (
-        <SplitItem className="pf-v5-u-display-flex pf-v5-u-align-content-center">
+        <SplitItem className="pf-v6-u-display-flex pf-v6-u-align-content-center">
           <Button
             type="button"
             variant="link"

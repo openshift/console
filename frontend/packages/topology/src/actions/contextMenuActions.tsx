@@ -31,7 +31,7 @@ export const createContextMenuItems = (actions: MenuOption[]) => {
       case MenuOptionType.GROUP_MENU:
         return (
           <React.Fragment key={option.id}>
-            {option.label && <h1 className="pf-v5-c-dropdown__group-title">{option.label}</h1>}
+            {option.label && <h1 className="pf-v6-c-dropdown__group-title">{option.label}</h1>}
             {createContextMenuItems((option as GroupedMenuOption).children)}
           </React.Fragment>
         );

@@ -32,7 +32,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
         </div>
         <input
           type="text"
-          className="pf-v5-c-form-control"
+          className="pf-v6-c-form-control"
           value={expression.key ?? ''}
           onChange={(e) => onChange({ ...expression, key: e.target.value })}
         />
@@ -54,7 +54,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
           {t('olm~Values')}
         </div>
         <input
-          className="pf-v5-c-form-control"
+          className="pf-v6-c-form-control"
           type="text"
           value={values?.join(',') ?? ''}
           onChange={(e) =>

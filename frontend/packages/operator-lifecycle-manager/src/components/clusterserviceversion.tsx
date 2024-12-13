@@ -312,7 +312,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
                   {isPluginEnabled(consoleOperatorConfig, pluginName)
                     ? t('olm~Enabled')
                     : t('olm~Disabled')}{' '}
-                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
+                  <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />
                 </>
               </Button>
             </dd>
@@ -425,7 +425,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           {csvPlugins.length > 0 && <ConsolePluginStatus csv={obj} csvPlugins={csvPlugins} />}
           {deprecatedPackage.deprecation && (
             <DeprecatedOperatorWarningBadge
-              className="pf-v5-u-mt-xs"
+              className="pf-v6-u-mt-xs"
               deprecation={deprecatedPackage.deprecation}
             />
           )}

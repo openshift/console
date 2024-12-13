@@ -1,9 +1,9 @@
 .co-search {
   padding-bottom: 30px;
   @media (max-width: $pf-v5-global--breakpoint--sm-max) {
-    .pf-v5-c-input-group {
+    .pf-v6-c-input-group {
       display: block;
-      .pf-v5-c-dropdown__toggle {
+      .pf-v6-c-dropdown__toggle {
         margin-bottom: 2px;
         width: 100%;
       }
@@ -35,7 +35,7 @@
   }
 }
 .co-search__accordion-toggle {
-  .pf-v5-c-accordion__toggle-text {
+  .pf-v6-c-accordion__toggle-text {
     display: flex;
     flex-direction: column;
     width: 100%;

@@ -126,10 +126,10 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
 };
 
 const tableClasses = [
-  'pf-v5-u-w-25-on-2xl',
-  'pf-v5-u-w-16-on-2xl',
-  'pf-v5-u-w-16-on-lg pf-v5-u-w-10-on-2xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-v5-u-w-16-on-lg',
+  'pf-v6-u-w-25-on-2xl',
+  'pf-v6-u-w-16-on-2xl',
+  'pf-v6-u-w-16-on-lg pf-v6-u-w-10-on-2xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-16-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
 ];
 

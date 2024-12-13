@@ -172,7 +172,7 @@ export const AddOpenIDIDPPage = () => {
               {t('public~Client ID')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="text"
               onChange={(e) => setClientID(e.currentTarget.value)}
               value={clientID}
@@ -185,7 +185,7 @@ export const AddOpenIDIDPPage = () => {
               {t('public~Client secret')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="password"
               onChange={(e) => setClientSecret(e.currentTarget.value)}
               value={clientSecret}
@@ -198,7 +198,7 @@ export const AddOpenIDIDPPage = () => {
               {t('public~Issuer URL')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="url"
               onChange={(e) => setIssuer(e.currentTarget.value)}
               value={issuer}
@@ -250,7 +250,7 @@ export const AddOpenIDIDPPage = () => {
             helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

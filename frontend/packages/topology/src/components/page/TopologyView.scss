@@ -43,7 +43,7 @@
   }
 
   &__layout-button {
-    .pf-topology-control-bar__button.pf-v5-c-button {
+    .pf-topology-control-bar__button.pf-v6-c-button {
       --pf-v5-c-button--BorderRadius: 0;
 
       margin-right: 0;
@@ -68,14 +68,14 @@
     }
 
     &:first-of-type {
-      .pf-topology-control-bar__button.pf-v5-c-button {
+      .pf-topology-control-bar__button.pf-v6-c-button {
         --pf-v5-c-button--BorderRadius: var(--pf-v5-global--BorderRadius--sm) 0 0
           var(--pf-v5-global--BorderRadius--sm);
       }
     }
 
     &:last-of-type {
-      .pf-topology-control-bar__button.pf-v5-c-button {
+      .pf-topology-control-bar__button.pf-v6-c-button {
         --pf-v5-c-button--BorderRadius: 0 var(--pf-v5-global--BorderRadius--sm)
           var(--pf-v5-global--BorderRadius--sm) 0;
       }

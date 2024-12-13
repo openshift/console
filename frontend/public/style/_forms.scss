@@ -87,19 +87,19 @@
   z-index: 2;
 }
 
-.has-feedback .pf-v5-c-form-control {
+.has-feedback .pf-v6-c-form-control {
   --pf-v5-c-form-control--PaddingRight: 25px;
 }
 
-.pf-v5-c-form__actions--right {
+.pf-v6-c-form__actions--right {
   justify-content: flex-end;
 }
 
-.pf-v5-c-form__checkbox-row {
+.pf-v6-c-form__checkbox-row {
   display: grid;
   row-gap: $pf-v5-global-gutter;
 }
 
-.pf-v5-c-form__group--no-top-margin {
+.pf-v6-c-form__group--no-top-margin {
   margin-top: 0 !important;
 }

@@ -28,7 +28,7 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
       titleText={title}
     />
   );
-  const bodyClassName = cx({ 'pf-v5-u-m-0': !header }); // Remove top margin if there's not a header
+  const bodyClassName = cx({ 'pf-v6-u-m-0': !header }); // Remove top margin if there's not a header
   const body = children && (
     <EmptyStateBody className={bodyClassName} data-test={`${dataTest}-body`}>
       {children}

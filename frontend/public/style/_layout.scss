@@ -1,7 +1,7 @@
 html,
 body,
 #app,
-.pf-v5-c-drawer {
+.pf-v6-c-drawer {
   height: 100%;
 }
 
@@ -30,7 +30,7 @@ body,
   height: 100%; // doesn't work on safari without height
 }
 
-.co-m-app__content > .pf-v5-c-page {
+.co-m-app__content > .pf-v6-c-page {
   height: 0;
   flex: 1;
 }

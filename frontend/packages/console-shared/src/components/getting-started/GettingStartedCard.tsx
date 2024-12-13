@@ -59,7 +59,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
     });
   };
   const getLinkTitleClassNames = (external: boolean) =>
-    external ? 'co-external-link pf-v5-u-display-block' : 'co-goto-arrow';
+    external ? 'co-external-link pf-v6-u-display-block' : 'co-goto-arrow';
 
   return (
     <Flex

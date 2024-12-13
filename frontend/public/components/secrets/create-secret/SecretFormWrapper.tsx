@@ -122,7 +122,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
             </label>
             <div>
               <input
-                className="pf-v5-c-form-control"
+                className="pf-v6-c-form-control"
                 type="text"
                 onChange={onNameChanged}
                 value={secret?.metadata?.name}
@@ -171,7 +171,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
         <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
           {renderBody()}
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button
                 type="submit"
                 data-test="save-changes"

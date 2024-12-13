@@ -24,9 +24,9 @@ export const WebHookSecretForm: React.FC<SecretSubFormProps> = ({ onChange, stri
       <label className="control-label co-required" htmlFor="webhook-secret-key">
         {t('public~Webhook secret key')}
       </label>
-      <div className="pf-v5-c-input-group">
+      <div className="pf-v6-c-input-group">
         <input
-          className="pf-v5-c-form-control"
+          className="pf-v6-c-form-control"
           id="webhook-secret-key"
           data-test="secret-key"
           type="text"
@@ -39,7 +39,7 @@ export const WebHookSecretForm: React.FC<SecretSubFormProps> = ({ onChange, stri
         <button
           type="button"
           onClick={generateWebHookSecret}
-          className="pf-v5-c-button pf-m-tertiary"
+          className="pf-v6-c-button pf-m-tertiary"
           data-test="webhook-generate-button"
         >
           {t('public~Generate')}

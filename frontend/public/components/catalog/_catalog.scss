@@ -226,7 +226,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     right: 0;
     top: 4.75rem; // --pf-v5-c-page__header--MinHeight
 
-    .pf-v5-c-modal-box__body {
+    .pf-v6-c-modal-box__body {
       // Required to position scroll shadows correctly on Chrome
       display: flex;
       flex-direction: column;
@@ -317,7 +317,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 }
 
-.co-catalog-page__overlay.pf-v5-c-modal-box {
+.co-catalog-page__overlay.pf-v6-c-modal-box {
   @media screen and (min-width: $screen-sm) {
     --pf-v5-c-modal-box--Width: 600px;
   }

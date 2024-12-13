@@ -1,7 +1,7 @@
 @import '~@patternfly/patternfly/sass-utilities/index';
 @import '~@console/internal/style/vars';
 
-.pf-v5-c-nav .oc-nav-header {
+.pf-v6-c-nav .oc-nav-header {
   border-bottom: 1px solid var(--pf-v5-global--BackgroundColor--dark-200);
   margin-top: var(--pf-v5-global--spacer--sm);
   padding: 0.6rem var(--pf-v5-global--spacer--sm);
@@ -16,7 +16,7 @@
     padding-right: var(--pf-v5-global--spacer--md);
   }
 
-  .pf-v5-c-menu {
+  .pf-v6-c-menu {
     --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
     padding: var(--pf-v5-global--spacer--sm) 0;
     :where(.pf-v5-theme-dark) & {
@@ -24,7 +24,7 @@
     }
   }
 
-  .pf-v5-c-menu__item {
+  .pf-v6-c-menu__item {
     color: var(--pf-v5-global--Color--100);
     padding: var(--pf-v5-global--spacer--sm);
     &::after,
@@ -33,8 +33,8 @@
     }
   }
 
-  .pf-v5-c-menu__item,
-  .pf-v5-c-menu__list-item {
+  .pf-v6-c-menu__item,
+  .pf-v6-c-menu__list-item {
     &:hover,
     &:active,
     &:focus,
@@ -47,7 +47,7 @@
     }
   }
 
-  .pf-v5-c-menu-toggle {
+  .pf-v6-c-menu-toggle {
     &::after,
     &::before {
       border-style: hidden;
@@ -64,7 +64,7 @@
       }
     }
 
-    .pf-v5-c-title.pf-m-md {
+    .pf-v6-c-title.pf-m-md {
       font-family: var(
         --pf-v5-global--FontFamily--text
       ); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay

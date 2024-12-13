@@ -316,7 +316,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="text"
               onChange={handleDevicePathChange}
               aria-describedby="volume-device-help"
@@ -337,7 +337,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="text"
               onChange={handleMountPathChange}
               aria-describedby="mount-path-help"
@@ -363,7 +363,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
             </label>
             <div>
               <input
-                className="pf-v5-c-form-control"
+                className="pf-v6-c-form-control"
                 type="text"
                 onChange={handleSubPathChange}
                 aria-describedby="subpath-help"
@@ -409,7 +409,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
         </div>
       )}
       <ButtonBar errorMessage={error} inProgress={inProgress}>
-        <ActionGroup className="pf-v5-c-form">
+        <ActionGroup className="pf-v6-c-form">
           <Button
             type="submit"
             variant="primary"

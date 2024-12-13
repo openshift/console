@@ -269,7 +269,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
                 {t('console-app~Name')}
               </label>
               <input
-                className="pf-v5-c-form-control"
+                className="pf-v6-c-form-control"
                 type="text"
                 onChange={handleSnapshotName}
                 name="snapshotName"
@@ -301,7 +301,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               </div>
             )}
             <ButtonBar errorMessage={errorMessage || loadError} inProgress={inProgress}>
-              <ActionGroup className="pf-v5-c-form">
+              <ActionGroup className="pf-v6-c-form">
                 <Button
                   type="submit"
                   variant="primary"

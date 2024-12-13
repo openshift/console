@@ -446,7 +446,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                     }}
                     categoryName={translatedNameFilterTitle}
                   >
-                    <div className="pf-v5-c-input-group co-filter-group">
+                    <div className="pf-v6-c-input-group co-filter-group">
                       {showSearchFiltersDropdown && (
                         <DropdownInternal
                           items={filterDropdownItems}

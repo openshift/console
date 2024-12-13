@@ -102,7 +102,7 @@ const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
     <a
-      className="pf-v5-c-button pf-m-plain"
+      className="pf-v6-c-button pf-m-plain"
       aria-label={t('public~System status')}
       href={statuspageData.page.url}
       target="_blank"
@@ -332,7 +332,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
           : []),
         {
           component: () => (
-            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v5-c-menu__item" />
+            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
           ),
         },
         ...(reportBugLink
@@ -523,7 +523,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             component: () => (
               <QuickCreateImportFromGit
                 namespace={activeNamespace}
-                className="pf-v5-c-menu__item"
+                className="pf-v6-c-menu__item"
               />
             ),
           },
@@ -531,12 +531,12 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             component: () => (
               <QuickCreateContainerImages
                 namespace={activeNamespace}
-                className="pf-v5-c-menu__item"
+                className="pf-v6-c-menu__item"
               />
             ),
           },
           {
-            component: () => <CloudShellMastheadAction className="pf-v5-c-menu__item" />,
+            component: () => <CloudShellMastheadAction className="pf-v6-c-menu__item" />,
           },
         ],
       });
@@ -572,7 +572,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     }
 
     const userToggle = (
-      <span className="pf-v5-c-dropdown__toggle">
+      <span className="pf-v6-c-dropdown__toggle">
         <span className="co-username" data-test="username">
           {authEnabledFlag ? username : t('public~Auth disabled')}
         </span>

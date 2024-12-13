@@ -63,8 +63,8 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Configuration files')} />
           {files.map((file, i) => (
-            <div className="pf-v5-u-mb-xl" key={file.path}>
-              <Flex columnGap={{ default: 'columnGapNone' }} className="pf-v5-u-mb-md">
+            <div className="pf-v6-u-mb-xl" key={file.path}>
+              <Flex columnGap={{ default: 'columnGapNone' }} className="pf-v6-u-mb-md">
                 <Content>
                   <Content component="p" data-test={`config-file-path-${i}`}>
                     {file.path}
@@ -98,7 +98,7 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
                       icon={<BlueInfoCircleIcon />}
                       variant={ButtonVariant.plain}
                       aria-label={'public~Info'}
-                      className="pf-v5-u-ml-sm pf-v5-u-p-0"
+                      className="pf-v6-u-ml-sm pf-v6-u-p-0"
                     />
                   </Popover>
                 )}

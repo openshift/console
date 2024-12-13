@@ -33,17 +33,17 @@ const getTriggerProperty = (trigger: WebhookTrigger) => trigger.type.toLowerCase
 const getTableColumnClasses = (canGetSecret: boolean) => {
   if (canGetSecret) {
     return [
-      'pf-v5-c-table__td',
-      'pf-v5-c-table__td pf-m-hidden pf-m-visible-on-xl pf-v5-u-w-50-on-xl  pf-m-break-word',
-      'pf-v5-c-table__td pf-m-hidden pf-m-visible-on-md',
-      'pf-v5-c-table__td',
+      'pf-v6-c-table__td',
+      'pf-v6-c-table__td pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-50-on-xl  pf-m-break-word',
+      'pf-v6-c-table__td pf-m-hidden pf-m-visible-on-md',
+      'pf-v6-c-table__td',
     ];
   }
   return [
-    'pf-v5-c-table__td pf-v5-u-w-16-on-md',
-    'pf-v5-c-table__td pf-v5-u-w-58-on-xl pf-m-break-word',
-    'pf-v5-c-table__td pf-m-hidden pf-m-visible-on-md pf-v5-u-w-25-on-md',
-    'pf-v5-c-table__td pf-m-hidden',
+    'pf-v6-c-table__td pf-v6-u-w-16-on-md',
+    'pf-v6-c-table__td pf-v6-u-w-58-on-xl pf-m-break-word',
+    'pf-v6-c-table__td pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-md',
+    'pf-v6-c-table__td pf-m-hidden',
   ];
 };
 
@@ -198,10 +198,10 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
         />
       )}
       <SectionHeading text={t('public~Webhooks')} />
-      <div className="co-table-container pf-v5-c-scroll-inner-wrapper">
-        <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-          <thead className="pf-v5-c-table__thead">
-            <tr className="pf-v5-c-table__tr">
+      <div className="co-table-container pf-v6-c-scroll-inner-wrapper">
+        <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+          <thead className="pf-v6-c-table__thead">
+            <tr className="pf-v6-c-table__tr">
               <th className={tableColumnClasses[0]}>{t('public~Type')}</th>
               <th className={tableColumnClasses[1]}>{t('public~Webhook URL')}</th>
               <th className={tableColumnClasses[2]}>{t('public~Secret')}</th>
@@ -214,7 +214,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
               const secretReference = getSecretReference(trigger);
               const clipboardButton = getClipboardButton(trigger);
               return (
-                <tr className="pf-v5-c-table__tr" key={i}>
+                <tr className="pf-v6-c-table__tr" key={i}>
                   <td className={tableColumnClasses[0]}>{trigger.type}</td>
                   <td className={tableColumnClasses[1]}>{webhookURL || '-'}</td>
                   <td className={tableColumnClasses[2]}>{secretReference}</td>

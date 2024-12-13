@@ -6,15 +6,15 @@
 
 /* Style override for FormFieldGroupExpandable: bigger font (~h2), move toggle icon a little bit lower */
 .co-create-networkpolicy__expandable-xl
-  > .pf-v5-c-form__field-group-header
-  .pf-v5-c-form__field-group-header-title-text {
+  > .pf-v6-c-form__field-group-header
+  .pf-v6-c-form__field-group-header-title-text {
   font-family: var(--pf-v5-global--FontFamily--heading);
   font-size: var(--pf-v5-global--FontSize--xl);
   font-weight: var(--pf-v5-global--FontWeight--normal);
   line-height: var(--pf-v5-global--LineHeight--md);
 }
 
-.co-create-networkpolicy__expandable-xl > .pf-v5-c-form__field-group-toggle {
+.co-create-networkpolicy__expandable-xl > .pf-v6-c-form__field-group-toggle {
   --pf-v5-c-form__field-group-toggle-button--MarginTop: 0.3rem;
 }
 
@@ -40,10 +40,10 @@
   margin-right: 0;
 }
 
-.co-create-networkpolicy__selector-preview button.pf-v5-c-tree-view__node[role='treeitem'],
+.co-create-networkpolicy__selector-preview button.pf-v6-c-tree-view__node[role='treeitem'],
 .co-create-networkpolicy__selector-preview
-  button.pf-v5-c-tree-view__node[role='treeitem']
-  > .pf-v5-c-tree-view__node-container {
+  button.pf-v6-c-tree-view__node[role='treeitem']
+  > .pf-v6-c-tree-view__node-container {
   cursor: default;
 }
 

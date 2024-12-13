@@ -1,5 +1,5 @@
 //Prevent layout shift when Advanced section is opened
-.pf-v5-c-modal-box__body {
+.pf-v6-c-modal-box__body {
   scrollbar-gutter: stable;
   padding-right: var(--pf-v5-global--spacer--sm);
 
@@ -9,7 +9,7 @@
   }
 }
 
-.pf-v5-c-modal-box__header {
+.pf-v6-c-modal-box__header {
   padding-bottom: var(--pf-v5-global--spacer--md);
 }
 

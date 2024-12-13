@@ -791,7 +791,7 @@ const EditYAMLInner = (props) => {
         />
       )}
 
-      <div className="pf-v5-c-form co-m-page__body">
+      <div className="pf-v6-c-form co-m-page__body">
         <div className="co-p-has-sidebar">
           <div className="co-p-has-sidebar__body">
             <div className={classNames('yaml-editor', customClass)} ref={editor}>
@@ -831,7 +831,7 @@ const EditYAMLInner = (props) => {
                     {t('public~Click reload to see the new version.')}
                   </Alert>
                 )}
-                <ActionGroup className="pf-v5-c-form__group--no-top-margin">
+                <ActionGroup className="pf-v6-c-form__group--no-top-margin">
                   {create && (
                     <Button
                       type="submit"
@@ -884,7 +884,7 @@ const EditYAMLInner = (props) => {
                       icon={<DownloadIcon />}
                       type="submit"
                       variant="secondary"
-                      className="pf-v5-c-button--align-right hidden-sm hidden-xs"
+                      className="pf-v6-c-button--align-right hidden-sm hidden-xs"
                       onClick={() => download()}
                     >
                       {t('public~Download')}

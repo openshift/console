@@ -205,8 +205,8 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
     >
       <ActionGroup
         className={classNames(
-          { 'pf-v5-c-form__actions--right': buttonAlignment === 'right' },
-          'pf-v5-c-form  pf-v5-c-form__group--no-top-margin',
+          { 'pf-v6-c-form__actions--right': buttonAlignment === 'right' },
+          'pf-v6-c-form  pf-v6-c-form__group--no-top-margin',
         )}
       >
         {buttonAlignment === 'left' ? (

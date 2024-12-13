@@ -33,7 +33,7 @@ const DataListRow: React.FC<DataListRowProps> = ({
   <DataListItem
     aria-labelledby={`table-column-management-item-${column.id}`}
     key={column.id}
-    className="pf-v5-c-data-list__item--transparent-bg"
+    className="pf-v6-c-data-list__item--transparent-bg"
   >
     <DataListItemRow>
       <DataListCheck

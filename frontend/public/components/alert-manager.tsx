@@ -50,7 +50,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
               <dt>Replicas</dt>
               <dd>
                 <Button
-                  icon={<PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
+                  icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
                   variant="link"
                   type="button"
                   isInline
@@ -76,9 +76,9 @@ export const AlertManagersDetailsPage = (props) => (
 const tableColumnClasses = [
   '',
   '',
-  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-25-on-md',
+  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-md',
   'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-lg',
 ];
 
 const AlertManagerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({

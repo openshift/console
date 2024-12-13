@@ -56,7 +56,7 @@ export const DeprecatedOperatorWarningIcon: React.FC<DeprecatedOperatorWarningIc
 
   return (
     <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
-      <YellowExclamationTriangleIcon dataTest={dataTest} className="pf-v5-u-ml-xs" />
+      <YellowExclamationTriangleIcon dataTest={dataTest} className="pf-v6-u-ml-xs" />
     </Tooltip>
   );
 };
@@ -72,7 +72,7 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
 
   return (
     alertVisible && (
-      <FormAlert className="pf-v5-u-my-md">
+      <FormAlert className="pf-v6-u-my-md">
         <Alert
           variant="warning"
           title={t('olm~Deprecated warnings')}

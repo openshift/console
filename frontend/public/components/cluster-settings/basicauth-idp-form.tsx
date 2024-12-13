@@ -184,7 +184,7 @@ export const AddBasicAuthPage: React.FC = () => {
               {t('public~URL')}
             </label>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               type="url"
               onChange={(e) => setUrl(e.currentTarget.value)}
               value={url}
@@ -222,7 +222,7 @@ export const AddBasicAuthPage: React.FC = () => {
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

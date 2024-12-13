@@ -90,7 +90,7 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
           </>
         )}
       </p>
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
           <Button variant="primary">{t('olm~View error')}</Button>
         </Link>
@@ -122,7 +122,7 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
       <h2 className="co-clusterserviceversion-install__heading">
         {t('olm~Manual approval required')}
       </h2>
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <InstallPlanReview installPlan={installObj} />
         {((installObjIsInstallPlan && canPatchInstallPlans) || !installObjIsInstallPlan) && (
           <>
@@ -233,7 +233,7 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
           />
         </>
       )}
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         {initializationResource ? (
           <CreateInitializationResourceButton
             initializationResource={initializationResource}
@@ -282,7 +282,7 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
           obj={obj}
         />
       )}
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         {initializationResource && (
           <CreateInitializationResourceButton
             disabled

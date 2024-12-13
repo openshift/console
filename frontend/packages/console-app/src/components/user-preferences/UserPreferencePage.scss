@@ -36,7 +36,7 @@
   }
 
   //workaround for patternfly bug which causes the buttons to show even when isVertical prop is true
-  .pf-v5-c-tabs__scroll-button {
+  .pf-v6-c-tabs__scroll-button {
     display: none;
   }
 }

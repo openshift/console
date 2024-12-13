@@ -9,7 +9,7 @@
   --pf-v5-c-accordion--BoxShadow: none !important;
   --pf-v5-c-accordion--PaddingBottom: 0rem !important;
   --pf-v5-c-accordion--PaddingTop: 0rem !important;
-  .pf-v5-c-accordion__toggle label {
+  .pf-v6-c-accordion__toggle label {
     margin-bottom: 0;
   }
 }
@@ -30,7 +30,7 @@
   --pf-v5-c-accordion__toggle-text--hover--FontWeight: 600 !important;
   margin-bottom: 0.5rem;
 
-  .pf-v5-c-accordion__toggle {
+  .pf-v6-c-accordion__toggle {
     &:before,
     &:after {
       display: none;

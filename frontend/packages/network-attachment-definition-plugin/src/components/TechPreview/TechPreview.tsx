@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 const TechPreview: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className={classNames('pf-v5-c-button', 'kv-tech-preview-label')}>
+    <div className={classNames('pf-v6-c-button', 'kv-tech-preview-label')}>
       {t('network-attachment-definition-plugin~Tech preview')}
     </div>
   );

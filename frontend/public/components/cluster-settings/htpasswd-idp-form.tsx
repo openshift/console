@@ -137,7 +137,7 @@ export const AddHTPasswdPage = () => {
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary">
                 {t('public~Add')}
               </Button>

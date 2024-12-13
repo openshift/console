@@ -305,7 +305,7 @@ class CreateRouteWithTranslation extends React.Component<
             {t('public~Name')}
           </label>
           <input
-            className="pf-v5-c-form-control"
+            className="pf-v6-c-form-control"
             type="text"
             onChange={this.handleChange}
             value={this.state.name}
@@ -323,7 +323,7 @@ class CreateRouteWithTranslation extends React.Component<
         <div className="form-group co-create-route__hostname">
           <label htmlFor="hostname">{t('public~Hostname')}</label>
           <input
-            className="pf-v5-c-form-control"
+            className="pf-v6-c-form-control"
             type="text"
             onChange={this.handleChange}
             value={this.state.hostname}
@@ -343,7 +343,7 @@ class CreateRouteWithTranslation extends React.Component<
         <div className="form-group co-create-route__path">
           <label htmlFor="path">{t('public~Path')}</label>
           <input
-            className="pf-v5-c-form-control"
+            className="pf-v6-c-form-control"
             type="text"
             onChange={this.handleChange}
             value={this.state.path ?? ''} // this.state.path can be set to undefined in componentDidMount
@@ -390,7 +390,7 @@ class CreateRouteWithTranslation extends React.Component<
             <div className="form-group co-create-route__weight">
               <label htmlFor="weight">{t('public~Weight')}</label>
               <input
-                className="pf-v5-c-form-control co-create-route__weight-label"
+                className="pf-v6-c-form-control co-create-route__weight-label"
                 type="number"
                 onChange={this.handleWeightChange}
                 value={this.state.weight}
@@ -603,7 +603,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
       <div className="form-group">
         <label htmlFor={`${index}-weight`}>{t('public~Alternate Service weight')}</label>
         <input
-          className="pf-v5-c-form-control co-create-route__weight-label"
+          className="pf-v6-c-form-control co-create-route__weight-label"
           id={`${index}-weight`}
           type="number"
           onChange={onWeightChange}
