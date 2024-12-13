@@ -22,9 +22,10 @@ export const TableHeader: React.FCC<TableHeaderProps> = ({
           const sortable = sortField || sortFunc || sort;
           return (
             <Th
-              key={id}
+              key={id || title || 'actions'}
               sort={sortable ? { sortBy, onSort, columnIndex } : null}
               data-label={title}
+              screenReaderText={!title && t('public~Actions')}
               {...(props ?? {})}
             >
               {title}

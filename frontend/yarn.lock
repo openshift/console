@@ -2324,13 +2324,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cypress-axe@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@types/cypress-axe/-/cypress-axe-0.8.0.tgz#c22f5cb197080378fd65082255a613fa2e8e1afa"
-  integrity sha512-4sTqNsXUXnl/CqmSI+xCCmYwml+/zZ66uBExMLqnF1dn3wd+BIyrLL8fJ81O/AJePuh08igR2VjZqWuZaoqWaw==
-  dependencies:
-    axe-core "^3.4.1"
-
 "@types/d3-array@*", "@types/d3-array@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-3.0.3.tgz#87d990bf504d14ad6b16766979d04e943c046dac"
@@ -4081,10 +4074,10 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
 
-axe-core@^3.4.1:
-  version "3.5.5"
-  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-3.5.5.tgz#84315073b53fa3c0c51676c588d59da09a192227"
-  integrity sha512-5P0QZ6J5xGikH780pghEdbEKijCTrruK9KxtPZCFWUpef0f6GipO+xEZ5GKCb020mmqgbiNO6TcA55CriL784Q==
+axe-core@^4.10.2:
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.10.2.tgz#85228e3e1d8b8532a27659b332e39b7fa0e022df"
+  integrity sha512-RE3mdQ7P3FRSe7eqCWoeQ/Z9QXrtniSjp1wUjt5nRC3WIpz5rSCve6o3fsZ2aCpJtrZjSZgjwXAoTO5k4tEI0w==
 
 axobject-query@^2.0.2:
   version "2.0.2"
@@ -6098,10 +6091,10 @@ cucumber@^4.2.1:
     util-arity "^1.0.2"
     verror "^1.9.0"
 
-cypress-axe@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/cypress-axe/-/cypress-axe-0.12.0.tgz#2549a55f0a5c8006de240a85a19c8ecf2ce3abf9"
-  integrity sha512-NF/bMxU6KaxhSqfJysBtX3Buw92aBgct1kR+eqCTwoU1bmqMjAzxxRZY5UaWTxmxQeVRb7Bv4yXNNzu0JDkK/g==
+cypress-axe@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/cypress-axe/-/cypress-axe-1.5.0.tgz#95082734583da77b51ce9b7784e14a442016c7a1"
+  integrity sha512-Hy/owCjfj+25KMsecvDgo4fC/781ccL+e8p+UUYoadGVM2ogZF9XIKbiM6KI8Y3cEaSreymdD6ZzccbI2bY0lQ==
 
 cypress-cucumber-preprocessor@latest:
   version "2.5.5"

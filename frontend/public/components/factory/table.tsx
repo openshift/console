@@ -352,43 +352,40 @@ const VirtualizedTable: React.FCC<VirtualizedTableProps> = ({
   scrollElement,
   sortBy,
 }) => {
-  const ariaRowCount = data && data.length;
   const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
   return (
     <div className="co-virtualized-table">
-      <div role="grid" aria-label={ariaLabel} aria-rowcount={ariaRowCount}>
-        <PfTable gridBreakPoint={gridBreakPoint} aria-label={ariaLabel}>
-          <TableHeader onSort={onSort} sortBy={sortBy} columns={columns} onSelect={onSelect} />
-        </PfTable>
-        <WithScrollContainer>
-          {(scrollContainer) => (
-            <WindowScroller scrollElement={scrollNode ?? scrollContainer}>
-              {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
-                <AutoSizer disableHeight>
-                  {({ width }) => (
-                    <div ref={registerChild}>
-                      <VirtualBody
-                        Row={Row}
-                        customData={customData}
-                        height={height}
-                        isScrolling={isScrolling}
-                        onChildScroll={onChildScroll}
-                        data={data}
-                        columns={columns}
-                        scrollTop={scrollTop}
-                        width={width}
-                        expand={expand}
-                        getRowProps={getRowProps}
-                        onRowsRendered={onRowsRendered}
-                      />
-                    </div>
-                  )}
-                </AutoSizer>
-              )}
-            </WindowScroller>
-          )}
-        </WithScrollContainer>
-      </div>
+      <PfTable gridBreakPoint={gridBreakPoint} aria-label={ariaLabel}>
+        <TableHeader onSort={onSort} sortBy={sortBy} columns={columns} onSelect={onSelect} />
+      </PfTable>
+      <WithScrollContainer>
+        {(scrollContainer) => (
+          <WindowScroller scrollElement={scrollNode ?? scrollContainer}>
+            {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
+              <AutoSizer disableHeight>
+                {({ width }) => (
+                  <div ref={registerChild}>
+                    <VirtualBody
+                      Row={Row}
+                      customData={customData}
+                      height={height}
+                      isScrolling={isScrolling}
+                      onChildScroll={onChildScroll}
+                      data={data}
+                      columns={columns}
+                      scrollTop={scrollTop}
+                      width={width}
+                      expand={expand}
+                      getRowProps={getRowProps}
+                      onRowsRendered={onRowsRendered}
+                    />
+                  </div>
+                )}
+              </AutoSizer>
+            )}
+          </WindowScroller>
+        )}
+      </WithScrollContainer>
     </div>
   );
 };
