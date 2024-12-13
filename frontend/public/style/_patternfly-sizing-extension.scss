@@ -1,13 +1,27 @@
 // Extend PatternFly 5 widths to add missing sizes that comprise a 12 column grid like Bootstrap
 
 $pf-v6-u-width-options: (
-  w-8:  (width calc(100% / 12)),
-  w-10: (width calc(100% / 10)),
-  w-16: (width calc(100% / 12 * 2)),
-  w-42: (width calc(100% / 12 * 5)),
-  w-58: (width calc(100% / 12 * 7)),
-  w-83: (width calc(100% / 12 * 10)),
-  w-92: (width calc(100% / 12 * 11))
+  w-8: (
+    width calc(100% / 12),
+  ),
+  w-10: (
+    width calc(100% / 10),
+  ),
+  w-16: (
+    width calc(100% / 12 * 2),
+  ),
+  w-42: (
+    width calc(100% / 12 * 5),
+  ),
+  w-58: (
+    width calc(100% / 12 * 7),
+  ),
+  w-83: (
+    width calc(100% / 12 * 10),
+  ),
+  w-92: (
+    width calc(100% / 12 * 11),
+  ),
 );
 
-@include pf-v5-utility-builder($pf-v6-u-width-options, $pf-v5-global--breakpoint-list);
+@include pf-v5-utility-builder($pf-v6-u-width-options, $pf-v6-global--breakpoint-list);

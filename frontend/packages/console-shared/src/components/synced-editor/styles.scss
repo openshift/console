@@ -4,9 +4,9 @@
   border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
   border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
   padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg);
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding-left: $pf-v5-global-gutter--md;
-    padding-right: $pf-v5-global-gutter--md;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-left: $pf-v6-global-gutter--md;
+    padding-right: $pf-v6-global-gutter--md;
   }
 }
 
@@ -16,5 +16,5 @@
 }
 
 .co-synced-editor__yaml-warning {
-  margin: $pf-v5-global-gutter--md $pf-v5-global-gutter--md 0;
+  margin: $pf-v6-global-gutter--md $pf-v6-global-gutter--md 0;
 }

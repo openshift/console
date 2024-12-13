@@ -42,11 +42,11 @@ dl.co-inline {
 }
 
 .co-m-pane__body {
-  margin: $pf-v5-global-gutter--md 0 0;
-  padding: 0 $pf-v5-global-gutter $pf-v5-global-gutter--md;
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding-left: $pf-v5-global-gutter--md;
-    padding-right: $pf-v5-global-gutter--md;
+  margin: $pf-v6-global-gutter--md 0 0;
+  padding: 0 $pf-v6-global-gutter $pf-v6-global-gutter--md;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-left: $pf-v6-global-gutter--md;
+    padding-right: $pf-v6-global-gutter--md;
   }
   &--full-height {
     height: 100%;
@@ -60,21 +60,21 @@ dl.co-inline {
   + .co-m-pane__body {
     border-top: 1px solid var(--pf-v5-global--BorderColor--100);
     margin-top: 0;
-    padding-top: $pf-v5-global-gutter--md;
+    padding-top: $pf-v6-global-gutter--md;
   }
 }
 
 .co-m-pane__createLink--no-title {
-  margin-bottom: $pf-v5-global-gutter--md;
+  margin-bottom: $pf-v6-global-gutter--md;
 }
 
 .co-m-pane__filter-bar,
 .co-m-pane__help-text {
-  margin: 20px $pf-v5-global-gutter;
-  @media (min-width: $pf-v5-global--breakpoint--md) {
-    margin-left: $pf-v5-global-gutter--md;
-    margin-right: $pf-v5-global-gutter--md;
-    margin-top: $pf-v5-global-gutter--md;
+  margin: 20px $pf-v6-global-gutter;
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    margin-left: $pf-v6-global-gutter--md;
+    margin-right: $pf-v6-global-gutter--md;
+    margin-top: $pf-v6-global-gutter--md;
   }
 }
 
@@ -111,11 +111,11 @@ dl.co-inline {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-bottom: $pf-v5-global-gutter--md;
+  margin-bottom: $pf-v6-global-gutter--md;
 }
 
 .co-m-pane__filter-row-action {
-  padding-top: $pf-v5-global-gutter;
+  padding-top: $pf-v6-global-gutter;
   @media (min-width: $screen-xs-min) {
     padding-top: 0;
   }
@@ -124,7 +124,7 @@ dl.co-inline {
 .co-m-pane__heading {
   display: flex;
   justify-content: space-between;
-  margin-bottom: $pf-v5-global-gutter--md !important;
+  margin-bottom: $pf-v6-global-gutter--md !important;
   &--baseline {
     align-items: baseline;
   }
@@ -146,7 +146,7 @@ dl.co-inline {
 }
 
 .co-m-pane__heading-help-text {
-  margin-bottom: $pf-v5-global-gutter--md !important;
+  margin-bottom: $pf-v6-global-gutter--md !important;
 }
 
 .co-m-pane__heading-owner {
@@ -249,7 +249,7 @@ dl.co-inline {
 // Prevent iOS phones from zooming on form inputs
 @supports (-webkit-overflow-scrolling: touch) {
   // Target mobile Safari
-  @media (max-width: $pf-v5-global--breakpoint--sm-max) {
+  @media (max-width: $pf-v6-global--breakpoint--sm-max) {
     // Target phones
     input,
     select,

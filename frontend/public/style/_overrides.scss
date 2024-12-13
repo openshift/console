@@ -87,8 +87,8 @@ form.pf-v6-c-form {
 
 .co-toolbar-no-padding .pf-v6-c-toolbar__content {
   // use negative margins so that pf-v6-c-toolbar__expandable-content extends to the edges at mobile
-  margin-left: -$pf-v5-global-gutter;
-  margin-right: -$pf-v5-global-gutter;
+  margin-left: -$pf-v6-global-gutter;
+  margin-right: -$pf-v6-global-gutter;
   --pf-v5-c-toolbar--PaddingTop: 0;
   --pf-v5-c-toolbar--RowGap: var(--pf-v5-global--spacer--md);
 }
@@ -302,7 +302,7 @@ form.pf-v6-c-form {
     --pf-v5-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
     --pf-v5-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
 
-    @media screen and (min-width: $pf-v5-global--breakpoint--xl) {
+    @media screen and (min-width: $pf-v6-global--breakpoint--xl) {
       --pf-v5-c-nav__list-link--PaddingRight: var(--pf-v5-global--spacer--md);
       --pf-v5-c-nav__list-link--PaddinLeft: var(--pf-v5-global--spacer--lg);
       --pf-v5-c-nav__list-link--after--Left: var(--pf-v5-global--spacer--lg);

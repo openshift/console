@@ -54,12 +54,12 @@
 
 .co-namespace-bar {
   border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-  padding: 0 $pf-v5-global-gutter;
+  padding: 0 $pf-v6-global-gutter;
   white-space: nowrap;
 
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding-left: $pf-v5-global-gutter--md;
-    padding-right: $pf-v5-global-gutter--md;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-left: $pf-v6-global-gutter--md;
+    padding-right: $pf-v6-global-gutter--md;
   }
 
   &__items {
@@ -79,7 +79,7 @@
 
 .co-namespace-bar--no-project {
   padding-left: var(--pf-v5-global--spacer--sm);
-  @media screen and (max-width: $pf-v5-global--breakpoint--xl) {
+  @media screen and (max-width: $pf-v6-global--breakpoint--xl) {
     margin-left: -0.5rem;
   }
 }
@@ -94,7 +94,7 @@
     --pf-v5-c-dropdown__toggle--PaddingLeft: 0;
     --pf-v5-c-dropdown__toggle--PaddingRight: 0;
 
-    @media (min-width: $pf-v5-global--breakpoint--md) {
+    @media (min-width: $pf-v6-global--breakpoint--md) {
       font-size: ($font-size-base + 2);
       --pf-v5-c-dropdown__toggle--PaddingBottom: 9px;
     }
@@ -124,7 +124,7 @@
 .pf-v6-c-dropdown__menu {
   list-style: none;
   -webkit-overflow-scrolling: touch;
-  @media (min-width: $pf-v5-global--breakpoint--md) {
+  @media (min-width: $pf-v6-global--breakpoint--md) {
     &.pf-m-align-right-on-md {
       right: 0;
     }

@@ -118,11 +118,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   border: 1px solid var(--pf-v5-global--BorderColor--300);
   display: flex;
   flex: 1;
-  padding-top: $pf-v5-global-gutter;
+  padding-top: $pf-v6-global-gutter;
 
   &--with-sidebar {
-    margin: 0 $pf-v5-global-gutter;
-    padding-bottom: $pf-v5-global-gutter;
+    margin: 0 $pf-v6-global-gutter;
+    padding-bottom: $pf-v6-global-gutter;
   }
 
   &__btn-group__group-by {
@@ -137,10 +137,10 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__description {
     margin-top: -10px;
-    padding: 0 $pf-v5-global-gutter $pf-v5-global-gutter;
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      padding-left: $pf-v5-global-gutter--md;
-      padding-right: $pf-v5-global-gutter--md;
+    padding: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      padding-left: $pf-v6-global-gutter--md;
+      padding-right: $pf-v6-global-gutter--md;
     }
   }
 
@@ -166,15 +166,15 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__header {
-    margin: 0 $pf-v5-global-gutter--md 0 0;
+    margin: 0 $pf-v6-global-gutter--md 0 0;
   }
 
   &__heading {
     font-size: 16px;
-    margin: 0 $pf-v5-global-gutter $pf-v5-global-gutter;
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      margin-left: $pf-v5-global-gutter--md;
-      margin-right: $pf-v5-global-gutter--md;
+    margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      margin-left: $pf-v6-global-gutter--md;
+      margin-right: $pf-v6-global-gutter--md;
     }
   }
 
@@ -183,13 +183,13 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__input {
-    margin: 0 $pf-v5-global-gutter $pf-v5-global-gutter--md;
-    @media (max-width: $pf-v5-global--breakpoint--md) {
+    margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter--md;
+    @media (max-width: $pf-v6-global--breakpoint--md) {
       max-width: 165px;
     }
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      margin-left: $pf-v5-global-gutter--md;
-      margin-right: $pf-v5-global-gutter--md;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      margin-left: $pf-v6-global-gutter--md;
+      margin-right: $pf-v6-global-gutter--md;
     }
   }
 
@@ -309,7 +309,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__tabs {
     flex: 0 0 220px;
-    margin: 0 $pf-v5-global-gutter 0 0;
+    margin: 0 $pf-v6-global-gutter 0 0;
   }
 
   &__searchfilter {

@@ -12,7 +12,7 @@ $consoleWebDistPath: './';
 // == Overrides of external dependency variables
 
 // PatternFly 5 font path.
-$pf-v5-global--font-path: '~@patternfly/patternfly/assets/fonts';
+$pf-v6-global--font-path: '~@patternfly/patternfly/assets/fonts';
 $table-border-color: var(--pf-v5-global--BorderColor--300);
 
 :root {
@@ -22,14 +22,14 @@ $table-border-color: var(--pf-v5-global--BorderColor--300);
 }
 
 // == Declare max breakpoints from PatternFly variables
-$pf-v5-global--breakpoint--xs-max: ($pf-v5-global--breakpoint--xs - 1);
-$pf-v5-global--breakpoint--sm-max: ($pf-v5-global--breakpoint--sm - 1);
-$pf-v5-global--breakpoint--md-max: ($pf-v5-global--breakpoint--md - 1);
-$pf-v5-global--breakpoint--lg-max: ($pf-v5-global--breakpoint--lg - 1);
+$pf-v6-global--breakpoint--xs-max: ($pf-v6-global--breakpoint--xs - 1);
+$pf-v6-global--breakpoint--sm-max: ($pf-v6-global--breakpoint--sm - 1);
+$pf-v6-global--breakpoint--md-max: ($pf-v6-global--breakpoint--md - 1);
+$pf-v6-global--breakpoint--lg-max: ($pf-v6-global--breakpoint--lg - 1);
 
 // Can not use --pf-v5-global--gutter --pf-v5-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
-$pf-v5-global-gutter: 1rem; // Matches --pf-v5-global--gutter
-$pf-v5-global-gutter--md: 1.5rem; // Matches --pf-v5-global--gutter--md
+$pf-v6-global-gutter: 1rem; // Matches --pf-v5-global--gutter
+$pf-v6-global-gutter--md: 1.5rem; // Matches --pf-v5-global--gutter--md
 
 // == Custom variables
 

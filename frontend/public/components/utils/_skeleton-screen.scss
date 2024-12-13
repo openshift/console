@@ -115,7 +115,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
   display: flex;
   flex: 1;
   height: 100%;
-  margin: 0 $pf-v5-global-gutter;
+  margin: 0 $pf-v6-global-gutter;
   position: relative;
 }
 
@@ -186,7 +186,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
 }
 
 .skeleton-detail-view {
-  padding: $pf-v5-global-gutter--md;
+  padding: $pf-v6-global-gutter--md;
   height: 100%;
   width: 100%;
 }

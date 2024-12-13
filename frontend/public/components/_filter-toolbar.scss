@@ -22,7 +22,7 @@
   padding: 0 var(--pf-v5-global--spacer--xs);
 }
 
-@media (min-width: $pf-v5-global--breakpoint--md) {
+@media (min-width: $pf-v6-global--breakpoint--md) {
   .co-filter-group {
     width: 350px !important; // enable full placeholder text to display
   }

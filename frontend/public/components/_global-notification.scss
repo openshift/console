@@ -3,11 +3,11 @@ $global-notification-text: $pf-v5-color-white;
 .co-global-notification {
   background-color: $pf-v5-color-blue-400;
   color: $global-notification-text;
-  padding: 4px $pf-v5-global-gutter;
+  padding: 4px $pf-v6-global-gutter;
   text-align: center;
 
-  @media (min-width: $pf-v5-global--breakpoint--md) {
-    padding: 6px $pf-v5-global-gutter--md;
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    padding: 6px $pf-v6-global-gutter--md;
   }
 
   + .co-global-notification {

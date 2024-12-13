@@ -19,11 +19,11 @@
 }
 
 .co-m-nav-title {
-  margin-top: $pf-v5-global-gutter--md;
-  padding: 0 $pf-v5-global-gutter 0;
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding-left: $pf-v5-global-gutter--md;
-    padding-right: $pf-v5-global-gutter--md;
+  margin-top: $pf-v6-global-gutter--md;
+  padding: 0 $pf-v6-global-gutter 0;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-left: $pf-v6-global-gutter--md;
+    padding-right: $pf-v6-global-gutter--md;
   }
   &--row {
     @media (min-width: $screen-sm) {

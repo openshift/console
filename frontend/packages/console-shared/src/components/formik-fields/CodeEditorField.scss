@@ -5,31 +5,31 @@
   display: flex;
   flex: 1 0 auto;
   flex-direction: row;
-  margin-right: -$pf-v5-global-gutter;
-  @media (max-width: $pf-v5-global--breakpoint--md) {
-    margin-left: -$pf-v5-global-gutter;
-    margin-top: -$pf-v5-global-gutter--md;
+  margin-right: -$pf-v6-global-gutter;
+  @media (max-width: $pf-v6-global--breakpoint--md) {
+    margin-left: -$pf-v6-global-gutter;
+    margin-top: -$pf-v6-global-gutter--md;
   }
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    margin-right: -$pf-v5-global-gutter--md;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    margin-right: -$pf-v6-global-gutter--md;
   }
 
   &__editor {
     display: flex;
     flex: 1 0 auto;
     flex-direction: column;
-    @media (min-width: $pf-v5-global--breakpoint--md) {
-      margin-right: $pf-v5-global-gutter;
+    @media (min-width: $pf-v6-global--breakpoint--md) {
+      margin-right: $pf-v6-global-gutter;
     }
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      margin-right: $pf-v5-global-gutter--md;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      margin-right: $pf-v6-global-gutter--md;
     }
   }
   &__sidebar {
     display: flex;
     width: 34%;
-    margin-top: -$pf-v5-global-gutter--md;
-    @media screen and (max-width: $pf-v5-global--breakpoint--lg) {
+    margin-top: -$pf-v6-global-gutter--md;
+    @media screen and (max-width: $pf-v6-global--breakpoint--lg) {
       display: none;
     }
   }

@@ -59,13 +59,13 @@
   outline: 0;
   position: relative;
   width: 100%;
-  @media (min-width: $pf-v5-global--breakpoint--md) {
+  @media (min-width: $pf-v6-global--breakpoint--md) {
     margin: 30px auto;
     &:not(.modal-lg) {
       max-width: 600px;
     }
   }
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
     &.modal-lg {
       // Manually set to match --pf-v5-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v6-c-modal-box
       max-width: 70rem;

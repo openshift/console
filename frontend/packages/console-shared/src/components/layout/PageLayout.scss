@@ -2,11 +2,11 @@
 
 .ocs-page-layout {
   &__content {
-    padding: $pf-v5-global-gutter--md $pf-v5-global-gutter;
+    padding: $pf-v6-global-gutter--md $pf-v6-global-gutter;
     background-color: var(--pf-v5-global--BackgroundColor--200);
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      padding-left: $pf-v5-global-gutter--md;
-      padding-right: $pf-v5-global-gutter--md;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      padding-left: $pf-v6-global-gutter--md;
+      padding-right: $pf-v6-global-gutter--md;
     }
 
     flex: 1;
@@ -22,20 +22,20 @@
 
   &__hint {
     padding-bottom: var(--pf-v5-global--spacer--md);
-    padding: 0 $pf-v5-global-gutter $pf-v5-global-gutter--md;
+    padding: 0 $pf-v6-global-gutter $pf-v6-global-gutter--md;
 
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      padding-left: $pf-v5-global-gutter--md;
-      padding-right: $pf-v5-global-gutter--md;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      padding-left: $pf-v6-global-gutter--md;
+      padding-right: $pf-v6-global-gutter--md;
     }
   }
 
   &__title {
-    padding: 0 $pf-v5-global-gutter;
+    padding: 0 $pf-v6-global-gutter;
 
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      padding-left: $pf-v5-global-gutter--md;
-      padding-right: $pf-v5-global-gutter--md;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      padding-left: $pf-v6-global-gutter--md;
+      padding-right: $pf-v6-global-gutter--md;
     }
   }
 }

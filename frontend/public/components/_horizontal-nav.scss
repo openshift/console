@@ -1,4 +1,4 @@
-$co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v5-global-gutter;
+$co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
 
 .co-m-horizontal-nav__menu {
   border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
@@ -11,18 +11,18 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v5-global-gutter;
   padding: 0;
   -webkit-overflow-scrolling: touch;
   white-space: nowrap;
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding-left: ($pf-v5-global-gutter--md - $pf-v5-global-gutter);
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-left: ($pf-v6-global-gutter--md - $pf-v6-global-gutter);
   }
   &--within-sidebar {
     border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    margin-bottom: $pf-v5-global-gutter--md !important;
-    margin-left: -$pf-v5-global-gutter;
-    margin-right: -$pf-v5-global-gutter;
+    margin-bottom: $pf-v6-global-gutter--md !important;
+    margin-left: -$pf-v6-global-gutter;
+    margin-right: -$pf-v6-global-gutter;
     overflow: visible; // so focus indicator is not clipped since these don't need to scroll
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      margin-left: -$pf-v5-global-gutter--md;
-      margin-right: -$pf-v5-global-gutter--md;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      margin-left: -$pf-v6-global-gutter--md;
+      margin-right: -$pf-v6-global-gutter--md;
     }
     .co-m-horizontal-nav__menu-item {
       font-size: 16px;
@@ -75,7 +75,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v5-global-gutter;
     }
   }
   &:last-child {
-    @media (min-width: $pf-v5-global--breakpoint--md) {
+    @media (min-width: $pf-v6-global--breakpoint--md) {
       a,
       button {
         margin-right: $co-m-horizontal-nav__menu-item-link-padding-lr;

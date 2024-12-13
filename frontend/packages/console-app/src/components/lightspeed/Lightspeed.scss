@@ -29,28 +29,28 @@
   top: calc(var(--popover-margin) * 5);
   width: 90%;
 
-  @media (min-width: $pf-v5-global--breakpoint--sm) {
+  @media (min-width: $pf-v6-global--breakpoint--sm) {
     height: 70vh;
     top: auto;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--md) {
+  @media (min-width: $pf-v6-global--breakpoint--md) {
     width: 50%;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--lg) and (min-height: $pf-v5-global--breakpoint--lg) {
+  @media (min-width: $pf-v6-global--breakpoint--lg) and (min-height: $pf-v6-global--breakpoint--lg) {
     height: 60vh;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--lg) and (min-height: $pf-v5-global--breakpoint--xl) {
+  @media (min-width: $pf-v6-global--breakpoint--lg) and (min-height: $pf-v6-global--breakpoint--xl) {
     height: 55vh;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
     width: 40%;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--2xl) {
+  @media (min-width: $pf-v6-global--breakpoint--2xl) {
     width: 35%;
   }
 }

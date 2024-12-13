@@ -131,10 +131,10 @@ $co-affinity-row-margin: 15px;
 // only used in packages and will be orphaned when packages move out
 .co-create-operand__header {
   border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-  padding: 0 $pf-v5-global-gutter var(--pf-v5-global--spacer--lg);
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding-left: $pf-v5-global-gutter--md;
-    padding-right: $pf-v5-global-gutter--md;
+  padding: 0 $pf-v6-global-gutter var(--pf-v5-global--spacer--lg);
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-left: $pf-v6-global-gutter--md;
+    padding-right: $pf-v6-global-gutter--md;
   }
 }
 
@@ -214,7 +214,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .key-operator-value__heading-button {
-  height: 23px; // for vertical alignment with input field; equals $pf-v5-global--LineHeight--md
+  height: 23px; // for vertical alignment with input field; equals $pf-v6-global--LineHeight--md
 }
 
 .key-operator-value__name-field,
@@ -242,9 +242,9 @@ $co-affinity-row-margin: 15px;
 }
 
 #operator-install-page {
-  margin: 0 $pf-v5-global-gutter;
+  margin: 0 $pf-v6-global-gutter;
   @media (min-width: $screen-sm-min) {
-    margin: $pf-v5-global-gutter--md;
+    margin: $pf-v6-global-gutter--md;
     max-width: 600px;
     min-width: 375px;
     width: 100%;
@@ -300,7 +300,7 @@ $co-affinity-row-margin: 15px;
 }
 
 // Enable inner table to scroll if needed
-@media (min-width: $pf-v5-global--breakpoint--md) and (min-height: 600px) {
+@media (min-width: $pf-v6-global--breakpoint--md) and (min-height: 600px) {
   .co-operator-uninstall__operands-section {
     display: block;
     max-height: calc(100vh - 400px);

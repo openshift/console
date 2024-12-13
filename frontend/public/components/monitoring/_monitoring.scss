@@ -330,7 +330,7 @@ $monitoring-line-height: 18px;
     align-items: baseline;
     display: flex;
     justify-content: space-between;
-    @media (min-width: $pf-v5-global--breakpoint--md) {
+    @media (min-width: $pf-v6-global--breakpoint--md) {
       padding-top: 26px;
     }
   }

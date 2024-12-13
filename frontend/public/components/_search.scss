@@ -4,14 +4,14 @@
   // Align with search results
   @media (min-width: $screen-sm-min) {
     .co-search__accordion-toggle {
-      padding-left: $pf-v5-global-gutter--md;
-      padding-right: $pf-v5-global-gutter--md;
+      padding-left: $pf-v6-global-gutter--md;
+      padding-right: $pf-v6-global-gutter--md;
     }
   }
   .co-m-pane__filter-bar {
     // Reduce the margin between the accordion toggle and the create button
     // so that the space is equal above and below the button.
-    margin-top: $pf-v5-global-gutter;
+    margin-top: $pf-v6-global-gutter;
   }
   // There's no way to set a class name on this element with the PF4 component,
   // so use a nested selector.
