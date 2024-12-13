@@ -1,21 +1,11 @@
 import {
   t_temp_dev_tbd as globalBackground200 /* CODEMODS: you should update this color token, original v5 token was global_BackgroundColor_200 */,
-
   t_temp_dev_tbd as darkEditorBackground /* CODEMODS: you should update this color token, original v5 token was global_BackgroundColor_dark_100 */,
-,
   t_temp_dev_tbd as globalBackgroundDark200 /* CODEMODS: you should update this color token, original v5 token was global_BackgroundColor_dark_200 */,
-,
   t_temp_dev_tbd as lightEditorBackground /* CODEMODS: you should update this color token, original v5 token was global_BackgroundColor_light_100 */,
-,
   t_temp_dev_tbd as globalColorDark100 /* CODEMODS: you should update this color token, original v5 token was global_Color_dark_100 */,
-,
   t_temp_dev_tbd as globalColorLight100 /* CODEMODS: you should update this color token, original v5 token was global_Color_light_100 */,
 } from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
-
-
-
-
-
 
 (window as any).monaco.editor.defineTheme('console-light', {
   base: 'vs',

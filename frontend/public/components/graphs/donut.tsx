@@ -5,8 +5,8 @@ import {
   chart_color_black_100,
   chart_color_green_300,
   chart_color_green_500,
-  chart_color_gold_400,
-  chart_color_gold_500,
+  chart_color_yellow_400,
+  chart_color_yellow_500,
 } from '@patternfly/react-tokens';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -58,8 +58,8 @@ export const DonutChart: React.FC<DonutChartProps> = ({
           colorScale={
             namespaceData[0]?.y === 100
               ? [
-                  chart_color_gold_400.value,
-                  chart_color_gold_500.value,
+                  chart_color_yellow_400.value,
+                  chart_color_yellow_500.value,
                   chart_color_black_100.value,
                 ]
               : [

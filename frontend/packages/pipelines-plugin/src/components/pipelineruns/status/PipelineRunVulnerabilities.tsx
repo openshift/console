@@ -7,16 +7,10 @@ import {
 } from '@patternfly/react-icons/dist/js/icons';
 import {
   t_temp_dev_tbd as blueColor /* CODEMODS: you should update this color token, original v5 token was global_palette_blue_300 */,
-
   t_temp_dev_tbd as goldColor /* CODEMODS: you should update this color token, original v5 token was global_palette_gold_400 */,
-,
   t_temp_dev_tbd as orangeColor /* CODEMODS: you should update this color token, original v5 token was global_palette_orange_300 */,
-,
   t_temp_dev_tbd as redColor /* CODEMODS: you should update this color token, original v5 token was global_palette_red_200 */,
 } from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
-
-
-
 import i18n from 'i18next';
 import { PipelineRunKind } from '../../../types';
 import { usePipelineRunVulnerabilities } from '../hooks/usePipelineRunVulnerabilities';
