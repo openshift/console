@@ -313,7 +313,7 @@ const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
 };
 
 const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo, pluginInfoLoaded] = useDynamicPluginInfo();
+  const [pluginInfo] = useDynamicPluginInfo();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
@@ -322,7 +322,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
     props?.obj?.spec?.plugins,
   ]);
   const rows = React.useMemo<ConsolePluginTableRow[]>(() => {
-    if (!pluginInfoLoaded || !consolePluginsLoaded) {
+    if (!consolePluginsLoaded) {
       return [];
     }
     return consolePlugins.map((plugin) => {
@@ -356,10 +356,8 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
             : undefined,
       };
     });
-  }, [pluginInfoLoaded, consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins]);
-  return (
-    <ConsolePluginsTable {...props} rows={rows} loaded={pluginInfoLoaded && consolePluginsLoaded} />
-  );
+  }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins]);
+  return <ConsolePluginsTable {...props} rows={rows} loaded={consolePluginsLoaded} />;
 };
 
 const ConsoleOperatorConfigPluginsPage: React.FC<ConsoleOperatorConfigPageProps> = developmentMode
