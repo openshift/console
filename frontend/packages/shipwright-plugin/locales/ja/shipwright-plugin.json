@@ -2,7 +2,7 @@
   "Build": "Build",
   "Builds": "Builds",
   "BuildRun": "BuildRun",
-  "BuildRuns": "BuildRun",
+  "BuildRuns": "BuildRuns",
   "Shipwright": "Shipwright",
   "Start": "開始",
   "Start last run": "最終実行の開始",
@@ -37,7 +37,11 @@
   "Select a ConfigMap": "ConfigMap の選択",
   "Invalid YAML - {{err}}": "無効な YAML - {{err}}",
   "Image": "イメージ",
+  "Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest": "OpenShift 内部レジストリーの例: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest",
   "Parameters": "パラメーター",
+  "No required parameters are associated with the selected build strategy.": "選択したビルドストラテジーには、必須のパラメーターが関連付けられていません。",
+  "Hide optional parameters": "オプションのパラメーターの非表示",
+  "Show optional parameters": "オプションのパラメーターの表示",
   "Select a Secret": "シークレットの選択",
   "Push Secret": "シークレットのプッシュ",
   "Create new Secret": "新規シークレットの作成",
@@ -89,8 +93,8 @@
   "Started": "開始済み",
   "BuildStrategy": "BuildStrategy",
   "ClusterBuildStrategy": "ClusterBuildStrategy",
-  "ClusterBuildStrategies": "ClusterBuildStrategy",
-  "BuildStrategies": "BuildStrategy",
+  "ClusterBuildStrategies": "ClusterBuildStrategies",
+  "BuildStrategies": "BuildStrategies",
   "Buildah": "Buildah",
-  "Source-to-Image": "Source-to-Image (S2I)"
+  "Source-to-Image": "Source-to-Image"
 }

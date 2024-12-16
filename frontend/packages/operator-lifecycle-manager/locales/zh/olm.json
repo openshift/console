@@ -372,6 +372,8 @@
   "View Operator": "查看 Operator",
   "The Operator is being installed. This may take a few minutes.": "Operator 正在被安装。这可能需要几分钟。",
   "Once the Operator is installed the required custom resource will be available for creation.": "安装 Operator 后，就可以创建所需的自定义资源。",
+  "Not found": "没有找到",
+  "Error: {{loadError}}": "错误：{{loadError}}",
   "Installing...": "安装......",
   "CatalogSource": "CatalogSource",
   "No PackageManifests Found": "未找到 PackageManifests 信息",
