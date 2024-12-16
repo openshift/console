@@ -92,6 +92,7 @@
   "Delete Revision": "Delete Revision",
   "Edit URI": "Edit URI",
   "Test Serverless Function": "Test Serverless Function",
+  "Serverless function is not ready to test": "Serverless function is not ready to test",
   "Make Serverless": "Make Serverless",
   "A KafkaSink takes a CloudEvent, and sends it to an Apache Kafka Topic. Events can be specified in either Structured or Binary mode.": "A KafkaSink takes a CloudEvent, and sends it to an Apache Kafka Topic. Events can be specified in either Structured or Binary mode.",
   "Supported": "Supported",
