@@ -33,9 +33,9 @@ export const getProgram = (config: tsj.Config): ts.Program => {
 
   if (diagnosticsErrors.length > 0) {
     throw new Error(
-      `Detected errors while parsing ${
-        config.path ? relativePath(config.path) : 'unknown'
-      }, ${String(diagnosticsErrors)}`,
+      // In practice this would never be undefined so we can ignore this warning
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      `Detected errors while parsing ${relativePath(config.path!)}, ${String(diagnosticsErrors)}`,
     );
   }
 
