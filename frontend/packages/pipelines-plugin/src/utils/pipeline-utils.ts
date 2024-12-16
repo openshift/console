@@ -147,10 +147,7 @@ export const appendPipelineRunStatus = (
       if (pipelineRun.spec.status === SucceedConditionReason.PipelineRunCancelled) {
         return _.merge(task, { status: { reason: ComputedStatus.Cancelled } });
       }
-      if (pipelineRun.spec.status === SucceedConditionReason.PipelineRunPending) {
-        return _.merge(task, { status: { reason: ComputedStatus.Idle } });
-      }
-      return _.merge(task, { status: { reason: ComputedStatus.Failed } });
+      return _.merge(task, { status: { reason: ComputedStatus.Idle } });
     }
 
     const taskRun = _.find(
