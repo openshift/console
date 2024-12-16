@@ -372,6 +372,8 @@
   "View Operator": "Afficher l’opérateur",
   "The Operator is being installed. This may take a few minutes.": "L’opérateur est en cours d’installation. Cette opération peut prendre quelques minutes.",
   "Once the Operator is installed the required custom resource will be available for creation.": "Une fois l’opérateur installé, la ressource personnalisée requise sera disponible pour création.",
+  "Not found": "Introuvable",
+  "Error: {{loadError}}": "Erreur : {{loadError}}",
   "Installing...": "Installation...",
   "CatalogSource": "Source du catalogue",
   "No PackageManifests Found": "Aucun manifeste de package trouvé",
