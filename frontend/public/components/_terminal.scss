@@ -4,9 +4,9 @@ $console-z-index: $zindex-navbar-fixed + 20;
 $console-collapse-link-z-index: $console-z-index + 20;
 
 .co-terminal > .terminal {
-  color: $pf-v5-color-white;
+  color: var(--pf-t--color--white);
   padding: 10px;
-  background-color: $pf-v5-color-black-1000;
+  background-color: var(--pf-t--color--black);
 }
 
 .co-terminal > .terminal.fullscreen {
@@ -17,7 +17,7 @@ $console-collapse-link-z-index: $console-z-index + 20;
   width: 100%;
   height: 100%;
   padding: 0;
-  background-color: $pf-v5-color-black-1000;
+  background-color: var(--pf-t--color--black);
   position: relative;
   > .terminal {
     height: 100%;
@@ -26,7 +26,7 @@ $console-collapse-link-z-index: $console-z-index + 20;
 
 .co-terminal-collapse-link.pf-v6-c-button {
   background: rgba(0, 0, 0, 0.75) !important;
-  color: $pf-v5-color-blue-300;
+  color: var(--pf-t--global--border--color--hover);
   position: fixed;
   right: 18px;
   top: 4px;

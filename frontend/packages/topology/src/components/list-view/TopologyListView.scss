@@ -114,7 +114,7 @@
     }
     &.is-filtered {
       outline-offset: -5px;
-      outline: $pf-v5-color-orange-200 auto 1px;
+      outline: var(--pf-t--global--border--color--nonstatus--orange--clicked) auto 1px;
     }
   }
   &__application-label {
@@ -131,7 +131,7 @@
     min-height: 58px;
     &.is-filtered {
       outline-offset: -5px;
-      outline: $pf-v5-color-orange-200 auto 1px;
+      outline: var(--pf-t--global--border--color--nonstatus--orange--clicked) auto 1px;
     }
   }
   &__kind-label {

@@ -1,4 +1,3 @@
-@import '~@patternfly/patternfly/sass-utilities/colors';
 @import '../../../topology-utils';
 
 .odc-application-group {
@@ -17,7 +16,7 @@
     stroke: $filtered-stroke-color;
   }
   &.pf-m-highlight .pf-topology__group__background {
-    fill: $pf-v5-color-black-150;
+    fill: var(--pf-t--global--background--color--control--read-only);
     stroke: $interactive-stroke-color;
   }
   &.pf-m-selected .pf-topology__group__background {

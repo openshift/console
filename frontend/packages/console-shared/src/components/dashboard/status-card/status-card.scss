@@ -1,4 +1,3 @@
-@import '~@patternfly/patternfly/sass-utilities/colors';
 @import '../../../styles/skeleton-screen';
 
 .co-status-card__alerts-body {
@@ -29,7 +28,9 @@
 }
 
 .co-status-card__alerts-icon.pf-v6-c-empty-state__icon {
-  --pf-v5-c-empty-state__icon--Color: $pf-v5-color-black-400;
+  --pf-v5-c-empty-state__icon--Color: var(
+    --pf-t--global--icon--color--severity--undefined--default
+  );
 }
 
 .co-status-card__alert-item {

@@ -42,23 +42,23 @@ $co-m-catalog-tile-width: 260px;
 
 // == Colors
 
-$color-alertmanager-dark: $pf-v5-color-orange-600;
-$color-application-dark: $pf-v5-color-green-500;
-$color-configmap-dark: $pf-v5-color-purple-600;
-$color-container-dark: $pf-v5-color-blue-300;
-$color-error: $pf-v5-color-red-100;
-$color-ingress-dark: $pf-v5-color-purple-600;
-$color-namespace-dark: $pf-v5-color-green-600;
-$color-node-dark: $pf-v5-color-purple-400;
-$color-pod-dark: $pf-v5-color-cyan-300;
-$color-pod-overlord: $pf-v5-color-blue-500;
-$color-primary: $pf-v5-color-blue-300;
-$color-rbac-binding-dark: $pf-v5-color-light-blue-500;
-$color-rbac-role-dark: $pf-v5-color-gold-600;
-$color-secret-dark: $pf-v5-color-orange-400;
-$color-service-dark: $pf-v5-color-light-green-500;
-$color-text-muted: $pf-v5-color-black-600;
-$color-text-secondary: $pf-v5-color-black-600;
+$color-alertmanager-dark: #9e4a06;
+$color-application-dark: var(--pf-t--global--border--color--status--success--default);
+$color-configmap-dark: var(--pf-t--global--border--color--status--info--clicked);
+$color-container-dark: var(--pf-t--global--border--color--hover);
+$color-error: #ee0000;
+$color-ingress-dark: var(--pf-t--global--border--color--status--info--clicked);
+$color-namespace-dark: (--pf-t--global--border--color--status--success--clicked);
+$color-node-dark: var(--pf-t--global--border--color--nonstatus--purple--clicked);
+$color-pod-dark: var(--pf-t--global--border--color--status--custom--default);
+$color-pod-overlord: var(--pf-t--global--border--color--brand--clicked);
+$color-primary: var(--pf-t--global--border--color--hover);
+$color-rbac-binding-dark: var(--pf-t--global--border--color--brand--default);
+$color-rbac-role-dark: var(--pf-t--global--border--color--status--warning--clicked);
+$color-secret-dark: var(--pf-t--global--icon--color--severity--important--default);
+$color-service-dark: #63993d;
+$color-text-muted: var(--pf-t--global--border--color--on-secondary);
+$color-text-secondary: var(--pf-t--global--border--color--on-secondary);
 // -- Depend on color vars defined above
 $color-alert-dark: $color-container-dark;
 $color-alertrule-dark: $color-configmap-dark;

@@ -341,7 +341,7 @@ $monitoring-line-height: 18px;
 }
 
 .monitoring-state-icon--pending {
-  color: $pf-v5-color-black-700;
+  color: var(--pf-t--global--icon--color--on-disabled);
 }
 
 .monitoring-timestamp {

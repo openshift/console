@@ -1,4 +1,3 @@
-@import '~@patternfly/patternfly/sass-utilities/colors';
 @import '../../../styles/skeleton-screen';
 
 .co-inventory-card__item {
@@ -31,11 +30,11 @@
 }
 
 .co-inventory-card__status-icon--question {
-  color: $pf-v5-color-black-300;
+  color: var(--pf-t--global--icon--color--severity--undefined--default);
 }
 
 .co-inventory-card__status-icon--progress {
-  color: $pf-v5-color-black-600;
+  color: var(--pf-t--global--icon--color--subtle);
 }
 
 .co-inventory-card__accordion.pf-v6-c-accordion {

@@ -328,7 +328,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-tab__empty {
-  color: $pf-v5-color-black-600;
+  color: var(--pf-t--global--border--color--on-secondary);
 }
 
 .co-modal-ignore-warning {

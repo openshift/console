@@ -33,7 +33,7 @@ $drag-column-width: 28px;
 
 .pairs-list__row-dragging {
   background-color: var(--pf-v5-global--BorderColor--300);
-  border: 1px dashed $pf-v5-color-black-300;
+  border: 1px dashed var(--pf-t--global--background--color--secondary--clicked);
   border-radius: 4px;
   height: 28px;
   margin-left: 28px;

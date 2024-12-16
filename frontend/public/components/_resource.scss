@@ -105,7 +105,7 @@
 
 @keyframes co-resource-icon__deleting {
   to {
-    color: $pf-v5-color-black-600;
+    color: var(--pf-t--global--border--color--on-secondary);
   }
 }
 
