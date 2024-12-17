@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, Label, Skeleton } from '@patternfly/react-core';
 import { NotificationEntry, NotificationTypes } from '@console/patternfly';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';

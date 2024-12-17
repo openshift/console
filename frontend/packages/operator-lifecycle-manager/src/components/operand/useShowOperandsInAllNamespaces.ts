@@ -1,6 +1,6 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector, useDispatch } from 'react-redux';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';

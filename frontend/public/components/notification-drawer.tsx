@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import {

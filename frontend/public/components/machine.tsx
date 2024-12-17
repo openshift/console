@@ -286,7 +286,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
 
   // FIXME - there isn't a type for a simple filter like this nor is there an easy way to add this type
   const machineFilter = [{ type: 'name', filter: tableFilters(isExactSearch).machine }];
-  //@ts-ignore
+  // @ts-ignore
   const [data, filteredData, onFilterChange] = useListPageFilter(machines, machineFilter);
 
   return (

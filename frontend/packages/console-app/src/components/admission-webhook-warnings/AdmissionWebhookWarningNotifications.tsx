@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore-next-line
+// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import {
   AdmissionWebhookWarning,
