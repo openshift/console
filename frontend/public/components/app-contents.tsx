@@ -823,7 +823,7 @@ const AppContents: React.FC<{}> = () => {
       <div id="content-scrollable">
         <PageSection
           hasBodyWrapper={false}
-          className="pf-v5-page__main-section--flex co-page-backdrop"
+          className="pf-v6-page__main-section--flex co-page-backdrop"
           padding={{ default: 'noPadding' }}
         >
           <ErrorBoundaryPage>

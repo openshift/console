@@ -30,7 +30,7 @@ form.pf-v6-c-form {
     max-width: 100%;
     min-width: 50px; // prevent collapsed state before img loads
     width: fit-content;
-    :where(.pf-v5-theme-dark) & {
+    :where(.pf-v6-theme-dark) & {
       margin-left: 0;
       margin-top: 0;
     }
@@ -234,7 +234,7 @@ form.pf-v6-c-form {
   }
 
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing
-  .pf-v5-page__main-section--flex {
+  .pf-v6-page__main-section--flex {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -271,7 +271,7 @@ form.pf-v6-c-form {
   .pf-v6-c-dropdown__toggle,
   .pf-v6-c-menu-toggle,
   .pf-v6-c-notification-badge {
-    font-size: $pf-v5-header-icon-fontsize !important;
+    font-size: $pf-v6-header-icon-fontsize !important;
   }
 }
 
@@ -281,7 +281,7 @@ form.pf-v6-c-form {
   font-size: var(--pf-v6-c-masthead__toggle--c-button--FontSize);
 }
 
-:where(:root:not(.pf-v5-theme-dark)) .pf-v6-c-page {
+:where(:root:not(.pf-v6-theme-dark)) .pf-v6-c-page {
   --pf-v6-c-page__sidebar--BoxShadow: none;
 }
 
@@ -330,7 +330,7 @@ form.pf-v6-c-form {
 }
 
 // Remove when upstream issue is addressed. https://github.com/patternfly/patternfly/issues/4889
-.pf-v5-theme-dark .pf-v6-c-card {
+.pf-v6-theme-dark .pf-v6-c-card {
   --pf-v6-c-card--BoxShadow: var(--pf-v6-global--BoxShadow--md);
 }
 

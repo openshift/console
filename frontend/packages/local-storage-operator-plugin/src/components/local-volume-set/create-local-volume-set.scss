@@ -55,7 +55,7 @@
     --pf-v6-c-alert--BoxShadow: 0;
   }
 
-  :where(.pf-v5-theme-dark) & {
+  :where(.pf-v6-theme-dark) & {
     background-color: var(--pf-v6-c-alert--m-inline--m-plain--BackgroundColor);
   }
 }

@@ -6,7 +6,7 @@
   color: var(--co-code--Color);
   padding: 3px var(--pf-v6-global--spacer--xs);
 
-  :where(.pf-v5-theme-dark) & {
+  :where(.pf-v6-theme-dark) & {
     --co-code--BackgroundColor: var(--pf-v6-global--palette--blue-700);
     --co-code--Color: var(--pf-v6-global--palette--light-blue-100);
   }

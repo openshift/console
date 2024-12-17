@@ -48,7 +48,7 @@
   }
 }
 
-:root:where(.pf-v5-theme-dark) .odc-eventing-pubsub {
+:root:where(.pf-v6-theme-dark) .odc-eventing-pubsub {
   &--image {
     filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }

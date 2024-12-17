@@ -6,7 +6,7 @@
   margin-top: var(--pf-v6-global--spacer--sm);
   padding: 0.6rem var(--pf-v6-global--spacer--sm);
 
-  :where(.pf-v5-theme-dark) & {
+  :where(.pf-v6-theme-dark) & {
     // Match --pf-v6-c-nav__item--before--BorderColor
     border-bottom-color: var(--pf-v6-global--BorderColor--100);
   }
@@ -19,7 +19,7 @@
   .pf-v6-c-menu {
     --pf-v6-c-menu--BackgroundColor: var(--pf-v6-global--BackgroundColor--100);
     padding: var(--pf-v6-global--spacer--sm) 0;
-    :where(.pf-v5-theme-dark) & {
+    :where(.pf-v6-theme-dark) & {
       --pf-v6-c-menu--BackgroundColor: var(--pf-v6-global--BackgroundColor--dark-300);
     }
   }
@@ -41,8 +41,8 @@
     &:focus-within {
       --pf-v6-c-menu__list-item--BackgroundColor: var(--pf-v6-global--BackgroundColor--200);
       --pf-v6-c-menu__list-item--Color: var(--pf-v6-global--Color--100, inherit);
-      :where(.pf-v5-theme-dark) & {
-        background-color: var(--pf-v5-global--BackgroundColor--400);
+      :where(.pf-v6-theme-dark) & {
+        background-color: var(--pf-v6-global--BackgroundColor--400);
       }
     }
   }
@@ -53,13 +53,13 @@
       border-style: hidden;
     }
 
-    :where(.pf-v5-theme-dark) & {
+    :where(.pf-v6-theme-dark) & {
       --pf-v6-c-menu-toggle--BackgroundColor: transparent;
     }
 
     &.pf-m-expanded {
       --pf-v6-c-menu-toggle--BackgroundColor: var(--pf-v6-global--BackgroundColor--dark-200);
-      :where(.pf-v5-theme-dark) & {
+      :where(.pf-v6-theme-dark) & {
         background-color: var(--pf-v6-global--BackgroundColor--dark-300);
       }
     }

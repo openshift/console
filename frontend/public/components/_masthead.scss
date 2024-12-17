@@ -48,14 +48,14 @@
     right: 0;
     top: 0;
 
-    .pf-v5-theme-dark & {
+    .pf-v6-theme-dark & {
       border-color: var(--pf-v6-global--palette--black-700) !important;
     }
   }
 }
 
 .co-masthead-icon {
-  font-size: $pf-v5-header-icon-fontsize;
+  font-size: $pf-v6-header-icon-fontsize;
 }
 
 .co-username {

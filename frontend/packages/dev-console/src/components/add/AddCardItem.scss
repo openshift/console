@@ -43,7 +43,7 @@
   }
 }
 
-:root:where(.pf-v5-theme-dark) .odc-add-card-item {
+:root:where(.pf-v6-theme-dark) .odc-add-card-item {
   &__img-icon {
     filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }

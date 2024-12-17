@@ -11,7 +11,7 @@ const NotificationCategory: React.FC<NotificationCategoryProps> = ({
   onExpandContents,
 }) => (
   <section
-    className={classNames('query-pf-v5-c-notification-drawer__group', {
+    className={classNames('query-pf-v6-c-notification-drawer__group', {
       'pf-m-expanded': isExpanded,
     })}
   >

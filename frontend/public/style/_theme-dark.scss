@@ -20,7 +20,7 @@
   --co-skeleton--dark--Color--300: var(--pf-v6-global--palette--black-700);
 }
 
-:root:where(.pf-v5-theme-dark) {
+:root:where(.pf-v6-theme-dark) {
   // Co palette updates
   --co-global--palette--blue-400: var(--co-global--dark--palette--blue-400);
   --co-global--palette--purple-600: var(--co-global--dark--palette--purple-600);

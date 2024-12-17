@@ -16,7 +16,7 @@
 
   background: var(--os-modal-dialog--BackgroundColor);
 
-  :where(.pf-v5-theme-dark) & {
+  :where(.pf-v6-theme-dark) & {
     --os-modal-dialog--BackgroundColor: var(--pf-v6-global--BackgroundColor--300);
   }
 }

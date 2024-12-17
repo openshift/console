@@ -117,7 +117,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
           <NotificationIcon type={type} />
         </span>
         <h4 className="pf-v6-c-notification-drawer__list-item-header-title">
-          <span className="pf-v5-screen-reader">{notificationTypeString(type)}</span>
+          <span className="pf-v6-screen-reader">{notificationTypeString(type)}</span>
           {title}
         </h4>
         {actionText && (actionPath || alertAction || actionExternalLinkURL) && (
