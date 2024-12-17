@@ -15,7 +15,7 @@ import {
   referenceForModel,
   modelFor,
 } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled, useActiveNamespace, usePodsWatcher } from '@console/shared';
+import { isCatalogTypeEnabled, useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
 import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
@@ -91,12 +91,6 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
-  const { loaded: podDataLoaded, podData } = usePodsWatcher(
-    resource,
-    referenceFor(resource),
-    resource.metadata.namespace,
-  );
-
   const actions = React.useMemo(() => {
     return [
       setTrafficDistribution(kindObj, resource),
@@ -110,17 +104,10 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
         ? [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, true)]
         : [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, false)]),
       ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true'
-        ? [
-            testServerlessFunction(
-              kindObj,
-              resource,
-              !podDataLoaded ||
-                podData?.obj?.status?.conditions.some((cond) => cond.status !== 'True'),
-            ),
-          ]
+        ? [testServerlessFunction(kindObj, resource)]
         : []),
     ];
-  }, [kindObj, resource, serviceTypeValue, podData, podDataLoaded]);
+  }, [kindObj, resource, serviceTypeValue]);
 
   return [actions, !inFlight, undefined];
 };
