@@ -15,10 +15,6 @@ export const WebHookSecretForm: React.FC<SecretSubFormProps> = ({ onChange, stri
   };
 
   const generateWebHookSecret = () => {
-    // the current (4.5.5) version of typescript does not have the randomUUID function defined, thus it produces ts errors
-    // but all of our supported browsers should have it defined, so we can safely ignore the error.
-    // randomUUID is firstly defined in 4.6 version of typescript, so once we upgrade to this or newer version we can remove this ts-ignore
-    // @ts-ignore-next-line
     const newSecret = window.crypto.randomUUID();
     handleWebHookSecretChange(newSecret);
   };

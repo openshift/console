@@ -43,7 +43,6 @@ export const chartStatusColors = {
   [AreaChartStatus.WARNING]: warningColor.value,
 };
 
-// @ts-ignore
 export const AreaChart: React.FC<AreaChartProps> = ({
   className,
   data = [],
@@ -65,8 +64,6 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   mainDataName,
   ...rest
 }) => {
-  // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
-  // @ts-ignore
   const theme = getCustomTheme(ChartThemeColor.blue, areaTheme);
   const [containerRef, width] = useRefWidth();
   const { processedData, unit } = React.useMemo(() => {

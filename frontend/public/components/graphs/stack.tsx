@@ -45,12 +45,7 @@ export const StackChart: React.FC<AreaChartProps> = ({
   byteDataType = '',
   mainDataName,
 }) => {
-  const theme = getCustomTheme(
-    ChartThemeColor.multiUnordered,
-    // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
-    // @ts-ignore
-    areaTheme,
-  );
+  const theme = getCustomTheme(ChartThemeColor.multiUnordered, areaTheme);
   const [containerRef, width] = useRefWidth();
 
   const [processedData, unit] = React.useMemo(() => {
