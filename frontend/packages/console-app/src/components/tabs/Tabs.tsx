@@ -33,7 +33,7 @@ export interface TabsProps
   /** Additional classes added to the tabs */
   className?: string;
   /** Tabs background color variant */
-  variant?: 'default' | 'light300';
+  variant?: 'default' | 'secondary';
   /** The index of the active tab */
   activeKey?: number | string;
   /** The index of the default active tab. Set this for uncontrolled Tabs */
@@ -96,7 +96,7 @@ export interface TabsProps
 
 const variantStyle = {
   default: '',
-  light300: styles.modifiers.colorSchemeLight_300,
+  secondary: styles.modifiers.secondary,
 };
 
 interface TabsState {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ModalFooter, ModalHeader } from '@patternfly/react-core';
 import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
@@ -13,7 +14,6 @@ type TourStepComponentProps = {
   placement?: string;
   heading: string;
   content: React.ReactNode;
-  showClose?: boolean;
   step?: number;
   totalSteps?: number;
   showStepBadge?: boolean;
@@ -30,7 +30,6 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   content,
   selector,
   showStepBadge,
-  showClose,
   step,
   totalSteps,
   nextButtonText,
@@ -83,17 +82,16 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
     <Modal
       className="co-tour-step-component"
       variant={ModalVariant.small}
-      showClose={showClose}
       isOpen
-      header={header}
-      footer={footer}
       onClose={handleClose}
       id="guided-tour-modal"
       data-test="guided-tour-modal"
       aria-label={t('console-app~guided tour {{step, number}}', { step })}
       isFullScreen
     >
+      <ModalHeader>{header}</ModalHeader>
       {stepContent}
+      <ModalFooter>{footer}</ModalFooter>
     </Modal>
   );
 };

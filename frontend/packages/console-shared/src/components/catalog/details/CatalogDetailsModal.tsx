@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { Split, SplitItem } from '@patternfly/react-core';
+import { ModalHeader, Split, SplitItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
@@ -66,7 +66,6 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
   return (
     <Modal
       className="co-catalog-page__overlay co-catalog-page__overlay--right"
-      header={modalHeader}
       isOpen={!!item}
       onClose={onClose}
       title={item.name}
@@ -77,6 +76,7 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
           <ServiceBindingDeprecationAlertForModals />
         </div>
       )}
+      <ModalHeader>{modalHeader}</ModalHeader>
       <CatalogDetailsPanel item={item} />
     </Modal>
   );

@@ -7,6 +7,7 @@ import {
   EmptyStateVariant,
   EmptyStateFooter,
   Truncate,
+  ModalHeader,
 } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
@@ -612,7 +613,11 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           className="co-catalog-page__overlay co-catalog-page__overlay--right"
           data-test-id="operator-modal-box"
           aria-labelledby="catalog-item-header"
-          header={
+          isOpen={!!detailsItem && showDetails}
+          onClose={closeOverlay}
+          title={detailsItem.name}
+        >
+          <ModalHeader>
             <>
               <CatalogItemHeader
                 className="co-catalog-page__overlay-header"
@@ -672,11 +677,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 )}
               </div>
             </>
-          }
-          isOpen={!!detailsItem && showDetails}
-          onClose={closeOverlay}
-          title={detailsItem.name}
-        >
+          </ModalHeader>
           <OperatorHubItemDetails
             item={detailsItem}
             updateChannel={updateChannel}

@@ -3,13 +3,10 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   EmptyStateVariant,
   EmptyState,
   EmptyStateProps,
 } from '@patternfly/react-core';
-import * as cx from 'classnames';
 
 export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
   children,
@@ -21,18 +18,8 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
 }) => {
   const dataTest = props['data-test'] || 'console-empty-state';
   const variant = props.variant || EmptyStateVariant.xs;
-  const header = (title || Icon) && (
-    <EmptyStateHeader
-      data-test={`${dataTest}-title`}
-      {...(Icon ? { icon: Icon } : {})}
-      titleText={title}
-    />
-  );
-  const bodyClassName = cx({ 'pf-v6-u-m-0': !header }); // Remove top margin if there's not a header
   const body = children && (
-    <EmptyStateBody className={bodyClassName} data-test={`${dataTest}-body`}>
-      {children}
-    </EmptyStateBody>
+    <EmptyStateBody data-test={`${dataTest}-body`}>{children}</EmptyStateBody>
   );
   const footer = (primaryActions || secondaryActions) && (
     <EmptyStateFooter data-test={`${dataTest}-footer`}>
@@ -49,8 +36,7 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
     </EmptyStateFooter>
   );
   return (
-    <EmptyState variant={variant} data-test={dataTest} {...props}>
-      {header}
+    <EmptyState variant={variant} data-test={dataTest} titleText={title} icon={Icon} {...props}>
       {body}
       {footer}
     </EmptyState>
