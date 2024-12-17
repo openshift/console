@@ -297,13 +297,15 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
 };
 
 type OperatorInstallStatusPageRouteParams = RouteParams<
-  'pkg' | 'catalogNamespace' | 'currentCSV' | 'targetNamespace'
+  'pkg' | 'catalogNamespace' | 'currentCSV' | 'targetNamespace' | 'catalog'
 >;
 
 const OperatorInstallLogo = ({ subscription }) => {
   const { t } = useTranslation();
   const notFound = t('olm~Not found');
-  const { currentCSV, catalogNamespace, pkg } = useParams<OperatorInstallStatusPageRouteParams>();
+  const { currentCSV, catalogNamespace, catalog, pkg } = useParams<
+    OperatorInstallStatusPageRouteParams
+  >();
   const [packageManifests, loaded, loadError] = useK8sWatchResource<PackageManifestKind[]>({
     groupVersionKind: {
       group: PackageManifestModel.apiGroup,
@@ -313,6 +315,7 @@ const OperatorInstallLogo = ({ subscription }) => {
     selector: {
       matchLabels: {
         'catalog-namespace': catalogNamespace,
+        catalog,
       },
     },
     fieldSelector: `metadata.name=${pkg}`,
