@@ -38,21 +38,21 @@
 }
 
 .co-inventory-card__accordion.pf-v6-c-accordion {
-  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
   box-shadow: none;
   padding: 0;
 
   h5 {
-    font-size: var(--pf-v5-c-card__body--FontSize);
-    font-weight: var(--pf-v5-global--FontWeight--normal);
+    font-size: var(--pf-v6-c-card__body--FontSize);
+    font-weight: var(--pf-v6-global--FontWeight--normal);
     margin: 0;
   }
 
   .co-inventory-card__accordion-toggle.pf-v6-c-accordion__toggle {
-    --pf-v5-c-accordion__toggle--PaddingTop: 0;
-    --pf-v5-c-accordion__toggle--PaddingRight: var(--pf-v5-c-card--child--PaddingRight);
-    --pf-v5-c-accordion__toggle--PaddingBottom: 0;
-    --pf-v5-c-accordion__toggle--PaddingLeft: 0;
+    --pf-v6-c-accordion__toggle--PaddingTop: 0;
+    --pf-v6-c-accordion__toggle--PaddingRight: var(--pf-v6-c-card--child--PaddingRight);
+    --pf-v6-c-accordion__toggle--PaddingBottom: 0;
+    --pf-v6-c-accordion__toggle--PaddingLeft: 0;
 
     border-left: none;
 
@@ -62,15 +62,15 @@
   }
 
   .co-inventory-card__accordion-body.pf-v6-c-accordion__expanded-content {
-    --pf-v5-c-accordion__expanded-content-body--PaddingTop: 1rem;
-    --pf-v5-c-accordion__expanded-content-body--PaddingRight: var(
-      --pf-v5-c-card--child--PaddingRight
+    --pf-v6-c-accordion__expanded-content-body--PaddingTop: 1rem;
+    --pf-v6-c-accordion__expanded-content-body--PaddingRight: var(
+      --pf-v6-c-card--child--PaddingRight
     );
-    --pf-v5-c-accordion__expanded-content-body--PaddingBottom: 1rem;
-    --pf-v5-c-accordion__expanded-content-body--PaddingLeft: var(
-      --pf-v5-c-card--child--PaddingRight
+    --pf-v6-c-accordion__expanded-content-body--PaddingBottom: 1rem;
+    --pf-v6-c-accordion__expanded-content-body--PaddingLeft: var(
+      --pf-v6-c-card--child--PaddingRight
     );
-    --pf-v5-c-accordion__expanded-content-body--expanded-content-body--PaddingTop: 1rem;
+    --pf-v6-c-accordion__expanded-content-body--expanded-content-body--PaddingTop: 1rem;
 
     border-left: none;
   }

@@ -29,7 +29,7 @@
   }
 
   .co-file-dropzone-container {
-    border: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--100);
+    border: var(--pf-v6-global--BorderWidth--lg) solid var(--pf-v6-global--BorderColor--100);
     background: rgba(0, 0, 0, 0.3);
     bottom: 0;
     color: #fff;
@@ -47,14 +47,14 @@
 }
 
 .co-file-dropzone__textarea {
-  font-family: var(--pf-v5-global--FontFamily--monospace);
+  font-family: var(--pf-v6-global--FontFamily--monospace);
   min-height: 300px;
   width: 100%;
 }
 
 .co-file-dropzone__drop-text {
   font-size: 20px;
-  font-weight: var(--pf-v5-global--FontWeight--bold);
+  font-weight: var(--pf-v6-global--FontWeight--bold);
   left: 50%;
   margin-right: -50%;
   position: absolute;

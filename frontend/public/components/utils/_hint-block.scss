@@ -1,11 +1,11 @@
 .co-hint-block {
-  background-color: var(--pf-v5-global--palette--blue-50);
-  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--palette--blue-100);
-  color: var(--pf-v5-global--Color--100);
-  padding: var(--pf-v5-global--spacer--lg);
+  background-color: var(--pf-v6-global--palette--blue-50);
+  border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--palette--blue-100);
+  color: var(--pf-v6-global--Color--100);
+  padding: var(--pf-v6-global--spacer--lg);
 
   :where(.pf-v5-theme-dark) & {
-    background-color: var(--pf-v5-global--BackgroundColor--400);
-    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+    background-color: var(--pf-v6-global--BackgroundColor--400);
+    border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
   }
 }

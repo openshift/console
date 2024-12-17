@@ -1,6 +1,6 @@
 $catalog-capability-level-icon-left: -20px;
 $catalog-capability-level-icon-top: 4px;
-$catalog-capability-level-inactive-color: var(--pf-v5-global--Color--400);
+$catalog-capability-level-inactive-color: var(--pf-v6-global--Color--400);
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
 $co-modal-ignore-warning-icon-width: 30px;
@@ -28,13 +28,13 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
 // Prevents our tile text from inheriting the link color
 .co-catalog-tile {
-  color: var(--pf-v5-global--Color--100);
+  color: var(--pf-v6-global--Color--100);
 }
 
 .co-catalog-tile-view {
   display: flex;
   flex-wrap: wrap;
-  --pf-v5-l-gallery--GridTemplateColumns: repeat(auto-fill, 260px) !important;
+  --pf-v6-l-gallery--GridTemplateColumns: repeat(auto-fill, 260px) !important;
 }
 
 .co-catalog__body {
@@ -54,7 +54,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__kind-label {
-    font-weight: var(--pf-v5-global--FontWeight--bold);
+    font-weight: var(--pf-v6-global--FontWeight--bold);
   }
 
   &__name {
@@ -67,7 +67,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__tag {
-    color: var(--pf-v5-global--Color--200);
+    color: var(--pf-v6-global--Color--200);
     font-size: ($font-size-base - 1);
     margin-right: 5px;
     text-transform: uppercase;
@@ -114,8 +114,8 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-page {
-  background: var(--pf-v5-global--BackgroundColor--100);
-  border: 1px solid var(--pf-v5-global--BorderColor--300);
+  background: var(--pf-v6-global--BackgroundColor--100);
+  border: 1px solid var(--pf-v6-global--BorderColor--300);
   display: flex;
   flex: 1;
   padding-top: $pf-v6-global-gutter;
@@ -127,7 +127,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__btn-group__group-by {
     display: inline;
-    margin-left: var(--pf-v5-global--spacer--md);
+    margin-left: var(--pf-v6-global--spacer--md);
   }
 
   &__content {
@@ -154,15 +154,15 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__grid {
-    background-color: var(--pf-v5-global--BackgroundColor--200);
+    background-color: var(--pf-v6-global--BackgroundColor--200);
   }
 
   &__grouped-items {
-    margin-bottom: var(--pf-v5-global--spacer--md);
+    margin-bottom: var(--pf-v6-global--spacer--md);
   }
 
   &__group-title {
-    margin-bottom: var(--pf-v5-global--spacer--sm);
+    margin-bottom: var(--pf-v6-global--spacer--sm);
   }
 
   &__header {
@@ -179,7 +179,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__hint {
-    margin: 0 0 var(--pf-v5-global--spacer--md) 0;
+    margin: 0 0 var(--pf-v6-global--spacer--md) 0;
   }
 
   &__input {
@@ -195,19 +195,19 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__sort {
     display: inline;
-    margin-left: var(--pf-v5-global--spacer--md);
+    margin-left: var(--pf-v6-global--spacer--md);
   }
 
   &__num-items {
-    font-weight: var(--pf-v5-global--FontWeight--bold);
+    font-weight: var(--pf-v6-global--FontWeight--bold);
     padding: 0 0 20px;
   }
 
   &__info-icon {
     vertical-align: middle;
-    color: var(--pf-v5-global--icon--Color--light);
+    color: var(--pf-v6-global--icon--Color--light);
     &:hover {
-      color: var(--pf-v5-global--icon--Color--dark);
+      color: var(--pf-v6-global--icon--Color--dark);
     }
   }
 
@@ -224,17 +224,17 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     bottom: 0;
     padding: 0 !important;
     right: 0;
-    top: 4.75rem; // --pf-v5-c-page__header--MinHeight
+    top: 4.75rem; // --pf-v6-c-page__header--MinHeight
 
     .pf-v6-c-modal-box__body {
       // Required to position scroll shadows correctly on Chrome
       display: flex;
       flex-direction: column;
       margin: 0 !important;
-      --pf-v5-c-modal-box__body--PaddingTop: 0 !important;
-      --pf-v5-c-modal-box__body--PaddingRight: 0 !important;
-      --pf-v5-c-modal-box__body--PaddingLeft: 0 !important;
-      --pf-v5-c-modal-box__body--last-child--PaddingBottom: 0 !important;
+      --pf-v6-c-modal-box__body--PaddingTop: 0 !important;
+      --pf-v6-c-modal-box__body--PaddingRight: 0 !important;
+      --pf-v6-c-modal-box__body--PaddingLeft: 0 !important;
+      --pf-v6-c-modal-box__body--last-child--PaddingBottom: 0 !important;
     }
 
     h1 {
@@ -245,7 +245,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-action {
     align-items: baseline;
     display: inline-flex !important;
-    margin: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--sm) 0 0;
+    margin: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--sm) 0 0;
     overflow-x: hidden;
   }
 
@@ -257,17 +257,17 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: var(--pf-v5-global--spacer--md);
+    margin-bottom: var(--pf-v6-global--spacer--md);
     white-space: normal;
   }
 
   &__overlay-header {
-    margin-bottom: var(--pf-v5-global--spacer--md);
+    margin-bottom: var(--pf-v6-global--spacer--md);
   }
 
   &__overlay-body {
     margin: 0;
-    padding-top: var(--pf-v5-global--spacer--md);
+    padding-top: var(--pf-v6-global--spacer--md);
     @media (min-width: $screen-sm-min) {
       display: flex;
     }
@@ -283,7 +283,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     h2,
     h3 {
       color: var(
-        --pf-v5-global--Color--100
+        --pf-v6-global--Color--100
       ); // same color as styles hardcoded in markdown text component
     }
 
@@ -295,7 +295,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     li,
     ol {
       color: var(
-        --pf-v5-global--Color--100
+        --pf-v6-global--Color--100
       ); // same color as styles hardcoded in markdown text component
       font-size: $font-size-base !important;
     }
@@ -319,11 +319,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
 .co-catalog-page__overlay.pf-v6-c-modal-box {
   @media screen and (min-width: $screen-sm) {
-    --pf-v5-c-modal-box--Width: 600px;
+    --pf-v6-c-modal-box--Width: 600px;
   }
 
   @media screen and (min-width: $screen-md) {
-    --pf-v5-c-modal-box--Width: 900px;
+    --pf-v6-c-modal-box--Width: 900px;
   }
 }
 

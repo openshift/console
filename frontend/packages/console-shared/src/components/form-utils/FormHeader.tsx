@@ -12,8 +12,8 @@ type FormHeaderProps = {
 
 const FormHeader: React.FC<FormHeaderProps> = ({ title, helpText, marginTop, marginBottom }) => {
   const marginStyles = {
-    ...(marginTop ? { marginTop: `var(--pf-v5-global--spacer--${marginTop})` } : {}),
-    ...(marginBottom ? { marginBottom: `var(--pf-v5-global--spacer--${marginBottom})` } : {}),
+    ...(marginTop ? { marginTop: `var(--pf-v6-global--spacer--${marginTop})` } : {}),
+    ...(marginBottom ? { marginBottom: `var(--pf-v6-global--spacer--${marginBottom})` } : {}),
   };
 
   return (

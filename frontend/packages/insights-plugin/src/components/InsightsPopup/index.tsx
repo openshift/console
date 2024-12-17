@@ -40,14 +40,14 @@ const LabelComponent = ({ clusterID, ...props }) => (
       {...props}
       style={{
         fill:
-          'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--link--Color */,
+          'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--link--Color */,
       }}
     />
   </ExternalLink>
 );
 
 const SubTitleComponent = (props) => (
-  <ChartLabel {...props} style={{ fill: 'var(--pf-v5-chart-color-black-500)' }} />
+  <ChartLabel {...props} style={{ fill: 'var(--pf-v6-chart-color-black-500)' }} />
 );
 
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {

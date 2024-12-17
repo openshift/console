@@ -1,10 +1,10 @@
-$color-log-window-header-bg: var(--pf-v5-global--BackgroundColor--dark-300);
-$color-log-window-text: var(--pf-v5-global--Color--light-100);
+$color-log-window-header-bg: var(--pf-v6-global--BackgroundColor--dark-300);
+$color-log-window-text: var(--pf-v6-global--Color--light-100);
 
 .pf-v6-c-log-viewer {
   &.pf-m-dark {
     .pf-v6-c-log-viewer__main {
-      background-color: var(--pf-v5-global--palette--black-1000);
+      background-color: var(--pf-v6-global--palette--black-1000);
     }
   }
 }

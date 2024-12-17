@@ -60,11 +60,11 @@ body,
 
     &--bordered {
       @media (max-width: $screen-sm-max) {
-        border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+        border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
       }
       @media (min-width: $screen-md-min) {
-        border-left: var(--pf-v5-global--BorderWidth--sm) solid
-          var(--pf-v5-global--BorderColor--100);
+        border-left: var(--pf-v6-global--BorderWidth--sm) solid
+          var(--pf-v6-global--BorderColor--100);
       }
     }
   }

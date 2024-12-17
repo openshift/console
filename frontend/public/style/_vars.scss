@@ -4,7 +4,7 @@
 $consoleWebDistPath: './';
 
 // PatternFly variables -- imported here so they can be used throughout
-@import '~@patternfly/patternfly/sass-utilities/index';
+@import '~@patternfly/patternfly/sass-utilities';
 
 // Enable use within shared components and packages
 @import '../style/ancillary/bootstrap-variables';
@@ -13,12 +13,12 @@ $consoleWebDistPath: './';
 
 // PatternFly 5 font path.
 $pf-v6-global--font-path: '~@patternfly/patternfly/assets/fonts';
-$table-border-color: var(--pf-v5-global--BorderColor--300);
+$table-border-color: var(--pf-v6-global--BorderColor--300);
 
 :root {
   // Numerical value required
-  --pf-v5-global--FontSize--md: 14px; // same as $font-size-base
-  --pf-v5-global--FontSize--sm: 13px;
+  --pf-v6-global--FontSize--md: 14px; // same as $font-size-base
+  --pf-v6-global--FontSize--sm: 13px;
 }
 
 // == Declare max breakpoints from PatternFly variables
@@ -27,38 +27,38 @@ $pf-v6-global--breakpoint--sm-max: ($pf-v6-global--breakpoint--sm - 1);
 $pf-v6-global--breakpoint--md-max: ($pf-v6-global--breakpoint--md - 1);
 $pf-v6-global--breakpoint--lg-max: ($pf-v6-global--breakpoint--lg - 1);
 
-// Can not use --pf-v5-global--gutter --pf-v5-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
-$pf-v6-global-gutter: 1rem; // Matches --pf-v5-global--gutter
-$pf-v6-global-gutter--md: 1.5rem; // Matches --pf-v5-global--gutter--md
+// Can not use --pf-v6-global--gutter --pf-v6-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
+$pf-v6-global-gutter: 1rem; // Matches --pf-v6-global--gutter
+$pf-v6-global-gutter--md: 1.5rem; // Matches --pf-v6-global--gutter--md
 
 // == Custom variables
 
 $pf-v5-header-icon-fontsize: 16px; // Patternfly 5 default
 // Manually set because our default font size is different than PF 4
-$co-side-nav-font-size: $font-size-base; // Matches PF 4 --pf-v5-c-nav__subnav__link--FontSize
-$co-side-nav-section-font-size: ($font-size-base + 2); // Matches PF 4 --pf-v5-c-nav__link--FontSize
+$co-side-nav-font-size: $font-size-base; // Matches PF 4 --pf-v6-c-nav__subnav__link--FontSize
+$co-side-nav-section-font-size: ($font-size-base + 2); // Matches PF 4 --pf-v6-c-nav__link--FontSize
 $co-m-catalog-tile-height: 100%;
 $co-m-catalog-tile-width: 260px;
 
 // == Colors
 
-$color-alertmanager-dark: #9e4a06;
-$color-application-dark: var(--pf-t--global--border--color--status--success--default);
-$color-configmap-dark: var(--pf-t--global--border--color--status--info--clicked);
-$color-container-dark: var(--pf-t--global--border--color--hover);
-$color-error: #ee0000;
-$color-ingress-dark: var(--pf-t--global--border--color--status--info--clicked);
-$color-namespace-dark: (--pf-t--global--border--color--status--success--clicked);
-$color-node-dark: var(--pf-t--global--border--color--nonstatus--purple--clicked);
-$color-pod-dark: var(--pf-t--global--border--color--status--custom--default);
-$color-pod-overlord: var(--pf-t--global--border--color--brand--clicked);
-$color-primary: var(--pf-t--global--border--color--hover);
-$color-rbac-binding-dark: var(--pf-t--global--border--color--brand--default);
-$color-rbac-role-dark: var(--pf-t--global--border--color--status--warning--clicked);
-$color-secret-dark: var(--pf-t--global--icon--color--severity--important--default);
-$color-service-dark: #63993d;
-$color-text-muted: var(--pf-t--global--border--color--on-secondary);
-$color-text-secondary: var(--pf-t--global--border--color--on-secondary);
+$color-alertmanager-dark: #773d00;
+$color-application-dark: #3e8635;
+$color-configmap-dark: #40199a;
+$color-container-dark: #2b9af3;
+$color-error: #c9190b;
+$color-ingress-dark: #40199a;
+$color-namespace-dark: #1e4f18;
+$color-node-dark: #8476d1;
+$color-pod-dark: #009596;
+$color-pod-overlord: #004080;
+$color-primary: #2b9af3;
+$color-rbac-binding-dark: #008bad;
+$color-rbac-role-dark: #795600;
+$color-secret-dark: #c46100;
+$color-service-dark: #6ca100;
+$color-text-muted: #6a6e73;
+$color-text-secondary: #6a6e73;
 // -- Depend on color vars defined above
 $color-alert-dark: $color-container-dark;
 $color-alertrule-dark: $color-configmap-dark;

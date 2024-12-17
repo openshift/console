@@ -1,13 +1,13 @@
 .co-app-launcher {
   .pf-v6-c-menu__item-external-icon {
-    --pf-v5-c-menu__item-external-icon--Color: var(--pf-v5-c-menu__item-action--Color);
+    --pf-v6-c-menu__item-external-icon--Color: var(--pf-v6-c-menu__item-action--Color);
 
     opacity: 1;
   }
 
   .pf-v6-c-menu__item-icon {
-    height: var(--pf-v5-global--icon--FontSize--lg);
-    width: var(--pf-v5-global--icon--FontSize--lg);
+    height: var(--pf-v6-global--icon--FontSize--lg);
+    width: var(--pf-v6-global--icon--FontSize--lg);
   }
 }
 
@@ -38,7 +38,7 @@
 
   // PatternFly does not fully support <MenuToggle isFullHeight> styling in <Masthead>
   &::before {
-    border: 1px solid var(--pf-v5-global--palette--black-800) !important;
+    border: 1px solid var(--pf-v6-global--palette--black-800) !important;
     border-bottom: 0 !important;
     border-top: 0 !important;
     bottom: 0;
@@ -49,7 +49,7 @@
     top: 0;
 
     .pf-v5-theme-dark & {
-      border-color: var(--pf-v5-global--palette--black-700) !important;
+      border-color: var(--pf-v6-global--palette--black-700) !important;
     }
   }
 }
@@ -74,5 +74,5 @@
 }
 
 .pf-v6-c-masthead__content .pf-v6-c-notification-badge {
-  --pf-v5-c-notification-badge--m-unread--hover--after--BackgroundColor: transparent;
+  --pf-v6-c-notification-badge--m-unread--hover--after--BackgroundColor: transparent;
 }

@@ -1,6 +1,6 @@
 .co-search__accordion {
   // Margin between each resource section results
-  margin-bottom: var(--pf-v5-global--spacer--lg);
+  margin-bottom: var(--pf-v6-global--spacer--lg);
   // Align with search results
   @media (min-width: $screen-sm-min) {
     .co-search__accordion-toggle {
@@ -22,8 +22,8 @@
   // There's no way to set a class name on this element, so use the PF4 class.
   .pf-v6-c-accordion__expanded-content-body {
     // Left align the content with the heading on the search page.
-    --pf-v5-c-accordion__expanded-content-body--PaddingRight: 0 !important;
-    --pf-v5-c-accordion__expanded-content-body--PaddingLeft: 0 !important;
+    --pf-v6-c-accordion__expanded-content-body--PaddingRight: 0 !important;
+    --pf-v6-c-accordion__expanded-content-body--PaddingLeft: 0 !important;
   }
 
   .pf-v6-c-accordion__expanded-content-body,

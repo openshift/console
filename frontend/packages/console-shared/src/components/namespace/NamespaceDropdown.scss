@@ -12,9 +12,9 @@
 
   // This allows the menu to be longer than the menu toggle
   // Currently PatternFly does not support a min width on the menu component
-  --pf-v5-c-menu--MinWidth: 210px;
+  --pf-v6-c-menu--MinWidth: 210px;
   @media (min-width: $pf-v6-global--breakpoint--md) {
-    --pf-v5-c-menu--MinWidth: 325px;
+    --pf-v6-c-menu--MinWidth: 325px;
   }
 }
 
@@ -48,7 +48,7 @@
 
   &:disabled {
     background: none;
-    color: var(--pf-v5-global--disabled-color--200);
+    color: var(--pf-v6-global--disabled-color--200);
   }
 }
 

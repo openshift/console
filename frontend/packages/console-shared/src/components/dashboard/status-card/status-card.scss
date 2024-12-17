@@ -1,14 +1,14 @@
 @import '../../../styles/skeleton-screen';
 
 .co-status-card__alerts-body {
-  border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
   max-height: 19rem;
   min-height: 6rem;
   overflow-x: hidden;
   overflow-y: auto;
 
   .pf-v6-c-empty-state {
-    --pf-v5-c-empty-state__icon--MarginBottom: 0 !important;
+    --pf-v6-c-empty-state__icon--MarginBottom: 0 !important;
   }
 }
 
@@ -28,7 +28,7 @@
 }
 
 .co-status-card__alerts-icon.pf-v6-c-empty-state__icon {
-  --pf-v5-c-empty-state__icon--Color: var(
+  --pf-v6-c-empty-state__icon--Color: var(
     --pf-t--global--icon--color--severity--undefined--default
   );
 }
@@ -36,8 +36,8 @@
 .co-status-card__alert-item {
   display: flex;
   padding-bottom: 0.5rem;
-  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
-  padding-right: var(--pf-v5-c-card--child--PaddingRight);
+  padding-left: var(--pf-v6-c-card--child--PaddingLeft);
+  padding-right: var(--pf-v6-c-card--child--PaddingRight);
 }
 
 .co-status-card__alert-item-icon {
@@ -53,7 +53,7 @@
   display: flex;
   flex-shrink: 0;
   justify-content: flex-end;
-  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
+  padding-left: var(--pf-v6-c-card--child--PaddingLeft);
 }
 
 .co-status-card__alert-item-text {
@@ -66,7 +66,7 @@
 .co-status-card__alert-item-header {
   margin-left: 1rem;
   font-weight: bold;
-  color: var(--pf-v5-global--Color--black);
+  color: var(--pf-v6-global--Color--black);
 }
 
 .co-status-card__alert-item-doc-link {
@@ -82,19 +82,19 @@
 }
 
 .co-status-card__alert-item:first-of-type {
-  padding-top: var(--pf-v5-c-card--first-child--PaddingTop);
+  padding-top: var(--pf-v6-c-card--first-child--PaddingTop);
 }
 
 .co-status-card__alert-item:last-of-type {
-  padding-bottom: var(--pf-v5-c-card--child--PaddingBottom);
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBottom);
 }
 
 .co-status-card__health-body {
   display: flex;
   flex-wrap: wrap;
-  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
-  padding-right: var(--pf-v5-c-card--child--PaddingRight);
-  padding-bottom: var(--pf-v5-c-card__title--not--last-child--PaddingBottom);
+  padding-left: var(--pf-v6-c-card--child--PaddingLeft);
+  padding-right: var(--pf-v6-c-card--child--PaddingRight);
+  padding-bottom: var(--pf-v6-c-card__title--not--last-child--PaddingBottom);
 }
 
 .co-status-card__health-item {

@@ -1,6 +1,6 @@
 .ocs-quick-search-bar {
   &.pf-v6-c-input-group {
-    background-color: var(--pf-v5-global--BackgroundColor--400);
+    background-color: var(--pf-v6-global--BackgroundColor--400);
     &__item.pf-m-box {
       border: none;
     }
@@ -30,7 +30,8 @@
       max-width: 100%;
       display: inline-flex;
     }
-    &.pf-v6-c-form-control:before, &.pf-v6-c-form-control:after {
+    &.pf-v6-c-form-control:before,
+    &.pf-v6-c-form-control:after {
       display: none;
     }
   }

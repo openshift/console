@@ -6,9 +6,9 @@
 //
 // @at-root .foo#{&}
 
-:where(:not([class*="pf-v6-c-"])) {
+:where(:not([class*='pf-v6-c-'])) {
   @at-root dd#{&} {
-    margin-bottom: var(--pf-v5-global--spacer--lg);
+    margin-bottom: var(--pf-v6-global--spacer--lg);
   }
 
   @at-root dd:last-child#{&} {
@@ -21,7 +21,7 @@
 
   // match pf4 styling / table col head styling
   @at-root dt#{&} {
-    font-weight: var(--pf-v5-global--FontWeight--bold);
+    font-weight: var(--pf-v6-global--FontWeight--bold);
   }
 
   @at-root fieldset#{&} {

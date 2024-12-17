@@ -329,7 +329,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
             // need to use max to account for min-width of the input element in PF
             resizeToFit
               ? {
-                  width: `max(calc(${selectedItemWidth}px + var(--pf-v5-c-text-input-group__text-input--PaddingLeft) + var(--pf-v5-c-text-input-group__text-input--PaddingRight)), var(--pf-v5-c-text-input-group__text-input--MinWidth))`,
+                  width: `max(calc(${selectedItemWidth}px + var(--pf-v6-c-text-input-group__text-input--PaddingLeft) + var(--pf-v6-c-text-input-group__text-input--PaddingRight)), var(--pf-v6-c-text-input-group__text-input--MinWidth))`,
                 }
               : {}
           }

@@ -5,7 +5,7 @@ const FormSectionDivider: React.FC = () => (
     style={{
       margin: 0,
       borderBottom:
-        'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--Color--400 */,
+        'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--400 */,
       width: '100%',
     }}
   />

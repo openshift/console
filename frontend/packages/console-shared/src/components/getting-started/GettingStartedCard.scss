@@ -1,10 +1,10 @@
 .ocs-getting-started-card {
   &__title-icon {
-    margin-right: var(--pf-v5-global--spacer--sm);
+    margin-right: var(--pf-v6-global--spacer--sm);
   }
 
   small {
-    color: var(--pf-v5-global--Color--200);
+    color: var(--pf-v6-global--Color--200);
   }
 
   &__list {
@@ -18,10 +18,10 @@
       > li {
         // Add spacing to the skeleton similar to the SimpleListItem
         .pf-v6-c-skeleton {
-          margin: var(--pf-v5-c-simple-list__item-link--PaddingTop)
-            var(--pf-v5-c-simple-list__item-link--PaddingRight)
-            var(--pf-v5-c-simple-list__item-link--PaddingBottom)
-            var(--pf-v5-c-simple-list__item-link--PaddingLeft);
+          margin: var(--pf-v6-c-simple-list__item-link--PaddingTop)
+            var(--pf-v6-c-simple-list__item-link--PaddingRight)
+            var(--pf-v6-c-simple-list__item-link--PaddingBottom)
+            var(--pf-v6-c-simple-list__item-link--PaddingLeft);
         }
       }
     }
@@ -29,6 +29,6 @@
 
   a > svg,
   button > svg {
-    margin-left: var(--pf-v5-global--spacer--sm);
+    margin-left: var(--pf-v6-global--spacer--sm);
   }
 }

@@ -3,7 +3,7 @@
 .ocs-page-layout {
   &__content {
     padding: $pf-v6-global-gutter--md $pf-v6-global-gutter;
-    background-color: var(--pf-v5-global--BackgroundColor--200);
+    background-color: var(--pf-v6-global--BackgroundColor--200);
     @media (min-width: $pf-v6-global--breakpoint--xl) {
       padding-left: $pf-v6-global-gutter--md;
       padding-right: $pf-v6-global-gutter--md;
@@ -12,16 +12,16 @@
     flex: 1;
 
     &.is-dark {
-      background: var(--pf-v5-global--BackgroundColor--100);
+      background: var(--pf-v6-global--BackgroundColor--100);
     }
   }
 
   &__header {
-    background-color: var(--pf-v5-global--BackgroundColor--light-100);
+    background-color: var(--pf-v6-global--BackgroundColor--light-100);
   }
 
   &__hint {
-    padding-bottom: var(--pf-v5-global--spacer--md);
+    padding-bottom: var(--pf-v6-global--spacer--md);
     padding: 0 $pf-v6-global-gutter $pf-v6-global-gutter--md;
 
     @media (min-width: $pf-v6-global--breakpoint--xl) {

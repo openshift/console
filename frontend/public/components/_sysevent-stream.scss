@@ -15,7 +15,7 @@
 }
 
 .co-sysevent-stream__connection-error {
-  color: var(--pf-v5-global--danger-color--100);
+  color: var(--pf-v6-global--danger-color--100);
 }
 
 .co-sysevent-stream__timeline {
@@ -67,9 +67,9 @@
 
 .co-sysevent__box {
   background-color: var(
-    --pf-v5-global--BackgroundColor--100
+    --pf-v6-global--BackgroundColor--100
   ); // prevent overlapping text if events overlap each other
-  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+  border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
   flex: none;
   padding: 10px;
   width: 100%;
@@ -140,7 +140,7 @@
 
 .co-sysevent__icon-line {
   background-color: var(
-    --pf-v5-global--BorderColor--300
+    --pf-v6-global--BorderColor--300
   ); // connector line that matches the .co-sysevent-stream__timeline and .co-sysevent__box border color
   height: 3px;
   position: absolute;
@@ -157,7 +157,7 @@
 
   .co-sysevent__box {
     flex: 1 2 auto;
-    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+    border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
     min-width: 0%; // necessary for wrapping since its a flex child
   }
 
@@ -171,8 +171,8 @@
   }
 
   .co-sysevent-stream__timeline {
-    border-bottom: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--300);
-    border-left: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--300);
+    border-bottom: var(--pf-v6-global--BorderWidth--lg) solid var(--pf-v6-global--BorderColor--300);
+    border-left: var(--pf-v6-global--BorderWidth--lg) solid var(--pf-v6-global--BorderColor--300);
     margin-left: 10px;
     &--empty {
       border: 0;

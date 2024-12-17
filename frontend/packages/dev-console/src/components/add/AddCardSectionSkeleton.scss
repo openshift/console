@@ -1,23 +1,23 @@
 .odc-add-section-skeleton-placeholder {
   &__container {
     max-width: 100%;
-    padding: var(--pf-v5-global--spacer--lg) var(--pf-v5-global--spacer--lg)
-      var(--pf-v5-global--spacer--2xl);
+    padding: var(--pf-v6-global--spacer--lg) var(--pf-v6-global--spacer--lg)
+      var(--pf-v6-global--spacer--2xl);
   }
   &__title {
-    margin-top: var(--pf-v5-global--spacer--md) 0 var(--pf-v5-global--spacer--md) 0;
+    margin-top: var(--pf-v6-global--spacer--md) 0 var(--pf-v6-global--spacer--md) 0;
   }
   &__item-header {
     display: flex;
-    margin-top: var(--pf-v5-global--spacer--xl);
+    margin-top: var(--pf-v6-global--spacer--xl);
     &__title {
-      margin-left: var(--pf-v5-global--spacer--sm);
+      margin-left: var(--pf-v6-global--spacer--sm);
     }
   }
   &__item-desc {
-    margin-top: var(--pf-v5-global--spacer--md);
+    margin-top: var(--pf-v6-global--spacer--md);
     & > * {
-      margin-top: var(--pf-v5-global--spacer--xs);
+      margin-top: var(--pf-v6-global--spacer--xs);
     }
   }
 }

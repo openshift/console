@@ -145,7 +145,7 @@ describe('When expression decorator color', () => {
       false,
     );
     expect(diamondColor).toBe(
-      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--BackgroundColor--200 */,
+      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--BackgroundColor--200 */,
     );
     expect(tooltipContent).toBe('When expression');
   });
@@ -157,7 +157,7 @@ describe('When expression decorator color', () => {
       true,
     );
     expect(diamondColor).toBe(
-      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--BackgroundColor--light-100 */,
+      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--BackgroundColor--light-100 */,
     );
     expect(tooltipContent).toBe('When expression');
   });

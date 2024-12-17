@@ -7,21 +7,21 @@
 
     .pf-v6-c-menu__group-title {
       flex: 1;
-      padding-block-start: var(--pf-v5-global--spacer--sm);
-      padding-block-end: var(--pf-v5-global--spacer--sm);
+      padding-block-start: var(--pf-v6-global--spacer--sm);
+      padding-block-end: var(--pf-v6-global--spacer--sm);
     }
 
     .pf-v6-c-switch {
-      margin-right: var(--pf-v5-global--spacer--sm);
+      margin-right: var(--pf-v6-global--spacer--sm);
     }
 
     .pf-m-disabled {
-      color: var(--pf-v5-c-check__label--disabled--Color);
+      color: var(--pf-v6-c-check__label--disabled--Color);
     }
   }
 
   .pf-v6-c-select {
-    --pf-v5-c-select__menu-group-title--PaddingBottom: 0;
+    --pf-v6-c-select__menu-group-title--PaddingBottom: 0;
   }
 
   &__expand-groups-label > .pf-v6-c-select__menu-group-title {

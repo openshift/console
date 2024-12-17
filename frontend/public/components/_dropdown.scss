@@ -17,12 +17,12 @@
 }
 
 .dropdown__disabled {
-  color: var(--pf-v5-global--disabled-color--100);
+  color: var(--pf-v6-global--disabled-color--100);
   cursor: not-allowed;
 }
 
 .dropdown-menu__divider {
-  background-color: var(--pf-v5-global--BackgroundColor--200);
+  background-color: var(--pf-v6-global--BackgroundColor--200);
   height: 1px;
   flex-grow: 1;
   margin: 9px 0;
@@ -53,7 +53,7 @@
 }
 
 .co-namespace-bar {
-  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
   padding: 0 $pf-v6-global-gutter;
   white-space: nowrap;
 
@@ -78,7 +78,7 @@
 }
 
 .co-namespace-bar--no-project {
-  padding-left: var(--pf-v5-global--spacer--sm);
+  padding-left: var(--pf-v6-global--spacer--sm);
   @media screen and (max-width: $pf-v6-global--breakpoint--xl) {
     margin-left: -0.5rem;
   }
@@ -90,13 +90,13 @@
 
   .pf-v6-c-dropdown__toggle.pf-m-plain {
     font-size: ($font-size-base + 1);
-    --pf-v5-c-dropdown__toggle--PaddingBottom: 7px;
-    --pf-v5-c-dropdown__toggle--PaddingLeft: 0;
-    --pf-v5-c-dropdown__toggle--PaddingRight: 0;
+    --pf-v6-c-dropdown__toggle--PaddingBottom: 7px;
+    --pf-v6-c-dropdown__toggle--PaddingLeft: 0;
+    --pf-v6-c-dropdown__toggle--PaddingRight: 0;
 
     @media (min-width: $pf-v6-global--breakpoint--md) {
       font-size: ($font-size-base + 2);
-      --pf-v5-c-dropdown__toggle--PaddingBottom: 9px;
+      --pf-v6-c-dropdown__toggle--PaddingBottom: 9px;
     }
 
     &:not(:disabled) {

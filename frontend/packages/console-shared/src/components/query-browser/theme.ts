@@ -5,10 +5,10 @@ import {
 
 const pfDependentAxisTickLabels = {
   padding: 5,
-  fontFamily: 'var(--pf-v5-chart-global--FontFamily)',
-  letterSpacing: 'var(--pf-v5-chart-global--letter-spacing)',
+  fontFamily: 'var(--pf-v6-chart-global--FontFamily)',
+  letterSpacing: 'var(--pf-v6-chart-global--letter-spacing)',
   fill:
-    'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--Color--200 */,
+    'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--200 */,
 };
 
 const theme = {

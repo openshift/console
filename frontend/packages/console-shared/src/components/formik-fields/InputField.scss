@@ -26,28 +26,28 @@
     border: 0 transparent;
 
     &.success {
-      width: var(--pf-v5-c-form-control--success--PaddingRight);
-      background-image: var(--pf-v5-c-form-control--success--BackgroundUrl);
-      background-position: var(--pf-v5-c-form-control--success--BackgroundPosition);
-      background-size: var(--pf-v5-c-form-control--success--BackgroundSize);
-      border-bottom: var(--pf-v5-c-form-control--success--BorderBottomWidth) transparent;
-      padding-bottom: var(--pf-v5-c-form-control--success--PaddingBottom);
+      width: var(--pf-v6-c-form-control--success--PaddingRight);
+      background-image: var(--pf-v6-c-form-control--success--BackgroundUrl);
+      background-position: var(--pf-v6-c-form-control--success--BackgroundPosition);
+      background-size: var(--pf-v6-c-form-control--success--BackgroundSize);
+      border-bottom: var(--pf-v6-c-form-control--success--BorderBottomWidth) transparent;
+      padding-bottom: var(--pf-v6-c-form-control--success--PaddingBottom);
     }
     &.warning {
-      width: var(--pf-v5-c-form-control--warning--PaddingRight);
-      background-image: var(--pf-v5-c-form-control--warning--BackgroundUrl);
-      background-position: var(--pf-v5-c-form-control--warning--BackgroundPosition);
-      background-size: var(--pf-v5-c-form-control--warning--BackgroundSize);
-      border-bottom: var(--pf-v5-c-form-control--warning--BorderBottomWidth) transparent;
-      padding-bottom: var(--pf-v5-c-form-control--warning--PaddingBottom);
+      width: var(--pf-v6-c-form-control--warning--PaddingRight);
+      background-image: var(--pf-v6-c-form-control--warning--BackgroundUrl);
+      background-position: var(--pf-v6-c-form-control--warning--BackgroundPosition);
+      background-size: var(--pf-v6-c-form-control--warning--BackgroundSize);
+      border-bottom: var(--pf-v6-c-form-control--warning--BorderBottomWidth) transparent;
+      padding-bottom: var(--pf-v6-c-form-control--warning--PaddingBottom);
     }
     &.error {
-      width: var(--pf-v5-c-form-control--invalid--PaddingRight);
-      background-image: var(--pf-v5-c-form-control--invalid--BackgroundUrl);
-      background-position: var(--pf-v5-c-form-control--invalid--BackgroundPosition);
-      background-size: var(--pf-v5-c-form-control--invalid--BackgroundSize);
-      border-bottom-width: var(--pf-v5-c-form-control--invalid--BorderBottomWidth) transparent;
-      padding-bottom: var(--pf-v5-c-form-control--invalid--PaddingBottom);
+      width: var(--pf-v6-c-form-control--invalid--PaddingRight);
+      background-image: var(--pf-v6-c-form-control--invalid--BackgroundUrl);
+      background-position: var(--pf-v6-c-form-control--invalid--BackgroundPosition);
+      background-size: var(--pf-v6-c-form-control--invalid--BackgroundSize);
+      border-bottom-width: var(--pf-v6-c-form-control--invalid--BorderBottomWidth) transparent;
+      padding-bottom: var(--pf-v6-c-form-control--invalid--PaddingBottom);
     }
   }
 }

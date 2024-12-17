@@ -19,7 +19,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
           style={{
             fontSize,
             fill:
-              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--danger-color--100 */,
+              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--danger-color--100 */,
           }}
         />
       );
@@ -30,7 +30,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
           style={{
             fontSize,
             fill:
-              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--warning-color--100 */,
+              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--warning-color--100 */,
           }}
         />
       );

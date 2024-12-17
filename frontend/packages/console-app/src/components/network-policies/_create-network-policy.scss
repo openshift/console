@@ -8,14 +8,14 @@
 .co-create-networkpolicy__expandable-xl
   > .pf-v6-c-form__field-group-header
   .pf-v6-c-form__field-group-header-title-text {
-  font-family: var(--pf-v5-global--FontFamily--heading);
-  font-size: var(--pf-v5-global--FontSize--xl);
-  font-weight: var(--pf-v5-global--FontWeight--normal);
-  line-height: var(--pf-v5-global--LineHeight--md);
+  font-family: var(--pf-v6-global--FontFamily--heading);
+  font-size: var(--pf-v6-global--FontSize--xl);
+  font-weight: var(--pf-v6-global--FontWeight--normal);
+  line-height: var(--pf-v6-global--LineHeight--md);
 }
 
 .co-create-networkpolicy__expandable-xl > .pf-v6-c-form__field-group-toggle {
-  --pf-v5-c-form__field-group-toggle-button--MarginTop: 0.3rem;
+  --pf-v6-c-form__field-group-toggle-button--MarginTop: 0.3rem;
 }
 
 .co-create-networkpolicy__rule-header {
@@ -31,9 +31,9 @@
 }
 
 .co-create-networkpolicy__rule-header .pf-m-secondary {
-  color: var(--pf-v5-global--primary-color--100);
-  padding-left: var(--pf-v5-global--spacer--md);
-  padding-right: var(--pf-v5-global--spacer--md);
+  color: var(--pf-v6-global--primary-color--100);
+  padding-left: var(--pf-v6-global--spacer--md);
+  padding-right: var(--pf-v6-global--spacer--md);
 }
 
 .co-create-networkpolicy__rule-header .pf-m-secondary .pf-c-dropdown__toggle-icon {
@@ -48,5 +48,5 @@
 }
 
 .co-create-networkpolicy__paragraph {
-  margin-bottom: var(--pf-v5-c-content--MarginBottom);
+  margin-bottom: var(--pf-v6-c-content--MarginBottom);
 }

@@ -643,10 +643,10 @@ export const getWhenExpressionDiamondState = (
     }
   } else if (!isFinallyTask) {
     diamondColor =
-      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--BackgroundColor--200 */;
+      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--BackgroundColor--200 */;
   } else {
     diamondColor =
-      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--BackgroundColor--light-100 */;
+      'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--BackgroundColor--light-100 */;
   }
 
   let tooltipContent: string;

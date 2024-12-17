@@ -6,7 +6,7 @@
   // Fix missing white background color above the header.
   .ocs-page-layout__title {
     margin-top: 0;
-    padding-top: var(--pf-v5-global--spacer--lg);
+    padding-top: var(--pf-v6-global--spacer--lg);
   }
 
   .ocs-page-layout__content {
@@ -14,13 +14,13 @@
   }
 
   .pf-v6-c-empty-state {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
+    background-color: var(--pf-v6-global--BackgroundColor--100);
     flex: 1;
     align-items: flex-start;
   }
 
   .pf-v6-c-tabs.pf-m-vertical {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
+    background-color: var(--pf-v6-global--BackgroundColor--100);
 
     @media (min-width: 769px) {
       max-width: 100%;
@@ -44,7 +44,7 @@
 .co-cluster-configuration-page-content {
   display: flex;
   flex-direction: row;
-  background-color: var(--pf-v5-global--BackgroundColor--100);
+  background-color: var(--pf-v6-global--BackgroundColor--100);
   min-height: 100%;
   &__tabs {
     @media (min-width: 769px) {
@@ -60,7 +60,7 @@
     }
   }
   &__tab-content {
-    margin: var(--pf-v5-global--spacer--lg);
+    margin: var(--pf-v6-global--spacer--lg);
     max-width: 100%;
   }
 

@@ -4,9 +4,10 @@
   flex-grow: 0;
   flex-shrink: 0;
   transition: opacity 175ms ease-out, transform 225ms ease-out;
-  box-shadow: var(--pf-v5-global--BoxShadow--sm-top);
+  box-shadow: var(--pf-v6-global--BoxShadow--sm-top);
   display: flex;
   flex-direction: column;
+  z-index: var(--pf-t--global--z-index--sm);
 
   &__drag-handle {
     width: 100%;
@@ -15,13 +16,13 @@
     position: absolute;
     background-color: transparent;
     &:hover {
-      background-color: var(--pf-v5-global--palette--black-300);
+      background-color: var(--pf-v6-global--palette--black-300);
     }
   }
 
   &__header {
-    height: var(--pf-v5-global--target-size--MinHeight);
-    background-color: var(--pf-v5-global--BackgroundColor--200);
+    height: var(--pf-v6-global--target-size--MinHeight);
+    background-color: var(--pf-v6-global--BackgroundColor--200);
     display: flex;
     align-items: center;
     flex-shrink: 0;

@@ -2,7 +2,7 @@
 
 .pipeline-metrics-dashboard {
   &__body {
-    background-color: var(--pf-v5-global--BackgroundColor--200);
+    background-color: var(--pf-v6-global--BackgroundColor--200);
     margin-bottom: 0 !important;
     margin-top: 0;
   }
@@ -11,11 +11,11 @@
   }
   &__toolbar {
     margin-bottom: 0 !important;
-    padding: var(--pf-v5-global--spacer--md) $pf-v6-global-gutter--md 0;
+    padding: var(--pf-v6-global--spacer--md) $pf-v6-global-gutter--md 0;
   }
 }
 .pipeline-metrics-empty-state {
-  background-color: var(--pf-v5-global--BackgroundColor--200);
+  background-color: var(--pf-v6-global--BackgroundColor--200);
 }
 
 .pipeline-metrics {

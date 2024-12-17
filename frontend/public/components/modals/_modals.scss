@@ -12,12 +12,12 @@
 }
 
 .modal-dialog {
-  --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
+  --os-modal-dialog--BackgroundColor: var(--pf-v6-global--BackgroundColor--100);
 
   background: var(--os-modal-dialog--BackgroundColor);
 
   :where(.pf-v5-theme-dark) & {
-    --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--300);
+    --os-modal-dialog--BackgroundColor: var(--pf-v6-global--BackgroundColor--300);
   }
 }
 
@@ -32,14 +32,14 @@
 }
 
 .modal-body-border {
-  border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+  border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
 }
 
 .modal-body-content {
   height: 100%;
-  padding: 0 var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
+  padding: 0 var(--pf-v6-global--spacer--xl) var(--pf-v6-global--spacer--xl);
   p {
-    margin-bottom: var(--pf-v5-c-content--MarginBottom);
+    margin-bottom: var(--pf-v6-c-content--MarginBottom);
   }
 }
 
@@ -54,8 +54,8 @@
 }
 
 .modal-dialog {
-  margin: var(--pf-v5-global--spacer--md);
-  max-width: calc(100% - var(--pf-v5-global--spacer--xl));
+  margin: var(--pf-v6-global--spacer--md);
+  max-width: calc(100% - var(--pf-v6-global--spacer--xl));
   outline: 0;
   position: relative;
   width: 100%;
@@ -67,7 +67,7 @@
   }
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     &.modal-lg {
-      // Manually set to match --pf-v5-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v6-c-modal-box
+      // Manually set to match --pf-v6-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v6-c-modal-box
       max-width: 70rem;
     }
   }
@@ -75,13 +75,13 @@
 
 .modal-footer {
   margin-top: 0;
-  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
+  padding: var(--pf-v6-global--spacer--md) var(--pf-v6-global--spacer--xl)
+    var(--pf-v6-global--spacer--xl) var(--pf-v6-global--spacer--xl);
 }
 
 .modal-header {
-  padding: var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--lg);
+  padding: var(--pf-v6-global--spacer--xl) var(--pf-v6-global--spacer--xl)
+    var(--pf-v6-global--spacer--lg);
 }
 
 .modal__inline-resource-link {
@@ -115,5 +115,5 @@
 }
 
 .modal-paragraph {
-  margin-bottom: var(--pf-v5-c-content--MarginBottom);
+  margin-bottom: var(--pf-v6-c-content--MarginBottom);
 }

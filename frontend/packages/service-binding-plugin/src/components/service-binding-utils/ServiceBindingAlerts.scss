@@ -1,5 +1,5 @@
-.service-binding-alert-modal {  
-    :where(.pf-v5-theme-dark) & {
-      background-color: var(--pf-v5-global--BackgroundColor--400) !important;
-    }
+.service-binding-alert-modal {
+  :where(.pf-v5-theme-dark) & {
+    background-color: var(--pf-v6-global--BackgroundColor--400) !important;
   }
+}

@@ -1,7 +1,7 @@
 .co-actions {
   align-items: flex-end;
   display: flex;
-  font-family: var(--pf-v5-global--FontFamily--text);
+  font-family: var(--pf-v6-global--FontFamily--text);
   @media (max-width: $screen-xs) {
     flex-direction: column;
   }
@@ -33,7 +33,7 @@
     }
   }
   &--detail {
-    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
     flex-shrink: 0; // do not allow to shrink
   }
   // Positioned after --detail to take precedence, since they will be a siblings

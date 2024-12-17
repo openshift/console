@@ -1,5 +1,5 @@
 .co-label.pf-v6-c-label {
-  --pf-v5-c-label__text--MaxWidth: 100%;
+  --pf-v6-c-label__text--MaxWidth: 100%;
 }
 
 .co-label,
@@ -22,14 +22,14 @@
 
 tags-input {
   min-width: 100%;
-  padding: var(--pf-v5-global--spacer--sm)
+  padding: var(--pf-v6-global--spacer--sm);
 }
 
 tags-input .tags {
   align-content: flex-start;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--pf-v5-global--spacer--xs);
+  gap: var(--pf-v6-global--spacer--xs);
   min-height: 120px;
 
   > span {
@@ -45,5 +45,5 @@ tags-input .tags .input {
 }
 
 tags-input .tags .input.invalid-tag {
-  color: var(--pf-v5-global--danger-color--100);
+  color: var(--pf-v6-global--danger-color--100);
 }

@@ -1,14 +1,14 @@
 .co-code {
-  --co-code--BackgroundColor: var(--pf-v5-global--palette--blue-50);
-  --co-code--Color: var(--pf-v5-global--palette--light-blue-600);
+  --co-code--BackgroundColor: var(--pf-v6-global--palette--blue-50);
+  --co-code--Color: var(--pf-v6-global--palette--light-blue-600);
 
   background-color: var(--co-code--BackgroundColor);
   color: var(--co-code--Color);
-  padding: 3px var(--pf-v5-global--spacer--xs);
+  padding: 3px var(--pf-v6-global--spacer--xs);
 
   :where(.pf-v5-theme-dark) & {
-    --co-code--BackgroundColor: var(--pf-v5-global--palette--blue-700);
-    --co-code--Color: var(--pf-v5-global--palette--light-blue-100);
+    --co-code--BackgroundColor: var(--pf-v6-global--palette--blue-700);
+    --co-code--Color: var(--pf-v6-global--palette--light-blue-100);
   }
 }
 
@@ -24,7 +24,7 @@
 }
 
 .co-pre {
-  background-color: var(--pf-v5-c-code-block--BackgroundColor); // supports dark theme
-  padding: var(--pf-v5-global--spacer--md);
+  background-color: var(--pf-v6-c-code-block--BackgroundColor); // supports dark theme
+  padding: var(--pf-v6-global--spacer--md);
   white-space: pre-wrap;
 }

@@ -1,13 +1,13 @@
 .odc-item-selector-filter {
   display: flex;
-  padding-bottom: var(--pf-v5-global--spacer--md);
+  padding-bottom: var(--pf-v6-global--spacer--md);
 
   &__input {
     max-width: 20em;
   }
 
   &__count {
-    color: var(--pf-v5-global--Color--200);
+    color: var(--pf-v6-global--Color--200);
     margin-left: auto;
   }
 }
@@ -16,7 +16,7 @@
   display: inline-flex;
   flex-direction: column;
   flex-flow: wrap;
-  background: var(--pf-v5-global--BackgroundColor--200);
+  background: var(--pf-v6-global--BackgroundColor--200);
   padding: 4px;
 
   &__scrollbar {
@@ -25,8 +25,8 @@
   }
 
   &__success-icon {
-    color: var(--pf-v5-global--palette--green-700);
-    font-size: var(--pf-v5-global--FontSize--md);
-    margin-left: var(--pf-v5-global--spacer--lg);
+    color: var(--pf-v6-global--palette--green-700);
+    font-size: var(--pf-v6-global--FontSize--md);
+    margin-left: var(--pf-v6-global--spacer--lg);
   }
 }

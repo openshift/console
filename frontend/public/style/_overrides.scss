@@ -1,7 +1,7 @@
 // Use this file to override styles from 3rd party dependencies
 
 form.pf-v6-c-form {
-  --pf-v5-c-form__helper-text--Color: var(--pf-v5-global--Color--200);
+  --pf-v6-c-form__helper-text--Color: var(--pf-v6-global--Color--200);
 }
 
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
@@ -21,12 +21,12 @@ form.pf-v6-c-form {
     width: 100%;
   }
   .catalog-tile-pf-icon {
-    @include catalog-logo-background(var(--pf-v5-global--spacer--sm));
+    @include catalog-logo-background(var(--pf-v6-global--spacer--sm));
     display: block;
     height: 50px;
-    margin-bottom: calc(-1 * var(--pf-v5-global--spacer--sm)); // Cancels bottom padding
-    margin-left: calc(-1 * var(--pf-v5-global--spacer--sm)); // Align logo with left edge
-    margin-top: calc(-1 * var(--pf-v5-global--spacer--sm)); // Align logo with top edge
+    margin-bottom: calc(-1 * var(--pf-v6-global--spacer--sm)); // Cancels bottom padding
+    margin-left: calc(-1 * var(--pf-v6-global--spacer--sm)); // Align logo with left edge
+    margin-top: calc(-1 * var(--pf-v6-global--spacer--sm)); // Align logo with top edge
     max-width: 100%;
     min-width: 50px; // prevent collapsed state before img loads
     width: fit-content;
@@ -42,7 +42,7 @@ form.pf-v6-c-form {
     }
   }
   .pf-v6-c-card__selectable-actions .pf-v6-c-radio__label:hover {
-    --pf-v5-c-card--m-selectable--hover--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
+    --pf-v6-c-card--m-selectable--hover--BackgroundColor: var(--pf-v6-global--BackgroundColor--100);
   }
 }
 
@@ -59,7 +59,7 @@ form.pf-v6-c-form {
 }
 
 .catalog-item-header-pf-icon {
-  @include catalog-logo-background(var(--pf-v5-global--spacer--sm));
+  @include catalog-logo-background(var(--pf-v6-global--spacer--sm));
 }
 
 .co-catalog-page__overlay-header {
@@ -72,7 +72,7 @@ form.pf-v6-c-form {
 // Override to remove accordion left border and prevent overlap https://bugzilla.redhat.com/show_bug.cgi?id=1942193
 .co-create-operand__form--toggle-no-border {
   .pf-v6-c-accordion__toggle.pf-m-expanded {
-    --pf-v5-c-accordion__toggle--before--BackgroundColor: transparent;
+    --pf-v6-c-accordion__toggle--before--BackgroundColor: transparent;
   }
 }
 
@@ -81,16 +81,16 @@ form.pf-v6-c-form {
 }
 
 .co-toolbar-empty-state .pf-v6-c-toolbar__content {
-  --pf-v5-c-toolbar__content--PaddingLeft: 0;
-  --pf-v5-c-toolbar__content--PaddingRight: 0;
+  --pf-v6-c-toolbar__content--PaddingLeft: 0;
+  --pf-v6-c-toolbar__content--PaddingRight: 0;
 }
 
 .co-toolbar-no-padding .pf-v6-c-toolbar__content {
   // use negative margins so that pf-v6-c-toolbar__expandable-content extends to the edges at mobile
   margin-left: -$pf-v6-global-gutter;
   margin-right: -$pf-v6-global-gutter;
-  --pf-v5-c-toolbar--PaddingTop: 0;
-  --pf-v5-c-toolbar--RowGap: var(--pf-v5-global--spacer--md);
+  --pf-v6-c-toolbar--PaddingTop: 0;
+  --pf-v6-c-toolbar--RowGap: var(--pf-v6-global--spacer--md);
 }
 
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
@@ -102,7 +102,7 @@ form.pf-v6-c-form {
 // PatternFly overrides
 
 .pf-v6-c-about-modal-box {
-  --pf-v5-c-about-modal-box__brand-image--Height: auto !important; // allow logo to be taller
+  --pf-v6-c-about-modal-box__brand-image--Height: auto !important; // allow logo to be taller
 
   &__brand {
     align-items: flex-start; // so logos don't stretch vertically
@@ -120,7 +120,7 @@ form.pf-v6-c-form {
 }
 
 .pf-v6-c-about-modal-box__brand {
-  background-color: var(--pf-v5-global--palette--black-1000);
+  background-color: var(--pf-v6-global--palette--black-1000);
 }
 
 .pf-v6-c-about-modal-box__brand-image,
@@ -129,21 +129,21 @@ form.pf-v6-c-form {
 }
 
 .pf-v6-c-about-modal-box__content {
-  background-color: var(--pf-v5-global--palette--black-1000);
-  padding: var(--pf-v5-global--spacer--2xl) var(--pf-v5-global--spacer--3xl);
-  --pf-v5-c-about-modal-box__content--MarginBottom: 0;
-  --pf-v5-c-about-modal-box__content--MarginLeft: 0;
-  --pf-v5-c-about-modal-box__content--MarginRight: 0;
-  --pf-v5-c-about-modal-box__content--MarginTop: 0;
+  background-color: var(--pf-v6-global--palette--black-1000);
+  padding: var(--pf-v6-global--spacer--2xl) var(--pf-v6-global--spacer--3xl);
+  --pf-v6-c-about-modal-box__content--MarginBottom: 0;
+  --pf-v6-c-about-modal-box__content--MarginLeft: 0;
+  --pf-v6-c-about-modal-box__content--MarginRight: 0;
+  --pf-v6-c-about-modal-box__content--MarginTop: 0;
 }
 
 .pf-v6-c-alert--top-margin {
-  margin-top: var(--pf-v5-global--spacer--lg);
+  margin-top: var(--pf-v6-global--spacer--lg);
 }
 
 .pf-v6-c-app-launcher__group-title {
   // Reset font to RedHatText so it doesn't appear too bold
-  font-family: var(--pf-v5-global--FontFamily--text);
+  font-family: var(--pf-v6-global--FontFamily--text);
 }
 
 .pf-v6-c-button--align-right {
@@ -154,20 +154,20 @@ form.pf-v6-c-form {
   &:hover,
   &:focus {
     .pf-v6-c-button-icon--plain {
-      color: var(--pf-v5-c-button--m-plain--hover--Color);
+      color: var(--pf-v6-c-button--m-plain--hover--Color);
     }
   }
 }
 
 .pf-v6-c-button-icon--plain {
-  color: var(--pf-v5-c-button--m-plain--Color);
+  color: var(--pf-v6-c-button--m-plain--Color);
 }
 
 .pf-v6-c-button.pf-v6-c-button--no-default-values {
-  --pf-v5-c-button--PaddingTop: 0;
-  --pf-v5-c-button--PaddingRight: 0;
-  --pf-v5-c-button--PaddingBottom: 0;
-  --pf-v5-c-button--PaddingLeft: 0;
+  --pf-v6-c-button--PaddingTop: 0;
+  --pf-v6-c-button--PaddingRight: 0;
+  --pf-v6-c-button--PaddingBottom: 0;
+  --pf-v6-c-button--PaddingLeft: 0;
 
   border: 0;
   font-size: unset;
@@ -182,11 +182,11 @@ form.pf-v6-c-form {
 }
 
 .pf-v6-c-button.pf-m-link--align-left {
-  --pf-v5-c-button--PaddingLeft: 0;
+  --pf-v6-c-button--PaddingLeft: 0;
 }
 
 .pf-v6-c-button.pf-m-link--align-right {
-  --pf-v5-c-button--PaddingRight: 0;
+  --pf-v6-c-button--PaddingRight: 0;
 }
 
 // Override label in _bootstrap-residual.scss
@@ -202,13 +202,13 @@ form.pf-v6-c-form {
 
 //set pf datalist item background to transparent
 .pf-v6-c-data-list__item--transparent-bg {
-  --pf-v5-c-data-list__item--BackgroundColor: transparent;
+  --pf-v6-c-data-list__item--BackgroundColor: transparent;
 }
 
-// PF components that calculate their correct height based on --pf-v5-global--FontSize--md: 1rem
+// PF components that calculate their correct height based on --pf-v6-global--FontSize--md: 1rem
 .pf-v6-c-modal-box,
 .pf-v6-c-switch {
-  --pf-v5-global--FontSize--md: 1rem;
+  --pf-v6-global--FontSize--md: 1rem;
 }
 
 // Drawer
@@ -220,7 +220,7 @@ form.pf-v6-c-form {
 .pf-v6-c-page {
   // Positions fullscreen terminal on top of mast header
   &__main.default-overflow {
-    z-index: calc(var(--pf-v5-c-page__header--ZIndex) + 50);
+    z-index: calc(var(--pf-v6-c-page__header--ZIndex) + 50);
   }
 
   // Default light background for our content
@@ -241,7 +241,7 @@ form.pf-v6-c-form {
   }
 }
 
-// specificity targeting form elements to override --pf-v5-global--FontSize--md
+// specificity targeting form elements to override --pf-v6-global--FontSize--md
 .pf-v6-c-page,
 .modal-dialog {
   .pf-v6-c-app-launcher,
@@ -260,7 +260,7 @@ form.pf-v6-c-form {
 
   .pf-v6-c-form-control.pf-m-success,
   .pf-v6-c-form-control[aria-invalid='true'] {
-    --pf-v5-global--FontSize--md: #{$font-size-base};
+    --pf-v6-global--FontSize--md: #{$font-size-base};
   }
 }
 
@@ -278,11 +278,11 @@ form.pf-v6-c-form {
 // reset toggle to original size
 // overriding .pf-v6-c-button rule above
 .pf-v6-c-masthead__toggle .pf-v6-c-button {
-  font-size: var(--pf-v5-c-masthead__toggle--c-button--FontSize);
+  font-size: var(--pf-v6-c-masthead__toggle--c-button--FontSize);
 }
 
 :where(:root:not(.pf-v5-theme-dark)) .pf-v6-c-page {
-  --pf-v5-c-page__sidebar--BoxShadow: none;
+  --pf-v6-c-page__sidebar--BoxShadow: none;
 }
 
 .pf-v6-c-page__sidebar {
@@ -292,22 +292,22 @@ form.pf-v6-c-form {
 
   // Perspective switcher
   &.pf-m-dark .pf-v6-c-dropdown {
-    --pf-v5-global--Color--100: var(--pf-v5-global--Color--dark-100);
+    --pf-v6-global--Color--100: var(--pf-v6-global--Color--dark-100);
   }
 
   .pf-v6-c-nav {
-    --pf-v5-c-nav__list-link--PaddingRight: var(--pf-v5-global--spacer--sm);
-    --pf-v5-c-nav__list-link--PaddinLeft: var(--pf-v5-global--spacer--md);
-    --pf-v5-c-nav__list-link--after--Left: var(--pf-v5-global--spacer--md);
-    --pf-v5-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
-    --pf-v5-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
+    --pf-v6-c-nav__list-link--PaddingRight: var(--pf-v6-global--spacer--sm);
+    --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-v6-global--spacer--md);
+    --pf-v6-c-nav__list-link--after--Left: var(--pf-v6-global--spacer--md);
+    --pf-v6-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
+    --pf-v6-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
 
     @media screen and (min-width: $pf-v6-global--breakpoint--xl) {
-      --pf-v5-c-nav__list-link--PaddingRight: var(--pf-v5-global--spacer--md);
-      --pf-v5-c-nav__list-link--PaddinLeft: var(--pf-v5-global--spacer--lg);
-      --pf-v5-c-nav__list-link--after--Left: var(--pf-v5-global--spacer--lg);
-      --pf-v5-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-v5-global--spacer--xl);
-      --pf-v5-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-v5-global--spacer--xl);
+      --pf-v6-c-nav__list-link--PaddingRight: var(--pf-v6-global--spacer--md);
+      --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-v6-global--spacer--lg);
+      --pf-v6-c-nav__list-link--after--Left: var(--pf-v6-global--spacer--lg);
+      --pf-v6-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-v6-global--spacer--xl);
+      --pf-v6-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-v6-global--spacer--xl);
     }
 
     .pf-v6-c-nav__link {
@@ -325,13 +325,13 @@ form.pf-v6-c-form {
 // Reset our tables to our base font-size
 .pf-v6-c-table {
   tr > * {
-    --pf-v5-c-table--cell--FontSize: $font-size-base;
+    --pf-v6-c-table--cell--FontSize: $font-size-base;
   }
 }
 
 // Remove when upstream issue is addressed. https://github.com/patternfly/patternfly/issues/4889
 .pf-v5-theme-dark .pf-v6-c-card {
-  --pf-v5-c-card--BoxShadow: var(--pf-v5-global--BoxShadow--md);
+  --pf-v6-c-card--BoxShadow: var(--pf-v6-global--BoxShadow--md);
 }
 
 .table {
@@ -343,14 +343,14 @@ form.pf-v6-c-form {
     vertical-align: middle !important;
   }
   th {
-    font-weight: var(--pf-v5-global--FontWeight--bold);
+    font-weight: var(--pf-v6-global--FontWeight--bold);
     padding-top: 0 !important;
   }
   thead > tr > th {
     border-bottom: 0;
   }
   tr:last-child {
-    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+    border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
   }
 }
 
@@ -390,12 +390,12 @@ ul {
 
 .odc-topology {
   .pf-topology-content {
-    background-color: var(--pf-v5-global--BackgroundColor--200);
+    background-color: var(--pf-v6-global--BackgroundColor--200);
   }
 }
 
 .pfext-quick-start-footer {
-  background-color: var(--pf-v5-global--BackgroundColor--100);
+  background-color: var(--pf-v6-global--BackgroundColor--100);
 }
 
 // TODO Remove this override when skip to content CSS is figured out.
@@ -416,11 +416,11 @@ ul {
   background-color: var(--pf-v5-global--palette--black-600);
 }
 
-// PF5 Popover component applies an new inline width:auto style that overrides it's own pf-v6-c-popover min-width: var(--pf-v5-c-popover--MinWidth). So the pf-v6-c-popover container is not a consistent size and can resize when additional content is loaded which causes the alignment to be incorrect.
+// PF5 Popover component applies an new inline width:auto style that overrides it's own pf-v6-c-popover min-width: var(--pf-v6-c-popover--MinWidth). So the pf-v6-c-popover container is not a consistent size and can resize when additional content is loaded which causes the alignment to be incorrect.
 .pf-v6-c-popover {
-  min-width: var(--pf-v5-c-popover--MinWidth) !important;
+  min-width: var(--pf-v6-c-popover--MinWidth) !important;
 }
 
 .pf-v6-c-truncate--no-min-width {
-  --pf-v5-c-truncate--MinWidth: 0 !important;
+  --pf-v6-c-truncate--MinWidth: 0 !important;
 }

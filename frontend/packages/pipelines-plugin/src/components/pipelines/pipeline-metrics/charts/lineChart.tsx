@@ -60,7 +60,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       textAnchor: 'end',
       verticalAnchor: 'end',
       fill:
-        'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--Color--100 */,
+        'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--100 */,
     },
   };
 
@@ -92,7 +92,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         style={{
           tickLabels: {
             fill:
-              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--Color--100 */,
+              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--100 */,
           },
         }}
       />

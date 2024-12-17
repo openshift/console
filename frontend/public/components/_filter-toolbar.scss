@@ -15,11 +15,11 @@
 
 .co-filter-dropdown-item {
   display: inline-flex;
-  margin: var(--pf-v5-global--spacer--xs) 0;
+  margin: var(--pf-v6-global--spacer--xs) 0;
 }
 
 .co-filter-dropdown-item__name {
-  padding: 0 var(--pf-v5-global--spacer--xs);
+  padding: 0 var(--pf-v6-global--spacer--xs);
 }
 
 @media (min-width: $pf-v6-global--breakpoint--md) {

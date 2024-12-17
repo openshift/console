@@ -1,15 +1,15 @@
 .odc-functions-getting-started-section {
-  padding-right: var(--pf-v5-global--spacer--lg);
-  padding-left: var(--pf-v5-global--spacer--lg);
+  padding-right: var(--pf-v6-global--spacer--lg);
+  padding-left: var(--pf-v6-global--spacer--lg);
 }
 
 .pf-v6-c-expandable-section__toggle-text {
-  color: var(--pf-v5-global--Color--dark-100) !important;
+  color: var(--pf-v6-global--Color--dark-100) !important;
   &.is-dark {
-    color: var(--pf-v5-global--Color--light-100) !important;
+    color: var(--pf-v6-global--Color--light-100) !important;
   }
-  font-size: var(--pf-v5-global--icon--FontSize--md) !important;
-  font-weight: var(--pf-v5-global--FontWeight--bold) !important;
+  font-size: var(--pf-v6-global--icon--FontSize--md) !important;
+  font-weight: var(--pf-v6-global--FontWeight--bold) !important;
 }
 
 .pf-v6-c-expandable-section__toggle {
@@ -26,13 +26,13 @@
   // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
   &__header.pf-v6-c-card__header {
     // Use padding sm instead of lg to fix alignment of the KebabToggle action button.
-    padding-right: var(--pf-v5-global--spacer--sm);
+    padding-right: var(--pf-v6-global--spacer--sm);
   }
   &__tooltip {
     white-space: pre-line;
   }
   &__tooltip-icon {
-    padding-left: var(--pf-v5-global--spacer--sm);
+    padding-left: var(--pf-v6-global--spacer--sm);
   }
 
   // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
@@ -41,21 +41,20 @@
     grid-template-columns: repeat(auto-fit, minmax(var(--min-column-width), 1fr));
 
     // Keep only additional spacing at the bottom. Horizontal spacing is added to the child elements.
-    padding: 0 0 calc(var(--pf-v5-c-card--child--PaddingBottom) / 2) 0;
+    padding: 0 0 calc(var(--pf-v6-c-card--child--PaddingBottom) / 2) 0;
     // Hide the border on the right side of the content. Works together wie negative margin below.
     overflow: hidden;
 
     // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
     > .pf-v6-l-flex.pf-m-column {
       // Show a divider on the right side and hide them in the latest column.
-      border-right: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-      margin-right: calc(-1 * var(--pf-v5-global--BorderWidth--sm));
+      border-right: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+      margin-right: calc(-1 * var(--pf-v6-global--BorderWidth--sm));
       // Padding around the card. Vertical spacing is splitted on the card and the grid.
-      padding-top: calc(var(--pf-v5-c-card--first-child--PaddingTop) / 2);
-      padding-bottom: calc(var(--pf-v5-c-card--child--PaddingBottom) / 2);
-      padding-left: var(--pf-v5-global--spacer--md);
-      padding-right: var(--pf-v5-c-card--child--PaddingRight);
+      padding-top: calc(var(--pf-v6-c-card--first-child--PaddingTop) / 2);
+      padding-bottom: calc(var(--pf-v6-c-card--child--PaddingBottom) / 2);
+      padding-left: var(--pf-v6-global--spacer--md);
+      padding-right: var(--pf-v6-c-card--child--PaddingRight);
     }
   }
 }
-

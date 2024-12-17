@@ -2,31 +2,31 @@
 @import '~@console/internal/style/vars';
 
 .pf-v6-c-nav .oc-nav-header {
-  border-bottom: 1px solid var(--pf-v5-global--BackgroundColor--dark-200);
-  margin-top: var(--pf-v5-global--spacer--sm);
-  padding: 0.6rem var(--pf-v5-global--spacer--sm);
+  border-bottom: 1px solid var(--pf-v6-global--BackgroundColor--dark-200);
+  margin-top: var(--pf-v6-global--spacer--sm);
+  padding: 0.6rem var(--pf-v6-global--spacer--sm);
 
   :where(.pf-v5-theme-dark) & {
-    // Match --pf-v5-c-nav__item--before--BorderColor
-    border-bottom-color: var(--pf-v5-global--BorderColor--100);
+    // Match --pf-v6-c-nav__item--before--BorderColor
+    border-bottom-color: var(--pf-v6-global--BorderColor--100);
   }
 
   @media screen and (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-left: var(--pf-v5-global--spacer--md);
-    padding-right: var(--pf-v5-global--spacer--md);
+    padding-left: var(--pf-v6-global--spacer--md);
+    padding-right: var(--pf-v6-global--spacer--md);
   }
 
   .pf-v6-c-menu {
-    --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
-    padding: var(--pf-v5-global--spacer--sm) 0;
+    --pf-v6-c-menu--BackgroundColor: var(--pf-v6-global--BackgroundColor--100);
+    padding: var(--pf-v6-global--spacer--sm) 0;
     :where(.pf-v5-theme-dark) & {
-      --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-300);
+      --pf-v6-c-menu--BackgroundColor: var(--pf-v6-global--BackgroundColor--dark-300);
     }
   }
 
   .pf-v6-c-menu__item {
-    color: var(--pf-v5-global--Color--100);
-    padding: var(--pf-v5-global--spacer--sm);
+    color: var(--pf-v6-global--Color--100);
+    padding: var(--pf-v6-global--spacer--sm);
     &::after,
     &::before {
       border-style: hidden;
@@ -39,8 +39,8 @@
     &:active,
     &:focus,
     &:focus-within {
-      --pf-v5-c-menu__list-item--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
-      --pf-v5-c-menu__list-item--Color: var(--pf-v5-global--Color--100, inherit);
+      --pf-v6-c-menu__list-item--BackgroundColor: var(--pf-v6-global--BackgroundColor--200);
+      --pf-v6-c-menu__list-item--Color: var(--pf-v6-global--Color--100, inherit);
       :where(.pf-v5-theme-dark) & {
         background-color: var(--pf-v5-global--BackgroundColor--400);
       }
@@ -54,19 +54,19 @@
     }
 
     :where(.pf-v5-theme-dark) & {
-      --pf-v5-c-menu-toggle--BackgroundColor: transparent;
+      --pf-v6-c-menu-toggle--BackgroundColor: transparent;
     }
 
     &.pf-m-expanded {
-      --pf-v5-c-menu-toggle--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-200);
+      --pf-v6-c-menu-toggle--BackgroundColor: var(--pf-v6-global--BackgroundColor--dark-200);
       :where(.pf-v5-theme-dark) & {
-        background-color: var(--pf-v5-global--BackgroundColor--dark-300);
+        background-color: var(--pf-v6-global--BackgroundColor--dark-300);
       }
     }
 
     .pf-v6-c-title.pf-m-md {
       font-family: var(
-        --pf-v5-global--FontFamily--text
+        --pf-v6-global--FontFamily--text
       ); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
       font-size: $co-side-nav-section-font-size;
     }

@@ -3,16 +3,16 @@
 
 :root {
   --popover-border-radius: 12px;
-  --popover-button-size: var(--pf-v5-global--spacer--2xl);
-  --popover-margin: var(--pf-v5-global--spacer--lg);
+  --popover-button-size: var(--pf-v6-global--spacer--2xl);
+  --popover-margin: var(--pf-v6-global--spacer--lg);
   --popover-bottom: calc(
-    var(--popover-button-size) + var(--popover-margin) + var(--pf-v5-global--spacer--sm)
+    var(--popover-button-size) + var(--popover-margin) + var(--pf-v6-global--spacer--sm)
   );
 }
 
 .lightspeed__popover,
 .lightspeed__popover-button {
-  box-shadow: var(--pf-v5-global--BoxShadow--lg);
+  box-shadow: var(--pf-v6-global--BoxShadow--lg);
   position: absolute;
   right: var(--popover-margin);
   z-index: 199;
@@ -20,7 +20,7 @@
 
 .lightspeed__popover {
   border-radius: 12px;
-  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
   bottom: var(--popover-bottom);
   overflow: hidden;
 }
@@ -67,7 +67,7 @@
   background-size: calc(var(--popover-button-size) + 3px);
   border-radius: var(--popover-border-radius) !important;
   bottom: var(--popover-margin);
-  box-shadow: var(--pf-v5-global--BoxShadow--lg);
+  box-shadow: var(--pf-v6-global--BoxShadow--lg);
   height: var(--popover-button-size);
   padding: 0;
   position: absolute !important;
@@ -80,16 +80,16 @@
 
   .pf-v5-theme-dark & {
     background-image: url('logo-dark.svg');
-    background-color: var(--pf-v5-global--BackgroundColor--100) !important;
+    background-color: var(--pf-v6-global--BackgroundColor--100) !important;
   }
 }
 
 .lightspeed__welcome-logo {
-  --logo-size: var(--pf-v5-global--spacer--4xl);
+  --logo-size: var(--pf-v6-global--spacer--4xl);
 
   background-image: url('logo.svg');
   height: var(--logo-size);
-  margin: 0 0 var(--pf-v5-global--spacer--xl);
+  margin: 0 0 var(--pf-v6-global--spacer--xl);
   width: var(--logo-size);
 
   .pf-v5-theme-dark & {

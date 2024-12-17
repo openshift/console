@@ -84,7 +84,7 @@ export const SearchTourText: React.FC = () => {
         <span
           style={{
             color:
-              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v5-global--palette--blue-400 */,
+              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--palette--blue-400 */,
           }}
         >
           <PlusCircleIcon /> {t('devconsole~Add to navigation')}
