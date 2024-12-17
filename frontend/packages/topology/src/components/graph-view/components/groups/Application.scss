@@ -16,7 +16,7 @@
     stroke: $filtered-stroke-color;
   }
   &.pf-m-highlight .pf-topology__group__background {
-    fill: var(--pf-t--global--background--color--control--read-only);
+    fill: var(--pf-t--color--gray--10);
     stroke: $interactive-stroke-color;
   }
   &.pf-m-selected .pf-topology__group__background {

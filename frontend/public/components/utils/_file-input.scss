@@ -40,8 +40,8 @@
     top: 0;
     z-index: 1001;
     &.co-file-dropzone--drop-over {
-      border-color: var(--pf-t--global--border--color--hover);
-      color: var(--pf-t--global--border--color--hover);
+      border-color: var(--pf-t--color--blue--40);
+      color: var(--pf-t--color--blue--40);
     }
   }
 }

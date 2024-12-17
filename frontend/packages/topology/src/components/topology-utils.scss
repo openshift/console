@@ -1,13 +1,13 @@
-$filtered-stroke-color: var(--pf-t--global--border--color--nonstatus--orange--clicked);
+$filtered-stroke-color: var(--pf-t--color--orange--40);
 
 $selected-fill-color: #a5c4e2;
-$selected-stroke-color: var(--pf-t--global--border--color--clicked);
+$selected-stroke-color: var(--pf-t--color--blue--50);
 
 $interactive-fill-color: #a5c4e2;
-$interactive-stroke-color: var(--pf-t--global--border--color--nonstatus--blue--default);
+$interactive-stroke-color: var(--pf-t--color--blue--30);
 
-$group-node-stroke-color: var(--pf-t--global--border--color--on-secondary);
-$group-node-fill-color: var(--pf-t--global--border--color--default);
+$group-node-stroke-color: var(--pf-t--color--gray--50);
+$group-node-fill-color: var(--pf-t--color--gray--30);
 $group-node-fill-opacity: 0.5;
 $group-node-stroke-width: 2.5px;
 $group-node-stroke-dasharray: 5 6;

@@ -30,7 +30,7 @@
   }
 
   &.pf-m-highlight &__bg {
-    fill: var(--pf-t--global--background--color--control--read-only);
+    fill: var(--pf-t--color--gray--10);
     stroke: $interactive-stroke-color;
   }
 

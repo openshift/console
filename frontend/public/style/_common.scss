@@ -221,7 +221,7 @@ dl.co-inline {
 }
 
 .co-m-pane__explanation {
-  color: var(--pf-t--global--border--color--on-secondary);
+  color: var(--pf-t--color--gray--50);
   margin-bottom: 30px;
 }
 
@@ -235,7 +235,7 @@ dl.co-inline {
 
 .co-m-pane__explanation code {
   background-color: var(--pf-v6-global--BackgroundColor--200);
-  color: var(--pf-t--global--border--color--on-secondary);
+  color: var(--pf-t--color--gray--50);
 }
 
 .co-pre-line {
@@ -288,11 +288,11 @@ dl.co-inline {
   mask-image: $co-icon-external-link-alt;
 
   .pf-v6-c-dropdown__menu-item & {
-    color: var(--pf-t--global--border--color--on-secondary);
+    color: var(--pf-t--color--gray--50);
     margin-left: 5px;
   }
   .pf-v6-c-nav__link & {
-    color: var(--pf-t--global--icon--color--on-disabled);
+    color: var(--pf-t--color--gray--60);
     margin-left: 4px;
   }
 }
