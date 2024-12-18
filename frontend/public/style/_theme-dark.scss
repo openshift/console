@@ -1,23 +1,23 @@
 :root {
   // Co Palette
-  --co-global--palette--blue-400: var(--pf-v6-global--palette--blue-400);
-  --co-global--palette--purple-600: var(--pf-v6-global--palette--purple-600);
-  --co-global--palette--orange-400: var(--pf-v6-global--palette--orange-400);
-  --co-global--palette--purple-700: var(--pf-v6-global--palette--purple-700);
+  --co-global--palette--blue-400: var(--pf-t--color--blue--40);
+  --co-global--palette--purple-600: var(--pf-t--color--gray--purple-60);
+  --co-global--palette--orange-400: var(--pf-t--color--gray--orange-40);
+  --co-global--palette--purple-700: var(--pf-t--color--gray--purple-70);
 
   // Co Palette Dark
-  --co-global--dark--palette--blue-400: var(--pf-v6-global--palette--blue-200);
-  --co-global--dark--palette--purple-600: var(--pf-v6-global--palette--purple-200);
-  --co-global--dark--palette--orange-400: var(--pf-v6-global--palette--orange-200);
-  --co-global--dark--palette--purple-700: var(--pf-v6-global--palette--purple-200);
+  --co-global--dark--palette--blue-400: var(--pf-t--color--gray--blue-20);
+  --co-global--dark--palette--purple-600: var(--pf-t--color--gray--purple-20);
+  --co-global--dark--palette--orange-400: var(--pf-t--color--gray--orange-20);
+  --co-global--dark--palette--purple-700: var(--pf-t--color--gray--purple-20);
 
   // Skeleton
-  --co-skeleton--Color: var(--pf-v6-global--palette--black-150);
-  --co-skeleton--Color--300: var(--pf-v6-global--palette--black-300);
+  --co-skeleton--Color: var(--pf-t--color--gray--20);
+  --co-skeleton--Color--300: var(--pf-t--color--gray--30);
 
   // Skeleton dark
-  --co-skeleton--dark--Color: var(--pf-v6-global--palette--black-600);
-  --co-skeleton--dark--Color--300: var(--pf-v6-global--palette--black-700);
+  --co-skeleton--dark--Color: var(--pf-t--color--gray--60);
+  --co-skeleton--dark--Color--300: var(--pf-t--color--gray--70);
 }
 
 :root:where(.pf-v6-theme-dark) {
