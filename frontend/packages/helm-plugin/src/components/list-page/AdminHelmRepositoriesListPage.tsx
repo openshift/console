@@ -1,43 +1,23 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { PageHeading } from '@console/internal/components/utils';
 import RepositoriesPage from './RepositoriesListPage';
-
-type PageContentsProps = {
-  namespace: string;
-};
-
-const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageHeading title={t('helm-plugin~Helm Repositories')} className="co-m-nav-title--row">
-        <div>
-          <Link
-            className="co-m-primary-action"
-            to={`/helm-repositories/ns/${namespace || 'default'}/~new/form`}
-          >
-            <Button variant="primary" id="yaml-create" data-test="item-create">
-              {t('helm-plugin~Create Helm Repository')}
-            </Button>
-          </Link>
-        </div>
-      </PageHeading>
-      <RepositoriesPage />
-    </>
-  );
-};
 
 const AdminHelmRepositoriesListPage: React.FC = () => {
   const { ns } = useParams();
+  const { t } = useTranslation();
+
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContents namespace={ns} />
+      <RepositoriesPage
+        title={t('helm-plugin~Helm Repositories')}
+        createButtonText={t('helm-plugin~Create Helm Repository')}
+        createProps={{ to: `/helm-repositories/ns/${ns || 'default'}/~new/form` }}
+        canCreate
+      />
     </NamespacedPage>
   );
 };

@@ -9,7 +9,21 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import RepositoriesList from './RepositoriesList';
 
-const RepositoriesPage: React.FC = () => {
+type RepositoriesPageProps = {
+  title?: string;
+  canCreate?: boolean;
+  createButtonText?: string;
+  createProps?: {
+    to: string;
+  };
+};
+
+const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
+  title,
+  canCreate = false,
+  createButtonText,
+  createProps,
+}) => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const [projectHelmChartListAccess] = useAccessReview({
@@ -102,6 +116,10 @@ const RepositoriesPage: React.FC = () => {
         resources={resources}
         label={t('helm-plugin~Repositories')}
         ListComponent={RepositoriesList}
+        title={title}
+        createProps={createProps}
+        canCreate={canCreate}
+        createButtonText={createButtonText}
       />
     </>
   );
