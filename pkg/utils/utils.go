@@ -63,7 +63,7 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	// When running off-cluster, 'http://localhost:8080' and 'ws://localhost:8080' are appended to the
 	// default sources. Image source, font source, and style source only use 'self' and
 	// 'http://localhost:8080'.
-	baseUriDirective := []string{baseURI, self, consoleDot}
+	baseUriDirective := []string{baseURI, self}
 	defaultSrcDirective := []string{defaultSrc, self, consoleDot}
 	imgSrcDirective := []string{imgSrc, self}
 	fontSrcDirective := []string{fontSrc, self}
