@@ -225,7 +225,7 @@ form.pf-v5-c-form {
 
   // Default light background for our content
   .co-page-backdrop {
-    background-color: var(--pf-global--BackgroundColor--100) !important;
+    background-color: var(--pf-v5-global--BackgroundColor--100) !important;
   }
 
   // Restore the max-height from PageHeader to maintain backwards compatibility
@@ -246,15 +246,10 @@ form.pf-v5-c-form {
 .modal-dialog {
   .pf-v5-c-app-launcher,
   .pf-v5-c-button,
-  .pf-c-button,
   .pf-v5-c-dropdown,
-  .pf-c-dropdown,
   .pf-v5-c-dropdown__menu-item,
-  .pf-c-dropdown__menu-item,
   .pf-v5-c-dropdown__toggle,
-  .pf-c-dropdown__toggle,
-  .pf-v5-c-form-control,
-  .pf-c-form-control {
+  .pf-v5-c-form-control {
     font-size: $font-size-base;
     height: auto;
   }
@@ -417,8 +412,8 @@ ul {
 }
 
 :where(.pf-theme-dark) .pfext-quick-start-task__content .pfext-markdown-view pre code {
-  color: var(--pf-global--Color--100);
-  background-color: var(--pf-global--palette--black-600);
+  color: var(--pf-v5-global--Color--100);
+  background-color: var(--pf-v5-global--palette--black-600);
 }
 
 // PF5 Popover component applies an new inline width:auto style that overrides it's own pf-v5-c-popover min-width: var(--pf-v5-c-popover--MinWidth). So the pf-v5-c-popover container is not a consistent size and can resize when additional content is loaded which causes the alignment to be incorrect.
