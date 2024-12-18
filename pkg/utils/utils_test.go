@@ -6,21 +6,21 @@ import (
 )
 
 const (
-	onClusterBaseUri     = "base-uri 'self' console.redhat.com"
-	onClusterDefaultSrc  = "default-src 'self' console.redhat.com"
-	onClusterImgSrc      = "img-src 'self'"
-	onClusterFontSrc     = "font-src 'self'"
-	onClusterScriptSrc   = "script-src 'self' console.redhat.com"
-	onClusterStyleSrc    = "style-src 'self'"
-	offClusterBaseUri    = "base-uri 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
-	offClusterDefaultSrc = "default-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
-	offClusterImgSrc     = "img-src 'self' http://localhost:8080"
-	offClusterFontSrc    = "font-src 'self' http://localhost:8080"
-	offClusterScriptSrc  = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
-	offClusterStyleSrc   = "style-src 'self' http://localhost:8080"
-	frameSrc             = "frame-src 'none'"
-	frameAncestors       = "frame-ancestors 'none'"
-	objectSrc            = "object-src 'none'"
+	onClusterBaseUri        = "base-uri 'self'"
+	onClusterDefaultSrc     = "default-src 'self' console.redhat.com"
+	onClusterImgSrc         = "img-src 'self'"
+	onClusterFontSrc        = "font-src 'self'"
+	onClusterScriptSrc      = "script-src 'self' console.redhat.com"
+	onClusterStyleSrc       = "style-src 'self'"
+	offClusterBaseUri       = "base-uri 'self' http://localhost:8080 ws://localhost:8080"
+	offClusterDefaultSrc    = "default-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
+	offClusterImgSrc        = "img-src 'self' http://localhost:8080"
+	offClusterFontSrc       = "font-src 'self' http://localhost:8080"
+	offClusterScriptSrc     = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
+	offClusterStyleSrc      = "style-src 'self' http://localhost:8080"
+	frameSrcDirective       = "frame-src 'none'"
+	frameAncestorsDirective = "frame-ancestors 'none'"
+	objectSrcDirective      = "object-src 'none'"
 )
 
 func TestParseContentSecurityPolicyConfig(t *testing.T) {
@@ -75,9 +75,9 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterFontSrc + " data:",
 				onClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " 'unsafe-inline'",
-				frameSrc,
-				frameAncestors,
-				objectSrc,
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 		{
@@ -92,9 +92,9 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterFontSrc + " data:",
 				offClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " 'unsafe-inline'",
-				frameSrc,
-				frameAncestors,
-				objectSrc,
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 		{
@@ -117,9 +117,9 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterFontSrc + " foo.bar.baz data:",
 				onClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
-				frameSrc,
-				frameAncestors,
-				objectSrc,
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 		{
@@ -142,9 +142,9 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterFontSrc + " foo.bar.baz data:",
 				offClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
-				frameSrc,
-				frameAncestors,
-				objectSrc,
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 	}
