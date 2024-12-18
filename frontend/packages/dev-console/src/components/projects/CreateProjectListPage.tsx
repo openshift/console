@@ -21,6 +21,10 @@ export const CreateAProjectButton: React.FC<CreateAProjectButtonProps> = ({ open
   const { t } = useTranslation();
   const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
+  const isStartGuideEnabled = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
+  if (isStartGuideEnabled) {
+    return null;
+  }
   if (canCreateProject) {
     return (
       <Trans t={t} ns="devconsole">
