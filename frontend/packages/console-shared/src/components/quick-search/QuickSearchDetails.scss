@@ -1,8 +1,8 @@
 .ocs-quick-search-details {
   display: flex;
   flex-direction: column;
-  padding: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--md) 0px
-    var(--pf-v6-global--spacer--md);
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md) 0px
+    var(--pf-t--global--spacer--md);
   overflow-y: auto;
   overflow-wrap: break-word;
   scrollbar-width: 12px;
@@ -10,7 +10,7 @@
     var(--pf-v6-global--palette--white);
 
   &__form-button {
-    margin: var(--pf-v6-global--spacer--md) 0px !important;
+    margin: var(--pf-t--global--spacer--md) 0px !important;
     width: max-content;
   }
 

@@ -1,5 +1,5 @@
 .ocs-radio-group-field {
-  padding-left: var(--pf-v6-global--spacer--sm);
+  padding-left: var(--pf-t--global--spacer--sm);
 
   input[type='radio'] {
     margin-top: 0;
@@ -7,13 +7,13 @@
 
   &:not(.ocs-radio-group-field--inline) {
     .pf-v6-c-radio {
-      padding-bottom: var(--pf-v6-global--spacer--md);
+      padding-bottom: var(--pf-t--global--spacer--md);
     }
     .pf-v6-c-radio:last-of-type {
       padding-bottom: 0;
     }
     .ocs-radio-group-field__children {
-      padding-top: var(--pf-v6-global--spacer--sm);
+      padding-top: var(--pf-t--global--spacer--sm);
     }
   }
 
@@ -23,7 +23,7 @@
 
     > .pf-v6-c-form__group-label {
       padding-bottom: 0;
-      margin-right: var(--pf-v6-global--spacer--md);
+      margin-right: var(--pf-t--global--spacer--md);
     }
   }
   .pf-v6-c-radio {

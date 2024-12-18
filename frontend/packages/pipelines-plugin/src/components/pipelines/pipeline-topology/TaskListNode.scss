@@ -1,12 +1,12 @@
 .odc-task-list-node {
-  border: 1px solid var(--pf-v6-global--BorderColor--light-100);
+  border: 1px solid var(--pf-t--global--border--color--light-100);
 
   &__container {
     overflow: hidden;
     box-shadow: var(--pf-v6-c-dropdown__menu--BoxShadow);
   }
   &__trigger-background {
-    stroke: var(--pf-v6-global--BorderColor--100);
+    stroke: var(--pf-t--global--border--color--50);
     fill: var(--pf-v6-global--BackgroundColor--light-100);
     &.is-disabled {
       fill: var(--pf-v6-global--disabled-color--300);
@@ -19,7 +19,7 @@
     }
   }
   &__trigger {
-    font-size: var(--pf-v6-global--FontSize--md);
+    font-size: var(--pf-t--global--font--size--md);
     text-anchor: middle;
     dominant-baseline: middle;
     cursor: pointer;
@@ -32,7 +32,7 @@
     overflow: auto;
   }
   &__divider {
-    border-color: var(--pf-v6-global--BorderColor--100);
+    border-color: var(--pf-t--global--border--color--50);
     margin: 0;
   }
   &__render-text {

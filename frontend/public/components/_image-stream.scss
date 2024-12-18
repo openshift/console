@@ -19,7 +19,7 @@
 
 .co-images-stream-tag-timeline__circle-icon,
 .co-images-stream-tag-timeline__square-icon {
-  color: var(--pf-v6-global--BorderColor--100);
+  color: var(--pf-t--global--border--color--50);
   left: 8px;
   position: relative;
 }
@@ -32,7 +32,7 @@
   padding: 20px;
   width: 100%;
   & > div:first-of-type {
-    font-size: var(--pf-v6-global--FontSize--sm);
+    font-size: var(--pf-t--global--font--size--sm);
     padding-bottom: 16px;
   }
 }
@@ -43,7 +43,7 @@
 }
 
 .co-images-stream-tag-timeline__line {
-  border: var(--pf-v6-global--BorderWidth--md) solid var(--pf-v6-global--BorderColor--100);
+  border: var(--pf-t--global--border--width--md) solid var(--pf-t--global--border--color--50);
   left: 14px;
   position: relative;
 }

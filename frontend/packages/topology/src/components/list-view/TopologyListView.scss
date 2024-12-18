@@ -12,7 +12,7 @@
   right: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-left: var(--pf-v6-global--spacer--sm);
+  padding-left: var(--pf-t--global--spacer--sm);
   -webkit-overflow-scrolling: touch;
   .odc-m-filter-active & {
     .odc-topology-list-view__kind-row,
@@ -27,7 +27,7 @@
 
   .pf-v6-c-data-list {
     --pf-v6-c-data-list__item-row--PaddingLeft: calc(
-      var(--pf-v6-c-data-list__item-row--xl--PaddingLeft) - var(--pf-v6-global--spacer--sm)
+      var(--pf-v6-c-data-list__item-row--xl--PaddingLeft) - var(--pf-t--global--spacer--sm)
     );
   }
 
@@ -58,9 +58,9 @@
   }
 
   &__group-resource-count {
-    margin-right: var(--pf-v6-global--spacer--md);
+    margin-right: var(--pf-t--global--spacer--md);
     .co-m-resource-icon {
-      margin-left: var(--pf-v6-global--spacer--sm);
+      margin-left: var(--pf-t--global--spacer--sm);
     }
   }
   &__application-label-cell {
@@ -75,26 +75,26 @@
     align-items: start;
   }
   &__alert-button {
-    padding: 2px var(--pf-v6-global--spacer--xs);
-    margin-left: var(--pf-v6-global--spacer--xs);
+    padding: 2px var(--pf-t--global--spacer--xs);
+    margin-left: var(--pf-t--global--spacer--xs);
   }
   &__resource-icon-cell.pf-v6-c-data-list__cell {
-    margin-right: var(--pf-v6-global--spacer--sm);
+    margin-right: var(--pf-t--global--spacer--sm);
   }
   &__resource-icon__container {
     display: flex;
     align-items: center;
-    margin-right: var(--pf-v6-global--spacer--sm);
+    margin-right: var(--pf-t--global--spacer--sm);
   }
   &__resource-icon {
     margin: 2px 0;
   }
   &__type-icon-bg {
     background-color: var(--pf-v6-global--palette--white);
-    border: solid 1px var(--pf-v6-global--BorderColor--300);
+    border: solid 1px var(--pf-t--global--border--color--200);
     border-radius: 12px;
-    box-shadow: 2px 2px 3px var(--pf-v6-global--BorderColor--100);
-    margin-left: var(--pf-v6-global--spacer--xs);
+    box-shadow: 2px 2px 3px var(--pf-t--global--border--color--50);
+    margin-left: var(--pf-t--global--spacer--xs);
     padding: 0 3px 1px;
   }
   &__type-icon {
@@ -103,13 +103,13 @@
     min-width: var(--odc-topology-list-view-type-icon-size);
   }
   &__application {
-    margin-top: var(--pf-v6-global--spacer--sm);
+    margin-top: var(--pf-t--global--spacer--sm);
   }
   &__application-row {
     .pf-v6-c-data-list__item-content {
-      padding-bottom: var(--pf-v6-global--spacer--sm);
+      padding-bottom: var(--pf-t--global--spacer--sm);
       .pf-v6-c-data-list__cell {
-        padding-top: var(--pf-v6-global--spacer--sm);
+        padding-top: var(--pf-t--global--spacer--sm);
       }
     }
     &.is-filtered {
@@ -118,11 +118,11 @@
     }
   }
   &__application-label {
-    font-size: var(--pf-v6-global--FontSize--2xl);
-    margin-left: var(--pf-v6-global--spacer--sm);
+    font-size: var(--pf-t--global--font--size--2xl);
+    margin-left: var(--pf-t--global--spacer--sm);
   }
   &__unassigned-label {
-    font-size: var(--pf-v6-global--FontSize--2xl);
+    font-size: var(--pf-t--global--font--size--2xl);
   }
   &__kind-row,
   &__item-row {
@@ -135,7 +135,7 @@
     }
   }
   &__kind-label {
-    font-size: var(--pf-v6-global--FontSize--lg);
+    font-size: var(--pf-t--global--font--size--lg);
   }
   .pf-v6-c-data-list__item.pf-m-clickable {
     .odc-topology-list-view__kind-row,
@@ -148,14 +148,14 @@
   }
   .odc-topology-list-view__group-children {
     .odc-topology-list-view__item-row {
-      padding-left: var(--pf-v6-global--spacer--2xl);
+      padding-left: var(--pf-t--global--spacer--2xl);
     }
     .odc-topology-list-view__group-children {
       .odc-topology-list-view__item-row {
-        padding-left: var(--pf-v6-global--spacer--3xl);
+        padding-left: var(--pf-t--global--spacer--3xl);
       }
       .odc-topology-list-view__group-children .odc-topology-list-view__item-row {
-        padding-left: var(--pf-v6-global--spacer--4xl);
+        padding-left: var(--pf-t--global--spacer--4xl);
       }
     }
   }
@@ -220,11 +220,11 @@
     }
   }
   .pf-v6-c-data-list__item-content {
-    --pf-v6-c-data-list__item-content--md--PaddingBottom: var(--pf-v6-global--spacer--md);
+    --pf-v6-c-data-list__item-content--md--PaddingBottom: var(--pf-t--global--spacer--md);
   }
   .pf-v6-c-data-list__cell,
   .pf-v6-c-data-list__cell.pf-m-icon + .pf-v6-c-data-list__cell {
-    padding-top: var(--pf-v6-global--spacer--md);
+    padding-top: var(--pf-t--global--spacer--md);
   }
 
   .pf-v6-c-data-list__expandable-content {

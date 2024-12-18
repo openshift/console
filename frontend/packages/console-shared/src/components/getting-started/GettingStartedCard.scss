@@ -1,6 +1,6 @@
 .ocs-getting-started-card {
   &__title-icon {
-    margin-right: var(--pf-v6-global--spacer--sm);
+    margin-right: var(--pf-t--global--spacer--sm);
   }
 
   small {
@@ -29,6 +29,6 @@
 
   a > svg,
   button > svg {
-    margin-left: var(--pf-v6-global--spacer--sm);
+    margin-left: var(--pf-t--global--spacer--sm);
   }
 }

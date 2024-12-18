@@ -1,5 +1,5 @@
 .co-storage__selection {
-  margin-bottom: var(--pf-v6-global--spacer--lg);
+  margin-bottom: var(--pf-t--global--spacer--lg);
 }
 
 .co-storage-heading {
@@ -7,7 +7,7 @@
     display: flex;
   }
   &__subtitle {
-    padding-left: var(--pf-v6-global--spacer--xs);
-    margin-top: var(--pf-v6-global--spacer--xs);
+    padding-left: var(--pf-t--global--spacer--xs);
+    margin-top: var(--pf-t--global--spacer--xs);
   }
 }

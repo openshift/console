@@ -8,9 +8,9 @@
 .co-create-networkpolicy__expandable-xl
   > .pf-v6-c-form__field-group-header
   .pf-v6-c-form__field-group-header-title-text {
-  font-family: var(--pf-v6-global--FontFamily--heading);
-  font-size: var(--pf-v6-global--FontSize--xl);
-  font-weight: var(--pf-v6-global--FontWeight--normal);
+  font-family: var(--pf-t--global--font--family--heading);
+  font-size: var(--pf-t--global--font--size--xl);
+  font-weight: var(--pf-t--global--font--weight--body--default);
   line-height: var(--pf-v6-global--LineHeight--md);
 }
 
@@ -32,8 +32,8 @@
 
 .co-create-networkpolicy__rule-header .pf-m-secondary {
   color: var(--pf-v6-global--primary-color--100);
-  padding-left: var(--pf-v6-global--spacer--md);
-  padding-right: var(--pf-v6-global--spacer--md);
+  padding-left: var(--pf-t--global--spacer--md);
+  padding-right: var(--pf-t--global--spacer--md);
 }
 
 .co-create-networkpolicy__rule-header .pf-m-secondary .pf-c-dropdown__toggle-icon {

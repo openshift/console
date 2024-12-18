@@ -1,14 +1,14 @@
 .odc-monitoring-events {
   &__event-item {
-    margin-bottom: var(--pf-v6-global--spacer--md);
+    margin-bottom: var(--pf-t--global--spacer--md);
   }
   &__warning-icon {
-    font-size: var(--pf-v6-global--FontSize--xl);
+    font-size: var(--pf-t--global--font--size--xl);
   }
   &__event-message {
-    font-size: var(--pf-v6-global--FontSize--sm);
+    font-size: var(--pf-t--global--font--size--sm);
     color: var(--pf-v6-global--Color--100);
-    margin-top: var(--pf-v6-global--spacer--sm);
+    margin-top: var(--pf-t--global--spacer--sm);
     word-wrap: break-word;
   }
 }

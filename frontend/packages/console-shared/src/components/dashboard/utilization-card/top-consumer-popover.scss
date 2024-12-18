@@ -1,7 +1,7 @@
 @import '../../../styles/skeleton-screen';
 
 .co-utilization-card-popover__body {
-  min-height: var(--pf-v6-global--spacer--lg);
+  min-height: var(--pf-t--global--spacer--lg);
 }
 
 .co-utilization-card-popover__consumer-list {
@@ -10,7 +10,7 @@
 }
 
 .co-utilization-card-popover__consumer-name {
-  flex: 0 0 calc(70% - var(--pf-v6-global--spacer--md));
+  flex: 0 0 calc(70% - var(--pf-t--global--spacer--md));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -24,11 +24,11 @@
 }
 
 .co-utilization-card-popover__description {
-  padding: var(--pf-v6-global--spacer--sm) 0;
+  padding: var(--pf-t--global--spacer--sm) 0;
 }
 
 .co-utilization-card-popover__dropdown {
-  margin: var(--pf-v6-global--spacer--sm) 0;
+  margin: var(--pf-t--global--spacer--sm) 0;
 }
 
 .co-utilization-card-popover__dropdown,
@@ -38,7 +38,7 @@
 }
 
 .co-utilization-card-popover__limit-icon {
-  margin-left: var(--pf-v6-global--spacer--sm);
+  margin-left: var(--pf-t--global--spacer--sm);
 }
 
 .co-utilization-card-popover__consumer-item {
@@ -53,10 +53,10 @@
 .skeleton-consumer {
   animation: $skeleton-animation;
   background: $skeleton-color;
-  height: var(--pf-v6-global--spacer--md);
+  height: var(--pf-t--global--spacer--md);
   opacity: 0;
-  margin-top: var(--pf-v6-global--spacer--sm);
-  margin-bottom: var(--pf-v6-global--spacer--sm);
+  margin-top: var(--pf-t--global--spacer--sm);
+  margin-bottom: var(--pf-t--global--spacer--sm);
   &::after {
     background-repeat: no-repeat;
     content: '';

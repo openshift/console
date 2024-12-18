@@ -1,7 +1,12 @@
 $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
 
+.co-m-horizontal-nav {
+  margin-top: calc(var(--pf-t--global--spacer--lg) * -1);
+}
+
 .co-m-horizontal-nav__menu {
-  border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+  border-bottom: var(--pf-t--global--border--width--100) solid
+    var(--pf-t--global--border--color--50);
   display: flex;
   flex-shrink: 0; // prevent collapse of tabs
   list-style: none;
@@ -15,7 +20,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
     padding-left: ($pf-v6-global-gutter--md - $pf-v6-global-gutter);
   }
   &--within-sidebar {
-    border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+    border-top: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
     margin-bottom: $pf-v6-global-gutter--md !important;
     margin-left: -$pf-v6-global-gutter;
     margin-right: -$pf-v6-global-gutter;

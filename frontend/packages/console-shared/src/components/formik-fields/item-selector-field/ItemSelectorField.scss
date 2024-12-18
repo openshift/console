@@ -1,6 +1,6 @@
 .odc-item-selector-filter {
   display: flex;
-  padding-bottom: var(--pf-v6-global--spacer--md);
+  padding-bottom: var(--pf-t--global--spacer--md);
 
   &__input {
     max-width: 20em;
@@ -26,7 +26,7 @@
 
   &__success-icon {
     color: var(--pf-v6-global--palette--green-700);
-    font-size: var(--pf-v6-global--FontSize--md);
-    margin-left: var(--pf-v6-global--spacer--lg);
+    font-size: var(--pf-t--global--font--size--md);
+    margin-left: var(--pf-t--global--spacer--lg);
   }
 }

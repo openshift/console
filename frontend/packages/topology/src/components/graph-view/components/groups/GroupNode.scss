@@ -2,12 +2,12 @@
 
 .odc-group-node {
   &__title {
-    font-size: var(--pf-v6-global--FontSize--lg);
+    font-size: var(--pf-t--global--font--size--lg);
     font-weight: var(--pf-v6-global--FontWeight--bold);
   }
   &__type-icon {
     fill: var(--pf-v6-global--Color--light-100);
-    font-size: var(--pf-v6-global--FontSize--md);
+    font-size: var(--pf-t--global--font--size--md);
   }
   &__bg {
     fill: $group-node-fill-color;

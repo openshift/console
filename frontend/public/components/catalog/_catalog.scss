@@ -115,7 +115,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
 .co-catalog-page {
   background: var(--pf-v6-global--BackgroundColor--100);
-  border: 1px solid var(--pf-v6-global--BorderColor--300);
+  border: 1px solid var(--pf-t--global--border--color--200);
   display: flex;
   flex: 1;
   padding-top: $pf-v6-global-gutter;
@@ -127,7 +127,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__btn-group__group-by {
     display: inline;
-    margin-left: var(--pf-v6-global--spacer--md);
+    margin-left: var(--pf-t--global--spacer--md);
   }
 
   &__content {
@@ -158,11 +158,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__grouped-items {
-    margin-bottom: var(--pf-v6-global--spacer--md);
+    margin-bottom: var(--pf-t--global--spacer--md);
   }
 
   &__group-title {
-    margin-bottom: var(--pf-v6-global--spacer--sm);
+    margin-bottom: var(--pf-t--global--spacer--sm);
   }
 
   &__header {
@@ -179,7 +179,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__hint {
-    margin: 0 0 var(--pf-v6-global--spacer--md) 0;
+    margin: 0 0 var(--pf-t--global--spacer--md) 0;
   }
 
   &__input {
@@ -195,7 +195,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__sort {
     display: inline;
-    margin-left: var(--pf-v6-global--spacer--md);
+    margin-left: var(--pf-t--global--spacer--md);
   }
 
   &__num-items {
@@ -245,7 +245,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-action {
     align-items: baseline;
     display: inline-flex !important;
-    margin: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--sm) 0 0;
+    margin: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--sm) 0 0;
     overflow-x: hidden;
   }
 
@@ -257,17 +257,17 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: var(--pf-v6-global--spacer--md);
+    margin-bottom: var(--pf-t--global--spacer--md);
     white-space: normal;
   }
 
   &__overlay-header {
-    margin-bottom: var(--pf-v6-global--spacer--md);
+    margin-bottom: var(--pf-t--global--spacer--md);
   }
 
   &__overlay-body {
     margin: 0;
-    padding-top: var(--pf-v6-global--spacer--md);
+    padding-top: var(--pf-t--global--spacer--md);
     @media (min-width: $screen-sm-min) {
       display: flex;
     }

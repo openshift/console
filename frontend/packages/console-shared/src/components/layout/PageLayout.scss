@@ -21,7 +21,7 @@
   }
 
   &__hint {
-    padding-bottom: var(--pf-v6-global--spacer--md);
+    padding-bottom: var(--pf-t--global--spacer--md);
     padding: 0 $pf-v6-global-gutter $pf-v6-global-gutter--md;
 
     @media (min-width: $pf-v6-global--breakpoint--xl) {

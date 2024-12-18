@@ -59,8 +59,8 @@ $overview-sidebar-width: 550px;
   padding-top: 5px;
 
   .co-m-pane__heading {
-    font-size: var(--pf-v6-global--FontSize--xl);
-    margin: 0 20px var(--pf-v6-global--spacer--md);
+    font-size: var(--pf-t--global--font--size--xl);
+    margin: 0 20px var(--pf-t--global--spacer--md);
   }
 
   .co-actions-menu {
@@ -84,7 +84,7 @@ $overview-sidebar-width: 550px;
 .resource-overview__body {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--pf-v6-global--spacer--lg);
+  gap: var(--pf-t--global--spacer--lg);
 }
 
 .resource-overview__details,
@@ -104,7 +104,7 @@ $overview-sidebar-width: 550px;
 
 .sidebar__section-view-all {
   font-size: 14px;
-  margin-left: var(--pf-v6-global--spacer--sm);
+  margin-left: var(--pf-t--global--spacer--sm);
 }
 
 .sidebar__section-owner-operator-heading {
@@ -112,5 +112,5 @@ $overview-sidebar-width: 550px;
 }
 
 .sidebar__section-owner-reference-operator {
-  padding-left: var(--pf-v6-global--spacer--sm);
+  padding-left: var(--pf-t--global--spacer--sm);
 }

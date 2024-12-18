@@ -65,7 +65,7 @@ $co-channel-height: 60px;
   font-size: ($font-size-small - 1) !important;
   font-weight: bold !important;
   justify-content: center;
-  padding: var(--pf-v6-global--spacer--xs) var(--pf-v6-global--spacer--sm) !important;
+  padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--sm) !important;
   position: absolute !important;
 
   &::after {
@@ -207,12 +207,12 @@ $co-channel-height: 60px;
 
   &,
   &__section {
-    border-color: var(--pf-v6-global--BorderColor--300);
+    border-color: var(--pf-t--global--border--color--200);
     border-style: solid;
   }
 
   &__details {
-    padding-right: var(--pf-v6-global--spacer--lg);
+    padding-right: var(--pf-t--global--spacer--lg);
 
     &--status {
       @media (min-width: $screen-xs) {
@@ -234,8 +234,8 @@ $co-channel-height: 60px;
     align-items: center;
     border-width: 1px 0 0 1px;
     flex: 1 1 auto;
-    padding: var(--pf-v6-global--spacer--lg) 0 var(--pf-v6-global--spacer--lg)
-      var(--pf-v6-global--spacer--lg);
+    padding: var(--pf-t--global--spacer--lg) 0 var(--pf-t--global--spacer--lg)
+      var(--pf-t--global--spacer--lg);
     margin-left: -1px;
     margin-top: -1px;
 
@@ -245,18 +245,18 @@ $co-channel-height: 60px;
   }
 
   &__updates-graph {
-    padding: 0 var(--pf-v6-global--spacer--lg) 0 0;
+    padding: 0 var(--pf-t--global--spacer--lg) 0 0;
     @media (max-width: 400px) {
       display: none;
     }
   }
 
   &__updates-group {
-    margin: 0 0 var(--pf-v6-global--spacer--lg) 0;
+    margin: 0 0 var(--pf-t--global--spacer--lg) 0;
 
     &--divided {
-      border-top: 1px solid var(--pf-v6-global--BorderColor--300);
-      padding-top: var(--pf-v6-global--spacer--lg);
+      border-top: 1px solid var(--pf-t--global--border--color--200);
+      padding-top: var(--pf-t--global--spacer--lg);
 
       // only add border and padding to first instance
       & ~ & {
@@ -267,11 +267,11 @@ $co-channel-height: 60px;
   }
 
   &__updates-progress:not(:empty) {
-    padding: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--lg) 0 0;
+    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg) 0 0;
   }
 
   &__updates-type {
-    margin: 0 0 var(--pf-v6-global--spacer--xs) 0;
+    margin: 0 0 var(--pf-t--global--spacer--xs) 0;
   }
 }
 

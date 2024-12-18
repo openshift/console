@@ -1,4 +1,4 @@
-@mixin catalog-logo-background($padding: var(--pf-v6-global--spacer--xs)) {
+@mixin catalog-logo-background($padding: var(--pf-t--global--spacer--xs)) {
   padding: $padding;
   border-radius: var(--pf-v6-global--BorderRadius--sm);
   background: var(--pf-v6-global--palette--white);

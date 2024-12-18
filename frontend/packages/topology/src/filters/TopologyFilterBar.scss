@@ -5,8 +5,8 @@
   padding: 6px 0;
 
   @media screen and (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-left: var(--pf-v6-global--spacer--sm);
-    padding-right: var(--pf-v6-global--spacer--sm);
+    padding-left: var(--pf-t--global--spacer--sm);
+    padding-right: var(--pf-t--global--spacer--sm);
   }
 
   &__kiali-link {
@@ -14,6 +14,6 @@
   }
 
   &__resource-quota-warning-block {
-    margin-right: var(--pf-v6-global--spacer--lg);
+    margin-right: var(--pf-t--global--spacer--lg);
   }
 }

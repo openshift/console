@@ -53,8 +53,10 @@
 }
 
 .co-namespace-bar {
-  border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+  border-bottom: var(--pf-t--global--border--width--100) solid
+    var(--pf-t--global--border--color--50);
   padding: 0 $pf-v6-global-gutter;
+  margin-top: calc(var(--pf-t--global--spacer--lg) * -1);
   white-space: nowrap;
 
   @media (min-width: $pf-v6-global--breakpoint--xl) {
@@ -78,7 +80,7 @@
 }
 
 .co-namespace-bar--no-project {
-  padding-left: var(--pf-v6-global--spacer--sm);
+  padding-left: var(--pf-t--global--spacer--sm);
   @media screen and (max-width: $pf-v6-global--breakpoint--xl) {
     margin-left: -0.5rem;
   }

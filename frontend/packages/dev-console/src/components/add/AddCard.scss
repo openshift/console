@@ -1,10 +1,10 @@
 .odc-add-card {
-  margin-bottom: var(--pf-v6-global--spacer--lg);
-  padding: 0px var(--pf-v6-global--spacer--lg) var(--pf-v6-global--spacer--lg) 0px;
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  padding: 0px var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg) 0px;
   max-width: 100%;
 
   &__title {
-    margin: var(--pf-v6-global--spacer--lg) 0px 0px var(--pf-v6-global--spacer--lg);
+    margin: var(--pf-t--global--spacer--lg) 0px 0px var(--pf-t--global--spacer--lg);
   }
 
   &__icon {

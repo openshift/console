@@ -38,13 +38,14 @@
 }
 
 .co-inventory-card__accordion.pf-v6-c-accordion {
-  border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+  border-bottom: var(--pf-t--global--border--width--100) solid
+    var(--pf-t--global--border--color--50);
   box-shadow: none;
   padding: 0;
 
   h5 {
     font-size: var(--pf-v6-c-card__body--FontSize);
-    font-weight: var(--pf-v6-global--FontWeight--normal);
+    font-weight: var(--pf-t--global--font--weight--body--default);
     margin: 0;
   }
 

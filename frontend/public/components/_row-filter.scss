@@ -2,13 +2,13 @@
 
 .co-row-filter {
   background-color: var(--pf-v6-global--BackgroundColor--100);
-  margin-bottom: var(--pf-v6-global--spacer--xl);
+  margin-bottom: var(--pf-t--global--spacer--xl);
   position: relative;
 
   // use pseudo element for border so that .pf-v6-c-toggle-group__item(s) overlap
   @media screen and (min-width: $pf-v6-global--breakpoint--md) {
     &::before {
-      border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+      border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
       border-bottom-right-radius: var(--pf-v6-global--BorderRadius--sm);
       border-top-right-radius: var(--pf-v6-global--BorderRadius--sm);
       bottom: 0;
@@ -41,16 +41,16 @@
   white-space: nowrap;
 
   @media screen and (min-width: $pf-v6-global--breakpoint--md) {
-    padding: 0 var(--pf-v6-global--spacer--md);
+    padding: 0 var(--pf-t--global--spacer--md);
   }
 }
 
 .co-row-filter__number-bubble {
-  border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
   border-radius: var(--pf-v6-global--BorderRadius--sm);
   display: inline-block;
   line-height: var(--pf-v6-global--LineHeight--sm);
-  margin-right: var(--pf-v6-global--spacer--sm);
+  margin-right: var(--pf-t--global--spacer--sm);
   padding: 2px 5px 0;
   text-align: center;
 

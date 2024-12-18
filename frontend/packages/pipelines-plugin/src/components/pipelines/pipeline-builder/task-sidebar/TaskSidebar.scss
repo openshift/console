@@ -16,7 +16,7 @@ $overview-sidebar-width: 550px;
   }
 
   &__content {
-    padding: var(--pf-v6-global--spacer--lg);
+    padding: var(--pf-t--global--spacer--lg);
     overflow-y: auto;
   }
 
@@ -24,7 +24,7 @@ $overview-sidebar-width: 550px;
   &__resource,
   &__workspace,
   &__when-expressions {
-    margin-bottom: var(--pf-v6-global--spacer--md);
+    margin-bottom: var(--pf-t--global--spacer--md);
   }
 
   &__paragraph {
@@ -32,6 +32,6 @@ $overview-sidebar-width: 550px;
   }
 
   h2 {
-    margin: 0 0 var(--pf-v6-global--spacer--sm) 0;
+    margin: 0 0 var(--pf-t--global--spacer--sm) 0;
   }
 }

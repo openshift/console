@@ -48,7 +48,7 @@ label {
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
   background-color: var(--pf-v6-global--BackgroundColor--100);
-  border: 1px solid var(--pf-v6-global--BorderColor--100);
+  border: 1px solid var(--pf-t--global--border--color--50);
 }
 
 .radio,
@@ -109,7 +109,7 @@ label {
 
 .small,
 small {
-  font-size: var(--pf-v6-global--FontSize--sm) !important;
+  font-size: var(--pf-t--global--font--size--sm) !important;
 }
 
 .table {
@@ -124,17 +124,19 @@ small {
       > th,
       > td {
         padding: var(
-          --pf-v6-global--spacer--sm
+          --pf-t--global--spacer--sm
         ); // matches --pf-v6-c-table--m-compact--cell--Padding
         vertical-align: top;
-        border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
+        border-top: var(--pf-t--global--border--width--100) solid
+          var(--pf-t--global--border--color--200);
       }
     }
   }
   // Bottom align for column headings
   > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: var(--pf-v6-global--BorderWidth--md) solid var(--pf-v6-global--BorderColor--300);
+    border-bottom: var(--pf-t--global--border--width--md) solid
+      var(--pf-t--global--border--color--200);
   }
   // Remove top border from thead by default
   > caption + thead,

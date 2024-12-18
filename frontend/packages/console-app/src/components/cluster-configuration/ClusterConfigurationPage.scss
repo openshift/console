@@ -6,7 +6,7 @@
   // Fix missing white background color above the header.
   .ocs-page-layout__title {
     margin-top: 0;
-    padding-top: var(--pf-v6-global--spacer--lg);
+    padding-top: var(--pf-t--global--spacer--lg);
   }
 
   .ocs-page-layout__content {
@@ -60,7 +60,7 @@
     }
   }
   &__tab-content {
-    margin: var(--pf-v6-global--spacer--lg);
+    margin: var(--pf-t--global--spacer--lg);
     max-width: 100%;
   }
 

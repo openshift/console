@@ -46,13 +46,13 @@
   }
 
   .co-search-group__pin-toggle {
-    padding-left: var(--pf-v6-global--spacer--xs);
-    padding-right: var(--pf-v6-global--spacer--xs);
-    margin-right: var(--pf-v6-global--spacer--sm);
+    padding-left: var(--pf-t--global--spacer--xs);
+    padding-right: var(--pf-t--global--spacer--xs);
+    margin-right: var(--pf-t--global--spacer--sm);
     text-align: left;
   }
   .co-search-group__pin-toggle__icon {
-    margin-right: var(--pf-v6-global--spacer--xs);
+    margin-right: var(--pf-t--global--spacer--xs);
   }
 }
 

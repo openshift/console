@@ -9,13 +9,13 @@
   &__icon {
     height: 36px;
     max-width: 100%;
-    padding: var(--pf-v6-global--spacer--xs);
+    padding: var(--pf-t--global--spacer--xs);
     border-radius: var(--pf-v6-global--BorderRadius--sm);
     background: var(--pf-v6-global--palette--white);
   }
 
   &__title {
-    font-size: var(--pf-v6-global--FontSize--sm);
+    font-size: var(--pf-t--global--font--size--sm);
     font-weight: var(--pf-v6-global--FontWeight--bold);
     line-height: var(--pf-v6-global--LineHeight--sm);
     display: -webkit-box;
@@ -27,7 +27,7 @@
   &__recommended {
     position: absolute;
     color: var(--pf-v6-global--primary-color--100);
-    font-size: var(--pf-v6-global--FontSize--md);
+    font-size: var(--pf-t--global--font--size--md);
     top: 3px;
     right: 6px;
   }

@@ -36,7 +36,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
 
   return (
     <Button
-      icon={<TerminalIcon className="co-masthead-icon" />}
+      icon={<TerminalIcon />}
       variant="plain"
       aria-label={t('webterminal-plugin~Command line terminal')}
       onClick={openCloudshell}

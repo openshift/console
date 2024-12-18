@@ -2,11 +2,12 @@
 
 .ocs-synced-editor-field {
   &__editor-toggle {
-    border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
-    border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+    border-bottom: var(--pf-t--global--border--width--100) solid
+      var(--pf-t--global--border--color--50);
+    border-top: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
     margin-left: -$pf-v6-global-gutter;
     margin-right: -$pf-v6-global-gutter;
-    padding: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--lg);
+    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);
     @media (min-width: $pf-v6-global--breakpoint--xl) {
       margin-left: -$pf-v6-global-gutter--md;
       margin-right: -$pf-v6-global-gutter--md;
@@ -17,7 +18,7 @@
     }
 
     &.margin {
-      margin: var(--pf-v6-global--spacer--md) 0;
+      margin: var(--pf-t--global--spacer--md) 0;
     }
   }
 

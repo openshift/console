@@ -8,7 +8,7 @@
 
 :where(:not([class*='pf-v6-c-'])) {
   @at-root dd#{&} {
-    margin-bottom: var(--pf-v6-global--spacer--lg);
+    margin-bottom: var(--pf-t--global--spacer--lg);
   }
 
   @at-root dd:last-child#{&} {

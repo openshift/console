@@ -1,7 +1,7 @@
 .ocs-quick-search-content {
   flex: 1;
   overflow-y: hidden;
-  border-top: 1px solid var(--pf-v6-global--BorderColor--100);
+  border-top: 1px solid var(--pf-t--global--border--color--50);
   &__list {
     width: 40%;
     height: 100%;
@@ -11,6 +11,6 @@
     width: 60%;
     overflow-y: auto;
     height: 100%;
-    padding-right: var(--pf-v6-global--spacer--md);
+    padding-right: var(--pf-t--global--spacer--md);
   }
 }

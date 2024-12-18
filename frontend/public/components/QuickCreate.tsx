@@ -15,8 +15,6 @@ import { FLAGS } from '@console/shared/src/constants';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useNavigate } from 'react-router-dom-v5-compat';
 
-import './QuickCreate.scss';
-
 type QuickCreateProps = {
   namespace?: string;
 };
@@ -95,8 +93,8 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
           isExpanded={isOpen}
           data-test="quick-create-dropdown"
         >
-          <Tooltip content={t('public~Quick create')} className="co-quick-create-tooltip">
-            <PlusCircleIcon className="co-masthead-icon" alt="" />
+          <Tooltip content={t('public~Quick create')}>
+            <PlusCircleIcon alt="" />
           </Tooltip>
         </MenuToggle>
       )}
@@ -114,10 +112,11 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
             ev.preventDefault();
             history.push(importYAMLURL);
           }}
-          tooltipProps={{
-            content: t('public~Create resources from their YAML or JSON definitions'),
-            position: 'left',
-          }}
+          // TODO: PF6 upgrade
+          // tooltipProps={{
+          //   content: t('public~Create resources from their YAML or JSON definitions'),
+          //   position: 'left',
+          // }}
           data-test="qc-import-yaml"
         >
           {t('public~Import YAML')}
@@ -132,10 +131,11 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 ev.preventDefault();
                 history.push(getImportFromGitURL(namespace));
               }}
-              tooltipProps={{
-                content: t('public~Import code from your Git repository to be built and deployed'),
-                position: 'left',
-              }}
+              // TODO: PF6 upgrade
+              // tooltipProps={{
+              //   content: t('public~Import code from your Git repository to be built and deployed'),
+              //   position: 'left',
+              // }}
               data-test="qc-import-from-git"
             >
               {t('public~Import from Git')}
@@ -148,12 +148,13 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 ev.preventDefault();
                 history.push(getContainerImageURL(namespace));
               }}
-              tooltipProps={{
-                content: t(
-                  'public~Deploy an existing Image from an Image registry or Image stream tag',
-                ),
-                position: 'left',
-              }}
+              // TODO: PF6 upgrade
+              // tooltipProps={{
+              //   content: t(
+              //     'public~Deploy an existing Image from an Image registry or Image stream tag',
+              //   ),
+              //   position: 'left',
+              // }}
               data-test="qc-container-images"
             >
               {t('public~Container images')}

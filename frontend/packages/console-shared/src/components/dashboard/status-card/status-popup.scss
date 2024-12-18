@@ -1,18 +1,18 @@
 .co-status-popup__status {
   align-items: center;
   display: flex;
-  padding-left: var(--pf-v6-global--spacer--xs);
+  padding-left: var(--pf-t--global--spacer--xs);
   white-space: nowrap;
 }
 
 .co-status-popup__icon {
-  padding-left: var(--pf-v6-global--spacer--xs);
+  padding-left: var(--pf-t--global--spacer--xs);
 }
 
 .co-status-popup__row {
   display: flex;
   justify-content: space-between;
-  padding-bottom: var(--pf-v6-global--spacer--xs);
+  padding-bottom: var(--pf-t--global--spacer--xs);
 }
 
 .co-status-popup__text--bold {

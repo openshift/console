@@ -4,7 +4,7 @@
 
   background-color: var(--co-code--BackgroundColor);
   color: var(--co-code--Color);
-  padding: 3px var(--pf-v6-global--spacer--xs);
+  padding: 3px var(--pf-t--global--spacer--xs);
 
   :where(.pf-v6-theme-dark) & {
     --co-code--BackgroundColor: var(--pf-v6-global--palette--blue-700);
@@ -25,6 +25,6 @@
 
 .co-pre {
   background-color: var(--pf-v6-c-code-block--BackgroundColor); // supports dark theme
-  padding: var(--pf-v6-global--spacer--md);
+  padding: var(--pf-t--global--spacer--md);
   white-space: pre-wrap;
 }

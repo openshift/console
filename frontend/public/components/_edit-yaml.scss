@@ -17,7 +17,7 @@
 
 .yaml-editor__buttons {
   background-color: var(--pf-v6-global--BackgroundColor--100);
-  border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+  border-top: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
   padding: 20px $pf-v6-global-gutter;
   margin-top: auto;
   z-index: 10;
@@ -29,7 +29,8 @@
 
 // only used in packages and will be orphaned when packages move out
 .yaml-editor__header {
-  border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+  border-bottom: var(--pf-t--global--border--width--100) solid
+    var(--pf-t--global--border--color--50);
   padding: 20px $pf-v6-global-gutter;
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding-left: $pf-v6-global-gutter--md;

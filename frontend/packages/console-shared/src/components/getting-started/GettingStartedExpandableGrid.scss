@@ -4,13 +4,13 @@
   // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
   &__header.pf-v6-c-card__header {
     // Use padding sm instead of lg to fix alignment of the KebabToggle action button.
-    padding-right: var(--pf-v6-global--spacer--sm);
+    padding-right: var(--pf-t--global--spacer--sm);
   }
   &__tooltip {
     white-space: pre-line;
   }
   &__tooltip-icon {
-    margin-left: var(--pf-v6-global--spacer--sm);
+    margin-left: var(--pf-t--global--spacer--sm);
   }
 
   // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
@@ -27,8 +27,9 @@
     // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
     > .pf-v6-l-flex.pf-m-grow.pf-m-column {
       // Show a divider on the right side and hide them in the latest column.
-      border-right: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
-      margin-right: calc(-1 * var(--pf-v6-global--BorderWidth--sm));
+      border-right: var(--pf-t--global--border--width--100) solid
+        var(--pf-t--global--border--color--50);
+      margin-right: calc(-1 * var(--pf-t--global--border--width--100));
       // Padding around the card. Vertical spacing is splitted on the card and the grid.
       padding-top: calc(var(--pf-v6-c-card--first-child--PaddingTop) / 2);
       padding-bottom: calc(var(--pf-v6-c-card--child--PaddingBottom) / 2);

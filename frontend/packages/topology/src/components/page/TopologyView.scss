@@ -17,15 +17,15 @@
     display: flex;
     pointer-events: none;
     position: absolute;
-    top: var(--pf-v6-global--spacer--sm);
+    top: var(--pf-t--global--spacer--sm);
     left: 0;
     right: 0;
   }
   &__hint-background {
     background-color: var(--pf-v6-global--BackgroundColor--100);
-    border: 1px solid var(--pf-v6-global--BorderColor--light-100);
+    border: 1px solid var(--pf-t--global--border--color--light-100);
     border-radius: 8px;
-    padding: var(--pf-v6-global--spacer--xs) var(--pf-v6-global--spacer--sm);
+    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--sm);
     pointer-events: none;
   }
 
@@ -39,7 +39,7 @@
   &__layout-group {
     display: flex;
     align-items: center;
-    margin: 0 var(--pf-v6-global--spacer--sm);
+    margin: 0 var(--pf-t--global--spacer--sm);
   }
 
   &__layout-button {
@@ -82,12 +82,12 @@
     }
 
     &__icon {
-      margin-right: var(--pf-v6-global--spacer--xs);
+      margin-right: var(--pf-t--global--spacer--xs);
     }
   }
 
   &__shortcuts-button {
-    margin-right: var(--pf-v6-global--spacer--2xl);
+    margin-right: var(--pf-t--global--spacer--2xl);
   }
 
   &__dropzone {
@@ -98,7 +98,7 @@
 
   &__dropzone-text {
     top: 0%;
-    padding-top: var(--pf-v6-global--spacer--lg);
+    padding-top: var(--pf-t--global--spacer--lg);
   }
 
   .pf-topology-container {

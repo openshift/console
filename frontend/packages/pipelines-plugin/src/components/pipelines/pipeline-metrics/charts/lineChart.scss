@@ -7,8 +7,8 @@
 
 .horizontal-scroll {
   overflow-x: auto;
-  padding-left: var(--pf-v6-global--spacer--md);
-  padding-right: var(--pf-v6-global--spacer--md);
+  padding-left: var(--pf-t--global--spacer--md);
+  padding-right: var(--pf-t--global--spacer--md);
 
   &:before,
   &:after {
@@ -17,7 +17,7 @@
     pointer-events: none;
     position: absolute;
     top: 0;
-    width: var(--pf-v6-global--spacer--md);
+    width: var(--pf-t--global--spacer--md);
     z-index: 1;
   }
   &:before {

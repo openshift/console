@@ -9,14 +9,14 @@
   }
   &__alerts-body {
     .pf-v6-c-accordion__expanded-content-body {
-      --pf-v6-c-accordion__expanded-content-body--PaddingTop: var(--pf-v6-global--spacer--sm);
+      --pf-v6-c-accordion__expanded-content-body--PaddingTop: var(--pf-t--global--spacer--sm);
       --pf-v6-c-accordion__expanded-content-body--PaddingRight: 0;
-      --pf-v6-c-accordion__expanded-content-body--PaddingBottom: var(--pf-v6-global--spacer--sm);
+      --pf-v6-c-accordion__expanded-content-body--PaddingBottom: var(--pf-t--global--spacer--sm);
       --pf-v6-c-accordion__expanded-content-body--PaddingLeft: 0;
     }
   }
   &__view-monitoring-dashboards {
-    margin: var(--pf-v6-global--spacer--sm) 0;
+    margin: var(--pf-t--global--spacer--sm) 0;
     text-align: right;
   }
   .pf-v6-c-accordion__expandable-content.pf-m-expanded {
@@ -28,7 +28,7 @@
   &__empty-state {
     &-icon {
       color: var(--pf-v6-global--icon--Color--light);
-      font-size: var(--pf-v6-global--FontSize--4xl);
+      font-size: var(--pf-t--global--font--size--4xl);
     }
   }
 }

@@ -1,31 +1,31 @@
 .odc-multi-column-field {
   &__row {
     position: relative;
-    margin-right: var(--pf-v6-global--spacer--lg);
-    margin-bottom: var(--pf-v6-global--spacer--md);
+    margin-right: var(--pf-t--global--spacer--lg);
+    margin-bottom: var(--pf-t--global--spacer--md);
   }
   &__header {
     position: relative;
-    margin-right: var(--pf-v6-global--spacer--lg);
-    margin-bottom: var(--pf-v6-global--spacer--sm);
-    max-height: var(--pf-v6-global--spacer--xl);
+    margin-right: var(--pf-t--global--spacer--lg);
+    margin-bottom: var(--pf-t--global--spacer--sm);
+    max-height: var(--pf-t--global--spacer--xl);
   }
   &__col {
-    margin-right: var(--pf-v6-global--spacer--md);
+    margin-right: var(--pf-t--global--spacer--md);
   }
 
   &__col--button {
-    line-height: var(--pf-v6-global--spacer--xl);
+    line-height: var(--pf-t--global--spacer--xl);
     position: absolute;
     right: -30px;
     top: 0;
   }
   &__empty-message {
-    margin-bottom: var(--pf-v6-global--spacer--sm);
+    margin-bottom: var(--pf-t--global--spacer--sm);
   }
   &__header--required-label {
-    margin-left: var(--pf-v6-global--spacer--xs);
-    font-size: var(--pf-v6-global--FontSize--sm);
+    margin-left: var(--pf-t--global--spacer--xs);
+    font-size: var(--pf-t--global--font--size--sm);
     color: var(--pf-v6-global--danger-color--100);
   }
 }

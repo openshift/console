@@ -1,6 +1,6 @@
 .odc-resource-section {
   &__badge-wrapper {
-    margin-left: var(--pf-v6-global--spacer--md);
+    margin-left: var(--pf-t--global--spacer--md);
     position: relative;
   }
 
@@ -10,6 +10,6 @@
   }
 
   &__help-text {
-    padding-bottom: var(--pf-v6-global--spacer--xs);
+    padding-bottom: var(--pf-t--global--spacer--xs);
   }
 }

@@ -2,10 +2,10 @@
   img.icon {
     background-color: var(--pf-v6-global--palette--white);
     border-radius: var(--pf-v6-global--BorderRadius--sm);
-    height: var(--pf-v6-global--FontSize--3xl);
-    margin-right: var(--pf-v6-global--spacer--sm);
-    padding: var(--pf-v6-global--spacer--xs);
-    width: var(--pf-v6-global--FontSize--3xl);
+    height: var(--pf-t--global--font--size--3xl);
+    margin-right: var(--pf-t--global--spacer--sm);
+    padding: var(--pf-t--global--spacer--xs);
+    width: var(--pf-t--global--font--size--3xl);
   }
 
   &__item {

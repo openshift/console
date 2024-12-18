@@ -23,12 +23,12 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 }
 
 .co-breadcrumb {
-  padding-bottom: var(--pf-v6-global--spacer--sm);
+  padding-bottom: var(--pf-t--global--spacer--sm);
 }
 
 .co-divider {
-  margin-bottom: var(--pf-v6-global--spacer--lg);
-  margin-top: var(--pf-v6-global--spacer--lg);
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  margin-top: var(--pf-t--global--spacer--lg);
 }
 
 dl.co-inline {
@@ -58,7 +58,7 @@ dl.co-inline {
     padding-bottom: 0;
   }
   + .co-m-pane__body {
-    border-top: 1px solid var(--pf-v6-global--BorderColor--100);
+    border-top: 1px solid var(--pf-t--global--border--color--50);
     margin-top: 0;
     padding-top: $pf-v6-global-gutter--md;
   }
@@ -141,7 +141,7 @@ dl.co-inline {
 
 .co-m-pane__heading-badge {
   @media (min-width: $screen-sm-min) {
-    margin-left: var(--pf-v6-global--spacer--sm);
+    margin-left: var(--pf-t--global--spacer--sm);
   }
 }
 
@@ -153,7 +153,7 @@ dl.co-inline {
   display: block;
   font-size: $font-size-base;
   line-height: var(--pf-v6-global--LineHeight--md);
-  padding-top: var(--pf-v6-global--spacer--sm);
+  padding-top: var(--pf-t--global--spacer--sm);
   span {
     display: inline;
   }
@@ -164,7 +164,7 @@ dl.co-inline {
 }
 
 .co-no-bold {
-  font-weight: var(--pf-v6-global--FontWeight--normal);
+  font-weight: var(--pf-t--global--font--weight--body--default);
 }
 
 .cos-error-title {
@@ -194,7 +194,7 @@ dl.co-inline {
   // and when override `label` font-weight style from _bootstrap-residual.scss is removed
   .pf-v6-c-switch__label {
     font-size: $font-size-base;
-    font-weight: var(--pf-v6-global--FontWeight--normal);
+    font-weight: var(--pf-t--global--font--weight--body--default);
   }
 }
 
@@ -318,10 +318,10 @@ dl.co-inline {
     }
   }
   &__externallinkicon {
-    padding-left: var(--pf-v6-global--spacer--xs);
+    padding-left: var(--pf-t--global--spacer--xs);
   }
   &__copyicon {
-    margin-left: var(--pf-v6-global--spacer--md);
+    margin-left: var(--pf-t--global--spacer--md);
     padding: 0 !important;
   }
 }
@@ -521,8 +521,8 @@ dl.co-inline {
   &--bordered {
     .co-m-table-grid__body .row,
     .co-m-table-grid__head {
-      border-bottom: var(--pf-v6-global--BorderWidth--sm) solid
-        var(--pf-v6-global--BorderColor--100);
+      border-bottom: var(--pf-t--global--border--width--100) solid
+        var(--pf-t--global--border--color--50);
     }
   }
   .co-m-table-grid {
@@ -591,7 +591,7 @@ dl.co-inline {
     min-height: 2rem;
     pointer-events: none;
     position: absolute;
-    width: calc(100% - var(--pf-v6-global--spacer--lg));
+    width: calc(100% - var(--pf-t--global--spacer--lg));
   }
 }
 

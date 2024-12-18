@@ -6,16 +6,16 @@
 
   &--fullscreen {
     background-color: var(--pf-v6-global--BackgroundColor--100);
-    padding: var(--pf-v6-global--spacer--sm);
+    padding: var(--pf-t--global--spacer--sm);
   }
 
   &__icon {
-    margin-right: var(--pf-v6-global--spacer--xs);
+    margin-right: var(--pf-t--global--spacer--xs);
   }
 
   &__divider {
     color: var(--pf-v6-global--palette--black-600);
-    margin: 0 var(--pf-v6-global--spacer--sm);
+    margin: 0 var(--pf-t--global--spacer--sm);
   }
 
   &__button {
@@ -38,10 +38,10 @@
   }
   &__taskName {
     background-color: var(--pf-v6-global--BackgroundColor--dark-300);
-    padding: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--md);
+    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
     color: var(--pf-v6-global--Color--light-100);
   }
   &__taskName__loading-indicator {
-    margin-left: var(--pf-v6-global--spacer--sm);
+    margin-left: var(--pf-t--global--spacer--sm);
   }
 }

@@ -226,7 +226,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   body {
     background-color: transparent !important;
     color: ${isEmpty ? '#999' : '#333'};
-    font-family: var(--pf-v6-global--FontFamily--text);
+    font-family: var(--pf-t--global--font--family--body);
     min-width: auto !important;
   }
   table {
@@ -236,7 +236,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   }
   td,
   th {
-    border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
+    border-bottom: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--200);
     padding: 10px;
     vertical-align: top;
   }

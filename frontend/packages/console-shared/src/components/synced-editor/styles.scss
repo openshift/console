@@ -1,9 +1,10 @@
 @import '../../../../../public/style/vars';
 
 .co-synced-editor__editor-toggle {
-  border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
-  border-top: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
-  padding: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--lg);
+  border-bottom: var(--pf-t--global--border--width--100) solid
+    var(--pf-t--global--border--color--50);
+  border-top: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding-left: $pf-v6-global-gutter--md;
     padding-right: $pf-v6-global-gutter--md;

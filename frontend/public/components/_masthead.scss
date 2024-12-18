@@ -1,14 +1,6 @@
-.co-app-launcher {
-  .pf-v6-c-menu__item-external-icon {
-    --pf-v6-c-menu__item-external-icon--Color: var(--pf-v6-c-menu__item-action--Color);
-
-    opacity: 1;
-  }
-
-  .pf-v6-c-menu__item-icon {
-    height: var(--pf-v6-global--icon--FontSize--lg);
-    width: var(--pf-v6-global--icon--FontSize--lg);
-  }
+.co-app-launcher .pf-v6-c-menu__item-icon {
+  height: var(--pf-t--global--spacer--lg);
+  width: var(--pf-t--global--spacer--lg);
 }
 
 .co-cluster-menu {
@@ -35,31 +27,14 @@
   @media (min-width: $screen-lg) {
     max-width: 400px !important;
   }
-
-  // PatternFly does not fully support <MenuToggle isFullHeight> styling in <Masthead>
-  &::before {
-    border: 1px solid var(--pf-v6-global--palette--black-800) !important;
-    border-bottom: 0 !important;
-    border-top: 0 !important;
-    bottom: 0;
-    content: '';
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-
-    .pf-v6-theme-dark & {
-      border-color: var(--pf-v6-global--palette--black-700) !important;
-    }
-  }
 }
 
-.co-masthead-icon {
-  font-size: $pf-v6-header-icon-fontsize;
+.co-masthead-button {
+  align-items: center;
 }
 
-.co-username {
-  max-width: 140px !important; // PF4 does not limit username length (upstream bug)
+.co-user-menu {
+  max-width: 140px !important; // PF does not limit username length
   overflow-x: hidden;
   text-overflow: ellipsis;
   @media (min-width: 855px) {
@@ -71,8 +46,4 @@
   @media (min-width: $screen-lg-min) {
     max-width: 300px !important;
   }
-}
-
-.pf-v6-c-masthead__content .pf-v6-c-notification-badge {
-  --pf-v6-c-notification-badge--m-unread--hover--after--BackgroundColor: transparent;
 }

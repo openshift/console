@@ -3,10 +3,10 @@
 
 :root {
   --popover-border-radius: 12px;
-  --popover-button-size: var(--pf-v6-global--spacer--2xl);
-  --popover-margin: var(--pf-v6-global--spacer--lg);
+  --popover-button-size: var(--pf-t--global--spacer--2xl);
+  --popover-margin: var(--pf-t--global--spacer--lg);
   --popover-bottom: calc(
-    var(--popover-button-size) + var(--popover-margin) + var(--pf-v6-global--spacer--sm)
+    var(--popover-button-size) + var(--popover-margin) + var(--pf-t--global--spacer--sm)
   );
 }
 
@@ -20,7 +20,7 @@
 
 .lightspeed__popover {
   border-radius: 12px;
-  border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--100);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
   bottom: var(--popover-bottom);
   overflow: hidden;
 }
@@ -85,11 +85,11 @@
 }
 
 .lightspeed__welcome-logo {
-  --logo-size: var(--pf-v6-global--spacer--4xl);
+  --logo-size: var(--pf-t--global--spacer--4xl);
 
   background-image: url('logo.svg');
   height: var(--logo-size);
-  margin: 0 0 var(--pf-v6-global--spacer--xl);
+  margin: 0 0 var(--pf-t--global--spacer--xl);
   width: var(--logo-size);
 
   .pf-v6-theme-dark & {

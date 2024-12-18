@@ -23,11 +23,11 @@
 
 .co-suggestion-box__suggestions--shadowed {
   box-shadow: var(--pf-v6-global--BoxShadow--md);
-  padding: var(--pf-v6-global--spacer--sm);
+  padding: var(--pf-t--global--spacer--sm);
 }
 
 .co-suggestion-line {
-  border: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--200);
   background-color: var(--pf-v6-global--palette--black-150);
   border-radius: 12px;
   overflow: hidden;
@@ -35,6 +35,6 @@
   align-self: flex-start;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: calc(100% - var(--pf-v6-global--spacer--sm));
+  max-width: calc(100% - var(--pf-t--global--spacer--sm));
   margin: 0.15rem 0;
 }

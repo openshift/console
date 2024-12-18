@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Alert, AboutModal as PfAboutModal, Content } from '@patternfly/react-core';
+import {
+  Alert,
+  AboutModal as PfAboutModal,
+  Content,
+  ContentVariants,
+} from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
@@ -21,6 +26,8 @@ import {
   getOpenShiftVersion,
   hasAvailableUpdates,
 } from '../module/k8s/cluster-settings';
+import redHatFedoraImg from '../imgs/red-hat-fedora.svg';
+import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
 const DynamicPlugins: React.FC = () => {
   const { t } = useTranslation();
@@ -157,22 +164,24 @@ export const AboutModal: React.FC<AboutModalProps> = (props) => {
   const { t } = useTranslation();
   const details = getBrandingDetails();
   const customBranding = window.SERVER_FLAGS.customLogoURL || window.SERVER_FLAGS.customProductName;
+  const openShiftBranding = window.SERVER_FLAGS.branding !== 'okd' && !customBranding;
   return (
     <PfAboutModal
       isOpen={isOpen}
       onClose={closeAboutModal}
-      productName=""
-      brandImageSrc={details.logoImg}
-      brandImageAlt={details.productName}
+      productName={details.productName}
+      brandImageSrc={openShiftBranding && redHatFedoraImg}
+      brandImageAlt={openShiftBranding && details.productName}
+      backgroundImageSrc={openShiftBranding && `/${redHatFedoraWatermarkImg}`}
       hasNoContentContainer
       aria-label="About modal"
     >
       {!customBranding && (
-        <p>
+        <Content component={ContentVariants.p}>
           {t(
             "public~OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.",
           )}
-        </p>
+        </Content>
       )}
       <AboutModalItems {...(props as any)} />
     </PfAboutModal>

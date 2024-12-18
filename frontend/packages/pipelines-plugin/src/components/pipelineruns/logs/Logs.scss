@@ -1,5 +1,5 @@
 .odc-logs {
-  padding: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--md);
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
 
   &__name {
     font-weight: var(--pf-v6-global--FontWeight--bold);
@@ -7,7 +7,7 @@
   }
 
   &__content {
-    padding-left: var(--pf-v6-global--spacer--md);
+    padding-left: var(--pf-t--global--spacer--md);
     white-space: pre;
   }
 }

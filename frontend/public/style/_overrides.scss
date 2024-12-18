@@ -1,5 +1,7 @@
 // Use this file to override styles from 3rd party dependencies
 
+$masthead-logo-max-height: 60px;
+
 form.pf-v6-c-form {
   --pf-v6-c-form__helper-text--Color: var(--pf-v6-global--Color--200);
 }
@@ -21,12 +23,12 @@ form.pf-v6-c-form {
     width: 100%;
   }
   .catalog-tile-pf-icon {
-    @include catalog-logo-background(var(--pf-v6-global--spacer--sm));
+    @include catalog-logo-background(var(--pf-t--global--spacer--sm));
     display: block;
     height: 50px;
-    margin-bottom: calc(-1 * var(--pf-v6-global--spacer--sm)); // Cancels bottom padding
-    margin-left: calc(-1 * var(--pf-v6-global--spacer--sm)); // Align logo with left edge
-    margin-top: calc(-1 * var(--pf-v6-global--spacer--sm)); // Align logo with top edge
+    margin-bottom: calc(-1 * var(--pf-t--global--spacer--sm)); // Cancels bottom padding
+    margin-left: calc(-1 * var(--pf-t--global--spacer--sm)); // Align logo with left edge
+    margin-top: calc(-1 * var(--pf-t--global--spacer--sm)); // Align logo with top edge
     max-width: 100%;
     min-width: 50px; // prevent collapsed state before img loads
     width: fit-content;
@@ -59,7 +61,7 @@ form.pf-v6-c-form {
 }
 
 .catalog-item-header-pf-icon {
-  @include catalog-logo-background(var(--pf-v6-global--spacer--sm));
+  @include catalog-logo-background(var(--pf-t--global--spacer--sm));
 }
 
 .co-catalog-page__overlay-header {
@@ -90,7 +92,7 @@ form.pf-v6-c-form {
   margin-left: -$pf-v6-global-gutter;
   margin-right: -$pf-v6-global-gutter;
   --pf-v6-c-toolbar--PaddingTop: 0;
-  --pf-v6-c-toolbar--RowGap: var(--pf-v6-global--spacer--md);
+  --pf-v6-c-toolbar--RowGap: var(--pf-t--global--spacer--md);
 }
 
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
@@ -101,49 +103,13 @@ form.pf-v6-c-form {
 
 // PatternFly overrides
 
-.pf-v6-c-about-modal-box {
-  --pf-v6-c-about-modal-box__brand-image--Height: auto !important; // allow logo to be taller
-
-  &__brand {
-    align-items: flex-start; // so logos don't stretch vertically
-    min-width: 220px;
-  }
-}
-
-// Webpack will not properly bundle the background-image from PatternFly
-@media only screen and (min-width: 576px) {
-  .pf-v6-c-about-modal-box {
-    background-image: url('../imgs/pfbg_992.jpg') !important;
-    background-position: 400px !important;
-    background-size: cover !important;
-  }
-}
-
-.pf-v6-c-about-modal-box__brand {
-  background-color: var(--pf-v6-global--palette--black-1000);
-}
-
-.pf-v6-c-about-modal-box__brand-image,
-.pf-v6-c-brand {
-  max-width: 100%;
-}
-
-.pf-v6-c-about-modal-box__content {
-  background-color: var(--pf-v6-global--palette--black-1000);
-  padding: var(--pf-v6-global--spacer--2xl) var(--pf-v6-global--spacer--3xl);
-  --pf-v6-c-about-modal-box__content--MarginBottom: 0;
-  --pf-v6-c-about-modal-box__content--MarginLeft: 0;
-  --pf-v6-c-about-modal-box__content--MarginRight: 0;
-  --pf-v6-c-about-modal-box__content--MarginTop: 0;
-}
-
 .pf-v6-c-alert--top-margin {
-  margin-top: var(--pf-v6-global--spacer--lg);
+  margin-top: var(--pf-t--global--spacer--lg);
 }
 
 .pf-v6-c-app-launcher__group-title {
   // Reset font to RedHatText so it doesn't appear too bold
-  font-family: var(--pf-v6-global--FontFamily--text);
+  font-family: var(--pf-t--global--font--family--body);
 }
 
 .pf-v6-c-button--align-right {
@@ -205,10 +171,10 @@ form.pf-v6-c-form {
   --pf-v6-c-data-list__item--BackgroundColor: transparent;
 }
 
-// PF components that calculate their correct height based on --pf-v6-global--FontSize--md: 1rem
+// PF components that calculate their correct height based on --pf-t--global--font--size--md: 1rem
 .pf-v6-c-modal-box,
 .pf-v6-c-switch {
-  --pf-v6-global--FontSize--md: 1rem;
+  --pf-t--global--font--size--md: 1rem;
 }
 
 // Drawer
@@ -230,7 +196,7 @@ form.pf-v6-c-form {
 
   // Restore the max-height from PageHeader to maintain backwards compatibility
   .pf-v6-c-brand {
-    max-height: 60px;
+    max-height: $masthead-logo-max-height;
   }
 
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing
@@ -241,7 +207,7 @@ form.pf-v6-c-form {
   }
 }
 
-// specificity targeting form elements to override --pf-v6-global--FontSize--md
+// specificity targeting form elements to override --pf-t--global--font--size--md
 .pf-v6-c-page,
 .modal-dialog {
   .pf-v6-c-app-launcher,
@@ -260,25 +226,12 @@ form.pf-v6-c-form {
 
   .pf-v6-c-form-control.pf-m-success,
   .pf-v6-c-form-control[aria-invalid='true'] {
-    --pf-v6-global--FontSize--md: #{$font-size-base};
+    --pf-t--global--font--size--md: #{$font-size-base};
   }
 }
 
-// reset toggles to original size
-// overriding .pf-v6-c-button rule above
-.pf-v6-c-masthead__content {
-  .pf-v6-c-app-launcher__toggle,
-  .pf-v6-c-dropdown__toggle,
-  .pf-v6-c-menu-toggle,
-  .pf-v6-c-notification-badge {
-    font-size: $pf-v6-header-icon-fontsize !important;
-  }
-}
-
-// reset toggle to original size
-// overriding .pf-v6-c-button rule above
-.pf-v6-c-masthead__toggle .pf-v6-c-button {
-  font-size: var(--pf-v6-c-masthead__toggle--c-button--FontSize);
+.pf-v6-c-masthead {
+  --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit at mobile
 }
 
 :where(:root:not(.pf-v6-theme-dark)) .pf-v6-c-page {
@@ -296,18 +249,18 @@ form.pf-v6-c-form {
   }
 
   .pf-v6-c-nav {
-    --pf-v6-c-nav__list-link--PaddingRight: var(--pf-v6-global--spacer--sm);
-    --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-v6-global--spacer--md);
-    --pf-v6-c-nav__list-link--after--Left: var(--pf-v6-global--spacer--md);
+    --pf-v6-c-nav__list-link--PaddingRight: var(--pf-t--global--spacer--sm);
+    --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-t--global--spacer--md);
+    --pf-v6-c-nav__list-link--after--Left: var(--pf-t--global--spacer--md);
     --pf-v6-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
     --pf-v6-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
 
     @media screen and (min-width: $pf-v6-global--breakpoint--xl) {
-      --pf-v6-c-nav__list-link--PaddingRight: var(--pf-v6-global--spacer--md);
-      --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-v6-global--spacer--lg);
-      --pf-v6-c-nav__list-link--after--Left: var(--pf-v6-global--spacer--lg);
-      --pf-v6-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-v6-global--spacer--xl);
-      --pf-v6-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-v6-global--spacer--xl);
+      --pf-v6-c-nav__list-link--PaddingRight: var(--pf-t--global--spacer--md);
+      --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-t--global--spacer--lg);
+      --pf-v6-c-nav__list-link--after--Left: var(--pf-t--global--spacer--lg);
+      --pf-v6-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-t--global--spacer--xl);
+      --pf-v6-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-t--global--spacer--xl);
     }
 
     .pf-v6-c-nav__link {
@@ -350,7 +303,8 @@ form.pf-v6-c-form {
     border-bottom: 0;
   }
   tr:last-child {
-    border-bottom: var(--pf-v6-global--BorderWidth--sm) solid var(--pf-v6-global--BorderColor--300);
+    border-bottom: var(--pf-t--global--border--width--100) solid
+      var(--pf-t--global--border--color--200);
   }
 }
 
