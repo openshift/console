@@ -44,7 +44,7 @@
       "description": "%devconsole~Define a list of ClusterRole names that are assignable to users on the project access page.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "projectAccess.ProjectAccessRolesConfiguration" }
+        "component": { "$codeRef": "ProjectAccessRolesConfiguration" }
       },
       "readAccessReview": [
         {
@@ -77,7 +77,7 @@
       "description": "%devconsole~Resource links that are shown below the standard navigation items. These pinned resources can still be changed by the user.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "catalog.PinnedResourcesConfiguration" }
+        "component": { "$codeRef": "PinnedResourcesConfiguration" }
       },
       "readAccessReview": [
         {
@@ -106,7 +106,7 @@
       "description": "%devconsole~A list of actions that are not shown to users on the add page.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "add.AddPageConfiguration" }
+        "component": { "$codeRef": "AddPageConfiguration" }
       },
       "readAccessReview": [
         {
@@ -136,7 +136,7 @@
       "description": "%devconsole~Categories which are shown in the developer catalog.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "catalog.CatalogCategoriesConfiguration" }
+        "component": { "$codeRef": "CatalogCategoriesConfiguration.default" }
       },
       "readAccessReview": [
         {
@@ -166,7 +166,7 @@
       "description": "%devconsole~A list of software catalog types that are not shown to users.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "catalog.CatalogTypesConfiguration" }
+        "component": { "$codeRef": "CatalogTypesConfiguration" }
       },
       "readAccessReview": [
         {
@@ -189,7 +189,7 @@
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "actions.useDeveloperCatalogProvider" }
+      "handler": { "$codeRef": "providers.useDeveloperCatalogProvider" }
     }
   },
   {
@@ -424,7 +424,7 @@
     "properties": {
       "id": "export-application",
       "groupId": "application-portability",
-      "callback": { "$codeRef": "actions.exportApplicationAction" },
+      "callback": { "$codeRef": "exportApplicationAction.exportApplicationAction" },
       "label": "%devconsole~Export application%",
       "description": "%devconsole~Replicate your application by exporting a zip file, which can be imported to another project or another cluster%",
       "icon": { "$codeRef": "icons.exportApplicationIconElement" },
@@ -491,7 +491,7 @@
       "catalogId": "dev-catalog",
       "type": "BuilderImage",
       "title": "%devconsole~Builder Images%",
-      "provider": { "$codeRef": "catalog.builderImageProvider" }
+      "provider": { "$codeRef": "useBuilderImages" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
@@ -515,7 +515,7 @@
       "catalogId": "dev-catalog",
       "type": "Template",
       "title": "%devconsole~Templates%",
-      "provider": { "$codeRef": "catalog.templateProvider" }
+      "provider": { "$codeRef": "useTemplates" }
     },
     "flags": {
       "required": ["OPENSHIFT_TEMPLATE"]
@@ -539,7 +539,7 @@
       "catalogId": "dev-catalog",
       "type": "Devfile",
       "title": "%devconsole~Devfiles%",
-      "provider": { "$codeRef": "catalog.devfileProvider" }
+      "provider": { "$codeRef": "useDevfile" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
@@ -566,7 +566,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "OperatorBackedService",
-      "provider": { "$codeRef": "catalog.bindableItemMetadataProvider" }
+      "provider": { "$codeRef": "useBindableItemMetadataProvider" }
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
@@ -585,7 +585,7 @@
       "catalogId": "samples-catalog",
       "type": "ConsoleSample",
       "title": "%devconsole~Console sample%",
-      "provider": { "$codeRef": "catalog.useConsoleSamplesCatalogProvider" }
+      "provider": { "$codeRef": "useConsoleSamples" }
     },
     "flags": {
       "required": ["CONSOLESAMPLE"]
@@ -597,7 +597,7 @@
       "catalogId": "samples-catalog",
       "type": "BuilderImage",
       "title": "%devconsole~Builder Image%",
-      "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
+      "provider": { "$codeRef": "useBuilderImageSamples" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
@@ -609,7 +609,7 @@
       "catalogId": "samples-catalog",
       "type": "Devfile",
       "title": "%devconsole~Devfile%",
-      "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
+      "provider": { "$codeRef": "useDevfileSamples" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
@@ -762,7 +762,7 @@
     "properties": {
       "exact": true,
       "path": ["/builds"],
-      "component": { "$codeRef": "common.NamespaceRedirect" }
+      "component": { "$codeRef": "NamespaceRedirect.NamespaceRedirect" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG"]
@@ -773,7 +773,7 @@
     "properties": {
       "exact": false,
       "path": ["/builds/all-namespaces", "/builds/ns/:ns"],
-      "component": { "$codeRef": "builds.BuildsTabListPage" }
+      "component": { "$codeRef": "BuildsTabListPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG"]
@@ -801,7 +801,7 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "actions.useEditImportActionProvider" }
+      "provider": { "$codeRef": "providers.useEditImportActionProvider" }
     }
   },
   {
@@ -812,21 +812,21 @@
         "version": "v1",
         "kind": "DeploymentConfig"
       },
-      "provider": { "$codeRef": "actions.useEditImportActionProvider" }
+      "provider": { "$codeRef": "providers.useEditImportActionProvider" }
     }
   },
   {
     "type": "console.action/provider",
     "properties": {
       "contextId": "topology-context-actions",
-      "provider": { "$codeRef": "actions.useTopologyGraphActionProvider" }
+      "provider": { "$codeRef": "providers.useTopologyGraphActionProvider" }
     }
   },
   {
     "type": "console.action/provider",
     "properties": {
       "contextId": "topology-context-actions",
-      "provider": { "$codeRef": "actions.useTopologyApplicationActionProvider" }
+      "provider": { "$codeRef": "providers.useTopologyApplicationActionProvider" }
     }
   },
   {
@@ -841,7 +841,7 @@
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
-        "$codeRef": "topology.getDevConsoleComponentFactory"
+        "$codeRef": "devConsoleComponentFactory.getDevConsoleComponentFactory"
       }
     }
   },
@@ -849,11 +849,11 @@
     "type": "console.topology/relationship/provider",
     "properties": {
       "provides": {
-        "$codeRef": "topology.providerProvidesServiceBinding"
+        "$codeRef": "topologyRelationshipProvider.providerProvidesServiceBinding"
       },
       "tooltip": "%devconsole~Create Service Binding%",
       "create": {
-        "$codeRef": "topology.providerCreateServiceBinding"
+        "$codeRef": "topologyRelationshipProvider.providerCreateServiceBinding"
       },
       "priority": 100
     },
@@ -867,7 +867,7 @@
       "id": "topology-tab-section-hpas",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "topology.useHpaTabSectionForTopologySideBar"
+        "$codeRef": "hpaTabSection.useHpaTabSectionForTopologySideBar"
       },
       "insertAfter": "topology-tab-section-builds-overview"
     }
@@ -889,7 +889,7 @@
       "id": "topology-tab-section-observe",
       "tab": "topology-side-bar-tab-observe",
       "provider": {
-        "$codeRef": "topology.useObserveSideBarTabSection"
+        "$codeRef": "observeTabSection.useObserveSideBarTabSection"
       }
     }
   },
@@ -897,7 +897,7 @@
     "type": "console.topology/details/resource-link",
     "properties": {
       "priority": 100,
-      "link": { "$codeRef": "topology.getSbrPanelResourceLink" }
+      "link": { "$codeRef": "sbrPanelResourceLink.getSbrPanelResourceLink" }
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
@@ -909,7 +909,7 @@
       "id": "topology-tab-section-sbr-details",
       "tab": "topology-side-bar-tab-details",
       "provider": {
-        "$codeRef": "topology.useSbrPanelDetailsSection"
+        "$codeRef": "sbrTabSection.useSbrPanelDetailsSection"
       }
     },
     "flags": {
@@ -922,7 +922,7 @@
       "id": "topology-tab-section-sbr-resource",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "topology.useSbrPanelResourceSection"
+        "$codeRef": "sbrTabSection.useSbrPanelResourceSection"
       }
     },
     "flags": {
@@ -937,7 +937,7 @@
         "version": "v1alpha1",
         "kind": "ServiceBinding"
       },
-      "provider": { "$codeRef": "actions.useServiceBindingActionProvider" }
+      "provider": { "$codeRef": "providers.useServiceBindingActionProvider" }
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
@@ -961,7 +961,7 @@
       "description": "",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "userPreferences.SecureRouteFields" }
+        "component": { "$codeRef": "SecureRouteFields" }
       },
       "insertAfter": "console.preferredCreateEditMethod"
     }
@@ -1127,7 +1127,7 @@
     "properties": {
       "exact": true,
       "path": ["/project-access/ns/:ns", "/project-access/all-namespaces"],
-      "component": { "$codeRef": "projectAccess.ProjectAccessPage" }
+      "component": { "$codeRef": "ProjectAccessPage" }
     }
   },
   {
@@ -1136,7 +1136,7 @@
       "exact": true,
       "path": ["/serverless-function/all-namespaces", "/serverless-function/ns/:ns"],
       "component": {
-        "$codeRef": "serverlessFunction.ServerlessFunctionPage"
+        "$codeRef": "ServerlessFunctionPage"
       }
     },
     "flags": {
@@ -1161,7 +1161,7 @@
         "/builds",
         "/functions"
       ],
-      "component": { "$codeRef": "common.NamespaceRedirect" }
+      "component": { "$codeRef": "NamespaceRedirect.NamespaceRedirect" }
     }
   },
   {
@@ -1169,7 +1169,7 @@
     "properties": {
       "exact": true,
       "path": ["/import"],
-      "component": { "$codeRef": "common.NamespaceRedirect" }
+      "component": { "$codeRef": "NamespaceRedirect.NamespaceRedirect" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
@@ -1180,7 +1180,7 @@
     "properties": {
       "exact": true,
       "path": ["/add/all-namespaces", "/add/ns/:ns"],
-      "component": { "$codeRef": "add.AddPage" }
+      "component": { "$codeRef": "AddPage" }
     }
   },
   {
@@ -1188,7 +1188,7 @@
     "properties": {
       "exact": true,
       "path": ["/topology/all-namespaces", "/topology/ns/:name"],
-      "component": { "$codeRef": "topology.TopologyPage" }
+      "component": { "$codeRef": "topologyPage" }
     }
   },
   {
@@ -1196,7 +1196,7 @@
     "properties": {
       "exact": true,
       "path": ["/catalog/all-namespaces", "/catalog/ns/:ns"],
-      "component": { "$codeRef": "catalog.CatalogPage" }
+      "component": { "$codeRef": "CatalogPage" }
     }
   },
   {
@@ -1204,7 +1204,7 @@
     "properties": {
       "exact": true,
       "path": "/edit/ns/:ns",
-      "component": { "$codeRef": "editApplication.EditApplication" }
+      "component": { "$codeRef": "EditApplication" }
     }
   },
   {
@@ -1212,7 +1212,7 @@
     "properties": {
       "exact": true,
       "path": ["/k8s/ns/:ns/deployments/~new/form", "/k8s/ns/:ns/deployments/:name/form"],
-      "component": { "$codeRef": "deployment.DeploymentPage" }
+      "component": { "$codeRef": "DeploymentPage" }
     }
   },
   {
@@ -1223,7 +1223,7 @@
         "/k8s/ns/:ns/deploymentconfigs/~new/form",
         "/k8s/ns/:ns/deploymentconfigs/:name/form"
       ],
-      "component": { "$codeRef": "deployment.DeploymentConfigPage" }
+      "component": { "$codeRef": "DeploymentConfigPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_DEPLOYMENTCONFIG"]
@@ -1234,7 +1234,7 @@
     "properties": {
       "exact": true,
       "path": ["/import/all-namespaces", "/import/ns/:ns"],
-      "component": { "$codeRef": "import.ImportPage" }
+      "component": { "$codeRef": "ImportPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG", "OPENSHIFT_IMAGESTREAM"]
@@ -1245,7 +1245,7 @@
     "properties": {
       "exact": true,
       "path": ["/import/all-namespaces", "/import/ns/:ns"],
-      "component": { "$codeRef": "import.ImportPage" }
+      "component": { "$codeRef": "ImportPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]
@@ -1256,7 +1256,7 @@
     "properties": {
       "exact": true,
       "path": ["/samples/all-namespaces", "/samples/ns/:ns"],
-      "component": { "$codeRef": "import.SamplesCatalog" }
+      "component": { "$codeRef": "SamplesCatalog" }
     }
   },
   {
@@ -1264,7 +1264,7 @@
     "properties": {
       "exact": true,
       "path": ["/samples/all-namespaces/:is/:isNs", "/samples/ns/:ns/:is/:isNs"],
-      "component": { "$codeRef": "import.ImportSamplePage" }
+      "component": { "$codeRef": "ImportSamplePage" }
     }
   },
   {
@@ -1272,7 +1272,7 @@
     "properties": {
       "exact": true,
       "path": ["/catalog/source-to-image"],
-      "component": { "$codeRef": "import.ImportPage" }
+      "component": { "$codeRef": "ImportPage" }
     }
   },
   {
@@ -1280,7 +1280,7 @@
     "properties": {
       "exact": true,
       "path": ["/k8s/ns/:ns/buildconfigs/~new/form", "/k8s/ns/:ns/buildconfigs/:name/form"],
-      "component": { "$codeRef": "buildConfig.BuildConfigFormPage" }
+      "component": { "$codeRef": "BuildConfigFormPage" }
     }
   },
   {
@@ -1288,7 +1288,7 @@
     "properties": {
       "exact": true,
       "path": ["/deploy-image/all-namespaces", "/deploy-image/ns/:ns"],
-      "component": { "$codeRef": "import.DeployImagePage" }
+      "component": { "$codeRef": "DeployImagePage" }
     }
   },
   {
@@ -1296,7 +1296,7 @@
     "properties": {
       "exact": true,
       "path": ["/upload-jar/all-namespaces", "/upload-jar/ns/:ns"],
-      "component": { "$codeRef": "import.UploadJarPage" }
+      "component": { "$codeRef": "UploadJarPage" }
     }
   },
   {
@@ -1305,7 +1305,7 @@
       "perspective": "dev",
       "exact": false,
       "path": ["/project-details/all-namespaces", "/project-details/ns/:ns"],
-      "component": { "$codeRef": "projects.ProjectDetailsPage" }
+      "component": { "$codeRef": "ProjectDetailsPage" }
     }
   },
   {
@@ -1313,7 +1313,7 @@
     "properties": {
       "exact": false,
       "path": ["/dev-monitoring/all-namespaces", "/dev-monitoring/ns/:ns"],
-      "component": { "$codeRef": "monitoring.MonitoringPage" }
+      "component": { "$codeRef": "MonitoringPage" }
     }
   },
   {
@@ -1321,7 +1321,7 @@
     "properties": {
       "exact": true,
       "path": ["/k8s/ns/:ns/:kind/:name/containers/:containerName/health-checks"],
-      "component": { "$codeRef": "healthChecks.HealthChecksPage" }
+      "component": { "$codeRef": "HealthChecksPage" }
     }
   },
   {
@@ -1330,7 +1330,7 @@
       "perspective": "dev",
       "exact": false,
       "path": ["/k8s/all-namespaces/import"],
-      "component": { "$codeRef": "import.ImportYamlPage" }
+      "component": { "$codeRef": "ImportYamlPage.ImportYamlPage" }
     }
   },
   {
@@ -1339,7 +1339,7 @@
       "perspective": "dev",
       "exact": false,
       "path": ["/k8s/all-namespaces/:plural"],
-      "component": { "$codeRef": "common.ProjectSelectPage" }
+      "component": { "$codeRef": "ProjectSelectPage" }
     }
   },
   {
@@ -1347,7 +1347,7 @@
     "properties": {
       "exact": true,
       "path": ["/workload-hpa/ns/:ns/:resourceRef/:name"],
-      "component": { "$codeRef": "hpa.HPAPage" }
+      "component": { "$codeRef": "HPAPage" }
     }
   },
   {
@@ -1356,7 +1356,7 @@
       "perspective": "dev",
       "exact": true,
       "path": ["/search-page/all-namespaces", "/search-page/ns/:ns"],
-      "component": { "$codeRef": "common.SearchPage" }
+      "component": { "$codeRef": "SearchPage" }
     }
   }
 ]
