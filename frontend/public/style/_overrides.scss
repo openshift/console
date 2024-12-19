@@ -202,6 +202,7 @@ form.pf-v6-c-form {
   // Apply to primary content section to prevent yaml editor and topology sections from collapsing
   .pf-v6-page__main-section--flex {
     display: flex;
+    gap: 0;
     flex-direction: column;
     height: 100%;
   }
@@ -216,7 +217,7 @@ form.pf-v6-c-form {
   .pf-v6-c-dropdown__menu-item,
   .pf-v6-c-dropdown__toggle,
   .pf-v6-c-form-control {
-    font-size: $font-size-base;
+    // font-size: $font-size-base;
     height: auto;
   }
 
@@ -231,7 +232,7 @@ form.pf-v6-c-form {
 }
 
 .pf-v6-c-masthead {
-  --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit at mobile
+  --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit
 }
 
 :where(:root:not(.pf-v6-theme-dark)) .pf-v6-c-page {

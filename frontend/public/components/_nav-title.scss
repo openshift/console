@@ -25,20 +25,20 @@
     padding-left: $pf-v6-global-gutter--md;
     padding-right: $pf-v6-global-gutter--md;
   }
-  // Positioned after --detail to take precedence, since they will be a siblings
-  &--breadcrumbs {
-    @include row-gap-negation();
-  }
-  &--detail {
-    border-bottom: var(--pf-t--global--border--width--100) solid
-      var(--pf-t--global--border--color--50);
-    flex-shrink: 0; // do not allow to shrink
-  }
   &--row {
     @media (min-width: $screen-sm) {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
     }
+  }
+  &--detail {
+    border-bottom: var(--pf-t--global--border--width--100) solid
+      var(--pf-t--global--border--color--50);
+    flex-shrink: 0; // do not allow to shrink
+  }
+  // Positioned after --detail to take precedence, since they will be a siblings
+  &--breadcrumbs {
+    margin-top: 0;
   }
 }
