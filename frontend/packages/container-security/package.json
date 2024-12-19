@@ -10,7 +10,7 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
-      "containerSecurityComponent": "src/components/index.ts"
+      "containerSecurityComponent": "src/components/image-manifest-vuln.tsx"
     }
   }
 }
