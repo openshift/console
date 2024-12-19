@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
-import { useExactSearch } from '@console/app/src/components/user-preferences/search';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Page, PageHeading, useAccessReview } from '@console/internal/components/utils';
 
