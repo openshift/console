@@ -70,7 +70,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
             {operatorHub.status.sources
               .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
               .map((source) => {
-                const checked = !userSelectedDefaultSourceToggleState[source.name] ?? true;
+                const checked = !userSelectedDefaultSourceToggleState[source.name];
                 return (
                   <Checkbox
                     name={source.name}

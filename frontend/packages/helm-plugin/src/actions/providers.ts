@@ -37,7 +37,7 @@ export const useHelmActionProvider = (scope: HelmActionsScope) => {
         return [
           [
             getHelmUpgradeAction(scope, t),
-            ...(scope.release.version > 1 ? [getHelmRollbackAction(scope, t)] : []),
+            ...(Number(scope.release.version) > 1 ? [getHelmRollbackAction(scope, t)] : []),
             getHelmDeleteAction(scope, t),
           ],
           true,

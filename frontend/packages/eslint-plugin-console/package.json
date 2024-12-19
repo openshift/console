@@ -9,8 +9,8 @@
     "prettier-check": "eslint --print-config ./lib/config/prettier.js | eslint-config-prettier-check"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "5.43.0",
-    "@typescript-eslint/parser": "5.43.0",
+    "@typescript-eslint/eslint-plugin": "5.62.0",
+    "@typescript-eslint/parser": "5.62.0",
     "eslint": "6.7.2",
     "eslint-config-airbnb": "18.0.1",
     "eslint-config-airbnb-base": "14.0.0",

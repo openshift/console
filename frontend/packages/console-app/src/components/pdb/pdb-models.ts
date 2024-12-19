@@ -64,11 +64,10 @@ export const initialValuesFromK8sResource = (from: PodDisruptionBudgetKind): For
     namespace: from?.metadata?.namespace || '',
     minAvailable: from?.spec?.minAvailable ?? '',
     maxUnavailable: from?.spec?.maxUnavailable ?? '',
-    selector:
-      {
-        matchLabels: from?.spec?.selector.matchLabels,
-        matchExpressions: from?.spec?.selector.matchExpressions,
-      } || {},
+    selector: {
+      matchLabels: from?.spec?.selector.matchLabels,
+      matchExpressions: from?.spec?.selector.matchExpressions,
+    },
 
     requirement:
       _.isNil(from?.spec?.minAvailable) && _.isNil(from?.spec?.maxUnavailable)

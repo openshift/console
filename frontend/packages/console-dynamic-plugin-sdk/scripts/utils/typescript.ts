@@ -22,16 +22,21 @@ export const getSchemaGeneratorConfig = (srcFile: string, typeName?: string): ts
 });
 
 export const getProgram = (config: tsj.Config): ts.Program => {
-  const program = tsj.createProgram(config);
+  const program = tsj.createProgram({ ...tsj.DEFAULT_CONFIG, ...config });
 
   const diagnostics = ts.sortAndDeduplicateDiagnostics(ts.getPreEmitDiagnostics(program));
   if (diagnostics.length > 0) {
     console.error(formatDiagnostics(diagnostics, program.getCurrentDirectory()));
   }
 
-  const hasDiagnosticErrors = diagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
-  if (hasDiagnosticErrors) {
-    throw new Error(`Detected errors while parsing ${relativePath(config.path)}`);
+  const diagnosticsErrors = diagnostics.filter((d) => d.category === ts.DiagnosticCategory.Error);
+
+  if (diagnosticsErrors.length > 0) {
+    throw new Error(
+      // In practice this would never be undefined so we can ignore this warning
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      `Detected errors while parsing ${relativePath(config.path!)}, ${String(diagnosticsErrors)}`,
+    );
   }
 
   return program;

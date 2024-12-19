@@ -126,7 +126,7 @@ ActionProvider contributes a hook that returns list of actions for specific cont
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `contextId` | `string` | no | The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm |
-| `provider` | `CodeRef<ExtensionHook<Action[], any>>` | no | A react hook which returns actions for the given scope.<br/>If contextId = `resource` then the scope will always be a K8s resource object |
+| `provider` | `CodeRef<ExtensionHook<Action[]>>` | no | A react hook which returns actions for the given scope.<br/>If contextId = `resource` then the scope will always be a K8s resource object |
 
 ---
 
@@ -141,7 +141,7 @@ ResourceActionProvider contributes a hook that returns list of actions for speci
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `model` | `ExtensionK8sKindVersionModel` | no | The model for which this provider provides actions for. |
-| `provider` | `CodeRef<ExtensionHook<Action[], any>>` | no | A react hook which returns actions for the given resource model |
+| `provider` | `CodeRef<ExtensionHook<Action[]>>` | no | A react hook which returns actions for the given resource model |
 
 ---
 
@@ -337,7 +337,7 @@ Adds a new dashboard card.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `tab` | `string` | no | The id of the dashboard tab to which the card will be added. |
-| `position` | `'LEFT' \| 'RIGHT' \| 'MAIN'` | no | The grid position of the card on the dashboard. |
+| `position` | `'MAIN' \| 'LEFT' \| 'RIGHT'` | no | The grid position of the card on the dashboard. |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | Dashboard card component. |
 | `span` | `OverviewCardSpan` | yes | Card's vertical span in the column. Ignored for small screens, defaults to 12. |
 
@@ -448,7 +448,7 @@ Adds a health subsystem to the status card of Overview dashboard where the sourc
 | ---- | ---------- | -------- | ----------- |
 | `title` | `string` | no | The display name of the subsystem. |
 | `url` | `string` | no | The URL to fetch data from. It will be prefixed with base k8s URL. |
-| `healthHandler` | `CodeRef<URLHealthHandler<T, K8sResourceCommon \| K8sResourceCommon[]>>` | no | Resolve the subsystem's health. |
+| `healthHandler` | `CodeRef<URLHealthHandler<T>>` | no | Resolve the subsystem's health. |
 | `additionalResource` | `CodeRef<FirehoseResource>` | yes | Additional resource which will be fetched and passed to `healthHandler`. |
 | `popupComponent` | `CodeRef<React.ComponentType<{ healthResult?: T; healthResultError?: any; k8sResult?: FirehoseResult<R>; }>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
 | `popupTitle` | `string` | yes | The title of the popover. |
@@ -742,8 +742,8 @@ This extension can be used to add a separator between navigation items in the na
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | A unique identifier for this item. |
-| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
 | `section` | `string` | yes | Navigation section to which this item belongs to. If not specified, render this item as a top level link. |
+| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
 | `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here. For arrays, the first one found in order is used. `insertBefore` takes precedence. |
@@ -807,8 +807,8 @@ Adds new standalone page (rendered outside the common page layout) to Console ro
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
 
 ---
@@ -940,7 +940,7 @@ Adds new reducer to Console Redux store which operates on `plugins.<scope>` subs
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `scope` | `string` | no | The key to represent the reducer-managed substate within the Redux state object. |
-| `reducer` | `CodeRef<Reducer<any, AnyAction>>` | no | The reducer function, operating on the reducer-managed substate. |
+| `reducer` | `CodeRef<Reducer>` | no | The reducer function, operating on the reducer-managed substate. |
 
 ---
 

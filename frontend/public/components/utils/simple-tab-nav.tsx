@@ -61,7 +61,7 @@ class SimpleTabNav_ extends React.Component<SimpleTabNavProps, SimpleTabNavState
     const selectedTabData = _.find(tabs, { name: selectedTab }) || _.head(tabs);
     const content =
       !React.isValidElement(selectedTabData.component) && !Array.isArray(selectedTabData.component)
-        ? React.createElement(selectedTabData.component, tabProps)
+        ? React.createElement(selectedTabData.component as React.FunctionComponent, tabProps)
         : selectedTabData.component;
 
     return (

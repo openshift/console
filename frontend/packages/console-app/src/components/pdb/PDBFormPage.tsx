@@ -62,7 +62,7 @@ export const PDBFormPage: React.FC<{}> = () => {
   const initialPDB = {
     name: '',
     namespace: params.ns,
-    selector: { matchLabels: resource?.spec?.template?.metadata?.labels } || {},
+    selector: { matchLabels: resource?.spec?.template?.metadata?.labels },
   };
   const [helpText, setHelpText] = React.useState(formHelpText);
   const k8sObj = pdbToK8sResource(initialPDB);

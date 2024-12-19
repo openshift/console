@@ -31,12 +31,10 @@ const ServiceBindingSummary: React.FC<ServiceBindingSummaryProps> = ({ serviceBi
           obj={serviceBinding}
           path="spec.application.labelSelector"
         >
-          {(
-            <LabelList
-              kind={model.kind}
-              labels={serviceBinding.spec.application.labelSelector.matchLabels}
-            />
-          ) || '-'}
+          <LabelList
+            kind={model.kind}
+            labels={serviceBinding.spec.application.labelSelector.matchLabels}
+          />
         </DetailsItem>
       ) : (
         <DetailsItem

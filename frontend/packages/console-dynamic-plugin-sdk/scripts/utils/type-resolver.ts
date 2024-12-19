@@ -162,7 +162,7 @@ export const getConsoleTypeResolver = (program: ts.Program): ConsoleTypeResolver
       validateExtensionTypes(result, errors, warnings);
 
       if (errors.length > 0 && exitOnErrors) {
-        console.error('Detected errors while parsing Console extension type declarations');
+        console.error('Detected errors while parsing Console extension type declarations', errors);
         process.exit(1);
       }
 
