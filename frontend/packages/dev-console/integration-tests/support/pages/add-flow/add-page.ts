@@ -22,7 +22,7 @@ export const addPage = {
         cy.testA11y('Deploy Page');
         detailsPage.titleShouldContain(pageTitle.ContainerImage);
         break;
-      case 'Developer Catalog':
+      case 'Software Catalog':
       case 'From Catalog':
       case addOptions.DeveloperCatalog:
         cy.byTestID('item dev-catalog').click();
@@ -160,7 +160,7 @@ export const verifyAddPage = {
       case 'Git Repository':
         cy.byTestID('card git-repository').should('be.visible');
         break;
-      case 'Developer Catalog':
+      case 'Software Catalog':
         cy.byTestID('card developer-catalog').should('be.visible');
         break;
       case 'Container images':

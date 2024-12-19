@@ -162,8 +162,8 @@
     "properties": {
       "id": "dev-console.CatalogTypesConfiguration",
       "groupId": "developer",
-      "label": "%devconsole~Developer Catalog Types%",
-      "description": "%devconsole~A list of developer catalog types that are not shown to users.%",
+      "label": "%devconsole~Software Catalog Types%",
+      "description": "%devconsole~A list of software catalog types that are not shown to users.%",
       "field": {
         "type": "custom",
         "component": { "$codeRef": "catalog.CatalogTypesConfiguration" }
@@ -196,7 +196,7 @@
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "developer-catalog",
-      "name": "%devconsole~Developer Catalog%",
+      "name": "%devconsole~Software Catalog%",
       "insertBefore": "serverless-function"
     }
   },
@@ -746,7 +746,7 @@
       "id": "developer-catalog",
       "perspective": "admin",
       "section": "home",
-      "name": "%devconsole~Developer Catalog%",
+      "name": "%devconsole~Software Catalog%",
       "href": "/catalog",
       "namespaced": true,
       "insertAfter": "search",

@@ -85,7 +85,7 @@
   "Prerequisites": "Prerequisites",
   "Quick Starts": "Quick Starts",
   "Start": "Start",
-  "View all developer catalog items ({{itemCount, number}})": "View all developer catalog items ({{itemCount, number}})",
+  "View all software catalog items ({{itemCount, number}})": "View all software catalog items ({{itemCount, number}})",
   "View all quick starts ({{itemCount, number}})": "View all quick starts ({{itemCount, number}})",
   "View all samples ({{itemCount, number}})": "View all samples ({{itemCount, number}})",
   "Add to Project": "Add to Project",

@@ -106,7 +106,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     });
     const crumbs = [
       {
-        name: t('console-shared~Developer Catalog'),
+        name: t('console-shared~Software Catalog'),
         path: `${pathname}?${params.toString()}`,
       },
     ];

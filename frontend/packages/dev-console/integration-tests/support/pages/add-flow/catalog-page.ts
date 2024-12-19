@@ -12,7 +12,7 @@ import { app, navigateTo } from '../app';
 import { addPage } from './add-page';
 
 export const catalogPage = {
-  verifyTitle: () => detailsPage.titleShouldContain('Developer Catalog'),
+  verifyTitle: () => detailsPage.titleShouldContain('Software Catalog'),
   verifyPageTitle: (page: string) => detailsPage.titleShouldContain(page),
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
   isCardsDisplayed: () => {
