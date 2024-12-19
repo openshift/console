@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import { PerspectiveType } from '@console/dynamic-plugin-sdk';
 import { usePerspectiveExtension, usePerspectives, useTelemetry } from '@console/shared';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
-import { usePreferredPerspective } from '../user-preferences';
+import { usePreferredPerspective } from '../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from './useLastPerspective';
 
 export const useValuesForPerspectiveContext = (): [
