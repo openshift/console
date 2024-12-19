@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useHideLightspeed } from '@console/app/src/components/user-preferences/lightspeed';
+import { useHideLightspeed } from '@console/app/src/components/user-preferences/lightspeed/useHideLightspeed';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { ConsolePluginModel } from '@console/internal/models';
