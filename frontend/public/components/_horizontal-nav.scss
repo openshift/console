@@ -1,7 +1,7 @@
 $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
 
 .co-m-horizontal-nav {
-  margin-top: calc(var(--pf-t--global--spacer--lg) * -1);
+  @include row-gap-negation();
 }
 
 .co-m-horizontal-nav__menu {

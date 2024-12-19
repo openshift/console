@@ -56,8 +56,8 @@
   border-bottom: var(--pf-t--global--border--width--100) solid
     var(--pf-t--global--border--color--50);
   padding: 0 $pf-v6-global-gutter;
-  margin-top: calc(var(--pf-t--global--spacer--lg) * -1);
   white-space: nowrap;
+  @include row-gap-negation();
 
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding-left: $pf-v6-global-gutter--md;

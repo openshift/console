@@ -27,7 +27,7 @@
   }
   // Positioned after --detail to take precedence, since they will be a siblings
   &--breadcrumbs {
-    margin-top: calc(var(--pf-t--global--spacer--lg) * -1);
+    @include row-gap-negation();
   }
   &--detail {
     border-bottom: var(--pf-t--global--border--width--100) solid

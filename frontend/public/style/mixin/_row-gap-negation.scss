@@ -1,0 +1,5 @@
+// Generic mixin for negating spacing created by rowGap
+
+@mixin row-gap-negation() {
+  margin-top: calc(var(--pf-v6-c-page__main-section--RowGap) * -1);
+}
