@@ -2,7 +2,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
 
 .co-m-horizontal-nav__menu {
   border-bottom: var(--pf-t--global--border--width--100) solid
-    var(--pf-t--global--border--color--50);
+    var(--pf-t--global--border--color--default);
   display: flex;
   flex-shrink: 0; // prevent collapse of tabs
   list-style: none;
@@ -16,7 +16,8 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
     padding-left: ($pf-v6-global-gutter--md - $pf-v6-global-gutter);
   }
   &--within-sidebar {
-    border-top: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+    border-top: var(--pf-t--global--border--width--100) solid
+      var(--pf-t--global--border--color--default);
     margin-bottom: $pf-v6-global-gutter--md !important;
     margin-left: -$pf-v6-global-gutter;
     margin-right: -$pf-v6-global-gutter;
@@ -69,9 +70,9 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
   &.co-m-horizontal-nav-item--active {
     a,
     button {
-      color: var(--pf-v6-global--link--Color);
+      color: var(--pf-t--global--text--color--link--default);
       &::after {
-        background: var(--pf-v6-global--link--Color);
+        background: var(--pf-t--global--text--color--link--default);
       }
     }
   }

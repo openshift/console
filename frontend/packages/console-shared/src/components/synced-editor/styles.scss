@@ -2,8 +2,9 @@
 
 .co-synced-editor__editor-toggle {
   border-bottom: var(--pf-t--global--border--width--100) solid
-    var(--pf-t--global--border--color--50);
-  border-top: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+    var(--pf-t--global--border--color--default);
+  border-top: var(--pf-t--global--border--width--100) solid
+    var(--pf-t--global--border--color--default);
   padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding-left: $pf-v6-global-gutter--md;

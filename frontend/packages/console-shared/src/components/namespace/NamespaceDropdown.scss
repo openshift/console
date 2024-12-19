@@ -8,7 +8,8 @@
 .pf-v6-c-menu.co-namespace-dropdown__menu {
   // Position is to ensure that the dropdown doesn't push content down when opened
   // Especially on the /topology/ns/[namespace]?view=graph page
-  position: fixed;
+  position: absolute;
+  z-index: 9999; // same as popper
 
   // This allows the menu to be longer than the menu toggle
   // Currently PatternFly does not support a min width on the menu component

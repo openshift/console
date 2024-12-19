@@ -189,22 +189,19 @@ form.pf-v6-c-form {
     z-index: calc(var(--pf-v6-c-page__header--ZIndex) + 50);
   }
 
-  // Default light background for our content
-  .co-page-backdrop {
-    background-color: var(--pf-v5-global--BackgroundColor--100) !important;
-  }
-
   // Restore the max-height from PageHeader to maintain backwards compatibility
   .pf-v6-c-brand {
     max-height: $masthead-logo-max-height;
   }
 
-  // Apply to primary content section to prevent yaml editor and topology sections from collapsing
-  .pf-v6-page__main-section--flex {
-    display: flex;
-    gap: 0;
-    flex-direction: column;
+  // Apply to primary content sections to prevent yaml editor and topology sections from collapsing
+  .pf-v6-c-page__main-container,
+  .pf-v6-c-page__main-section--expanded {
     height: 100%;
+  }
+
+  .pf-v6-c-page__main-section--no-gap {
+    --pf-v6-c-page__main-section--RowGap: 0;
   }
 }
 
@@ -242,37 +239,6 @@ form.pf-v6-c-form {
 .pf-v6-c-page__sidebar {
   @media print {
     display: none !important;
-  }
-
-  // Perspective switcher
-  &.pf-m-dark .pf-v6-c-dropdown {
-    --pf-v6-global--Color--100: var(--pf-v6-global--Color--dark-100);
-  }
-
-  .pf-v6-c-nav {
-    --pf-v6-c-nav__list-link--PaddingRight: var(--pf-t--global--spacer--sm);
-    --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-t--global--spacer--md);
-    --pf-v6-c-nav__list-link--after--Left: var(--pf-t--global--spacer--md);
-    --pf-v6-c-nav__link--FontSize: #{$co-side-nav-section-font-size};
-    --pf-v6-c-nav__subnav__link--FontSize: #{$co-side-nav-font-size};
-
-    @media screen and (min-width: $pf-v6-global--breakpoint--xl) {
-      --pf-v6-c-nav__list-link--PaddingRight: var(--pf-t--global--spacer--md);
-      --pf-v6-c-nav__list-link--PaddinLeft: var(--pf-t--global--spacer--lg);
-      --pf-v6-c-nav__list-link--after--Left: var(--pf-t--global--spacer--lg);
-      --pf-v6-c-nav__simple-list--nested__separator--MarginLeft: var(--pf-t--global--spacer--xl);
-      --pf-v6-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-t--global--spacer--xl);
-    }
-
-    .pf-v6-c-nav__link {
-      font-size: $co-side-nav-section-font-size;
-    }
-
-    .pf-v6-c-nav__subnav {
-      .pf-v6-c-nav__link {
-        font-size: $co-side-nav-font-size;
-      }
-    }
   }
 }
 

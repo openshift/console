@@ -40,7 +40,7 @@ const LabelComponent = ({ clusterID, ...props }) => (
       {...props}
       style={{
         fill:
-          'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--link--Color */,
+          'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-t--global--text--color--link--default */,
       }}
     />
   </ExternalLink>

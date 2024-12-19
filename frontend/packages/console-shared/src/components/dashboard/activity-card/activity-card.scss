@@ -16,7 +16,7 @@
 
 .co-activity-card__ongoing-title {
   border-bottom: var(--pf-t--global--border--width--100) solid
-    var(--pf-t--global--border--color--50);
+    var(--pf-t--global--border--color--default);
   padding: 0.2rem var(--pf-v6-c-card--child--PaddingRight) 0.2rem
     var(--pf-v6-c-card--child--PaddingLeft);
 }
@@ -82,7 +82,7 @@
 
 .co-activity-card__recent-title {
   border-bottom: var(--pf-t--global--border--width--100) solid
-    var(--pf-t--global--border--color--50);
+    var(--pf-t--global--border--color--default);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

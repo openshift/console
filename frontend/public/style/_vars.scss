@@ -11,36 +11,23 @@ $consoleWebDistPath: './';
 
 // == Overrides of external dependency variables
 
-// PatternFly 5 font path.
+// PatternFly font path.
 $pf-v6-global--font-path: '~@patternfly/patternfly/assets/fonts';
-$table-border-color: var(--pf-t--global--border--color--200);
-
-:root {
-  // Numerical value required
-  --pf-t--global--font--size--md: 14px; // same as $font-size-base
-  --pf-t--global--font--size--sm: 13px;
-}
 
 // == Declare max breakpoints from PatternFly variables
+// TODO: PF6 upgrade -- $pf-v6-global--breakpoint--* are now rem
 $pf-v6-global--breakpoint--xs-max: ($pf-v6-global--breakpoint--xs - 1);
 $pf-v6-global--breakpoint--sm-max: ($pf-v6-global--breakpoint--sm - 1);
 $pf-v6-global--breakpoint--md-max: ($pf-v6-global--breakpoint--md - 1);
 $pf-v6-global--breakpoint--lg-max: ($pf-v6-global--breakpoint--lg - 1);
 
 // Can not use --pf-v6-global--gutter --pf-v6-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
-$pf-v6-global-gutter: 1rem; // Matches --pf-v6-global--gutter
-$pf-v6-global-gutter--md: 1.5rem; // Matches --pf-v6-global--gutter--md
+$pf-v6-global-gutter: 1rem; // Matches --pf-t--global--spacer--gutter--default
+$pf-v6-global-gutter--md: 1.5rem;
 
 // == Custom variables
-
-// Manually set because our default font size is different than PF 4
-$co-side-nav-font-size: $font-size-base; // Matches PF 4 --pf-v6-c-nav__subnav__link--FontSize
-$co-side-nav-section-font-size: ($font-size-base + 2); // Matches PF 4 --pf-v6-c-nav__link--FontSize
 $co-m-catalog-tile-height: 100%;
 $co-m-catalog-tile-width: 260px;
-
-// == Colors
-
 $color-alertmanager-dark: #773d00;
 $color-application-dark: #3e8635;
 $color-configmap-dark: #40199a;

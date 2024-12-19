@@ -28,7 +28,7 @@
     > .pf-v6-l-flex.pf-m-grow.pf-m-column {
       // Show a divider on the right side and hide them in the latest column.
       border-right: var(--pf-t--global--border--width--100) solid
-        var(--pf-t--global--border--color--50);
+        var(--pf-t--global--border--color--default);
       margin-right: calc(-1 * var(--pf-t--global--border--width--100));
       // Padding around the card. Vertical spacing is splitted on the card and the grid.
       padding-top: calc(var(--pf-v6-c-card--first-child--PaddingTop) / 2);

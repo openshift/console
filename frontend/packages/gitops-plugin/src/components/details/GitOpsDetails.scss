@@ -68,7 +68,8 @@
       color: var(--pf-v6-global--palette--black-600);
     }
     article {
-      border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+      border: var(--pf-t--global--border--width--100) solid
+        var(--pf-t--global--border--color--default);
       min-width: 335px;
       max-width: 335px;
     }
@@ -110,7 +111,7 @@
   }
   &__sha {
     background-color: inherit;
-    color: var(--pf-v6-global--link--Color);
+    color: var(--pf-t--global--text--color--link--default);
     font-size: 12px;
     width: auto;
     svg {

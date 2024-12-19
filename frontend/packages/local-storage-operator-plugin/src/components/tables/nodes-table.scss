@@ -6,7 +6,8 @@
     var(--pf-v6-global--palette--white);
 
   .pf-v6-c-table {
-    border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+    border: var(--pf-t--global--border--width--100) solid
+      var(--pf-t--global--border--color--default);
 
     .pf-v6-c-table__check {
       /* This overrides the default overrides of checkboxes for ocs based tables */

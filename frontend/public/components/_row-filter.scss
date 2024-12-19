@@ -8,7 +8,8 @@
   // use pseudo element for border so that .pf-v6-c-toggle-group__item(s) overlap
   @media screen and (min-width: $pf-v6-global--breakpoint--md) {
     &::before {
-      border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+      border: var(--pf-t--global--border--width--100) solid
+        var(--pf-t--global--border--color--default);
       border-bottom-right-radius: var(--pf-v6-global--BorderRadius--sm);
       border-top-right-radius: var(--pf-v6-global--BorderRadius--sm);
       bottom: 0;
@@ -46,7 +47,7 @@
 }
 
 .co-row-filter__number-bubble {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
   border-radius: var(--pf-v6-global--BorderRadius--sm);
   display: inline-block;
   line-height: var(--pf-v6-global--LineHeight--sm);

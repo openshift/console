@@ -91,7 +91,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
 }
 
 .co-catalog-details {
@@ -131,7 +131,7 @@ $co-affinity-row-margin: 15px;
 // only used in packages and will be orphaned when packages move out
 .co-create-operand__header {
   border-bottom: var(--pf-t--global--border--width--100) solid
-    var(--pf-t--global--border--color--50);
+    var(--pf-t--global--border--color--default);
   padding: 0 $pf-v6-global-gutter var(--pf-t--global--spacer--lg);
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding-left: $pf-v6-global-gutter--md;

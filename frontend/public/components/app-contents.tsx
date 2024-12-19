@@ -816,14 +816,18 @@ const AppContents: React.FC<{}> = () => {
 
   return (
     <div id="content">
-      <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding' }}>
+      <PageSection
+        hasBodyWrapper={false}
+        padding={{ default: 'noPadding' }}
+        className="pf-v6-c-page__main-section--no-gap"
+      >
         <GlobalNotifications />
         {matches && <NamespaceBar />}
       </PageSection>
       <div id="content-scrollable">
         <PageSection
           hasBodyWrapper={false}
-          className="pf-v6-page__main-section--flex co-page-backdrop"
+          className="pf-v6-c-page__main-section--expanded pf-v6-c-page__main-section--no-gap"
           padding={{ default: 'noPadding' }}
         >
           <ErrorBoundaryPage>
@@ -831,7 +835,11 @@ const AppContents: React.FC<{}> = () => {
           </ErrorBoundaryPage>
         </PageSection>
       </div>
-      <PageSection hasBodyWrapper={false} padding={{ default: 'noPadding' }}>
+      <PageSection
+        hasBodyWrapper={false}
+        padding={{ default: 'noPadding' }}
+        className="pf-v6-c-page__main-section--no-gap"
+      >
         <TelemetryNotifier />
       </PageSection>
     </div>

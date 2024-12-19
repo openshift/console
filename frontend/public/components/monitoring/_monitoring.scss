@@ -435,7 +435,7 @@ $monitoring-line-height: 18px;
 
 .query-browser__query-controls {
   align-items: center;
-  border: solid var(--pf-t--global--border--color--50);
+  border: solid var(--pf-t--global--border--color--default);
   border-width: 1px 0;
   display: flex;
   padding: 10px 0;
@@ -520,7 +520,7 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__table-message {
-  border-bottom: solid 1px var(--pf-t--global--border--color--50);
+  border-bottom: solid 1px var(--pf-t--global--border--color--default);
   padding: 10px 20px;
 }
 
@@ -592,7 +592,7 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__wrapper {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
   margin: 0 0 20px 0;
   overflow: visible;
   padding: 10px;

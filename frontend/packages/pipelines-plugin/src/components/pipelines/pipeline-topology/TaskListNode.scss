@@ -6,7 +6,7 @@
     box-shadow: var(--pf-v6-c-dropdown__menu--BoxShadow);
   }
   &__trigger-background {
-    stroke: var(--pf-t--global--border--color--50);
+    stroke: var(--pf-t--global--border--color--default);
     fill: var(--pf-v6-global--BackgroundColor--light-100);
     &.is-disabled {
       fill: var(--pf-v6-global--disabled-color--300);
@@ -15,7 +15,7 @@
   &__trigger-underline {
     fill: var(--pf-v6-global--Color--100);
     &--hover {
-      fill: var(--pf-v6-global--link--Color);
+      fill: var(--pf-t--global--text--color--link--default);
     }
   }
   &__trigger {
@@ -32,7 +32,7 @@
     overflow: auto;
   }
   &__divider {
-    border-color: var(--pf-t--global--border--color--50);
+    border-color: var(--pf-t--global--border--color--default);
     margin: 0;
   }
   &__render-text {

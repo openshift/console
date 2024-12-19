@@ -3,8 +3,9 @@
 .ocs-synced-editor-field {
   &__editor-toggle {
     border-bottom: var(--pf-t--global--border--width--100) solid
-      var(--pf-t--global--border--color--50);
-    border-top: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
+      var(--pf-t--global--border--color--default);
+    border-top: var(--pf-t--global--border--width--100) solid
+      var(--pf-t--global--border--color--default);
     margin-left: -$pf-v6-global-gutter;
     margin-right: -$pf-v6-global-gutter;
     padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);

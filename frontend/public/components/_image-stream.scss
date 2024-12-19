@@ -19,7 +19,7 @@
 
 .co-images-stream-tag-timeline__circle-icon,
 .co-images-stream-tag-timeline__square-icon {
-  color: var(--pf-t--global--border--color--50);
+  color: var(--pf-t--global--border--color--default);
   left: 8px;
   position: relative;
 }
@@ -43,7 +43,7 @@
 }
 
 .co-images-stream-tag-timeline__line {
-  border: var(--pf-t--global--border--width--md) solid var(--pf-t--global--border--color--50);
+  border: var(--pf-t--global--border--width--md) solid var(--pf-t--global--border--color--default);
   left: 14px;
   position: relative;
 }

@@ -99,7 +99,7 @@
   --pf-v6-c-form-control--before--BorderBottomColor: transparent;
   --pf-v6-c-form-control--before--BorderLeftColor: var(--pf-t--global--border--color--200);
   --pf-v6-c-form-control--after--BorderBottomWidth: var(--pf-t--global--border--width--100);
-  --pf-v6-c-form-control--after--BorderBottomColor: var(--pf-t--global--border--color--100);
+  --pf-v6-c-form-control--after--BorderBottomColor: var(--pf-t--global--border--color--default);
   --pf-v6-c-form-control--BackgroundColor: var(--pf-v6-global--BackgroundColor--100);
   --pf-v6-c-form-control--Width: 100%;
 
@@ -137,13 +137,13 @@
   // readonly
   --pf-v6-c-form-control--m-readonly--BackgroundColor: var(--pf-v6-global--disabled-color--300);
   --pf-v6-c-form-control--m-readonly--hover--after--BorderBottomColor: var(
-    --pf-t--global--border--color--100
+    --pf-t--global--border--color--default
   );
   --pf-v6-c-form-control--m-readonly--focus--after--BorderBottomWidth: var(
     --pf-t--global--border--width--100
   );
   --pf-v6-c-form-control--m-readonly--focus--after--BorderBottomColor: var(
-    --pf-t--global--border--color--100
+    --pf-t--global--border--color--default
   );
 
   // readonly plain

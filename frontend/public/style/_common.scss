@@ -58,7 +58,7 @@ dl.co-inline {
     padding-bottom: 0;
   }
   + .co-m-pane__body {
-    border-top: 1px solid var(--pf-t--global--border--color--50);
+    border-top: 1px solid var(--pf-t--global--border--color--default);
     margin-top: 0;
     padding-top: $pf-v6-global-gutter--md;
   }
@@ -311,7 +311,7 @@ dl.co-inline {
 
 .co-external-link-with-copy {
   &__icon {
-    color: var(--pf-v6-global--link--Color) !important;
+    color: var(--pf-t--global--text--color--link--default) !important;
     cursor: pointer;
     &:hover {
       color: var(--pf-v6-global--Color--300);
@@ -522,7 +522,7 @@ dl.co-inline {
     .co-m-table-grid__body .row,
     .co-m-table-grid__head {
       border-bottom: var(--pf-t--global--border--width--100) solid
-        var(--pf-t--global--border--color--50);
+        var(--pf-t--global--border--color--default);
     }
   }
   .co-m-table-grid {

@@ -48,7 +48,7 @@ label {
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
   background-color: var(--pf-v6-global--BackgroundColor--100);
-  border: 1px solid var(--pf-t--global--border--color--50);
+  border: 1px solid var(--pf-t--global--border--color--default);
 }
 
 .radio,

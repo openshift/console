@@ -34,7 +34,7 @@
   }
   &--detail {
     border-bottom: var(--pf-t--global--border--width--100) solid
-      var(--pf-t--global--border--color--50);
+      var(--pf-t--global--border--color--default);
     flex-shrink: 0; // do not allow to shrink
   }
   // Positioned after --detail to take precedence, since they will be a siblings

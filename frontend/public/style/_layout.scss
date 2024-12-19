@@ -61,11 +61,11 @@ body,
     &--bordered {
       @media (max-width: $screen-sm-max) {
         border-top: var(--pf-t--global--border--width--100) solid
-          var(--pf-t--global--border--color--50);
+          var(--pf-t--global--border--color--default);
       }
       @media (min-width: $screen-md-min) {
         border-left: var(--pf-t--global--border--width--100) solid
-          var(--pf-t--global--border--color--50);
+          var(--pf-t--global--border--color--default);
       }
     }
   }
