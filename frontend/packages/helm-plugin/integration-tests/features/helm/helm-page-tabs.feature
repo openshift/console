@@ -3,7 +3,9 @@ Feature: Add repositories tab in Helm navigation item
               As a user, I want to navigate to different tabs related to Helm in the Helm page
 
         Background:
-            Given user has created or selected namespace "aut-helm"
+            Given user has logged in as admin user
+              And user is at developer perspective
+              And user has created or selected namespace "aut-helm"
 
 
         @regression
