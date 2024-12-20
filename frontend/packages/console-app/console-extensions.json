@@ -466,6 +466,12 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "userPreferences.usePerspectivesAvailable" }
+    }
+  },
+  {
     "type": "console.user-preference/group",
     "properties": {
       "id": "general",
@@ -527,6 +533,9 @@
         "component": { "$codeRef": "userPreferences.PreferredPerspectiveSelect" }
       },
       "insertAfter": "console.theme"
+    },
+    "flags": {
+      "required": ["FLAG_PERSPECTIVES_AVAILABLE"]
     }
   },
   {
