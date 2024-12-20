@@ -221,4 +221,6 @@ export const testServerlessFunction = (model: K8sKind, obj: K8sResourceKind): Ac
       obj,
     }),
   insertBefore: 'create-service-binding',
+  disabledTooltip: i18next.t('knative-plugin~Serverless function is not ready to test'),
+  disabled: obj?.status?.conditions.some((cond) => cond.status !== 'True'),
 });
