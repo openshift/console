@@ -1,131 +1,15 @@
-import * as URL from 'url';
-import { Uri, Range } from 'monaco-editor';
-import {
-  MonacoToProtocolConverter,
-  ProtocolToMonacoConverter,
-} from 'monaco-languageclient/lib/monaco-converter';
+import { Range } from 'monaco-editor';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { configureMonacoYaml } from 'monaco-yaml';
 import * as yaml from 'yaml-ast-parser';
-import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 
 export const defaultEditorOptions = { readOnly: false, scrollBeyondLastLine: false };
 
-const MODEL_URI = 'inmemory://model.yaml';
-const MONACO_URI = Uri.parse(MODEL_URI);
-
-const createDocument = (model) => {
-  return TextDocument.create(
-    MODEL_URI,
-    model?.getModeId(),
-    model?.getVersionId(),
-    model?.getValue(),
-  );
-};
-
-// Unfortunately, `editor.focus()` doesn't work when hiding the shortcuts
-// popover. We need to find the actual DOM element.
-export const hackyFocusEditor = () =>
-  setTimeout(() => document.querySelector<any>('.monaco-editor textarea')?.focus());
-
-export const registerYAMLLanguage = (monaco) => {
-  // register the YAML language with Monaco
-  monaco.languages.register({
-    id: 'yaml',
-    extensions: ['.yml', '.yaml'],
-    aliases: ['YAML', 'yaml'],
-    mimetypes: ['application/yaml'],
-  });
-};
-
-export const createYAMLService = () => {
-  const resolveSchema = (url: string): Promise<string> => {
-    const promise = new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = () => resolve(xhr.responseText);
-      xhr.onerror = () => reject(xhr.statusText);
-      xhr.open('GET', url, true);
-      xhr.send();
-    });
-    return promise as Promise<string>;
-  };
-
-  const workspaceContext = {
-    resolveRelativePath: (relativePath, resource) => URL.resolve(resource, relativePath),
-  };
-
-  const yamlService = getLanguageService(resolveSchema, workspaceContext);
-
-  // Prepare the schema
-  const yamlOpenAPI = getSwaggerDefinitions();
-
-  // Convert the openAPI schema to something the language server understands
-  const kubernetesJSONSchema = openAPItoJSONSchema(yamlOpenAPI);
-
-  const schemas = [
-    {
-      uri: 'inmemory:yaml',
-      fileMatch: ['*'],
-      schema: kubernetesJSONSchema,
-    },
-  ];
-  yamlService.configure({
-    validate: true,
-    schemas,
-    hover: true,
-    completion: true,
-  });
-  return yamlService;
-};
-
-export const registerYAMLCompletion = (languageID, monaco, m2p, p2m, yamlService) => {
-  monaco.languages.registerCompletionItemProvider(languageID, {
-    provideCompletionItems(model, position) {
-      const document = createDocument(model);
-      return yamlService
-        .doComplete(document, m2p.asPosition(position.lineNumber, position.column), true)
-        .then((list) => {
-          return p2m.asCompletionResult(list);
-        });
-    },
-  });
-};
-
-export const registerYAMLDocumentSymbols = (languageID, monaco, p2m, yamlService) => {
-  monaco.languages.registerDocumentSymbolProvider(languageID, {
-    provideDocumentSymbols(model) {
-      const document = createDocument(model);
-      return p2m.asSymbolInformations(yamlService.findDocumentSymbols(document));
-    },
-  });
-};
-
-export const registerYAMLHover = (languageID, monaco, m2p, p2m, yamlService) => {
-  monaco.languages.registerHoverProvider(languageID, {
-    provideHover(model, position) {
-      const doc = createDocument(model);
-      return yamlService
-        .doHover(doc, m2p.asPosition(position.lineNumber, position.column), true)
-        .then((hover) => {
-          return p2m.asHover(hover);
-        })
-        .then((e) => {
-          for (const el of <any>document.getElementsByClassName('monaco-editor-hover')) {
-            el.onclick = (event) => event.preventDefault();
-            el.onauxclick = (event) => {
-              window.open(event.target.getAttribute('data-href'), '_blank').opener = null;
-              event.preventDefault();
-            };
-          }
-          return e;
-        });
-    },
-  });
-};
-
-const findManagedMetadata = (model) => {
-  const document = createDocument(model);
-  const doc = yaml.safeLoad(document.getText());
+const findManagedMetadata = (model: monaco.editor.ITextModel) => {
+  const modelValue = model.getValue();
+  const doc = yaml.safeLoad(modelValue);
   const rootMappings = doc?.mappings || [];
   for (const rootElement of rootMappings) {
     const rootKey = rootElement.key;
@@ -139,8 +23,8 @@ const findManagedMetadata = (model) => {
 
         // Search for managedFields
         if (childKey.value === 'managedFields') {
-          const startLine = document.positionAt(metadataChildren.startPosition).line + 1;
-          const endLine = document.positionAt(metadataChildren.endPosition).line;
+          const startLine = model.getPositionAt(metadataChildren.startPosition).lineNumber;
+          const endLine = model.getPositionAt(metadataChildren.endPosition).lineNumber;
           return {
             start: startLine,
             end: endLine,
@@ -155,7 +39,11 @@ const findManagedMetadata = (model) => {
   };
 };
 
-export const fold = (editor, model, resetMouseLocation: boolean): void => {
+export const fold = (
+  editor: monaco.editor.IStandaloneCodeEditor,
+  model: monaco.editor.ITextModel,
+  resetMouseLocation: boolean,
+): void => {
   const managedLocation = findManagedMetadata(model);
   const { start } = managedLocation;
   const { end } = managedLocation;
@@ -176,49 +64,20 @@ export const fold = (editor, model, resetMouseLocation: boolean): void => {
   }
 };
 
-// TODO: These functions are not part of React Component LifeCycle, will need refactoring
-export const enableYAMLValidation = (
-  editor,
-  monaco,
-  p2m,
-  monacoURI,
-  yamlService,
+/**
+ * Register auto fold for the editor
+ * This should probably be a React hook
+ */
+export const registerAutoFold = (
+  editor: monaco.editor.IStandaloneCodeEditor,
+  model: monaco.editor.ITextModel,
   alreadyInUse: boolean = false,
 ) => {
-  const pendingValidationRequests = new Map();
-
-  const getModel = () => monaco.editor?.getModels()[0];
-
-  const cleanPendingValidation = (document) => {
-    const request = pendingValidationRequests.get(document.uri);
-    if (request !== undefined) {
-      clearTimeout(request);
-      pendingValidationRequests.delete(document.uri);
-    }
-  };
-
-  const cleanDiagnostics = () =>
-    monaco.editor.setModelMarkers(monaco.editor.getModel(monacoURI), 'default', []);
-
-  const doValidate = (document) => {
-    if (document.getText().length === 0) {
-      cleanDiagnostics();
-      return;
-    }
-    yamlService
-      .doValidation(document, true)
-      .then((diagnostics) => {
-        const markers = p2m.asDiagnostics(diagnostics);
-        monaco.editor.setModelMarkers(getModel(), 'default', markers);
-      })
-      .catch(() => {});
-  };
-
   let initialFoldingTriggered = false;
   const tryFolding = () => {
-    const document = createDocument(getModel());
-    if (!initialFoldingTriggered && document.getText() !== '') {
-      setTimeout(() => fold(editor, getModel(), true));
+    const document = model.getValue();
+    if (!initialFoldingTriggered && document !== '') {
+      setTimeout(() => fold(editor, model, true));
       initialFoldingTriggered = true;
     }
   };
@@ -226,33 +85,16 @@ export const enableYAMLValidation = (
     tryFolding();
   }
 
-  getModel()?.onDidChangeContent(() => {
+  model.onDidChangeContent(() => {
     tryFolding();
-
-    const document = createDocument(getModel());
-    cleanPendingValidation(document);
-    pendingValidationRequests.set(
-      document.uri,
-      setTimeout(() => {
-        pendingValidationRequests.delete(document.uri);
-        doValidate(document);
-      }),
-    );
   });
 };
 
-export const registerYAMLinMonaco = (editor, monaco, alreadyInUse: boolean = false) => {
-  const LANGUAGE_ID = 'yaml';
-
-  const m2p = new MonacoToProtocolConverter();
-  const p2m = new ProtocolToMonacoConverter();
-
-  const yamlService = createYAMLService();
-
-  // validation is not a 'registered' feature like the others, it relies on calling the yamlService
-  // directly for validation results when content in the editor has changed
-  enableYAMLValidation(editor, monaco, p2m, MONACO_URI, yamlService, alreadyInUse);
-
+export const registerYAMLinMonaco = (
+  editor: monaco.editor.IStandaloneCodeEditor,
+  monacoInstance: typeof monaco,
+  alreadyInUse: boolean = false,
+) => {
   /**
    * This exists because react-monaco-editor passes the same monaco
    * object each time. Without it you would be registering all the features again and
@@ -264,12 +106,32 @@ export const registerYAMLinMonaco = (editor, monaco, alreadyInUse: boolean = fal
    * We check that > 1 YAML language exists because one is the default and one is the initial register
    * that setups our features.
    */
-  if (monaco.languages.getLanguages().filter((x) => x.id === LANGUAGE_ID).length > 1) {
-    return;
+  if (monacoInstance.languages.getLanguages().filter((x) => x.id === 'yaml').length <= 1) {
+    // Prepare the schema
+    const yamlOpenAPI = getSwaggerDefinitions();
+
+    // Convert the openAPI schema to something the language server understands
+    const kubernetesJSONSchema = openAPItoJSONSchema(yamlOpenAPI);
+
+    const schemas = [
+      {
+        uri: 'inmemory:yaml',
+        fileMatch: ['*'],
+        schema: kubernetesJSONSchema,
+      },
+    ];
+
+    configureMonacoYaml(monacoInstance, {
+      isKubernetes: true,
+      validate: true,
+      schemas,
+      hover: true,
+      completion: true,
+    });
   }
 
-  registerYAMLLanguage(monaco); // register the YAML language with monaco
-  registerYAMLCompletion(LANGUAGE_ID, monaco, m2p, p2m, yamlService);
-  registerYAMLDocumentSymbols(LANGUAGE_ID, monaco, p2m, yamlService);
-  registerYAMLHover(LANGUAGE_ID, monaco, m2p, p2m, yamlService);
+  if (!alreadyInUse) {
+    const model = editor.getModel();
+    registerAutoFold(editor, model);
+  }
 };
