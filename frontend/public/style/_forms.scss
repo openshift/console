@@ -44,7 +44,7 @@
   border-radius: 3px;
   color: var(--pf-v6-global--Color--200);
   font-size: var(--pf-t--global--font--size--sm);
-  padding: 1px 3px;
+  padding: 3px 2px;
 }
 
 .co-kbd__filter-input {
@@ -78,18 +78,16 @@
 
 .co-text-filter-feedback {
   display: block;
-  height: 29px;
   pointer-events: none;
   position: absolute;
-  right: 0;
+  right: 7px;
   text-align: center;
-  top: 5px;
-  width: 29px;
+  top: 8px;
   z-index: 2;
 }
 
-.has-feedback .pf-v6-c-form-control {
-  --pf-v6-c-form-control--PaddingRight: 25px;
+.has-feedback .pf-v6-c-form-control > :is(input) {
+  --pf-v6-c-form-control--PaddingInlineEnd: 30px;
 }
 
 .pf-v6-c-form__actions--right {

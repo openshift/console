@@ -229,7 +229,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       <PageSection hasBodyWrapper={false}>
         <Content component="h1">{t('public~Search')}</Content>
         <Toolbar
-          className="co-toolbar-no-padding"
           id="search-toolbar"
           clearAllFilters={clearAll}
           collapseListedFiltersBreakpoint="xl"

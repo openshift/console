@@ -5,6 +5,10 @@
   max-width: 60%;
 }
 
+.pf-v6-c-menu .pf-v6-c-menu__content.co-namespace-dropdown__menu-content {
+  overflow-y: auto !important;
+}
+
 .pf-v6-c-menu.co-namespace-dropdown__menu {
   // Position is to ensure that the dropdown doesn't push content down when opened
   // Especially on the /topology/ns/[namespace]?view=graph page

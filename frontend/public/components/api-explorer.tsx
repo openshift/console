@@ -314,7 +314,7 @@ const APIResourcesList = compose(
   return (
     <>
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
-        <Toolbar className="co-toolbar-no-padding pf-m-toggle-group-container">
+        <Toolbar className="pf-m-toggle-group-container">
           <ToolbarContent>
             <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
               <ToolbarItem>

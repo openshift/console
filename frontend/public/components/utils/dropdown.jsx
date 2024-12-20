@@ -129,11 +129,11 @@ class DropDownRowWithTranslation extends React.PureComponent {
     const contentString = _.isString(content) ? content : '';
 
     if (!autocompleteFilter && !onBookmark) {
-      //use pf4 markup if not using the autocomplete dropdown
+      // use PatternFly 6 markup if not using the autocomplete dropdown
       return (
-        <li key={itemKey}>
+        <li key={itemKey} className="pf-v6-c-menu__list-item">
           <button
-            className="pf-v6-c-dropdown__menu-item"
+            className="pf-v6-c-menu__item"
             id={`${itemKey}-link`}
             data-test-id="dropdown-menu"
             data-test-dropdown-menu={itemKey}
@@ -461,7 +461,7 @@ class Dropdown_ extends DropdownMixin {
               onClick={this.toggle}
               onKeyDown={this.onKeyDown}
               type="button"
-              className={classNames('pf-v6-c-dropdown__toggle', buttonClassName)}
+              className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
               id={this.props.id}
               aria-describedby={describedBy}
               disabled={disabled}
@@ -477,7 +477,7 @@ class Dropdown_ extends DropdownMixin {
             </button>
             {active && (
               // Style the Application menu to match the Project selection menu
-              <div className="pf-v6-c-menu pf-m-scrollable co-namespace-dropdown__menu">
+              <div className="pf-v6-c-menu pf-m-scrollable dropdown-menu co-namespace-dropdown__menu">
                 <div className="pf-v6-c-menu__content" style={{ maxHeight: '60vh' }}>
                   {autocompleteFilter && (
                     <>
@@ -520,7 +520,7 @@ class Dropdown_ extends DropdownMixin {
       );
     }
 
-    //pf4 markup
+    // PatternFly 6 markup
     return (
       <div className={className} ref={this.dropdownElement} style={this.props.style}>
         <div
@@ -533,7 +533,7 @@ class Dropdown_ extends DropdownMixin {
             aria-label={ariaLabel}
             aria-haspopup="true"
             aria-expanded={this.state.active}
-            className={classNames('pf-v6-c-dropdown__toggle', buttonClassName)}
+            className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
             data-test-id="dropdown-button"
             onClick={this.toggle}
             onKeyDown={this.onKeyDown}
@@ -550,12 +550,14 @@ class Dropdown_ extends DropdownMixin {
             <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
           </button>
           {active && (
-            <ul
-              ref={this.dropdownList}
-              className={classNames('pf-v6-c-dropdown__menu', menuClassName)}
-            >
-              {rows}
-            </ul>
+            <div className="pf-v6-c-menu dropdown-menu">
+              <ul
+                ref={this.dropdownList}
+                className={classNames('pf-v6-c-menu-list', menuClassName)}
+              >
+                {rows}
+              </ul>
+            </div>
           )}
         </div>
       </div>
@@ -731,7 +733,7 @@ const ActionsMenuDropdown = (props) => {
         aria-haspopup="true"
         aria-label={t('public~Actions')}
         aria-expanded={active}
-        className="pf-v6-c-dropdown__toggle"
+        className="pf-v6-c-menu-toggle"
         onClick={toggle}
         data-test-id="actions-menu-button"
       >

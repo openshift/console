@@ -1,6 +1,6 @@
 .dropdown--full-width {
   &,
-  .pf-v6-c-dropdown__toggle {
+  .pf-v6-c-menu-toggle {
     justify-content: space-between;
     width: 100%;
   }
@@ -19,6 +19,11 @@
 .dropdown__disabled {
   color: var(--pf-v6-global--disabled-color--100);
   cursor: not-allowed;
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 9999; // same as popper
 }
 
 .dropdown-menu__divider {
@@ -89,15 +94,15 @@
   margin-right: 20px;
   max-width: 60%;
 
-  .pf-v6-c-dropdown__toggle.pf-m-plain {
+  .pf-v6-c-menu-toggle.pf-m-plain {
     font-size: ($font-size-base + 1);
-    --pf-v6-c-dropdown__toggle--PaddingBottom: 7px;
-    --pf-v6-c-dropdown__toggle--PaddingLeft: 0;
-    --pf-v6-c-dropdown__toggle--PaddingRight: 0;
+    --pf-v6-c-menu-toggle--PaddingBottom: 7px;
+    --pf-v6-c-menu-toggle--PaddingLeft: 0;
+    --pf-v6-c-menu-toggle--PaddingRight: 0;
 
     @media (min-width: $pf-v6-global--breakpoint--md) {
       font-size: ($font-size-base + 2);
-      --pf-v6-c-dropdown__toggle--PaddingBottom: 9px;
+      --pf-v6-c-menu-toggle--PaddingBottom: 9px;
     }
 
     &:not(:disabled) {
@@ -132,11 +137,11 @@
   }
 }
 
-.pf-v6-c-dropdown__toggle {
+.pf-v6-c-menu-toggle {
   max-width: 100%;
 }
 
-.pf-v6-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
+.pf-v6-c-menu-toggle .pf-c-dropdown__toggle-icon {
   flex: 0 0 auto; // so arrow doesn't shrink
 }
 

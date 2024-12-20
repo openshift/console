@@ -340,7 +340,7 @@ const NamespaceMenu: React.FC<{
       data-test="namespace-dropdown-menu"
       isScrollable
     >
-      <MenuContent maxMenuHeight="60vh">
+      <MenuContent maxMenuHeight="60vh" className="co-namespace-dropdown__menu-content">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}

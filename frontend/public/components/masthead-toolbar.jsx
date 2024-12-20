@@ -571,10 +571,8 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     }
 
     const userToggle = (
-      <span className="pf-v6-c-dropdown__toggle">
-        <span className="co-username" data-test="username">
-          {authEnabledFlag ? username : t('public~Auth disabled')}
-        </span>
+      <span className="co-username" data-test="username">
+        {authEnabledFlag ? username : t('public~Auth disabled')}
       </span>
     );
 

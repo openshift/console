@@ -96,21 +96,28 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   isAllowed,
 }) => {
   const { t } = useTranslation();
+  const ref = React.useRef(null);
+  const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
+  React.useEffect(() => {
+    const parentNode = ref.current.parentNode; // <li />
+    disabled
+      ? parentNode.classList.add('pf-m-disabled')
+      : parentNode.classList.remove('pf-m-disabled');
+  }, [disabled]);
   const handleEscape = (e) => {
     if (e.keyCode === KeyTypes.Escape) {
       onEscape();
     }
   };
-  const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
-  const classes = classNames('pf-v6-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
   return (
     <button
-      className={classes}
+      className="pf-v6-c-menu__item"
       onClick={(e) => !disabled && onClick(e, option)}
       autoFocus={autoFocus}
       onKeyDown={onEscape && handleEscape}
       disabled={disabled}
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
+      ref={ref}
     >
       {option.icon && <span className="oc-kebab__icon">{option.icon}</span>}
       {option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
@@ -145,7 +152,7 @@ const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
     <>
       <button
         ref={nodeRef}
-        className="oc-kebab__sub pf-v6-c-dropdown__menu-item"
+        className="oc-kebab__sub pf-v6-c-menu__item"
         data-test-action={option.labelKey || option.label}
         // mouse enter will open the sub menu
         onMouseEnter={() => setOpen(true)}
@@ -256,11 +263,11 @@ export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({
   focusItem,
 }) => (
   <ul
-    className={classNames('pf-v6-c-dropdown__menu pf-m-align-right', className)}
+    className={classNames('pf-v6-c-menu__list pf-m-align-right', className)}
     data-test-id="action-items"
   >
     {_.map(options, (o, index) => (
-      <li key={index}>
+      <li key={index} className="pf-v6-c-menu__list-item">
         {isKebabSubMenu(o) ? (
           <KebabSubMenu option={o} onClick={onClick} />
         ) : (
@@ -560,7 +567,7 @@ export const Kebab: KebabComponent = (props) => {
           aria-expanded={active}
           aria-haspopup="true"
           aria-label={t('public~Actions')}
-          className="pf-v6-c-dropdown__toggle pf-m-plain"
+          className="pf-v6-c-menu-toggle pf-m-plain"
           data-test-id="kebab-button"
           disabled={isDisabled}
           onClick={toggle}
@@ -584,7 +591,7 @@ export const Kebab: KebabComponent = (props) => {
               fallbackFocus: getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
             }}
           >
-            <div ref={divElement} className="pf-v6-c-dropdown pf-m-expanded" tabIndex={-1}>
+            <div ref={divElement} className="pf-v6-c-menu pf-m-expanded" tabIndex={-1}>
               <KebabMenuItems
                 options={menuOptions}
                 onClick={onClick}

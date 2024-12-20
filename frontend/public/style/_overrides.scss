@@ -87,14 +87,6 @@ form.pf-v6-c-form {
   --pf-v6-c-toolbar__content--PaddingRight: 0;
 }
 
-.co-toolbar-no-padding .pf-v6-c-toolbar__content {
-  // use negative margins so that pf-v6-c-toolbar__expandable-content extends to the edges at mobile
-  margin-left: -$pf-v6-global-gutter;
-  margin-right: -$pf-v6-global-gutter;
-  --pf-v6-c-toolbar--PaddingTop: 0;
-  --pf-v6-c-toolbar--RowGap: var(--pf-t--global--spacer--md);
-}
-
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
 // bug occurs only if the suggestions overlay has been enabled
 .monaco-aria-container {
@@ -212,7 +204,7 @@ form.pf-v6-c-form {
   .pf-v6-c-button,
   .pf-v6-c-dropdown,
   .pf-v6-c-dropdown__menu-item,
-  .pf-v6-c-dropdown__toggle,
+  .pf-v6-c-menu-toggle,
   .pf-v6-c-form-control {
     // font-size: $font-size-base;
     height: auto;

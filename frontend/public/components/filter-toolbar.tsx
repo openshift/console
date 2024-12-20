@@ -357,7 +357,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   const showSearchFiltersDropdown = Object.keys(filterDropdownItems).length > 1;
   return (
     <Toolbar
-      className="co-toolbar-no-padding pf-m-toggle-group-container"
+      className="pf-m-toggle-group-container"
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}

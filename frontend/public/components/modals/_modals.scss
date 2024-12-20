@@ -12,13 +12,10 @@
 }
 
 .modal-dialog {
-  --os-modal-dialog--BackgroundColor: var(--pf-v6-global--BackgroundColor--100);
+  --os-modal-dialog--BackgroundColor: var(--pf-t--global--background--color--floating--default);
 
   background: var(--os-modal-dialog--BackgroundColor);
-
-  :where(.pf-v6-theme-dark) & {
-    --os-modal-dialog--BackgroundColor: var(--pf-v6-global--BackgroundColor--300);
-  }
+  border-radius: var(--pf-t--global--border--radius--large);
 }
 
 .modal-body {
