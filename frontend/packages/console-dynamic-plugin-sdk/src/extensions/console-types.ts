@@ -3,7 +3,6 @@ import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
-import MonacoEditor from 'react-monaco-editor/lib/editor';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -647,7 +646,7 @@ export type CodeEditorProps = {
 };
 
 export type CodeEditorRef = {
-  editor?: MonacoEditor['editor'];
+  editor?: any;
 };
 
 export type ResourceYAMLEditorProps = {

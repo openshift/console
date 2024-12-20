@@ -4,7 +4,6 @@ import { FormikValues, useFormikContext } from 'formik';
 import MonacoEditor, { ChangeHandler, MonacoEditorProps } from 'react-monaco-editor';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
-import '@console/shared/src/components/editor/theme';
 
 type EditorFieldProps = {
   name: string;

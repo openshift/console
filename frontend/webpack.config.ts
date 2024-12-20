@@ -148,14 +148,6 @@ const config: Configuration = {
         ],
       },
       {
-        test: /node_modules[\\\\|/](yaml-language-server)/,
-        loader: 'umd-compat-loader',
-      },
-      {
-        test: /node_modules[\\\\|/](vscode-json-languageservice)/,
-        loader: 'umd-compat-loader',
-      },
-      {
         test: /\.s?css$/,
         exclude: /node_modules\/(?!(@patternfly(-\S+)?|@console\/plugin-shared)\/).*/,
         use: [
@@ -265,6 +257,16 @@ const config: Configuration = {
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
       globalAPI: true,
+      customLanguages: [
+        {
+          label: 'yaml',
+          entry: 'monaco-yaml',
+          worker: {
+            id: 'monaco-yaml/yamlWorker',
+            entry: 'monaco-yaml/yaml.worker',
+          },
+        },
+      ],
     }),
     new NodePolyfillPlugin({
       additionalAliases: ['process'],
