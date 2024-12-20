@@ -3,7 +3,6 @@
 // Mostly just a copy-paste from patternfly.
 import * as React from 'react';
 import { defaults } from 'lodash';
-//@ts-ignore
 import { Helpers } from 'victory-core';
 import {
   ChartLegend,

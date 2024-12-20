@@ -3,9 +3,8 @@ import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector, useDispatch } from 'react-redux';
 import { ListPageBody } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {

@@ -3,7 +3,7 @@ import { Button, Divider } from '@patternfly/react-core';
 import { MagicIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch } from 'react-redux';
 import { action } from 'typesafe-actions';
 import { ActionType } from '@console/internal/reducers/ols';

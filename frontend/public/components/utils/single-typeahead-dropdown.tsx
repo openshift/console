@@ -56,9 +56,8 @@ export type SingleTypeaheadDropdownProps = {
  * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
  */
 const getTextWidth = (text: string, font: string): number => {
-  // re-use canvas object for better performance
   const canvas: HTMLCanvasElement =
-    // @ts-ignore
+    // @ts-ignore: re-use canvas object for better performance
     getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
   const context = canvas.getContext('2d');
   context.font = font;

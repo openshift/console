@@ -1,4 +1,4 @@
-/* eslint-disable tsdoc/syntax */
+/* eslint-disable tsdoc/syntax */ // This file is written in JavaScript, so we use JSDoc here. TSDoc rules don't apply
 // @ts-check
 
 /**

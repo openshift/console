@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { RootState } from '@console/internal/redux';

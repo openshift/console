@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { setActiveApplication } from '@console/internal/actions/ui';
 import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
