@@ -1,26 +1,3 @@
-$color-log-window-header-bg: var(--pf-v6-global--BackgroundColor--dark-300);
-$color-log-window-text: var(--pf-v6-global--Color--light-100);
-
-.pf-v6-c-log-viewer {
-  &.pf-m-dark {
-    .pf-v6-c-log-viewer__main {
-      background-color: var(--pf-v6-global--palette--black-1000);
-    }
-  }
-}
-
-.log-window__header {
-  color: $color-log-window-text;
-  background-color: $color-log-window-header-bg;
-  padding: 8px 10px 5px 10px;
-}
-
-.log-window-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
 .log-window__footer--hidden {
   visibility: hidden;
 }

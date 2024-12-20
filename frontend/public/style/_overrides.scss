@@ -44,7 +44,9 @@ form.pf-v6-c-form {
     }
   }
   .pf-v6-c-card__selectable-actions .pf-v6-c-radio__label:hover {
-    --pf-v6-c-card--m-selectable--hover--BackgroundColor: var(--pf-v6-global--BackgroundColor--100);
+    --pf-v6-c-card--m-selectable--hover--BackgroundColor: var(
+      --pf-t--global--background--color--100
+    );
   }
 }
 
@@ -308,7 +310,7 @@ ul {
 }
 
 .pfext-quick-start-footer {
-  background-color: var(--pf-v6-global--BackgroundColor--100);
+  background-color: var(--pf-t--global--background--color--100);
 }
 
 // TODO Remove this override when skip to content CSS is figured out.

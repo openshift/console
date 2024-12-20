@@ -1,15 +1,14 @@
 .co-toggle-play.pf-v6-c-button {
-  background-color: var(--pf-v6-global--BackgroundColor--100);
-  border: var(--pf-t--global--border--width--lg) solid var(--pf-t--global--border--color--default);
+  align-items: center;
+  background-color: var(--pf-t--global--background--color--100);
+  border: var(--pf-t--global--border--width--300) solid var(--pf-t--global--border--color--default);
   border-radius: 50%;
-  height: 32px;
+  height: 37px;
   margin-right: 15px;
   padding: 0;
-  width: 32px;
+  width: 37px;
 
   &.co-toggle-play--active {
-    border-color: var(
-      --pf-v6-global--palette--green-300
-    ); // brighter green that works for both light and dark themes
+    border-color: var(--pf-t--color--green--40);
   }
 }

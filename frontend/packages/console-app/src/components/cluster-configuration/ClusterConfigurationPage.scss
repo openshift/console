@@ -14,13 +14,13 @@
   }
 
   .pf-v6-c-empty-state {
-    background-color: var(--pf-v6-global--BackgroundColor--100);
+    background-color: var(--pf-t--global--background--color--100);
     flex: 1;
     align-items: flex-start;
   }
 
   .pf-v6-c-tabs.pf-m-vertical {
-    background-color: var(--pf-v6-global--BackgroundColor--100);
+    background-color: var(--pf-t--global--background--color--100);
 
     @media (min-width: 769px) {
       max-width: 100%;
@@ -44,7 +44,7 @@
 .co-cluster-configuration-page-content {
   display: flex;
   flex-direction: row;
-  background-color: var(--pf-v6-global--BackgroundColor--100);
+  background-color: var(--pf-t--global--background--color--100);
   min-height: 100%;
   &__tabs {
     @media (min-width: 769px) {

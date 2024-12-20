@@ -29,7 +29,8 @@
   }
 
   .co-file-dropzone-container {
-    border: var(--pf-t--global--border--width--lg) solid var(--pf-t--global--border--color--default);
+    border: var(--pf-t--global--border--width--300) solid
+      var(--pf-t--global--border--color--default);
     background: rgba(0, 0, 0, 0.3);
     bottom: 0;
     color: #fff;

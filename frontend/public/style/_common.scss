@@ -584,7 +584,10 @@ dl.co-inline {
 .co-overview-card--gradient {
   position: relative;
   &:after {
-    background: linear-gradient(rgba(255, 255, 255, 0), var(--pf-v6-global--BackgroundColor--100));
+    background: linear-gradient(
+      rgba(255, 255, 255, 0),
+      var(--pf-t--global--background--color--100)
+    );
     bottom: 0;
     content: '';
     left: 0;

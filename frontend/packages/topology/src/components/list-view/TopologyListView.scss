@@ -4,7 +4,7 @@
   --odc-topology-list-view-type-icon-size: 16px;
   --odc-topology-list-view-sidebar-width: 550px;
   --pf-v6-c-data-list__item--m-selectable--OutlineOffset: 0;
-  background-color: var(--pf-v6-global--BackgroundColor--100);
+  background-color: var(--pf-t--global--background--color--100);
   position: absolute;
   top: 0;
   bottom: 0;
@@ -32,7 +32,7 @@
   }
 
   &__sidebar {
-    background-color: var(--pf-v6-global--BackgroundColor--100);
+    background-color: var(--pf-t--global--background--color--100);
     bottom: 0;
     box-shadow: var(--pf-v6-global--BoxShadow--md);
     display: none;
@@ -141,7 +141,7 @@
     .odc-topology-list-view__kind-row,
     .odc-topology-list-view__unassigned-group {
       &.pf-v6-c-data-list__item-row:hover {
-        background-color: var(--pf-v6-global--BackgroundColor--100);
+        background-color: var(--pf-t--global--background--color--100);
         cursor: default;
       }
     }

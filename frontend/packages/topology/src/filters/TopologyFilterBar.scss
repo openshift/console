@@ -1,7 +1,7 @@
 @import '../../../../public/style/vars';
 
 .odc-topology-filter-bar {
-  background-color: var(--pf-v6-global--BackgroundColor--100);
+  background-color: var(--pf-t--global--background--color--100);
   padding: 6px 0;
 
   @media screen and (min-width: $pf-v6-global--breakpoint--xl) {

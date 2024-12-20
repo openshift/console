@@ -23,7 +23,7 @@
   &:before {
     background: linear-gradient(
       to right,
-      var(--pf-v6-global--BackgroundColor--100),
+      var(--pf-t--global--background--color--100),
       rgba(255, 255, 255, 0)
     );
     left: 0;
@@ -31,7 +31,7 @@
   &:after {
     background: linear-gradient(
       to left,
-      var(--pf-v6-global--BackgroundColor--100),
+      var(--pf-t--global--background--color--100),
       rgba(255, 255, 255, 0)
     );
     right: 0;
