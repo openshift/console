@@ -1,6 +1,6 @@
 {
   "Notifications": "알림",
-  "{{count}} unread_one": "{{count}} unread_one",
+  "{{count}} unread_one": "{{count}} 읽지 않음",
   "{{count}} unread_other": "{{count}} unread_other",
   "Close": "닫기",
   "Warning notification:": "경고 알림 :",

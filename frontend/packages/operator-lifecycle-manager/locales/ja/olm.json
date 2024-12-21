@@ -372,6 +372,8 @@
   "View Operator": "Operator の表示",
   "The Operator is being installed. This may take a few minutes.": "Operator がインストールされています。数分の時間がかかる可能性があります。",
   "Once the Operator is installed the required custom resource will be available for creation.": "Operator のインストール後に、必要なカスタムリソースは作成可能になります。",
+  "Not found": "見つかりません",
+  "Error: {{loadError}}": "エラー: {{loadError}}",
   "Installing...": "インストール...",
   "CatalogSource": "CatalogSource",
   "No PackageManifests Found": "PackageManifest が見つかりません",
