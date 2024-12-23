@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SecretSubFormProps, SecretTypeAbstraction } from './types';
-import { SourceSecretForm } from './SourceSecretForm';
+import { AuthSecretForm } from './AuthSecretForm';
 import { PullSecretForm } from './PullSecretForm';
 import { WebHookSecretForm } from './WebHookSecretForm';
 import { GenericSecretForm } from './GenericSecretForm';
@@ -10,7 +10,7 @@ export const SecretSubForm: React.FC<
 > = ({ typeAbstraction, ...props }) => {
   switch (typeAbstraction) {
     case SecretTypeAbstraction.source:
-      return <SourceSecretForm {...props} />;
+      return <AuthSecretForm {...props} />;
     case SecretTypeAbstraction.image:
       return <PullSecretForm {...props} />;
     case SecretTypeAbstraction.webhook:

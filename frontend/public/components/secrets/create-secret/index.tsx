@@ -6,7 +6,7 @@ export * from './PullSecretCredentialEntry';
 export * from './PullSecretCredentialsForm';
 export * from './PullSecretUploadForm';
 export * from './WebHookSecretForm';
-export * from './SourceSecretForm';
+export * from './AuthSecretForm';
 export * from './BasicAuthSubform';
 export * from './SSHAuthSubform';
 export * from './GenericSecretForm';

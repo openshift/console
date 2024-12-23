@@ -1,24 +1,32 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '../../utils';
-import { SecretType, BasicAuthSubform, SSHAuthSubform, SecretSubFormProps } from '.';
+import { SecretType, SecretSubFormProps, SecretStringData } from './types';
+import { BasicAuthSubform } from './BasicAuthSubform';
+import { SSHAuthSubform } from './SSHAuthSubform';
 
-export const SourceSecretForm: React.FC<SecretSubFormProps> = ({
+export const AuthSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,
   stringData,
   isCreate,
+  secretType,
 }) => {
   const { t } = useTranslation();
-  const [authType, setAuthType] = React.useState<SecretType>(SecretType.basicAuth);
+  const [authType, setAuthType] = React.useState<SecretType>(secretType);
+  const [data, setData] = React.useState<SecretStringData>(stringData);
 
   const authTypes = {
     [SecretType.basicAuth]: t('public~Basic authentication'),
     [SecretType.sshAuth]: t('public~SSH key'),
   };
 
+  const handleDataChange = (secretsData: SecretStringData) => {
+    setData(secretsData);
+    onChange({ stringData: secretsData });
+  };
   return (
     <>
-      {isCreate ? (
+      {isCreate && (
         <div className="form-group">
           <label className="control-label" htmlFor="secret-type">
             {t('public~Authentication type')}
@@ -33,11 +41,11 @@ export const SourceSecretForm: React.FC<SecretSubFormProps> = ({
             />
           </div>
         </div>
-      ) : null}
+      )}
       {authType === SecretType.basicAuth ? (
-        <BasicAuthSubform onChange={onChange} stringData={stringData} />
+        <BasicAuthSubform onChange={handleDataChange} stringData={data} />
       ) : (
-        <SSHAuthSubform onChange={onChange} stringData={stringData} />
+        <SSHAuthSubform onChange={handleDataChange} stringData={data} />
       )}
     </>
   );
