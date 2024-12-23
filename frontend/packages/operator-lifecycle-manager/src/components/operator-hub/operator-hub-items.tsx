@@ -9,7 +9,6 @@ import {
   EmptyStateFooter,
   Truncate,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -617,15 +616,12 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               <div className="co-catalog-page__overlay-actions">
                 {remoteWorkflowUrl && (
                   <ExternalLink
-                    additionalClassName="pf-v5-c-button pf-m-primary co-catalog-page__overlay-action"
+                    additionalClassName="pf-v5-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
                     href={remoteWorkflowUrl}
                     text={
-                      <>
-                        <div className="co-catalog-page__overlay-action-label">
-                          {detailsItem.marketplaceActionText || t('olm~Purchase')}
-                        </div>
-                        <ExternalLinkAltIcon className="co-catalog-page__overlay-action-icon" />
-                      </>
+                      <div className="co-catalog-page__overlay-action-label">
+                        {detailsItem.marketplaceActionText || t('olm~Purchase')}
+                      </div>
                     }
                   />
                 )}
