@@ -105,9 +105,10 @@ const UserPreferencePage: React.FC = () => {
   const [spotlightElement, setSpotlightElement] = React.useState<Element>(null);
 
   React.useEffect(() => {
+    setActiveTabId(groupIdFromUrl ?? 'general');
     const element = document.querySelector(spotlight);
     setSpotlightElement(element);
-  }, [spotlight, userPreferenceItemResolved, userPreferenceTabContents]);
+  }, [groupIdFromUrl, spotlight, userPreferenceItemResolved, userPreferenceTabContents]);
 
   // utils and callbacks
   const handleTabClick = (event: React.MouseEvent<HTMLElement>, eventKey: string) => {
