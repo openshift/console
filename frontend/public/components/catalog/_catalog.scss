@@ -249,12 +249,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     overflow-x: hidden;
   }
 
-  &__overlay-action-icon {
-    flex-shrink: 0;
-    font-size: $font-size-base;
-    margin-left: 6px;
-  }
-
   &__overlay-action-label {
     overflow-x: hidden;
     text-overflow: ellipsis;
