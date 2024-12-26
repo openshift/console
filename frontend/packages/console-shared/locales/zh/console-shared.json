@@ -182,7 +182,7 @@
   "Run in Web Terminal": "运行 Web 终端",
   "Successfully copied to clipboard!": "成功复制到剪贴板！",
   "Running in Web Terminal": "在 Web 终端中运行",
-  "Console plugin enablement - {{plugin}}": "控制台插件启用 - {{plugin}}",
+  "Console plugin enablement - {{pluginName}}": "控制台插件启用 - {{pluginName}}",
   "Console plugin enablement": "控制台插件启用",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "此 Operator 包含一个控制台插件，它提供了一个可包含在控制台中的自定义接口。更新此控制台插件的启用将提示在控制台更新后刷新控制台。请确保在启用前信任此控制台插件。",
   "This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "这个控制台插件提供了一个可包含在控制台中的自定义接口。更新此控制台插件的启用将提示在控制台更新后刷新控制台。请确保在启用前信任此控制台插件。",

@@ -294,7 +294,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
           {csvPlugins.map((pluginName) => (
             <dd key={pluginName} className="co-clusterserviceversion-details__field-description">
               {csvPluginsCount > 1 && (
-                <strong className="text-muted">{t('olm~{{plugin}}:', { pluginName })} </strong>
+                <strong className="text-muted">{t('olm~{{pluginName}}:', { pluginName })} </strong>
               )}
               <Button
                 data-test="edit-console-plugin"

@@ -182,7 +182,7 @@
   "Run in Web Terminal": "Ejecutar en terminal web",
   "Successfully copied to clipboard!": "¡Copiado correctamente al portapapeles!",
   "Running in Web Terminal": "Ejecutando en terminal web",
-  "Console plugin enablement - {{plugin}}": "Habilitación del complemento de consola - {{plugin}}",
+  "Console plugin enablement - {{pluginName}}": "Habilitación del complemento de consola - {{pluginName}}",
   "Console plugin enablement": "Habilitación del complemento de consola",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "Este operador incluye un complemento de consola que proporciona una interfaz personalizada que se puede incluir en la consola. Al actualizar la habilitación de este complemento de la consola, se solicitará que se vuelva a cargar la consola una vez que se haya actualizado. Asegúrese de que este complemento de consola sea confiable antes de habilitarlo.",
   "This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "Este complemento de consola proporciona una interfaz personalizada que se puede incluir en la consola. Al actualizar la habilitación de este complemento de la consola, se solicitará que se vuelva a cargar la consola una vez que se haya actualizado. Asegúrese de que este complemento de consola sea confiable antes de habilitarlo.",

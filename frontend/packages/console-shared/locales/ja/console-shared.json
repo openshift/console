@@ -182,7 +182,7 @@
   "Run in Web Terminal": "Web ターミナルでの実行",
   "Successfully copied to clipboard!": "クリップボードに正常にコピーされました!",
   "Running in Web Terminal": "Web ターミナルでの実行",
-  "Console plugin enablement - {{plugin}}": "コンソールプラグインの有効化 - {{plugin}}",
+  "Console plugin enablement - {{pluginName}}": "コンソールプラグインの有効化 - {{pluginName}}",
   "Console plugin enablement": "コンソールプラグインの有効化",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "この Operator には、コンソールに追加できるカスタムインターフェースを提供するコンソールプラグインが含まれています。このコンソールプラグインの有効化を更新すると、更新時にコンソールの更新を求めるプロンプトが出されます。このコンソールプラグインを信頼してから有効にするようにしてください。",
   "This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "このコンソールプラグインは、コンソールに含めることができるカスタムインターフェースを提供します。このコンソールプラグインの有効化を更新すると、更新時にコンソールの更新を求めるプロンプトが出されます。このコンソールプラグインを信頼してから有効にするようにしてください。",
