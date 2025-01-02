@@ -108,9 +108,10 @@ export const init = () => {
       },
       saveMissing: true,
       missingKeyHandler: function (lng, ns, key) {
-        window.windowError = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}".`;
+        const formattedMessage = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}".`;
+        window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
         // eslint-disable-next-line no-console
-        console.error(window.windowError);
+        console.error(formattedMessage);
       },
     })
     // Update loading promise and pass values and errors to the caller

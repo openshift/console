@@ -595,14 +595,14 @@ graphQLReady.onReady(() => {
   window.onerror = (message, source, lineno, colno, error) => {
     const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
-    window.windowError = formattedMessage;
+    window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
     // eslint-disable-next-line no-console
     console.error(formattedMessage, error || message);
   };
   window.onunhandledrejection = (promiseRejectionEvent) => {
     const { reason } = promiseRejectionEvent;
     const formattedMessage = `unhandled promise rejection: ${reason}`;
-    window.windowError = formattedMessage;
+    window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
     // eslint-disable-next-line no-console
     console.error(formattedMessage, reason);
   };

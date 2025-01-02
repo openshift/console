@@ -56,6 +56,7 @@ declare interface Window {
     k8sMode: string;
     capabilities: Record<string, string>[];
   };
+  /** (OCPBUGS-46415) Do not override this string! To add new errors please append to windowError if it exists*/
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
   i18n?: {}; // i18next instance, only available in development builds for debugging
