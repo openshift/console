@@ -154,7 +154,7 @@
     justify-content: space-between;
   }
   .monitoring-dashboards__dashboard_dropdown_tag {
-    font-weight: var(--pf-v6-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
     line-height: 13px;
     margin-left: 20px;
   }
@@ -355,7 +355,7 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__autocomplete-match {
-  font-weight: var(--pf-v6-global--FontWeight--bold);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
 }
 
 .query-browser__clear-icon {
@@ -565,11 +565,11 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__tooltip-time {
-  font-weight: var(--pf-v6-global--FontWeight--bold);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
 }
 
 .query-browser__tooltip-value {
-  font-weight: var(--pf-v6-global--FontWeight--bold);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
   margin-left: auto;
   padding-left: 10px;
   white-space: nowrap;

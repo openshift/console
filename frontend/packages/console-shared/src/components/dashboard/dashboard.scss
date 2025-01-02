@@ -1,7 +1,6 @@
 @import '../../../../../public/style/vars';
 
 .co-dashboard-body {
-  background-color: var(--pf-t--color--gray--10);
   flex: 1 0 auto;
   padding: $pf-v6-global-gutter;
   @media (min-width: $pf-v6-global--breakpoint--xl) {

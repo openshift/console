@@ -54,7 +54,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__kind-label {
-    font-weight: var(--pf-v6-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
   }
 
   &__name {
@@ -199,7 +199,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__num-items {
-    font-weight: var(--pf-v6-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
     padding: 0 0 20px;
   }
 

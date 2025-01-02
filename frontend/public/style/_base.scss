@@ -21,7 +21,7 @@
 
   // match pf4 styling / table col head styling
   @at-root dt#{&} {
-    font-weight: var(--pf-v6-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
   }
 
   @at-root fieldset#{&} {

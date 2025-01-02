@@ -421,7 +421,7 @@ dl.co-inline {
 
 .co-legend {
   border-bottom: 0;
-  font-weight: var(--pf-v6-global--FontWeight--bold);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
   font-size: $font-size-base;
   margin-bottom: 5px;
 
@@ -512,7 +512,7 @@ dl.co-inline {
     }
   }
   &__head {
-    font-weight: var(--pf-v6-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
     padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
     a {
       cursor: pointer;
