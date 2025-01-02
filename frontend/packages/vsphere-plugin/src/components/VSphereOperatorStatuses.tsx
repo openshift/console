@@ -5,8 +5,8 @@ import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/ex
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import {
-  t_temp_dev_tbd as okColor /* CODEMODS: you should update this color token, original v5 token was global_palette_green_500 */,
-  t_temp_dev_tbd as errorColor /* CODEMODS: you should update this color token, original v5 token was global_palette_red_100 */,
+  t_color_green_50 as okColor,
+  t_color_red_60 as errorColor,
 } from '@patternfly/react-tokens';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';

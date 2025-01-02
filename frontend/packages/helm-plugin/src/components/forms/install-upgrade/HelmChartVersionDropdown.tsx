@@ -85,9 +85,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
             </Trans>
           </p>
           <p>
-            <InfoCircleIcon
-              color="var(--pf-t--temp--dev--tbd)" /* CODEMODS: original v5 color was --pf-v6-global--info-color--100 */
-            />{' '}
+            <InfoCircleIcon color="var(--pf-t--color--blue--40)" />{' '}
             <Trans t={t} ns="helm-plugin">
               All data entered for version <strong>{{ currentVersion }}</strong> will be reset
             </Trans>

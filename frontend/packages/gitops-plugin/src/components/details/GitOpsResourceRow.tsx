@@ -3,8 +3,8 @@ import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { HeartBrokenIcon } from '@patternfly/react-icons/dist/esm/icons/heart-broken-icon';
 import {
-  t_temp_dev_tbd as RedColor /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
-  t_temp_dev_tbd as YellowColor /* CODEMODS: you should update this color token, original v5 token was global_warning_color_100 */,
+  t_global_icon_color_status_danger_default as RedColor,
+  t_global_icon_color_status_warning_default as YellowColor,
 } from '@patternfly/react-tokens';
 import { useTranslation } from 'react-i18next';
 import { GitOpsEnvironmentService, GitOpsHealthResources } from '../utils/gitops-types';

@@ -1,5 +1,5 @@
 .odc-task-list-node {
-  border: 1px solid var(--pf-t--global--border--color--light-100);
+  border: 1px solid var(--pf-t--global--border--color--disabled);
 
   &__container {
     overflow: hidden;
@@ -7,7 +7,7 @@
   }
   &__trigger-background {
     stroke: var(--pf-t--global--border--color--default);
-    fill: var(--pf-v6-global--BackgroundColor--light-100);
+    fill: var(--pf-t--global--background--color--primary--default);
     &.is-disabled {
       fill: var(--pf-v6-global--disabled-color--300);
     }

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
-import {
-  t_temp_dev_tbd as customTaskColor /* CODEMODS: you should update this color token, original v5 token was global_palette_black_500 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+import { t_color_gray_50 as customTaskColor } from '@patternfly/react-tokens';
 import { observer, Node, NodeModel, useHover, createSvgIdUrl } from '@patternfly/react-topology';
 import * as cx from 'classnames';
 import * as _ from 'lodash';

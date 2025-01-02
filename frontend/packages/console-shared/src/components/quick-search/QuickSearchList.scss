@@ -22,10 +22,10 @@
       }
     }
     &--highlight {
-      background-color: var(--pf-v6-global--BackgroundColor--200) !important;
+      background-color: var(--pf-t--color--gray--10) !important;
     }
     &:hover {
-      background-color: var(--pf-v6-global--BackgroundColor--200);
+      background-color: var(--pf-t--color--gray--10);
     }
   }
   &__item-row {

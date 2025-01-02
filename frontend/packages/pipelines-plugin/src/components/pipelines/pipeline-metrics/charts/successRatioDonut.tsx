@@ -33,8 +33,7 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
       subTitleComponent={
         <ChartLabel
           style={{
-            fill:
-              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--400 */,
+            fill: 'var(--pf-t--color--gray--50)',
             fontSize: 14,
           }}
         />
@@ -43,8 +42,7 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
       titleComponent={
         <ChartLabel
           style={{
-            fill:
-              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--100 */,
+            fill: 'var(--pf-t--global--text--color--regular)',
             fontSize: 24,
           }}
         />

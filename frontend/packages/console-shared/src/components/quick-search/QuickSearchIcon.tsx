@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {
-  t_temp_dev_tbd as globalWhite /* CODEMODS: you should update this color token, original v5 token was global_palette_white */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+import { t_color_white as globalWhite } from '@patternfly/react-tokens';
 
 const QuickSearchIcon: React.FC<React.HTMLProps<SVGElement>> = ({ style }): React.ReactElement => {
   return (

@@ -39,8 +39,7 @@ const LabelComponent = ({ clusterID, ...props }) => (
     <ChartLabel
       {...props}
       style={{
-        fill:
-          'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-t--global--text--color--link--default */,
+        fill: 'var(--pf-t--global--text--color--link--default)',
       }}
     />
   </ExternalLink>

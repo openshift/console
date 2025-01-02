@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Split, SplitItem, Bullseye, Icon } from '@patternfly/react-core';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
-import {
-  t_temp_dev_tbd as color200 /* CODEMODS: you should update this color token, original v5 token was global_Color_200 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+import { t_color_gray_50 as color200 } from '@patternfly/react-tokens';
 import { LoadingInline } from '@console/internal/components/utils';
 import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '../../hooks';

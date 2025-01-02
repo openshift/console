@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { ExclamationIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-icon';
-import {
-  t_temp_dev_tbd as redColor /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+import { t_global_icon_color_status_danger_default as redColor } from '@patternfly/react-tokens';
 import { BUILDER_NODE_DECORATOR_RADIUS } from './const';
 
 import './ErrorNodeDecorator.scss';

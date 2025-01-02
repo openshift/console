@@ -7,9 +7,7 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
-import {
-  t_temp_dev_tbd as greenColor /* CODEMODS: you should update this color token, original v5 token was global_palette_green_500 */,
-} from '@patternfly/react-tokens';
+import { t_color_green_50 as greenColor } from '@patternfly/react-tokens';
 import i18n from 'i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { TektonHubTaskVersion } from '../catalog/apis/tektonHub';

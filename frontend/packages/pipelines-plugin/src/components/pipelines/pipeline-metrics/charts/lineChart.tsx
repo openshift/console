@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ChartLineProps, ChartProps } from '@patternfly/react-charts/victory';
 import {
+  ChartLineProps,
+  ChartProps,
   Chart,
   ChartThemeColor,
   ChartAxis,
@@ -59,8 +60,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       fontSize: 10,
       textAnchor: 'end',
       verticalAnchor: 'end',
-      fill:
-        'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--100 */,
+      fill: 'var(--pf-t--global--text--color--regular)',
     },
   };
 
@@ -91,8 +91,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         tickFormat={yTickFormat}
         style={{
           tickLabels: {
-            fill:
-              'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--100 */,
+            fill: 'var(--pf-t--global--text--color--regular',
           },
         }}
       />

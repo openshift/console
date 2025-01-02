@@ -1,6 +1,6 @@
 .pf-topology__edge {
   &.odc-connects-to {
-    --edge--stroke: var(--pf-v6-global--Color--400);
+    --edge--stroke: var(--pf-t--color--gray--50);
     --edge--fill: var(--pf-v6-global--BackgroundColor--light-300);
 
     &.odc-m-editable {

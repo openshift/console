@@ -1,9 +1,8 @@
 .kv-subnets-container {
   &__info-icon {
-    color: var(--pf-v6-global--info-color--100);
+    color: var(--pf-t--color--blue--40);
     margin-right: var(--pf-t--global--spacer--sm);
   }
-
   &__helper-text {
     font-weight: bolder;
     color: var(--pf-t--global--text--color--link--default);

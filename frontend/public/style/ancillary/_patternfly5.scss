@@ -103,19 +103,17 @@
   --pf-v6-c-form-control--PaddingLeft: var(--pf-v6-c-form-control--inset--base);
 
   // hover
-  --pf-v6-c-form-control--hover--after--BorderBottomColor: var(--pf-v6-global--primary-color--100);
+  --pf-v6-c-form-control--hover--after--BorderBottomColor: var(--pf-t--color--blue--50);
 
   // focus
   --pf-v6-c-form-control--focus--after--BorderBottomWidth: var(--pf-t--global--border--width--md);
-  --pf-v6-c-form-control--focus--after--BorderBottomColor: var(--pf-v6-global--primary-color--100);
+  --pf-v6-c-form-control--focus--after--BorderBottomColor: var(--pf-t--color--blue--50);
 
   // expanded
   --pf-v6-c-form-control--m-expanded--after--BorderBottomWidth: var(
     --pf-t--global--border--width--md
   );
-  --pf-v6-c-form-control--m-expanded--after--BorderBottomColor: var(
-    --pf-v6-global--primary-color--100
-  );
+  --pf-v6-c-form-control--m-expanded--after--BorderBottomColor: var(--pf-t--color--blue--50);
 
   // placeholder
   --pf-v6-c-form-control--m-placeholder--Color: var(--pf-v6-global--Color--dark-200);
@@ -163,7 +161,9 @@
 
   // error
   --pf-v6-c-form-control--m-error--after--BorderBottomWidth: var(--pf-t--global--border--width--md);
-  --pf-v6-c-form-control--m-error--after--BorderBottomColor: var(--pf-v6-global--danger-color--100);
+  --pf-v6-c-form-control--m-error--after--BorderBottomColor: var(
+    --pf-t--global--text--color--status--danger--default
+  );
   --pf-v6-c-form-control--m-error--PaddingRight: var(--pf-t--global--spacer--xl);
   --pf-v6-c-form-control--m-error--icon--width: var(--pf-v6-c-form-control--FontSize);
 
@@ -206,7 +206,9 @@
   --pf-v6-c-form-control__icon--m-status--Color: var(--pf-v6-global--icon--Color--light);
   --pf-v6-c-form-control--m-success__icon--m-status--Color: var(--pf-v6-global--success-color--100);
   --pf-v6-c-form-control--m-warning__icon--m-status--Color: var(--pf-v6-global--warning-color--100);
-  --pf-v6-c-form-control--m-error__icon--m-status--Color: var(--pf-v6-global--danger-color--100);
+  --pf-v6-c-form-control--m-error__icon--m-status--Color: var(
+    --pf-t--global--icon--color--status--danger--default
+  );
 
   // Form control utilities
   --pf-v6-c-form-control__utilities--Gap: var(--pf-t--global--spacer--sm);

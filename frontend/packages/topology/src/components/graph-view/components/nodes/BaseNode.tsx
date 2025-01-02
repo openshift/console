@@ -139,12 +139,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
           <g data-test-id="base-node-handler">
             {icon && showDetails && (
               <>
-                <circle
-                  fill="var(--pf-t--temp--dev--tbd)" /* CODEMODS: original v5 color was --pf-v6-global--palette--white */
-                  cx={cx}
-                  cy={cy}
-                  r={innerRadius + 6}
-                />
+                <circle fill="var(--pf-t--color--white)" cx={cx} cy={cy} r={innerRadius + 6} />
                 <image
                   x={cx - iconRadius}
                   y={cy - iconRadius}

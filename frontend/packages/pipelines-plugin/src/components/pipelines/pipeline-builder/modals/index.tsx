@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Icon } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
-import {
-  t_temp_dev_tbd as warningColor /* CODEMODS: you should update this color token, original v5 token was global_warning_color_100 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
 import i18next from 'i18next';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import ModalContent from './ModalContent';

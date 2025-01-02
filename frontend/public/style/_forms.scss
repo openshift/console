@@ -18,7 +18,7 @@
 }
 
 .co-required:after {
-  color: var(--pf-v6-global--danger-color--100);
+  color: var(--pf-t--global--text--color--status--danger--default);
   content: '*';
   font-size: $font-size-base;
   padding-left: 3px;

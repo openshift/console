@@ -1,8 +1,8 @@
 @import '../../../../../../topology/src/components/topology-utils';
 
-$border-color: var(--pf-t--global--border--color--light-100);
+$border-color: var(--pf-t--global--border--color--disabled);
 .odc-pipeline-vis-task {
-  fill: var(--pf-v6-global--BackgroundColor--light-100);
+  fill: var(--pf-t--global--background--color--primary--default);
   stroke: $border-color;
   stroke-width: 1;
   cursor: default;

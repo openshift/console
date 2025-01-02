@@ -1,11 +1,9 @@
+import { t_global_text_color_status_danger_default as failureColor } from '@patternfly/react-tokens';
 import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { chart_color_blue_100 as pendingColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import {
-  t_temp_dev_tbd as failureColor /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
 import i18next from 'i18next';
 import {
   K8sKind,

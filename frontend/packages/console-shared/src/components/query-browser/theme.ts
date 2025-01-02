@@ -1,14 +1,11 @@
 import { ChartThemeColor, getCustomTheme } from '@patternfly/react-charts/victory';
-import {
-  t_temp_dev_tbd as globalBlack300 /* CODEMODS: you should update this color token, original v5 token was global_palette_black_300 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+import { t_color_gray_30 as globalBlack300 } from '@patternfly/react-tokens';
 
 const pfDependentAxisTickLabels = {
   padding: 5,
   fontFamily: 'var(--pf-v6-chart-global--FontFamily)',
   letterSpacing: 'var(--pf-v6-chart-global--letter-spacing)',
-  fill:
-    'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--200 */,
+  fill: 'var(--pf-t--global--text--color--subtle)',
 };
 
 const theme = {

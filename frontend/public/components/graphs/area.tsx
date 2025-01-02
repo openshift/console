@@ -13,9 +13,9 @@ import {
 } from '@patternfly/react-charts/victory';
 
 import {
-  t_temp_dev_tbd as warningColor /* CODEMODS: you should update this color token, original v5 token was global_warning_color_100 */,
-  t_temp_dev_tbd as dangerColor /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+  t_global_icon_color_status_warning_default as warningColor,
+  t_global_icon_color_status_danger_default as dangerColor,
+} from '@patternfly/react-tokens';
 
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';

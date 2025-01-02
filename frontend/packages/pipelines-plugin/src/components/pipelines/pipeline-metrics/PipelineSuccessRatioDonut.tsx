@@ -2,9 +2,9 @@ import * as React from 'react';
 import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts/victory';
 import { Grid, GridItem } from '@patternfly/react-core';
 import {
-  t_temp_dev_tbd as grayColor /* CODEMODS: you should update this color token, original v5 token was global_Color_200 */,
-  t_temp_dev_tbd as dangerColor /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+  t_color_gray_50 as grayColor,
+  t_global_icon_color_status_danger_default as dangerColor,
+} from '@patternfly/react-tokens';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import Measure from 'react-measure';

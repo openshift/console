@@ -90,7 +90,7 @@
     margin: 2px 0;
   }
   &__type-icon-bg {
-    background-color: var(--pf-v6-global--palette--white);
+    background-color: var(--pf-t--color--white);
     border: solid 1px var(--pf-t--global--border--color--200);
     border-radius: 12px;
     box-shadow: 2px 2px 3px var(--pf-t--global--border--color--default);
@@ -196,7 +196,7 @@
         > .odc-topology-list-view__item-row {
           outline-offset: -5px;
           outline: -webkit-focus-ring-color auto 1px;
-          background-color: var(--pf-v6-global--BackgroundColor--200);
+          background-color: var(--pf-t--color--gray--10);
         }
       }
     }
@@ -216,7 +216,7 @@
       }
     }
     &.pf-m-clickable .pf-v6-c-data-list__item-row:hover {
-      background-color: var(--pf-v6-global--BackgroundColor--200);
+      background-color: var(--pf-t--color--gray--10);
     }
   }
   .pf-v6-c-data-list__item-content {

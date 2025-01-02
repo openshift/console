@@ -13,9 +13,8 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
-import {
-  t_temp_dev_tbd as globalDangerColor100 /* CODEMODS: you should update this color token, original v5 token was global_danger_color_100 */,
-} from '@patternfly/react-tokens';
+import { t_global_icon_color_status_danger_default as globalDangerColor100 } from '@patternfly/react-tokens';
+
 import { PageHeading } from './utils';
 import { useLocation } from 'react-router';
 

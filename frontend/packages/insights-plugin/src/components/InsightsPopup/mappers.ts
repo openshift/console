@@ -3,12 +3,12 @@ import { AngleDoubleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-
 import { CriticalRiskIcon } from '@patternfly/react-icons/dist/esm/icons/critical-risk-icon';
 import { EqualsIcon } from '@patternfly/react-icons/dist/esm/icons/equals-icon';
 import {
-  t_temp_dev_tbd as blue300 /* CODEMODS: you should update this color token, original v5 token was global_palette_blue_300 */,
-  t_temp_dev_tbd as blue50 /* CODEMODS: you should update this color token, original v5 token was global_palette_blue_50 */,
-  t_temp_dev_tbd as gold400 /* CODEMODS: you should update this color token, original v5 token was global_palette_gold_400 */,
-  t_temp_dev_tbd as orange300 /* CODEMODS: you should update this color token, original v5 token was global_palette_orange_300 */,
-  t_temp_dev_tbd as red200 /* CODEMODS: you should update this color token, original v5 token was global_palette_red_200 */,
-} from '@patternfly/react-tokens/dist/js/t_temp_dev_tbd';
+  t_color_blue_10 as blue50,
+  t_color_blue_50 as blue300,
+  t_color_yellow_40 as gold400,
+  t_color_orange_40 as orange300,
+  t_color_red_60 as red200,
+} from '@patternfly/react-tokens';
 import * as _ from 'lodash';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 

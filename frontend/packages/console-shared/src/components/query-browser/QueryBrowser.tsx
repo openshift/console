@@ -514,8 +514,7 @@ const Graph: React.FC<GraphProps> = React.memo(
             style={{
               labels: {
                 fontSize: 11,
-                fill:
-                  'var(--pf-t--temp--dev--tbd)' /* CODEMODS: original v5 color was --pf-v6-global--Color--100 */,
+                fill: 'var(--pf-t--global--text--color--regular)',
               },
             }}
             symbolSpacer={4}
