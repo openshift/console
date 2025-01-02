@@ -290,48 +290,50 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           {[...selectedItems].map((resource) => {
             const isCollapsed = collapsedKinds.has(resource);
             return (
-              <div key={resource} className="co-search__accordion">
-                <AccordionItem isExpanded={!isCollapsed}>
-                  <AccordionToggle
-                    className="co-search__accordion-toggle"
-                    onClick={() => toggleKindExpanded(resource)}
-                    id={`${resource}-toggle`}
-                  >
-                    {getToggleText(resource)}
-                    {perspective !== 'admin' && pinnedResourcesLoaded && (
-                      <Button
-                        className="co-search-group__pin-toggle"
-                        variant={ButtonVariant.link}
-                        onClick={(e) => pinToggle(e, resource)}
-                      >
-                        {pinnedResources.includes(resource) ? (
-                          <>
-                            <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                            {t('public~Remove from navigation')}
-                          </>
-                        ) : (
-                          <>
-                            <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
-                            {t('public~Add to navigation')}
-                          </>
-                        )}
-                      </Button>
-                    )}
-                  </AccordionToggle>
-                  <AccordionContent>
-                    {!isCollapsed && (
-                      <ResourceList
-                        kind={resource}
-                        selector={selectorFromString(labelFilter.join(','))}
-                        nameFilter={typeaheadNameFilter}
-                        namespace={namespace}
-                        mock={noProjectsAvailable}
-                        key={resource}
-                      />
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              </div>
+              <AccordionItem
+                isExpanded={!isCollapsed}
+                key={resource}
+                className="co-search__accordion"
+              >
+                <AccordionToggle
+                  className="co-search__accordion-toggle"
+                  onClick={() => toggleKindExpanded(resource)}
+                  id={`${resource}-toggle`}
+                >
+                  {getToggleText(resource)}
+                  {perspective !== 'admin' && pinnedResourcesLoaded && (
+                    <Button
+                      className="co-search-group__pin-toggle"
+                      variant={ButtonVariant.link}
+                      onClick={(e) => pinToggle(e, resource)}
+                    >
+                      {pinnedResources.includes(resource) ? (
+                        <>
+                          <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          {t('public~Remove from navigation')}
+                        </>
+                      ) : (
+                        <>
+                          <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          {t('public~Add to navigation')}
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </AccordionToggle>
+                <AccordionContent>
+                  {!isCollapsed && (
+                    <ResourceList
+                      kind={resource}
+                      selector={selectorFromString(labelFilter.join(','))}
+                      nameFilter={typeaheadNameFilter}
+                      namespace={namespace}
+                      mock={noProjectsAvailable}
+                      key={resource}
+                    />
+                  )}
+                </AccordionContent>
+              </AccordionItem>
             );
           })}
         </Accordion>
