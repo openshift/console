@@ -586,11 +586,12 @@ dl.co-inline {
   &:after {
     background: linear-gradient(
       rgba(255, 255, 255, 0),
-      var(--pf-t--global--background--color--100)
+      var(--pf-v6-c-page__main-section--BackgroundColor)
     );
-    bottom: 0;
+    border-bottom-left-radius: var(--pf-v6-c-card--BorderRadius);
+    bottom: 1px;
     content: '';
-    left: 0;
+    left: 1px;
     min-height: 2rem;
     pointer-events: none;
     position: absolute;

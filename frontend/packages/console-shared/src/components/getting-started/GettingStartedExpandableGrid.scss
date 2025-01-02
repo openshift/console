@@ -19,7 +19,7 @@
     grid-template-columns: repeat(auto-fit, minmax(var(--min-column-width), 1fr));
 
     // Keep only additional spacing at the bottom. Horizontal spacing is added to the child elements.
-    padding: 0 0 calc(var(--pf-v6-c-card--child--PaddingBottom) / 2) 0;
+    padding: 0 0 calc(var(--pf-v6-c-card--child--PaddingBlockEnd) / 2) 0;
     // Hide the border on the right side of the content. Works together wie negative margin below.
     overflow: hidden;
     padding-top: 0 !important;
@@ -31,10 +31,10 @@
         var(--pf-t--global--border--color--default);
       margin-right: calc(-1 * var(--pf-t--global--border--width--100));
       // Padding around the card. Vertical spacing is splitted on the card and the grid.
-      padding-top: calc(var(--pf-v6-c-card--first-child--PaddingTop) / 2);
-      padding-bottom: calc(var(--pf-v6-c-card--child--PaddingBottom) / 2);
-      padding-left: var(--pf-v6-c-card--child--PaddingLeft);
-      padding-right: var(--pf-v6-c-card--child--PaddingRight);
+      padding-top: calc(var(--pf-v6-c-card--first-child--PaddingBlockStart) * 0.5);
+      padding-bottom: calc(var(--pf-v6-c-card--child--PaddingBlockEnd) * 0.5);
+      padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+      padding-right: var(--pf-v6-c-card--child--PaddingInlineEnd);
     }
   }
 }

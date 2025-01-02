@@ -22,61 +22,59 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
   const isWarning = typeFilter('warning', event);
   const expanded = isExpanded(metadata.uid);
   return (
-    <div className="co-recent-item__body">
-      <AccordionItem isExpanded={expanded}>
-        <AccordionToggle
-          onClick={() => onToggle(metadata.uid)}
-          id={metadata.uid}
-          className={classNames('co-recent-item__toggle', {
-            'co-recent-item--warning': isWarning && expanded,
-          })}
-        >
-          <div className="co-recent-item__title">
-            <div className="co-recent-item__title-timestamp text-secondary">
-              {lastTime ? (
-                <span title={lastTime}>{timeFormatter.format(new Date(lastTime))}</span>
-              ) : (
-                '-'
-              )}
-            </div>
-            <div className="co-recent-item__title-message">
-              {isWarning && (
-                <Icon iconSize="md" className="co-recent-item__icon">
-                  <YellowExclamationTriangleIcon
-                    title={t('public~Warning')}
-                    className="co-recent-item__icon--warning"
-                  />
-                </Icon>
-              )}
-              {!expanded && (
-                <>
-                  <ResourceIcon kind={involvedObject.kind} />
-                  <div className="co-recent-item__title-message-text">{message}</div>
-                </>
-              )}
-            </div>
+    <AccordionItem isExpanded={expanded}>
+      <AccordionToggle
+        onClick={() => onToggle(metadata.uid)}
+        id={metadata.uid}
+        className={classNames('co-recent-item__toggle', {
+          'co-recent-item--warning': isWarning && expanded,
+        })}
+      >
+        <div className="co-recent-item__title">
+          <div className="co-recent-item__title-timestamp text-secondary">
+            {lastTime ? (
+              <span title={lastTime}>{timeFormatter.format(new Date(lastTime))}</span>
+            ) : (
+              '-'
+            )}
           </div>
-        </AccordionToggle>
-        <AccordionContent
-          className={classNames('co-recent-item__content', {
-            'co-recent-item--warning': isWarning,
-          })}
-        >
-          <div>
-            <div className="co-recent-item__content-header">
-              <ResourceLink
-                className="co-recent-item__content-resourcelink"
-                kind={referenceFor(involvedObject)}
-                namespace={involvedObject.namespace}
-                name={involvedObject.name}
-                title={involvedObject.uid}
-              />
-            </div>
-            <div className="co-recent-item__content-message">{message}</div>
+          <div className="co-recent-item__title-message">
+            {isWarning && (
+              <Icon iconSize="md" className="co-recent-item__icon">
+                <YellowExclamationTriangleIcon
+                  title={t('public~Warning')}
+                  className="co-recent-item__icon--warning"
+                />
+              </Icon>
+            )}
+            {!expanded && (
+              <>
+                <ResourceIcon kind={involvedObject.kind} />
+                <div className="co-recent-item__title-message-text">{message}</div>
+              </>
+            )}
           </div>
-        </AccordionContent>
-      </AccordionItem>
-    </div>
+        </div>
+      </AccordionToggle>
+      <AccordionContent
+        className={classNames('co-recent-item__content', {
+          'co-recent-item--warning': isWarning,
+        })}
+      >
+        <div>
+          <div className="co-recent-item__content-header">
+            <ResourceLink
+              className="co-recent-item__content-resourcelink"
+              kind={referenceFor(involvedObject)}
+              namespace={involvedObject.namespace}
+              name={involvedObject.name}
+              title={involvedObject.uid}
+            />
+          </div>
+          <div className="co-recent-item__content-message">{message}</div>
+        </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 }, propsAreEqual);
 

@@ -34,9 +34,9 @@
 
 .co-status-card__alert-item {
   display: flex;
-  padding-bottom: 0.5rem;
-  padding-left: var(--pf-v6-c-card--child--PaddingLeft);
-  padding-right: var(--pf-v6-c-card--child--PaddingRight);
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+  padding-right: var(--pf-v6-c-card--child--PaddingInlineEnd);
 }
 
 .co-status-card__alert-item-icon {
@@ -52,7 +52,7 @@
   display: flex;
   flex-shrink: 0;
   justify-content: flex-end;
-  padding-left: var(--pf-v6-c-card--child--PaddingLeft);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
 .co-status-card__alert-item-text {
@@ -81,19 +81,19 @@
 }
 
 .co-status-card__alert-item:first-of-type {
-  padding-top: var(--pf-v6-c-card--first-child--PaddingTop);
+  padding-top: var(--pf-v6-c-card--first-child--PaddingBlockStart);
 }
 
 .co-status-card__alert-item:last-of-type {
-  padding-bottom: var(--pf-v6-c-card--child--PaddingBottom);
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
 }
 
 .co-status-card__health-body {
   display: flex;
   flex-wrap: wrap;
-  padding-left: var(--pf-v6-c-card--child--PaddingLeft);
-  padding-right: var(--pf-v6-c-card--child--PaddingRight);
-  padding-bottom: var(--pf-v6-c-card__title--not--last-child--PaddingBottom);
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+  padding-right: var(--pf-v6-c-card--child--PaddingInlineEnd);
 }
 
 .co-status-card__health-item {

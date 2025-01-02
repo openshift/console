@@ -17,18 +17,16 @@
 .co-activity-card__ongoing-title {
   border-bottom: var(--pf-t--global--border--width--100) solid
     var(--pf-t--global--border--color--default);
-  padding: 0.2rem var(--pf-v6-c-card--child--PaddingRight) 0.2rem
-    var(--pf-v6-c-card--child--PaddingLeft);
+  padding: 0.2rem var(--pf-v6-c-card--child--PaddingInlineEnd) 0.2rem
+    var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
 .co-activity-card__recent-more-link {
-  padding: 0 var(--pf-v6-c-card--child--PaddingRight) var(--pf-v6-c-card--child--PaddingBottom)
-    var(--pf-v6-c-card--child--PaddingLeft);
+  padding: 0 var(--pf-v6-c-card--child--PaddingInlineEnd)
+    var(--pf-v6-c-card--child--PaddingBlockEnd) var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
 .co-activity-card__recent-accordion.pf-v6-c-accordion {
-  box-shadow: none;
-  padding-bottom: 0;
   padding: 0.75rem 0;
   h5 {
     font-family: var(--pf-t--global--font--family--body);
@@ -39,20 +37,20 @@
   .co-recent-item__content {
     .pf-v6-c-accordion {
       --pf-v6-c-accordion__expanded-content-body--PaddingRight: var(
-        --pf-v6-c-card--child--PaddingRight
+        --pf-v6-c-card--child--PaddingInlineEnd
       );
       --pf-v6-c-accordion__expanded-content-body--PaddingLeft: var(
-        --pf-v6-c-card--child--PaddingLeft
+        --pf-v6-c-card--child--PaddingInlineStart
       );
     }
     .pf-v6-c-accordion__expandable-content-body {
-      padding-inline-start: var(--pf-v6-c-card--child--PaddingLeft);
-      padding-inline-end: var(--pf-v6-c-card--child--PaddingRight);
+      padding-inline-start: var(--pf-v6-c-card--child--PaddingInlineStart);
+      padding-inline-end: var(--pf-v6-c-card--child--PaddingInlineEnd);
     }
   }
   .co-recent-item__toggle.pf-v6-c-accordion__toggle {
-    --pf-v6-c-accordion__toggle--PaddingRight: var(--pf-v6-c-card--child--PaddingRight);
-    --pf-v6-c-accordion__toggle--PaddingLeft: var(--pf-v6-c-card--child--PaddingLeft);
+    --pf-v6-c-accordion__toggle--PaddingRight: var(--pf-v6-c-card--child--PaddingInlineEnd);
+    --pf-v6-c-accordion__toggle--PaddingLeft: var(--pf-v6-c-card--child--PaddingInlineStart);
 
     line-height: 18px; // so .co-m-resource-icon and text are on same baseline
   }
@@ -86,8 +84,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 0.2rem var(--pf-v6-c-card--child--PaddingRight) 0.2rem
-    var(--pf-v6-c-card--child--PaddingLeft);
+  padding: 0.2rem var(--pf-v6-c-card--child--PaddingInlineEnd) 0.2rem
+    var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
 .co-activity-item {
@@ -95,7 +93,8 @@
 }
 
 .co-activity-item__ongoing {
-  margin: 1rem var(--pf-v6-c-card--child--PaddingRight) 1rem var(--pf-v6-c-card--child--PaddingLeft);
+  margin: 1rem var(--pf-v6-c-card--child--PaddingInlineEnd) 1rem
+    var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
 .co-activity-item__progress.pf-v6-c-progress {
