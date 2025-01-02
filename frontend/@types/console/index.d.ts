@@ -56,7 +56,7 @@ declare interface Window {
     k8sMode: string;
     capabilities: Record<string, string>[];
   };
-  windowError?: string[];
+  windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
   i18n?: {}; // i18next instance, only available in development builds for debugging
   store?: {}; // Redux store, only available in development builds for debugging
