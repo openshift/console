@@ -253,10 +253,10 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     setDeprecatedPackage(_.pick(item?.obj?.status, 'deprecation'));
   }, [item?.obj?.status, setDeprecatedPackage]);
   const currentChannel = obj?.status.channels.find((ch) => ch.name === installChannel);
-  const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations.containerImage;
-  const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations.createdAt;
+  const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations?.containerImage;
+  const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations?.createdAt;
   const selectedChannelCapabilityLevel =
-    currentChannel?.currentCSVDesc.annotations.capabilities ?? item.capabilityLevel;
+    currentChannel?.currentCSVDesc.annotations?.capabilities ?? item.capabilityLevel;
 
   const installedChannel = item?.subscription?.spec?.channel;
   const notAvailable = (
