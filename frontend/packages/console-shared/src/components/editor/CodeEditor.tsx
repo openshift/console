@@ -1,10 +1,10 @@
 import * as React from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
-import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
+import type * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import Measure from 'react-measure';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import CodeEditorToolbar from './CodeEditorToolbar';
+import { useConsoleMonacoTheme } from './theme';
 import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
 
@@ -22,12 +22,17 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     onEditorDidMount,
   } = props;
 
-  const theme = React.useContext(ThemeContext);
-  const [editorRef, setEditorRef] = React.useState<editor.IStandaloneCodeEditor | null>(null);
+  const [editorRef, setEditorRef] = React.useState<Monaco.editor.IStandaloneCodeEditor | null>(
+    null,
+  );
+  const [monacoRef, setMonacoRef] = React.useState<typeof Monaco | null>(null);
+  useConsoleMonacoTheme(monacoRef?.editor);
+
   const [usesValue] = React.useState<boolean>(value !== undefined);
   const editorDidMount: OnMount = React.useCallback(
     (editor, monaco) => {
       setEditorRef(editor);
+      setMonacoRef(monaco);
       const currentLanguage = editor.getModel()?.getLanguageId();
       editor.layout();
       editor.focus();
@@ -62,8 +67,9 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     ref,
     () => ({
       getEditor: () => editorRef,
+      getMonaco: () => monacoRef,
     }),
-    [editorRef],
+    [editorRef, monacoRef],
   );
 
   return (
