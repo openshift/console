@@ -3,7 +3,7 @@ import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
-import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
+import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -644,10 +644,13 @@ export type CodeEditorProps = {
   toolbarLinks?: React.ReactNodeArray;
   onChange?: (newValue, event) => void;
   onSave?: () => void;
-  onEditorDidMount?: (editor: editor.IStandaloneCodeEditor) => void;
+  onEditorDidMount?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
 };
 
-export type CodeEditorRef = { getEditor: () => editor.IStandaloneCodeEditor };
+export type CodeEditorRef = {
+  getEditor: () => monaco.editor.IStandaloneCodeEditor;
+  getMonaco: () => typeof monaco;
+};
 
 export type ResourceYAMLEditorProps = {
   initialResource: string | { [key: string]: any };
