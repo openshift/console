@@ -57,7 +57,7 @@ export const pipelineBuilderPO = {
   },
   yamlView: {
     switchToYAMLView: '[id="form-radiobutton-editorType-yaml-field"]',
-    editor: 'div.react-monaco-editor-container',
+    editor: 'div.ocs-yaml-editor',
     yamlEditor: 'div.monaco-scrollable-element.editor-scrollable.vs-dark',
     sideBar: '[data-test="resource-sidebar"]',
     createButton: '[data-test-id="submit-button"]',
