@@ -36,3 +36,9 @@ $console-collapse-link-z-index: $console-z-index + 20;
 .default-overflow {
   overflow: visible !important;
 }
+
+.fullscreen-fix {
+  z-index: calc(
+    var(--pf-v6-c-page--c-masthead--ZIndex) + 1
+  ); // 1 more than masthead so the terminal is on top
+}

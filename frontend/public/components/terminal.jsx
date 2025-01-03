@@ -39,14 +39,20 @@ class Terminal_ extends React.Component {
     this.terminal && this.terminal.focus();
   }
 
-  enableiOSFix() {
+  enableLayoutFix() {
     document.getElementsByClassName('pf-v6-c-page__main')[0].classList.add('default-overflow');
     document.getElementById('content-scrollable').classList.add('default-overflow');
+    document
+      .getElementsByClassName('pf-v6-c-page__main-container')[0]
+      .classList.add('fullscreen-fix');
   }
 
-  disableiOSFix() {
+  disableLayoutFix() {
     document.getElementsByClassName('pf-v6-c-page__main')[0].classList.remove('default-overflow');
     document.getElementById('content-scrollable').classList.remove('default-overflow');
+    document
+      .getElementsByClassName('pf-v6-c-page__main-container')[0]
+      .classList.remove('fullscreen-fix');
   }
 
   setFullscreen(fullscreen) {
@@ -54,9 +60,10 @@ class Terminal_ extends React.Component {
     this.isFullscreen = fullscreen;
     this.focus();
     this.onResize();
+    document.getElementsByClassName('pf-v6-c-page__main-container');
     // fix iOS bug where masthead overlays fullscreen terminal
     // see https://bugs.webkit.org/show_bug.cgi?id=160953
-    fullscreen ? this.enableiOSFix() : this.disableiOSFix();
+    fullscreen ? this.enableLayoutFix() : this.disableLayoutFix();
   }
 
   onConnectionClosed(reason) {

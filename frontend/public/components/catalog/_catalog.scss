@@ -26,9 +26,8 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   margin-bottom: 20px;
 }
 
-// Prevents our tile text from inheriting the link color
 .co-catalog-tile {
-  color: var(--pf-v6-global--Color--100);
+  overflow: hidden; // prevent scrollbars within a card
 }
 
 .co-catalog-tile-view {
@@ -151,10 +150,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__filter-toggle {
     margin-top: 5px;
-  }
-
-  &__grid {
-    background-color: var(--pf-t--global--background--color--secondary--default);
   }
 
   &__grouped-items {

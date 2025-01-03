@@ -2,7 +2,6 @@
   background-color: var(--pf-t--global--background--color--primary--default);
   border: var(--pf-t--global--border--width--300) solid var(--pf-t--global--border--color--50);
   border-radius: var(--pf-t--global--border--radius--400);
-  color: var(--pf-v6-global--Color--100);
   position: relative;
   z-index: 10;
   height: 18px;
@@ -12,9 +11,9 @@
 .co-sysevent--warning {
   .co-sysevent-icon,
   .co-sysevent__box {
-    border-color: var(--pf-v6-global--warning-color--100);
+    border-color: var(--pf-t--global--border--color--status--warning--default);
   }
   .co-sysevent__icon-line {
-    background-color: var(--pf-v6-global--warning-color--100);
+    background-color: var(--pf-t--global--border--color--status--warning--default);
   }
 }
