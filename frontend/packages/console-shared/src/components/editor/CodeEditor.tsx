@@ -1,7 +1,7 @@
 import * as React from 'react';
+import Editor, { OnMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import Measure from 'react-measure';
-import MonacoEditor, { EditorDidMount } from 'react-monaco-editor';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import CodeEditorToolbar from './CodeEditorToolbar';
@@ -25,7 +25,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   const theme = React.useContext(ThemeContext);
   const [editorRef, setEditorRef] = React.useState<editor.IStandaloneCodeEditor | null>(null);
   const [usesValue] = React.useState<boolean>(value !== undefined);
-  const editorDidMount: EditorDidMount = React.useCallback(
+  const editorDidMount: OnMount = React.useCallback(
     (editor, monaco) => {
       setEditorRef(editor);
       const currentLanguage = editor.getModel()?.getLanguageId();
@@ -57,7 +57,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     };
   }, [options, showMiniMap]);
 
-  // use the ref of the editor to expose it to the parent component
+  // expose the editor instance to the parent component via ref
   React.useImperativeHandle(
     ref,
     () => ({
@@ -72,18 +72,16 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className="ocs-yaml-editor__root" style={{ minHeight }}>
-            <div className="ocs-yaml-editor__wrapper">
-              <MonacoEditor
-                language={language ?? 'yaml'}
-                theme={theme === 'light' ? 'vs-light' : 'vs-dark'}
-                height={contentRect.bounds.height}
-                width={contentRect.bounds.width}
-                value={value}
-                options={editorOptions}
-                editorDidMount={editorDidMount}
-                onChange={onChange}
-              />
-            </div>
+            <Editor
+              language={language ?? 'yaml'}
+              height={contentRect.bounds.height}
+              width={contentRect.bounds.width}
+              value={value}
+              options={editorOptions}
+              onMount={editorDidMount}
+              onChange={onChange}
+              className="ocs-yaml-editor"
+            />
           </div>
         )}
       </Measure>
