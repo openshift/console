@@ -337,14 +337,11 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
     verb: 'patch',
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
-  const aPluginIsDisabled =
-    !consoleOperatorConfig?.spec?.plugins?.length ||
-    csvPlugins.some((plugin) => !isPluginEnabled(consoleOperatorConfig, plugin));
 
   return (
     consoleOperatorConfig &&
     canPatchConsoleOperatorConfig &&
-    aPluginIsDisabled && (
+    csvPlugins.length > 0 && (
       <Popover
         headerContent={<div>{t('olm~Console plugin available')}</div>}
         bodyContent={
