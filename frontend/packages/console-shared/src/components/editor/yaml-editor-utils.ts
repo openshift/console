@@ -96,15 +96,15 @@ export const registerYAMLinMonaco = (
   alreadyInUse: boolean = false,
 ) => {
   /**
-   * This exists because react-monaco-editor passes the same monaco
-   * object each time. Without it you would be registering all the features again and
-   * getting duplicate results.
+   * This exists because we enabled globalAPI in the webpack config. This means that the
+   * the monaco instance may have already been setup with the YAML language features.
+   * Otherwise, you would register all the features again, getting duplicate results.
    *
-   * Monaco does not provide any apis for unregistering or checking if the features have already
+   * Monaco does not provide any APIs for unregistering or checking if the features have already
    * been registered for a language.
    *
-   * We check that > 1 YAML language exists because one is the default and one is the initial register
-   * that setups our features.
+   * We check that > 1 YAML language exists because one is the default and
+   * the other is the initial register that setups our features.
    */
   if (monacoInstance.languages.getLanguages().filter((x) => x.id === 'yaml').length <= 1) {
     // Prepare the schema

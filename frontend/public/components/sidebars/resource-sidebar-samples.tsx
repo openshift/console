@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
-import MonacoEditor from 'react-monaco-editor';
+import Editor from '@monaco-editor/react';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
 import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
@@ -64,11 +64,11 @@ const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
 
   return (
     <div style={{ paddingTop: 10 }}>
-      <MonacoEditor
+      <Editor
         height={Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}
         language="yaml"
         value={yaml}
-        theme={theme === 'light' ? 'console-light' : 'console-dark'}
+        theme={theme === 'light' ? 'vs-light' : 'vs-dark'}
         options={{
           lineHeight,
           readOnly: true,
