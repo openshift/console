@@ -1,5 +1,5 @@
 import { Range } from 'monaco-editor';
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { configureMonacoYaml } from 'monaco-yaml';
 import * as yaml from 'yaml-ast-parser';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';

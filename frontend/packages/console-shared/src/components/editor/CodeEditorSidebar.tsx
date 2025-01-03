@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import { Range, Selection } from 'monaco-editor';
+import { CodeEditorRef } from '@console/dynamic-plugin-sdk';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
 import { K8sKind } from '@console/internal/module/k8s';
 import { Sample } from '../../utils';
 import { downloadYaml } from './yaml-download-utils';
 
 type CodeEditorSidebarProps = {
-  editorRef: React.MutableRefObject<any>;
+  editorRef: React.MutableRefObject<CodeEditorRef>;
   model?: K8sKind;
   samples?: Sample[];
   schema?: JSONSchema7;
@@ -27,13 +28,13 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   sanitizeYamlContent,
   toggleSidebar,
 }) => {
-  const editor = editorRef.current?.editor;
+  const getEditor = React.useCallback(() => editorRef?.current?.getEditor(), [editorRef]);
 
   const insertYamlContent = React.useCallback(
     (id: string = 'default', yamlContent: string = '', kind) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
 
-      const selection = editor.getSelection();
+      const selection = getEditor()?.getSelection();
       const range = new Range(
         selection.startLineNumber,
         selection.startColumn,
@@ -63,18 +64,18 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
       );
 
       const op = { range, text: indentedText, forceMoveMarkers: true };
-      editor.executeEdits(id, [op], [newContentSelection]);
-      editor.focus();
+      getEditor()?.executeEdits(id, [op], [newContentSelection]);
+      getEditor()?.focus();
     },
-    [editor, sanitizeYamlContent],
+    [sanitizeYamlContent, getEditor],
   );
 
   const replaceYamlContent = React.useCallback(
     (id: string = 'default', yamlContent: string = '', kind: string) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
-      editor.setValue(yaml);
+      getEditor()?.setValue(yaml);
     },
-    [editor, sanitizeYamlContent],
+    [sanitizeYamlContent, getEditor],
   );
 
   const downloadYamlContent = React.useCallback(

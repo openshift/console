@@ -1,13 +1,14 @@
 import * as React from 'react';
+import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import Measure from 'react-measure';
 import MonacoEditor, { EditorDidMount } from 'react-monaco-editor';
-import { CodeEditorProps } from '@console/dynamic-plugin-sdk';
+import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import CodeEditorToolbar from './CodeEditorToolbar';
 import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
 
-const CodeEditor = React.forwardRef<any, CodeEditorProps>((props, ref) => {
+const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
   const {
     value,
     options = defaultEditorOptions,
@@ -18,12 +19,15 @@ const CodeEditor = React.forwardRef<any, CodeEditorProps>((props, ref) => {
     onChange,
     onSave,
     language,
+    onEditorDidMount,
   } = props;
 
   const theme = React.useContext(ThemeContext);
+  const [editorRef, setEditorRef] = React.useState<editor.IStandaloneCodeEditor | null>(null);
   const [usesValue] = React.useState<boolean>(value !== undefined);
   const editorDidMount: EditorDidMount = React.useCallback(
     (editor, monaco) => {
+      setEditorRef(editor);
       const currentLanguage = editor.getModel()?.getLanguageId();
       editor.layout();
       editor.focus();
@@ -39,8 +43,9 @@ const CodeEditor = React.forwardRef<any, CodeEditorProps>((props, ref) => {
       }
       monaco.editor.getModels()[0]?.updateOptions({ tabSize: 2 });
       onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, onSave); // eslint-disable-line no-bitwise
+      onEditorDidMount && onEditorDidMount(editor);
     },
-    [onSave, usesValue],
+    [onSave, usesValue, onEditorDidMount],
   );
 
   const editorOptions = React.useMemo(() => {
@@ -52,13 +57,22 @@ const CodeEditor = React.forwardRef<any, CodeEditorProps>((props, ref) => {
     };
   }, [options, showMiniMap]);
 
+  // use the ref of the editor to expose it to the parent component
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      getEditor: () => editorRef,
+    }),
+    [editorRef],
+  );
+
   return (
     <>
       <CodeEditorToolbar showShortcuts={showShortcuts} toolbarLinks={toolbarLinks} />
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className="ocs-yaml-editor__root" style={{ minHeight }}>
-            <div className="ocs-yaml-editor__wrapper" ref={ref}>
+            <div className="ocs-yaml-editor__wrapper">
               <MonacoEditor
                 language={language ?? 'yaml'}
                 theme={theme === 'light' ? 'vs-light' : 'vs-dark'}
