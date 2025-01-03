@@ -284,18 +284,15 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
     verb: 'patch',
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
-  const csvPluginsCount = csvPlugins.length;
 
   return (
     <>
       {consoleOperatorConfig && canPatchConsoleOperatorConfig && (
         <dl className="co-clusterserviceversion-details__field">
-          <dt>{t('olm~Console plugin', { count: csvPluginsCount })}</dt>
+          <dt>{t('olm~Console plugin')}</dt>
           {csvPlugins.map((pluginName) => (
             <dd key={pluginName} className="co-clusterserviceversion-details__field-description">
-              {csvPluginsCount > 1 && (
-                <strong className="text-muted">{t('olm~{{plugin}}:', { pluginName })} </strong>
-              )}
+              <strong className="text-muted">{t('olm~{{pluginName}}:', { pluginName })} </strong>
               <Button
                 data-test="edit-console-plugin"
                 type="button"
@@ -303,7 +300,6 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
                 onClick={() =>
                   consolePluginModal({
                     consoleOperatorConfig,
-                    csvPluginsCount,
                     pluginName,
                     trusted,
                   })
