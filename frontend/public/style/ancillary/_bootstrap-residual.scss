@@ -128,7 +128,7 @@ small {
         ); // matches --pf-v6-c-table--m-compact--cell--Padding
         vertical-align: top;
         border-top: var(--pf-t--global--border--width--100) solid
-          var(--pf-t--global--border--color--200);
+          var(--pf-t--global--border--color--100);
       }
     }
   }
@@ -136,7 +136,7 @@ small {
   > thead > tr > th {
     vertical-align: bottom;
     border-bottom: var(--pf-t--global--border--width--md) solid
-      var(--pf-t--global--border--color--200);
+      var(--pf-t--global--border--color--100);
   }
   // Remove top border from thead by default
   > caption + thead,

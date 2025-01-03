@@ -22,7 +22,6 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
   switchLabel,
   switchLabelClassName,
   switchLabelIsReversed,
-  switchLabelOff,
   switchOnChange,
 }) => {
   return (
@@ -34,7 +33,7 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
         setOpen(false);
       }}
       ref={menuRef}
-      style={{ position: 'absolute' }}
+      style={{ position: 'absolute', zIndex: 100 }}
     >
       <MenuContent>
         <MenuSearch>

@@ -236,7 +236,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   }
   td,
   th {
-    border-bottom: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--200);
+    border-bottom: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--100);
     padding: 10px;
     vertical-align: top;
   }

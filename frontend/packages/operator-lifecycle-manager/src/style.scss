@@ -117,7 +117,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-spec-descriptor--resource-requirements {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--200);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--100);
   padding: 20px 0 20px 20px;
   margin-top: 5px;
 }
@@ -145,7 +145,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-affinity-term {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--200);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--100);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -180,7 +180,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operand-field-group {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--200);
+  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--100);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -265,7 +265,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion__box {
-  border: 1px solid var(--pf-t--global--border--color--200);
+  border: 1px solid var(--pf-t--global--border--color--100);
   margin: var(--pf-t--global--spacer--md) 0;
   padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--md)
     var(--pf-t--global--spacer--xs);
