@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Editor, { OnChange, EditorProps } from '@monaco-editor/react';
+import Editor, { OnChange, EditorProps, Monaco } from '@monaco-editor/react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
+import { useConsoleMonacoTheme } from '@console/shared/src/components/editor/theme';
 
 type EditorFieldProps = {
   name: string;
@@ -22,9 +22,10 @@ const EditorField: React.FC<EditorFieldProps> = ({
   onChange,
   ...otherProps
 }) => {
-  const theme = React.useContext(ThemeContext);
   const { getFieldMeta, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { error, value } = getFieldMeta<string>(name);
+  const [monaco, setMonaco] = React.useState<Monaco | null>(null);
+  useConsoleMonacoTheme(monaco?.editor);
 
   const debouncedOnChange = useDebounceCallback<OnChange>((newValue, event) => {
     if (onChange) {
@@ -40,7 +41,9 @@ const EditorField: React.FC<EditorFieldProps> = ({
         {...otherProps}
         value={value}
         onChange={debouncedOnChange}
-        theme={theme === 'light' ? 'vs-light' : 'vs-dark'}
+        onMount={(_e, m) => {
+          setMonaco(m);
+        }}
       />
 
       <FormHelperText>
