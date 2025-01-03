@@ -4,14 +4,14 @@ $overview-sidebar-width: 550px;
   width: $overview-sidebar-width;
   max-width: 100%;
   position: absolute;
-  background: var(--pf-t--global--background--color--100);
+  background: var(--pf-t--global--background--color--primary--default);
   right: 0;
   height: 100%;
-  box-shadow: var(--pf-v6-global--BoxShadow--md);
+  box-shadow: var(--pf-t--global--box-shadow--md);
 
   &__header {
     // Hack for Popper to go under the header
-    background: var(--pf-t--global--background--color--100);
+    background: var(--pf-t--global--background--color--primary--default);
     z-index: 10000;
   }
 

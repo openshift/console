@@ -56,7 +56,7 @@
   }
 
   .co-recent-item--warning {
-    border-left-color: var(--pf-v6-global--warning-color--100);
+    border-left-color: var(--pf-v6-pf-t--global--icon--color--status--warning--default);
   }
 
   .pf-v6-c-accordion__toggle {
@@ -114,7 +114,6 @@
 }
 
 .co-recent-item__content-message {
-  color: var(--pf-v6-global--Color--100);
   margin-top: 0.5rem;
   word-wrap: break-word;
 }

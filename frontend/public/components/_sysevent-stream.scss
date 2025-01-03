@@ -67,7 +67,7 @@
 
 .co-sysevent__box {
   background-color: var(
-    --pf-t--global--background--color--100
+    --pf-t--global--background--color--primary--default
   ); // prevent overlapping text if events overlap each other
   border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--50);
   flex: none;

@@ -8,10 +8,10 @@
 .ocs-preview-badge {
   &.pf-v6-c-label {
     --pf-v6-c-label--BackgroundColor: #d93f00;
-    --pf-v6-c-label--BorderRadius: var(--pf-v6-global--BorderRadius--sm);
+    --pf-v6-c-label--BorderRadius: var(--pf-t--global--border--radius--tiny);
     --pf-v6-c-label__content--before--BorderWidth: 0;
     --pf-v6-c-label__content--before--BorderColor: transparent;
-    --pf-v6-c-label__content--Color: var(--pf-v6-global--Color--light-100);
+    --pf-v6-c-label__content--Color: var(--pf-t--color--white);
     font-family: var(--pf-t--global--font--family--body); // Use RedHatText even when inside an <h1>
   }
 }

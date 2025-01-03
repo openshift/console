@@ -7,10 +7,10 @@
   }
   &__sticky {
     position: sticky;
-    background-color: var(--pf-t--global--background--color--100);
+    background-color: var(--pf-t--global--background--color--primary--default);
     bottom: 0;
   }
   &__shadow {
-    box-shadow: var(--pf-v6-global--BoxShadow--sm-top);
+    box-shadow: var(--pf-t--global--box-shadow--sm--top);
   }
 }

@@ -15,7 +15,7 @@
 .co-user-preference-page-content {
   display: flex;
   flex-direction: row;
-  background-color: var(--pf-t--global--background--color--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
   min-height: 100%;
   &__tabs {
     @media (min-width: 769px) {

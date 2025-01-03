@@ -7,7 +7,6 @@ import {
   EmptyStateVariant,
   EmptyStateFooter,
   Truncate,
-  ModalHeader,
 } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
@@ -615,69 +614,68 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           aria-labelledby="catalog-item-header"
           isOpen={!!detailsItem && showDetails}
           onClose={closeOverlay}
-          title={detailsItem.name}
         >
-          <ModalHeader>
-            <>
-              <CatalogItemHeader
-                className="co-catalog-page__overlay-header"
-                iconClass={detailsItem.iconClass}
-                iconImg={detailsItem.imgUrl}
-                title={titleAndDeprecatedPackage()}
-                vendor={t('olm~{{version}} provided by {{provider}}', {
-                  version: updateVersion || installVersion || detailsItem.version,
-                  provider: detailsItem.provider,
-                })}
-                data-test-id="operator-modal-header"
-                id="catalog-item-header"
-              />
+          <>
+            <CatalogItemHeader
+              className="co-catalog-page__overlay-header"
+              iconClass={detailsItem.iconClass}
+              iconImg={detailsItem.imgUrl}
+              title={titleAndDeprecatedPackage()}
+              vendor={t('olm~{{version}} provided by {{provider}}', {
+                version: updateVersion || installVersion || detailsItem.version,
+                provider: detailsItem.provider,
+              })}
+              data-test-id="operator-modal-header"
+              id="catalog-item-header"
+            />
 
-              <div className="co-catalog-page__overlay-actions">
-                {remoteWorkflowUrl && (
-                  <ExternalLink
-                    additionalClassName="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
-                    href={remoteWorkflowUrl}
-                    text={
+            <div className="co-catalog-page__overlay-actions">
+              {remoteWorkflowUrl && (
+                <ExternalLink
+                  additionalClassName="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
+                  href={remoteWorkflowUrl}
+                  text={
+                    <>
                       <div className="co-catalog-page__overlay-action-label">
                         {detailsItem.marketplaceActionText || t('olm~Purchase')}
                       </div>
-                    }
-                  />
-                )}
-                {!detailsItem.installed ? (
-                  <Link
-                    className={classNames(
-                      'pf-v6-c-button',
-                      {
-                        'pf-m-secondary': remoteWorkflowUrl,
-                      },
-                      {
-                        'pf-m-primary': !remoteWorkflowUrl,
-                      },
-                      {
-                        'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
-                      },
-                      'co-catalog-page__overlay-action',
-                    )}
-                    data-test-id="operator-install-btn"
-                    to={installLink}
-                  >
-                    {t('olm~Install')}
-                  </Link>
-                ) : (
-                  <Button
-                    className="co-catalog-page__overlay-action"
-                    data-test-id="operator-uninstall-btn"
-                    isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
-                    variant="secondary"
-                  >
-                    {t('olm~Uninstall')}
-                  </Button>
-                )}
-              </div>
-            </>
-          </ModalHeader>
+                    </>
+                  }
+                />
+              )}
+              {!detailsItem.installed ? (
+                <Link
+                  className={classNames(
+                    'pf-v6-c-button',
+                    {
+                      'pf-m-secondary': remoteWorkflowUrl,
+                    },
+                    {
+                      'pf-m-primary': !remoteWorkflowUrl,
+                    },
+                    {
+                      'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
+                    },
+                    'co-catalog-page__overlay-action',
+                  )}
+                  data-test-id="operator-install-btn"
+                  to={installLink}
+                >
+                  {t('olm~Install')}
+                </Link>
+              ) : (
+                <Button
+                  className="co-catalog-page__overlay-action"
+                  data-test-id="operator-uninstall-btn"
+                  isDisabled={!detailsItem.installed}
+                  onClick={() => history.push(uninstallLink())}
+                  variant="secondary"
+                >
+                  {t('olm~Uninstall')}
+                </Button>
+              )}
+            </div>
+          </>
           <OperatorHubItemDetails
             item={detailsItem}
             updateChannel={updateChannel}

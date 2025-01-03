@@ -67,7 +67,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__tag {
-    color: var(--pf-v6-global--Color--200);
+    color: var(--pf-t--global--text--color--subtle);
     font-size: ($font-size-base - 1);
     margin-right: 5px;
     text-transform: uppercase;
@@ -114,7 +114,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-page {
-  background: var(--pf-t--global--background--color--100);
+  background: var(--pf-t--global--background--color--primary--default);
   border: 1px solid var(--pf-t--global--border--color--200);
   display: flex;
   flex: 1;
@@ -154,7 +154,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__grid {
-    background-color: var(--pf-t--color--gray--10);
+    background-color: var(--pf-t--global--background--color--secondary--default);
   }
 
   &__grouped-items {

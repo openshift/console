@@ -47,7 +47,7 @@ label {
   padding: 10px 15px;
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
-  background-color: var(--pf-t--global--background--color--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
   border: 1px solid var(--pf-t--global--border--color--default);
 }
 
@@ -152,9 +152,9 @@ small {
 }
 
 .text-muted {
-  color: var(--pf-v6-global--Color--200);
+  color: var(--pf-t--global--text--color--subtle);
 }
 
 .text-secondary {
-  color: var(--pf-v6-global--Color--200);
+  color: var(--pf-t--global--text--color--subtle);
 }

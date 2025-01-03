@@ -110,7 +110,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
 }
 
 .loading-skeleton--catalog {
-  background: var(--pf-t--global--background--color--100);
+  background: var(--pf-t--global--background--color--primary--default);
   border: 1px solid var(--pf-t--global--border--color--200);
   display: flex;
   flex: 1;

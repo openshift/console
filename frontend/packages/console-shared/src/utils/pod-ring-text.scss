@@ -1,7 +1,7 @@
 .pod-ring__center-text {
   tspan {
     font-size: 14px !important;
-    fill: var(--pf-v6-global--Color--200) !important;
+    fill: var(--pf-t--global--text--color--subtle) !important;
   }
   &:not(.pod-ring__long-text) {
     tspan:first-of-type {
@@ -14,7 +14,7 @@
 .pod-ring__center-text--reversed {
   tspan {
     font-size: 14px !important;
-    fill: var(--pf-v6-global--Color--200) !important;
+    fill: var(--pf-t--global--text--color--subtle) !important;
   }
   tspan:first-of-type {
     fill: var(--pf-v6-global--Color--100) !important;

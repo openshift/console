@@ -32,7 +32,7 @@
 
   &__description {
     margin: var(--pf-t--global--spacer--sm) 0 0 var(--pf-t--global--spacer--sm);
-    color: var(--pf-v6-global--Color--200);
+    color: var(--pf-t--global--text--color--subtle);
     // temporary fix since --pf-t--global--font--size--sm is being computed to 13px instead of 14px
     font-size: var(--pf-t--global--font--size--md);
   }

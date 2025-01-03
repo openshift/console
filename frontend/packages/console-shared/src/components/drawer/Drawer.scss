@@ -4,7 +4,7 @@
   flex-grow: 0;
   flex-shrink: 0;
   transition: opacity 175ms ease-out, transform 225ms ease-out;
-  box-shadow: var(--pf-v6-global--BoxShadow--sm-top);
+  box-shadow: var(--pf-t--global--box-shadow--sm--top);
   display: flex;
   flex-direction: column;
   z-index: var(--pf-t--global--z-index--sm);
@@ -16,13 +16,12 @@
     position: absolute;
     background-color: transparent;
     &:hover {
-      background-color: var(--pf-v6-global--palette--black-300);
+      background-color: var(--pf-t--global--background--color--secondary--hover);
     }
   }
 
   &__header {
-    height: var(--pf-v6-global--target-size--MinHeight);
-    background-color: var(--pf-t--color--gray--10);
+    background-color: var(--pf-t--global--background--color--secondary--default);
     display: flex;
     align-items: center;
     flex-shrink: 0;

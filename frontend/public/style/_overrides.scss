@@ -3,7 +3,7 @@
 $masthead-logo-max-height: 60px;
 
 form.pf-v6-c-form {
-  --pf-v6-c-form__helper-text--Color: var(--pf-v6-global--Color--200);
+  --pf-v6-c-form__helper-text--Color: var(--pf-t--global--text--color--subtle);
 }
 
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
@@ -45,7 +45,7 @@ form.pf-v6-c-form {
   }
   .pf-v6-c-card__selectable-actions .pf-v6-c-radio__label:hover {
     --pf-v6-c-card--m-selectable--hover--BackgroundColor: var(
-      --pf-t--global--background--color--100
+      --pf-t--global--background--color--primary--default
     );
   }
 }
@@ -245,7 +245,7 @@ form.pf-v6-c-form {
 
 // Remove when upstream issue is addressed. https://github.com/patternfly/patternfly/issues/4889
 .pf-v6-theme-dark .pf-v6-c-card {
-  --pf-v6-c-card--BoxShadow: var(--pf-v6-global--BoxShadow--md);
+  --pf-v6-c-card--BoxShadow: var(--pf-t--global--box-shadow--md);
 }
 
 .table {
@@ -310,7 +310,7 @@ ul {
 }
 
 .pfext-quick-start-footer {
-  background-color: var(--pf-t--global--background--color--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
 }
 
 // TODO Remove this override when skip to content CSS is figured out.
