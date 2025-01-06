@@ -671,24 +671,32 @@ func (s *Server) handleKnativeChannelCRDs(w http.ResponseWriter, r *http.Request
 }
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
+	// Handle unsupported browsers first
 	if serverutils.IsUnsupportedBrowser(r) {
 		serverutils.SendUnsupportedBrowserResponse(w, s.Branding)
 		return
 	}
 
+	// Generate a script nonce
 	indexPageScriptNonce, err := utils.RandomString(32)
 	if err != nil {
-		panic(err)
+		panic(err) // Avoid panic in production; log the error instead
 	}
 
+	// Build Content Security Policy
 	contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
 	if err != nil {
 		klog.Fatalf("Error building Content Security Policy directives: %s", err)
 		os.Exit(1)
 	}
 
+	// Set CSP header
 	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(contentSecurityPolicy, "; "))
 
+	// Set CSRF cookie
+	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
+
+	// Prepare template data
 	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
 	for plugin := range s.EnabledConsolePlugins {
 		plugins = append(plugins, plugin)
@@ -737,6 +745,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Capabilities:              s.Capabilities,
 	}
 
+	// Include additional fields if needed
 	if s.prometheusProxyEnabled() {
 		jsg.PrometheusBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint)
 		jsg.PrometheusTenancyBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusTenancyProxyEndpoint)
@@ -744,15 +753,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	if s.alertManagerProxyEnabled() {
 		jsg.AlertManagerBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyEndpoint)
-		jsg.AlertmanagerUserWorkloadBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertmanagerUserWorkloadProxyEndpoint)
 	}
 
-	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
-
-	if s.CustomLogoFile != "" {
-		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
-	}
-
+	// Prepare template rendering data
 	templateData := struct {
 		ServerFlags *jsGlobals
 		ScriptNonce string
@@ -761,14 +764,16 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		ScriptNonce: indexPageScriptNonce,
 	}
 
+	// Render the template
 	tpl := template.New(indexPageTemplateName)
 	tpl.Delims("[[", "]]")
 	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, indexPageTemplateName))
 	if err != nil {
-		fmt.Printf("index.html not found in configured public-dir path: %v", err)
-		os.Exit(1)
+		http.Error(w, fmt.Sprintf("index.html not found in configured public-dir path: %v", err), http.StatusInternalServerError)
+		return
 	}
 
+	// Write the template output
 	if err := tpls.ExecuteTemplate(w, indexPageTemplateName, templateData); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
