@@ -229,12 +229,12 @@
 
   .pf-v5-c-data-list__expandable-content {
     .pf-v5-c-data-list__expandable-content-body {
-      >.pf-v5-c-data-list {
+      > .pf-v5-c-data-list {
         margin-left: 0;
         margin-inline-start: 0;
       }
       .pf-v5-c-data-list__item-row {
-        --pf-v5-c-data-list__item-row--PaddingLeft: var(--pf-global--spacer--lg);
+        --pf-v5-c-data-list__item-row--PaddingLeft: var(--pf-v5-global--spacer--lg);
       }
     }
   }

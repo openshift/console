@@ -51,34 +51,17 @@ const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
 const getPluginSDKPackageDependencies = () =>
   loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').dependencies;
 
-const getPatternFlyMajorVersion = (pkg: ConsolePluginPackageJSON) => {
-  const pluginDeps = getPackageDependencies(pkg);
-  const pfCoreVersionRange = pluginDeps['@patternfly/react-core'];
-
-  return semver.validRange(pfCoreVersionRange)
-    ? semver.minVersion(pfCoreVersionRange)?.major
-    : undefined;
-};
-
 const getPatternFlyStyles = (baseDir: string) =>
   glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
 
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-const getWebpackSharedModules = (pkg: ConsolePluginPackageJSON) => {
-  const pfMajorVersion = getPatternFlyMajorVersion(pkg);
+const getWebpackSharedModules = () => {
   const sdkPkgDeps = getPluginSDKPackageDependencies();
 
   return sharedPluginModules.reduce<WebpackSharedObject>((acc, moduleName) => {
     const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
     const providedVersionRange = sdkPkgDeps[moduleName];
     const moduleConfig: WebpackSharedConfig = { singleton };
-
-    // Console provides PatternFly 4 shared modules to its plugins for backwards compatibility.
-    // Plugins using PatternFly 5 and higher share the PatternFly code bits via dynamic modules.
-    // TODO(vojtech): remove this code when Console drops support for PatternFly 4
-    if (moduleName.startsWith('@patternfly/') && pfMajorVersion > 4) {
-      return acc;
-    }
 
     if (!allowFallback) {
       moduleConfig.import = false;
@@ -393,7 +376,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       }
     });
 
-    const consoleProvidedSharedModules = getWebpackSharedModules(this.pkg);
+    const consoleProvidedSharedModules = getWebpackSharedModules();
 
     const sharedDynamicModules = Object.entries(this.sharedDynamicModuleMaps).reduce<
       WebpackSharedObject

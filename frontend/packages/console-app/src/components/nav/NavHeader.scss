@@ -17,34 +17,39 @@
   }
 
   .pf-v5-c-menu {
-     --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
-     padding: var(--pf-v5-global--spacer--sm) 0;
-     :where(.pf-v5-theme-dark) & {
-       --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-300);
-     }
+    --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
+    padding: var(--pf-v5-global--spacer--sm) 0;
+    :where(.pf-v5-theme-dark) & {
+      --pf-v5-c-menu--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-300);
+    }
   }
 
   .pf-v5-c-menu__item {
     color: var(--pf-v5-global--Color--100);
     padding: var(--pf-v5-global--spacer--sm);
-    &::after,&::before {
+    &::after,
+    &::before {
       border-style: hidden;
     }
   }
 
   .pf-v5-c-menu__item,
   .pf-v5-c-menu__list-item {
-    &:hover,&:active,&:focus,&:focus-within {
-    --pf-v5-c-menu__list-item--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
-    --pf-v5-c-menu__list-item--Color: var(--pf-v5-global--Color--100, inherit);
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-within {
+      --pf-v5-c-menu__list-item--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
+      --pf-v5-c-menu__list-item--Color: var(--pf-v5-global--Color--100, inherit);
       :where(.pf-v5-theme-dark) & {
-        background-color: var(--pf-global--BackgroundColor--400);
+        background-color: var(--pf-v5-global--BackgroundColor--400);
       }
     }
   }
 
   .pf-v5-c-menu-toggle {
-    &::after, &::before {
+    &::after,
+    &::before {
       border-style: hidden;
     }
 
@@ -60,7 +65,9 @@
     }
 
     .pf-v5-c-title.pf-m-md {
-      font-family: var(--pf-v5-global--FontFamily--text);  // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
+      font-family: var(
+        --pf-v5-global--FontFamily--text
+      ); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
       font-size: $co-side-nav-section-font-size;
     }
   }

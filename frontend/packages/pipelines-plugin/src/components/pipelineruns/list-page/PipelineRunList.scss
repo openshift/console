@@ -1,19 +1,19 @@
 .opp-pipeline-run-list {
   &__signed-indicator {
     display: inline-block;
-    --pf-c-table--cell--Color: var(--pf-global--BackgroundColor--dark-transparent-100);
-    margin-left: var(--pf-global--spacer--sm);
+    --pf-c-table--cell--Color: var(--pf-v5-global--BackgroundColor--dark-transparent-100);
+    margin-left: var(--pf-v5-global--spacer--sm);
     > img {
-      height: var(--pf-global--FontSize--lg);
+      height: var(--pf-v5-global--FontSize--lg);
       position: relative;
       top: 4px;
     }
   }
   &__results-indicator {
     display: inline-block;
-    margin-left: var(--pf-global--spacer--xs);
-    > svg{
-      color: var(--pf-global--Color--400);
+    margin-left: var(--pf-v5-global--spacer--xs);
+    > svg {
+      color: var(--pf-v5-global--Color--400);
     }
   }
 }

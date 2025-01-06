@@ -11,16 +11,14 @@ $consoleWebDistPath: './';
 
 // == Overrides of external dependency variables
 
-// PatternFly 4 font path.
+// PatternFly 5 font path.
 $pf-v5-global--font-path: '~@patternfly/patternfly/assets/fonts';
 $table-border-color: var(--pf-v5-global--BorderColor--300);
 
 :root {
   // Numerical value required
   --pf-v5-global--FontSize--md: 14px; // same as $font-size-base
-  --pf-global--FontSize--md: 14px; // same as $font-size-base
   --pf-v5-global--FontSize--sm: 13px;
-  --pf-global--FontSize--sm: 13px;
 }
 
 // == Declare max breakpoints from PatternFly variables
@@ -35,7 +33,7 @@ $pf-v5-global-gutter--md: 1.5rem; // Matches --pf-v5-global--gutter--md
 
 // == Custom variables
 
-$pf-v5-header-icon-fontsize: 16px; // Patternfly 4 default
+$pf-v5-header-icon-fontsize: 16px; // Patternfly 5 default
 // Manually set because our default font size is different than PF 4
 $co-side-nav-font-size: $font-size-base; // Matches PF 4 --pf-v5-c-nav__subnav__link--FontSize
 $co-side-nav-section-font-size: ($font-size-base + 2); // Matches PF 4 --pf-v5-c-nav__link--FontSize

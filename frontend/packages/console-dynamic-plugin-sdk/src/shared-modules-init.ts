@@ -44,26 +44,6 @@ const initSharedScope = () => {
   addModule('redux', async () => () => require('redux'));
   addModule('redux-thunk', async () => () => require('redux-thunk'));
 
-  // Backwards compatibility: provide PatternFly 4 packages for existing Console plugins
-  addModule(
-    '@patternfly/react-core',
-    async () => () => require('@patternfly-4/react-core'),
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('@patternfly-4/react-core/package.json').version,
-  );
-  addModule(
-    '@patternfly/react-table',
-    async () => () => require('@patternfly-4/react-table'),
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('@patternfly-4/react-table/package.json').version,
-  );
-  addModule(
-    '@patternfly/quickstarts',
-    async () => () => require('@patternfly-4/quickstarts'),
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('@patternfly-4/quickstarts/package.json').version,
-  );
-
   return scope;
 };
 

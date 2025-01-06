@@ -8,12 +8,12 @@
   }
 
   &__icon {
-    max-width: var(--pf-global--spacer--lg);
-    min-width: var(--pf-global--spacer--md);
-    color: var(--pf-global--Color--100) !important;
-    // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
-    font-size: var(--pf-global--FontSize--md);
-    margin-right: var(--pf-global--spacer--sm);
+    max-width: var(--pf-v5-global--spacer--lg);
+    min-width: var(--pf-v5-global--spacer--md);
+    color: var(--pf-v5-global--Color--100) !important;
+    // temporary fix since --pf-v5-global--FontSize--md is being computed to 14px instead of 16px
+    font-size: var(--pf-v5-global--FontSize--md);
+    margin-right: var(--pf-v5-global--spacer--sm);
   }
 
   &__img-icon {

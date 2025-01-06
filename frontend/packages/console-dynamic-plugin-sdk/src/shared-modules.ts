@@ -24,9 +24,6 @@ type SharedModuleMetadata = Partial<{
 export const sharedPluginModules = [
   '@openshift-console/dynamic-plugin-sdk',
   '@openshift-console/dynamic-plugin-sdk-internal',
-  '@patternfly/react-core',
-  '@patternfly/react-table',
-  '@patternfly/quickstarts',
   'react',
   'react-i18next',
   'react-router',
@@ -45,9 +42,6 @@ export type SharedModuleNames = typeof sharedPluginModules[number];
 const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
   '@openshift-console/dynamic-plugin-sdk': { singleton: true, allowFallback: false },
   '@openshift-console/dynamic-plugin-sdk-internal': { singleton: true, allowFallback: false },
-  '@patternfly/react-core': {},
-  '@patternfly/react-table': {},
-  '@patternfly/quickstarts': {},
   react: { singleton: true, allowFallback: false },
   'react-i18next': { singleton: true, allowFallback: false },
   'react-router': { singleton: true, allowFallback: false },
