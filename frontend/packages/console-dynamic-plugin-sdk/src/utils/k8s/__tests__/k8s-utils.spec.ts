@@ -1,5 +1,12 @@
 import { Operator } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { createEquals, requirementToString } from '../k8s-utils';
+import {
+  TestPodModel,
+  TestDeploymentModel,
+  TestClusterResourceQuotaModel,
+  TestPrometheusModel,
+} from '../__mocks__/k8s-data';
+import { getReferenceForModel } from '../k8s-ref';
+import { createEquals, requirementToString, modelsToMap } from '../k8s-utils';
 
 describe('k8sUtils', () => {
   describe('requirementToString', () => {
@@ -62,6 +69,22 @@ describe('k8sUtils', () => {
         key: 'Key',
         operator: 'Equals',
         values: ['Value'],
+      });
+    });
+  });
+
+  describe('modelsToMap', () => {
+    it('returns a map with keys based on model.kind for models with crd:false', () => {
+      expect(modelsToMap([TestPodModel, TestDeploymentModel]).toObject()).toEqual({
+        [TestPodModel.kind]: TestPodModel,
+        [TestDeploymentModel.kind]: TestDeploymentModel,
+      });
+    });
+
+    it('returns a map with keys based on referenceForModel for models with crd:true', () => {
+      expect(modelsToMap([TestClusterResourceQuotaModel, TestPrometheusModel]).toObject()).toEqual({
+        [getReferenceForModel(TestClusterResourceQuotaModel)]: TestClusterResourceQuotaModel,
+        [getReferenceForModel(TestPrometheusModel)]: TestPrometheusModel,
       });
     });
   });

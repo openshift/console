@@ -72,7 +72,7 @@ const NetworkPolicyTableRow: React.FC<RowFunctionArgs<NetworkPolicyKind>> = ({ o
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab
           actions={isMulti ? menuMultiNetworkActions : menuActions}
-          kind={getGroupVersionKindForModel(modelKind)}
+          kindObj={getGroupVersionKindForModel(modelKind)}
           resource={np}
         />
       </TableData>

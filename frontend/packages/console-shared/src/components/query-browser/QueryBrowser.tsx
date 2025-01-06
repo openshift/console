@@ -35,8 +35,6 @@ import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line
 import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 import {
@@ -699,11 +697,11 @@ const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
   units,
 }) => {
   const { t } = useTranslation();
-  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
+  const hideGraphs = useSelector<RootState, boolean>(({ observe }) => !!observe.get('hideGraphs'));
   const tickInterval = useSelector(
     ({ observe }: RootState) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
   );
-  const lastRequestTime = useSelector(({ observe }: RootState) =>
+  const lastRequestTime = useSelector<RootState, string>(({ observe }) =>
     observe.getIn(['queryBrowser', 'lastRequestTime']),
   );
 

@@ -1,5 +1,5 @@
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
-import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__mocks__/k8s-data';
+import { TestDeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__mocks__/k8s-data';
 import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
 import { usePerspectives } from '@console/shared/src';
@@ -48,7 +48,7 @@ describe('usePinnedResources', () => {
     useModelFinderMock.mockReturnValue({
       findModel: (group: string, resource: string) => {
         if (group === 'apps' && resource === 'deployments') {
-          return DeploymentModel;
+          return TestDeploymentModel;
         }
         if (group === '' && resource === 'configmaps') {
           return ConfigMapModel;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/dist/core/lib/lib-core';
 import { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { errorModal } from '@console/internal/components/modals';
 import { DeploymentConfigKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';

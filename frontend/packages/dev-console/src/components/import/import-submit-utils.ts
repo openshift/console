@@ -983,11 +983,7 @@ export const addSearchParamsToRelativeURL = (
 ): string => {
   const urlObj = new URL(url, 'thismessage:/'); // ITEF RFC 2557 section 5 (e)
 
-  urlObj.search = new URLSearchParams({
-    ...Object.fromEntries(urlObj.searchParams),
-    ...(searchParams ? Object.fromEntries(searchParams) : {}),
-  }).toString();
-
+  searchParams?.forEach?.((value, key) => urlObj.searchParams.set(key, value));
   return urlObj.toString().replace(urlObj.protocol, '');
 };
 

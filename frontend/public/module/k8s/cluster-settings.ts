@@ -3,19 +3,19 @@ import * as semver from 'semver';
 import i18next from 'i18next';
 
 import { ClusterVersionModel, MachineConfigPoolModel } from '../../models';
-import { referenceForModel } from './k8s-ref';
+import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   ClusterVersionCondition,
   ClusterVersionConditionType,
   ClusterVersionKind,
   ConditionalUpdate,
-  k8sPatch,
   K8sResourceCondition,
   K8sResourceConditionStatus,
+  MachineConfigPoolKind,
   UpdateHistory,
   VersionUpdate,
-} from '.';
-import { MachineConfigPoolKind } from './types';
+} from './types';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
@@ -28,7 +28,7 @@ export enum ClusterUpdateStatus {
   ReleaseNotAccepted = 'Release Not Accepted',
 }
 
-export const clusterVersionReference = referenceForModel(ClusterVersionModel);
+export const clusterVersionReference = getReferenceForModel(ClusterVersionModel);
 
 const getAvailableClusterUpdates = (cv: ClusterVersionKind): VersionUpdate[] =>
   cv?.status?.availableUpdates?.map((update) => _.pick(update, ['version', 'image'])) || [];

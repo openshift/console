@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -220,10 +220,12 @@ export const BindingName = ({ binding }) => (
   />
 );
 
-export const BindingKebab = connect(null, {
-  startImpersonate: UIActions.startImpersonate,
-})(({ binding, startImpersonate }) => {
+export const BindingKebab = ({ binding }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const startImpersonate = React.useCallback(() => dispatch(UIActions.startImpersonate), [
+    dispatch,
+  ]);
   return binding.subjects ? (
     <ResourceKebab
       actions={menuActions(binding, startImpersonate, navigate)}
@@ -231,7 +233,7 @@ export const BindingKebab = connect(null, {
       resource={binding}
     />
   ) : null;
-});
+};
 
 export const RoleLink = ({ binding }) => {
   const kind = binding.roleRef.kind;

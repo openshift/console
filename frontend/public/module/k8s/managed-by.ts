@@ -1,8 +1,7 @@
-import { K8sResourceCommon, OwnerReference, groupVersionFor } from './';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager';
+import { groupVersionFor } from './k8s';
+import { K8sResourceCommon, OwnerReference } from './types';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src/types';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 
 // Check if owner is an Operand under csv
 const isOwnedByOperator = (csv: ClusterServiceVersionKind, owner: OwnerReference) => {

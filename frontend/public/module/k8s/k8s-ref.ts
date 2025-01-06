@@ -1,4 +1,4 @@
-import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 
 // TODO(alecmerdler): Replace all manual string building with this function
 /**

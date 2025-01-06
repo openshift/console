@@ -2,21 +2,17 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import {
-  NotificationDrawer,
-  NotificationEntry,
-  NotificationCategory,
-  NotificationTypes,
-} from '@console/patternfly';
-import {
-  isNotLoadedDynamicPluginInfo,
-  useDynamicPluginInfo,
-  DynamicPluginInfo,
-} from '@console/plugin-sdk';
+  Alert,
+  AlertAction,
+  AlertSeverity,
+  isAlertAction,
+  ResolvedExtension,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import { PrometheusRulesResponse, useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   alertingErrored,
   alertingLoaded,
@@ -24,21 +20,30 @@ import {
   setAlertCount,
 } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
-import { RootState } from '@console/internal/redux';
-import { history, resourcePath } from '@console/internal/components/utils';
-
-import { getClusterID } from '../module/k8s/cluster-settings';
-
-import {
-  ServiceLevelNotification,
-  useShowServiceLevelNotifications,
-} from '@console/internal/components/utils/service-level';
 import {
   alertURL,
   getAlertsAndRules,
   silenceMatcherEqualitySymbol,
 } from '@console/internal/components/monitoring/utils';
+import { history, resourcePath } from '@console/internal/components/utils';
+import {
+  ServiceLevelNotification,
+  useShowServiceLevelNotifications,
+} from '@console/internal/components/utils/service-level';
+import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { NotificationAlerts } from '@console/internal/reducers/observe';
+import { RootState } from '@console/internal/redux';
+import {
+  NotificationCategory,
+  NotificationDrawer,
+  NotificationEntry,
+  NotificationTypes,
+} from '@console/patternfly';
+import {
+  DynamicPluginInfo,
+  isNotLoadedDynamicPluginInfo,
+  useDynamicPluginInfo,
+} from '@console/plugin-sdk';
 import { RedExclamationCircleIcon, useCanClusterUpgrade } from '@console/shared';
 import {
   getAlertDescription,
@@ -47,25 +52,18 @@ import {
   getAlertSeverity,
   getAlertTime,
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
+import { usePrevious } from '@console/shared/src/hooks/previous';
+import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { useClusterVersion } from '@console/shared/src/hooks/version';
 import {
   EmptyState,
+  EmptyStateActions,
   EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
   EmptyStateIcon,
   EmptyStateVariant,
-  EmptyStateActions,
-  EmptyStateHeader,
-  EmptyStateFooter,
 } from '@patternfly/react-core';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
-import { usePrevious } from '@console/shared/src/hooks/previous';
-import {
-  Alert,
-  AlertAction,
-  AlertSeverity,
-  isAlertAction,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '../co-fetch';
 import { ConsolePluginModel } from '../models';
 import {
@@ -77,11 +75,9 @@ import {
   splitClusterVersionChannel,
   VersionUpdate,
 } from '../module/k8s';
-import { LinkifyExternal } from './utils';
+import { getClusterID } from '../module/k8s/cluster-settings';
 import { PrometheusEndpoint } from './graphs/helpers';
-import { LabelSelector } from '@console/internal/module/k8s/label-selector';
-import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
-import { useModal, PrometheusRulesResponse } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { LinkifyExternal } from './utils';
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -231,7 +227,6 @@ export const refreshNotificationPollers = () => {
 
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
   isDesktop,
-  toggleNotificationDrawer,
   isDrawerExpanded,
   onDrawerChange,
   children,
@@ -241,7 +236,10 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const [pluginInfoEntries] = useDynamicPluginInfo();
-
+  const toggleNotificationDrawer = React.useCallback(
+    () => dispatch(UIActions.notificationDrawerToggleExpanded),
+    [dispatch],
+  );
   React.useEffect(() => {
     const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
       dispatch(alertingLoading(key));
@@ -502,7 +500,6 @@ export type WithNotificationsProps = {
 
 export type ConnectedNotificationDrawerProps = {
   isDesktop: boolean;
-  toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;
   onDrawerChange: () => void;
   alerts: NotificationAlerts;
@@ -522,8 +519,5 @@ type AlertEmptyProps = {
 
 type AlertAccumulator = [Alert[], Alert[]];
 
-const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
-  toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,
-});
-
+const connectToNotifications = connect(notificationStateToProps);
 export const ConnectedNotificationDrawer = connectToNotifications(ConnectedNotificationDrawer_);

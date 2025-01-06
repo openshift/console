@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector, useDispatch } from 'react-redux';
 import * as UIActions from '@console/internal/actions/ui';
 import { SimpleTabNav, Tab } from '@console/internal/components/utils';
+import { RootState } from '@console/internal/redux';
 import { useQueryParams } from '@console/shared/src';
 import SideBarTabLoader from '../providers/SideBarTabLoader';
 
 const SimpleTabNavWrapper: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
   const { t } = useTranslation();
-  const selectedTab = useSelector(({ UI }) => UI.getIn(['overview', 'selectedDetailsTab']));
+  const selectedTab = useSelector<RootState, string>(({ UI }) =>
+    UI.getIn(['overview', 'selectedDetailsTab']),
+  );
   const dispatch = useDispatch();
   const queryParams = useQueryParams();
   const selectTabParam = queryParams.get('selectTab');

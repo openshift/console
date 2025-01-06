@@ -7,7 +7,6 @@ import {
   referenceForModel,
   kindForReference,
   versionForReference,
-  modelsToMap,
 } from '../../../public/module/k8s';
 import {
   testCRD,
@@ -30,6 +29,7 @@ import {
   ClusterResourceQuotaModel,
   PrometheusModel,
 } from '../../../public/models';
+import { modelsToMap } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 describe('referenceFor', () => {
   it('returns a reference for objects without an API group', () => {

@@ -1,4 +1,4 @@
-import { DeploymentModel, PodModel } from '../__mocks__/k8s-data';
+import { TestDeploymentModel, TestPodModel } from '../__mocks__/k8s-data';
 import {
   getAPIVersionForModel,
   getGroupVersionKindForReference,
@@ -21,17 +21,17 @@ describe('k8s-Resource', () => {
   });
 
   it('should return reference for provided model', () => {
-    const referenceData = getReferenceForModel(DeploymentModel);
+    const referenceData = getReferenceForModel(TestDeploymentModel);
     expect(referenceData).toEqual('apps~v1~Deployment');
   });
 
   it('should return apiVersion for provided model', () => {
-    const apiVersion = getAPIVersionForModel(DeploymentModel);
+    const apiVersion = getAPIVersionForModel(TestDeploymentModel);
     expect(apiVersion).toEqual('apps/v1');
   });
 
   it('should return apiVersion for provided model if apiGroup is not present', () => {
-    const apiVersion = getAPIVersionForModel(PodModel);
+    const apiVersion = getAPIVersionForModel(TestPodModel);
     expect(apiVersion).toEqual('v1');
   });
 
@@ -78,14 +78,14 @@ describe('k8s-Resource', () => {
   });
 
   it('should return Group, Version, and Kind for provided model', () => {
-    const { group, version, kind } = getGroupVersionKindForModel(DeploymentModel);
+    const { group, version, kind } = getGroupVersionKindForModel(TestDeploymentModel);
     expect(group).toEqual('apps');
     expect(version).toEqual('v1');
     expect(kind).toEqual('Deployment');
   });
 
   it('should return Group, Version, and Kind for provided model which does not have apiGroup', () => {
-    const { group, version, kind } = getGroupVersionKindForModel(PodModel);
+    const { group, version, kind } = getGroupVersionKindForModel(TestPodModel);
     expect(group).toBeUndefined();
     expect(version).toEqual('v1');
     expect(kind).toEqual('Pod');

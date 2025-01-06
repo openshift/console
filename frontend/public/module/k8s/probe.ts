@@ -9,7 +9,7 @@ import {
   Handler,
   HTTPGetProbe,
   TCPSocketProbe,
-} from './';
+} from './types';
 
 const parsers = {
   exec: function (str: string) {

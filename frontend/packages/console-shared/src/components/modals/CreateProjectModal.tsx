@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Popover, Button, Modal, ModalVariant, Alert } from '@patternfly/react-core';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import {
@@ -12,6 +10,7 @@ import {
   isCreateProjectModal,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
+import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { setFlag } from '@console/internal/actions/flags';
 import {
   documentationURLs,
@@ -24,7 +23,6 @@ import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
 import { LoadingInline } from '@console/shared/src/components/loading/LoadingInline';
-import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   closeModal,

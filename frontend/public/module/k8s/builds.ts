@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
 
-import { BuildModel, BuildConfigModel } from '../../models';
-import { k8sCreate } from './';
+import { k8sCreate } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
+import { BuildModel, BuildConfigModel } from '../../models';
 
 const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
 

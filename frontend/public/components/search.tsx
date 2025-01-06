@@ -23,7 +23,7 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { getBadgeFromType, usePinnedResources } from '@console/shared';
-import { connectToModel } from '../kinds';
+import { connectToModel, WithModelProps } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -51,39 +51,42 @@ import {
   isResourceListPage as isDynamicResourceListPage,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
+import { ListPageProps } from '@console/internal/components/factory/list-page';
 
-const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
-  );
-  if (!kindObj) {
-    return <LoadingBox />;
-  }
+const ResourceList = connectToModel<React.FC<ListPageProps & WithModelProps>>(
+  ({ kindObj, mock, namespace, selector, nameFilter }) => {
+    const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
+    const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
+      isDynamicResourceListPage,
+    );
+    if (!kindObj) {
+      return <LoadingBox />;
+    }
 
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
-  const ns = kindObj.namespaced ? namespace : undefined;
+    const loader = getResourceListPages(
+      resourceListPageExtensions,
+      dynamicResourceListPageExtensions,
+    ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+    const ns = kindObj.namespaced ? namespace : undefined;
 
-  return (
-    <AsyncComponent
-      loader={componentLoader}
-      namespace={ns}
-      selector={selector}
-      nameFilter={nameFilter}
-      kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
-      showTitle={false}
-      hideTextFilter
-      autoFocus={false}
-      mock={mock}
-      badge={getBadgeFromType(kindObj.badge)}
-      hideNameLabelFilters
-      hideColumnManagement
-    />
-  );
-});
+    return (
+      <AsyncComponent
+        loader={loader}
+        namespace={ns}
+        selector={selector}
+        nameFilter={nameFilter}
+        kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
+        showTitle={false}
+        hideTextFilter
+        autoFocus={false}
+        mock={mock}
+        badge={getBadgeFromType(kindObj.badge)}
+        hideNameLabelFilters
+        hideColumnManagement
+      />
+    );
+  },
+);
 
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [perspective] = useActivePerspective();

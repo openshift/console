@@ -60,9 +60,9 @@ export const getURLSearchParams = () => {
   const all: any = {};
   const params = new URLSearchParams(window.location.search);
 
-  for (const [k, v] of params.entries()) {
+  params.forEach((v, k) => {
     all[k] = v;
-  }
+  });
 
   return all;
 };

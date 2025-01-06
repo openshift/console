@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { Alert, Label, Skeleton } from '@patternfly/react-core';
 import { NotificationEntry, NotificationTypes } from '@console/patternfly';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { YellowExclamationTriangleIcon, RedExclamationCircleIcon } from '@console/shared';
 import { getDuration, dateFormatter } from './datetime';
-import { getOCMLink } from '../../module/k8s';
+import { getOCMLink, SecretKind } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
 import { ExternalLink, FieldLevelHelp } from './index';
@@ -101,9 +99,8 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
       return;
     }
     setLoadingSecret(true);
-    k8sGet({ model: SecretModel, name: 'pull-secret', ns: 'openshift-config' })
+    k8sGet<SecretKind>({ model: SecretModel, name: 'pull-secret', ns: 'openshift-config' })
       .then((response) => {
-        // @ts-ignore  Data is not recognized as part of response.
         const secret = JSON.parse(atob(response.data['.dockerconfigjson']));
         const token = secret.auths['cloud.openshift.com'].auth;
         const headers = {
@@ -174,13 +171,16 @@ const useGetServiceLevel = (
   loadingSecret: boolean;
   loadingServiceLevel: boolean;
 } => {
-  const {
-    level,
-    daysRemaining,
-    clusterID,
-    trialDateEnd,
-    hasSecretAccess,
-  } = useSelector(({ UI }: RootState) => UI.get('serviceLevel'));
+  const { level, daysRemaining, clusterID, trialDateEnd, hasSecretAccess } = useSelector<
+    RootState,
+    {
+      level: string;
+      daysRemaining: number | null;
+      clusterID: string;
+      trialDateEnd: string;
+      hasSecretAccess: boolean;
+    }
+  >(({ UI }) => UI.get('serviceLevel'));
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 
   React.useEffect(() => {

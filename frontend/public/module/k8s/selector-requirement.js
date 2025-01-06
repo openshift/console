@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { createEquals } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { createEquals } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-utils';
 
 export const requirementFromString = (string) => {
   string = string.trim();

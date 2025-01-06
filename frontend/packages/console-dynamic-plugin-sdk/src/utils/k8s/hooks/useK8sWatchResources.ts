@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { K8sModel } from '../../../api/common-types';
+import { SDKStoreState } from '../../../app';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { UseK8sWatchResources } from '../../../extensions/console-types';
 import {
@@ -40,8 +39,8 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 
-  const allK8sModels = useSelector<OpenShiftReduxRootState, ImmutableMap<string, K8sModel>>(
-    (state: OpenShiftReduxRootState) => state.k8s.getIn(['RESOURCES', 'models']),
+  const allK8sModels = useSelector<SDKStoreState, ImmutableMap<string, K8sModel>>(
+    (state: SDKStoreState) => state.k8s.getIn(['RESOURCES', 'models']),
   );
 
   const prevK8sModels = usePrevious(allK8sModels);
@@ -62,9 +61,13 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     const requiredModels = Object.values(resources).map((r) =>
       transformGroupVersionKindToReference(r.groupVersionKind || r.kind),
     );
-    k8sModelsRef.current = allK8sModels.filter(
-      (model) =>
-        requiredModels.includes(getReferenceForModel(model)) || requiredModels.includes(model.kind),
+
+    k8sModelsRef.current = ImmutableMap<string, K8sModel>(
+      allK8sModels.filter(
+        (model) =>
+          requiredModels.includes(getReferenceForModel(model)) ||
+          requiredModels.includes(model.kind),
+      ),
     );
   }
 

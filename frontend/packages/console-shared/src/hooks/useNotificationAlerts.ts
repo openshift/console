@@ -1,7 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
 import { Alert } from '@console/dynamic-plugin-sdk';
@@ -26,7 +24,7 @@ export const useNotificationAlerts = (
     true,
     true,
   );
-  const { data: alerts, loaded, loadError } = useSelector<NotificationAlerts>(
+  const { data: alerts, loaded, loadError } = useSelector<RootState, NotificationAlerts>(
     ({ observe }: RootState) => observe.get('notificationAlerts') ?? {},
   );
 

@@ -1,9 +1,7 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { K8sModel } from '../../../api/common-types';
-import { OpenShiftReduxRootState } from './k8s-watch-types';
+import { SDKStoreState } from '../../../app';
 
 /**
  * Wait until internal models (CRDs) are loaded.
@@ -13,10 +11,10 @@ import { OpenShiftReduxRootState } from './k8s-watch-types';
  */
 export const useModelsLoaded = (): boolean => {
   const ref = React.useRef(false);
-  const loaded = useSelector<OpenShiftReduxRootState, K8sModel>(({ k8s }) =>
+  const loaded = useSelector<SDKStoreState, K8sModel>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'loaded']),
   );
-  const inFlight = useSelector<OpenShiftReduxRootState, K8sModel>(({ k8s }) =>
+  const inFlight = useSelector<SDKStoreState, K8sModel>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'inFlight']),
   );
 

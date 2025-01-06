@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { CopyToClipboard } from '@console/internal/components/utils';
 import { Modal } from '@console/shared/src/components/modal';
-import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const CopyCodeModal: CopyCodeModalComponent = ({ title, snippet, closeModal }) => (
   <Modal isOpen onClose={closeModal} showClose title={title} variant="medium">

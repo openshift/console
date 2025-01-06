@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import i18next from 'i18next';
 
-import { ContainerSpec, ContainerStatus, PodKind } from './';
+import { ContainerSpec, ContainerStatus, PodKind } from './types';
 
 // Parses the state from k8s container info field of a pod.
 // Returned object will always have a 'label' property,

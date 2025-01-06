@@ -240,7 +240,7 @@ export enum ActionMenuVariant {
   DROPDOWN = 'default',
 }
 
-type Request<R> = {
+export type Request<R = unknown> = {
   active: boolean;
   timeout: NodeJS.Timer;
   inFlight: boolean;
@@ -248,7 +248,7 @@ type Request<R> = {
   error: any;
 };
 
-export type RequestMap<R> = ImmutableMap<string, Request<R>>;
+export type RequestMap<R = unknown> = ImmutableMap<string, Request<R>>;
 
 export type Fetch = (url: string) => Promise<any>;
 export type WatchURLProps = {
@@ -271,7 +271,7 @@ export type UseDashboardResources = ({
   urls?: WatchURLProps[];
   notificationAlertLabelSelectors?: { [k: string]: string };
 }) => {
-  urlResults: RequestMap<any>;
+  urlResults: RequestMap;
   prometheusResults: RequestMap<PrometheusResponse>;
   notificationAlerts: { alerts: Alert[]; loaded: boolean; loadError: Error };
 };

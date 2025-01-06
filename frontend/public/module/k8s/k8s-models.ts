@@ -1,7 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 
 import { getModelExtensionMetadata } from './get-resources';
@@ -12,25 +10,21 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s/k8s';
 import { referenceForGroupVersionKind } from './k8s-ref';
-import store from '../../redux';
+import store, { RootState } from '../../redux';
 import { pluginStore } from '../../plugins';
-import { isModelDefinition, LoadedExtension } from '@console/plugin-sdk';
+import { isModelDefinition } from '@console/plugin-sdk/src/typings/models';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { K8sResourceKindReference } from '@console/dynamic-plugin-sdk';
 import {
   isModelMetadata,
-  K8sResourceKindReference,
   ModelMetadata,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/resource-metadata';
 import { K8sKind, DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { modelsToMap } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-utils';
 
 const modelKey = (model: K8sKind): string => {
   // TODO: Use `referenceForModel` even for known API objects
   return model.crd ? referenceForModel(model) : model.kind;
-};
-
-export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> => {
-  return ImmutableMap<K8sResourceKindReference, K8sKind>().withMutations((map) => {
-    models.forEach((model) => map.set(modelKey(model), model));
-  });
 };
 
 /**
@@ -137,7 +131,7 @@ export const useModelFinder = () => {
   const referenceForGroupVersionPlural = (group: string) => (version: string) => (plural: string) =>
     [group || 'core', version, plural].join('~');
 
-  const models: ImmutableMap<string, K8sKind> = useSelector(({ k8s }) =>
+  const models = useSelector<RootState, ImmutableMap<string, K8sKind>>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'models']),
   );
   const pluralsToModelMap = models.reduce((acc, curr) => {
@@ -145,7 +139,7 @@ export const useModelFinder = () => {
     acc[ref] = curr;
     return acc;
   }, {});
-  const groupVersionMap: DiscoveryResources['groupVersionMap'] = useSelector(({ k8s }) =>
+  const groupVersionMap = useSelector<RootState, DiscoveryResources['groupVersionMap']>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'groupToVersionMap']),
   );
 

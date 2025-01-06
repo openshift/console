@@ -215,22 +215,24 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   );
 };
 
-export const GlobalConfigPage = connect(stateToProps)(({ configResources, ...props }) => {
-  const [resolvedExtensions] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
+export const GlobalConfigPage = connect(stateToProps)(
+  ({ configResources, clusterOperatorConfigResources }) => {
+    const [resolvedExtensions] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
 
-  const canClusterUpgrade = useCanClusterUpgrade();
-  const adjustedConfigResources = canClusterUpgrade
-    ? configResources
-    : configResources.filter(filterNonUpgradableResources);
+    const canClusterUpgrade = useCanClusterUpgrade();
+    const adjustedConfigResources = canClusterUpgrade
+      ? configResources
+      : (configResources as K8sKind[]).filter(filterNonUpgradableResources);
 
-  return (
-    <GlobalConfigPage_
-      globalConfigs={resolvedExtensions}
-      configResources={adjustedConfigResources}
-      {...props}
-    />
-  );
-});
+    return (
+      <GlobalConfigPage_
+        globalConfigs={resolvedExtensions}
+        configResources={adjustedConfigResources}
+        clusterOperatorConfigResources={clusterOperatorConfigResources}
+      />
+    );
+  },
+);
 
 type GlobalConfigPageExtensionProps = {
   globalConfigs: ClusterGlobalConfig[];
