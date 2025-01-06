@@ -22,6 +22,7 @@ export type SecretSubFormProps = {
   stringData: SecretStringData;
   secretType?: SecretType;
   isCreate?: boolean;
+  base64StringData?: Base64StringData;
 };
 
 type Base64String = string;
