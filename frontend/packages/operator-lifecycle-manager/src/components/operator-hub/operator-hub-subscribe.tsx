@@ -147,7 +147,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const [gcpServiceAcctEmail, setGcpServiceAcctEmail] = React.useState('');
   const [targetNamespace, setTargetNamespace] = React.useState(null);
   const [installMode, setInstallMode] = React.useState(null);
-  const { catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
+  const { catalog, catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
 
   const defaultChannel = defaultChannelNameFor(packageManifest);
   const [updateChannelName, setUpdateChannelName] = React.useState(channel || defaultChannel);
@@ -351,10 +351,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const navigateToInstallPage = React.useCallback(
     (csvName: string) => {
       history.push(
-        `/operatorhub/install/${catalogNamespace}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
+        `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
       );
     },
-    [catalogNamespace, pkg, selectedTargetNamespace],
+    [catalog, catalogNamespace, pkg, selectedTargetNamespace],
   );
 
   if (!supportsSingle && !supportsGlobal) {

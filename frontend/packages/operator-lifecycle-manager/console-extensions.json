@@ -99,7 +99,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/operatorhub/install/:catalogNamespace/:pkg/:currentCSV/to/:targetNamespace/",
+      "path": "/operatorhub/install/:catalogNamespace/:catalog/:pkg/:currentCSV/to/:targetNamespace/",
       "component": {
         "$codeRef": "install.OperatorInstallStatusPage"
       }
