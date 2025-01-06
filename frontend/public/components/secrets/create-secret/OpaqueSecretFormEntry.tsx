@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Base64 } from 'js-base64';
 import { DroppableFileInput } from './DropableFileInput';
 import { OpaqueSecretFormEntryProps } from './types';
 
@@ -13,7 +14,7 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
   const handleValueChange = (fileData: string, isBinary: boolean) => {
     const updatedEntry = {
       ...entry,
-      value: fileData,
+      value: isBinary ? fileData : Base64.encode(fileData),
       isBinary_: isBinary,
     };
     onChange(updatedEntry, index);
@@ -53,7 +54,7 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
         <div>
           <DroppableFileInput
             onChange={handleValueChange}
-            inputFileData={entry.value}
+            inputFileData={Base64.decode(entry.value)}
             id={`${index}-value`}
             label={t('public~Value')}
             inputFieldHelpText={t(

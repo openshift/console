@@ -8,14 +8,10 @@ import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
 import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject } from './utils';
 import { size, map } from 'lodash';
 
-export const OpaqueSecretForm: React.FC<SecretSubFormProps> = ({
-  onChange,
-  stringData,
-  base64StringData,
-}) => {
+export const OpaqueSecretForm: React.FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
   const { t } = useTranslation();
   const [opaqueDataEntries, setOpaqueDataEntries] = React.useState(
-    opaqueSecretObjectToArray(stringData, base64StringData),
+    opaqueSecretObjectToArray(base64StringData),
   );
 
   const onDataChanged = (newEntries: OpaqueDataEntry[]) => {

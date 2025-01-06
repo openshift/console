@@ -7,7 +7,6 @@ import {
   PullSecretCredential,
   Base64StringData,
   OpaqueDataEntry,
-  SecretStringData,
   SecretChangeData,
 } from './types';
 import { isBinary } from 'istextorbinary';
@@ -190,18 +189,12 @@ type PullSecretData = DockerCfg | DockerConfigJSON;
 
 export const opaqueEntriesToObject = (opaqueEntriesArray: OpaqueDataEntry[]): SecretChangeData => {
   return (opaqueEntriesArray ?? []).reduce(
-    (acc, { key, value, isBinary_ }) => {
+    (acc, { key, value }) => {
       return {
-        stringData: {
-          ...acc.stringData,
-          [key]: isBinary_ ? null : value,
-        },
-        base64StringData: isBinary_
-          ? { ...acc.base64StringData, [key]: value }
-          : acc.base64StringData,
+        base64StringData: { ...acc.base64StringData, [key]: value },
       };
     },
-    { stringData: {}, base64StringData: {} },
+    { base64StringData: {} },
   );
 };
 
@@ -215,17 +208,16 @@ export const newOpaqueSecretEntry = (): OpaqueDataEntry => {
 };
 
 export const opaqueSecretObjectToArray = (
-  stringData: SecretStringData,
-  base64StringData?: Base64StringData,
+  base64StringData: Base64StringData,
 ): OpaqueDataEntry[] => {
-  if (_.isEmpty(stringData)) {
+  if (_.isEmpty(base64StringData)) {
     return [newOpaqueSecretEntry()];
   }
-  return _.map(stringData, (value, key) => {
+  return _.map(base64StringData, (value, key) => {
     return {
       key,
-      value: value ?? base64StringData[key],
-      isBinary_: value ? false : isBinary(null, Buffer.from(base64StringData[key] || '', 'base64')),
+      value,
+      isBinary_: isBinary(null, Buffer.from(value || '', 'base64')),
       uid: _.uniqueId(),
     };
   });
