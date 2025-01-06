@@ -245,6 +245,7 @@ export type ContainerStatus = {
   image: string;
   imageID: string;
   containerID?: string;
+  started?: boolean;
 };
 
 export type PodCondition = {
