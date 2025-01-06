@@ -112,7 +112,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
             ev.preventDefault();
             history.push(importYAMLURL);
           }}
-          // TODO: PF6 upgrade
+          // TODO: PF6 upgrade -- PatternFly bug that needs to be addressed upstream
           // tooltipProps={{
           //   content: t('public~Create resources from their YAML or JSON definitions'),
           //   position: 'left',
@@ -131,7 +131,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 ev.preventDefault();
                 history.push(getImportFromGitURL(namespace));
               }}
-              // TODO: PF6 upgrade
+              // TODO: PF6 upgrade -- PatternFly bug that needs to be addressed upstream
               // tooltipProps={{
               //   content: t('public~Import code from your Git repository to be built and deployed'),
               //   position: 'left',
@@ -148,7 +148,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 ev.preventDefault();
                 history.push(getContainerImageURL(namespace));
               }}
-              // TODO: PF6 upgrade
+              // TODO: PF6 upgrade -- PatternFly bug that needs to be addressed upstream
               // tooltipProps={{
               //   content: t(
               //     'public~Deploy an existing Image from an Image registry or Image stream tag',
