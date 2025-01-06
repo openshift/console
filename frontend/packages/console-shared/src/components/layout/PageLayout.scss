@@ -3,21 +3,12 @@
 .ocs-page-layout {
   &__content {
     padding: $pf-v6-global-gutter--md $pf-v6-global-gutter;
-    background-color: var(--pf-t--color--gray--10);
     @media (min-width: $pf-v6-global--breakpoint--xl) {
       padding-left: $pf-v6-global-gutter--md;
       padding-right: $pf-v6-global-gutter--md;
     }
 
     flex: 1;
-
-    &.is-dark {
-      background: var(--pf-t--global--background--color--primary--default);
-    }
-  }
-
-  &__header {
-    background-color: var(--pf-t--global--background--color--primary--default);
   }
 
   &__hint {

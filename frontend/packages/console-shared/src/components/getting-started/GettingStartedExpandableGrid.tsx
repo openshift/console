@@ -75,6 +75,7 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
         data-test="getting-started"
         isClickable
         isSelectable
+        isPlain
       >
         <CardBody className="ocs-getting-started-expandable-grid__content">{children}</CardBody>
       </Card>

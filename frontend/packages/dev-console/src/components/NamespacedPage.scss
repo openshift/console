@@ -8,13 +8,8 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: var(--pf-t--color--gray--10);
     position: relative;
     overflow: auto;
-
-    &.is-light {
-      background-color: var(--pf-t--global--background--color--primary--default);
-    }
   }
 
   &__toolbar {

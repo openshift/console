@@ -1,15 +1,15 @@
 :root {
   // Co Palette
-  --co-global--palette--blue-400: var(--pf-t--color--blue--40);
-  --co-global--palette--purple-600: var(--pf-t--color--gray--purple-60);
-  --co-global--palette--orange-400: var(--pf-t--color--gray--orange-40);
-  --co-global--palette--purple-700: var(--pf-t--color--gray--purple-70);
+  --co-global--palette--blue-400: var(--pf-t--color--blue--50);
+  --co-global--palette--purple-600: var(--pf-t--color--purple--60);
+  --co-global--palette--orange-400: var(--pf-t--color--orange--50);
+  --co-global--palette--purple-700: var(--pf-t--color--purple--70);
 
   // Co Palette Dark
-  --co-global--dark--palette--blue-400: var(--pf-t--color--gray--blue-20);
-  --co-global--dark--palette--purple-600: var(--pf-t--color--gray--purple-20);
-  --co-global--dark--palette--orange-400: var(--pf-t--color--gray--orange-20);
-  --co-global--dark--palette--purple-700: var(--pf-t--color--gray--purple-20);
+  --co-global--dark--palette--blue-400: var(--pf-t--color--blue--20);
+  --co-global--dark--palette--purple-600: var(--pf-t--color--purple--20);
+  --co-global--dark--palette--orange-400: var(--pf-t--color--orange--20);
+  --co-global--dark--palette--purple-700: var(--pf-t--color--purple--20);
 
   // Skeleton
   --co-skeleton--Color: var(--pf-t--color--gray--20);
