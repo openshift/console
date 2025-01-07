@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { pluginStore } from '@console/internal/plugins';
+import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
 import { useToast } from '@console/shared/src/components/toast';
 import { ONE_DAY } from '@console/shared/src/constants/time';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -28,36 +28,25 @@ export const newCSPViolationReport = (
   event: SecurityPolicyViolationEvent,
 ): CSPViolationReport => ({
   ..._.pick(event, [
-    // The URI of the resource that was blocked because it violates a policy.
     'blockedURI',
-    // The column number in the document or worker at which the violation occurred.
     'columnNumber',
-    // Whether the user agent is configured to enforce or just report the policy violation.
     'disposition',
-    // The URI of the document or worker in which the violation occurred.
     'documentURI',
-    // The directive that was violated.
     'effectiveDirective',
-    // The line number in the document or worker at which the violation occurred.
     'lineNumber',
-    // The policy whose enforcement caused the violation.
     'originalPolicy',
-    // The URL for the referrer of the resources whose policy was violated, or null.
     'referrer',
-    // A sample of the resource that caused the violation, usually the first 40 characters.
-    // This will only be populated if the resource is an inline script, event handler or style.
     'sample',
-    // If the violation occurred as a result of a script, this will be the URL of the script.
     'sourceFile',
-    // HTTP status code of the document or worker in which the violation occurred.
     'statusCode',
   ]),
-  pluginName: pluginName || 'none',
+  pluginName: pluginName || '',
 });
 
-const useCSPViolationReporter: UseCSPVilationReporter = () => {
+export const useCSPViolationDetector = () => {
   const { t } = useTranslation();
   const toastContext = useToast();
+  const pluginStore = usePluginStore();
   const fireTelemetryEvent = useTelemetry();
   const getRecords = React.useCallback((): CSPViolationRecord[] => {
     const serializedRecords = window.localStorage.getItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY) || '';
@@ -85,8 +74,9 @@ const useCSPViolationReporter: UseCSPVilationReporter = () => {
       // update the timestamp. Otherwise, append the new record.
       const [updatedRecords] = existingRecords.reduce(
         ([acc, hasBeenRecorded], existingRecord, i, all) => {
-          const { timestamp: existingTimestamp, ...existingReport } = existingRecord;
-          const { timestamp: newTimestamp, ...newReport } = newRecord;
+          // Exclude originalPolicy and timestamp from equality comparison.
+          const { timestamp, originalPolicy, ...existingReport } = existingRecord;
+          const { timestamp: _t, originalPolicy: _o, ...newReport } = newRecord;
 
           // Replace matching report with a newly timestamped record
           if (_.isEqual(newReport, existingReport)) {
@@ -108,28 +98,35 @@ const useCSPViolationReporter: UseCSPVilationReporter = () => {
     [],
   );
 
-  return React.useCallback(
-    (pluginName, event) => {
+  const reportViolation = React.useCallback(
+    (event) => {
       // eslint-disable-next-line no-console
       console.warn('Content Security Policy violation detected', event);
+
+      // Attempt to infer Console plugin name from SecurityPolicyViolation event
+      const pluginName =
+        getPluginNameFromResourceURL(event.blockedURI) ||
+        getPluginNameFromResourceURL(event.sourceFile);
+
       const existingRecords = getRecords();
-      const latestOccurrance = {
+      const newRecord = {
         ...newCSPViolationReport(pluginName, event),
         timestamp: Date.now(),
       };
-      const updatedRecords = updateRecords(existingRecords, latestOccurrance);
-      const isNewOccurrance = updatedRecords.length > existingRecords.length;
-      const shouldNotify = isNewOccurrance && process.env.NODE_ENV === 'production';
+      const updatedRecords = updateRecords(existingRecords, newRecord);
+      const isNewOccurrence = updatedRecords.length > existingRecords.length;
+      const isProduction = process.env.NODE_ENV === 'production';
 
       window.localStorage.setItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY, JSON.stringify(updatedRecords));
 
-      if (shouldNotify) {
-        fireTelemetryEvent('CSPViolation', latestOccurrance);
+      if (isNewOccurrence && isProduction) {
+        fireTelemetryEvent('CSPViolation', newRecord);
       }
 
       if (pluginName) {
         const pluginInfo = pluginStore.findDynamicPluginInfo(pluginName);
         const validPlugin = !!pluginInfo;
+        const pluginIsLoaded = validPlugin && pluginInfo.status === 'Loaded';
 
         // eslint-disable-next-line no-console
         console.warn(
@@ -138,7 +135,11 @@ const useCSPViolationReporter: UseCSPVilationReporter = () => {
           }`,
         );
 
-        if (validPlugin && shouldNotify) {
+        if (validPlugin) {
+          pluginStore.setCustomDynamicPluginInfo(pluginName, { hasCSPViolations: true });
+        }
+
+        if (pluginIsLoaded && !isProduction && !pluginInfo.hasCSPViolations) {
           toastContext.addToast({
             variant: AlertVariant.warning,
             title: t('public~Content Security Policy violation in Console plugin'),
@@ -154,49 +155,47 @@ const useCSPViolationReporter: UseCSPVilationReporter = () => {
         }
       }
     },
-    [fireTelemetryEvent, getRecords, t, toastContext, updateRecords],
-  );
-};
-
-export const useCSPViolationDetector = () => {
-  const reportViolation = useCSPViolationReporter();
-  const onCSPViolation = React.useCallback(
-    (event) => {
-      // Attempt to infer Console plugin name from SecurityPolicyViolation event
-      const pluginName =
-        getPluginNameFromResourceURL(event.blockedURI) ||
-        getPluginNameFromResourceURL(event.sourceFile);
-
-      reportViolation(pluginName, event);
-    },
-    [reportViolation],
+    [fireTelemetryEvent, getRecords, t, toastContext, updateRecords, pluginStore],
   );
 
   React.useEffect(() => {
-    document.addEventListener('securitypolicyviolation', onCSPViolation);
+    document.addEventListener('securitypolicyviolation', reportViolation);
     return () => {
-      document.removeEventListener('securitypolicyviolation', onCSPViolation);
+      document.removeEventListener('securitypolicyviolation', reportViolation);
     };
-  }, [onCSPViolation]);
+  }, [reportViolation]);
 };
 
+/** A subset of properties from a SecurityPolicyViolationEvent which identify a unique CSP violation */
 type CSPViolationReportProperties =
+  // The URI of the resource that was blocked because it violates a policy.
   | 'blockedURI'
+  // The column number in the document or worker at which the violation occurred.
   | 'columnNumber'
+  // Whether the user agent is configured to enforce or just report the policy violation.
   | 'disposition'
+  // The URI of the document or worker in which the violation occurred.
   | 'documentURI'
+  // The directive that was violated.
   | 'effectiveDirective'
+  // The line number in the document or worker at which the violation occurred.
   | 'lineNumber'
+  // The policy whose enforcement caused the violation.
   | 'originalPolicy'
+  // The URL for the referrer of the resources whose policy was violated, or null.
   | 'referrer'
+  // A sample of the resource that caused the violation, usually the first 40 characters.
+  // This will only be populated if the resource is an inline script, event handler or style.
   | 'sample'
+  // If the violation occurred as a result of a script, this will be the URL of the script.
   | 'sourceFile'
+  // HTTP status code of the document or worker in which the violation occurred.
   | 'statusCode';
+
+/** A CSPViolationReport represents a unique CSP violation per plugin */
 type CSPViolationReport = Pick<SecurityPolicyViolationEvent, CSPViolationReportProperties> & {
   pluginName: string;
 };
+
+/** A CSPViolationRecord represents a unique CSP violation per plugin, per occurrance */
 type CSPViolationRecord = CSPViolationReport & { timestamp: number };
-type UseCSPVilationReporter = () => (
-  pluginName: string,
-  event: SecurityPolicyViolationEvent,
-) => void;
