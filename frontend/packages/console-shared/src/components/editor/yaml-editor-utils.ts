@@ -70,10 +70,10 @@ export const fold = (
  */
 export const registerAutoFold = (
   editor: monaco.editor.IStandaloneCodeEditor,
-  model: monaco.editor.ITextModel,
   alreadyInUse: boolean = false,
 ) => {
   let initialFoldingTriggered = false;
+  const model = editor.getModel();
   const tryFolding = () => {
     const document = model.getValue();
     if (!initialFoldingTriggered && document !== '') {
@@ -131,7 +131,6 @@ export const registerYAMLinMonaco = (
   }
 
   if (!alreadyInUse) {
-    const model = editor.getModel();
-    registerAutoFold(editor, model);
+    registerAutoFold(editor);
   }
 };
