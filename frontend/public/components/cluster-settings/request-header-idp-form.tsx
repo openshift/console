@@ -145,7 +145,7 @@ export const AddRequestHeaderPage = () => {
               {t('public~Challenge URL')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="url"
               onChange={(e) => setChallengeURL(e.currentTarget.value)}
               value={challengeURL}
@@ -163,7 +163,7 @@ export const AddRequestHeaderPage = () => {
               {t('public~Login URL')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="url"
               onChange={(e) => setLoginURL(e.currentTarget.value)}
               value={loginURL}

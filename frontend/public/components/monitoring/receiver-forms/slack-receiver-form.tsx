@@ -36,7 +36,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         <div className="row">
           <div className="col-sm-7">
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="text"
               id="slack-api-url"
               aria-describedby="slack-api-url-help"
@@ -72,7 +72,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           {t('public~Channel')}
         </label>
         <input
-          className="pf-v6-c-form-control"
+          className="pf-v5-c-form-control"
           type="text"
           id="slack-channel"
           aria-describedby="slack-channel-help"
@@ -138,7 +138,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {formValues.slackIconType === 'url' && (
                 <>
                   <input
-                    className="pf-v6-c-form-control"
+                    className="pf-v5-c-form-control"
                     type="text"
                     aria-describedby="slack-icon-url-help"
                     aria-label={t('public~The URL of the icon.')}
@@ -159,7 +159,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {formValues.slackIconType === 'emoji' && (
                 <>
                   <input
-                    className="pf-v6-c-form-control"
+                    className="pf-v5-c-form-control"
                     type="text"
                     aria-describedby="slack-icon-emoji-help"
                     aria-label={t('public~An emoji code to use in place of the default icon.')}
@@ -191,7 +191,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 {t('public~Username')}
               </label>
               <input
-                className="pf-v6-c-form-control"
+                className="pf-v5-c-form-control"
                 type="text"
                 aria-describedby="slack-username-help"
                 id="slack-username"

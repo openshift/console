@@ -212,7 +212,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
               data-test="input-name"
               name="name"
               type="text"
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               onChange={(e) => setName(e.target.value)}
               value={name || ''}
               required

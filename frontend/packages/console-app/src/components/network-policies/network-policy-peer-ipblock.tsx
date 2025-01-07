@@ -29,7 +29,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           {t('console-app~CIDR')}
         </label>
         <input
-          className="pf-v6-c-form-control"
+          className="pf-v5-c-form-control"
           type="text"
           onChange={handleCIDRChange}
           value={ipBlock.cidr}
@@ -58,7 +58,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           {ipBlock.except.map((exc, idx) => (
             <div className="pf-v6-c-input-group" key={exc.key}>
               <input
-                className="pf-v6-c-form-control"
+                className="pf-v5-c-form-control"
                 type="text"
                 onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
                 placeholder="10.2.1.0/12"

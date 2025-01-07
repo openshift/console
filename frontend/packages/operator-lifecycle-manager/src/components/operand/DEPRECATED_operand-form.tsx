@@ -768,7 +768,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       return (
         <div>
           <input
-            className="pf-v6-c-form-control"
+            className="pf-v5-c-form-control"
             id={id}
             type="password"
             onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
@@ -863,7 +863,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         <div>
           <input
             key={id}
-            className="pf-v6-c-form-control"
+            className="pf-v5-c-form-control"
             id={id}
             type="text"
             onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
@@ -877,7 +877,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         <div>
           <input
             key={path}
-            className="pf-v6-c-form-control"
+            className="pf-v5-c-form-control"
             id={id}
             type="number"
             onChange={({ currentTarget: { value } }) =>
@@ -1114,7 +1114,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                   {t('public~Name')}
                 </label>
                 <input
-                  className="pf-v6-c-form-control"
+                  className="pf-v5-c-form-control"
                   type="text"
                   onChange={({ target: { value } }) => handleFormDataUpdate('metadata.name', value)}
                   value={immutableFormData.getIn(['metadata', 'name']) || 'example'}

@@ -388,7 +388,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
         >
           <label className="control-label co-required">{t('public~Receiver name')}</label>
           <input
-            className="pf-v6-c-form-control"
+            className="pf-v5-c-form-control"
             type="text"
             value={formValues.receiverName}
             onChange={(e) =>

@@ -242,7 +242,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             {t('console-app~Policy name')}
           </label>
           <input
-            className="pf-v6-c-form-control"
+            className="pf-v5-c-form-control"
             type="text"
             onChange={handleNameChange}
             value={networkPolicy.name}

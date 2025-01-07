@@ -184,7 +184,7 @@ export const AddBasicAuthPage: React.FC = () => {
               {t('public~URL')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="url"
               onChange={(e) => setUrl(e.currentTarget.value)}
               value={url}

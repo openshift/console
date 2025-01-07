@@ -521,7 +521,7 @@ const PairElement_ = DragSource(
                 <input
                   type="text"
                   data-test="pairs-list-name"
-                  className="pf-v6-c-form-control"
+                  className="pf-v5-c-form-control"
                   placeholder={nameString}
                   value={pair[NameValueEditorPair.Name]}
                   onChange={this._onChangeName}
@@ -544,7 +544,7 @@ const PairElement_ = DragSource(
                   <input
                     type="text"
                     data-test="pairs-list-value"
-                    className="pf-v6-c-form-control"
+                    className="pf-v5-c-form-control"
                     placeholder={valueString}
                     value={pair[NameValueEditorPair.Value] || ''}
                     onChange={this._onChangeValue}
@@ -684,7 +684,7 @@ const EnvFromPairElement_ = DragSource(
                 <input
                   data-test-id="env-prefix"
                   type="text"
-                  className="pf-v6-c-form-control"
+                  className="pf-v5-c-form-control"
                   placeholder={valueString}
                   value={pair[EnvFromPair.Prefix]}
                   onChange={this._onChangePrefix}

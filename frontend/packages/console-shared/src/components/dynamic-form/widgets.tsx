@@ -28,7 +28,7 @@ export const TextWidget: React.FC<WidgetProps> = (props) => {
     <NumberWidget {...props} />
   ) : (
     <input
-      className="pf-v6-c-form-control"
+      className="pf-v5-c-form-control"
       disabled={disabled}
       id={id}
       key={id}
@@ -46,7 +46,7 @@ export const NumberWidget: React.FC<WidgetProps> = ({ value, id, onChange }) => 
   const numberValue = _.toNumber(value);
   return (
     <input
-      className="pf-v6-c-form-control"
+      className="pf-v5-c-form-control"
       id={id}
       key={id}
       onChange={({ currentTarget }) =>
@@ -61,7 +61,7 @@ export const NumberWidget: React.FC<WidgetProps> = ({ value, id, onChange }) => 
 export const PasswordWidget: React.FC<WidgetProps> = ({ value = '', id, onChange }) => {
   return (
     <input
-      className="pf-v6-c-form-control"
+      className="pf-v5-c-form-control"
       key={id}
       id={id}
       type="password"

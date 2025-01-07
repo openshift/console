@@ -121,7 +121,7 @@ export const AddGooglePage = () => {
               {t('public~Client ID')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="text"
               onChange={(e) => setClientID(e.currentTarget.value)}
               value={clientID}
@@ -134,7 +134,7 @@ export const AddGooglePage = () => {
               {t('public~Client secret')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="password"
               onChange={(e) => setClientSecret(e.currentTarget.value)}
               value={clientSecret}
@@ -147,7 +147,7 @@ export const AddGooglePage = () => {
               {t('public~Hosted domain')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="text"
               onChange={(e) => setHostedDomain(e.currentTarget.value)}
               value={hostedDomain}

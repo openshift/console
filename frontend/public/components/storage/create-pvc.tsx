@@ -158,7 +158,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
       </label>
       <div className="form-group">
         <input
-          className="pf-v6-c-form-control"
+          className="pf-v5-c-form-control"
           type="text"
           onChange={handlePvcName}
           placeholder="my-storage-claim"

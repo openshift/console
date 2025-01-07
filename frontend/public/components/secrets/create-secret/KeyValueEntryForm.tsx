@@ -45,7 +45,7 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
           </label>
           <div>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               id={`${this.props.id}-key`}
               type="text"
               name="key"

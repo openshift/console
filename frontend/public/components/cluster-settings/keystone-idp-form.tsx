@@ -186,7 +186,7 @@ export const AddKeystonePage = () => {
               {t('public~Domain name')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="text"
               onChange={(e) => setDomainName(e.currentTarget.value)}
               value={domainName}
@@ -199,7 +199,7 @@ export const AddKeystonePage = () => {
               {t('public~URL')}
             </label>
             <input
-              className="pf-v6-c-form-control"
+              className="pf-v5-c-form-control"
               type="url"
               onChange={(e) => setUrl(e.currentTarget.value)}
               value={url}

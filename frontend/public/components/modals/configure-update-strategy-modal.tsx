@@ -64,7 +64,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                         placeholder="25%"
                         size={5}
                         type="text"
-                        className="pf-v6-c-form-control"
+                        className="pf-v5-c-form-control"
                         id="input-max-unavailable"
                         value={props.maxUnavailable}
                         onChange={(e) => props.onChangeMaxUnavailable(e.target.value)}
@@ -102,7 +102,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                         placeholder="25%"
                         size={5}
                         type="text"
-                        className="pf-v6-c-form-control"
+                        className="pf-v5-c-form-control"
                         id="input-max-surge"
                         value={props.maxSurge}
                         onChange={(e) => props.onChangeMaxSurge(e.target.value)}

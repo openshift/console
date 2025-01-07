@@ -491,7 +491,7 @@ class Dropdown_ extends DropdownMixin {
                           value={autocompleteText || ''}
                           autoCapitalize="none"
                           onKeyDown={this.onKeyDown}
-                          className="pf-v6-c-form-control pf-m-search"
+                          className="pf-v5-c-form-control pf-m-search"
                           onClick={(e) => e.stopPropagation()}
                           data-test-id="dropdown-text-filter"
                         />

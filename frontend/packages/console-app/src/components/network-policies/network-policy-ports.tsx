@@ -48,7 +48,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   data-test="port-protocol"
                 />
                 <input
-                  className="pf-v6-c-form-control"
+                  className="pf-v5-c-form-control"
                   onChange={(event) =>
                     onSingleChange({ ...port, port: event.currentTarget.value }, idx)
                   }

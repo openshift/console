@@ -34,7 +34,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           id={`${path}.cpu`}
           name="cpu"
           type="text"
-          className="pf-v6-c-form-control"
+          className="pf-v5-c-form-control"
           placeholder="500m"
         />
       </div>
@@ -52,7 +52,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           id={`${path}.memory`}
           name="memory"
           type="text"
-          className="pf-v6-c-form-control"
+          className="pf-v5-c-form-control"
           placeholder="50Mi"
         />
       </div>
@@ -70,7 +70,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           id={`${path}.ephemeral-storage`}
           name="ephemeral-storage"
           type="text"
-          className="pf-v6-c-form-control"
+          className="pf-v5-c-form-control"
           placeholder="50Mi"
         />
       </div>

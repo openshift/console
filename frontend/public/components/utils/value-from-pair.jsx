@@ -154,10 +154,10 @@ export const NameKeyDropdownPair = ({
 const FieldRef = ({ data: { fieldPath } }) => (
   <>
     <div className="pairs-list__value-ro-field">
-      <input type="text" className="pf-v6-c-form-control" value="FieldRef" disabled />
+      <input type="text" className="pf-v5-c-form-control" value="FieldRef" disabled />
     </div>
     <div className="pairs-list__value-ro-field">
-      <input type="text" className="pf-v6-c-form-control" value={fieldPath} disabled />
+      <input type="text" className="pf-v5-c-form-control" value={fieldPath} disabled />
     </div>
   </>
 );
@@ -185,13 +185,13 @@ const ConfigMapSecretKeyRef = ({
         <div className="pairs-list__value-ro-field">
           <input
             type="text"
-            className="pf-v6-c-form-control"
+            className="pf-v5-c-form-control"
             value={`${name} - ${kind}`}
             disabled
           />
         </div>
         <div className="pairs-list__value-ro-field">
-          <input type="text" className="pf-v6-c-form-control" value={key} disabled />
+          <input type="text" className="pf-v5-c-form-control" value={key} disabled />
         </div>
       </>
     );
@@ -235,7 +235,7 @@ const ConfigMapSecretRef = ({
       <div className="pairs-list__value-ro-field">
         <input
           type="text"
-          className="pf-v6-c-form-control"
+          className="pf-v5-c-form-control"
           value={nameString}
           disabled
           placeholder={t('public~ConfigMap/Secret')}
@@ -264,13 +264,13 @@ const ResourceFieldRef = ({ data: { containerName, resource } }) => (
     <div className="pairs-list__value-ro-field">
       <input
         type="text"
-        className="pf-v6-c-form-control value-from"
+        className="pf-v5-c-form-control value-from"
         value={`${containerName} - Resource Field`}
         disabled
       />
     </div>
     <div className="pairs-list__value-ro-field">
-      <input type="text" className="pf-v6-c-form-control value-from" value={resource} disabled />
+      <input type="text" className="pf-v5-c-form-control value-from" value={resource} disabled />
     </div>
   </>
 );
