@@ -1,7 +1,4 @@
 .oc-perspective-nav {
-  --pf-v6-c-nav__list--PaddingTop: 0;
-  --pf-v6-c-nav__list--PaddingBottom: 0;
-
   .pf-v6-c-nav__section:first-child {
     .pf-v6-c-nav__section-title {
       --pf-v6-c-nav__section-title--PaddingTop: 0;
@@ -12,7 +9,6 @@
   .pf-v6-c-nav__section.no-title {
     border-bottom: var(--pf-t--global--border--width--divider--default) solid
       var(--pf-t--global--border--color--default);
-    margin-top: var(--pf-t--global--spacer--sm);
     padding-bottom: var(--pf-t--global--spacer--sm);
     .pf-v6-c-nav__section-title {
       --pf-v6-c-nav__section-title--PaddingBottom: 0;
