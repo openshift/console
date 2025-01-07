@@ -146,7 +146,9 @@ const EditYAMLInner = (props) => {
   const onCancel = 'onCancel' in props ? props.onCancel : navigateBack;
 
   /** @return {import('monaco-editor').editor.IStandaloneCodeEditor | null} */
-  const getEditor = () => monacoRef.current?.getEditor();
+  const getEditor = () => {
+    return monacoRef.current?.editor;
+  };
 
   const getModel = React.useCallback(
     (obj) => {
@@ -372,7 +374,7 @@ const EditYAMLInner = (props) => {
     }
 
     const newVersion = _.get(props.obj, 'metadata.resourceVersion');
-    const s = displayedVersion.current !== newVersion;
+    const s = displayedVersion.current !== newVersion && editorMounted;
     setStale(s);
     handleError(props.error, success);
     if (props.sampleObj) {
