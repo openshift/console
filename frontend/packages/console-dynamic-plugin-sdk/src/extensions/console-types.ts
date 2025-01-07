@@ -648,8 +648,8 @@ export type CodeEditorProps = {
 };
 
 export type CodeEditorRef = {
-  getEditor: () => monaco.editor.IStandaloneCodeEditor;
-  getMonaco: () => typeof monaco;
+  editor: monaco.editor.IStandaloneCodeEditor;
+  monaco: typeof monaco;
 };
 
 export type ResourceYAMLEditorProps = {

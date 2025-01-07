@@ -159,6 +159,7 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
+- Upgraded `monaco-editor` to version `0.36.1`.
 - Removed PatternFly 4.x shared modules.
 - Upgraded PatternFly to v6.
 - Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve correct styling.

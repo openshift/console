@@ -28,13 +28,13 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   sanitizeYamlContent,
   toggleSidebar,
 }) => {
-  const getEditor = React.useCallback(() => editorRef?.current?.getEditor(), [editorRef]);
+  const editor = editorRef.current?.editor;
 
   const insertYamlContent = React.useCallback(
     (id: string = 'default', yamlContent: string = '', kind) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
 
-      const selection = getEditor()?.getSelection();
+      const selection = editor?.getSelection();
       const range = new Range(
         selection.startLineNumber,
         selection.startColumn,
@@ -64,18 +64,18 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
       );
 
       const op = { range, text: indentedText, forceMoveMarkers: true };
-      getEditor()?.executeEdits(id, [op], [newContentSelection]);
-      getEditor()?.focus();
+      editor?.executeEdits(id, [op], [newContentSelection]);
+      editor?.focus();
     },
-    [sanitizeYamlContent, getEditor],
+    [sanitizeYamlContent, editor],
   );
 
   const replaceYamlContent = React.useCallback(
     (id: string = 'default', yamlContent: string = '', kind: string) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
-      getEditor()?.setValue(yaml);
+      editor?.setValue(yaml);
     },
-    [sanitizeYamlContent, getEditor],
+    [sanitizeYamlContent, editor],
   );
 
   const downloadYamlContent = React.useCallback(

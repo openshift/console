@@ -66,8 +66,8 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   React.useImperativeHandle(
     ref,
     () => ({
-      getEditor: () => editorRef,
-      getMonaco: () => monacoRef,
+      editor: editorRef,
+      monaco: monacoRef,
     }),
     [editorRef, monacoRef],
   );
