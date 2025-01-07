@@ -5,7 +5,7 @@ export const THEME_USER_SETTING_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
 const THEME_DARK_CLASS = 'pf-v6-theme-dark';
-const THEME_DARK_CLASS_LEGACY = 'pf-theme-dark'; // legacy class name needed to support PF4
+const THEME_DARK_CLASS_LEGACY = 'pf-v5-theme-dark'; // legacy class name needed to support PF5
 const THEME_DARK = 'dark';
 const THEME_LIGHT = 'light';
 

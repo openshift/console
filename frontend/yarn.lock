@@ -1829,6 +1829,11 @@
     semver "^7.3.7"
     yup "^0.32.11"
 
+"@patternfly-5/patternfly@npm:@patternfly/patternfly@5.4.2":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.4.2.tgz#4a87d6a5fb2ffd526b4b9597b651f13ecf8ddd4f"
+  integrity sha512-+BaokNR8/AmTYMESxby9UtQXPGACg449BXQd0KejAvW/uGxlgO6mY1X1205DeBEHoK3e/vXkYXjvZPpv/tcxSA==
+
 "@patternfly/patternfly@^6.0.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-6.1.0.tgz#bd2374bf293b1c2abdde071700b3d9532ec2dfe6"

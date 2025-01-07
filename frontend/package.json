@@ -132,6 +132,7 @@
     "resolver": "./jest-resolver.js"
   },
   "dependencies": {
+    "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2",
     "@patternfly/patternfly": "^6.0.0",
     "@patternfly/quickstarts": "^6.1.0",
     "@patternfly/react-catalog-view-extension": "^6.0.0",

@@ -100,7 +100,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
                 readOnly
                 disabled
               />
-              <span className="pf-v6-c-button pf-m-tertiary co-btn-file">
+              <span className="pf-v5-c-button pf-m-tertiary co-btn-file">
                 <input id={id} type="file" onChange={this.onFileUpload} data-test="file-input" />
                 {t('public~Browse...')}
               </span>

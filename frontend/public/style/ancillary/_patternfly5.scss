@@ -2,6 +2,13 @@
 // These are either components we don't currently use or that our current
 // markup structure doesn't align with PF so we must apply through targeted css
 
+// Override PF5 font size
+:root {
+  // Numerical value required
+  --pf-v5-global--FontSize--md: 14px; // same as $font-size-base
+  --pf-v5-global--FontSize--sm: 13px;
+}
+
 // Assigning PF component specific variables globally so we can use
 :root {
   --pf-v6-c-code-block--BackgroundColor: var(--pf-v6-c-code-block--BackgroundColor);
@@ -70,7 +77,7 @@
 }
 
 // Reuse PF5 form-control styling that is modified to match our legacy components using PF4 markup
-// TODO: PF6 upgrade
+// TODO: PF6 upgrade -- convert to PF6 styles
 
 .pf-v5-c-form-control {
   --pf-v5-c-form-control--ColumnGap: var(--pf-v5-global--spacer--sm);
@@ -215,9 +222,6 @@
   --pf-v5-c-form-control__toggle-icon--PaddingLeft: var(--pf-v5-c-form-control--inset--base);
   --pf-v5-c-form-control__toggle-icon--Color: var(--pf-v5-global--Color--100);
   --pf-v5-c-form-control--m-disabled__toggle-icon--Color: var(--pf-v5-global--disabled-color--100);
-
-  // This component always needs to be light
-  @include pf-v5-t-light('--pf-v5-c-form-control--Color');
 
   position: relative;
   display: grid;
