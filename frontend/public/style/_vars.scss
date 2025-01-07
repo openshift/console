@@ -15,11 +15,10 @@ $consoleWebDistPath: './';
 $pf-v6-global--font-path: '~@patternfly/patternfly/assets/fonts';
 
 // == Declare max breakpoints from PatternFly variables
-// TODO: PF6 upgrade -- $pf-v6-global--breakpoint--* are now rem
-$pf-v6-global--breakpoint--xs-max: ($pf-v6-global--breakpoint--xs - 1);
-$pf-v6-global--breakpoint--sm-max: ($pf-v6-global--breakpoint--sm - 1);
-$pf-v6-global--breakpoint--md-max: ($pf-v6-global--breakpoint--md - 1);
-$pf-v6-global--breakpoint--lg-max: ($pf-v6-global--breakpoint--lg - 1);
+$pf-v6-global--breakpoint--xs-max: calc(#{$pf-v6-global--breakpoint--xs} - 1);
+$pf-v6-global--breakpoint--sm-max: calc(#{$pf-v6-global--breakpoint--sm} - 1);
+$pf-v6-global--breakpoint--md-max: calc(#{$pf-v6-global--breakpoint--md} - 1);
+$pf-v6-global--breakpoint--lg-max: calc(#{$pf-v6-global--breakpoint--lg} - 1);
 
 // Can not use --pf-v6-global--gutter --pf-v6-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
 $pf-v6-global-gutter: 1rem; // Matches --pf-t--global--spacer--gutter--default
