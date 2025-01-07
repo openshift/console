@@ -61,7 +61,13 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
 
   const children = navExtensions.map((extension) => {
     if (isSeparator(extension)) {
-      return <NavItemSeparator key={extension.uid} {...extension.properties.dataAttributes} />;
+      return (
+        <NavItemSeparator
+          key={extension.uid}
+          className="oc-perspective-nav__divider"
+          {...extension.properties.dataAttributes}
+        />
+      );
     }
     if (isHrefNavItem(extension)) {
       return (

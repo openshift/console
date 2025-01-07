@@ -1,4 +1,7 @@
 .oc-perspective-nav {
+  &__divider {
+    margin: var(--pf-v6-c-nav__subnav--RowGap) 0;
+  }
   .pf-v6-c-nav__section:first-child {
     .pf-v6-c-nav__section-title {
       --pf-v6-c-nav__section-title--PaddingTop: 0;
