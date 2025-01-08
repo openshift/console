@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,6 +27,7 @@ import (
 	"github.com/openshift/console/pkg/auth/sessions"
 	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
 	"github.com/openshift/console/pkg/devfile"
+	gql "github.com/openshift/console/pkg/graphql"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
@@ -44,7 +44,6 @@ import (
 	"github.com/openshift/console/pkg/version"
 
 	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/graph-gophers/graphql-go/relay"
 	"github.com/rawagner/graphql-transport-ws/graphqlws"
 )
 
@@ -332,7 +331,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 	handleFunc(terminal.InstalledNamespaceEndpoint, terminalProxy.HandleTerminalInstalledNamespace)
 
-	graphQLSchema, err := ioutil.ReadFile("pkg/graphql/schema.graphql")
+	graphQLSchema, err := os.ReadFile("pkg/graphql/schema.graphql")
 	if err != nil {
 		panic(err)
 	}
@@ -342,7 +341,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
 	handler := graphqlws.NewHandler()
 	handler.InitPayload = resolver.InitPayload
-	graphQLHandler := handler.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
+	graphQLHandler := handler.NewHandlerFunc(schema, gql.NewHttpHandler(schema))
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
 			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
