@@ -1210,7 +1210,6 @@
   "Create resources from their YAML or JSON definitions": "Create resources from their YAML or JSON definitions",
   "Import code from your Git repository to be built and deployed": "Import code from your Git repository to be built and deployed",
   "Import from Git": "Import from Git",
-  "Deploy an existing Image from an Image registry or Image stream tag": "Deploy an existing Image from an Image registry or Image stream tag",
   "Container images": "Container images",
   "Duplicate {{kindLabel}}": "Duplicate {{kindLabel}}",
   "Edit {{kindLabel}} subject": "Edit {{kindLabel}} subject",
