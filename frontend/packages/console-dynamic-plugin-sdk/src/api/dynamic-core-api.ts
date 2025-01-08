@@ -921,3 +921,13 @@ export const useUserSettings: UseUserSettings = require('@console/shared/src/hoo
  */
 export const useQuickStartContext: UseQuickStartContext = require('@console/shared/src/hooks/useQuickStartContext')
   .useQuickStartContext;
+
+/**
+ * A component that renders a YAML editor based on the provided resource model and template.
+ * @example
+ * ```tsx
+ * <CreateResource />
+ * ```
+ */
+export const CreateResource: React.FC = require('@console/internal/components/create-resource')
+  .CreateResource;
