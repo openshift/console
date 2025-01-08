@@ -721,26 +721,27 @@ const ActionsMenuDropdown = (props) => {
   };
 
   return (
-    <div
-      ref={dropdownElement}
-      className={classNames({
-        'co-actions-menu pf-v6-c-dropdown': true,
-        'pf-m-expanded': active,
-      })}
-    >
+    <div ref={dropdownElement}>
       <button
         type="button"
         aria-haspopup="true"
         aria-label={t('public~Actions')}
         aria-expanded={active}
-        className="pf-v6-c-menu-toggle"
+        className={classNames({
+          'pf-v6-c-menu-toggle': true,
+          'pf-m-expanded': active,
+        })}
         onClick={toggle}
         data-test-id="actions-menu-button"
       >
-        <span className="pf-v6-c-dropdown__toggle-text">{props.title || t('public~Actions')}</span>
-        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+        <span className="pf-v6-c-menu__toggle-text">{props.title || t('public~Actions')}</span>
+        <CaretDownIcon />
       </button>
-      {active && <KebabItems options={props.actions} onClick={onClick} />}
+      {active && (
+        <div className="co-actions-menu dropdown-menu pf-v6-c-menu">
+          <KebabItems options={props.actions} onClick={onClick} />
+        </div>
+      )}
     </div>
   );
 };

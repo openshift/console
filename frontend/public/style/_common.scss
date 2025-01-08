@@ -125,6 +125,7 @@ dl.co-inline {
   display: flex;
   justify-content: space-between;
   margin-bottom: $pf-v6-global-gutter--md !important;
+  position: relative;
   &--baseline {
     align-items: baseline;
   }
