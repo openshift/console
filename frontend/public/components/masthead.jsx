@@ -42,7 +42,7 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
             {window.SERVER_FLAGS.customLogoURL ? (
               <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
             ) : (
-              <ReactSVG src={details.logoImg} data-test="brand-image" />
+              <ReactSVG src={details.logoImg} data-test="brand-image" className="pf-v6-c-brand" />
             )}
           </MastheadLogo>
         </MastheadBrand>
