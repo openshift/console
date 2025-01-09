@@ -230,16 +230,17 @@ form.pf-v6-c-form {
   --pf-v6-c-page__sidebar--BoxShadow: none;
 }
 
-.pf-v6-c-page__sidebar {
-  @media print {
-    display: none !important;
+.pf-v6-c-page__main-breadcrumb {
+  // so breadcrumb padding matches .co-m-nav-title
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-inline-start: $pf-v6-global-gutter--md;
+    padding-inline-end: $pf-v6-global-gutter--md;
   }
 }
 
-// Reset our tables to our base font-size
-.pf-v6-c-table {
-  tr > * {
-    --pf-v6-c-table--cell--FontSize: $font-size-base;
+.pf-v6-c-page__sidebar {
+  @media print {
+    display: none !important;
   }
 }
 
