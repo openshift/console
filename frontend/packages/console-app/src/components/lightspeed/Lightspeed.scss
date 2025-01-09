@@ -21,8 +21,19 @@
 .lightspeed__popover {
   border-radius: 12px;
   border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
+  background-color: var(--pf-t--global--background--color--primary--default);
   bottom: var(--popover-bottom);
   overflow: hidden;
+  padding-block-end: var(--pf-t--global--spacer--md);
+  padding-block-start: var(--pf-t--global--spacer--md);
+  padding-inline-end: var(--pf-t--global--spacer--md);
+  padding-inline-start: var(--pf-t--global--spacer--md);
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-block-end: var(--pf-t--global--spacer--lg);
+    padding-block-start: var(--pf-t--global--spacer--lg);
+    padding-inline-end: var(--pf-t--global--spacer--lg);
+    padding-inline-start: var(--pf-t--global--spacer--lg);
+  }
 }
 
 .lightspeed__popover--collapsed {
