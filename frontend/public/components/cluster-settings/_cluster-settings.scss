@@ -1,5 +1,5 @@
 $co-channel-background-color: var(--pf-t--global--background--color--primary--default);
-$co-channel-color: var(--pf-v6-global--disabled-color--100);
+$co-channel-color: var(--pf-t--color--gray--40);
 $co-channel-current-color: var(--pf-t--color--blue--50);
 $co-channel-height: 60px;
 
@@ -85,7 +85,6 @@ $co-channel-height: 60px;
 }
 
 .co-channel-name {
-  color: $co-channel-color;
   padding: 0 10px 0 20px;
   min-width: 150px;
   white-space: nowrap;

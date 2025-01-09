@@ -9,7 +9,7 @@
     stroke: var(--pf-t--global--border--color--default);
     fill: var(--pf-t--global--background--color--primary--default);
     &.is-disabled {
-      fill: var(--pf-v6-global--disabled-color--300);
+      fill: var(--pf-t--global--background--color--disabled--default);
     }
   }
   &__trigger-underline {
@@ -25,7 +25,7 @@
     cursor: pointer;
   }
   &__trigger-disabled {
-    fill: var(--pf-v6-global--disabled-color--100);
+    fill: var(--pf-t--global--background--color--disabled--default);
   }
   &__list-items {
     max-height: 350px;
