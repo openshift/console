@@ -351,9 +351,13 @@ export const getTriggersAndImageStreamValues = (
     };
   }
 
-  imageTrigger = JSON.parse(
-    deployment?.metadata?.annotations?.['image.openshift.io/triggers'] ?? '[]',
-  )?.[0];
+  try {
+    const triggersAnnotation =
+      deployment?.metadata?.annotations?.['image.openshift.io/triggers'] ?? '[]';
+    imageTrigger = JSON.parse(triggersAnnotation)?.[0];
+  } catch (error) {
+    imageTrigger = undefined;
+  }
   imageName = imageTrigger?.from?.name?.split(':') ?? [];
   return {
     ...data,
