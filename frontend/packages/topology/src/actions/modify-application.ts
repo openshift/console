@@ -1,6 +1,5 @@
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { Action, K8sKind, K8sResourceKind } from '@console/dynamic-plugin-sdk';
 import { editApplicationModal } from '@console/topology/src/components/modals';
 
 export const getModifyApplicationAction = (

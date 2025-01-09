@@ -165,6 +165,12 @@ export type Alert = PrometheusAlert & {
   silencedBy?: Silence[];
 };
 
+export type Alerts = {
+  data: Alert[];
+  loaded: boolean;
+  loadError?: string | Error;
+};
+
 export type PrometheusRule = {
   alerts: PrometheusAlert[];
   annotations: PrometheusLabels;

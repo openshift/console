@@ -21,8 +21,8 @@ import {
 } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import { action } from 'mobx';
-import { errorModal } from '@console/internal/components/modals';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/dynamic-plugin-sdk';
+import { errorModal } from '@console/dynamic-plugin-sdk/src/api/internal-api';
 import { ActionContext } from '@console/shared';
 import { createConnection, moveNodeToGroup } from '../../../utils';
 import { isWorkloadRegroupable, graphContextMenu, groupContextMenu } from './nodeContextMenu';

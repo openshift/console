@@ -55,7 +55,6 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   const { width } = element.getBounds();
 
   const resourceObj = getTopologyResourceObject(element.getData());
-
   return (
     <Tooltip
       triggerRef={ref}

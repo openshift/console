@@ -1,6 +1,6 @@
-import { NamespaceMetrics } from '@console/internal/actions/ui';
-import { formatBytesAsMiB, formatCores } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
+import { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { formatBytesAsMiB, formatCores } from '@console/dynamic-plugin-sdk/src/topology/utils';
 import { PodRCData } from '@console/shared/src';
 
 export type PodStats = {

@@ -67,3 +67,8 @@ export const useURLPoll: UseURLPoll = require('@console/internal/components/util
   .useURLPoll;
 export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')
   .useLastNamespace;
+export const getImageForIconClass: (
+  iconClass: string,
+) => string = require('@console/internal/components/catalog/catalog-item-icon')
+  .getImageForIconClass;
+export const errorModal = require('@console/internal/components/modals/error-modal').errorModal;

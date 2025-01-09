@@ -4,7 +4,11 @@ import {
   GetGroupVersionKindForResource,
   GetGroupVersionKindForModel,
 } from '../../api/k8s-types';
-import { K8sGroupVersionKind, K8sResourceKindReference } from '../../extensions/console-types';
+import {
+  K8sGroupVersionKind,
+  K8sResourceCommon,
+  K8sResourceKindReference,
+} from '../../extensions/console-types';
 
 /**
  * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind
@@ -112,3 +116,21 @@ export const transformGroupVersionKindToReference = (
   kind: K8sResourceKindReference | K8sGroupVersionKind,
 ): K8sResourceKindReference =>
   kind && typeof kind !== 'string' ? getReference(kind) : (kind as K8sResourceKindReference);
+
+export const isGroupVersionKind = (ref: string) => ref?.split('~').length === 3;
+
+export const kindForReference = (ref: K8sResourceKindReference) =>
+  isGroupVersionKind(ref) ? ref.split('~')[2] : ref;
+
+export const apiVersionForReference = (ref: K8sResourceKindReference) =>
+  isGroupVersionKind(ref) ? `${ref.split('~')[0]}/${ref.split('~')[1]}` : ref;
+
+export const groupVersionFor = (apiVersion: string) => ({
+  group: apiVersion.split('/').length === 2 ? apiVersion.split('/')[0] : 'core',
+  version: apiVersion.split('/').length === 2 ? apiVersion.split('/')[1] : apiVersion,
+});
+
+export const referenceFor = ({ kind, apiVersion }: K8sResourceCommon): K8sResourceKindReference => {
+  const { group, version } = groupVersionFor(apiVersion);
+  return getReference({ group, version, kind });
+};

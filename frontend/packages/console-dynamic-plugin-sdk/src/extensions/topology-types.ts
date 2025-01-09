@@ -1,5 +1,13 @@
 import * as React from 'react';
 import {
+  BadgeLocation,
+  NodeStatus,
+  WithContextMenuProps,
+  WithDndDropProps,
+  WithDragNodeProps,
+  WithSelectionProps,
+} from '@patternfly/react-topology';
+import {
   Graph,
   Node,
   Model,
@@ -10,8 +18,13 @@ import {
   GraphElement,
   TopologyQuadrant,
 } from '@patternfly/react-topology/dist/esm/types';
-import { PrometheusAlert } from '../api/common-types';
-import { K8sResourceCommon, K8sResourceKindReference, WatchK8sResults } from './console-types';
+import { K8sKind, PrometheusAlert } from '../api/common-types';
+import {
+  K8sResourceCommon,
+  K8sResourceKindReference,
+  K8sVerb,
+  WatchK8sResults,
+} from './console-types';
 
 export type Point = [number, number];
 
@@ -26,6 +39,16 @@ export interface OdcEdgeModel extends EdgeModel {
 }
 
 export type TopologyResourcesObject = { [key: string]: K8sResourceCommon[] };
+
+export const WORKLOAD_TYPES = [
+  'deployments',
+  'deploymentConfigs',
+  'daemonSets',
+  'statefulSets',
+  'jobs',
+  'cronJobs',
+  'pods',
+];
 
 export type TopologyDataResources = WatchK8sResults<TopologyResourcesObject>;
 
@@ -179,3 +202,72 @@ export type BuildConfigData = {
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';
 export type ShowGroupingHintEventListener = EventListener<[Node, string]>;
+
+export type CreateConnectorProps = {
+  startPoint: Point;
+  endPoint: Point;
+  hints: string[];
+  dragging?: boolean;
+  hover?: boolean;
+};
+
+export type NodeComponentProps = {
+  element: GraphElement;
+};
+
+export interface WithCreateConnectorProps {
+  onShowCreateConnector: () => void;
+  onHideCreateConnector: () => void;
+  createConnectorDrag: boolean;
+}
+
+export type CpuCellComponentProps = {
+  cpuByPod: any;
+  totalCores: number;
+};
+
+export type MemoryCellComponentProps = {
+  totalBytes: number;
+  memoryByPod: any;
+};
+
+type MetricValuesByName = {
+  [name: string]: number;
+};
+
+export type NamespaceMetrics = {
+  cpu: MetricValuesByName;
+  memory: MetricValuesByName;
+};
+
+export type BaseNodeProps = {
+  className?: string;
+  innerRadius?: number;
+  icon?: string;
+  kind?: string;
+  labelIconClass?: string; // Icon to show in label
+  labelIcon?: React.ReactNode;
+  labelIconPadding?: number;
+  badge?: string;
+  badgeColor?: string;
+  badgeTextColor?: string;
+  badgeBorderColor?: string;
+  badgeClassName?: string;
+  badgeLocation?: BadgeLocation;
+  children?: React.ReactNode;
+  attachments?: React.ReactNode;
+  element: Node;
+  hoverRef?: (node: Element) => () => void;
+  dragging?: boolean;
+  dropTarget?: boolean;
+  canDrop?: boolean;
+  createConnectorAccessVerb?: K8sVerb;
+  nodeStatus?: NodeStatus;
+  showStatusBackground?: boolean;
+  alertVariant?: NodeStatus;
+  resourceModel: K8sKind;
+} & Partial<WithSelectionProps> &
+  Partial<WithDragNodeProps> &
+  Partial<WithDndDropProps> &
+  Partial<WithContextMenuProps> &
+  Partial<WithCreateConnectorProps>;

@@ -1,9 +1,6 @@
 import { observable, makeObservable } from 'mobx';
-import {
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceFor,
-} from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sResourceKindReference } from '@console/dynamic-plugin-sdk';
+import { referenceFor } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { OdcNodeModel } from '../topology-types';
 //
 // Import from @patternfly/react-topology when updated to a branch containing https://github.com/patternfly/patternfly-react/pull/7573
