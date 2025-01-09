@@ -1,4 +1,4 @@
-$co-icon-and-text-icon-lg: 1.2rem;
+$co-icon-and-text-icon-lg: var(--pf-t--global--font--size--500); // same as <Icon size="heading_2xl" />
 
 .co-icon-and-text {
   align-items: baseline;

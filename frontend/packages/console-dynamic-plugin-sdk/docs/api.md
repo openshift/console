@@ -139,7 +139,7 @@ Component for displaying a green check mark circle icon.
 | -------------- | ----------- |
 | `className` | (optional) additional class name for the component |
 | `title` | (optional) icon title |
-| `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl') |
+| `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl', '2xl', '3xl', 'headingSm', 'headingMd', 'headingLg', 'headingXl', 'heading_2xl', 'heading_3xl', 'bodySm', 'bodyDefault', 'bodyLg') |
 
 
 
