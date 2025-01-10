@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { t_global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens/dist/js/t_global_breakpoint_lg';
 import { OverviewGridCard, OverviewGridProps } from '@console/dynamic-plugin-sdk';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 
@@ -20,7 +19,7 @@ const mapCardsToGrid = (
 
 const DashboardGrid: React.FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {
   const [containerRef, width] = useRefWidth();
-  const smallGrid = !!width && width <= parseInt(breakpointLG.value, 10);
+  const smallGrid = !!width && width <= 992; // 992px is equivalent of --pf-t--global--breakpoint--lg
 
   const mainGridCards = React.useMemo(() => mapCardsToGrid(mainCards, 'main', smallGrid), [
     mainCards,
