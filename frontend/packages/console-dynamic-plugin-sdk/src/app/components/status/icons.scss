@@ -1,14 +1,14 @@
 .dps-icons {
   &__green-check-icon {
-    fill: var(--pf-t--global--color--status--success--100) !important;
+    fill: var(--pf-t--global--icon--color--status--success--default) !important;
   }
   &__red-exclamation-icon {
-    fill: var(--pf-t--global--color--status--danger--100) !important;
+    fill: var(--pf-t--global--icon--color--status--danger--default) !important;
   }
   &__yellow-exclamation-icon {
-    fill: var(--pf-t--global--color--status--warning--100) !important;
+    fill: var(--pf-t--global--icon--color--status--warning--default) !important;
   }
   &__blue-info-icon {
-    fill: var(--pf-t--color--blue--blue-30) !important;
+    fill: var(--pf-t--global--icon--color--status--info--default) !important;
   }
 }
