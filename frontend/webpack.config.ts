@@ -223,10 +223,6 @@ const config: Configuration = {
             return 'vendors~[name]-chunk-[contenthash].min.js';
           },
         },
-        'vendor-patternfly-5': {
-          // modules with @patternfly/ that don't also have @patternfly-4/ in the string
-          test: /^(?!.*@patternfly-4\/).*@patternfly\/.*/,
-        },
         'vendor-plugins-shared': {
           test(module: { resource?: string }) {
             return (
