@@ -4,7 +4,7 @@
   .co-icon-and-text__icon {
     margin-right: var(--pf-t--global--spacer--md);
     top: 0;
-    font-size: 1.2rem;
+    font-size: var(--pf-t--global--font--size--500); // same as <Icon size="heading_2xl" />;
   }
 }
 
