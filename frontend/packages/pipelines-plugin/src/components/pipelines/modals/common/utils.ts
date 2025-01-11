@@ -1,5 +1,8 @@
 import * as _ from 'lodash';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getActiveUserName } from '@console/internal/actions/ui';
+import { StorageClassModel } from '@console/internal/models';
 import { getRandomChars } from '@console/shared';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
@@ -183,9 +186,19 @@ export const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaim
   };
 };
 
-export const getServerlessFunctionDefaultPersistentVolumeClaim = (
+export const getServerlessFunctionDefaultPersistentVolumeClaim = async (
   pipelineName: string,
-): VolumeClaimTemplateType => {
+): Promise<VolumeClaimTemplateType> => {
+  const storageClasses: K8sResourceCommon[] = await k8sListResourceItems<K8sResourceCommon>({
+    model: StorageClassModel,
+    queryParams: {},
+  });
+  const defaultStorageClass = storageClasses?.find((storageClass) => {
+    return (
+      storageClass.metadata?.annotations?.['storageclass.kubernetes.io/is-default-class'] === 'true'
+    );
+  });
+  const defaultStorageClassName = defaultStorageClass?.metadata?.name;
   return {
     volumeClaimTemplate: {
       metadata: {
@@ -204,7 +217,7 @@ export const getServerlessFunctionDefaultPersistentVolumeClaim = (
             storage: '1Gi',
           },
         },
-        storageClassName: 'gp3-csi',
+        storageClassName: defaultStorageClassName,
         volumeMode: 'Filesystem',
       },
     },
