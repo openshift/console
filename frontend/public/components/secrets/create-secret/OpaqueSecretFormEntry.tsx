@@ -36,32 +36,28 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
         <label className="control-label co-required" htmlFor={`${index}-key`}>
           {t('public~Key')}
         </label>
-        <div>
-          <input
-            className="pf-v5-c-form-control"
-            id={`${index}-key`}
-            type="text"
-            name="key"
-            onChange={handleKeyChange}
-            value={entry.key}
-            data-test="secret-key"
-            required
-          />
-        </div>
+        <input
+          className="pf-v5-c-form-control"
+          id={`${index}-key`}
+          type="text"
+          name="key"
+          onChange={handleKeyChange}
+          value={entry.key}
+          data-test="secret-key"
+          required
+        />
       </div>
       <div className="form-group">
-        <div>
-          <DroppableFileInput
-            onChange={handleValueChange}
-            inputFileData={Base64.decode(entry.value)}
-            id={`${index}-value`}
-            label={t('public~Value')}
-            inputFieldHelpText={t(
-              'public~Drag and drop file with your value here or browse to upload it.',
-            )}
-            inputFileIsBinary={entry.isBinary_}
-          />
-        </div>
+        <DroppableFileInput
+          onChange={handleValueChange}
+          inputFileData={Base64.decode(entry.value)}
+          id={`${index}-value`}
+          label={t('public~Value')}
+          inputFieldHelpText={t(
+            'public~Drag and drop file with your value here or browse to upload it.',
+          )}
+          inputFileIsBinary={entry.isBinary_}
+        />
       </div>
     </div>
   );

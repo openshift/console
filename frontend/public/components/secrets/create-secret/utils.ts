@@ -187,8 +187,10 @@ type DockerCfg = {
 
 type PullSecretData = DockerCfg | DockerConfigJSON;
 
-export const opaqueEntriesToObject = (opaqueEntriesArray: OpaqueDataEntry[]): SecretChangeData => {
-  return (opaqueEntriesArray ?? []).reduce(
+export const opaqueEntriesToObject = (
+  opaqueEntriesArray: OpaqueDataEntry[] = [],
+): SecretChangeData => {
+  return opaqueEntriesArray.reduce(
     (acc, { key, value }) => {
       return {
         base64StringData: { ...acc.base64StringData, [key]: value },
@@ -213,7 +215,7 @@ export const opaqueSecretObjectToArray = (
   if (_.isEmpty(base64StringData)) {
     return [newOpaqueSecretEntry()];
   }
-  return _.map(base64StringData, (value, key) => {
+  return Object.entries(base64StringData).map(([key, value]) => {
     return {
       key,
       value,
