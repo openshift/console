@@ -51,18 +51,16 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
         </div>
       </div>
       <div className="form-group">
-        <div>
-          <DroppableFileInput
-            onChange={handleValueChange}
-            inputFileData={Base64.decode(entry.value)}
-            id={`${index}-value`}
-            label={t('public~Value')}
-            inputFieldHelpText={t(
-              'public~Drag and drop file with your value here or browse to upload it.',
-            )}
-            inputFileIsBinary={entry.isBinary_}
-          />
-        </div>
+        <DroppableFileInput
+          onChange={handleValueChange}
+          inputFileData={Base64.decode(entry.value)}
+          id={`${index}-value`}
+          label={t('public~Value')}
+          inputFieldHelpText={t(
+            'public~Drag and drop file with your value here or browse to upload it.',
+          )}
+          inputFileIsBinary={entry.isBinary_}
+        />
       </div>
     </div>
   );

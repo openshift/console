@@ -25,9 +25,8 @@ export type SecretSubFormProps = {
   base64StringData?: Base64StringData;
 };
 
-type Base64String = string;
-export type SecretStringData = { [key: string]: string };
-export type Base64StringData = { [key: string]: Base64String };
+export type SecretStringData = Record<string, string>;
+export type Base64StringData = Record<string, string>;
 
 export type SecretChangeData = {
   stringData?: SecretStringData;
@@ -55,5 +54,5 @@ export type OpaqueDataEntry = {
 export type OpaqueSecretFormEntryProps = {
   entry: OpaqueDataEntry;
   index: number;
-  onChange: Function;
+  onChange: (entry: OpaqueDataEntry, index: number) => void;
 };
