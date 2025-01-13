@@ -115,18 +115,15 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 .co-catalog-page {
   background: var(--pf-t--global--background--color--primary--default);
   border: 1px solid var(--pf-t--global--border--color--100);
+  border-radius: var(--pf-t--global--border--radius--medium);
   display: flex;
   flex: 1;
-  padding-top: $pf-v6-global-gutter;
-
-  &--with-sidebar {
-    margin: 0 $pf-v6-global-gutter;
-    padding-bottom: $pf-v6-global-gutter;
-  }
-
-  &__btn-group__group-by {
-    display: inline;
-    margin-left: var(--pf-t--global--spacer--md);
+  margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
+  padding: $pf-v6-global-gutter 0;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    margin-bottom: $pf-v6-global-gutter--md;
+    margin-left: $pf-v6-global-gutter--md;
+    margin-right: $pf-v6-global-gutter--md;
   }
 
   &__content {
@@ -161,36 +158,16 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__header {
-    margin: 0 $pf-v6-global-gutter--md 0 0;
+    margin: 0 $pf-v6-global-gutter--md 0;
   }
 
   &__heading {
     font-size: 16px;
-    margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      margin-left: $pf-v6-global-gutter--md;
-      margin-right: $pf-v6-global-gutter--md;
-    }
+    margin: 0 0 $pf-v6-global-gutter;
   }
 
   &__hint {
     margin: 0 0 var(--pf-t--global--spacer--md) 0;
-  }
-
-  &__input {
-    margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter--md;
-    @media (max-width: $pf-v6-global--breakpoint--md) {
-      max-width: 165px;
-    }
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      margin-left: $pf-v6-global-gutter--md;
-      margin-right: $pf-v6-global-gutter--md;
-    }
-  }
-
-  &__sort {
-    display: inline;
-    margin-left: var(--pf-t--global--spacer--md);
   }
 
   &__num-items {
@@ -305,10 +282,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__tabs {
     flex: 0 0 220px;
     margin: 0 $pf-v6-global-gutter 0 0;
-  }
-
-  &__searchfilter {
-    display: inline-flex;
   }
 }
 

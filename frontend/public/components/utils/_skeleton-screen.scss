@@ -112,11 +112,18 @@ $skeleton-tile-desc-line-bone: linear-gradient(
 .loading-skeleton--catalog {
   background: var(--pf-t--global--background--color--primary--default);
   border: 1px solid var(--pf-t--global--border--color--100);
+  border-radius: var(--pf-t--global--border--radius--medium);
   display: flex;
   flex: 1;
   height: 100%;
-  margin: 0 $pf-v6-global-gutter;
   position: relative;
+  margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
+  padding: $pf-v6-global-gutter 0;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    margin-bottom: $pf-v6-global-gutter--md;
+    margin-left: $pf-v6-global-gutter--md;
+    margin-right: $pf-v6-global-gutter--md;
+  }
 }
 
 .skeleton-catalog--grid {
@@ -160,6 +167,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
   width: $co-m-catalog-tile-width;
   &:empty::after {
     animation: $skeleton-animation;
+    border-radius: var(--pf-t--global--border--radius--medium);
     content: '';
     display: block;
     height: 100%;

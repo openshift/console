@@ -458,7 +458,7 @@ $monitoring-line-height: 18px;
 
 .query-browser__series-btn {
   border: var(--pf-t--global--border--width--100) solid transparent;
-  border-radius: var(--pf-v6-global--BorderRadius--sm);
+  border-radius: var(--pf-t--global--border--radius--small);
   height: 20px;
   padding: 0 !important;
   width: 20px;
@@ -469,7 +469,7 @@ $monitoring-line-height: 18px;
 
 .query-browser__series-btn-wrap {
   border: var(--pf-t--global--border--width--100) solid transparent;
-  border-radius: var(--pf-v6-global--BorderRadius--sm);
+  border-radius: var(--pf-t--global--border--radius--small);
   display: flex;
   height: 26px;
   padding: 2px;

@@ -10,8 +10,8 @@
     &::before {
       border: var(--pf-t--global--border--width--100) solid
         var(--pf-t--global--border--color--default);
-      border-bottom-right-radius: var(--pf-v6-global--BorderRadius--sm);
-      border-top-right-radius: var(--pf-v6-global--BorderRadius--sm);
+      border-bottom-right-radius: var(--pf-t--global--border--radius--small);
+      border-top-right-radius: var(--pf-t--global--border--radius--small);
       bottom: 0;
       content: '';
       left: 0;
@@ -48,7 +48,7 @@
 
 .co-row-filter__number-bubble {
   border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
-  border-radius: var(--pf-v6-global--BorderRadius--sm);
+  border-radius: var(--pf-t--global--border--radius--small);
   display: inline-block;
   line-height: var(--pf-v6-global--LineHeight--sm);
   margin-right: var(--pf-t--global--spacer--sm);

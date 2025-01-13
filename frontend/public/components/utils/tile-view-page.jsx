@@ -19,6 +19,8 @@ import {
   Title,
   EmptyStateActions,
   EmptyStateFooter,
+  Flex,
+  FlexItem,
 } from '@patternfly/react-core';
 import { useDebounceCallback, getURLWithParams, VirtualizedGrid } from '@console/shared';
 import { Link, useSearchParams } from 'react-router-dom-v5-compat';
@@ -830,7 +832,7 @@ export const TileViewPage = (props) => {
   });
 
   return (
-    <div className="co-catalog-page co-catalog-page--with-sidebar">
+    <div className="co-catalog-page">
       <div className="co-catalog-page__tabs">
         {renderCategoryTabs(activeCategory.id)}
         {renderSidePanel()}
@@ -839,28 +841,31 @@ export const TileViewPage = (props) => {
         <div className="co-catalog-page__header">
           <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
           <div className="co-catalog-page__filter">
-            <div>
-              <SearchInput
-                className="co-catalog-page__input"
-                data-test="search-operatorhub"
-                ref={filterByKeywordInput}
-                placeholder={t('public~Filter by keyword...')}
-                value={activeFilters.keyword.value}
-                onChange={(event, text) => onKeywordChange(text)}
-                onClear={() => onKeywordChange('')}
-                aria-label={t('public~Filter by keyword...')}
-              />
-              {groupItems && (
-                <Dropdown
-                  className="co-catalog-page__btn-group__group-by"
-                  menuClassName="dropdown-menu--text-wrap"
-                  items={groupByTypes}
-                  onChange={(e) => onGroupChange(e)}
-                  titlePrefix="Group By"
-                  title={groupBy}
+            <Flex>
+              <FlexItem>
+                <SearchInput
+                  data-test="search-operatorhub"
+                  ref={filterByKeywordInput}
+                  placeholder={t('public~Filter by keyword...')}
+                  value={activeFilters.keyword.value}
+                  onChange={(event, text) => onKeywordChange(text)}
+                  onClear={() => onKeywordChange('')}
+                  aria-label={t('public~Filter by keyword...')}
                 />
+              </FlexItem>
+              {groupItems && (
+                <FlexItem>
+                  <Dropdown
+                    className="co-catalog-page__btn-group__group-by"
+                    menuClassName="dropdown-menu--text-wrap"
+                    items={groupByTypes}
+                    onChange={(e) => onGroupChange(e)}
+                    titlePrefix="Group By"
+                    title={groupBy}
+                  />
+                </FlexItem>
               )}
-            </div>
+            </Flex>
             <div className="co-catalog-page__num-items">{numItems}</div>
           </div>
         </div>

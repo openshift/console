@@ -69,15 +69,15 @@
 
     &:first-of-type {
       .pf-topology-control-bar__button.pf-v6-c-button {
-        --pf-v6-c-button--BorderRadius: var(--pf-v6-global--BorderRadius--sm) 0 0
-          var(--pf-v6-global--BorderRadius--sm);
+        --pf-v6-c-button--BorderRadius: var(--pf-t--global--border--radius--small) 0 0
+          var(--pf-t--global--border--radius--small);
       }
     }
 
     &:last-of-type {
       .pf-topology-control-bar__button.pf-v6-c-button {
-        --pf-v6-c-button--BorderRadius: 0 var(--pf-v6-global--BorderRadius--sm)
-          var(--pf-v6-global--BorderRadius--sm) 0;
+        --pf-v6-c-button--BorderRadius: 0 var(--pf-t--global--border--radius--small)
+          var(--pf-t--global--border--radius--small) 0;
       }
     }
 
