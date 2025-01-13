@@ -244,7 +244,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     padding-top: 0;
   }
   </style>
-  <body class="pf-m-redhat-font pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
+  <body class="pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
 
   // update the iframe's content
   React.useEffect(() => {
