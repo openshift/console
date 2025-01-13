@@ -2,11 +2,11 @@ reviewers:
   - rhamilto
   - TheRealJon
   - jhadvig
-  - cyril-ui-developer
+  - cajieh
 approvers:
   - rhamilto
   - TheRealJon
   - jhadvig
-  - cyril-ui-developer
+  - cajieh
 labels:
   - kind/cypress
