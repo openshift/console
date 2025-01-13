@@ -283,6 +283,10 @@ dl.co-inline {
 .co-external-link {
   display: inline-block;
   padding-right: $co-external-link-padding-right;
+
+  &.co-catalog-page__overlay-action--external {
+    padding-right: $co-external-link-padding-right * 2; // extra padding for external link icon
+  }
 }
 // Enable break word within co-m-table-grid
 .co-external-link--block {
