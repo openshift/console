@@ -194,8 +194,11 @@ form.pf-v6-c-form {
     height: 100%;
   }
 
-  .pf-v6-c-page__main-section--no-gap {
-    --pf-v6-c-page__main-section--RowGap: 0;
+  #content,
+  #content-scrollable {
+    & > .pf-v6-c-page__main-section--no-gap {
+      gap: 0; // do not use CSS variable as the value as it will cascade to all descendent .pf-v6-c-page__main-section
+    }
   }
 }
 
@@ -308,10 +311,6 @@ ul {
   .pf-topology-content {
     background-color: var(--pf-t--color--gray--10);
   }
-}
-
-.pfext-quick-start-footer {
-  background-color: var(--pf-t--global--background--color--primary--default);
 }
 
 // TODO Remove this override when skip to content CSS is figured out.
