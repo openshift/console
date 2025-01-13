@@ -193,6 +193,9 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__overlay--right {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
     bottom: 0;
     padding: 0 !important;
     right: 0;
