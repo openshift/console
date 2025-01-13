@@ -45,4 +45,8 @@
   @at-root :is(ul, ol)#{&} {
     padding-left: 20px;
   }
+
+  @at-root body {
+    background-color: var(--pf-t--global--background--color--secondary--default);
+  }
 }
