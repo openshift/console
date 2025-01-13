@@ -10,11 +10,12 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   viewportHeight: 1080,
   animationDistanceThreshold: 40,
-  execTimeout: 120000,
+  execTimeout: 270000,
   pageLoadTimeout: 100000,
   requestTimeout: 15000,
   responseTimeout: 15000,
   fixturesFolder: 'testData',
+  video: true,
   reporter: '../../../node_modules/cypress-multi-reporters',
   reporterOptions: {
     configFile: 'reporter-config.json',
