@@ -1,14 +1,14 @@
 .co-code {
   --co-code--BackgroundColor: var(--pf-t--color--blue--10);
-  --co-code--Color: var(--pf-v6-global--palette--light-blue-600);
+  --co-code--Color: var(--pf-t--color--blue--60);
 
   background-color: var(--co-code--BackgroundColor);
   color: var(--co-code--Color);
   padding: 3px var(--pf-t--global--spacer--xs);
 
   :where(.pf-v6-theme-dark) & {
-    --co-code--BackgroundColor: var(--pf-v6-global--palette--blue-700);
-    --co-code--Color: var(--pf-v6-global--palette--light-blue-100);
+    --co-code--BackgroundColor: transparent;
+    --co-code--Color: var(--pf-t--color--blue--20);
   }
 }
 
