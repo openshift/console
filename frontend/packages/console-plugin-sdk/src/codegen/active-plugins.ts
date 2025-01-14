@@ -44,10 +44,9 @@ const guessModuleFilePath = (
 
   for (const p of indexModulePaths) {
     if (fs.existsSync(p)) {
-      // TODO(OCPBUGS-45847): uncomment when warnings are resolved
-      // diagnostics.warnings.push(
-      //   `The module ${basePath} refers to an index file ${p}. Index/barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`,
-      // );
+      diagnostics.warnings.push(
+        `The module ${basePath} refers to an index file ${p}. Index files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`,
+      );
       return p;
     }
   }
