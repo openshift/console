@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
