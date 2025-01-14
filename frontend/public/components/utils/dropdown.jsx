@@ -721,7 +721,7 @@ const ActionsMenuDropdown = (props) => {
   };
 
   return (
-    <div ref={dropdownElement}>
+    <div ref={dropdownElement} className="co-action-buttons__btn">
       <button
         type="button"
         aria-haspopup="true"
