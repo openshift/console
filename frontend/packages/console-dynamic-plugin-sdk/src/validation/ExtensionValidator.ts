@@ -37,8 +37,9 @@ export const guessModuleFilePath = (
     .find(fs.existsSync);
 
   if (barrelFile) {
-    // TODO(OCPBUGS-45847): uncomment when warnings are resolved
-    // msgCallback(`The module ${basePath} refers to an barrel file ${indexModule}. Barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file path directly.`);
+    msgCallback(
+      `The module ${basePath} refers to an barrel file ${barrelFile}. Barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file path directly.`,
+    );
     return barrelFile;
   }
 
