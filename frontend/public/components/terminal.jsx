@@ -162,7 +162,7 @@ Terminal.propTypes = {
 };
 
 Terminal.defaultProps = {
-  padding: 30,
+  padding: 52,
   options: {
     fontFamily: 'monospace',
     fontSize: 16,
