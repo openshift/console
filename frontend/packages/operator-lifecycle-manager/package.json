@@ -11,9 +11,9 @@
     "entry": "src/plugin.tsx",
     "exposedModules": {
       "utils": "src/utils/index.ts",
-      "topology": "src/components/topology",
-      "topologySidebar": "src/components/topology/sidebar",
-      "actions": "src/actions",
+      "topology": "src/components/topology/index.ts",
+      "topologySidebar": "src/components/topology/sidebar/index.ts",
+      "actions": "src/actions/index.ts",
       "install": "src/components/operator-install-page.tsx"
     }
   }
