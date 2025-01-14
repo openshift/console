@@ -51,10 +51,9 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: $pf-v6-global-gutter;
     text-decoration: none;
     &:hover,
     &:focus {
-      color: var(--pf-v6-global--Color--100);
-      text-decoration: none;
+      color: var(--pf-v6-c-nav__link--hover--Color);
       &::after {
-        background: var(--pf-v6-global--palette--black-400);
+        background: var(--pf-t--color--gray--40);
       }
     }
     &::after {
