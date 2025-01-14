@@ -19,11 +19,11 @@
     "entry": "src/plugin.tsx",
     "exposedModules": {
       "reduxReducer": "src/utils/reducer.ts",
-      "workload": "src/components/workload",
+      "workload": "src/components/workload/index.ts",
       "actions": "src/actions/provider.ts",
       "exportAppContext": "src/components/export-app/export-app-context.ts",
-      "applicationSidebar": "src/components/application-panel",
-      "vcSidebar": "src/components/visual-connector"
+      "applicationSidebar": "src/components/application-panel/index.ts",
+      "vcSidebar": "src/components/visual-connector/index.ts"
     }
   }
 }

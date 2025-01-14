@@ -18,20 +18,21 @@
     "exposedModules": {
       "actions": "src/actions/providers.ts",
       "icons": "src/utils/icons.tsx",
-      "catalog": "src/catalog",
+      "catalog": "src/catalog/index.ts",
       "yamlTemplates": "src/yaml-templates.ts",
-      "revisionsComponent": "src/components/revisions",
-      "routesComponent": "src/components/routes",
-      "servicesComponent": "src/components/services",
-      "overviewComponent": "src/components/overview",
-      "pubSubComponent": "src/components/pub-sub",
-      "addComponent": "src/components/add",
-      "knativeComponent": "src/components",
-      "eventingComponent": "src/components/eventing",
-      "knatifyComponent": "src/components/knatify",
-      "knativeTopologySidebar": "src/topology/sidebar",
-      "topology": "src/topology",
-      "eventingContext": "src/topology/eventing-context.ts"
+      "revisionsComponent": "src/components/revisions/index.ts",
+      "routesComponent": "src/components/routes/index.ts",
+      "servicesComponent": "src/components/services/index.ts",
+      "overviewComponent": "src/components/overview/index.ts",
+      "pubSubComponent": "src/components/pub-sub/index.ts",
+      "addComponent": "src/components/add/index.ts",
+      "knativeComponent": "src/components/index.ts",
+      "eventingComponent": "src/components/eventing/index.ts",
+      "knatifyComponent": "src/components/knatify/index.ts",
+      "knativeTopologySidebar": "src/topology/sidebar/index.ts",
+      "topology": "src/topology/index.ts",
+      "eventingContext": "src/topology/eventing-context.ts",
+      "functionsComponent": "src/components/functions/index.ts"
     }
   }
 }
