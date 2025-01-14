@@ -1,7 +1,6 @@
 @import '~@patternfly/patternfly/sass-utilities/index';
 
 .co-row-filter {
-  background-color: var(--pf-t--global--background--color--primary--default);
   margin-bottom: var(--pf-t--global--spacer--xl);
   position: relative;
 
@@ -10,8 +9,7 @@
     &::before {
       border: var(--pf-t--global--border--width--100) solid
         var(--pf-t--global--border--color--default);
-      border-bottom-right-radius: var(--pf-t--global--border--radius--small);
-      border-top-right-radius: var(--pf-t--global--border--radius--small);
+      border-radius: var(--pf-t--global--border--radius--tiny);
       bottom: 0;
       content: '';
       left: 0;
@@ -23,6 +21,20 @@
 
   .pf-v6-c-toggle-group {
     overflow: auto;
+  }
+
+  .pf-v6-c-toggle-group__button {
+    align-items: baseline;
+    display: flex;
+    text-decoration: none;
+  }
+
+  .pf-v6-c-toggle-group__item:first-child .pf-v6-c-toggle-group__button {
+    &,
+    &::before {
+      border-bottom-left-radius: var(--pf-t--global--border--radius--tiny);
+      border-top-left-radius: var(--pf-t--global--border--radius--tiny);
+    }
   }
 }
 
@@ -48,14 +60,11 @@
 
 .co-row-filter__number-bubble {
   border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
-  border-radius: var(--pf-t--global--border--radius--small);
-  display: inline-block;
-  line-height: var(--pf-v6-global--LineHeight--sm);
+  border-radius: var(--pf-t--global--border--radius--tiny);
   margin-right: var(--pf-t--global--spacer--sm);
-  padding: 2px 5px 0;
-  text-align: center;
+  padding: 0 3px;
 
   &.co-row-filter__number-bubble--active {
-    border-color: var(--pf-t--color--blue--50);
+    border-color: var(--pf-t--color--blue--40);
   }
 }
