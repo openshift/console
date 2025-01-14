@@ -11,13 +11,13 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
-      "helmActions": "src/actions",
-      "helmCatalog": "src/catalog",
-      "helmComponents": "src/components",
-      "helmTopology": "src/topology",
-      "helmTopologySidebar": "src/topology/sidebar",
-      "helmUtils": "src/utils",
-      "helmProviders": "src/providers"
+      "helmActions": "src/actions/index.ts",
+      "helmCatalog": "src/catalog/index.ts",
+      "helmComponents": "src/components/index.ts",
+      "helmTopology": "src/topology/index.ts",
+      "helmTopologySidebar": "src/topology/sidebar/index.ts",
+      "helmUtils": "src/utils/index.ts",
+      "helmProviders": "src/providers/index.ts"
     }
   }
 }
