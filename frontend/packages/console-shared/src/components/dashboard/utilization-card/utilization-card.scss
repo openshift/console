@@ -1,5 +1,6 @@
 .co-utilization-card__body {
   padding: 0;
+  overflow: hidden;
 }
 
 .co-utilization-card__item .co-u-hidden {
@@ -41,6 +42,7 @@
 
 .co-utilization-card__item-section {
   width: 100%;
+  overflow: hidden;
 }
 
 .co-utilization-card__item-section-multiline {
