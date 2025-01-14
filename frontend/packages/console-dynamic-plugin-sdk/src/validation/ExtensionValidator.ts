@@ -32,19 +32,21 @@ export const guessModuleFilePath = (
   }
 
   // Check if the path refers to an barrel file (base path only specified the directory)
-  const barrelFile = ['index.ts', 'index.js']
+  const barrelFile = ['index.ts', 'index.js', 'index.tsx', 'index.jsx']
     .map((i) => path.resolve(basePath, i))
     .find(fs.existsSync);
 
   if (barrelFile) {
-    // TODO(OCPBUGS-45847): uncomment when warnings are resolved
-    // msgCallback(`The module ${basePath} refers to an barrel file ${indexModule}. Barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file path directly.`);
+    msgCallback(
+      `The module ${basePath} refers to an barrel file ${barrelFile}. Barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file path directly.`,
+    );
     return barrelFile;
   }
 
   // Check if the base path neglected to include a file extension
-  const extensions = ['.tsx', '.ts', '.jsx', '.js'];
-  const moduleFile = [...extensions.map((ext) => `${basePath}${ext}`)].find(fs.existsSync);
+  const moduleFile = ['.tsx', '.ts', '.jsx', '.js']
+    .map((ext) => `${basePath}${ext}`)
+    .find(fs.existsSync);
 
   if (moduleFile) {
     msgCallback(
