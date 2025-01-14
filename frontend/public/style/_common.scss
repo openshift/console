@@ -222,7 +222,7 @@ dl.co-inline {
 }
 
 .co-m-pane__explanation {
-  color: var(--pf-t--color--gray--50);
+  color: var(--pf-t--global--text--color--subtle);
   margin-bottom: 30px;
 }
 
@@ -236,7 +236,7 @@ dl.co-inline {
 
 .co-m-pane__explanation code {
   background-color: var(--pf-t--color--gray--10);
-  color: var(--pf-t--color--gray--50);
+  color: var(--pf-t--global--text--color--subtle);
 }
 
 .co-pre-line {
