@@ -6,7 +6,7 @@
   &:not(.pod-ring__long-text) {
     tspan:first-of-type {
       font-size: var(--pf-v6-chart-global--FontSize--2xl) !important;
-      fill: var(--pf-v6-global--Color--100) !important;
+      fill: var(--pf-t--global--icon--color--regular) !important;
     }
   }
 }
@@ -17,6 +17,6 @@
     fill: var(--pf-t--global--text--color--subtle) !important;
   }
   tspan:first-of-type {
-    fill: var(--pf-v6-global--Color--100) !important;
+    fill: var(--pf-t--global--icon--color--regular) !important;
   }
 }

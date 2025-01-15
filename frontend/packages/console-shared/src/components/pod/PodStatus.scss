@@ -4,8 +4,8 @@
     display: flex;
   }
   &__status-box {
-    width: var(--pf-v6-global--icon--FontSize--sm);
-    height: var(--pf-v6-global--icon--FontSize--sm);
+    width: var(--pf-t--global--icon--size--sm);
+    height: var(--pf-t--global--icon--size--sm);
     margin-right: var(--pf-t--global--spacer--sm);
   }
   &__status-count {
