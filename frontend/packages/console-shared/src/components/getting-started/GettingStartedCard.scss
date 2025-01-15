@@ -3,10 +3,6 @@
     margin-right: var(--pf-t--global--spacer--sm);
   }
 
-  small {
-    color: var(--pf-t--global--text--color--subtle);
-  }
-
   &__list {
     // Remove default list styles which are globally resetted in the PatternFly samples
     // but not in the SimpleList. https://www.patternfly.org/v4/components/simple-list
@@ -24,6 +20,15 @@
             var(--pf-v6-c-simple-list__item-link--PaddingLeft);
         }
       }
+    }
+
+    p {
+      margin-bottom: 0 !important;
+    }
+
+    small {
+      color: var(--pf-t--global--text--color--subtle);
+      font-size: var(--pf-v6-c-content--small--FontSize) !important;
     }
   }
 
