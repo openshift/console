@@ -8,8 +8,8 @@ import {
   CardBody,
   CodeBlock,
   CodeBlockCode,
-  Page,
   PageSection,
+  Stack,
   Title,
 } from '@patternfly/react-core';
 import {
@@ -130,69 +130,68 @@ const K8sAPIConsumer: React.FC = () => {
   };
 
   return (
-    <Page
-      additionalGroupedContent={
-        <PageSection variant="light">
-          <Title headingLevel="h1" data-test="test-k8sapi-title">{t('K8s API from Dynamic Plugin SDK')}</Title>
-        </PageSection>
-      }
-    >
+    <>
       <PageSection>
-        {errData && (
-          <AlertGroup>
-            <Alert data-test="test-k8api-error" title={errData} variant="warning" isInline />
-          </AlertGroup>
-        )}
-        <Card>
-          <CardBody>
-            <Button isBlock onClick={k8sCreateClick}>
-              {t('k8sCreate')}
-            </Button>
-            <ConsoleK8sAPIConsumer data-test="test-k8s-create" data={k8sCreateData} />
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Button isBlock onClick={k8sGetClick}>
-              {t('k8sGet')}
-            </Button>
-            <ConsoleK8sAPIConsumer data-test="test-k8s-get" data={k8sGetData} />
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Button isBlock onClick={k8sPatchClick}>
-              {t('k8sPatch')}
-            </Button>
-            <ConsoleK8sAPIConsumer data-test="test-k8s-patch" data={k8sPatchData} />
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Button isBlock onClick={k8sUpdateClick}>
-              {t('k8sUpdate')}
-            </Button>
-            <ConsoleK8sAPIConsumer data-test="test-k8s-update" data={k8sUpdateData} />
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Button isBlock onClick={k8sListClick}>
-              {t('k8sList')}
-            </Button>
-            <ConsoleK8sAPIConsumer data-test="test-k8s-list" data={k8sListData} />
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Button isBlock onClick={k8sDeleteClick}>
-              {t('k8sDelete')}
-            </Button>
-            <ConsoleK8sAPIConsumer data-test="test-k8s-delete" data={k8sDeleteData} />
-          </CardBody>
-        </Card>
+        <Title headingLevel="h1" data-test="test-k8sapi-title">{t('K8s API from Dynamic Plugin SDK')}</Title>
       </PageSection>
-    </Page>
+      <PageSection>
+        <Stack hasGutter>
+          {errData && (
+            <AlertGroup>
+              <Alert data-test="test-k8api-error" title={errData} variant="warning" isInline />
+            </AlertGroup>
+          )}
+          <Card>
+            <CardBody>
+              <Button isBlock onClick={k8sCreateClick}>
+                {t('k8sCreate')}
+              </Button>
+              <ConsoleK8sAPIConsumer data-test="test-k8s-create" data={k8sCreateData} />
+            </CardBody>
+          </Card>
+          <Card>
+            <CardBody>
+              <Button isBlock onClick={k8sGetClick}>
+                {t('k8sGet')}
+              </Button>
+              <ConsoleK8sAPIConsumer data-test="test-k8s-get" data={k8sGetData} />
+            </CardBody>
+          </Card>
+          <Card>
+            <CardBody>
+              <Button isBlock onClick={k8sPatchClick}>
+                {t('k8sPatch')}
+              </Button>
+              <ConsoleK8sAPIConsumer data-test="test-k8s-patch" data={k8sPatchData} />
+            </CardBody>
+          </Card>
+          <Card>
+            <CardBody>
+              <Button isBlock onClick={k8sUpdateClick}>
+                {t('k8sUpdate')}
+              </Button>
+              <ConsoleK8sAPIConsumer data-test="test-k8s-update" data={k8sUpdateData} />
+            </CardBody>
+          </Card>
+          <Card>
+            <CardBody>
+              <Button isBlock onClick={k8sListClick}>
+                {t('k8sList')}
+              </Button>
+              <ConsoleK8sAPIConsumer data-test="test-k8s-list" data={k8sListData} />
+            </CardBody>
+          </Card>
+          <Card>
+            <CardBody>
+              <Button isBlock onClick={k8sDeleteClick}>
+                {t('k8sDelete')}
+              </Button>
+              <ConsoleK8sAPIConsumer data-test="test-k8s-delete" data={k8sDeleteData} />
+            </CardBody>
+          </Card>
+        </Stack>
+      </PageSection>
+    </>
   );
 };
 
