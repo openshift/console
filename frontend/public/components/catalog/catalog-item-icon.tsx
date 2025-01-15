@@ -76,7 +76,7 @@ import postgresqlImg from '../../imgs/logos/postgresql.svg';
 import processserverImg from '../../imgs/logos/processserver.svg';
 import pythonImg from '../../imgs/logos/python.svg';
 import quarkusImg from '../../imgs/logos/quarkus.svg';
-import rImg from '../../logos/rsvg';
+import rImg from '../../logos/r.svg';
 import rabbitmqImg from '../../imgs/logos/rabbitmq.svg';
 import railsImg from '../../imgs/logos/rails.svg';
 import reactImg from '../../imgs/logos/react.svg';
