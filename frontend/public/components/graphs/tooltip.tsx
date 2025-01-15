@@ -275,11 +275,9 @@ export const ChartLegendTooltip: React.FunctionComponent<
       : {
           ...legendTooltipProps,
           // For non-stack graphs, remove the text for "mainDataName"
-          // TODO: PF6 upgrade
-          // text: legendTooltipProps.text.filter(
-          //   (t, i) => legendTooltipProps.legendData[i].name !== mainDataName,
-          // ),
-          text,
+          text: legendTooltipProps.text.filter(
+            (t, i) => legendTooltipProps.legendData[i].name !== mainDataName,
+          ) as string[] | number[],
         };
     const _flyoutHeight =
       getLegendTooltipSize(sizeProps).height + ChartLegendTooltipStyles.flyout.padding;
