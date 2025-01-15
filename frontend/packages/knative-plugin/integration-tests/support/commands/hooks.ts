@@ -1,6 +1,7 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { installKnativeOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 
 before(() => {
   cy.exec('../../../../contrib/create-user.sh');
@@ -9,6 +10,7 @@ before(() => {
   const bridgePasswordPassword: string = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
   cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
   cy.document().its('readyState').should('eq', 'complete');
+  checkDeveloperPerspective();
   installKnativeOperatorUsingCLI();
   //  To ignore the resizeObserverLoopErrors on CI, adding below code
   const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
@@ -25,6 +27,8 @@ before(() => {
 
 beforeEach(() => {
   cy.initDeveloper();
+  // cy.initAdmin();
+  // cy.byLegacyTestID('topology-header').should('exist').click({force: true});
 });
 
 after(() => {

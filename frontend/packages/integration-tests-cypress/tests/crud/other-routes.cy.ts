@@ -1,3 +1,4 @@
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { guidedTour } from '../../views/guided-tour';
@@ -135,6 +136,7 @@ describe('Test perspective query parameters', () => {
     cy.visit('/k8s/cluster/projects');
     listPage.rows.shouldBeLoaded();
     guidedTour.close();
+    checkDeveloperPerspective();
   });
 
   afterEach(() => {
