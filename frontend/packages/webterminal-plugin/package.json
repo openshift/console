@@ -12,7 +12,7 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
-      "actions": "src/actions/providers/index.ts",
+      "useWebTerminalProvider": "src/actions/providers/web-terminal-provider.ts",
       "reduxReducer": "src/redux/reducer.ts",
       "webTerminalConfiguration": "src/components/cloud-shell/WebTerminalConfiguration.tsx"
     }
