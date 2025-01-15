@@ -172,6 +172,52 @@ export const getExecutableCodeRefSource = (
   return `() => import('${importPath}' ${webpackMagicComment}).then((m) => m.${exportName})`;
 };
 
+/** Deeply look at all properties of an object and find the code refs. */
+const recursivelyTraverseCodeRefs = (ext: object, codeRefs: Set<string>) => {
+  for (const key in ext) {
+    if (ext.hasOwnProperty(key)) {
+      const value = ext[key];
+
+      if (isEncodedCodeRef(value)) {
+        const [moduleName] = parseEncodedCodeRefValue(value.$codeRef);
+        if (moduleName) {
+          codeRefs.add(moduleName);
+        }
+      } else if (typeof value === 'object') {
+        recursivelyTraverseCodeRefs(value, codeRefs);
+      }
+    }
+  }
+};
+
+/**
+ * Find exposed modules that are not referenced by any extension.
+ * but not used by the plugin's extensions, and log a warning via `msgCallback`.
+ */
+const getUnusedModules = (
+  ext: ConsoleExtensionsJSON,
+  pkg: PluginPackage,
+  msgCallback: (msg: string) => void,
+): void => {
+  const usedCodeRefs = new Set<string>();
+
+  for (const extension of ext) {
+    recursivelyTraverseCodeRefs(extension.properties, usedCodeRefs);
+  }
+
+  // get unused code refs
+  const exposedModules = pkg.consolePlugin.exposedModules || {};
+  const unusedModules = _.difference(Object.keys(exposedModules), Array.from(usedCodeRefs));
+
+  if (unusedModules.length > 0) {
+    msgCallback(
+      `The following exposed modules in static plugin ${pkg.name} are unused: ${unusedModules.join(
+        ', ',
+      )}`,
+    );
+  }
+};
+
 /**
  * Returns the array source containing the given plugin's dynamic extensions.
  *
@@ -242,6 +288,8 @@ export const getActivePluginsModuleData = (
 
   for (const pkg of pluginPackages) {
     fileDependencies.push(getExtensionsFilePath(pkg));
+    const ext = parseJSONC<ConsoleExtensionsJSON>(getExtensionsFilePath(pkg));
+    getUnusedModules(ext, pkg, (msg) => warnings.push(msg));
 
     Object.keys(pkg.consolePlugin.exposedModules || {}).forEach((moduleName) => {
       const moduleFilePath = getExposedModuleFilePath(pkg, moduleName, { errors, warnings });
