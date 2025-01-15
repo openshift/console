@@ -1,5 +1,6 @@
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { quickStartSidebarPO } from '../pageObjects/quickStarts-po';
+import { checkDeveloperPerspective } from '../pages/functions/checkDeveloperPerspective';
 
 //  To ignore the resizeObserverLoopErrors on CI, adding below code
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
@@ -19,7 +20,14 @@ before(() => {
   const bridgePasswordPassword: string = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
   cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
   cy.document().its('readyState').should('eq', 'complete');
+  cy.exec(
+    `oc patch console.operator.openshift.io/cluster --type='merge' -p '{"spec":{"customization":{"perspectives":[{"id":"dev","visibility":{"state":"Enabled"}}]}}}'`,
+    { failOnNonZeroExit: false },
+  );
+  cy.reload(true);
+  cy.document().its('readyState').should('eq', 'complete');
   guidedTour.close();
+  checkDeveloperPerspective();
 });
 
 after(() => {
