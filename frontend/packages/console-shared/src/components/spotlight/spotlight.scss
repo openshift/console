@@ -28,7 +28,7 @@
 }
 
 @mixin ocs-spotlight-outline {
-  outline: 4px solid var(--pf-v6-global--palette--blue-200);
+  outline: 4px solid var(--pf-t--global--border--color--nonstatus--blue--default);
   outline-offset: 4px;
 }
 
@@ -39,8 +39,9 @@
     mix-blend-mode: hard-light;
   }
   &__element-highlight-noanimate {
-    border: var(--pf-t--global--border--width--xl) solid var(--pf-v6-global--palette--blue-100);
-    background-color: var(--pf-v6-global--palette--black-500);
+    border: var(--pf-t--global--border--width--xl) solid
+      var(--pf-t--global--color--nonstatus--blue--default);
+    background-color: var(--pf-t--color--gray--50);
     z-index: 9999;
   }
   &__element-highlight-animate {
