@@ -1,7 +1,7 @@
 import * as React from 'react';
 import yamlParser from 'js-yaml';
-import { Page } from '@patternfly/react-core';
 import { ResourceYAMLEditor } from '@openshift-console/dynamic-plugin-sdk';
+import { PageSection } from '@patternfly/react-core';
 
 const simpleYAML = {
   kind: 'Pod',
@@ -15,11 +15,11 @@ const EditorPage: React.FC = () => {
   const [data, setData] = React.useState(simpleYAML);
   const onSave = (content: string) => setData(yamlParser.load(content));
   return (
-    <Page>
+    <PageSection isFilled hasBodyWrapper={false} padding={{default: 'noPadding'}}>
       <React.Suspense fallback={<></>}>
         <ResourceYAMLEditor initialResource={data} header="Simple Pod" onSave={onSave} />
       </React.Suspense>
-    </Page>
+    </PageSection>
   );
 };
 
