@@ -22,6 +22,10 @@ func (s *StaticAuthenticator) Authenticate(w http.ResponseWriter, req *http.Requ
 	return &userCopy, nil
 }
 
+func (s *StaticAuthenticator) ReviewToken(r *http.Request) error {
+	return nil
+}
+
 func (s *StaticAuthenticator) LoginFunc(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
