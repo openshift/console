@@ -28,7 +28,7 @@ import {
 import { WithCreateConnectorProps } from '../../../../behavior/withCreateConnector';
 import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
-import { useResourceQuotaAlert } from '../../../workload';
+import { useResourceQuotaAlert } from '../../../workload/resource-alert';
 import BaseNode from './BaseNode';
 import { getNodeDecorators } from './decorators/getNodeDecorators';
 import PodSet, { podSetInnerRadius } from './PodSet';
