@@ -16,7 +16,7 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
-      "yamlTemplates": "src/models/templates/index.ts"
+      "yamlTemplates": "src/models/templates.ts"
     }
   }
 }

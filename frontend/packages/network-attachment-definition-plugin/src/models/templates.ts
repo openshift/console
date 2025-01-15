@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import { NetworkAttachmentDefinitionModel } from '..';
+import { NetworkAttachmentDefinitionModel } from '.';
 
 export const NetworkAttachmentDefinitionsYAMLTemplates = ImmutableMap().setIn(
   ['default'],
