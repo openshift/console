@@ -5,8 +5,8 @@ import { installWebterminalOperatorUsingCLI } from '@console/dev-console/integra
 before(() => {
   cy.login();
   cy.document().its('readyState').should('eq', 'complete');
-  guidedTour.close();
   installWebterminalOperatorUsingCLI();
+  guidedTour.close();
 });
 
 after(() => {
@@ -19,7 +19,8 @@ after(() => {
 });
 
 beforeEach(() => {
-  cy.initDeveloper();
+  cy.initAdmin();
+  cy.byLegacyTestID('topology-header').should('exist').click({ force: true });
 });
 
 afterEach(() => {

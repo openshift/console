@@ -5,13 +5,13 @@ Feature: Entire pipeline flow from Builder page
 
         @pre-condition
         Scenario: Background Steps
-            Given user is at developer perspective
+            Given user is at administrator perspective
               And user has created or selected namespace "pipeline-flow"
 
 
         @smoke
         Scenario: Create a pipeline from pipeline builder page
-            Given user is at Pipeline Builder page
+            Given user is at Pipeline Builder page in admin view
              When user enters pipeline name as "flow"
               And user clicks Add task button under Tasks section
               And user searches "kn" in quick search bar
@@ -25,7 +25,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Pipelines page details
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user searches pipeline "flow" in pipelines page
              Then pipelines table displayed with column names Name, Last Run, Task Status, Last Run Status and Last Run Time
               And pipelines column Name display with value "flow"
@@ -36,7 +36,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Pipelines Details page
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user clicks pipeline name "flow" on Pipelines page
              Then user will be redirected to Pipeline Details page with header name "flow"
               And user is able to see Details, Metrics, YAML, Pipeline Runs and Parameters tabs
@@ -46,7 +46,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Add the task by editing the pipeline
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user selects "Edit Pipeline" option from kebab menu of "flow"
              When user adds parallel task "openshift-client"
               And user clicks save on edit pipeline page
@@ -54,7 +54,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Start the pipeline with workspace
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user selects "Start" option from kebab menu for pipeline "flow"
               And user navigates to Workspaces section
         #   And user selects "VolumeClaimTemplate" option from workspace dropdown
@@ -67,7 +67,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Pipeline Run Details page
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user clicks Last Run value of the pipeline "flow"
              Then user will be redirected to Pipeline Run Details page
               And user is able to see Details, YAML, TaskRuns, Parameters, Logs, Events and Output tabs
@@ -77,7 +77,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Rerun the Pipeline Run from pipeline runs page: P-07-TC07
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user selects the Pipeline Run for "flow"
               And user navigates to Pipeline runs page
               And user selects Rerun option from kebab menu of "flow"
@@ -85,8 +85,8 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Add secret to pipeline with authentication type as Basic Authentication: P-08-TC02
-            Given user is at pipelines page
-              And user is at Start Pipeline modal for pipeline "flow"
+            Given user is at pipelines page in admin view
+              And user is at Start Pipeline modal in admin view for pipeline "flow"
              When user clicks on Show Credentials link present in Start Pipeline modal
               And user clicks on Add Secret link
               And user enters Secret Name as "basic-secret"
@@ -99,7 +99,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Add trigger to the pipeline: P-09-TC02
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user selects "Add Trigger" from the kebab menu for "flow"
               And user selects the "github-pullreq" from Git Provider Type field
               And user clicks on Add button present in Add Trigger modal
@@ -108,7 +108,7 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Remove the trigger from pipelines page: P-09-TC08
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user selects "Remove Trigger" from the kebab menu for "flow"
               And user selects the first option from the Trigger Template drop down field
               And user clicks on Remove button
@@ -116,17 +116,17 @@ Feature: Entire pipeline flow from Builder page
 
         @smoke
         Scenario: Delete the Pipeline Run
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user selects the Pipeline Run for "flow"
               And user navigates to Pipeline runs page
               And user selects Delete PipelineRun option from kebab menu of "flow"
               And user clicks Delete button present in Delete PipelineRun modal
              Then page will be redirected to pipeline runs page
-              And pipeline run is deleted from pipeline runs page
+              And pipeline run is deleted from pipeline runs page in admin view
 
         @smoke
         Scenario: Delete the Pipeline from pipelines page: P-06-TC10
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user selects "Delete Pipeline" from the kebab menu for "flow"
               And user clicks Delete button on Delete Pipeline modal
              Then user will be redirected to Pipelines page
