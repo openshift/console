@@ -2,7 +2,10 @@
 
 .ocs-form-footer {
   padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter;
-  z-index: var(--pf-t--global--z-index--xs);
+  z-index: calc(
+    var(--pf-t--global--z-index--xs) + 1
+  ); // bump above --pf-v6-c-menu-toggle--border--ZIndex (100) to prevent menu borders from appearing in the footer
+
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter--md;
   }

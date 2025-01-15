@@ -5,7 +5,7 @@ import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { Divider } from '@patternfly/react-core';
+import { Divider, Popper } from '@patternfly/react-core';
 import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
@@ -23,6 +23,8 @@ class DropdownMixin extends React.PureComponent {
     this.toggle = this.toggle.bind(this);
     this.dropdownElement = React.createRef();
     this.dropdownList = React.createRef();
+    this.dropdownMenuRef = React.createRef();
+    this.dropdownToggleRef = React.createRef();
   }
 
   _onWindowClick(event) {
@@ -445,7 +447,71 @@ class Dropdown_ extends DropdownMixin {
 
     _.each(items, (v, k) => addItem(k, v));
     //render PF4 dropdown markup if this is not the autocomplete filter
+
     if (autocompleteFilter) {
+      const autocompleteFilterToggle = (
+        <button
+          aria-label={ariaLabel}
+          aria-haspopup="true"
+          onClick={this.toggle}
+          onKeyDown={this.onKeyDown}
+          type="button"
+          className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
+          id={this.props.id}
+          aria-describedby={describedBy}
+          disabled={disabled}
+          data-test={this.props.dataTest}
+          ref={this.dropdownToggleRef}
+        >
+          <div className="pf-v6-c-dropdown__content-wrap">
+            <span className="pf-v6-c-dropdown__toggle-text">
+              {titlePrefix && `${titlePrefix}: `}
+              {title}
+            </span>
+            <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+          </div>
+        </button>
+      );
+      const autocompleteFilterMenu = (
+        <div
+          className="pf-v6-c-menu pf-m-scrollable dropdown-menu co-namespace-dropdown__menu"
+          ref={this.dropdownMenuRef}
+        >
+          <div className="pf-v6-c-menu__content" style={{ maxHeight: '60vh' }}>
+            {autocompleteFilter && (
+              <>
+                <div className="pf-v6-c-menu__search">
+                  <input
+                    autoFocus
+                    type="text"
+                    ref={(input) => (this.input = input)}
+                    onChange={this.changeTextFilter}
+                    placeholder={autocompletePlaceholder}
+                    value={autocompleteText || ''}
+                    autoCapitalize="none"
+                    onKeyDown={this.onKeyDown}
+                    className="pf-v5-c-form-control pf-m-search"
+                    onClick={(e) => e.stopPropagation()}
+                    data-test-id="dropdown-text-filter"
+                  />
+                </div>
+                <Divider />
+              </>
+            )}
+            {_.size(bookMarkRows) ? <h1 className="pf-v6-c-menu__group-title">Favorites</h1> : null}
+            <ul
+              role="listbox"
+              ref={this.dropdownList}
+              className="pf-v6-c-menu__list dropdown-menu__autocomplete-filter"
+            >
+              {this.renderActionItem()}
+              {bookMarkRows}
+              {_.size(bookMarkRows) && _.size(rows) ? <Divider component="li" /> : null}
+              {rows}
+            </ul>
+          </div>
+        </div>
+      );
       return (
         <div className={className} ref={this.dropdownElement} style={this.props.style}>
           <div
@@ -455,70 +521,51 @@ class Dropdown_ extends DropdownMixin {
               dropDownClassName,
             )}
           >
-            <button
-              aria-label={ariaLabel}
-              aria-haspopup="true"
-              onClick={this.toggle}
-              onKeyDown={this.onKeyDown}
-              type="button"
-              className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
-              id={this.props.id}
-              aria-describedby={describedBy}
-              disabled={disabled}
-              data-test={this.props.dataTest}
-            >
-              <div className="pf-v6-c-dropdown__content-wrap">
-                <span className="pf-v6-c-dropdown__toggle-text">
-                  {titlePrefix && `${titlePrefix}: `}
-                  {title}
-                </span>
-                <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
-              </div>
-            </button>
-            {active && (
-              // Style the Application menu to match the Project selection menu
-              <div className="pf-v6-c-menu pf-m-scrollable dropdown-menu co-namespace-dropdown__menu">
-                <div className="pf-v6-c-menu__content" style={{ maxHeight: '60vh' }}>
-                  {autocompleteFilter && (
-                    <>
-                      <div className="pf-v6-c-menu__search">
-                        <input
-                          autoFocus
-                          type="text"
-                          ref={(input) => (this.input = input)}
-                          onChange={this.changeTextFilter}
-                          placeholder={autocompletePlaceholder}
-                          value={autocompleteText || ''}
-                          autoCapitalize="none"
-                          onKeyDown={this.onKeyDown}
-                          className="pf-v5-c-form-control pf-m-search"
-                          onClick={(e) => e.stopPropagation()}
-                          data-test-id="dropdown-text-filter"
-                        />
-                      </div>
-                      <Divider />
-                    </>
-                  )}
-                  {_.size(bookMarkRows) ? (
-                    <h1 className="pf-v6-c-menu__group-title">Favorites</h1>
-                  ) : null}
-                  <ul
-                    role="listbox"
-                    ref={this.dropdownList}
-                    className="pf-v6-c-menu__list dropdown-menu__autocomplete-filter"
-                  >
-                    {this.renderActionItem()}
-                    {bookMarkRows}
-                    {_.size(bookMarkRows) && _.size(rows) ? <Divider component="li" /> : null}
-                    {rows}
-                  </ul>
-                </div>
-              </div>
-            )}
+            <Popper
+              trigger={autocompleteFilterToggle}
+              triggerRef={this.dropdownToggleRef}
+              popper={autocompleteFilterMenu}
+              popperRef={this.dropdownMenuRef}
+              isVisible={active}
+              zIndex={9999}
+              appendTo="inline"
+            />
           </div>
         </div>
       );
     }
+
+    const toggle = (
+      <button
+        aria-label={ariaLabel}
+        aria-haspopup="true"
+        aria-expanded={this.state.active}
+        className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
+        data-test-id="dropdown-button"
+        onClick={this.toggle}
+        onKeyDown={this.onKeyDown}
+        type="button"
+        id={this.props.id}
+        data-test={this.props.dataTest}
+        aria-describedby={describedBy}
+        disabled={disabled}
+        ref={this.dropdownToggleRef}
+      >
+        <span className="pf-v6-c-dropdown__toggle-text">
+          {titlePrefix && `${titlePrefix}: `}
+          {title}
+        </span>
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      </button>
+    );
+
+    const menu = (
+      <div className="pf-v6-c-menu dropdown-menu" ref={this.dropdownMenuRef}>
+        <ul ref={this.dropdownList} className={classNames('pf-v6-c-menu-list', menuClassName)}>
+          {rows}
+        </ul>
+      </div>
+    );
 
     // PatternFly 6 markup
     return (
@@ -529,36 +576,15 @@ class Dropdown_ extends DropdownMixin {
             dropDownClassName,
           )}
         >
-          <button
-            aria-label={ariaLabel}
-            aria-haspopup="true"
-            aria-expanded={this.state.active}
-            className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
-            data-test-id="dropdown-button"
-            onClick={this.toggle}
-            onKeyDown={this.onKeyDown}
-            type="button"
-            id={this.props.id}
-            data-test={this.props.dataTest}
-            aria-describedby={describedBy}
-            disabled={disabled}
-          >
-            <span className="pf-v6-c-dropdown__toggle-text">
-              {titlePrefix && `${titlePrefix}: `}
-              {title}
-            </span>
-            <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
-          </button>
-          {active && (
-            <div className="pf-v6-c-menu dropdown-menu">
-              <ul
-                ref={this.dropdownList}
-                className={classNames('pf-v6-c-menu-list', menuClassName)}
-              >
-                {rows}
-              </ul>
-            </div>
-          )}
+          <Popper
+            trigger={toggle}
+            triggerRef={this.dropdownToggleRef}
+            popper={menu}
+            popperRef={this.dropdownMenuRef}
+            isVisible={active}
+            zIndex={9999}
+            appendTo="inline"
+          />
         </div>
       </div>
     );
