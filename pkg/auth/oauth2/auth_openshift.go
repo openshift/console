@@ -1,13 +1,11 @@
 package oauth2
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,6 +15,7 @@ import (
 
 	authv1 "k8s.io/api/authentication/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
@@ -28,14 +27,13 @@ import (
 	"github.com/openshift/console/pkg/serverutils/asynccache"
 )
 
-const tokenReviewPath = "/apis/authentication.k8s.io/v1/tokenreviews"
-
 // openShiftAuth implements OpenShift Authentication as defined in:
 // https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/authentication_and_authorization/understanding-authentication
 type openShiftAuth struct {
 	*oidcConfig
 
-	k8sClient *http.Client
+	k8sHTTPClient        *http.Client
+	internalK8sClientset *kubernetes.Clientset
 
 	oauthEndpointCache *asynccache.AsyncCache[*oidcDiscovery]
 }
@@ -59,14 +57,18 @@ func validateAbsURL(value string) error {
 	return nil
 }
 
-func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig) (loginMethod, error) {
+func newOpenShiftAuth(ctx context.Context, k8sHTTPClient *http.Client, c *oidcConfig) (loginMethod, error) {
+	internalK8sClientset, err := kubernetes.NewForConfig(c.internalK8sConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create internal K8s Clientset: %v", err)
+	}
 	o := &openShiftAuth{
-		oidcConfig: c,
-		k8sClient:  k8sClient,
+		oidcConfig:           c,
+		k8sHTTPClient:        k8sHTTPClient,
+		internalK8sClientset: internalK8sClientset,
 	}
 
 	// TODO: repeat the discovery several times as in the auth.go logic
-	var err error
 	o.oauthEndpointCache, err = asynccache.NewAsyncCache[*oidcDiscovery](ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
@@ -90,7 +92,7 @@ func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDisc
 		return nil, err
 	}
 
-	resp, err := o.k8sClient.Do(req.WithContext(ctx))
+	resp, err := o.k8sHTTPClient.Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +203,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 
 	configWithBearerToken := &rest.Config{
 		Host:        "https://" + k8sURL.Host,
-		Transport:   o.k8sClient.Transport,
+		Transport:   o.k8sHTTPClient.Transport,
 		BearerToken: cookie.Value,
 		Timeout:     30 * time.Second,
 	}
@@ -226,13 +228,7 @@ func (o *openShiftAuth) LogoutRedirectURL() string {
 	return o.logoutRedirectOverride
 }
 
-func (o *openShiftAuth) reviewToken(token string) (*authv1.TokenReview, error) {
-	tokenReviewURL, err := url.Parse(o.issuerURL)
-	if err != nil {
-		return nil, err
-	}
-	tokenReviewURL.Path = tokenReviewPath
-
+func (o *openShiftAuth) reviewToken(ctx context.Context, token string) (*authv1.TokenReview, error) {
 	tokenReview := &authv1.TokenReview{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "authentication.k8s.io/v1",
@@ -243,45 +239,20 @@ func (o *openShiftAuth) reviewToken(token string) (*authv1.TokenReview, error) {
 		},
 	}
 
-	tokenReviewJSON, err := json.Marshal(tokenReview)
+	tokenReview, err := o.internalK8sClientset.
+		AuthenticationV1().
+		TokenReviews().
+		Create(ctx, tokenReview, metav1.CreateOptions{})
+
 	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, tokenReviewURL.String(), bytes.NewBuffer(tokenReviewJSON))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", o.internalK8sConfig.BearerToken))
-
-	res, err := o.k8sClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusCreated {
-		return nil, fmt.Errorf("unable to validate user token: %v", res.Status)
-	}
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	// Unmarshal the response into a TokenReview object
-	var responseTokenReview authv1.TokenReview
-	err = json.Unmarshal(body, &responseTokenReview)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create TokenReview: %v", err)
 	}
 
 	// Check if the token is authenticated
-	if !responseTokenReview.Status.Authenticated {
+	if !tokenReview.Status.Authenticated {
 		err := fmt.Errorf("invalid token: %v", token)
-		if responseTokenReview.Status.Error != "" {
-			err = fmt.Errorf("invalid token: %s", responseTokenReview.Status.Error)
+		if tokenReview.Status.Error != "" {
+			err = fmt.Errorf("invalid token: %s", tokenReview.Status.Error)
 		}
 		return nil, err
 	}
@@ -299,22 +270,16 @@ func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*a
 		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", sessions.OpenshiftAccessTokenCookieName)
 	}
 
-	if o.internalK8sConfig.BearerToken != "" {
-		tokenReviewResponse, err := o.reviewToken(cookie.Value)
-		if err != nil {
-			klog.Errorf("failed to authenticate user token: %v", err)
-			return nil, err
-		}
-		return &auth.User{
-			Token:    cookie.Value,
-			Username: tokenReviewResponse.Status.User.Username,
-			ID:       tokenReviewResponse.Status.User.UID,
-		}, nil
+	tokenReviewResponse, err := o.reviewToken(r.Context(), cookie.Value)
+	if err != nil {
+		klog.Errorf("failed to authenticate user token: %v", err)
+		return nil, err
 	}
 
-	klog.V(4).Info("TokenReview skipped, no bearer token is set on internal K8s rest config")
 	return &auth.User{
-		Token: cookie.Value,
+		Token:    cookie.Value,
+		Username: tokenReviewResponse.Status.User.Username,
+		ID:       tokenReviewResponse.Status.User.UID,
 	}, nil
 }
 
