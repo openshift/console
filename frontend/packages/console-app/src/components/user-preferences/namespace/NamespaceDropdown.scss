@@ -1,12 +1,16 @@
 .pf-v6-c-menu-toggle.co-user-preference__namespace-menu-toggle {
-  padding: var(--pf-t--global--spacer--form-element) var(--pf-t--global--spacer--sm)
-    var(--pf-t--global--spacer--form-element) var(--pf-t--global--spacer--sm) !important;
+  background-color: var(--pf-v6-c-menu-toggle--BackgroundColor) !important;
+  font-size: var(--pf-v6-c-menu-toggle--FontSize) !important;
+  padding-block-start: var(--pf-v6-c-menu-toggle--PaddingBlockStart) !important;
+  padding-block-end: var(--pf-v6-c-menu-toggle--PaddingBlockEnd) !important;
+  padding-inline-start: var(--pf-v6-c-menu-toggle--PaddingInlineStart) !important;
+  padding-inline-end: var(--pf-v6-c-menu-toggle--PaddingInlineEnd) !important;
   &::before,
   &::after {
     border-width: var(--pf-t--global--border--width--100) !important;
   }
   .pf-v6-c-menu-toggle__text {
-    font-size: var(--pf-t--global--font--size--md);
+    font-size: var(--pf-v6-c-menu-toggle--FontSize) !important;
   }
 }
 
