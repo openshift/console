@@ -171,6 +171,48 @@ export const getExecutableCodeRefSource = (
   return `() => import('${importPath}' ${webpackMagicComment}).then((m) => m.${exportName})`;
 };
 
+/** Deeply look at all properties of an object and find the code refs. */
+const recursivelyTraverseCodeRefs = (ext: object, codeRefs: Set<string>) => {
+  for (const key in ext) {
+    if (Object.prototype.hasOwnProperty.call(ext, key)) {
+      const value = ext[key];
+
+      if (isEncodedCodeRef(value)) {
+        codeRefs.add(value.$codeRef.split('.')[0]);
+      } else if (typeof value === 'object') {
+        recursivelyTraverseCodeRefs(value, codeRefs);
+      }
+    }
+  }
+};
+
+/**
+ * Get the code refs that are exposed but not used in the plugin.
+ */
+const getUnusedCodeRefs = (
+  ext: ConsoleExtensionsJSON,
+  pkg: PluginPackage,
+  msgCallback: (msg: string) => void,
+): void => {
+  const usedCodeRefs = new Set<string>();
+
+  for (const extension of ext) {
+    recursivelyTraverseCodeRefs(extension.properties, usedCodeRefs);
+  }
+
+  // get unused code refs
+  const exposedModules = pkg.consolePlugin.exposedModules || {};
+  const unusedCodeRefs = _.difference(Object.keys(exposedModules), Array.from(usedCodeRefs));
+
+  if (unusedCodeRefs.length > 0) {
+    msgCallback(
+      `The following codeRefs in ${pkg.name} are exposed but not used: ${unusedCodeRefs.join(
+        ', ',
+      )}`,
+    );
+  }
+};
+
 /**
  * Returns the array source containing the given plugin's dynamic extensions.
  *
@@ -180,6 +222,7 @@ export const getDynamicExtensions = (
   pkg: PluginPackage,
   extensionsFilePath: string,
   errorCallback: (errorMessage: string) => void,
+  warningCallback: (warningMessage: string) => void,
   codeRefTransformer: (codeRefSource: string) => string = _.identity,
 ) => {
   const emptyArraySource = '[]';
@@ -195,6 +238,8 @@ export const getDynamicExtensions = (
     errorCallback(schemaValidationResult.formatErrors());
     return emptyArraySource;
   }
+
+  getUnusedCodeRefs(ext, pkg, warningCallback);
 
   const codeRefValidationResult = new ValidationResult(extensionsFilePath);
   const source = JSON.stringify(
@@ -234,6 +279,9 @@ export const getActivePluginsModuleData = (
         getExtensionsFilePath(pkg),
         (errorMessage) => {
           errors.push(errorMessage);
+        },
+        (warningMessage) => {
+          warnings.push(warningMessage);
         },
         (codeRefSource) => `applyCodeRefSymbol(${codeRefSource})`,
       ),

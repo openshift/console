@@ -297,7 +297,13 @@ describe('getDynamicExtensions', () => {
     });
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        errorCallback,
+        codeRefTransformer,
+      ),
     ).toBe(
       trimStartMultiLine(
         `
@@ -367,7 +373,13 @@ describe('getDynamicExtensions', () => {
     fsExistsSync.mockImplementation(() => false);
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        errorCallback,
+        codeRefTransformer,
+      ),
     ).toBe('[]');
 
     expect(errorCallback).not.toHaveBeenCalled();
@@ -400,7 +412,13 @@ describe('getDynamicExtensions', () => {
     });
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        errorCallback,
+        codeRefTransformer,
+      ),
     ).toBe('[]');
 
     expect(errorCallback).toHaveBeenCalledWith(expect.any(String));
@@ -454,7 +472,13 @@ describe('getDynamicExtensions', () => {
     );
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        errorCallback,
+        codeRefTransformer,
+      ),
     ).toBe('[]');
 
     expect(errorCallback).toHaveBeenCalledWith(expect.any(String));
