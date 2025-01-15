@@ -172,6 +172,47 @@ export const getExecutableCodeRefSource = (
   return `() => import('${importPath}' ${webpackMagicComment}).then((m) => m.${exportName})`;
 };
 
+/** Deeply look at all properties of an object and find the code refs. */
+const recursivelyTraverseCodeRefs = (ext: object, codeRefs: Set<string>) => {
+  for (const key in ext) {
+    if (ext.hasOwnProperty(key)) {
+      const value = ext[key];
+
+      if (isEncodedCodeRef(value)) {
+        codeRefs.add(value.$codeRef.split('.')[0]);
+      } else if (typeof value === 'object') {
+        recursivelyTraverseCodeRefs(value, codeRefs);
+      }
+    }
+  }
+};
+
+/**
+ * Find the exposed consolePlugin.unusedModules that are exposed,
+ * but not used by the plugin's extensions, and log a warning via `msgCallback`.
+ */
+const getUnusedModules = (
+  ext: ConsoleExtensionsJSON,
+  pkg: PluginPackage,
+  msgCallback: (msg: string) => void,
+): void => {
+  const usedCodeRefs = new Set<string>();
+
+  for (const extension of ext) {
+    recursivelyTraverseCodeRefs(extension.properties, usedCodeRefs);
+  }
+
+  // get unused code refs
+  const exposedModules = pkg.consolePlugin.exposedModules || {};
+  const unusedModules = _.difference(Object.keys(exposedModules), Array.from(usedCodeRefs));
+
+  if (unusedModules.length > 0) {
+    msgCallback(
+      `The following exposedModules in ${pkg.name} are unused: ${unusedModules.join(', ')}`,
+    );
+  }
+};
+
 /**
  * Returns the array source containing the given plugin's dynamic extensions.
  *
@@ -245,6 +286,8 @@ export const getActivePluginsModuleData = (
 
     Object.keys(pkg.consolePlugin.exposedModules || {}).forEach((moduleName) => {
       const moduleFilePath = getExposedModuleFilePath(pkg, moduleName, { errors, warnings });
+      const ext = parseJSONC<ConsoleExtensionsJSON>(getExtensionsFilePath(pkg));
+      getUnusedModules(ext, pkg, (msg) => warnings.push(msg));
 
       if (fs.existsSync(moduleFilePath) && fs.statSync(moduleFilePath).isFile()) {
         fileDependencies.push(moduleFilePath);
