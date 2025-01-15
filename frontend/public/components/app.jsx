@@ -63,8 +63,6 @@ import { AuthenticationErrorPage } from './error';
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
-// load dark theme here as MiniCssExtractPlugin ignores load order of sass and dark theme must load after all other css
-// import '@patternfly/patternfly/patternfly-charts-theme-dark.css'; // TODO: PF6 upgrade - update to v5 source once v5 is added
 
 const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
