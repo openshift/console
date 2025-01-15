@@ -23,7 +23,7 @@ const UtilizationAxis: React.FC = () => {
         orientation="top"
         height={15}
         width={width}
-        padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
+        padding={{ top: 31, bottom: 0, left: 70, right: 0 }}
         style={{
           axis: { visibility: 'hidden' },
         }}
