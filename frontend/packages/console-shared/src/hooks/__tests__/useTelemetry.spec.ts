@@ -39,15 +39,26 @@ afterAll(() => {
 });
 
 describe('getClusterProperties', () => {
-  it('returns undefined when consoleVersion is not configured', () => {
-    window.SERVER_FLAGS = { ...originServerFlags };
-    delete window.SERVER_FLAGS.consoleVersion;
-    expect(getClusterProperties().consoleVersion).toBe(undefined);
+  it('prefers releaseVersion to consoleVersion', () => {
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      releaseVersion: '4.17.4',
+      consoleVersion: 'v6.0.6-23079-g6689498225',
+    };
+    expect(getClusterProperties().consoleVersion).toBe('4.17.4');
   });
 
-  it('returns the right version when it is configured', () => {
-    window.SERVER_FLAGS = { ...originServerFlags, consoleVersion: 'x.y.z' };
-    expect(getClusterProperties().consoleVersion).toBe('x.y.z');
+  it('falls back to consoleVersion if releaseVersion is not set', () => {
+    window.SERVER_FLAGS = { ...originServerFlags, consoleVersion: 'v6.0.6-23079-g6689498225' };
+    delete window.SERVER_FLAGS.releaseVersion;
+    expect(getClusterProperties().consoleVersion).toBe('v6.0.6-23079-g6689498225');
+  });
+
+  it('returns undefined when releaseVersion and consoleVersion are not set', () => {
+    window.SERVER_FLAGS = { ...originServerFlags };
+    delete window.SERVER_FLAGS.consoleVersion;
+    delete window.SERVER_FLAGS.releaseVersion;
+    expect(getClusterProperties().consoleVersion).toBe(undefined);
   });
 
   it('returns undefined when telemetry is missing at all', () => {
