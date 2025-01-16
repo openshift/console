@@ -20,9 +20,7 @@ import {
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 
-import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
-import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
@@ -372,8 +370,8 @@ export const UpdateBlockedLabel = () => {
 
   return (
     <Label
-      color="orange"
-      icon={<YellowExclamationTriangleIcon />}
+      status="warning"
+      variant="outline"
       className="pf-v6-u-ml-sm"
       data-test="cv-update-blocked"
     >
