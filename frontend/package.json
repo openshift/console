@@ -268,7 +268,6 @@
     "acorn-jsx": "5.2.0",
     "axe-core": "^4.10.2",
     "babel-loader": "^8.2.1",
-    "babel-plugin-transform-imports": "1.5.1",
     "browser-env": "3.x",
     "chalk": "2.4.x",
     "circular-dependency-plugin": "5.x",
