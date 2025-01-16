@@ -34,7 +34,10 @@
   &__tooltip-icon {
     padding-left: var(--pf-t--global--spacer--sm);
   }
-
+  &__title {
+    margin-left: var(--pf-t--global--spacer--md);
+    margin-top: var(--pf-t--global--spacer--md);
+  }
   // Increase css specificity to override a generic [class*="pf-v6-c-"] rule.
   &__content.pf-v6-c-card__body {
     display: grid;
