@@ -203,6 +203,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 		cookiePath:             c.CookiePath,
 		secureCookies:          c.SecureCookies,
 		constructOAuth2Config:  a.oauth2ConfigConstructor,
+		internalK8sConfig:      c.K8sConfig,
 	}
 
 	var tokenHandler loginMethod
