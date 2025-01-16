@@ -294,12 +294,6 @@ ul {
   font-size: $font-size-base !important;
 }
 
-.odc-topology {
-  .pf-topology-content {
-    background-color: var(--pf-t--color--gray--10);
-  }
-}
-
 // TODO Remove this override when skip to content CSS is figured out.
 .pf-v6-c-skip-to-content {
   position: absolute !important;
