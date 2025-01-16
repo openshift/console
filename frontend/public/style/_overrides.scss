@@ -307,6 +307,12 @@ ul {
   }
 }
 
+.odc-topology {
+  .pf-topology-content {
+    background-color: var(--pf-v6-c-page__main-section--BackgroundColor);
+  }
+}
+
 :where(.pf-theme-dark) .pfext-quick-start-task__content .pfext-markdown-view pre code {
   color: var(--pf-v5-global--Color--100);
   background-color: var(--pf-v5-global--palette--black-600);
