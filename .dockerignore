@@ -1,1 +1,2 @@
-**/*/node_modules
+frontend/public/node_modules
+frontend/packages/**/*/node_modules
