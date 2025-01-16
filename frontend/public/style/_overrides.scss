@@ -326,3 +326,10 @@ ul {
 .pf-v6-c-truncate--no-min-width {
   --pf-v6-c-truncate--MinWidth: 0 !important;
 }
+
+// Overrides bootstrap label margin for DataListCheck's internal checkbox labels
+.co-datalist-control {
+  label{
+    margin-bottom: 0;
+  }
+}

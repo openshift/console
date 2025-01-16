@@ -37,6 +37,7 @@ const DataListRow: React.FC<DataListRowProps> = ({
   >
     <DataListItemRow>
       <DataListCheck
+        className="co-datalist-control"
         isDisabled={
           (disableUncheckedRow && !checkedColumns.has(column.id)) || readOnlyColumns.has(column.id)
         }
@@ -128,7 +129,6 @@ export const ColumnManagementModal: React.FC<
                 {t('public~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
               </label>
               <DataList
-                className="co-datalist"
                 aria-label={t('public~Default column list')}
                 id="defalt-column-management"
                 isCompact
@@ -147,7 +147,6 @@ export const ColumnManagementModal: React.FC<
             <span className="col-sm-6">
               <label className="control-label">{t('public~Additional columns')}</label>
               <DataList
-                className="co-datalist"
                 aria-label={t('public~Additional column list')}
                 id="additional-column-management"
                 isCompact
