@@ -28,8 +28,8 @@ import { RevisionKind, ServiceKind, ServiceTypeValue } from '../../types';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 import { KnativeServiceTypeContext } from '../functions/ServiceTypeContext';
 import RevisionsOverviewList from '../overview/RevisionsOverviewList';
-import { RevisionsPage } from '../revisions';
-import { RoutesPage } from '../routes';
+import RevisionsPage from '../revisions/RevisionsPage';
+import RoutesPage from '../routes/RoutesPage';
 
 type FunctionsPodsProps = {
   obj: K8sResourceKind;
