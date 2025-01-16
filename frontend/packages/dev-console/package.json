@@ -31,7 +31,6 @@
       "BuildsTabListPage": "src/components/builds/BuildsTabListPage.tsx",
       "BuildConfigFormPage": "src/components/buildconfig/BuildConfigFormPage.tsx",
       "icons": "src/utils/icons.tsx",
-      "CatalogCategoriesConfiguration": "src/components/catalog/CatalogCategoriesConfiguration.tsx",
       "CatalogTypesConfiguration": "src/components/catalog/CatalogTypesConfiguration.tsx",
       "PinnedResourcesConfiguration": "src/components/catalog/PinnedResourcesConfiguration.tsx",
       "CatalogPage": "src/components/catalog/CatalogPage.tsx",
