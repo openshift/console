@@ -17,7 +17,6 @@
       "HelmInstallUpgradePage": "src/components/forms/install-upgrade/HelmInstallUpgradePage.tsx",
       "HelmReleaseRollbackPage": "src/components/forms/rollback/HelmReleaseRollbackPage.tsx",
       "HelmReleaseDetailsPage": "src/components/details-page/HelmReleaseDetailsPage.tsx",
-      "HelmReleaseListPage": "src/components/list-page/HelmReleaseListPage.tsx",
       "HelmChartRepositoryForm": "src/components/forms/HelmChartRepository/CreateHelmChartRepositoryPage.tsx",
       "ProjectHelmChartRepositoryListPage": "src/components/list-page/ProjectHelmChartRepositoryListPage.tsx",
       "HelmChartRepositoryListPage": "src/components/list-page/HelmChartRepositoryListPage.tsx",
