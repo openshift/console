@@ -305,8 +305,8 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
           <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-            <PencilAltIcon className="co-icon-space-r pf-v6-c-button-icon--plain" />
             {t('public~Configure')}
+            <PencilAltIcon className="co-icon-space-l" />
           </Link>
         ) : (
           integrationTypesLabel

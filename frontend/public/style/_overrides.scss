@@ -110,19 +110,6 @@ form.pf-v6-c-form {
   margin-left: auto !important;
 }
 
-.pf-v6-c-button {
-  &:hover,
-  &:focus {
-    .pf-v6-c-button-icon--plain {
-      color: var(--pf-v6-c-button--m-plain--hover--Color);
-    }
-  }
-}
-
-.pf-v6-c-button-icon--plain {
-  color: var(--pf-v6-c-button--m-plain--Color);
-}
-
 .pf-v6-c-button.pf-v6-c-button--no-default-values {
   --pf-v6-c-button--PaddingTop: 0;
   --pf-v6-c-button--PaddingRight: 0;

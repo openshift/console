@@ -78,7 +78,8 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dd>
               {canUpdate ? (
                 <Button
-                  icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
+                  icon={<PencilAltIcon />}
+                  iconPosition="end"
                   variant="link"
                   type="button"
                   isInline
@@ -98,7 +99,8 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dd>
               {canUpdate ? (
                 <Button
-                  icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
+                  icon={<PencilAltIcon />}
+                  iconPosition="end"
                   variant="link"
                   type="button"
                   isInline

@@ -161,7 +161,8 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
               <dd>
                 {canUpdate ? (
                   <Button
-                    icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
+                    icon={<PencilAltIcon />}
+                    iconPosition="end"
                     variant="link"
                     type="button"
                     isInline

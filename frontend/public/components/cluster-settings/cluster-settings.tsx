@@ -173,7 +173,8 @@ export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }
   const label = cv.spec.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
-      icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
+      icon={<PencilAltIcon />}
+      iconPosition="end"
       type="button"
       isInline
       data-test-id="current-channel-update-link"

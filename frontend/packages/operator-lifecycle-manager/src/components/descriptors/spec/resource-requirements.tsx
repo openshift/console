@@ -155,7 +155,8 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
 
     return (
       <Button
-        icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
+        icon={<PencilAltIcon />}
+        iconPosition="end"
         type="button"
         isInline
         data-test-id="configure-modal-btn"

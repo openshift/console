@@ -50,7 +50,8 @@ const Details: React.SFC<DetailsProps> = (props) => {
               <dt>Replicas</dt>
               <dd>
                 <Button
-                  icon={<PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />}
+                  icon={<PencilAltIcon />}
+                  iconPosition="end"
                   variant="link"
                   type="button"
                   isInline

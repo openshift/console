@@ -625,11 +625,10 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                     variant="link"
                     isDisabled={!pkg}
                     data-test="subscription-channel-update-button"
+                    icon={<PencilAltIcon />}
+                    iconPosition="end"
                   >
                     {obj.spec.channel || 'default'}
-                    {pkg && (
-                      <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />
-                    )}
                   </Button>
                   {deprecatedChannel.deprecation && (
                     <DeprecatedOperatorWarningIcon
@@ -657,9 +656,8 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                 <>
                   <div>
                     <Button
-                      icon={
-                        <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />
-                      }
+                      icon={<PencilAltIcon />}
+                      iconPosition="end"
                       type="button"
                       isInline
                       onClick={approvalModal}

@@ -307,12 +307,13 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
                   })
                 }
                 variant="link"
+                icon={<PencilAltIcon />}
+                iconPosition="end"
               >
                 <>
                   {isPluginEnabled(consoleOperatorConfig, pluginName)
                     ? t('olm~Enabled')
-                    : t('olm~Disabled')}{' '}
-                  <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />
+                    : t('olm~Disabled')}
                 </>
               </Button>
             </dd>
