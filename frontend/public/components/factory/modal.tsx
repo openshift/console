@@ -191,7 +191,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
   );
 
   const resetButton = (
-    <Button variant="link" isInline onClick={onResetClick} id="reset-action">
+    <Button variant="link" onClick={onResetClick} id="reset-action">
       {resetText || t('public~Reset')}
     </Button>
   );
