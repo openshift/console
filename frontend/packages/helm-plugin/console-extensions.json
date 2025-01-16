@@ -290,7 +290,7 @@
       "perspective": "admin",
       "id": "helm-section",
       "name": "%helm-plugin~Helm%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-operators" },
+      "dataAttributes": { "data-quickstart-id": "qs-admin-nav-helm" },
       "insertAfter": "operators"
     }
   },
