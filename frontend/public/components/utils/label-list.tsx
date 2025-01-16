@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-core';
@@ -16,14 +15,12 @@ export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
 
   return (
     <>
-      <PfLabel className={klass}>
-        <Link className="pf-v6-c-label__content" to={href}>
-          <span className="co-label__key" data-test="label-key">
-            {name}
-          </span>
-          {value && <span className="co-label__eq">=</span>}
-          {value && <span className="co-label__value">{value}</span>}
-        </Link>
+      <PfLabel className={klass} href={href}>
+        <span className="co-label__key" data-test="label-key">
+          {name}
+        </span>
+        {value && <span className="co-label__eq">=</span>}
+        {value && <span className="co-label__value">{value}</span>}
       </PfLabel>
     </>
   );
