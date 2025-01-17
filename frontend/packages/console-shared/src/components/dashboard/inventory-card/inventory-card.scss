@@ -30,15 +30,15 @@
 }
 
 .co-inventory-card__status-icon--question {
-  color: var(--pf-t--color--gray--30);
+  color: var(--pf-t--global--icon--color--severity--undefined--default); // verify these two colors
 }
 
 .co-inventory-card__status-icon--progress {
-  color: var(--pf-t--color--gray--50);
+  color: var(--pf-t--global--icon--color--severity--minor--default);
 }
 
 .co-inventory-card__accordion.pf-v6-c-accordion {
-  border-bottom: var(--pf-t--global--border--width--100) solid
+  border-bottom: var(--pf-t--global--border--width--regular) solid
     var(--pf-t--global--border--color--default);
   box-shadow: none;
   padding: 0;
