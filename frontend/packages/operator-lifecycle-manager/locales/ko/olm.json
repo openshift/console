@@ -37,7 +37,7 @@
   "{{count}} Namespaces_other": "{{count}} Namespaces_other",
   "Console plugin_one": "콘솔 플로그인",
   "Console plugin_other": "콘솔 plugin_other",
-  "{{plugin}}:": "{{plugin}}:",
+  "{{pluginName}}:": "{{pluginName}}:",
   "Enabled": "활성화됨",
   "Console plugin available": "콘솔 플러그인 사용 가능",
   "To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.": "이 operator가 사용자 지정 인터페이스를 제공하고 콘솔에서 자체 코드를 실행하도록하려면 operator 세부 정보에서 해당 콘솔 플러그인을 활성화합니다.",

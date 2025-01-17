@@ -182,7 +182,7 @@
   "Run in Web Terminal": "웹 터미널에서 실해ㅇ",
   "Successfully copied to clipboard!": "클립 보드에 복사되었습니다!",
   "Running in Web Terminal": "웹 터미널에서 실행 중",
-  "Console plugin enablement - {{plugin}}": "콘솔 플러그인 활성화- {{plugin}}",
+  "Console plugin enablement - {{pluginName}}": "콘솔 플러그인 활성화- {{pluginName}}",
   "Console plugin enablement": "콘솔 플러그인 활성화",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "이 operator에는 콘솔에 포함될 수있는 사용자 정의 인터페이스를 제공하는 콘솔 플러그인이 포함되어 있습니다. 이 콘솔 플러그인의 활성화를 업데이트하면 업데이트된 후 콘솔을 새로 고치라는 메시지가 표시됩니다. 활성화하기 전에 이 콘솔 플러그인을 신뢰하는지 확인하십시오.",
   "This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "이 콘솔 플러그인에는 콘솔에 포함할 수 있는 사용자 정의 인터페이스를 제공합니다. 이 콘솔 플러그인의 활성화를 업데이트하면 업데이트된 후 콘솔을 새로 고치라는 메시지가 표시됩니다. 활성화하기 전에 이 콘솔 플러그인을 신뢰하는지 확인하십시오.",

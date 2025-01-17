@@ -182,7 +182,7 @@
   "Run in Web Terminal": "Exécuter dans le terminal Web",
   "Successfully copied to clipboard!": "Copié avec succès dans le Presse-papiers !",
   "Running in Web Terminal": "Exécution dans le terminal Web",
-  "Console plugin enablement - {{plugin}}": "Activation du plug-in de console - {{plugin}}",
+  "Console plugin enablement - {{pluginName}}": "Activation du plug-in de console - {{pluginName}}",
   "Console plugin enablement": "Activation du plug-in de console",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "Cet opérateur inclut un plug-in de console qui fournit une interface personnalisée pouvant être incluse dans la console. Lors de la mise à jour de l’activation de ce plug-in de console, vous serez invité à actualiser la console une fois qu’elle aura été mise à jour. Vérifiez qu’il s’agit d’un plug-in de console de confiance avant de l’activer.",
   "This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "Ce plug-in de console fournit une interface personnalisée pouvant être incluse dans la console. Lors de la mise à jour de l’activation de ce plug-in de console, vous serez invité à actualiser la console une fois qu’elle aura été mise à jour. Vérifiez qu’il s’agit d’un plug-in de console de confiance avant de l’activer.",
