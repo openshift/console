@@ -371,8 +371,8 @@ export const gitPage = {
     cy.get(gitPO.advancedOptions.routing.targetPort).scrollIntoView().clear().type('8080');
   },
   selectTargetPortForRoutingWithPort: (port: string) => {
-    cy.get(gitPO.advancedOptions.routing.targetPortDropdown).click();
-    cy.get(`[id="select-option-route.unknownTargetPort-${port}"]`).click();
+    cy.get('input[aria-label="Type to filter"]').click();
+    cy.get(`[aria-label="Target port"]`).contains(port).click();
   },
   enterRoutingHostName: (hostName: string) =>
     cy.get(gitPO.advancedOptions.routing.hostname).type(hostName),

@@ -55,7 +55,8 @@ Then('user is redirected to resource quota list page', () => {
 When(
   'user creates resource quota {string} by entering {string} file data',
   (resourceQuotaName: string, yamlLocation: string) => {
-    cy.get('[data-test="import-yaml"]').click();
+    cy.get('[data-test="quick-create-dropdown"]').click();
+    cy.get('[data-test="qc-import-yaml"]').click();
     cy.get('.yaml-editor').should('be.visible');
     cy.readFile(yamlLocation).then((str) => {
       const myArray = str.split('---');

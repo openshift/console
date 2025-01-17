@@ -69,8 +69,6 @@ When('user clicks on Create button in the Import from Git page', () => {
   gitPage.enterAppName('devfile-sample-git-app');
   gitPage.enterWorkloadName('devfile-sample-git');
   cy.get(gitPO.gitRepoUrl).should('have.value', gitUrl);
-  // re-enter the URL so the actual github request gets mocked
-  gitPage.enterGitUrl(gitUrl);
   gitPage.clickCreate();
 });
 
