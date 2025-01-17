@@ -28,24 +28,26 @@ const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearc
     >
       <EmptyStateFooter>
         <EmptyStateActions>
-          <Trans t={t} ns="topology">
-            <Button
-              isInline
-              variant="link"
-              data-test="start-building-your-application"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsQuickSearchOpen(true);
-              }}
-            >
-              Start building your application
-            </Button>
-            {' or visit the '}
-            <Link to="/add" data-test="add-page">
-              Add page
-            </Link>
-            {' for more details.'}
-          </Trans>
+          <div>
+            <Trans t={t} ns="topology">
+              <Button
+                isInline
+                variant="link"
+                data-test="start-building-your-application"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsQuickSearchOpen(true);
+                }}
+              >
+                Start building your application
+              </Button>
+              {' or visit the '}
+              <Link to="/add" data-test="add-page">
+                Add page
+              </Link>
+              {' for more details.'}
+            </Trans>
+          </div>
         </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>
