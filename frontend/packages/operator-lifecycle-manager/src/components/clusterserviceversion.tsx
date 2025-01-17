@@ -339,21 +339,18 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
     verb: 'patch',
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
-  const aPluginIsDisabled =
-    !consoleOperatorConfig?.spec?.plugins?.length ||
-    csvPlugins.some((plugin) => !isPluginEnabled(consoleOperatorConfig, plugin));
 
   return (
     consoleOperatorConfig &&
     canPatchConsoleOperatorConfig &&
-    aPluginIsDisabled && (
+    csvPlugins.length > 0 && (
       <Popover
         headerContent={<div>{t('olm~Console plugin available')}</div>}
         bodyContent={
           <div>
             <p>
               {t(
-                'olm~To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.',
+                'olm~This operator includes console plugin which provides custom interface that can be included in the console, check its console plugin in the operator details.',
               )}
             </p>
             <Link to={resourceObjPath(csv, referenceFor(csv))}>
