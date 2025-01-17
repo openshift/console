@@ -29,13 +29,6 @@
     pointer-events: none;
   }
 
-  &__view-switcher.pf-m-plain {
-    @media (min-width: 768px) {
-      padding-bottom: 4px;
-      padding-right: 2px;
-    }
-  }
-
   &__layout-group {
     display: flex;
     align-items: center;
