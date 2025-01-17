@@ -22,13 +22,16 @@ export type SecretSubFormProps = {
   stringData: SecretStringData;
   secretType?: SecretType;
   isCreate?: boolean;
+  base64StringData?: Base64StringData;
 };
+
+export type SecretStringData = Record<string, string>;
+export type Base64StringData = Record<string, string>;
 
 export type SecretChangeData = {
   stringData?: SecretStringData;
   base64StringData?: SecretStringData;
 };
-export type SecretStringData = { [key: string]: string };
 
 export type OnSecretChange = (stringData: SecretChangeData) => void;
 
@@ -41,9 +44,15 @@ export type PullSecretCredential = {
   uid: string;
 };
 
-export type KeyValueEntry = {
-  isBase64?: boolean;
-  isBinary?: boolean;
+export type OpaqueDataEntry = {
+  isBinary_?: boolean;
   key: string;
   value: string;
+  uid: string;
+};
+
+export type OpaqueSecretFormEntryProps = {
+  entry: OpaqueDataEntry;
+  index: number;
+  onChange: (entry: OpaqueDataEntry, index: number) => void;
 };
