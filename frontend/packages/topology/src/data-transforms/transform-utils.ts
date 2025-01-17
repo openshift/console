@@ -1,18 +1,24 @@
 import { EdgeModel, Model, NodeModel, NodeShape } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { Alerts } from '@console/internal/components/monitoring/types';
-import { BuildConfigModel, HorizontalPodAutoscalerModel } from '@console/internal/models';
+import {
+  Alerts,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  WatchK8sResources,
+  WatchK8sResults,
+} from '@console/dynamic-plugin-sdk';
+import { getImageForIconClass } from '@console/dynamic-plugin-sdk/src/lib-internal';
+import {
+  BuildConfigModel,
+  HorizontalPodAutoscalerModel,
+} from '@console/dynamic-plugin-sdk/src/models';
 import {
   apiVersionForReference,
   isGroupVersionKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
   kindForReference,
   referenceFor,
-} from '@console/internal/module/k8s';
+} from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_KAFKA,

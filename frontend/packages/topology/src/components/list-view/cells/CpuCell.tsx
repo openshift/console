@@ -2,17 +2,13 @@ import * as React from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { formatCores } from '@console/internal/components/utils';
+import { CpuCellComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { formatCores } from '@console/dynamic-plugin-sdk/src/topology/utils';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
 import { useMetricStats } from '../../../utils/useMetricStats';
 import MetricsTooltip from './MetricsTooltip';
 
 import './MetricsCell.scss';
-
-type CpuCellComponentProps = {
-  cpuByPod: any;
-  totalCores: number;
-};
 
 const CpuCellComponent: React.FC<CpuCellComponentProps> = React.memo(({ cpuByPod, totalCores }) => {
   const { t } = useTranslation();

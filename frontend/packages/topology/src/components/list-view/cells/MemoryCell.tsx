@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-import { formatBytesAsMiB } from '@console/internal/components/utils';
+import { MemoryCellComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { formatBytesAsMiB } from '@console/dynamic-plugin-sdk/src/topology/utils';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
 import { useMetricStats } from '../../../utils/useMetricStats';
 import MetricsTooltip from './MetricsTooltip';
@@ -10,11 +11,6 @@ import './MemoryCell.scss';
 
 type MemoryCellProps = {
   item: Node;
-};
-
-type MemoryCellComponentProps = {
-  totalBytes: number;
-  memoryByPod: any;
 };
 
 const MemoryCellComponent: React.FC<MemoryCellComponentProps> = React.memo(

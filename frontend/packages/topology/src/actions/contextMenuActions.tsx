@@ -12,7 +12,7 @@ import {
   MenuOption,
   MenuOptionType,
 } from '@console/dynamic-plugin-sdk/src';
-import { referenceFor } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getMenuOptionType, orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 import { getResource } from '../utils';

@@ -285,3 +285,24 @@ export type UseURLPoll = <R>(
   delay?: number,
   ...dependencies: any[]
 ) => [R, any, boolean];
+
+export type ModalComponentProps = {
+  cancel?: () => void;
+  close?: () => void;
+};
+
+export type HandlePromiseProps = {
+  handlePromise: <T>(
+    promise: Promise<T>,
+    onFulfill?: (res) => void,
+    onError?: (errorMsg: string) => void,
+  ) => void;
+  inProgress: boolean;
+  errorMessage: string;
+};
+
+export type ErrorModalProps = {
+  error: string;
+  title?: string;
+} & ModalComponentProps &
+  HandlePromiseProps;

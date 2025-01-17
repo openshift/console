@@ -36,3 +36,7 @@ export const useK8sModel: UseK8sModel = (k8sGroupVersionKind) => [
   useSelector(({ k8s }) => getK8sModel(k8s, k8sGroupVersionKind)),
   useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight']) ?? false),
 ];
+
+export const useOverviewMetrics = () => {
+  return useSelector(({ k8s }) => k8s.getIn(['overview', 'metrics']));
+};
