@@ -37,12 +37,22 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
             <BarsIcon />
           </PageToggleButton>
         </MastheadToggle>
-        <MastheadBrand>
-          <MastheadLogo component="a" {...logoProps}>
+        <MastheadBrand data-codemods>
+          <MastheadLogo
+            data-codemods
+            component="a"
+            {...logoProps}
+            aria-label={window.SERVER_FLAGS.customLogoURL ? undefined : details.productName}
+          >
             {window.SERVER_FLAGS.customLogoURL ? (
               <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
             ) : (
-              <ReactSVG src={details.logoImg} data-test="brand-image" className="pf-v6-c-brand" />
+              <ReactSVG
+                src={details.logoImg}
+                aria-hidden
+                data-test="brand-image"
+                className="pf-v6-c-brand"
+              />
             )}
           </MastheadLogo>
         </MastheadBrand>
