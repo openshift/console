@@ -44,8 +44,8 @@ const Contents: React.FC<
       items: catalogService.items,
       loaded: catalogService.loaded,
       getCatalogURL: (searchTerm: string, ns: string) => `/catalog/ns/${ns}?keyword=${searchTerm}`,
-      // t('topology~View all developer catalog items ({{itemCount, number}})')
-      catalogLinkLabel: 'topology~View all developer catalog items ({{itemCount, number}})',
+      // t('topology~View all software catalog items ({{itemCount, number}})')
+      catalogLinkLabel: 'topology~View all software catalog items ({{itemCount, number}})',
       extensions: catalogService.catalogExtensions,
     },
     {

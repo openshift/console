@@ -35,18 +35,18 @@ const CatalogPage: React.FC = () => {
               {...service}
               enableDetailsPanel
               categories={categories}
-              title={t('devconsole~Developer Catalog')}
+              title={t('devconsole~Software Catalog')}
               description={t(
-                'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the developer catalog. Cluster administrators can customize the content made available in the catalog.',
+                'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.',
               )}
             />
           )}
         </CatalogServiceProvider>
       ) : (
-        <CreateProjectListPage title={t('devconsole~Developer Catalog')}>
+        <CreateProjectListPage title={t('devconsole~Software Catalog')}>
           {(openProjectModal) => (
             <Trans t={t} ns="devconsole">
-              Select a Project to view the developer catalog
+              Select a Project to view the software catalog
               <CreateAProjectButton openProjectModal={openProjectModal} />.
             </Trans>
           )}

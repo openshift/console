@@ -19,7 +19,7 @@ Feature: Add page on Developer Console
 
         @regression
         Scenario: Options to create an Application, Component or Service: A-11-TC02
-             Then user will see "Developer Catalog" card
+             Then user will see "Software Catalog" card
               And user will see "Git Repository" card
               And user will see "Container images" option
               And user will see "Samples" option

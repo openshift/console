@@ -8,6 +8,7 @@ import NamespacedPage, {
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ListPage } from '@console/internal/components/factory';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { PageHeading } from '@console/internal/components/utils';
@@ -21,10 +22,9 @@ import { KnativeServiceTypeContext } from './ServiceTypeContext';
 
 import './FunctionsPage.scss';
 
-const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
+const FunctionList: React.FC<{ namespace: string }> = (props) => {
   const { t } = useTranslation();
-  const params = useParams();
-  return params.ns ? (
+  return (
     <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
       <Helmet>
         <title>{t('knative-plugin~Functions')}</title>
@@ -32,7 +32,7 @@ const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (prop
       <div className="odc-functions-list-page__heading">
         <PageHeading title={t('knative-plugin~Functions')} />
         <div className="co-m-nav-title">
-          <CreateActionDropdown />
+          <CreateActionDropdown namespace={props.namespace} />
         </div>
       </div>
       <GettingStartedSection />
@@ -44,15 +44,28 @@ const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (prop
         selector={{ matchLabels: { 'function.knative.dev': 'true' } }}
       />
     </KnativeServiceTypeContext.Provider>
+  );
+};
+
+const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
+  const { t } = useTranslation();
+  const { ns } = useParams();
+  const [perspective] = useActivePerspective();
+  return perspective === 'dev' ? (
+    ns ? (
+      <FunctionList namespace={ns} {...props} />
+    ) : (
+      <CreateProjectListPage title={t('knative-plugin~Functions')}>
+        {(openProjectModal) => (
+          <Trans t={t} ns="knative-plugin">
+            Select a Project to view its details
+            <CreateAProjectButton openProjectModal={openProjectModal} />.
+          </Trans>
+        )}
+      </CreateProjectListPage>
+    )
   ) : (
-    <CreateProjectListPage title={t('knative-plugin~Functions')}>
-      {(openProjectModal) => (
-        <Trans t={t} ns="knative-plugin">
-          Select a Project to view its details
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
-      )}
-    </CreateProjectListPage>
+    <FunctionList namespace={ns} {...props} />
   );
 };
 

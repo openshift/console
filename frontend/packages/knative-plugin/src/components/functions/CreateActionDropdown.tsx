@@ -1,20 +1,23 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { history, Dropdown } from '@console/internal/components/utils';
-import { MenuAction, MenuActions, useActiveNamespace } from '@console/shared/src';
+import { MenuAction, MenuActions } from '@console/shared/src';
 
-export const CreateActionDropdown: React.FC = () => {
+type CreateActionDropdownProps = {
+  namespace: string;
+};
+
+export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ namespace }) => {
   const { t } = useTranslation();
-  const [activeNamespace] = useActiveNamespace();
 
   const menuActions: MenuActions = {
     importfromGit: {
       label: t('knative-plugin~Import from Git'),
-      onSelection: () => `/serverless-function/ns/${activeNamespace}`,
+      onSelection: () => `/serverless-function/ns/${namespace || 'default'}`,
     },
     functionsUsingSamples: {
       label: t('knative-plugin~Samples'),
-      onSelection: () => `/samples/ns/${activeNamespace}?sampleType=Serverless function`,
+      onSelection: () => `/samples/ns/${namespace || 'default'}?sampleType=Serverless function`,
     },
   };
 

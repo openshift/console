@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Timestamp, ResourceIcon } from '@console/internal/components/utils';
+import { Timestamp, ResourceIcon, ResourceLink } from '@console/internal/components/utils';
 import { LazyActionMenu, Status } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';
@@ -23,6 +23,9 @@ const HelmReleaseListRow: React.FC<RowFunctionArgs<HelmRelease>> = ({ obj }) => 
         >
           {obj.name}
         </Link>
+      </TableData>
+      <TableData columnID="namespace">
+        <ResourceLink kind="Namespace" name={obj.namespace} />
       </TableData>
       <TableData className={tableColumnClasses.revision}>{obj.version}</TableData>
       <TableData className={tableColumnClasses.updated}>

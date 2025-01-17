@@ -57,7 +57,7 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/helm-releases"],
+      "path": ["/helm-releases", "/helm", "/helm-repositories"],
       "component": { "$codeRef": "helmComponents.NamespaceRedirect" }
     },
     "flags": {
@@ -112,8 +112,30 @@
     "type": "console.page/route",
     "properties": {
       "exact": false,
-      "path": ["/helm-releases/all-namespaces", "/helm-releases/ns/:ns"],
+      "path": ["/helm/all-namespaces", "/helm/ns/:ns"],
       "component": { "$codeRef": "helmComponents.HelmTabbedPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/helm-releases/all-namespaces", "/helm-releases/ns/:ns"],
+      "component": { "$codeRef": "helmComponents.AdminHelmReleaseListPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/helm-repositories/all-namespaces", "/helm-repositories/ns/:ns"],
+      "component": { "$codeRef": "helmComponents.AdminHelmRepositoriesListPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -124,8 +146,8 @@
     "properties": {
       "exact": true,
       "path": [
-        "/ns/:ns/helmchartrepositories/~new/form",
-        "/ns/:ns/helmchartrepositories/:name/form",
+        "/helm-repositories/ns/:ns/~new/form",
+        "/helm-repositories/ns/:ns/:name/form",
         "/k8s/cluster/helmchartrepositories/:name/form"
       ],
       "component": { "$codeRef": "helmComponents.HelmChartRepositoryForm" }
@@ -167,7 +189,7 @@
     "properties": {
       "id": "project-helm-chart-repositories",
       "groupId": "helm-chart-repositories",
-      "href": "/ns/:namespace/helmchartrepositories/~new/form?actionOrigin=addPage",
+      "href": "/helm-repositories/ns/:namespace/~new/form?actionOrigin=addPage",
       "label": "%helm-plugin~Helm Chart repositories%",
       "description": "%helm-plugin~Add a Helm Chart Repository to extend the Developer Catalog%",
       "icon": { "$codeRef": "helmUtils.helmChartRepositoriesIconElement" },
@@ -251,10 +273,55 @@
       "section": "resources",
       "insertBefore": "project",
       "name": "%helm-plugin~Helm%",
-      "href": "/helm-releases",
+      "href": "/helm",
       "namespaced": true,
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-helm",
+        "data-test-id": "helm-releases-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "perspective": "admin",
+      "id": "helm-section",
+      "name": "%helm-plugin~Helm%",
+      "dataAttributes": { "data-quickstart-id": "qs-admin-nav-helm" },
+      "insertAfter": "operators"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "repositories",
+      "perspective": "admin",
+      "section": "helm-section",
+      "name": "%helm-plugin~Repositories%",
+      "href": "/helm-repositories",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-test-id": "helm-repositories-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "releases",
+      "perspective": "admin",
+      "section": "helm-section",
+      "name": "%helm-plugin~Releases%",
+      "href": "/helm-releases",
+      "insertAfter": "repositories",
+      "namespaced": true,
+      "dataAttributes": {
         "data-test-id": "helm-releases-header"
       }
     },

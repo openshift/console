@@ -76,7 +76,7 @@ Then(
 Then(
   'user will see All services, Database, Operator Backed and Helm Chart options under Developer Catalog section',
   () => {
-    verifyAddPage.verifyAddPageCard('Developer Catalog');
+    verifyAddPage.verifyAddPageCard('Software Catalog');
     verifyAddPage.verifyAddPageCard('All services');
     verifyAddPage.verifyAddPageCard('Database');
     verifyAddPage.verifyAddPageCard('Operator Backed');

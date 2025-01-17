@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { EmptyState, EmptyStateIcon, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Table, TableProps } from '@console/internal/components/factory';
 import ServiceHeader from '../services/ServiceHeader';
@@ -19,6 +20,7 @@ const FunctionIcon = () => (
 
 const FunctionsList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
+  const { ns } = useParams();
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.sm}>
       <EmptyStateIcon icon={FunctionIcon} className="odc-functions__empty-list__icon" />
@@ -31,7 +33,7 @@ const FunctionsList: React.FC<TableProps> = (props) => {
         )}
       </span>
       <div className="odc-functions__empty-list__dropdown">
-        <CreateActionDropdown />
+        <CreateActionDropdown namespace={ns} />
       </div>
     </EmptyState>
   );
