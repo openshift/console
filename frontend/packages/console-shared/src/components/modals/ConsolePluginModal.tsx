@@ -20,7 +20,6 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
     cancel,
     close,
     consoleOperatorConfig,
-    csvPluginsCount,
     errorMessage,
     handlePromise,
     inProgress,
@@ -40,19 +39,13 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
   return (
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
-        {csvPluginsCount > 1
-          ? t('console-shared~Console plugin enablement - {{plugin}}', { pluginName })
-          : t('console-shared~Console plugin enablement')}
+        {t('console-shared~Console plugin enablement - {{pluginName}}', { pluginName })}
       </ModalTitle>
       <ModalBody>
         <p>
-          {csvPluginsCount
-            ? t(
-                'console-shared~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
-              )
-            : t(
-                'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
-              )}
+          {t(
+            'console-shared~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
+          )}
         </p>
         <ConsolePluginRadioInputs
           autofocus
@@ -81,7 +74,6 @@ export const consolePluginModal = createModalLauncher(ConsolePluginModal);
 
 export type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;
-  csvPluginsCount?: number;
   pluginName: string;
   trusted: boolean;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;

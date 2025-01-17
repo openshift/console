@@ -183,7 +183,6 @@
   "Successfully copied to clipboard!": "Successfully copied to clipboard!",
   "Running in Web Terminal": "Running in Web Terminal",
   "Console plugin enablement - {{plugin}}": "Console plugin enablement - {{plugin}}",
-  "Console plugin enablement": "Console plugin enablement",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.",
   "This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.": "This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.",
   "An error occurred. Please try again.": "An error occurred. Please try again.",
