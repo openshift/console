@@ -77,7 +77,10 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
         headingLevel="h5"
       >
         {firingAlerts.length > 0 && (
-          <AccordionItem isExpanded={expanded.includes('monitoring-alerts')}>
+          <AccordionItem
+            isExpanded={expanded.includes('monitoring-alerts')}
+            id="monitoring-alerts-accordian-item"
+          >
             <AccordionToggle
               onClick={() => {
                 onToggle('monitoring-alerts');
@@ -102,7 +105,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
           </AccordionItem>
         )}
 
-        <AccordionItem isExpanded={expanded.includes('metrics')}>
+        <AccordionItem isExpanded={expanded.includes('metrics')} id="metrics-accordian-item">
           <AccordionToggle
             onClick={() => {
               onToggle('metrics');
@@ -142,7 +145,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem isExpanded={expanded.includes('all-events')}>
+        <AccordionItem isExpanded={expanded.includes('all-events')} id="all-events-accordian-item">
           <AccordionToggle
             onClick={() => {
               onToggle('all-events');

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ModalFooter, ModalHeader } from '@patternfly/react-core';
+import { ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
 import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
@@ -89,8 +89,8 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       aria-label={t('console-app~guided tour {{step, number}}', { step })}
       isFullScreen
     >
-      <ModalHeader>{header}</ModalHeader>
-      {stepContent}
+      <ModalHeader data-test="close-guided-tour">{header}</ModalHeader>
+      <ModalBody>{stepContent}</ModalBody>
       <ModalFooter>{footer}</ModalFooter>
     </Modal>
   );
