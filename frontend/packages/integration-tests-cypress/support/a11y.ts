@@ -65,8 +65,6 @@ Cypress.Commands.add('testA11y', (target: string, selector?: string) => {
     rules: [
       { id: 'color-contrast', enabled: false }, // seem to be somewhat inaccurate and has difficulty always picking up the correct colors, tons of open issues for it on axe-core
       { id: 'focusable-content', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
-      { id: 'scrollable-region-focusable', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
-      { id: 'aria-roles', enabled: false }, // rule is outdated and current installation of axe-core is no longer complaint with newest ariaRoles spec, causing false test failures (specifically with the role='code'). reenable when axe core is updated to at least 4.1.0
     ],
   });
   a11yTestResults.numberChecks += 1;
