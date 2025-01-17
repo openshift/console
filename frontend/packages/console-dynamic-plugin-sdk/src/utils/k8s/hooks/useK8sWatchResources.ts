@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { K8sModel } from '../../../api/common-types';
@@ -65,7 +63,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     k8sModelsRef.current = allK8sModels.filter(
       (model) =>
         requiredModels.includes(getReferenceForModel(model)) || requiredModels.includes(model.kind),
-    );
+    ) as ImmutableMap<string, K8sModel>;
   }
 
   const k8sModels = k8sModelsRef.current;

@@ -13,7 +13,6 @@ import {
   useResolvedExtensions,
   ProvisionerDetails as UnResolvedProvisionerDetails,
   ProvisionerType,
-  ResolvedExtension,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
@@ -55,6 +54,9 @@ type StorageProvisionerMap = {
 const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const provisionerExtensions = useResolvedExtensions<StorageClassProvisioner>(
+    isStorageClassProvisioner,
+  );
 
   const [newStorageClass, setNewStorageClass] = React.useState<{
     name: string;
@@ -241,10 +243,11 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
   };
 
   const prevProps = React.useRef(props);
+  const prevProvisionerExtensions = React.useRef(provisionerExtensions);
 
   React.useEffect(() => {
-    const [extensions, extensionsLoaded] = props.extensions;
-    if (extensionsLoaded && !_.isEqual(props.extensions, prevProps.current.extensions)) {
+    const [extensions, extensionsLoaded] = provisionerExtensions;
+    if (extensionsLoaded && !_.isEqual(provisionerExtensions, prevProvisionerExtensions.current)) {
       getExtensions(extensions);
     }
     if (props !== prevProps.current && extensionsLoaded) {
@@ -268,8 +271,9 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     }
 
     prevProps.current = props;
+    prevProvisionerExtensions.current = provisionerExtensions;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props]);
+  }, [props, provisionerExtensions]);
 
   const updateNewStorage = (param: keyof Parameters, value, runValidation) => {
     const newParams = {
@@ -746,8 +750,6 @@ export type StorageClassFormProps = StateProps &
     resources?: {
       [key: string]: FirehoseResult;
     };
-  } & {
-    extensions?: [ResolvedExtension<StorageClassProvisioner>[], boolean, any[]];
   };
 
 export type StorageClassData = {
@@ -786,10 +788,7 @@ export type Resources = {
 export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
-)((props) => {
-  const extensions = useResolvedExtensions<StorageClassProvisioner>(isStorageClassProvisioner);
-  return <StorageClassFormInner extensions={extensions} {...props} />;
-});
+)(StorageClassFormInner);
 
 export const StorageClassForm = (props) => {
   const resources = [
