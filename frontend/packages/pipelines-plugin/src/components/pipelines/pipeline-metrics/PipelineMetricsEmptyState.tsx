@@ -3,11 +3,9 @@ import {
   Bullseye,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateVariant,
   Stack,
   StackItem,
-  EmptyStateHeader,
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +18,7 @@ const PipelineMetricsEmptyState: React.FC = () => {
     <Stack className="pipeline-metrics-empty-state">
       <StackItem isFilled>
         <Bullseye>
-          <EmptyState variant={EmptyStateVariant.full}>
-            <EmptyStateHeader icon={<EmptyStateIcon icon={ChartLineIcon} />} />
+          <EmptyState icon={ChartLineIcon} variant={EmptyStateVariant.full}>
             <EmptyStateBody>
               {t('pipelines-plugin~Start your pipeline to view pipeline metrics.')}
             </EmptyStateBody>

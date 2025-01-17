@@ -31,25 +31,25 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
       <Level>
         <LevelItem>
           <Button
+            icon={<PasteIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="load-sample"
             isInline
             onClick={() => loadSampleYaml(id, yaml, reference)}
           >
-            <PasteIcon className="co-icon-space-r" />
             {t('public~Try it')}
           </Button>
         </LevelItem>
         <LevelItem>
           <Button
+            icon={<DownloadIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="download-sample"
             isInline
             onClick={() => downloadSampleYaml(id, yaml, reference)}
           >
-            <DownloadIcon className="co-icon-space-r" />
             {t('public~Download YAML')}
           </Button>
         </LevelItem>
@@ -130,8 +130,13 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
       <p>{description}</p>
       <Level>
         <LevelItem>
-          <Button type="button" variant="link" isInline onClick={insertSnippet}>
-            <PasteIcon className="co-icon-space-r" />
+          <Button
+            icon={<PasteIcon className="co-icon-space-r" />}
+            type="button"
+            variant="link"
+            isInline
+            onClick={insertSnippet}
+          >
             {t('public~Insert snippet')}
           </Button>
         </LevelItem>

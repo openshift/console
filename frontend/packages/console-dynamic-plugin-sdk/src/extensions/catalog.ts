@@ -185,7 +185,7 @@ export type CatalogItemAttribute = {
 
 export type CatalogItemBadge = {
   text: string;
-  color?: 'blue' | 'cyan' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
+  color?: 'blue' | 'teal' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
   icon?: React.ReactNode;
   variant?: 'outline' | 'filled';
 };

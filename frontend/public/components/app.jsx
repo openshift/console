@@ -63,8 +63,6 @@ import { AuthenticationErrorPage } from './error';
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
-// load dark theme here as MiniCssExtractPlugin ignores load order of sass and dark theme must load after all other css
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
@@ -228,8 +226,7 @@ const App = (props) => {
           <Page
             // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
             mainTabIndex={null}
-            className="pf-c-page" // legacy pf-c-page class needed for PF4 component styling
-            header={
+            masthead={
               <Masthead
                 isNavOpen={isNavOpen}
                 onNavToggle={onNavToggle}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextVariants, Text } from '@patternfly/react-core';
+import { ContentVariants, Content } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
@@ -80,7 +80,7 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
     case EventSources.KameletBinding:
       EventSource = kameletSource && (
         <>
-          <Text component={TextVariants.h2}>{kameletSource.spec?.definition?.title}</Text>
+          <Content component={ContentVariants.h2}>{kameletSource.spec?.definition?.title}</Content>
           <DynamicFormField
             name="formData.data.KameletBinding.source.properties"
             schema={formSchema}

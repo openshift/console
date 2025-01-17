@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContainer } from '@patternfly/react-charts';
+import { createContainer } from '@patternfly/react-charts/victory';
 import { AsyncComponent } from '../utils/async';
 
 // Constants

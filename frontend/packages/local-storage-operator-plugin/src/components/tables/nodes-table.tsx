@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text } from '@patternfly/react-core';
+import { Content } from '@patternfly/react-core';
 import { sortable, IRow } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
@@ -24,11 +24,11 @@ import { NodesTableRowsFunction, NodesTableCustomData } from './types';
 import './nodes-table.scss';
 
 const tableColumnClasses = [
-  classNames('pf-v5-u-w-40-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-10-on-sm'),
+  classNames('pf-v6-u-w-40-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-10-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-10-on-sm'),
 ];
 
 const getRows: NodesTableRowsFunction = (
@@ -154,13 +154,13 @@ export const NodesTable: React.FC<NodesTableProps> = (props) => {
         />
       </div>
       {hasOnSelect && (
-        <Text data-test-id="create-lvs-form-selected-nodes" component="h6">
+        <Content data-test-id="create-lvs-form-selected-nodes" component="h6">
           {t('lso-plugin~{{nodeCount, number}} node', {
             nodeCount: selectedNodes?.size,
             count: selectedNodes?.size,
           })}{' '}
           {t('lso-plugin~selected')}
-        </Text>
+        </Content>
       )}
     </>
   );

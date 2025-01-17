@@ -69,15 +69,14 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
               />
             </div>
             <Button
+              icon={<MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />}
               type="button"
               className="pairs-list__span-btns"
               onClick={() => this.removeValue(i)}
               aria-label={t('public~Remove')}
               variant="plain"
               disabled={isEmpty}
-            >
-              <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            </Button>
+            />
           </div>
         ))}
         {helpText && (
@@ -86,12 +85,12 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
           </div>
         )}
         <Button
+          icon={<PlusCircleIcon className="co-icon-space-r" />}
           className="pf-m-link--align-left"
           onClick={() => this.addValue()}
           type="button"
           variant="link"
         >
-          <PlusCircleIcon className="co-icon-space-r" />
           {t('public~Add more')}
         </Button>
       </div>

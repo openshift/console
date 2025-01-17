@@ -123,13 +123,15 @@ const RequestPane: React.FC<FormikProps<FormikValues>> = ({ setFieldValue, value
               />
             ) : (
               <Button
+                icon={
+                  <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+                }
                 className="pf-m-link--align-left"
                 data-test="add-optional-header"
                 onClick={() => setShowCustomHeaders(true)}
                 type="button"
                 variant="link"
               >
-                <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
                 {t('knative-plugin~Add optional headers')}
               </Button>
             )}

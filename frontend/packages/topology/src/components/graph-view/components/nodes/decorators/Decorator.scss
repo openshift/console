@@ -1,5 +1,5 @@
 .odc-decorator {
-  color: var(--pf-v5-global--Color--200);
+  color: var(--pf-t--global--text--color--subtle);
   transition: color 0.2s ease;
   outline: none;
 
@@ -11,11 +11,11 @@
   }
 
   &__bg {
-    fill: var(--pf-v5-global--BackgroundColor--light-100);
+    fill: var(--pf-t--global--background--color--primary--default);
   }
 
   &:hover,
   &:active {
-    color: var(--pf-v5-global--link--Color--hover);
+    color: var(--pf-t--global--text--color--link--default--hover);
   }
 }

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Popover, Button, Modal, ModalVariant, Alert } from '@patternfly/react-core';
+import { Popover, Button, Alert } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -164,12 +165,11 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           </label>{' '}
           <Popover aria-label={t('console-shared~Naming information')} bodyContent={popoverText}>
             <Button
+              icon={<OutlinedQuestionCircleIcon />}
               className="co-button-help-icon"
               variant="plain"
               aria-label={t('console-shared~View naming information')}
-            >
-              <OutlinedQuestionCircleIcon />
-            </Button>
+            />
           </Popover>
           <div className="modal-body__field">
             <input

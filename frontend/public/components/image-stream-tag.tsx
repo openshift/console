@@ -187,18 +187,18 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
           <span className="text-muted">{t('public~No labels')}</span>
         ) : (
           <div className="co-table-container">
-            <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v5-c-table__thead">
-                <tr className="pf-v5-c-table__tr">
-                  <th className="pf-v5-c-table__th">{t('public~Name')}</th>
-                  <th className="pf-v5-c-table__th">{t('public~Value')}</th>
+            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+              <thead className="pf-v6-c-table__thead">
+                <tr className="pf-v6-c-table__tr">
+                  <th className="pf-v6-c-table__th">{t('public~Name')}</th>
+                  <th className="pf-v6-c-table__th">{t('public~Value')}</th>
                 </tr>
               </thead>
-              <tbody className="pf-v5-c-table__tbody">
+              <tbody className="pf-v6-c-table__tbody">
                 {_.map(sortedLabels, ({ name, value }) => (
-                  <tr className="pf-v5-c-table__tr" key={name}>
-                    <td className="pf-v5-c-table__td">{name}</td>
-                    <td className="pf-v5-c-table__td">{value}</td>
+                  <tr className="pf-v6-c-table__tr" key={name}>
+                    <td className="pf-v6-c-table__td">{name}</td>
+                    <td className="pf-v6-c-table__td">{value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -212,20 +212,20 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
           <span className="text-muted">{t('public~No environment variables')}</span>
         ) : (
           <div className="co-table-container">
-            <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v5-c-table__thead">
-                <tr className="pf-v5-c-table__tr">
-                  <th className="pf-v5-c-table__th">{t('public~Name')}</th>
-                  <th className="pf-v5-c-table__th">{t('public~Value')}</th>
+            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+              <thead className="pf-v6-c-table__thead">
+                <tr className="pf-v6-c-table__tr">
+                  <th className="pf-v6-c-table__th">{t('public~Name')}</th>
+                  <th className="pf-v6-c-table__th">{t('public~Value')}</th>
                 </tr>
               </thead>
-              <tbody className="pf-v5-c-table__tbody">
+              <tbody className="pf-v6-c-table__tbody">
                 {_.map(config.Env, (nameValueStr, i) => {
                   const pair = splitEnv(nameValueStr);
                   return (
-                    <tr className="pf-v5-c-table__tr" key={i}>
-                      <td className="pf-v5-c-table__td">{pair.name}</td>
-                      <td className="pf-v5-c-table__td">{pair.value}</td>
+                    <tr className="pf-v6-c-table__tr" key={i}>
+                      <td className="pf-v6-c-table__td">{pair.name}</td>
+                      <td className="pf-v6-c-table__td">{pair.value}</td>
                     </tr>
                   );
                 })}

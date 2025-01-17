@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SearchInput } from '@patternfly/react-core';
+import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
@@ -54,35 +54,40 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
       <div className="co-catalog-page__header">
         <div className="co-catalog-page__heading text-capitalize">{title}</div>
         <div className="co-catalog-page__filter">
-          <div className="co-catalog-page__searchfilter">
-            <SearchInput
-              ref={inputRef}
-              className="co-catalog-page__input"
-              data-test="search-catalog"
-              type="text"
-              placeholder={t('console-shared~Filter by keyword...')}
-              value={searchKeyword}
-              onChange={(_event, text) => debouncedOnSearchKeywordChange(text)}
-              onClear={() => onSearchKeywordChange('')}
-              aria-label={t('console-shared~Filter by keyword...')}
-            />
-            <Dropdown
-              className="co-catalog-page__sort"
-              items={catalogSortItems}
-              title={catalogSortItems[sortOrder]}
-              onChange={onSortOrderChange}
-            />
-            {showGrouping && (
-              <Dropdown
-                className="co-catalog-page__btn-group__group-by"
-                menuClassName="dropdown-menu--text-wrap"
-                items={catalogGroupItems}
-                onChange={onGroupingChange}
-                titlePrefix={t('console-shared~Group by')}
-                title={catalogGroupItems[activeGrouping]}
+          <Flex>
+            <FlexItem>
+              <SearchInput
+                ref={inputRef}
+                data-test="search-catalog"
+                type="text"
+                placeholder={t('console-shared~Filter by keyword...')}
+                value={searchKeyword}
+                onChange={(_event, text) => debouncedOnSearchKeywordChange(text)}
+                onClear={() => onSearchKeywordChange('')}
+                aria-label={t('console-shared~Filter by keyword...')}
               />
+            </FlexItem>
+            <FlexItem>
+              <Dropdown
+                className="co-catalog-page__sort"
+                items={catalogSortItems}
+                title={catalogSortItems[sortOrder]}
+                onChange={onSortOrderChange}
+              />
+            </FlexItem>
+            {showGrouping && (
+              <FlexItem>
+                <Dropdown
+                  className="co-catalog-page__btn-group__group-by"
+                  menuClassName="dropdown-menu--text-wrap"
+                  items={catalogGroupItems}
+                  onChange={onGroupingChange}
+                  titlePrefix={t('console-shared~Group by')}
+                  title={catalogGroupItems[activeGrouping]}
+                />
+              </FlexItem>
             )}
-          </div>
+          </Flex>
           <div className="co-catalog-page__num-items">
             {t('console-shared~{{totalItems}} items', { totalItems })}
           </div>

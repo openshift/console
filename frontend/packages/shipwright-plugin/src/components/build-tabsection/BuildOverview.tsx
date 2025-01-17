@@ -79,7 +79,7 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
           )
           .sort(byCreationTime);
         return (
-          <ul className="list-group pf-v5-u-mb-xl">
+          <ul className="list-group pf-v6-u-mb-xl">
             <li className="list-group-item">
               <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
                 <FlexItem>

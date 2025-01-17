@@ -90,7 +90,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
             {this.props.label}
           </label>
           <div className="modal-body__field">
-            <div className="pf-v5-c-input-group">
+            <div className="pf-v6-c-input-group">
               <input
                 type="text"
                 className="pf-v5-c-form-control"

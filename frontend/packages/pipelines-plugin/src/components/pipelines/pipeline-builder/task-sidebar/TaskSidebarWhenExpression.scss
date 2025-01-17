@@ -1,10 +1,10 @@
 .opp-task-sidebar-when-expression {
-  margin-bottom: var(--pf-v5-global--spacer--lg);
+  margin-bottom: var(--pf-t--global--spacer--lg);
 
   &__section {
-    margin-bottom: var(--pf-v5-global--spacer--md);
-    border: 1px dashed var(--pf-v5-global--BorderColor--100);
-    padding: var(--pf-v5-global--spacer--md);
+    margin-bottom: var(--pf-t--global--spacer--md);
+    border: 1px dashed var(--pf-t--global--border--color--default);
+    padding: var(--pf-t--global--spacer--md);
   }
   &__control-button-wrapper {
     display: flex;
@@ -12,12 +12,12 @@
   }
   &__control-button {
     padding: 0;
-    color: var(--pf-v5-c-button--m-link--Color);
+    color: var(--pf-v6-c-button--m-link--Color);
   }
   &__control-label {
-    margin-left: var(--pf-v5-global--spacer--xs);
+    margin-left: var(--pf-t--global--spacer--xs);
   }
   &__field {
-    margin-right: var(--pf-v5-global--spacer--md);
+    margin-right: var(--pf-t--global--spacer--md);
   }
 }

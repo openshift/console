@@ -42,14 +42,13 @@ const DraggableButton: React.FC<DraggableButtonProps> = ({ dragRef }) => {
   const { t } = useTranslation();
   return (
     <Button
+      icon={<GripVerticalIcon className="oc-pinned-resource__drag-icon" />}
       ref={dragRef}
       className="oc-pinned-resource__drag-button"
       variant="link"
       type="button"
       aria-label={t('console-app~Drag to reorder')}
-    >
-      <GripVerticalIcon className="oc-pinned-resource__drag-icon" />
-    </Button>
+    />
   );
 };
 
@@ -62,13 +61,12 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({ resourceRef, navResources, 
   };
   return (
     <Button
+      icon={<MinusCircleIcon className="oc-pinned-resource__delete-icon" />}
       className="oc-pinned-resource__unpin-button"
       variant="link"
       aria-label={t('console-app~Unpin')}
       onClick={(e) => unPin(e, resourceRef)}
-    >
-      <MinusCircleIcon className="oc-pinned-resource__delete-icon" />
-    </Button>
+    />
   );
 };
 

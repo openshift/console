@@ -50,10 +50,8 @@ import {
 import {
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateVariant,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
@@ -86,14 +84,12 @@ import { useModal, PrometheusRulesResponse } from '@console/dynamic-plugin-sdk/s
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
   return (
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader
-        titleText={<>{t('public~Alerts could not be loaded')}</>}
-        icon={
-          <EmptyStateIcon className="co-status-card__alerts-icon" icon={RedExclamationCircleIcon} />
-        }
-        headingLevel="h5"
-      />
+    <EmptyState
+      headingLevel="h5"
+      icon={RedExclamationCircleIcon}
+      titleText={<>{t('public~Alerts could not be loaded')}</>}
+      variant={EmptyStateVariant.full}
+    >
       <EmptyStateFooter>
         {errorText && <EmptyStateBody>{errorText}</EmptyStateBody>}
       </EmptyStateFooter>
@@ -104,8 +100,12 @@ const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
 const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
   const { t } = useTranslation();
   return (
-    <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
-      <EmptyStateHeader titleText={<>{t('public~No critical alerts')}</>} headingLevel="h5" />
+    <EmptyState
+      headingLevel="h5"
+      titleText={<>{t('public~No critical alerts')}</>}
+      variant={EmptyStateVariant.full}
+      className="co-status-card__alerts-msg"
+    >
       <EmptyStateBody>
         {t(
           'public~There are currently no critical alerts firing. There may be firing alerts of other severities or silenced critical alerts however.',

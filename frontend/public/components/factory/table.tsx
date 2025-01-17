@@ -113,7 +113,7 @@ export const TableRow: React.FC<TableRowProps> = ({
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}
-      className={classNames('pf-v5-c-table__tr', className)}
+      className={classNames('pf-v6-c-table__tr', className)}
       role="row"
     />
   );
@@ -254,7 +254,7 @@ const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
   return (
     <VirtualTableBody
       autoHeight
-      className="pf-v5-c-table pf-m-compact pf-m-border-rows pf-v5-c-window-scroller"
+      className="pf-v6-c-table pf-m-compact pf-m-border-rows pf-v6-c-window-scroller"
       deferredMeasurementCache={cellMeasurementCache}
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}

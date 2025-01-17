@@ -110,7 +110,7 @@ export const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ labelSelector 
       {showClusterUpdate && (
         <StatusItem
           key="clusterUpdate"
-          Icon={BlueArrowCircleUpIcon}
+          Icon={() => <BlueArrowCircleUpIcon size="heading_2xl" />}
           message={t('public~A cluster version update is available')}
         >
           <Link to="/settings/cluster?showVersions">{t('public~Update cluster')}</Link>

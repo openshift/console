@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartVoronoiContainer } from '@patternfly/react-charts';
+import { ChartVoronoiContainer } from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import Measure from 'react-measure';

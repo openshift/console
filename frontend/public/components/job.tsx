@@ -63,9 +63,9 @@ export const menuActions: KebabAction[] = [
 const kind = 'Job';
 
 const tableColumnClasses = [
-  'pf-v5-u-w-25-on-2xl',
-  'pf-v5-u-w-25-on-2xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-25-on-2xl',
+  'pf-v6-u-w-25-on-2xl',
+  'pf-v6-u-w-25-on-2xl',
+  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-2xl',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',
   Kebab.columnClass,

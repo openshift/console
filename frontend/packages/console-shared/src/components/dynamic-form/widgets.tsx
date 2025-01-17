@@ -86,7 +86,7 @@ export const CheckboxWidget: React.FC<WidgetProps> = ({ value = false, id, label
 
 export const SwitchWidget: React.FC<WidgetProps> = ({ value, id, label, onChange, options }) => {
   const { t } = useTranslation();
-  const { labelOn = t('console-shared~true'), labelOff = t('console-shared~false') } = options;
+  const { labelOn = t('console-shared~true') } = options;
   return (
     <Switch
       id={id || label}
@@ -94,7 +94,6 @@ export const SwitchWidget: React.FC<WidgetProps> = ({ value, id, label, onChange
       isChecked={_.isNil(value) ? false : value}
       onChange={(_event, v) => onChange(v)}
       label={labelOn as string}
-      labelOff={labelOff as string}
     />
   );
 };

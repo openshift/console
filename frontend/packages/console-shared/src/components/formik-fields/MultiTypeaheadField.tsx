@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {
+  Label,
+  LabelGroup,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -13,8 +15,6 @@ import {
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  ChipGroup,
-  Chip,
   Button,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
@@ -292,11 +292,12 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
           aria-label={ariaLabel}
           aria-controls={`${ID_PREFIX}-listbox`}
         >
-          <ChipGroup aria-label={t('console-shared~Current selections')}>
+          <LabelGroup aria-label={t('console-shared~Current selections')}>
             {field.value.map((selection) => (
-              <Chip
+              <Label
+                variant="outline"
                 key={selection}
-                onClick={(ev) => {
+                onClose={(ev) => {
                   ev.stopPropagation();
                   onSelect(selection);
                 }}
@@ -305,21 +306,20 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
                 })}
               >
                 {getChildren(selection)}
-              </Chip>
+              </Label>
             ))}
-          </ChipGroup>
+          </LabelGroup>
         </TextInputGroupMain>
         {!hideClearButton && (
           <TextInputGroupUtilities
             {...(field.value.length === 0 ? { style: { display: 'none' } } : {})}
           >
             <Button
+              icon={<TimesIcon aria-hidden />}
               variant="plain"
               onClick={onClearButtonClick}
               aria-label={t('console-shared~Clear filter')}
-            >
-              <TimesIcon aria-hidden />
-            </Button>
+            />
           </TextInputGroupUtilities>
         )}
       </TextInputGroup>

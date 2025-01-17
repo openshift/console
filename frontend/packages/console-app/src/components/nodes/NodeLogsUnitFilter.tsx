@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Chip, ChipGroup, TextInput, ToolbarItem } from '@patternfly/react-core';
+import { Label, LabelGroup, TextInput, ToolbarItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getQueryArgument } from '@console/internal/components/utils';
@@ -71,13 +71,13 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
       </ToolbarItem>
       {values.length > 0 && (
         <ToolbarItem>
-          <ChipGroup categoryName={t('public~Unit')} isClosable onClick={deleteCategory}>
+          <LabelGroup categoryName={t('public~Unit')} isClosable onClick={deleteCategory}>
             {values?.map((v) => (
-              <Chip key={v} onClick={() => deleteValue(v)}>
+              <Label variant="outline" key={v} onClose={() => deleteValue(v)}>
                 {v}
-              </Chip>
+              </Label>
             ))}
-          </ChipGroup>
+          </LabelGroup>
         </ToolbarItem>
       )}
     </>

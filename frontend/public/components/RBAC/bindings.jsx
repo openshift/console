@@ -753,7 +753,7 @@ const BaseEditRoleBinding = (props) => {
           <div className="co-form-section__separator" />
 
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
                 {saveButtonText || t('public~Create')}
               </Button>

@@ -9,7 +9,6 @@ type StepComponentProps = {
   content: StepContentType;
   selector?: string;
   placement?: string;
-  showClose?: boolean;
   showStepBadge?: boolean;
   nextButtonText: string;
   backButtonText: string;
@@ -22,7 +21,6 @@ const StepComponent: React.FC<StepComponentProps> = ({
   placement,
   nextButtonText,
   backButtonText,
-  showClose = true,
   showStepBadge = true,
 }) => {
   const {
@@ -38,7 +36,6 @@ const StepComponent: React.FC<StepComponentProps> = ({
       heading={heading}
       selector={selector}
       placement={placement}
-      showClose={showClose}
       totalSteps={totalSteps}
       showStepBadge={showStepBadge}
       nextButtonText={nextButtonText}

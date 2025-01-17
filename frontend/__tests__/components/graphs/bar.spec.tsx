@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ChartBar } from '@patternfly/react-charts';
+import { ChartBar } from '@patternfly/react-charts/victory';
 
 import { BarChart } from '@console/internal/components/graphs/bar';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';

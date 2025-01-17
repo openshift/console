@@ -18,14 +18,22 @@ const EventPubSubExpandButton: React.FC<EventPubSubExpandButtonProps> = ({
   const { t } = useTranslation();
   const title = rowSelected ? t('knative-plugin~Hide filters') : t('knative-plugin~Show filters');
   return (
-    <Button aria-label={title} onClick={onClick} title={title} variant="plain">
-      <span className="kn-event-pubsub-expand-button__link">{title}</span>
-      {rowSelected ? (
-        <AngleDownIcon className="kn-event-pubsub-expand-button__icon" />
-      ) : (
-        <AngleRightIcon className="kn-event-pubsub-expand-button__icon" />
-      )}
-    </Button>
+    <Button
+      icon={
+        <>
+          <span className="kn-event-pubsub-expand-button__link">{title}</span>
+          {rowSelected ? (
+            <AngleDownIcon className="kn-event-pubsub-expand-button__icon" />
+          ) : (
+            <AngleRightIcon className="kn-event-pubsub-expand-button__icon" />
+          )}
+        </>
+      }
+      aria-label={title}
+      onClick={onClick}
+      title={title}
+      variant="plain"
+    />
   );
 };
 

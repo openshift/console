@@ -13,7 +13,7 @@ $overview-sidebar-width: 550px;
   .overview__sidebar {
     background: #fff;
     bottom: 0;
-    box-shadow: var(--pf-v5-global--BoxShadow--md);
+    box-shadow: var(--pf-t--global--box-shadow--md);
     display: none;
     position: absolute;
     right: 0;
@@ -59,17 +59,13 @@ $overview-sidebar-width: 550px;
   padding-top: 5px;
 
   .co-m-pane__heading {
-    font-size: var(--pf-v5-global--FontSize--xl);
-    margin: 0 20px var(--pf-v5-global--spacer--md);
-  }
-
-  .co-actions-menu {
-    margin-top: -3px;
+    font-size: var(--pf-t--global--font--size--xl);
+    margin: 0 20px var(--pf-t--global--spacer--md);
   }
 }
 
 .overview__pod-donut-sm {
-  width: var(--pf-v5-global--icon--FontSize--lg);
+  width: var(--pf-t--global--icon--size--lg);
 }
 
 .resource-overview {
@@ -84,7 +80,7 @@ $overview-sidebar-width: 550px;
 .resource-overview__body {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--pf-v5-global--spacer--lg);
+  gap: var(--pf-t--global--spacer--lg);
 }
 
 .resource-overview__details,
@@ -104,7 +100,7 @@ $overview-sidebar-width: 550px;
 
 .sidebar__section-view-all {
   font-size: 14px;
-  margin-left: var(--pf-v5-global--spacer--sm);
+  margin-left: var(--pf-t--global--spacer--sm);
 }
 
 .sidebar__section-owner-operator-heading {
@@ -112,5 +108,5 @@ $overview-sidebar-width: 550px;
 }
 
 .sidebar__section-owner-reference-operator {
-  padding-left: var(--pf-v5-global--spacer--sm);
+  padding-left: var(--pf-t--global--spacer--sm);
 }

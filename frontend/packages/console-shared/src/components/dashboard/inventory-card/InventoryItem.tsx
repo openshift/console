@@ -93,10 +93,9 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
         headingLevel="h5"
         className="co-inventory-card__accordion"
       >
-        <AccordionItem>
+        <AccordionItem isExpanded={expanded}>
           <AccordionToggle
             onClick={onClick}
-            isExpanded={expanded}
             id={title}
             className="co-inventory-card__accordion-toggle"
           >
@@ -119,7 +118,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
               )}
             </InventoryItemNew>
           </AccordionToggle>
-          <AccordionContent isHidden={!expanded} className="co-inventory-card__accordion-body">
+          <AccordionContent className="co-inventory-card__accordion-body">
             <ExpandedComponent />
           </AccordionContent>
         </AccordionItem>

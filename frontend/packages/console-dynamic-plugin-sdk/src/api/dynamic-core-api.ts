@@ -134,7 +134,7 @@ export const VirtualizedTable: VirtualizedTableFC = require('@console/internal/c
  *         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
  *       </TableData>
  *       // Important:  the kebab menu cell should include the id and className prop values below
- *       <TableData id='' className='pf-v5-c-table__action' activeColumnIDs={activeColumnIDs}>
+ *       <TableData id='' className='pf-v6-c-table__action' activeColumnIDs={activeColumnIDs}>
  *         <MockKebabMenu obj={obj} />
  *      </TableData>
  *     </>

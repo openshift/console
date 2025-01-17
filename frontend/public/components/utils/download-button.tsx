@@ -26,13 +26,14 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
   return (
     <>
       <Button
+        icon={<DownloadIcon />}
         variant="primary"
         style={{ marginBottom: 10 }}
         isDisabled={inFlight}
         type="button"
         onClick={() => download()}
       >
-        <DownloadIcon /> Download{inFlight && <>ing...</>}
+        Download{inFlight && <>ing...</>}
       </Button>
       {error && (
         <Alert

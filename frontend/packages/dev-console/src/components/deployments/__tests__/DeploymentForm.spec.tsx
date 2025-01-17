@@ -149,7 +149,7 @@ describe('EditDeploymentForm', () => {
     fireEvent.click(saveButton);
 
     expect(saveButton.hasAttribute('disabled')).toBeTruthy();
-    expect(saveButton.querySelector('.pf-v5-c-button__progress')).not.toBeNull();
+    expect(saveButton.querySelector('.pf-v6-c-button__progress')).not.toBeNull();
     await waitFor(() => {
       expect(handleSubmit).toHaveBeenCalledTimes(1);
     });

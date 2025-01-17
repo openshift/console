@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from '@patternfly/react-core';
+import { Icon, IconSize } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -13,7 +13,7 @@ import './icons.scss';
 export type ColoredIconProps = {
   className?: string;
   title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: IconSize;
   dataTest?: string;
 };
 
@@ -21,7 +21,7 @@ export type ColoredIconProps = {
  * Component for displaying a green check mark circle icon.
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [title] - (optional) icon title
- * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl')
+ * @param {string} [size] - (optional) icon size: ('sm', 'md', 'lg', 'xl', '2xl', '3xl', 'headingSm', 'headingMd', 'headingLg', 'headingXl', 'heading_2xl', 'heading_3xl', 'bodySm', 'bodyDefault', 'bodyLg')
  * @example
  * ```tsx
  * <GreenCheckCircleIcon title="Healthy" />

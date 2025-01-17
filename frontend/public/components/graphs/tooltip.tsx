@@ -5,22 +5,22 @@ import * as React from 'react';
 import { defaults } from 'lodash';
 import { Helpers } from 'victory-core';
 import {
+  ChartLegendTooltipContentProps,
+  ChartLegendTooltipProps,
+  ChartLegendTooltipLabelProps,
   ChartLegend,
   ChartLabel,
   getTheme,
-  ChartLegendTooltipContentProps,
   ChartCursorTooltip,
   ChartTooltip,
-  ChartLegendTooltipProps,
-  ChartLegendTooltipLabelProps,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import {
   getLegendTooltipSize,
   getLegendTooltipDataProps,
   getLegendTooltipVisibleData,
   getLegendTooltipVisibleText,
-} from '@patternfly/react-charts/dist/js/components/ChartUtils/chart-tooltip';
-import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/js/components/ChartTheme/ChartStyles';
+} from '@patternfly/react-charts/dist/js/victory/components/ChartUtils/chart-tooltip';
+import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/js/victory/components/ChartTheme/ChartStyles';
 
 import { DataPoint } from '.';
 
@@ -277,7 +277,7 @@ export const ChartLegendTooltip: React.FunctionComponent<
           // For non-stack graphs, remove the text for "mainDataName"
           text: legendTooltipProps.text.filter(
             (t, i) => legendTooltipProps.legendData[i].name !== mainDataName,
-          ),
+          ) as string[] | number[],
         };
     const _flyoutHeight =
       getLegendTooltipSize(sizeProps).height + ChartLegendTooltipStyles.flyout.padding;

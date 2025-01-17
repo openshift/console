@@ -107,12 +107,12 @@ class GenericSecretFormWithTranslation extends React.Component<
           {_.size(this.state.secretEntriesArray) > 1 && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
+                icon={<MinusCircleIcon className="co-icon-space-r" />}
                 type="button"
                 onClick={() => this.removeEntry(index)}
                 variant="link"
                 data-test="remove-entry-button"
               >
-                <MinusCircleIcon className="co-icon-space-r" />
                 {t('public~Remove key/value')}
               </Button>
             </div>
@@ -125,13 +125,13 @@ class GenericSecretFormWithTranslation extends React.Component<
       <>
         {secretEntriesList}
         <Button
+          icon={<PlusCircleIcon className="co-icon-space-r" />}
           className="co-create-secret-form__link--add-entry pf-m-link--align-left"
           onClick={() => this.addEntry()}
           type="button"
           variant="link"
           data-test="add-credentials-button"
         >
-          <PlusCircleIcon className="co-icon-space-r" />
           {t('public~Add key/value')}
         </Button>
       </>

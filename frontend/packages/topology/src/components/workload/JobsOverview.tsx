@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartLabel } from '@patternfly/react-charts';
+import { ChartLabel } from '@patternfly/react-charts/victory';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {

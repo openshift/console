@@ -406,7 +406,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             </FormFieldGroupExpandable>
           )}
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <ActionGroup className="pf-v5-c-form">
+          <ActionGroup className="pf-v6-c-form">
             <Button type="submit" id="save-changes" variant="primary">
               {t('console-app~Create')}
             </Button>

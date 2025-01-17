@@ -70,7 +70,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
+              <div className="pf-v6-c-input-group">
                 <input
                   placeholder="cluster, alertname"
                   type="text"
@@ -92,7 +92,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
+              <div className="pf-v6-c-input-group">
                 <input
                   placeholder="30s"
                   type="text"
@@ -114,7 +114,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
+              <div className="pf-v6-c-input-group">
                 <input
                   placeholder="5m"
                   type="text"
@@ -136,7 +136,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
+              <div className="pf-v6-c-input-group">
                 <input
                   placeholder="3h"
                   type="text"

@@ -203,7 +203,7 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
         </HelperText>
       </FormHelperText>
       <FormGroup label={t('webterminal-plugin~Timeout')} fieldId="timeout-value">
-        <div className="pf-v5-c-input-group">
+        <div className="pf-v6-c-input-group">
           <NumberSpinner
             onChange={onValueChange}
             changeValueBy={changeValueBy}

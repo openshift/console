@@ -90,12 +90,11 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
         position={TooltipPosition.right}
       >
         <Button
+          icon={<AlertSeverityIcon severityAlertType={severityAlertType} />}
           variant="plain"
           className="odc-topology-list-view__alert-button"
           onClick={onAlertClick}
-        >
-          <AlertSeverityIcon severityAlertType={severityAlertType} />
-        </Button>
+        />
       </Tooltip>
     );
   }

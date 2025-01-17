@@ -106,7 +106,7 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
   return (
     <VirtualTableBody
       autoHeight
-      className="pf-v5-c-table pf-m-compact pf-m-border-rows pf-v5-c-virtualized pf-v5-c-window-scroller"
+      className="pf-v6-c-table pf-m-compact pf-m-border-rows pf-v6-c-virtualized pf-v6-c-window-scroller"
       deferredMeasurementCache={cellMeasurementCache}
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}

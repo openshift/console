@@ -39,6 +39,8 @@ export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> =
 const EditButton: React.SFC<EditButtonProps> = (props) => {
   return (
     <Button
+      icon={<PencilAltIcon />}
+      iconPosition="end"
       type="button"
       variant="link"
       isInline
@@ -48,7 +50,6 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
       }
     >
       {props.children}
-      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
     </Button>
   );
 };
@@ -94,9 +95,12 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
                 {...(path && { footerContent: <PropertyPath kind={model?.kind} path={path} /> })}
                 maxWidth="30rem"
               >
-                <Button data-test={label} variant="plain" className="details-item__popover-button">
-                  {label}
-                </Button>
+                <Button
+                  icon={label}
+                  data-test={label}
+                  variant="plain"
+                  className="details-item__popover-button"
+                />
               </Popover>
             ) : (
               label

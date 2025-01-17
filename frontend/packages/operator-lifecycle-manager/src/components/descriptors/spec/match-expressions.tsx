@@ -70,14 +70,13 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
       <div className="col-xs-1 key-operator-value__action key-operator-value__action--stacked">
         <div className="key-operator-value__heading key-operator-value__heading-button hidden-md hidden-lg" />
         <Button
+          icon={<MinusCircleIcon />}
           type="button"
           onClick={onClickRemove}
           aria-label="Delete"
           className="key-operator-value__delete-button"
           variant="plain"
-        >
-          <MinusCircleIcon />
-        </Button>
+        />
       </div>
     </div>
   );
@@ -119,8 +118,12 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
         />
       ))}
       <div className="row">
-        <Button type="button" onClick={addExpression} variant="link">
-          <PlusCircleIcon className="co-icon-space-r" />
+        <Button
+          icon={<PlusCircleIcon className="co-icon-space-r" />}
+          type="button"
+          onClick={addExpression}
+          variant="link"
+        >
           {t('olm~Add expression')}
         </Button>
       </div>

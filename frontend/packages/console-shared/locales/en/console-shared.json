@@ -106,7 +106,6 @@
   "Error": "Error",
   "Fix the following errors:": "Fix the following errors:",
   "true": "true",
-  "false": "false",
   "Select {{label}}": "Select {{label}}",
   "Cluster does not have resource {{groupVersionKind}}": "Cluster does not have resource {{groupVersionKind}}",
   "Ask OpenShift Lightspeed": "Ask OpenShift Lightspeed",

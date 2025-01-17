@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup, Form, TextVariants } from '@patternfly/react-core';
+import { FormGroup, Form, ContentVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -79,7 +79,7 @@ export const CreateLocalVolumeDiscovery: React.FC = () => {
     <>
       <div className="co-create-operand__header">
         <LocalVolumeDiscoveryHeader
-          variant={TextVariants.h1}
+          variant={ContentVariants.h1}
           className="co-create-operand__header-text"
         />
       </div>

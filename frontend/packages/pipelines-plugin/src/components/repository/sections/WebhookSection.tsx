@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
-  Text,
+  Content,
   TextInputTypes,
   FormGroup,
   ClipboardCopy,
   InputGroup,
   ExpandableSection,
-  TextVariants,
+  ContentVariants,
   Button,
   Tooltip,
   InputGroupItem,
@@ -279,9 +279,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
               label={t('pipelines-plugin~Events triggering the webhook: ')}
               fieldId="repo-permissions"
             >
-              <Text component={TextVariants.small}>
+              <Content component={ContentVariants.small}>
                 <PermissionsSection formContextField={formContextField} />
-              </Text>
+              </Content>
             </FormGroup>
           </ExpandableSection>
 

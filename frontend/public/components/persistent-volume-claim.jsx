@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { ChartDonut } from '@patternfly/react-charts';
+import { ChartDonut } from '@patternfly/react-charts/victory';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   isPVCAlert,

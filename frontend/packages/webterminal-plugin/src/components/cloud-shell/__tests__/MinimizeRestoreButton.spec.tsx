@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { OutlinedWindowMinimizeIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-minimize-icon';
-import { OutlinedWindowRestoreIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-restore-icon';
 import { shallow } from 'enzyme';
 import MinimizeRestoreButton from '../MinimizeRestoreButton';
 
@@ -22,7 +20,7 @@ describe('MinimizeRestoreButton', () => {
         onClick={() => null}
       />,
     );
-    expect(wrapper.find(OutlinedWindowMinimizeIcon).exists()).toEqual(true);
+    expect(wrapper.find('Button[aria-label="Minimize"]').exists()).toEqual(true);
   });
 
   it('should render restore button when minimized is false', () => {
@@ -34,7 +32,7 @@ describe('MinimizeRestoreButton', () => {
         onClick={() => null}
       />,
     );
-    expect(wrapper.find(OutlinedWindowRestoreIcon).exists()).toEqual(true);
+    expect(wrapper.find('Button[aria-label="Restore"]').exists()).toEqual(true);
   });
 
   it('should invoke onclose callback with argument true when minimized button clicked and false when restore button clicked', () => {
@@ -47,14 +45,14 @@ describe('MinimizeRestoreButton', () => {
         onClick={onClose}
       />,
     );
-    expect(wrapper.find(OutlinedWindowMinimizeIcon).exists()).toEqual(true);
-    expect(wrapper.find(OutlinedWindowRestoreIcon).exists()).toEqual(false);
+    expect(wrapper.find('Button[aria-label="Minimize"]').exists()).toEqual(true);
+    expect(wrapper.find('Button[aria-label="Restore"]').exists()).toEqual(false);
     // click on minimize button
     wrapper.find(Button).simulate('click');
     expect(onClose).toHaveBeenLastCalledWith(true);
     wrapper.setProps({ minimize: false });
-    expect(wrapper.find(OutlinedWindowMinimizeIcon).exists()).toEqual(false);
-    expect(wrapper.find(OutlinedWindowRestoreIcon).exists()).toEqual(true);
+    expect(wrapper.find('Button[aria-label="Minimize"]').exists()).toEqual(false);
+    expect(wrapper.find('Button[aria-label="Restore"]').exists()).toEqual(true);
     // click on restore button
     wrapper.find(Button).simulate('click');
     expect(onClose).toHaveBeenLastCalledWith(false);

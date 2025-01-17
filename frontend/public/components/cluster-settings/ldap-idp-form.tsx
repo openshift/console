@@ -263,7 +263,7 @@ export const AddLDAPPage = () => {
           <h3>{t('public~More options')}</h3>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

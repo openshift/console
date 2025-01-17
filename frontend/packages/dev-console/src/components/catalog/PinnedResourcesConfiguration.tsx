@@ -1,11 +1,6 @@
 import * as React from 'react';
-import {
-  DualListSelector,
-  FormHelperText,
-  FormSection,
-  Icon,
-  Tooltip,
-} from '@patternfly/react-core';
+import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
+import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import { useTranslation } from 'react-i18next';

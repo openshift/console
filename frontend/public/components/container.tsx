@@ -118,18 +118,18 @@ const Ports: React.FC<PortsProps> = ({ ports }) => {
   }
 
   return (
-    <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-      <thead className="pf-v5-c-table__thead">
-        <tr className="pf-v5-c-table__tr">
-          <th className="pf-v5-c-table__th">{t('public~Name')}</th>
-          <th className="pf-v5-c-table__th">{t('public~Container')}</th>
+    <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+      <thead className="pf-v6-c-table__thead">
+        <tr className="pf-v6-c-table__tr">
+          <th className="pf-v6-c-table__th">{t('public~Name')}</th>
+          <th className="pf-v6-c-table__th">{t('public~Container')}</th>
         </tr>
       </thead>
       <tbody>
         {ports.map((p: ContainerPort, i: number) => (
-          <tr className="pf-v5-c-table__tr" key={i}>
-            <td className="pf-v5-c-table__td">{p.name || '-'}</td>
-            <td className="pf-v5-c-table__td">{p.containerPort}</td>
+          <tr className="pf-v6-c-table__tr" key={i}>
+            <td className="pf-v6-c-table__td">{p.name || '-'}</td>
+            <td className="pf-v6-c-table__td">{p.containerPort}</td>
           </tr>
         ))}
       </tbody>
@@ -148,22 +148,22 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
   }
 
   return (
-    <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-      <thead className="pf-v5-c-table__thead">
-        <tr className="pf-v5-c-table__tr">
-          <th className="pf-v5-c-table__th">{t('public~Access')}</th>
-          <th className="pf-v5-c-table__th">{t('public~Location')}</th>
-          <th className="pf-v5-c-table__th">{t('public~Mount path')}</th>
+    <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+      <thead className="pf-v6-c-table__thead">
+        <tr className="pf-v6-c-table__tr">
+          <th className="pf-v6-c-table__th">{t('public~Access')}</th>
+          <th className="pf-v6-c-table__th">{t('public~Location')}</th>
+          <th className="pf-v6-c-table__th">{t('public~Mount path')}</th>
         </tr>
       </thead>
       <tbody>
         {volumeMounts.map((v: VolumeMount) => (
-          <tr className="pf-v5-c-table__tr" key={v.name}>
-            <td className="pf-v5-c-table__td">
+          <tr className="pf-v6-c-table__tr" key={v.name}>
+            <td className="pf-v6-c-table__td">
               {v.readOnly === true ? t('public~Read only') : t('public~Read/write')}
             </td>
-            <td className="pf-v5-c-table__td pf-m-break-word co-select-to-copy">{v.name}</td>
-            <td className="pf-v5-c-table__td">
+            <td className="pf-v6-c-table__td pf-m-break-word co-select-to-copy">{v.name}</td>
+            <td className="pf-v6-c-table__td">
               {v.mountPath ? (
                 <div className="co-break-all co-select-to-copy">{v.mountPath}</div>
               ) : (
@@ -203,18 +203,18 @@ const Env: React.FC<EnvProps> = ({ env }) => {
   };
 
   return (
-    <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-      <thead className="pf-v5-c-table__thead">
-        <tr className="pf-v5-c-table__tr">
-          <th className="pf-v5-c-table__th">{t('public~Name')}</th>
-          <th className="pf-v5-c-table__th">{t('public~Value')}</th>
+    <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+      <thead className="pf-v6-c-table__thead">
+        <tr className="pf-v6-c-table__tr">
+          <th className="pf-v6-c-table__th">{t('public~Name')}</th>
+          <th className="pf-v6-c-table__th">{t('public~Value')}</th>
         </tr>
       </thead>
-      <tbody className="pf-v5-c-table__tbody">
+      <tbody className="pf-v6-c-table__tbody">
         {env.map((e: EnvVar, i: number) => (
-          <tr className="pf-v5-c-table__tr" key={i}>
-            <td className="pf-v5-c-table__td">{e.name}</td>
-            <td className="pf-v5-c-table__td">{value(e)}</td>
+          <tr className="pf-v6-c-table__tr" key={i}>
+            <td className="pf-v6-c-table__td">{e.name}</td>
+            <td className="pf-v6-c-table__td">{value(e)}</td>
           </tr>
         ))}
       </tbody>

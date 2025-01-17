@@ -68,8 +68,8 @@ const menuActions: KebabAction[] = [
 ];
 
 const tableColumnClasses = [
-  'pf-m-u-w-33-on-md pf-v5-u-w-25-on-lg',
-  'pf-m-u-w-33-on-md pf-v5-u-w-25-on-lg',
+  'pf-m-u-w-33-on-md pf-v6-u-w-25-on-lg',
+  'pf-m-u-w-33-on-md pf-v6-u-w-25-on-lg',
   'pf-m-hidden pf-m-visible-on-md',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',

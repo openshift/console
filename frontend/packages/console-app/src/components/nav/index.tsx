@@ -17,9 +17,9 @@ export const Navigation: React.FC<NavigationProps> = React.memo(function Navigat
 }) {
   const { t } = useTranslation();
   return (
-    <PageSidebar isSidebarOpen={isNavOpen} theme="dark">
+    <PageSidebar isSidebarOpen={isNavOpen}>
       <PageSidebarBody>
-        <Nav aria-label={t('console-app~Nav')} onSelect={onNavSelect} theme="dark">
+        <Nav aria-label={t('console-app~Nav')} onSelect={onNavSelect}>
           <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
           <PerspectiveNav />
         </Nav>

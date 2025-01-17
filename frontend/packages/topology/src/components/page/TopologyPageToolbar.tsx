@@ -66,6 +66,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
         ) : null}
         <Tooltip position="left" content={viewChangeTooltipContent}>
           <Button
+            icon={<Icon size="md">{showGraphView ? <ListIcon /> : <TopologyIcon />}</Icon>}
             variant="link"
             aria-label={viewChangeTooltipContent}
             className="pf-m-plain odc-topology__view-switcher"
@@ -74,9 +75,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
             onClick={() =>
               onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)
             }
-          >
-            <Icon size="md">{showGraphView ? <ListIcon /> : <TopologyIcon />}</Icon>
-          </Button>
+          />
         </Tooltip>
       </>
     );

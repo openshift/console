@@ -52,7 +52,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
   );
 
   return (
-    <div className="pf-v5-c-input-group">
+    <div className="pf-v6-c-input-group">
       <Select
         onSelect={(_event, value: NameLabelFilterValues) => {
           if (value) {

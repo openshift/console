@@ -58,7 +58,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                 </div>
                 <div className="co-m-form-col col-sm-9">
                   <div className="form-inline">
-                    <div className="pf-v5-c-input-group">
+                    <div className="pf-v6-c-input-group">
                       <input
                         disabled={props.strategyType !== 'RollingUpdate'}
                         placeholder="25%"
@@ -71,7 +71,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                         aria-describedby="input-max-unavailable-help"
                       />
                       {props.replicas && (
-                        <span className="pf-v5-c-input-group__text">
+                        <span className="pf-v6-c-input-group__text">
                           <Tooltip content={t('public~Current desired pod count')}>
                             <span>{t('public~of pod', { count: props.replicas })}</span>
                           </Tooltip>
@@ -96,7 +96,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                 </div>
                 <div className="co-m-form-col col-sm-9">
                   <div className="form-inline">
-                    <div className="pf-v5-c-input-group">
+                    <div className="pf-v6-c-input-group">
                       <input
                         disabled={props.strategyType !== 'RollingUpdate'}
                         placeholder="25%"
@@ -108,7 +108,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                         onChange={(e) => props.onChangeMaxSurge(e.target.value)}
                         aria-describedby="input-max-surge-help"
                       />
-                      <span className="pf-v5-c-input-group__text">
+                      <span className="pf-v6-c-input-group__text">
                         <Tooltip content={t('public~Current desired pod count')}>
                           <span>{t('public~greater than pod', { count: props.replicas })}</span>
                         </Tooltip>

@@ -129,10 +129,10 @@ const AlertmanagerYAML: React.FC<{}> = () => {
 
   return (
     <>
-      <div className="pf-c-page__main-breadcrumb">
+      <div className="pf-v6-c-page__main-breadcrumb">
         <Breadcrumb className="monitoring-breadcrumbs">
           <BreadcrumbItem>
-            <Link className="pf-c-breadcrumb__link" to={breadcrumbs[0].path}>
+            <Link className="pf-v6-c-breadcrumb__link" to={breadcrumbs[0].path}>
               {breadcrumbs[0].name}
             </Link>
           </BreadcrumbItem>

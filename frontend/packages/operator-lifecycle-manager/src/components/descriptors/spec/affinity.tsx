@@ -90,12 +90,12 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
     <div className="co-affinity-term">
       {showRemoveButton && (
         <Button
+          icon={<MinusCircleIcon className="co-icon-space-r" />}
           type="button"
           className="co-affinity-term__remove"
           onClick={onClickRemove}
           variant="link"
         >
-          <MinusCircleIcon className="co-icon-space-r" />
           {t('olm~Remove {{item}}', { item: type })}
         </Button>
       )}
@@ -203,8 +203,12 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
           />
         ))}
         <div className="row">
-          <Button type="button" onClick={addRequiredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addRequiredRule}
+            variant="link"
+          >
             {t('olm~Add required')}
           </Button>
         </div>
@@ -230,8 +234,12 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
           />
         ))}
         <div className="row">
-          <Button type="button" onClick={addPreferredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addPreferredRule}
+            variant="link"
+          >
             {t('olm~Add preferred')}
           </Button>
         </div>
@@ -284,12 +292,12 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
     <div className="co-affinity-term">
       {showRemoveButton && (
         <Button
+          icon={<MinusCircleIcon className="co-icon-space-r" />}
           type="button"
           className="co-affinity-term__remove"
           onClick={onClickRemove}
           variant="link"
         >
-          <MinusCircleIcon className="co-icon-space-r" />
           {t('olm~Remove {{item}}', { item: type })}
         </Button>
       )}
@@ -412,8 +420,12 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
           />
         ))}
         <div className="row">
-          <Button type="button" onClick={addRequiredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addRequiredRule}
+            variant="link"
+          >
             {t('olm~Add required')}
           </Button>
         </div>
@@ -442,8 +454,12 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
         })}
 
         <div className="row">
-          <Button type="button" onClick={addPreferredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addPreferredRule}
+            variant="link"
+          >
             {t('olm~Add preferred')}
           </Button>
         </div>

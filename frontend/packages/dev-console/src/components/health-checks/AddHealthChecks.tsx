@@ -86,8 +86,14 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
           <>
             {pageTitle}
             {!isManaged() && (
-              <Button variant="link" component="a" href={healthURL} target="_blank">
-                {t('devconsole~Learn more')} <ExternalLinkAltIcon />
+              <Button
+                icon={<ExternalLinkAltIcon />}
+                variant="link"
+                component="a"
+                href={healthURL}
+                target="_blank"
+              >
+                {t('devconsole~Learn more')}
               </Button>
             )}
           </>

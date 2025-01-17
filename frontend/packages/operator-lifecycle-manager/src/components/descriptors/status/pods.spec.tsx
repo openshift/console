@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartDonut } from '@patternfly/react-charts';
+import { ChartDonut } from '@patternfly/react-charts/victory';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { SpecCapability, Descriptor } from '../types';
 import { PodStatusChart, PodStatusChartProps } from './pods';

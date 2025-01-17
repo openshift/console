@@ -205,11 +205,11 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
               <div className="co-toolbar__group co-toolbar__group--right">
                 <div className="co-toolbar__item">
                   <Button
+                    icon={<ExpandIcon className="co-icon-space-r" />}
                     variant="link"
                     className="pf-m-link--align-right"
                     onClick={() => this.setFullscreen(true)}
                   >
-                    <ExpandIcon className="co-icon-space-r" />
                     {t('public~Expand')}
                   </Button>
                 </div>

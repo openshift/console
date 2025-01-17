@@ -9,6 +9,7 @@ import { ActionMenu, Status } from '@console/shared';
 import { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 import { tableColumnClasses } from './HelmReleaseHistoryHeader';
+import './HelmReleaseHistoryRow.scss';
 
 type HelmReleaseHistoryKebabProps = {
   obj: HelmRelease;
@@ -52,7 +53,7 @@ const confirmModalRollbackHelmRelease = (
 const HelmReleaseHistoryKebab: React.FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const { t } = useTranslation();
   const menuActions = [confirmModalRollbackHelmRelease(obj.name, obj.namespace, obj.version, t)];
-  return <ActionMenu actions={menuActions} />;
+  return <ActionMenu actions={menuActions} className="helm-release-history-action-menu" />;
 };
 
 const HelmReleaseHistoryRow: React.FC<RowFunctionArgs> = ({ obj, customData }) => (

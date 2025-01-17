@@ -1,14 +1,14 @@
 @use "sass:math";
 
-$pipeline-aborted-color: $pf-v5-color-black-300;
-$pipeline-border-color: $pf-v5-color-black-300;
-$pipeline-failed-color: $pf-v5-color-red-100;
+$pipeline-aborted-color: var(--pf-t--color--gray--20);
+$pipeline-border-color: #8a8d90;
+$pipeline-failed-color: #ee0000;
 $pipeline-font-base: 13px;
-$pipeline-in-progress-color: $pf-v5-color-blue-400;
-$pipeline-new-color: $pf-v5-color-blue-100;
-$pipeline-pending-color: $pf-v5-color-black-300;
-$pipeline-success-color: var(--pf-v5-chart-color-green-400);
-$pipeline-require-attention-color: $pf-v5-color-gold-400;
+$pipeline-in-progress-color: var(--pf-t--color--blue--50);
+$pipeline-new-color: var(--pf-t--color--blue--20);
+$pipeline-pending-color: var(--pf-t--color--gray--20);
+$pipeline-success-color: var(--pf-v6-chart-color-green-400);
+$pipeline-require-attention-color: var(--pf-t--color--yellow--40);
 $pipeline-circle-animation-time: 0.35s;
 $pipeline-circle-diameter: 18px;
 $pipeline-line-border-width: 8px;

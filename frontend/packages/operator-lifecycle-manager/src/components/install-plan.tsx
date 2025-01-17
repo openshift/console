@@ -57,19 +57,19 @@ import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
 
 const tableColumnClasses = [
-  'pf-v5-c-table__td',
-  'pf-v5-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg', 'pf-v5-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v5-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v5-c-table__td'),
+  'pf-v6-c-table__td',
+  'pf-v6-c-table__td',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
   Kebab.columnClass,
 ];
 
 const componentsTableColumnClasses = [
-  'pf-v5-c-table__td',
-  'pf-v5-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg', 'pf-v5-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v5-c-table__td'),
+  'pf-v6-c-table__td',
+  'pf-v6-c-table__td',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
 export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
@@ -98,7 +98,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Components */}
       <TableData className={tableColumnClasses[3]}>
-        <ul className="pf-v5-c-list pf-m-plain">
+        <ul className="pf-v6-c-list pf-m-plain">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
             <li key={csvName}>
               {obj.status?.phase === 'Complete' ? (
@@ -124,7 +124,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         {(obj.metadata.ownerReferences || [])
           .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
           .map((ref) => (
-            <ul key={ref.uid} className="pf-v5-c-list pf-m-plain">
+            <ul key={ref.uid} className="pf-v6-c-list pf-m-plain">
               <li>
                 <ResourceLink
                   kind={referenceForModel(SubscriptionModel)}
@@ -431,8 +431,8 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
         <div className="co-m-pane__body">
           <HintBlock title={t('olm~Review manual InstallPlan')}>
             <InstallPlanReview installPlan={obj} />
-            <div className="pf-v5-c-form">
-              <div className="pf-v5-c-form__actions">
+            <div className="pf-v6-c-form">
+              <div className="pf-v6-c-form__actions">
                 <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
                   {needsApproval ? t('olm~Approve') : t('olm~Approved')}
                 </Button>
@@ -458,20 +458,20 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
         <div key={steps[0].resolving} className="co-m-pane__body">
           <SectionHeading text={steps[0].resolving} />
           <div className="co-table-container">
-            <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v5-c-table__thead">
-                <tr className="pf-v5-c-table__tr">
+            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+              <thead className="pf-v6-c-table__thead">
+                <tr className="pf-v6-c-table__tr">
                   <th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</th>
                   <th className={componentsTableColumnClasses[1]}>{t('olm~Kind')}</th>
                   <th className={componentsTableColumnClasses[2]}>{t('olm~Status')}</th>
                   <th className={componentsTableColumnClasses[3]}>{t('olm~API version')}</th>
                 </tr>
               </thead>
-              <tbody className="pf-v5-c-table__tbody">
+              <tbody className="pf-v6-c-table__tbody">
                 {steps.map((step) => (
                   <tr
                     key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}
-                    className="pf-v5-c-table__tr"
+                    className="pf-v6-c-table__tr"
                   >
                     <td className={componentsTableColumnClasses[0]}>
                       {['Present', 'Created'].includes(step.status) ? (

@@ -111,7 +111,7 @@ const TelemetryUserPreferenceDropdown: React.FC = () => {
   };
 
   return (
-    <div className="pf-v5-c-form">
+    <div className="pf-v6-c-form">
       <FormGroup fieldId="telemetry" label={t('console-telemetry-plugin~Telemetry')}>
         <TelemetryAnalyticsSelect
           disabled={!window.SERVER_FLAGS.telemetry?.STATE}

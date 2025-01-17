@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
+import { t_color_white as globalWhite } from '@patternfly/react-tokens';
 
 const QuickSearchIcon: React.FC<React.HTMLProps<SVGElement>> = ({ style }): React.ReactElement => {
   return (

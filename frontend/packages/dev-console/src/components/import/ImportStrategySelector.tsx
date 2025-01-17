@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { FormGroup, Grid, GridItem, Tile, Tooltip } from '@patternfly/react-core';
+import { FormGroup, Grid, GridItem, Tooltip } from '@patternfly/react-core';
+import { Tile } from '@patternfly/react-core/deprecated';
 import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
 import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
 import { LayerGroupIcon } from '@patternfly/react-icons/dist/esm/icons/layer-group-icon';

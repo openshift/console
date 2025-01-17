@@ -121,22 +121,28 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                 <div className="col-md-1 col-md-offset-0 col-sm-offset-10 col-xs-offset-10">
                   <Tooltip content="Remove">
                     <Button
+                      icon={
+                        <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                      }
                       type="button"
                       className="taint-modal__delete-icon"
                       onClick={() => remove(i)}
                       aria-label={t('public~Remove')}
                       variant="plain"
-                    >
-                      <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                    </Button>
+                    />
                   </Tooltip>
                 </div>
               </div>
             ))}
           </>
         )}
-        <Button className="pf-m-link--align-left" onClick={addRow} type="button" variant="link">
-          <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+        <Button
+          icon={<PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />}
+          className="pf-m-link--align-left"
+          onClick={addRow}
+          type="button"
+          variant="link"
+        >
           {t('public~Add more')}
         </Button>
       </ModalBody>

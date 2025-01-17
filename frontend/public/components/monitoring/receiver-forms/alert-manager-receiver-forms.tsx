@@ -446,7 +446,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
         )}
 
         <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
-          <ActionGroup className="pf-v5-c-form">
+          <ActionGroup className="pf-v6-c-form">
             <Button
               type="submit"
               variant="primary"
