@@ -1839,18 +1839,18 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-6.1.0.tgz#bd2374bf293b1c2abdde071700b3d9532ec2dfe6"
   integrity sha512-w+QazL8NHKkg5j01eotblsswKxQQSYB0CN3yBXQL9ScpHdp/fK8M6TqWbKZNRpf+NqhMxcH/om8eR0N/fDCJqw==
 
-"@patternfly/quickstarts@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-6.1.0.tgz#bb38064aefdb606cc1aec9e29024fd1755d79358"
-  integrity sha512-2FzGyv1nOBDhwxNyXuIulB9HNgSdpnbuJfZ9pfJXdLcIk9+kTZTJps7LFup/Ipg1r9hAuH/LsOaE3maPhFjVEA==
+"@patternfly/quickstarts@^6.2.0-prerelease.2":
+  version "6.2.0-prerelease.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-6.2.0-prerelease.2.tgz#ca46b9de80d1de256e6b9dcc54a97114101291db"
+  integrity sha512-T2mG7lnsvKbfu4/kU10zzMVCr5XO9bJdryrV5AnnAcGkJOKrU/mdIt6bqn7IOZbKvx89UBhhxn627wmMqlhVVQ==
   dependencies:
     dompurify "^3.1.3"
     history "^5.0.0"
 
-"@patternfly/react-catalog-view-extension@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-catalog-view-extension/-/react-catalog-view-extension-6.0.0.tgz#9054d9cbfde3c53d76d91706a6836fe698d43bdb"
-  integrity sha512-AfvfJXjADXX1YZnWNZLe0mLgBepSnn4Xn9SQsvTeS+PLFFGgJQEsbhRyFXdGVJLVU/19+a/YOpHgZZeI2dus0A==
+"@patternfly/react-catalog-view-extension@^6.1.0-prerelease.3":
+  version "6.1.0-prerelease.3"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-catalog-view-extension/-/react-catalog-view-extension-6.1.0-prerelease.3.tgz#5e95fdb8134f460e9e5f671002d01daf61b6042b"
+  integrity sha512-43zZRiJA95Co26fkdjrHTGVNq6ESKf9SFys2cskkN1RTEGuBPdBQQEx4uHdJOIjQE7cQwKVhKcnhF7RLfAFKAA==
   dependencies:
     "@patternfly/react-core" "^6.0.0"
     "@patternfly/react-styles" "^6.0.0"
