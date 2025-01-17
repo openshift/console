@@ -26,7 +26,7 @@
 
   &__recommended {
     position: absolute;
-    color: var(--pf-t--global--text--color--brand--default);
+    color: var(--pf-t--global--icon--color--brand--default);
     font-size: var(--pf-t--global--font--size--md);
     top: 3px;
     right: 6px;
@@ -36,6 +36,7 @@
   &:hover,
   &:focus,
   &:active {
+    outline: var(--pf-t--global--border--color--brand--default) 3px solid;
     outline: var(--pf-t--global--border--color--brand--default) 3px solid;
     outline-offset: -3px;
   }
