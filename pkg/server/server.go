@@ -680,7 +680,12 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
+	contentSecurityPolicy, err := utils.BuildCSPDirectives(
+		s.K8sMode,
+		s.ContentSecurityPolicy,
+		indexPageScriptNonce,
+		r.Header.Get("Test-CSP-Reporting-Endpoint"),
+	)
 	if err != nil {
 		klog.Fatalf("Error building Content Security Policy directives: %s", err)
 		os.Exit(1)

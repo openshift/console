@@ -7,15 +7,15 @@ SCREENSHOTS_DIR=gui_test_screenshots
 # https://ci-operator-configresolver-ui-ci.apps.ci.l2s4.p1.openshiftapps.com/help#env
 OPENSHIFT_CI=${OPENSHIFT_CI:=false}
 
-if [ "$(basename "$(pwd)")" != "frontend" ]; then
-  echo "This script must be run from the frontend folder"
-  exit 1
-fi
-
 # Disable color codes in Cypress since they do not render well CI test logs.
 # https://docs.cypress.io/guides/guides/continuous-integration.html#Colors
 if [ "$OPENSHIFT_CI" = true ]; then
   export NO_COLOR=1
+fi
+
+if [ "$(basename "$(pwd)")" != "frontend" ]; then
+  echo "This script must be run from the frontend folder"
+  exit 1
 fi
 
 if [ ! -d node_modules ]; then
