@@ -84,6 +84,13 @@ form.pf-v6-c-form {
   vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
 }
 
+// Overrides bootstrap label margin for DataListCheck's internal checkbox labels
+.co-datalist-control {
+  label{
+    margin-bottom: 0;
+  }
+}
+
 .co-toolbar-empty-state .pf-v6-c-toolbar__content {
   --pf-v6-c-toolbar__content--PaddingLeft: 0;
   --pf-v6-c-toolbar__content--PaddingRight: 0;
@@ -325,11 +332,4 @@ ul {
 
 .pf-v6-c-truncate--no-min-width {
   --pf-v6-c-truncate--MinWidth: 0 !important;
-}
-
-// Overrides bootstrap label margin for DataListCheck's internal checkbox labels
-.co-datalist-control {
-  label{
-    margin-bottom: 0;
-  }
 }
