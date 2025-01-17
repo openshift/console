@@ -235,13 +235,14 @@ export const CreateProjectModal: ModalComponent<CreateProjectModalProps> = (prop
     CreateProjectModalExtension
   >(isCreateProjectModal);
 
-  // resolve the modal component from the extensions, if at least one exists
-  const Component = createProjectModalExtensions?.[0]?.properties?.component;
-
   // If extensions are not resolved yet, return null
   if (!resolved) {
     return null;
   }
+
+  // resolve the modal component from the extensions, if at least one exists
+  const Component = createProjectModalExtensions.find(({ uid }) => uid === props.pluginUID)
+    ?.properties?.component;
 
   // If extension modal component exists, render it, else render default
   return Component ? <Component {...props} /> : <DefaultCreateProjectModal {...props} />;
