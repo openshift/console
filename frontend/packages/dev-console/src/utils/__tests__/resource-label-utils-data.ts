@@ -7,7 +7,7 @@ export const originalDeployment = {
       'app.openshift.io/vcs-ref': 'master',
       'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
       'image.openshift.io/triggers':
-        '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","pause":"false"}]',
+        '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","paused":"false"}]',
       'openshift.io/generated-by': 'OpenShiftWebConsole',
       'app.openshift.io/connects-to': 'database',
       'deployment.kubernetes.io/revision': '4',
@@ -104,7 +104,7 @@ export const newDeployment = {
       'app.openshift.io/vcs-ref': 'master',
       'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
       'image.openshift.io/triggers':
-        '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","pause":"true"}]',
+        '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","paused":"true"}]',
       'openshift.io/generated-by': 'OpenShiftWebConsole',
     },
     name: 'nationalparks-py',
@@ -169,7 +169,7 @@ export const devfileDeployment = {
       'app.openshift.io/vcs-ref': 'master',
       'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
       'image.openshift.io/triggers':
-        '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","pause":"true"}]',
+        '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","paused":"true"}]',
       'openshift.io/generated-by': 'OpenShiftWebConsole',
       isFromDevfile: 'true',
     },
