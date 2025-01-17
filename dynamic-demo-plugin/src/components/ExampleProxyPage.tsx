@@ -6,7 +6,6 @@ import {
   Card,
   CardBody,
   CardTitle,
-  Page,
   PageSection,
   Title,
 } from "@patternfly/react-core";
@@ -14,15 +13,12 @@ import {
 const ExampleProxyPage: React.FC = () => {
   const { t } = useTranslation("plugin__console-demo-plugin");
   return (
-    <Page
-      additionalGroupedContent={
-        <PageSection variant="light">
-          <Title headingLevel="h1">
-            {t("Dynamic Plugin Proxy Services example")}
-          </Title>
-        </PageSection>
-      }
-    >
+    <>
+      <PageSection>
+        <Title headingLevel="h1">
+          {t("Dynamic Plugin Proxy Services example")}
+        </Title>
+      </PageSection>
       <PageSection>
         <Card>
           <CardTitle>{t("Proxy: consoleFetchJSON")}</CardTitle>
@@ -31,7 +27,7 @@ const ExampleProxyPage: React.FC = () => {
           </CardBody>
         </Card>
       </PageSection>
-    </Page>
+    </>
   );
 };
 

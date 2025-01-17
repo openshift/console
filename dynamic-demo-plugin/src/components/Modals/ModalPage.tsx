@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Flex, List, ListItem, Modal, Spinner } from '@patternfly/react-core';
+import { Button, Flex, List, ListItem, Modal, ModalBody, ModalHeader, Spinner} from '@patternfly/react-core';
 import {
   K8sResourceCommon,
   useK8sWatchResource,
@@ -21,13 +21,15 @@ export const TestModal: React.FC<{ closeModal: () => void }> = (props) => {
     <Modal
       isOpen
       onClose={props?.closeModal}
-      title={t('plugin__console-demo-plugin~Storage Classes')}
     >
-      {t('plugin__console-demo-plugin~StorageClasses present in this cluster:')}
-      <List>
-        {!!res &&
-          res.map((item) => <ListItem key={item.metadata.uid}>{item.metadata.name}</ListItem>)}
-      </List>
+      <ModalHeader title={t('plugin__console-demo-plugin~Storage Classes')} />
+      <ModalBody>
+        {t('plugin__console-demo-plugin~StorageClasses present in this cluster:')}
+        <List>
+          {!!res &&
+            res.map((item) => <ListItem key={item.metadata.uid}>{item.metadata.name}</ListItem>)}
+        </List>
+      </ModalBody>
     </Modal>
   );
 };
