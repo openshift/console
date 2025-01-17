@@ -834,6 +834,24 @@
     }
   },
   {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "serverlessfunctions",
+      "perspective": "admin",
+      "section": "serverless",
+      "name": "%knative-plugin~Functions%",
+      "href": "/functions",
+      "namespaced": true,
+      "insertAfter": "serverlesseventing",
+      "dataAttributes": {
+        "data-test-id": "functions-details-header"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
     "type": "console.yaml-template",
     "properties": {
       "name": "default",

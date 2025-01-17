@@ -6,4 +6,7 @@ export { default as HelmReleaseListPage } from './list-page/HelmReleaseListPage'
 export { default as HelmChartRepositoryForm } from './forms/HelmChartRepository/CreateHelmChartRepositoryPage';
 export { default as ProjectHelmChartRepositoryListPage } from './list-page/ProjectHelmChartRepositoryListPage';
 export { default as HelmChartRepositoryListPage } from './list-page/HelmChartRepositoryListPage';
+export { default as RepositoriesPage } from './list-page/RepositoriesListPage';
+export { default as AdminHelmReleaseListPage } from './list-page/AdminHelmReleaseListPage';
+export { default as AdminHelmRepositoriesListPage } from './list-page/AdminHelmRepositoriesListPage';
 export { default as HelmTabbedPage } from './list-page/HelmTabbedPage';

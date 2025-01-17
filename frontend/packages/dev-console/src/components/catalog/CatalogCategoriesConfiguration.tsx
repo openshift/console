@@ -74,7 +74,7 @@ const CatalogCategoriesConfiguration: React.FC<{ readonly: boolean }> = ({ reado
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
-      customize: 'Developer Catalog categories',
+      customize: 'Software Catalog categories',
     });
     setSaveStatus({ status: 'in-progress' });
 

@@ -162,8 +162,8 @@
     "properties": {
       "id": "dev-console.CatalogTypesConfiguration",
       "groupId": "developer",
-      "label": "%devconsole~Developer Catalog Types%",
-      "description": "%devconsole~A list of developer catalog types that are not shown to users.%",
+      "label": "%devconsole~Software Catalog Types%",
+      "description": "%devconsole~A list of software catalog types that are not shown to users.%",
       "field": {
         "type": "custom",
         "component": { "$codeRef": "catalog.CatalogTypesConfiguration" }
@@ -196,7 +196,7 @@
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "developer-catalog",
-      "name": "%devconsole~Developer Catalog%",
+      "name": "%devconsole~Software Catalog%",
       "insertBefore": "serverless-function"
     }
   },
@@ -656,6 +656,21 @@
   {
     "type": "console.navigation/href",
     "properties": {
+      "id": "topology",
+      "perspective": "admin",
+      "section": "workloads",
+      "name": "%devconsole~Topology%",
+      "href": "/topology",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-topology",
+        "data-test-id": "topology-header"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
       "id": "observe",
       "perspective": "dev",
       "section": "top",
@@ -723,6 +738,24 @@
     },
     "flags": {
       "required": ["OPENSHIFT_BUILDCONFIG"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "developer-catalog",
+      "perspective": "admin",
+      "section": "home",
+      "name": "%devconsole~Software Catalog%",
+      "href": "/catalog",
+      "namespaced": true,
+      "insertAfter": "search",
+      "dataAttributes": {
+        "data-test-id": "developer-catalog-header"
+      }
+    },
+    "flags": {
+      "required": ["DEVELOPER_CATALOG"]
     }
   },
   {
@@ -1135,7 +1168,6 @@
         "/deploy-image",
         "/project-details",
         "/dev-monitoring",
-        "/helm-releases",
         "/upload-jar",
         "/search-page",
         "/builds",

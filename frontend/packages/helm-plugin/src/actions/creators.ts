@@ -66,7 +66,7 @@ export const editChartRepository = (
   cta: {
     href:
       hcr.kind === ProjectHelmChartRepositoryModel.kind
-        ? `/ns/${hcr.metadata.namespace}/helmchartrepositories/${
+        ? `/helm-repositories/ns/${hcr.metadata.namespace}/${
             hcr.metadata.name
           }/form?kind=${referenceFor(hcr)}`
         : `/k8s/cluster/helmchartrepositories/${hcr.metadata.name}/form?kind=${referenceFor(hcr)}`,

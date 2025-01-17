@@ -812,6 +812,7 @@
       "perspective": "admin",
       "section": "workloads",
       "id": "pods",
+      "insertAfter": "topology",
       "name": "%console-app~Pods%",
       "model": {
         "version": "v1",
