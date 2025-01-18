@@ -2,6 +2,8 @@ import * as React from 'react';
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { SignOutAltIcon } from '@patternfly/react-icons/dist/esm/icons/sign-out-alt-icon';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
+import { helmCatalogIconSVG } from '@console/helm-plugin/src/utils/icons';
+import { pipelineIconSVG } from '@console/pipelines-plugin/src/utils/icons';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 
 type AddActionExtension = ResolvedExtension<AddAction>;
@@ -64,7 +66,7 @@ const helmChart: AddActionExtension = {
     description: 'Browse the catalog to discover and install Helm Charts',
     groupId: 'developer-catalog',
     href: '/catalog/ns/:namespace?catalogType=HelmChart',
-    icon: 'static/assets/helm.svg',
+    icon: helmCatalogIconSVG,
     id: 'helm',
     label: 'Helm Chart',
   },
@@ -245,7 +247,7 @@ const pipelinesAction: AddActionExtension = {
     description: 'Create a Tekton Pipeline to automate delivery of your application',
     groupId: 'pipelines',
     href: '/k8s/ns/:namespace/tekton.dev~v1beta1~Pipeline/~new/builder',
-    icon: 'static/assets/pipeline.svg',
+    icon: pipelineIconSVG,
     id: 'pipeline',
     label: 'Pipelines',
   },

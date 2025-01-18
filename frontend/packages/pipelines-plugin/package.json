@@ -15,7 +15,7 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "exposedModules": {
-      "icons": "src/utils/icons.ts",
+      "icons": "src/utils/icons.tsx",
       "yamlTemplates": "src/templates/pipelines.ts",
       "catalog": "src/components/catalog",
       "topology": "src/topology",
