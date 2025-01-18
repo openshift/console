@@ -42,6 +42,11 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 		return ProxyResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
 
+	// Validate the request URL to prevent SSRF
+	if err := validateRequestURL(request.Url); err != nil {
+		return ProxyResponse{}, fmt.Errorf("ssrf detected: %v", err)
+	}
+
 	if request.Method == "" {
 		request.Method = http.MethodGet
 	}
@@ -94,12 +99,12 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 
 	serviceResponse, err := serviceClient.Do(serviceRequest)
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to send request: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to send request: %v", err)
 	}
 	defer serviceResponse.Body.Close()
 	serviceResponseBody, err := io.ReadAll(serviceResponse.Body)
 	if err != nil {
-		return ProxyResponse{}, fmt.Errorf("Failed to read response body: %v", err)
+		return ProxyResponse{}, fmt.Errorf("failed to read response body: %v", err)
 	}
 
 	return ProxyResponse{
