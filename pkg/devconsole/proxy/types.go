@@ -6,12 +6,13 @@ import (
 )
 
 type ProxyRequest struct {
-	AllowInsecure bool        `json:"allowInsecure,omitempty"`
-	Method        string      `json:"method"`
-	Url           string      `json:"url"`
-	Headers       http.Header `json:"headers"`
-	Queryparams   url.Values  `json:"queryparams"`
-	Body          string      `json:"body"`
+	AllowInsecure   bool        `json:"allowInsecure,omitempty"`
+	AllowAuthHeader bool        `json:"allowAuthHeader,omitempty"`
+	Method          string      `json:"method"`
+	Url             string      `json:"url"`
+	Headers         http.Header `json:"headers"`
+	Queryparams     url.Values  `json:"queryparams"`
+	Body            string      `json:"body"`
 }
 
 type ProxyResponse struct {
