@@ -59,7 +59,7 @@ declare interface Window {
     k8sMode: string;
     capabilities: {
       name: string;
-      visibility: { state: "Enabled" | "Disabled" };
+      visibility: { state: 'Enabled' | 'Disabled' };
     }[];
   };
   /** (OCPBUGS-46415) Do not override this string! To add new errors please append to windowError if it exists*/
