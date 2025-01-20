@@ -49,7 +49,6 @@
       "nodeStatus": "src/components/nodes/status",
       "nodeActions": "src/components/nodes/menu-actions.tsx",
       "oauthConfigDetailsPage": "src/components/oauth-config/OAuthConfigDetailsPage.tsx",
-      "multiNetworkFlag": "src/components/network-policies/multi-network-policy/multiNetworkFlag.ts",
       "consolePluginDescriptionDetail": "src/components/console-operator/ConsolePluginDescriptionDetail.tsx",
       "consolePluginVersionDetail": "src/components/console-operator/ConsolePluginVersionDetail.tsx",
       "consolePluginStatusDetail": "src/components/console-operator/ConsolePluginStatusDetail.tsx",
