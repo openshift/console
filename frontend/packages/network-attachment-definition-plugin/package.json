@@ -14,9 +14,6 @@
     "unique-names-generator": "4.3.1"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
-    "exposedModules": {
-      "yamlTemplates": "src/models/templates/index.ts"
-    }
+    "entry": "src/plugin.ts"
   }
 }
