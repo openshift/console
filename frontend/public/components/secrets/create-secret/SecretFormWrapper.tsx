@@ -38,7 +38,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     type: defaultSecretType,
   });
 
-  const [secretTypeAbstraction] = React.useState(props.secretTypeAbstraction);
+  const { secretTypeAbstraction } = props;
   const [secret, setSecret] = React.useState(initialSecret);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState();
