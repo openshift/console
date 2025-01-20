@@ -80,15 +80,12 @@ form.pf-v6-c-form {
   }
 }
 
-.co-installed-operators .pf-v6-c-table tbody > tr > * {
-  vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
+.co-datalist-control label {
+  margin-bottom: 0; // Overrides Bootstrap label margin for DataListCheck's internal checkbox labels
 }
 
-// Overrides bootstrap label margin for DataListCheck's internal checkbox labels
-.co-datalist-control {
-  label{
-    margin-bottom: 0;
-  }
+.co-installed-operators .pf-v6-c-table tbody > tr > * {
+  vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
 }
 
 .co-toolbar-empty-state .pf-v6-c-toolbar__content {
@@ -159,15 +156,24 @@ form.pf-v6-c-form {
   --pf-v6-c-data-list__item--BackgroundColor: transparent;
 }
 
+// Drawer
+.pf-v6-c-drawer__body {
+  height: 100%;
+}
+
+.pf-v6-c-masthead {
+  --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit
+}
+
+.pf-v6-c-masthead__logo {
+  --pf-v6-c-masthead__logo--MaxHeight: #{$masthead-logo-max-height}; // Restore the max-height from PageHeader to maintain backwards compatibility
+  --pf-v6-c-masthead__logo--Width: auto; // Do not set a width to maintain backwards compatibility
+}
+
 // PF components that calculate their correct height based on --pf-t--global--font--size--md: 1rem
 .pf-v6-c-modal-box,
 .pf-v6-c-switch {
   --pf-t--global--font--size--md: 1rem;
-}
-
-// Drawer
-.pf-v6-c-drawer__body {
-  height: 100%;
 }
 
 // Page
@@ -175,11 +181,6 @@ form.pf-v6-c-form {
   // Positions fullscreen terminal on top of mast header
   &__main.default-overflow {
     z-index: calc(var(--pf-v6-c-page__header--ZIndex) + 50);
-  }
-
-  // Restore the max-height from PageHeader to maintain backwards compatibility
-  .pf-v6-c-brand {
-    max-height: $masthead-logo-max-height;
   }
 
   // Apply to primary content sections to prevent yaml editor and topology sections from collapsing
@@ -217,10 +218,6 @@ form.pf-v6-c-form {
   .pf-v6-c-form-control[aria-invalid='true'] {
     --pf-t--global--font--size--md: #{$font-size-base};
   }
-}
-
-.pf-v6-c-masthead {
-  --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit
 }
 
 :where(:root:not(.pf-v6-theme-dark)) .pf-v6-c-page {
