@@ -96,7 +96,6 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
                 maxWidth="30rem"
               >
                 <Button
-                  icon={label}
                   data-test={label}
                   variant="plain"
                   className="details-item__popover-button"
