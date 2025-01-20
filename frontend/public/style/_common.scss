@@ -153,7 +153,7 @@ dl.co-inline {
 .co-m-pane__heading-owner {
   display: block;
   font-size: $font-size-base;
-  line-height: var(--pf-v6-global--LineHeight--md);
+  line-height: var(--pf-t--global--font--line-height--heading);
   padding-top: var(--pf-t--global--spacer--sm);
   span {
     display: inline;
@@ -521,7 +521,7 @@ dl.co-inline {
   &--bordered {
     .co-m-table-grid__body .row,
     .co-m-table-grid__head {
-      border-bottom: var(--pf-t--global--border--width--100) solid
+      border-bottom: var(--pf-t--global--border--width--divider--default) solid
         var(--pf-t--global--border--color--default);
     }
   }

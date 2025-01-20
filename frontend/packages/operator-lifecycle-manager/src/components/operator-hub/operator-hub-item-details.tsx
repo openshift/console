@@ -80,7 +80,7 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabi
           >
             {active && (
               <CheckCircleIcon
-                color="var(--pf-t--color--blue--40)"
+                color="var(--pf-t--global--icon--color--brand--default)"
                 className="properties-side-panel-pf-property-value__capability-level-icon"
                 title={t('olm~Checked')}
               />

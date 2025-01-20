@@ -38,7 +38,7 @@ const ClouldShellMastheadAction: React.FC<Props> = ({ onClick, className, open }
           <SplitItem>
             <span
               style={{
-                color: 'var(--pf-t--color--blue--50)',
+                color: 'var(--pf-t--global--icon--color--brand--default)',
                 fontSize: 'var(--pf-t--global--font--size--xs)',
                 paddingLeft: 'var(--pf-t--global--spacer--md)',
               }}

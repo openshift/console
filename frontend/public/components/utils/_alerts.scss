@@ -4,7 +4,7 @@
   // overrides Bootstrap-related line-height issue that causes the title and icon to go out of alignment
   h4 {
     font-family: var(--pf-t--global--font--family--body);
-    line-height: var(--pf-v6-global--LineHeight--md);
+    line-height: var(--pf-t--global--font--line-height--heading);
   }
 }
 

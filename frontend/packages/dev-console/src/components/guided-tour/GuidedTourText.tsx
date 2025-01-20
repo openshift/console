@@ -83,7 +83,7 @@ export const SearchTourText: React.FC = () => {
         )}{' '}
         <span
           style={{
-            color: 'var(--pf-t--color--blue--50)',
+            color: 'var(--pf-t--global--icon--color--brand--default)',
           }}
         >
           <PlusCircleIcon /> {t('devconsole~Add to navigation')}

@@ -69,8 +69,7 @@
   background-color: var(
     --pf-t--global--background--color--primary--default
   ); // prevent overlapping text if events overlap each other
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--color--nonstatus--gray--default);
-  border-radius: var(--pf-t--global--border--radius--medium);
+  border: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--color--nonstatus--gray--default);
   flex: none;
   padding: 10px;
   width: 100%;
@@ -158,7 +157,7 @@
 
   .co-sysevent__box {
     flex: 1 2 auto;
-    border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--color--nonstatus--gray--default);
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--color--nonstatus--gray--default);
     min-width: 0%; // necessary for wrapping since its a flex child
   }
 
@@ -172,9 +171,9 @@
   }
 
   .co-sysevent-stream__timeline {
-    border-bottom: var(--pf-t--global--border--width--300) solid
+    border-bottom: var(--pf-t--global--border--width--extra-strong) solid
       var(--pf-t--global--color--nonstatus--gray--default);
-    border-left: var(--pf-t--global--border--width--300) solid
+    border-left: var(--pf-t--global--border--width--extra-strong) solid
       var(--pf-t--global--color--nonstatus--gray--default);
     margin-left: 10px;
     &--empty {

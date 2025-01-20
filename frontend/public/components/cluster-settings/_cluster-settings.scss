@@ -255,7 +255,7 @@ $co-channel-height: 60px;
     margin: 0 0 var(--pf-t--global--spacer--lg) 0;
 
     &--divided {
-      border-top: 1px solid var(--pf-t--global--border--color--100);
+      border-top: 1px solid var(--pf-t--global--border--color--default);
       padding-top: var(--pf-t--global--spacer--lg);
 
       // only add border and padding to first instance

@@ -111,7 +111,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
 
 .loading-skeleton--catalog {
   background: var(--pf-t--global--background--color--primary--default);
-  border: 1px solid var(--pf-t--global--border--color--100);
+  border: 1px solid var(--pf-t--global--border--color--default);
   border-radius: var(--pf-t--global--border--radius--medium);
   display: flex;
   flex: 1;
@@ -325,7 +325,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
   }
   // table rows
   &::after {
-    background-image: linear-gradient(var(--pf-t--global--border--color--100) 1px, transparent 0px),
+    background-image: linear-gradient(var(--pf-t--global--border--color--default) 1px, transparent 0px),
       linear-gradient($skeleton-color 26px, transparent 26px);
     background-size: 100% 46px, 50% 46px;
     background-position: 50px 0%, 0px 10px;

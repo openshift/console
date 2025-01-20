@@ -91,7 +91,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
 }
 
 .co-catalog-details {
@@ -117,7 +117,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-spec-descriptor--resource-requirements {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--100);
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
   padding: 20px 0 20px 20px;
   margin-top: 5px;
 }
@@ -130,7 +130,7 @@ $co-affinity-row-margin: 15px;
 
 // only used in packages and will be orphaned when packages move out
 .co-create-operand__header {
-  border-bottom: var(--pf-t--global--border--width--100) solid
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
     var(--pf-t--global--border--color--default);
   padding: 0 $pf-v6-global-gutter var(--pf-t--global--spacer--lg);
   @media (min-width: $pf-v6-global--breakpoint--xl) {
@@ -145,7 +145,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-affinity-term {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--100);
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -180,7 +180,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operand-field-group {
-  border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--100);
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -215,7 +215,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .key-operator-value__heading-button {
-  height: 23px; // for vertical alignment with input field; equals $pf-v6-global--LineHeight--md
+  height: 23px; // for vertical alignment with input field; equals --pf-t--global--font--line-height--heading
 }
 
 .key-operator-value__name-field,
@@ -265,7 +265,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion__box {
-  border: 1px solid var(--pf-t--global--border--color--100);
+  border: 1px solid var(--pf-t--global--border--color--default);
   margin: var(--pf-t--global--spacer--md) 0;
   padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--md)
     var(--pf-t--global--spacer--xs);

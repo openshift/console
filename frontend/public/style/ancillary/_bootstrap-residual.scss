@@ -12,7 +12,7 @@
   margin-top: 5px;
   margin-bottom: 10px;
   color: var(
-    --pf-v6-global--Color--100
+    --pf-t--global--text--color--regular
   ); // matches --pf-v6-c-helper-text__item-text--Color and picks up dark theme variable
 }
 
@@ -127,8 +127,8 @@ small {
           --pf-t--global--spacer--sm
         ); // matches --pf-v6-c-table--m-compact--cell--Padding
         vertical-align: top;
-        border-top: var(--pf-t--global--border--width--100) solid
-          var(--pf-t--global--border--color--100);
+        border-top: var(--pf-t--global--border--width--divider--default) solid
+          var(--pf-t--global--border--color--default);
       }
     }
   }
@@ -136,7 +136,7 @@ small {
   > thead > tr > th {
     vertical-align: bottom;
     border-bottom: var(--pf-t--global--border--width--md) solid
-      var(--pf-t--global--border--color--100);
+      var(--pf-t--global--border--color--default);
   }
   // Remove top border from thead by default
   > caption + thead,

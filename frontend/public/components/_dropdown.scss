@@ -39,7 +39,7 @@
 }
 
 .dropdown-menu__header {
-  color: var(--pf-v5-global--Color--100);
+  color: var(--pf-t--global--text--color--regular);
   flex-grow: 1;
   font-size: ($font-size-base - 1);
   padding: 3px 10px;
@@ -62,7 +62,7 @@
 }
 
 .co-namespace-bar {
-  border-bottom: var(--pf-t--global--border--width--100) solid
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
     var(--pf-t--global--border--color--default);
   padding: 0 $pf-v6-global-gutter;
   white-space: nowrap;

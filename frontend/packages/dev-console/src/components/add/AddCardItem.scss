@@ -12,7 +12,7 @@
     height: var(--pf-t--global--font--size--lg);
     max-width: var(--pf-t--global--spacer--lg);
     min-width: var(--pf-t--global--spacer--md);
-    color: var(--pf-v6-global--Color--100) !important;
+    color: var(--pf-t--global--text--color--regular) !important;
     // temporary fix since --pf-t--global--font--size--md is being computed to 14px instead of 16px
     font-size: var(--pf-t--global--font--size--md);
     margin-right: var(--pf-t--global--spacer--sm);

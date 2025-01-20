@@ -17,7 +17,7 @@
   &__title {
     font-size: var(--pf-t--global--font--size--sm);
     font-weight: var(--pf-t--global--font--weight--body--bold);
-    line-height: var(--pf-v6-global--LineHeight--sm);
+    line-height: var(--pf-t--global--font--line-height--body);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -26,7 +26,7 @@
 
   &__recommended {
     position: absolute;
-    color: var(--pf-t--global--icon--color--brand--default);
+    color: var(--pf-t--global--text--color--brand--default);
     font-size: var(--pf-t--global--font--size--md);
     top: 3px;
     right: 6px;

@@ -7,7 +7,7 @@
   padding-inline-end: var(--pf-v6-c-menu-toggle--PaddingInlineEnd) !important;
   &::before,
   &::after {
-    border-width: var(--pf-t--global--border--width--divider--default) !important;
+    border-width: var(--pf-t--global--border--width--regular) !important;
   }
   .pf-v6-c-menu-toggle__text {
     font-size: var(--pf-v6-c-menu-toggle--FontSize) !important;
