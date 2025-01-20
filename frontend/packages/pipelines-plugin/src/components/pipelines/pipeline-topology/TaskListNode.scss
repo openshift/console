@@ -13,13 +13,13 @@
     }
   }
   &__trigger-underline {
-    fill: var(--pf-v6-global--Color--100);
+    fill: var(--pf-t--global--text--color--regular);
     &--hover {
       fill: var(--pf-t--global--text--color--link--default);
     }
   }
   &__trigger {
-    font-size: var(--pf-t--global--font--size--md);
+    font-size: var(--pf-t--global--font--size--sm);
     text-anchor: middle;
     dominant-baseline: middle;
     cursor: pointer;
@@ -36,6 +36,6 @@
     margin: 0;
   }
   &__render-text {
-    fill: var(--pf-v6-global--Color--100);
+    fill: var(--pf-t--global--text--color--regular);
   }
 }
