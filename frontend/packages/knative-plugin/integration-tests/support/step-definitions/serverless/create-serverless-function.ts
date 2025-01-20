@@ -7,13 +7,9 @@ Then('user clicks on Topology list view', () => {
 });
 
 Then(
-  'user will see name of the serverless function as KSVC label followed by fx label and name {string}',
+  'user will see name of the serverless function as KSVC label followed by name {string}',
   (name: string) => {
     cy.get(`#${name}-app-Service`).find(eventingPO.resourceIcon).should('contain.text', 'KSVC');
-    cy.get(`#${name}-app-Service`)
-      .find('.odc-topology-list-view__type-icon')
-      .should('have.attr', 'src')
-      .should('include', 'static/assets/serverlessfx.svg');
     cy.get(`#${name}-app-Service`).find('.pf-v6-c-data-list__cell').should('contain.text', name);
   },
 );
