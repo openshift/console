@@ -37,8 +37,8 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
             <BarsIcon />
           </PageToggleButton>
         </MastheadToggle>
-        <MastheadBrand data-codemods>
-          <MastheadLogo data-codemods component="a" {...logoProps}>
+        <MastheadBrand>
+          <MastheadLogo component="a" {...logoProps}>
             {window.SERVER_FLAGS.customLogoURL ? (
               <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
             ) : (

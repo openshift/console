@@ -149,7 +149,6 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
             variant="compact"
             aria-label={t('public~Import YAML results')}
             {...reactPropFix}
-            data-codemods="true"
           >
             <Thead {...reactPropFix}>
               <Tr {...reactPropFix}>
