@@ -8,7 +8,7 @@ $overview-sidebar-width: 550px;
   right: 0;
   height: 100%;
   box-shadow: var(--pf-t--global--box-shadow--md);
-  z-index: 100;
+  z-index: var(--pf-t--global--z-index--xs);
 
   &__header {
     // Hack for Popper to go under the header
