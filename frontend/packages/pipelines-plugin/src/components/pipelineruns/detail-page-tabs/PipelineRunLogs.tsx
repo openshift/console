@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Nav, NavItem, NavList } from '@patternfly/react-core';
+import { Nav, NavItem, NavItemSeparator, NavList } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
@@ -155,26 +155,29 @@ class PipelineRunLogsWithTranslation extends React.Component<
                 {taskRunNames.map((taskRunName) => {
                   const taskRun = tRuns.find((tRun) => tRun.metadata.name === taskRunName);
                   return (
-                    <NavItem
-                      key={taskRunName}
-                      itemId={taskRunName}
-                      isActive={activeItem === taskRunName}
-                      className="odc-pipeline-run-logs__navitem"
-                    >
-                      <Link
-                        to={`${logsPath}?taskName=${
-                          taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-'
-                        }`}
+                    <>
+                      <NavItem
+                        key={taskRunName}
+                        itemId={taskRunName}
+                        isActive={activeItem === taskRunName}
+                        className="odc-pipeline-run-logs__navitem"
                       >
-                        <ColoredStatusIcon status={taskRunStatus(taskRun)} />
-                        <span
-                          className="odc-pipeline-run-logs__namespan"
-                          ref={activeItem === taskRunName ? selectedItemRef : undefined}
+                        <Link
+                          to={`${logsPath}?taskName=${
+                            taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-'
+                          }`}
                         >
-                          {taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-'}
-                        </span>
-                      </Link>
-                    </NavItem>
+                          <ColoredStatusIcon status={taskRunStatus(taskRun)} />
+                          <span
+                            className="odc-pipeline-run-logs__namespan"
+                            ref={activeItem === taskRunName ? selectedItemRef : undefined}
+                          >
+                            {taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-'}
+                          </span>
+                        </Link>
+                      </NavItem>
+                      <NavItemSeparator />
+                    </>
                   );
                 })}
               </NavList>

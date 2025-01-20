@@ -27,7 +27,7 @@
     flex: 1;
     flex-direction: column;
     background-color: var(--pf-t--color--black);
-    color: var(--pf-v6-global--Color--light-100);
+    color: var(--pf-t--global--text--color--300);
     font-family: Menlo, Monaco, 'Courier New', monospace;
     overflow-y: scroll;
     position: relative;
@@ -37,9 +37,9 @@
     }
   }
   &__taskName {
-    background-color: var(--pf-v6-global--BackgroundColor--dark-300);
+    background-color: var(--pf-t--color--gray--70);
     padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
-    color: var(--pf-v6-global--Color--light-100);
+    color: var(--pf-t--global--text--color--300);
   }
   &__taskName__loading-indicator {
     margin-left: var(--pf-t--global--spacer--sm);
