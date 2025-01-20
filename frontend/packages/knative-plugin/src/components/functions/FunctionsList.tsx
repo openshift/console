@@ -2,21 +2,13 @@ import * as React from 'react';
 import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Table, TableProps } from '@console/internal/components/factory';
+import { ServerlessFunctionIcon } from '../../utils/icons';
 import ServiceHeader from '../services/ServiceHeader';
 import { CreateActionDropdown } from './CreateActionDropdown';
 import FunctionRow from './FunctionRow';
 
 import './FunctionsPage.scss';
-
-const FunctionIcon = () => (
-  <img
-    className="odc-functions__empty-list__image"
-    src={getImageForIconClass('icon-serverless-function')}
-    alt=""
-  />
-);
 
 const FunctionsList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
@@ -28,7 +20,7 @@ const FunctionsList: React.FC<TableProps> = (props) => {
           {t('knative-plugin~No functions found')}
         </Title>
       }
-      icon={FunctionIcon}
+      icon={ServerlessFunctionIcon}
       variant={EmptyStateVariant.sm}
     >
       <span>

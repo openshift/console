@@ -3,6 +3,7 @@ import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon
 import { SignOutAltIcon } from '@patternfly/react-icons/dist/esm/icons/sign-out-alt-icon';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { helmCatalogIconSVG } from '@console/helm-plugin/src/utils/icons';
+import { channelIconSVG } from '@console/knative-plugin/src/utils/icons';
 import { pipelineIconSVG } from '@console/pipelines-plugin/src/utils/icons';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 
@@ -192,7 +193,7 @@ const channel: AddActionExtension = {
       'Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
     groupId: 'eventing',
     href: '/channel/ns/:namespace',
-    icon: 'static/assets/channel.svg',
+    icon: channelIconSVG,
     id: 'knative-eventing-channel',
     label: 'Channel',
   },

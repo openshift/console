@@ -3,7 +3,7 @@ import TypedResourceBadgeCell from '@console/topology/src/components/list-view/c
 import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
 import { OdcBaseNode } from '@console/topology/src/elements';
 import { getResourceKind } from '@console/topology/src/utils';
-import { EventSourceIcon, eventIconStyle } from '../../utils/icons';
+import { EventSourceIcon } from '../../utils/icons';
 import { NodeType } from '../topology-types';
 
 interface NoStatusListViewNodeProps {
@@ -15,11 +15,7 @@ interface NoStatusListViewNodeProps {
 const NoStatusListViewNode: React.FC<NoStatusListViewNodeProps> = (props) => {
   const kind = getResourceKind(props.item);
   const badgeCell = (
-    <TypedResourceBadgeCell
-      key="type-icon"
-      kind={kind}
-      typeIcon={<EventSourceIcon style={eventIconStyle} />}
-    />
+    <TypedResourceBadgeCell key="type-icon" kind={kind} typeIcon={<EventSourceIcon />} />
   );
   return (
     <TopologyListViewNode

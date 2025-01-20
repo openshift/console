@@ -14,8 +14,9 @@ import { BuildStrategyType } from '@console/internal/components/build';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
 import { ServiceModel as ksvcModel } from '@console/knative-plugin/src/models';
+import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
 import { getFieldId, useFlag, useFormikValidationFix } from '@console/shared/src';
-import ServerlessFxIcon from './ServerlessFxIcon';
+
 import './ImportStrategySelector.scss';
 
 const ImportStrategySelector: React.FC = () => {
@@ -89,7 +90,7 @@ const ImportStrategySelector: React.FC = () => {
       build: ServerlessBuildStrategyType.ServerlessFunction,
       priority: 3,
       detectedFiles: [],
-      icon: <ServerlessFxIcon />,
+      icon: <ServerlessFunctionIcon />,
     });
   }
 
