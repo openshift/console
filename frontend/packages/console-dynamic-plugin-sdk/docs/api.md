@@ -56,7 +56,7 @@
 54.  [DocumentTitle](#documenttitle)
 55.  [usePrometheusPoll](#useprometheuspoll)
 56.  [Timestamp](#timestamp)
-57.  [useModal](#usemodal)
+57.  [useOverlay](#useoverlay)
 58.  [ActionServiceProvider](#actionserviceprovider)
 59.  [NamespaceBar](#namespacebar)
 60.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
@@ -74,6 +74,7 @@
 72. [DEPRECATED] [ListPageFilter](#listpagefilter)
 73. [DEPRECATED] [useListPageFilter](#uselistpagefilter)
 74. [DEPRECATED] [YAMLEditor](#yamleditor)
+75. [DEPRECATED] [useModal](#usemodal)
 
 ---
 
@@ -1921,11 +1922,11 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 ---
 
-## `useModal`
+## `useOverlay`
 
 ### Summary 
 
-A hook to launch Modals.
+The `useOverlay` hook inserts a component directly to the DOM, outside the web console's page structure. This allows the component to be freely styled and positioning via CSS. For example, to float the overlay in the top right corner of the UI: `style={{ position: 'absolute', right: '2rem', top: '2rem', zIndex: 999 }}`.<br/><br/>It is possible to add multiple overlays by calling `useOverlay` multiple times.<br/><br/>A `closeOverlay` function is passed to the overlay component. Calling it removes the component from the DOM without affecting any other overlays that may have been added via useOverlay.<br/><br/>Additional props can be passed to `useOverlay` and they will be passed through to the overlay component.
 
 
 
@@ -1933,12 +1934,34 @@ A hook to launch Modals.
 
 
 ```tsx
+const OverlayComponent = ({ closeOverlay, heading }) => {
+  return (
+    <div style={{ position: 'absolute', right: '2rem', top: '2rem', zIndex: 999 }}>
+      <h2>{heading}</h2>
+      <Button onClick={closeOverlay}>Close</Button>
+    </div>
+  );
+};
+
+const ModalComponent = ({ body, closeOverlay, title }) => (
+  <Modal isOpen onClose={closeOverlay}>
+    <ModalHeader title={title} />
+    <ModalBody>{body}</ModalBody>
+  </Modal>
+);
+
 const AppPage: React.FC = () => {
- const launchModal = useModal();
- const onClick = () => launchModal(ModalComponent);
- return (
-   <Button onClick={onClick}>Launch a Modal</Button>
- )
+  const launchOverlay = useOverlay();
+  const onClickOverlay = () => {
+    launchOverlay(OverlayComponent, { heading: 'Test overlay' });
+  };
+  const onClickModal = () => {
+    launchOverlay(ModalComponent, { body: 'Test modal', title: 'Overlay modal' });
+  };
+  return (
+    <Button onClick={onClickOverlay}>Launch an Overlay</Button>
+    <Button onClick={onClickModal}>Launch a Modal</Button>
+  )
 }
 ```
 
@@ -2624,6 +2647,35 @@ A tuple containing the data filtered by all static filteres, the data filtered b
 | `onChange` | Callback for on code change event. |
 | `onSave` | Callback called when the command `CTRL + S` / `CMD + S` is triggered. |
 | `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, see https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html. |
+
+
+
+---
+
+## `useModal`
+
+### Summary [DEPRECATED]
+
+@deprecated - Use useOverlay from \@console/dynamic-plugin-sdk instead.<br/>A hook to launch Modals.
+
+
+
+### Example
+
+
+```tsx
+const AppPage: React.FC = () => {
+ const launchModal = useModal();
+ const onClick = () => launchModal(ModalComponent);
+ return (
+   <Button onClick={onClick}>Launch a Modal</Button>
+ )
+}
+```
+
+
+
+
 
 
 
