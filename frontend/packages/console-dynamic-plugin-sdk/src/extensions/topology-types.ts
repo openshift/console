@@ -9,9 +9,15 @@ import {
   ModelKind,
   GraphElement,
   TopologyQuadrant,
-} from '@patternfly/react-topology/dist/esm/types';
+  NodeShape,
+} from '@patternfly/react-topology';
 import { PrometheusAlert } from '../api/common-types';
-import { K8sResourceCommon, K8sResourceKindReference, WatchK8sResults } from './console-types';
+import {
+  K8sResourceCommon,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  WatchK8sResults,
+} from './console-types';
 
 export type Point = [number, number];
 
@@ -179,3 +185,67 @@ export type BuildConfigData = {
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';
 export type ShowGroupingHintEventListener = EventListener<[Node, string]>;
+
+export type MetricsTooltipProps = {
+  metricLabel: string;
+  byPod: {
+    formattedValue: string;
+    name: string;
+    value: number;
+  }[];
+};
+
+export type CpuCellComponentProps = {
+  cpuByPod: MetricsTooltipProps['byPod'];
+  totalCores: number;
+};
+
+export type MemoryCellComponentProps = {
+  totalBytes: number;
+  memoryByPod: any;
+};
+
+export type TopologyListViewNodeProps = {
+  item: Node;
+  selectedIds: string[];
+  onSelect: (ids: string[]) => void;
+  badgeCell?: React.ReactNode;
+  labelCell?: React.ReactNode;
+  alertsCell?: React.ReactNode;
+  memoryCell?: React.ReactNode;
+  cpuCell?: React.ReactNode;
+  statusCell?: React.ReactNode;
+  groupResourcesCell?: React.ReactNode;
+  hideAlerts?: boolean;
+  noPods?: boolean;
+  onSelectTab?: (name: string) => void;
+};
+
+export type GetTopologyNodeItemParams = (
+  resource: K8sResourceKind,
+  type: string,
+  data: any,
+  nodeProps?: Omit<OdcNodeModel, 'type' | 'data' | 'children' | 'id' | 'label'>,
+  children?: string[],
+  resourceKind?: K8sResourceKindReference,
+  shape?: NodeShape,
+) => OdcNodeModel;
+
+export type GetTopologyEdgeItemParams = (
+  resource: K8sResourceKind,
+  resources: K8sResourceKind[],
+) => EdgeModel[];
+
+export type GetTopologyGroupItemParams = (resource: K8sResourceKind) => NodeModel | null;
+
+export type MergeGroupParams = (newGroup: NodeModel, existingGroups: NodeModel[]) => void;
+
+export type WorkloadModelPropsType = {
+  width: number;
+  height: number;
+  group: boolean;
+  visible: boolean;
+  style: {
+    padding: number;
+  };
+};

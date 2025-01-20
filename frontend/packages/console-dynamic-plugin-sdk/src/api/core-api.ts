@@ -26,3 +26,4 @@ export * from '../perspective/perspective-context';
 
 // Dynamic plugin SDK core APIs
 export * from './dynamic-core-api';
+export * from './topology-api';

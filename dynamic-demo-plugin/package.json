@@ -19,6 +19,7 @@
     "@patternfly/react-core": "5.1.1",
     "@patternfly/react-icons": "5.1.1",
     "@patternfly/react-table": "5.1.1",
+    "@patternfly/react-topology": "5.3.0",
     "@types/react": "16.8.13",
     "@types/react-measure": "^2.0.6",
     "@types/react-router": "^5.1.20",
@@ -72,7 +73,8 @@
       "projectOverview": "./utils/project-overview",
       "modalPage": "./components/Modals/ModalPage",
       "sampleErrorBoundaryPage": "./components/ErrorBoundary/SampleErrorBoundaryPage",
-      "createProjectModal": "./components/Modals/CreateProjectModal"
+      "createProjectModal": "./components/Modals/CreateProjectModal",
+      "exampleTopologyPage": "./components/ExampleTopologyPage"
     },
     "disableStaticPlugins": [
       "@console/demo-plugin"
