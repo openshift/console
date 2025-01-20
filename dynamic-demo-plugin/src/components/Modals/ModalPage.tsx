@@ -4,6 +4,7 @@ import {
   K8sResourceCommon,
   useK8sWatchResource,
   useModal,
+  useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import './modal.scss';
 import { useTranslation } from 'react-i18next';
@@ -47,9 +48,31 @@ const LoadingComponent: React.FC = () => {
   );
 };
 
+const Overlay = ({ closeOverlay }) => {
+  const [right] = React.useState(`${800 * Math.random()}px`);
+  const [top] = React.useState(`${800 * Math.random()}px`);
+
+  return (
+    <div style={{
+      backgroundColor: 'gray',
+      padding: '1rem 4rem',
+      position: 'absolute',
+      right,
+      textAlign: 'center',
+      top,
+      zIndex: 100,
+    }}>
+      <p>Test Overlay</p>
+      <Button onClick={closeOverlay}>Close</Button>
+    </div>
+  );
+};
+
 export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   const launchModal = useModal();
   const { t } = useTranslation();
+
+  const launchOverlay = useOverlay();
 
   const TestComponent = ({ closeModal, ...rest }) => (
     <TestModal closeModal={closeModal} {...rest} />
@@ -72,6 +95,13 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   const onClick = React.useCallback(() => launchModal(TestComponent, {}), [launchModal]);
   const onAsyncClick = React.useCallback(() => launchModal(AsyncTestComponent, {}), [launchModal]);
 
+  const onClickOverlay1 = React.useCallback(
+    () => {
+      launchOverlay(Overlay, {});
+    },
+    [launchOverlay],
+  );
+
   return (
     <Flex
       alignItems={{ default: 'alignItemsCenter' }}
@@ -81,6 +111,9 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       className="demo-modal__page"
     >
       <Button onClick={onClick}>{t('plugin__console-demo-plugin~Launch Modal')}</Button>
+      <Button onClick={onClickOverlay1}>
+        {t('plugin__console-demo-plugin~Launch Overlay')}
+      </Button>
       <Button onClick={onAsyncClick}>
         {t('plugin__console-demo-plugin~Launch Modal Asynchronously')}
       </Button>
