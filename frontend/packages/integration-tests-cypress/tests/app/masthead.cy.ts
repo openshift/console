@@ -19,9 +19,9 @@ describe('Masthead', () => {
 
   describe('Logo', () => {
     it('should be restricted to a max-height of 60px', () => {
-      cy.byTestID('brand-image').should('be.visible');
-      cy.byTestID('brand-image').should('have.css', 'max-height', '60px');
-      cy.byTestID('brand-image').invoke('height').should('be.lte', 60);
+      cy.byTestID('masthead-logo').should('be.visible');
+      cy.byTestID('masthead-logo').should('have.css', 'max-height', '60px');
+      cy.byTestID('masthead-logo').invoke('height').should('be.lte', 60);
     });
   });
 
