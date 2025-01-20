@@ -6,6 +6,7 @@ export const API_PROXY_URL = '/api/dev-console/proxy/internet';
 
 type ProxyRequest = {
   allowInsecure?: boolean;
+  allowAuthHeader?: boolean;
   method: string;
   url: string;
   headers?: Record<string, string[]>;
