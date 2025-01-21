@@ -113,6 +113,11 @@
       color: inherit;
     }
 
+    &:disabled {
+      background: none;
+      color: var(--pf-t--global--text--color--disabled);
+    }
+
     &__titlePrefix {
       margin-right: 6px;
     }
