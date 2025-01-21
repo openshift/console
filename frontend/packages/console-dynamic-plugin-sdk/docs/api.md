@@ -76,11 +76,10 @@
 74.  [getTopologyGroupItems](#gettopologygroupitems)
 75.  [getTopologyNodeItem](#gettopologynodeitem)
 76.  [mergeGroup](#mergegroup)
-77.  [WorkloadModelProps](#workloadmodelprops)
-78. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-79. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-80. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-81. [DEPRECATED] [YAMLEditor](#yamleditor)
+77. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+78. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+79. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+80. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -2517,14 +2516,10 @@ A component that renders CPU core information within a tooltip.<br/><br/>@compon
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `cpuByPod` | Array of CPU usage per Pod, including names, values, and formatted values. |
-| `totalCores` | Total number of CPU cores used. |
+| `cpuByPod` | Array of CPU usage per Pod. |
+| `totalCores` | Total number of CPU cores used.
+ |
 
-
-
-### Returns
-
-{JSX.Element} A styled component displaying CPU usage and total cores.
 
 
 ---
@@ -2542,11 +2537,11 @@ A component that renders memory usage information within a tooltip.<br/><br/>@co
 
 ```tsx
 <MemoryCellComponent
-  totalBytes={8388608} // Represents 8 MiB
   memoryByPod={[
     { name: 'Pod1', value: 4194304, formattedValue: '4 MiB' },
     { name: 'Pod2', value: 4194304, formattedValue: '4 MiB' },
   ]}
+  totalBytes={8388608} // Represents 8 MiB
 />
 ```
 
@@ -2558,14 +2553,10 @@ A component that renders memory usage information within a tooltip.<br/><br/>@co
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `totalBytes` | Total memory usage in bytes. |
-| `memoryByPod` | Memory usage details per Pod. |
+| `memoryByPod` | Array of memory usage per Pod. |
+| `totalBytes` | Total memory usage in bytes.
+ |
 
-
-
-### Returns
-
-{JSX.Element} A styled component displaying memory usage in MiB.
 
 
 ---
@@ -2585,14 +2576,12 @@ A component that renders a row in the topology list view, with support for vario
 const node = getNode(); // Custom function to fetch or define a Node object
 const selectedIds = ['node-1'];
 const onSelect = (ids) => console.log('Selected IDs:', ids);
-const onSelectTab = (name) => console.log('Selected tab:', name);
 
 <DataList aria-label="Topology List View">
   <TopologyListViewNode
     item={node}
     selectedIds={selectedIds}
     onSelect={onSelect}
-    onSelectTab={onSelectTab}
     badgeCell={<CustomBadge />}
     labelCell={<CustomLabel />}
     alertsCell={<CustomAlerts />}
@@ -2613,7 +2602,6 @@ const onSelectTab = (name) => console.log('Selected tab:', name);
 | `item` | The topology node item to render. |
 | `selectedIds` | Array of selected node IDs. |
 | `onSelect` | Callback for handling node selection. |
-| `onSelectTab` | Callback for tab selection, if defined. |
 | `badgeCell` | Custom content for the badge cell. |
 | `labelCell` | Custom content for the label cell. |
 | `alertsCell` | Custom content for the alerts cell. |
@@ -2751,8 +2739,7 @@ const node = getTopologyNodeItem(resource, 'pod', data, undefined, ['child1'], '
 | `nodeProps` | Optional additional properties for the node model (excluding 'type', 'data', 'children', 'id', and 'label'). |
 | `children` | An array of child node IDs to associate with this node. |
 | `resourceKind` | The resource kind reference (optional). |
-| `shape` | The shape of the node (optional).
- |
+| `shape` | The shape of the node (optional). |
 
 
 
@@ -2797,34 +2784,6 @@ mergeGroup(newGroup, existingGroups);
 | `newGroup` | The new group to be merged into the existing groups. |
 | `existingGroups` | The array of groups into which the new group should be merged.
  |
-
-
-
-### Returns
-
-{void} This function does not return any value.
-
-
----
-
-## `WorkloadModelProps`
-
-### Summary 
-
-Default properties for a workload node model in the topology.<br/>This includes the dimensions, visibility, group status, and styling for the workload node.<br/><br/>@constant WorkloadModelProps<br/>@type {Object}<br/>@property {number} width - The default width for the workload node.<br/>@property {number} height - The default height for the workload node.<br/>@property {boolean} group - A flag indicating if the workload node is a group. Default is false.<br/>@property {boolean} visible - A flag indicating if the workload node is visible. Default is true.<br/>@property {Object} style - The default styling for the node, including padding.
-
-
-
-### Example
-
-
-```tsx
-const node = { ...WorkloadModelProps };
-```
-
-
-
-
 
 
 

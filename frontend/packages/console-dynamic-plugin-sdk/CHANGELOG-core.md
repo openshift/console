@@ -3,6 +3,10 @@
 Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
 version and PatternFly version compatibility.
 
+## 1.9.0 - 2025-01-21
+
+- Add and expose `CpuCellComponent`, `MemoryCellComponent`, `TopologyListViewNode`, `getTopologyEdgeItems`, `getTopologyGroupItems`, `getTopologyNodeItem`, `mergeGroup` topology components ([ODC-7726], [#14690])
+
 ## 1.8.0 - 2024-11-04
 
 - Add `allRowsSelected` and `canSelectAll` props to `VirtualizedTable` component ([OCPBUGS-43998], [#14447])
@@ -53,28 +57,29 @@ version and PatternFly version compatibility.
 - Use PatternFly 5 in Console and relax singleton config of PatternFly shared modules ([CONSOLE-3693], [#12983])
 - Add new extension type `console.node/status` ([CONSOLE-3899], [#13493])
 
-[CONSOLE-3662]: https://issues.redhat.com/browse/CONSOLE-3662
-[CONSOLE-3693]: https://issues.redhat.com/browse/CONSOLE-3693
-[CONSOLE-3695]: https://issues.redhat.com/browse/CONSOLE-3695
-[CONSOLE-3792]: https://issues.redhat.com/browse/CONSOLE-3792
-[CONSOLE-3883]: https://issues.redhat.com/browse/CONSOLE-3883
-[CONSOLE-3899]: https://issues.redhat.com/browse/CONSOLE-3899
-[CONSOLE-3949]: https://issues.redhat.com/browse/CONSOLE-3949
-[CONSOLE-4097]: https://issues.redhat.com/browse/CONSOLE-4097
-[CONSOLE-4185]: https://issues.redhat.com/browse/CONSOLE-4185
-[CONSOLE-4263]: https://issues.redhat.com/browse/CONSOLE-4263
-[OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
-[OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
-[OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
-[OCPBUGS-31703]: https://issues.redhat.com/browse/OCPBUGS-31703
-[OCPBUGS-33539]: https://issues.redhat.com/browse/OCPBUGS-33539
-[OCPBUGS-33567]: https://issues.redhat.com/browse/OCPBUGS-33567
-[OCPBUGS-34538]: https://issues.redhat.com/browse/OCPBUGS-34538
-[OCPBUGS-36678]: https://issues.redhat.com/browse/OCPBUGS-36678
-[OCPBUGS-37426]: https://issues.redhat.com/browse/OCPBUGS-37426
-[OCPBUGS-43538]: https://issues.redhat.com/browse/OCPBUGS-43538
-[OCPBUGS-43998]: https://issues.redhat.com/browse/OCPBUGS-43998
-[ODC-7425]: https://issues.redhat.com/browse/ODC-7425
+[console-3662]: https://issues.redhat.com/browse/CONSOLE-3662
+[console-3693]: https://issues.redhat.com/browse/CONSOLE-3693
+[console-3695]: https://issues.redhat.com/browse/CONSOLE-3695
+[console-3792]: https://issues.redhat.com/browse/CONSOLE-3792
+[console-3883]: https://issues.redhat.com/browse/CONSOLE-3883
+[console-3899]: https://issues.redhat.com/browse/CONSOLE-3899
+[console-3949]: https://issues.redhat.com/browse/CONSOLE-3949
+[console-4097]: https://issues.redhat.com/browse/CONSOLE-4097
+[console-4185]: https://issues.redhat.com/browse/CONSOLE-4185
+[console-4263]: https://issues.redhat.com/browse/CONSOLE-4263
+[ocpbugs-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
+[ocpbugs-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
+[ocpbugs-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
+[ocpbugs-31703]: https://issues.redhat.com/browse/OCPBUGS-31703
+[ocpbugs-33539]: https://issues.redhat.com/browse/OCPBUGS-33539
+[ocpbugs-33567]: https://issues.redhat.com/browse/OCPBUGS-33567
+[ocpbugs-34538]: https://issues.redhat.com/browse/OCPBUGS-34538
+[ocpbugs-36678]: https://issues.redhat.com/browse/OCPBUGS-36678
+[ocpbugs-37426]: https://issues.redhat.com/browse/OCPBUGS-37426
+[ocpbugs-43538]: https://issues.redhat.com/browse/OCPBUGS-43538
+[ocpbugs-43998]: https://issues.redhat.com/browse/OCPBUGS-43998
+[odc-7425]: https://issues.redhat.com/browse/ODC-7425
+[odc-7726]: https://issues.redhat.com/browse/ODC-7726
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
 [#13240]: https://github.com/openshift/console/pull/13240
@@ -96,3 +101,4 @@ version and PatternFly version compatibility.
 [#14156]: https://github.com/openshift/console/pull/14156
 [#14421]: https://github.com/openshift/console/pull/14421
 [#14447]: https://github.com/openshift/console/pull/14447
+[#14690]: https://github.com/openshift/console/pull/14690

@@ -201,8 +201,8 @@ export type CpuCellComponentProps = {
 };
 
 export type MemoryCellComponentProps = {
+  memoryByPod: MetricsTooltipProps['byPod'];
   totalBytes: number;
-  memoryByPod: any;
 };
 
 export type TopologyListViewNodeProps = {
@@ -218,10 +218,16 @@ export type TopologyListViewNodeProps = {
   groupResourcesCell?: React.ReactNode;
   hideAlerts?: boolean;
   noPods?: boolean;
-  onSelectTab?: (name: string) => void;
 };
 
-export type GetTopologyNodeItemParams = (
+export type GetTopologyEdgeItems = (
+  resource: K8sResourceKind,
+  resources: K8sResourceKind[],
+) => EdgeModel[];
+
+export type GetTopologyGroupItems = (resource: K8sResourceKind) => NodeModel | null;
+
+export type GetTopologyNodeItem = (
   resource: K8sResourceKind,
   type: string,
   data: any,
@@ -231,21 +237,4 @@ export type GetTopologyNodeItemParams = (
   shape?: NodeShape,
 ) => OdcNodeModel;
 
-export type GetTopologyEdgeItemParams = (
-  resource: K8sResourceKind,
-  resources: K8sResourceKind[],
-) => EdgeModel[];
-
-export type GetTopologyGroupItemParams = (resource: K8sResourceKind) => NodeModel | null;
-
-export type MergeGroupParams = (newGroup: NodeModel, existingGroups: NodeModel[]) => void;
-
-export type WorkloadModelPropsType = {
-  width: number;
-  height: number;
-  group: boolean;
-  visible: boolean;
-  style: {
-    padding: number;
-  };
-};
+export type MergeGroup = (newGroup: NodeModel, existingGroups: NodeModel[]) => void;

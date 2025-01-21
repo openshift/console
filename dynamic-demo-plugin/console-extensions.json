@@ -448,12 +448,8 @@
   {
     "type": "console.page/route",
     "properties": {
-      "exact": false,
-      "path": [
-        "/example-topology-page/ns/:ns",
-        "/example-topology-page/all-namespaces",
-        "/example-topology-page"
-      ],
+      "exact": true,
+      "path": ["/example-topology-page"],
       "component": {
         "$codeRef": "exampleTopologyPage.ExampleTopologyPage"
       }

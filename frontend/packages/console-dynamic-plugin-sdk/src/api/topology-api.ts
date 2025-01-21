@@ -2,22 +2,30 @@
 import * as React from 'react';
 import {
   CpuCellComponentProps,
-  GetTopologyEdgeItemParams,
-  GetTopologyGroupItemParams,
-  GetTopologyNodeItemParams,
   MemoryCellComponentProps,
-  MergeGroupParams,
   TopologyListViewNodeProps,
-  WorkloadModelPropsType,
+  GetTopologyEdgeItems,
+  GetTopologyGroupItems,
+  GetTopologyNodeItem,
+  MergeGroup,
+} from '../extensions/topology-types';
+
+export type {
+  CpuCellComponentProps,
+  MemoryCellComponentProps,
+  TopologyListViewNodeProps,
+  GetTopologyEdgeItems,
+  GetTopologyGroupItems,
+  GetTopologyNodeItem,
+  MergeGroup,
 } from '../extensions/topology-types';
 
 /**
  * A component that renders CPU core information within a tooltip.
  *
  * @component
- * @param {MetricsTooltipProps['byPod']} cpuByPod - Array of CPU usage per Pod, including names, values, and formatted values.
+ * @param {MetricsTooltipProps['byPod']} cpuByPod - Array of CPU usage per Pod.
  * @param {number} totalCores - Total number of CPU cores used.
- * @returns {JSX.Element} A styled component displaying CPU usage and total cores.
  *
  * @example
  * ```tsx
@@ -37,18 +45,17 @@ export const CpuCellComponent: React.FC<CpuCellComponentProps> = require('@conso
  * A component that renders memory usage information within a tooltip.
  *
  * @component
+ * @param {MetricsTooltipProps['byPod']} memoryByPod - Array of memory usage per Pod.
  * @param {number} totalBytes - Total memory usage in bytes.
- * @param {any} memoryByPod - Memory usage details per Pod.
- * @returns {JSX.Element} A styled component displaying memory usage in MiB.
  *
  * @example
  * ```tsx
  * <MemoryCellComponent
- *   totalBytes={8388608} // Represents 8 MiB
  *   memoryByPod={[
  *     { name: 'Pod1', value: 4194304, formattedValue: '4 MiB' },
  *     { name: 'Pod2', value: 4194304, formattedValue: '4 MiB' },
  *   ]}
+ *   totalBytes={8388608} // Represents 8 MiB
  * />
  * ```
  */
@@ -71,7 +78,6 @@ export const MemoryCellComponent: React.FC<MemoryCellComponentProps> = require('
  * @param {Node} item - The topology node item to render.
  * @param {string[]} selectedIds - Array of selected node IDs.
  * @param {(ids: string[]) => void} onSelect - Callback for handling node selection.
- * @param {(name: string) => void} [onSelectTab] - Callback for tab selection, if defined.
  * @param {React.ReactNode} [badgeCell] - Custom content for the badge cell.
  * @param {React.ReactNode} [labelCell] - Custom content for the label cell.
  * @param {React.ReactNode} [alertsCell] - Custom content for the alerts cell.
@@ -88,14 +94,12 @@ export const MemoryCellComponent: React.FC<MemoryCellComponentProps> = require('
  * const node = getNode(); // Custom function to fetch or define a Node object
  * const selectedIds = ['node-1'];
  * const onSelect = (ids) => console.log('Selected IDs:', ids);
- * const onSelectTab = (name) => console.log('Selected tab:', name);
  *
  * <DataList aria-label="Topology List View">
  *   <TopologyListViewNode
  *     item={node}
  *     selectedIds={selectedIds}
  *     onSelect={onSelect}
- *     onSelectTab={onSelectTab}
  *     badgeCell={<CustomBadge />}
  *     labelCell={<CustomLabel />}
  *     alertsCell={<CustomAlerts />}
@@ -130,7 +134,7 @@ export const TopologyListViewNode: React.FC<TopologyListViewNodeProps> = require
  * const edges = getTopologyEdgeItems(resource, resources);
  * ```
  */
-export const getTopologyEdgeItems: GetTopologyEdgeItemParams = require('@console/topology/src/data-transforms/transform-utils')
+export const getTopologyEdgeItems: GetTopologyEdgeItems = require('@console/topology/src/data-transforms/transform-utils')
   .getTopologyEdgeItems;
 
 /**
@@ -150,7 +154,7 @@ export const getTopologyEdgeItems: GetTopologyEdgeItemParams = require('@console
  * const groupNode = getTopologyGroupItems(resource);
  * ```
  */
-export const getTopologyGroupItems: GetTopologyGroupItemParams = require('@console/topology/src/data-transforms/transform-utils')
+export const getTopologyGroupItems: GetTopologyGroupItems = require('@console/topology/src/data-transforms/transform-utils')
   .getTopologyGroupItems;
 
 /**
@@ -163,7 +167,6 @@ export const getTopologyGroupItems: GetTopologyGroupItemParams = require('@conso
  * @param {string[]} [children] - An array of child node IDs to associate with this node.
  * @param {K8sResourceKindReference} [resourceKind] - The resource kind reference (optional).
  * @param {NodeShape} [shape] - The shape of the node (optional).
- *
  * @returns {OdcNodeModel} The generated node model for the topology item.
  *
  * @example
@@ -179,7 +182,7 @@ export const getTopologyGroupItems: GetTopologyGroupItemParams = require('@conso
  * const node = getTopologyNodeItem(resource, 'pod', data, undefined, ['child1'], 'PodKind');
  * ```
  */
-export const getTopologyNodeItem: GetTopologyNodeItemParams = require('@console/topology/src/data-transforms/transform-utils')
+export const getTopologyNodeItem: GetTopologyNodeItem = require('@console/topology/src/data-transforms/transform-utils')
   .getTopologyNodeItem;
 
 /**
@@ -188,8 +191,6 @@ export const getTopologyNodeItem: GetTopologyNodeItemParams = require('@console/
  *
  * @param {NodeModel} newGroup - The new group to be merged into the existing groups.
  * @param {NodeModel[]} existingGroups - The array of groups into which the new group should be merged.
- *
- * @returns {void} This function does not return any value.
  *
  * @example
  * ```tsx
@@ -204,25 +205,5 @@ export const getTopologyNodeItem: GetTopologyNodeItemParams = require('@console/
  * mergeGroup(newGroup, existingGroups);
  * ```
  */
-export const mergeGroup: MergeGroupParams = require('@console/topology/src/data-transforms/transform-utils')
+export const mergeGroup: MergeGroup = require('@console/topology/src/data-transforms/transform-utils')
   .mergeGroup;
-
-/**
- * Default properties for a workload node model in the topology.
- * This includes the dimensions, visibility, group status, and styling for the workload node.
- *
- * @constant WorkloadModelProps
- * @type {Object}
- * @property {number} width - The default width for the workload node.
- * @property {number} height - The default height for the workload node.
- * @property {boolean} group - A flag indicating if the workload node is a group. Default is false.
- * @property {boolean} visible - A flag indicating if the workload node is visible. Default is true.
- * @property {Object} style - The default styling for the node, including padding.
- *
- * @example
- * ```tsx
- * const node = { ...WorkloadModelProps };
- * ```
- */
-export const WorkloadModelProps: WorkloadModelPropsType = require('@console/topology/src/data-transforms/transform-utils')
-  .WorkloadModelProps;

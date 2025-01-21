@@ -1,9 +1,9 @@
+import * as React from 'react';
 import {
   CpuCellComponent,
   MemoryCellComponent,
   TopologyListViewNode,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
 import { Node } from '@patternfly/react-topology';
 import { DataList, DataListCell } from '@patternfly/react-core';
 
@@ -219,7 +219,6 @@ export const ExampleTopologyPage: React.FC = () => {
   } as unknown as Node;
 
   const onSelect = (ids: string[]) => console.log('Selected Node IDs:', ids);
-  const onSelectTab = (name: string) => console.log('Selected Tab:', name);
 
   const cpuStats = {
     totalCores: 2,
@@ -262,7 +261,6 @@ export const ExampleTopologyPage: React.FC = () => {
             item={mockNode}
             selectedIds={[]}
             onSelect={onSelect}
-            onSelectTab={onSelectTab}
             cpuCell={
               <DataListCell key="cpu" id="cpu-cell-component">
                 <CpuCellComponent cpuByPod={cpuStats.cpuByPod} totalCores={cpuStats.totalCores} />
