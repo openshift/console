@@ -23,7 +23,7 @@
   border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--border--color--default);
   background-color: var(--pf-t--global--background--color--primary--default);
   bottom: var(--popover-bottom);
-  overflow: hidden;
+  overflow: auto;
   padding-block-end: var(--pf-t--global--spacer--md);
   padding-block-start: var(--pf-t--global--spacer--md);
   padding-inline-end: var(--pf-t--global--spacer--md);
@@ -37,7 +37,7 @@
 }
 
 .lightspeed__popover--collapsed {
-  top: calc(var(--popover-margin) * 5);
+  top: calc(var(--popover-margin) * 5.5);
   width: 90%;
 
   @media (min-width: $pf-v6-global--breakpoint--sm) {
