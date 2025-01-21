@@ -147,12 +147,7 @@ export const ActivityCard: React.FC = () => {
   const viewEvents = `/k8s/ns/${projectName}/events`;
   const { t } = useTranslation();
   return (
-    <Card
-      data-test-id="activity-card"
-      className="co-overview-card--gradient"
-      isClickable
-      isSelectable
-    >
+    <Card data-test-id="activity-card" className="co-overview-card--gradient">
       <CardHeader
         actions={{
           actions: (

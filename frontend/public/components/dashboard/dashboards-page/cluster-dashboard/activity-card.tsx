@@ -194,12 +194,7 @@ const OngoingActivity = connect(mapStateToProps)(
 export const ActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
   return (
-    <Card
-      data-test-id="activity-card"
-      className="co-overview-card--gradient"
-      isClickable
-      isSelectable
-    >
+    <Card data-test-id="activity-card" className="co-overview-card--gradient">
       <CardHeader
         actions={{
           actions: (

@@ -311,7 +311,7 @@ export const UtilizationCard = () => {
   );
   return (
     machineConfigPoolsLoaded && (
-      <Card data-test-id="utilization-card" isClickable isSelectable>
+      <Card data-test-id="utilization-card">
         <CardHeader
           actions={{
             actions: (

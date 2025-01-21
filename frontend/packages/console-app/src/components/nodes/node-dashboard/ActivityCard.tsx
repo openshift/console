@@ -37,12 +37,7 @@ const ActivityCard: React.FC = () => {
   const eventsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/events`;
   const { t } = useTranslation();
   return (
-    <Card
-      data-test-id="activity-card"
-      className="co-overview-card--gradient"
-      isClickable
-      isSelectable
-    >
+    <Card data-test-id="activity-card" className="co-overview-card--gradient">
       <CardHeader
         actions={{
           actions: (

@@ -75,7 +75,7 @@ const EventsCard: React.FC<EventsCardProps> = ({
   const hostStatus = getBareMetalHostStatus(obj);
 
   return (
-    <Card className="co-overview-card--gradient" isClickable isSelectable>
+    <Card className="co-overview-card--gradient">
       <CardHeader
         actions={{
           actions: (

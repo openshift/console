@@ -50,7 +50,7 @@ export const UtilizationCard: React.FC = () => {
   );
 
   return (
-    <Card data-test-id="utilization-card" isClickable isSelectable>
+    <Card data-test-id="utilization-card">
       <CardHeader
         actions={{
           actions: (

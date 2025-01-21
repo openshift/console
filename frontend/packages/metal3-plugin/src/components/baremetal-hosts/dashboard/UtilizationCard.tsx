@@ -122,7 +122,7 @@ const UtilizationCard: React.FC = () => {
   );
 
   return (
-    <Card isClickable isSelectable>
+    <Card>
       <CardHeader
         actions={{
           actions: (
