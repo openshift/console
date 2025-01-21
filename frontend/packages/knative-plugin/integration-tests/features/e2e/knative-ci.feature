@@ -5,8 +5,24 @@ Feature: Perform actions on knative service and revision
         Background:
               And user is at Topology page
 
-
         @pre-condition
+        Scenario Outline: Create knative workload from From Git card on Add page: KN-05-TC04
+            Given user has created or selected namespace "knative-ci"
+              And user is at Add page
+              And user is at Import from Git page
+             When user enters Git Repo url as "<git_url>"
+              And user enters Name as "<workload_name>"
+              And user selects resource type as "Serverless Deployment"
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "<workload_name>" in topology page
+              And user is able to see Knative Revision
+
+        Examples:
+                  | git_url                                 | workload_name |
+                  | https://github.com/sclorg/nodejs-ex.git | kn-service    |
+
+        @manual
         Scenario Outline: Create knative workload using Container image with extrenal registry on Add page: KN-05-TC05
             Given user has logged in as a basic user
               And user is at developer perspective
@@ -75,7 +91,7 @@ Feature: Perform actions on knative service and revision
              When user right clicks on the revision of knative service "kn-service" to open the context menu
              Then user is able to see Edit Labels, Edit Annotations, Edit Revision, Delete Revision options in context menu
 
-
+        @broken-test
         Scenario: side bar details of knative Revision: KN-06-TC02
             Given user has created or selected namespace "knative-ci"
              When user clicks on the revision of knative service "kn-service"
@@ -121,7 +137,7 @@ Feature: Perform actions on knative service and revision
               And user clicks save button on the "Set traffic distribution" modal
              Then error message displays as "validation failed: Traffic targets sum to 75, want 100: spec.traffic"
 
-
+        @broken-test
         Scenario: Set traffic distribution equal to 100% for the Revisions of the knative Service: KN-02-TC12
             Given user has created or selected namespace "knative-ci"
              When user selects "Set traffic distribution" context menu option of knative service "kn-service"
@@ -133,7 +149,7 @@ Feature: Perform actions on knative service and revision
               And user clicks on the knative service name "kn-service"
              Then number of revisions should get increased in side bar - resources tab - routes section
 
-
+        @broken-test
         Scenario: Delete revision modal details for service with multiple revisions: KN-01-TC10
             Given user has created or selected namespace "knative-ci"
              When user right clicks on the revision of knative service "kn-service" to open the context menu

@@ -96,7 +96,8 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.url().should('include', 'topology');
       app.waitForLoad();
       cy.url().then(($url) => {
-        if ($url.includes('view=list')) {
+        if ($url.includes('view=list') && !$url.includes('all-namespace')) {
+          cy.log('Topology view is in list');
           cy.get(topologyPO.switcher).click({ force: true });
         }
       });
