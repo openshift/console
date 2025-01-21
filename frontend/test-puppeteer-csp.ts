@@ -100,11 +100,16 @@ const testPage = async (
     // The browser will attempt to send any CSP violations to the CSP reporting endpoint.
     // When such request occurs, we manually fulfill that request before it is sent over
     // the network and therefore avoiding the need to implement that reporting endpoint.
-    if (resourceType === 'CSPViolationReport' && request.url === cspReportURL.href) {
+    else if (resourceType === 'CSPViolationReport' && request.url === cspReportURL.href) {
       console.error('CSP violation detected', request.postData);
       errorCallback();
 
       cdpSession.send('Fetch.fulfillRequest', { requestId, responseCode: 200 });
+    }
+
+    // Resume other requests that were not explicitly handled above.
+    else {
+      cdpSession.send('Fetch.continueRequest', { requestId });
     }
   });
 
