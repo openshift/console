@@ -1,9 +1,10 @@
-import { app } from '@console/dev-console/integration-tests/support/pages';
+import { app, topologyPage } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 
 export const topologyHelper = {
   search: (name: string) => cy.get(topologyPO.search).clear().type(name),
   verifyWorkloadInTopologyPage: (appName: string, options?: { timeout: number }) => {
+    topologyPage.verifyToplogyPageNotEmpty();
     topologyHelper.search(appName);
     // eslint-disable-next-line promise/catch-or-return
     cy.get('body').then(($body) => {
