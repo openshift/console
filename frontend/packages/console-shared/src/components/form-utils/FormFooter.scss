@@ -2,6 +2,7 @@
 
 .ocs-form-footer {
   padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter;
+  z-index: var(--pf-t--global--z-index--xs);
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter--md;
   }
