@@ -27,18 +27,25 @@
   }
 }
 
-.co-virtualized-table .pf-v6-c-table .pf-v6-c-table__action {
-  padding-left: 0px !important;
-  width: 5% !important;
-}
-@media screen and (max-width: 992px) {
-  .co-virtualized-table .pf-v6-c-table .pf-v6-c-table__action {
-    width: 10% !important;
+.co-virtualized-table {
+  .pf-v6-c-table,
+  .pf-v5-c-table {
+    .pf-v6-c-table__action,
+    .pf-v5-c-table__action {
+      padding-left: 0px !important;
+      width: 5% !important;
+
+      @media screen and (max-width: 992px) {
+        & {
+          width: 10% !important;
+        }
+      }
+    }
   }
 }
 
 .co-virtualized-table--export-csv-button {
-  margin-bottom: 20px 
+  margin-bottom: 20px;
 }
 
 .pf-v6-c-window-scroller.ReactVirtualized__VirtualGrid,
