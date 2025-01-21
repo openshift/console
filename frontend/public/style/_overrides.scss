@@ -287,8 +287,8 @@ button.pf-v6-c-dropdown__menu-item.pf-m-disabled {
 ul {
   list-style: disc;
 }
-// And here we explicitly remove it from PF components, except for the List component.
-:where([class^='pf-']:not(.pf-v6-c-list, .pf-c-list)) {
+// And here we explicitly remove it from PF components, except for the List and Content components.
+:where([class^='pf-']:not(.pf-v6-c-list, .pf-c-list, .pf-v6-c-content--ul)) {
   @at-root :is(ul, ol)#{&} {
     list-style: none !important;
   }
