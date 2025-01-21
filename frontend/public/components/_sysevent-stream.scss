@@ -70,6 +70,7 @@
     --pf-t--global--background--color--primary--default
   ); // prevent overlapping text if events overlap each other
   border: var(--pf-t--global--border--width--100) solid var(--pf-t--global--color--nonstatus--gray--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
   flex: none;
   padding: 10px;
   width: 100%;
