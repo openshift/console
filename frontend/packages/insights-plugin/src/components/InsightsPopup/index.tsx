@@ -46,7 +46,12 @@ const LabelComponent = ({ clusterID, ...props }) => (
 );
 
 const SubTitleComponent = (props) => (
-  <ChartLabel {...props} style={{ fill: 'var(--pf-v6-chart-color-black-500)' }} />
+  <ChartLabel
+    {...props}
+    x={220}
+    y={100}
+    style={{ fill: 'var(--pf-t--chart--color--black--500)' }}
+  />
 );
 
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
@@ -115,6 +120,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
                 y: v,
               }))}
               title={`${numberOfIssues}`}
+              titleComponent={<ChartLabel x={220} y={78} />}
               subTitle={t('insights-plugin~Total issue', { count: numberOfIssues })}
               legendOrientation="vertical"
               width={320}
