@@ -83,6 +83,7 @@ const JarSection: React.FunctionComponent = () => {
         }}
         isRequired
         onClearClick={handleClear}
+        className="pf-v6-u-p-0"
       />
       <InputField
         type={TextInputTypes.text}
