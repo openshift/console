@@ -38,9 +38,9 @@ export const DeprecatedOperatorWarningBadge: React.FC<DeprecatedOperatorWarningB
     <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
       <Label
         data-test="deprecated-operator-warning-badge"
-        color="orange"
+        status="warning"
+        variant="outline"
         className={className}
-        icon={<YellowExclamationTriangleIcon />}
       >
         {t('olm~Deprecated')}
       </Label>

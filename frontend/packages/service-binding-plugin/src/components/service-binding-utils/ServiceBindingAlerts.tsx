@@ -3,7 +3,6 @@ import { Alert, Label, Popover } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ServiceBindingModel } from '../../models';
 import { getBrandingDetails } from '../../utils';
 import './ServiceBindingAlerts.scss';
@@ -45,7 +44,7 @@ export const ServiceBindingWarningForTopology: React.FC<ServiceBindingWarningPro
     <>
       {serviceBindingsLoaded && serviceBindings?.length > 0 && (
         <Popover bodyContent={<ServiceBindingDeprecationAlertForTopology />} triggerAction="hover">
-          <Label color="orange" icon={<YellowExclamationTriangleIcon />}>
+          <Label status="warning" variant="outline">
             {t('service-binding-plugin~Service Bindings are deprecated')}
           </Label>
         </Popover>
