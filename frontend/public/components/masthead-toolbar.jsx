@@ -588,7 +588,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             ref={toggleRef}
             onClick={(open) => setIsUserDropdownOpen(open)}
             isExpanded={isUserDropdownOpen}
-            data-test="user-dropdown"
+            data-test="user-dropdown-toggle"
             data-tour-id="tour-user-button"
             data-quickstart-id="qs-masthead-usermenu"
             className="co-user-menu"
@@ -598,6 +598,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         )}
         ref={userMenuRef}
         popperProps={{ position: 'right' }}
+        data-test="user-dropdown"
       >
         {renderApplicationItems(actions)}
       </Dropdown>

@@ -46,14 +46,14 @@ export const listPage = {
           .find('button')
           .as('filterDropdownToggleButton')
           .click();
-        /* PF Filter dropdown menu items are:
-           <li id="cluster">
-             <a data-test-row-filter="cluster">
-         */
-        cy.get(`#${rowFilter}`).click({ force: true }); // clicking on the <li /> works!
-        cy.url().should('include', '?rowFilter');
-        cy.get('@filterDropdownToggleButton').click();
       });
+      /* PF Filter dropdown menu items are:
+           <li data-test-row-filter="cluster">
+             <label id="cluster">
+         */
+      cy.get(`#${rowFilter}`).click();
+      cy.url().should('include', '?rowFilter');
+      cy.get('@filterDropdownToggleButton').click();
     },
   },
   rows: {
