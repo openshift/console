@@ -41,6 +41,14 @@
       opacity: 0;
     }
   }
+
+  .oc-pinned-resource__unpin-button:focus-visible,
+  .oc-pinned-resource__drag-button:focus-visible {
+    .oc-pinned-resource__delete-icon,
+    .oc-pinned-resource__drag-icon {
+      opacity: 1;
+    }
+  }
 }
 
 .oc-pinned-resource--dragging {
