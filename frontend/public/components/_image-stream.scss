@@ -25,8 +25,8 @@
 }
 
 .co-images-stream-tag-timeline__info {
-  background-color: var(--pf-t--color--gray--10);
-  border-radius: 3px;
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
   line-height: 30px;
   margin: 8px 0 24px 40px;
   padding: 20px;
@@ -43,7 +43,7 @@
 }
 
 .co-images-stream-tag-timeline__line {
-  border: var(--pf-t--global--border--width--md) solid var(--pf-t--global--border--color--default);
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
   left: 14px;
   position: relative;
 }
