@@ -68,7 +68,7 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
         }
         toggleButtonProps={{
           id: 'toggle-button1',
-          'aria-label': 'Expandable Details',
+          'aria-label': t('console-shared~Expandable details'),
           'aria-labelledby': 'expandable-card-title toggle-button1',
           'aria-expanded': isOpen,
         }}
