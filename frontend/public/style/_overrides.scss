@@ -66,6 +66,29 @@ form.pf-v6-c-form {
   @include catalog-logo-background(var(--pf-t--global--spacer--sm));
 }
 
+// .chr-c-* rules fix upstream issues with cascade of @patternfly/react-user-feedback styles
+// see https://github.com/patternfly/react-user-feedback/issues/86
+.chr-c-feedback-cards {
+  padding: inherit !important;
+}
+
+.chr-c-feedback-content-main {
+  max-height: 450px !important;
+}
+
+.chr-c-feedback-flex {
+  margin-right: 0px !important;
+}
+
+.chr-c-feedback-footer {
+  box-shadow: none !important;
+  padding: 0 0 var(--pf-t--global--spacer--sm) 0 !important;
+}
+
+.chr-c-feedback-heading {
+  padding: 0 37px var(--pf-t--global--spacer--sm) 0 !important;
+}
+
 .co-catalog-page__overlay-header {
   .catalog-item-header-pf-icon {
     max-width: 80px;
