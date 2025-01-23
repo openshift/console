@@ -232,12 +232,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: var(--pf-t--global--spacer--md);
     white-space: normal;
-  }
-
-  &__overlay-header {
-    margin-bottom: var(--pf-t--global--spacer--md);
   }
 
   &__overlay-body {

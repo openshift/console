@@ -69,13 +69,13 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
       isOpen={!!item}
       onClose={onClose}
       aria-label={item.name}
+      header={modalHeader}
     >
       {isBindable && (
         <div className="odc-catalog-details-modal__sbo_alert">
           <ServiceBindingDeprecationAlertForModals />
         </div>
       )}
-      {modalHeader}
       <CatalogDetailsPanel item={item} />
     </Modal>
   );
