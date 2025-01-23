@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
-import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { getDuration, dateFormatter } from './datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -64,10 +63,7 @@ const TrialDaysLeft: React.FC<{
   if (label) {
     return (
       <div>
-        <Label
-          color={variant === 'warning' ? 'orange' : 'red'}
-          icon={variant === 'warning' ? <ExclamationTriangleIcon /> : <ExclamationCircleIcon />}
-        >
+        <Label status={variant ?? 'danger'} variant="outline">
           {alertText}
         </Label>
       </div>
