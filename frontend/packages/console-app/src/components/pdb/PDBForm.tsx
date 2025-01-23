@@ -78,7 +78,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [isDisabled, setDisabled] = React.useState(true);
   const [labels, setLabels] = React.useState([]);
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
-  const [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   const items: RequirementItems = React.useMemo(
     () => ({
       maxUnavailable: t('console-app~maxUnavailable'),
@@ -127,7 +127,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
 
   const handleAvailabilityRequirementKeyChange = (value: string) => {
     setRequirement(value);
-    setOpen(!isOpen);
+    setIsOpen(!isOpen);
     setDisabled(false);
     onFormValuesChange({
       ...formValues,
@@ -227,7 +227,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
               <SplitItem isFilled>
                 <Select
                   isOpen={isOpen}
-                  onOpenChange={(open) => setOpen(open)}
+                  onOpenChange={(open) => setIsOpen(open)}
                   selected={selectedRequirement}
                   onSelect={(value: string) => handleAvailabilityRequirementKeyChange(value)}
                   toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -235,7 +235,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                       ref={toggleRef}
                       isExpanded={isOpen}
                       isFullWidth
-                      onClick={(open) => setOpen(open)}
+                      onClick={() => setIsOpen(!isOpen)}
                     >
                       {selectedRequirement}
                     </MenuToggle>
