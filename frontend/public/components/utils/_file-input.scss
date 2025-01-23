@@ -2,7 +2,6 @@
   overflow: hidden;
   position: relative;
   input[type='file'] {
-    background: white;
     cursor: inherit;
     display: block;
     filter: alpha(opacity=0);
@@ -19,6 +18,11 @@
   }
 }
 
+.co-file-dropzone__textarea {
+  min-height: 300px;
+}
+
+
 .co-file-dropzone {
   position: relative;
 
@@ -33,7 +37,6 @@
       var(--pf-t--global--border--color--default);
     background: rgba(0, 0, 0, 0.3);
     bottom: 0;
-    color: #fff;
     left: 0;
     margin: -3px;
     position: absolute;
@@ -41,20 +44,14 @@
     top: 0;
     z-index: 1001;
     &.co-file-dropzone--drop-over {
-      border-color: var(--pf-t--color--blue--40);
-      color: var(--pf-t--color--blue--40);
+      border-color: var(--pf-t--global--color--brand--default);
+      color: var(--pf-t--global--color--brand--default);
     }
   }
 }
 
-.co-file-dropzone__textarea {
-  font-family: var(--pf-v6-global--FontFamily--monospace);
-  min-height: 300px;
-  width: 100%;
-}
-
 .co-file-dropzone__drop-text {
-  font-size: 20px;
+  font-size: var(--pf-t--global--icon--size--font--body--lg);
   font-weight: var(--pf-t--global--font--weight--body--bold);
   left: 50%;
   margin-right: -50%;
