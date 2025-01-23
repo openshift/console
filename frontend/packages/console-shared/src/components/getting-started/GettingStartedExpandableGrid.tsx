@@ -66,8 +66,14 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
             ),
           }
         }
+        toggleButtonProps={{
+          id: 'toggle-button1',
+          'aria-label': 'Expandable Details',
+          'aria-labelledby': 'expandable-card-title toggle-button1',
+          'aria-expanded': isOpen,
+        }}
       >
-        <CardTitle data-test="title">
+        <CardTitle data-test="title" id="expandable-card-title">
           {title}{' '}
           <Popover bodyContent={titleTooltip} triggerAction="hover">
             <span role="button" aria-label={t('console-shared~More info')}>
