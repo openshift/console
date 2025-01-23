@@ -126,6 +126,14 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     margin-right: $pf-v6-global-gutter--md;
   }
 
+  &__alert {
+    margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      margin-left: $pf-v6-global-gutter--md;
+      margin-right: $pf-v6-global-gutter--md;
+    }
+  }
+
   &__content {
     flex: 1 1 auto;
     overflow: hidden;
