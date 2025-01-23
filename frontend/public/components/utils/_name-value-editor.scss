@@ -32,8 +32,8 @@ $drag-column-width: 28px;
 }
 
 .pairs-list__row-dragging {
-  background-color: var(--pf-t--global--border--color--default);
-  border: 1px dashed var(--pf-t--color--gray--20);
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  border: 1px dashed var(--pf-t--global--border--color--default);
   border-radius: 4px;
   height: 28px;
   margin-left: 28px;

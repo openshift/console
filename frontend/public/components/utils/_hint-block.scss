@@ -1,11 +1,7 @@
 .co-hint-block {
-  background-color: var(--pf-t--color--blue--10);
-  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--color--blue--20);
-  color: var(--pf-t--global--text--color--regular);
   padding: var(--pf-t--global--spacer--lg);
-
-  :where(.pf-v6-theme-dark) & {
-    background-color: var(--pf-t--color--gray--60);
-    border-color: var(--pf-t--color--gray--50);
-  }
+  color: var(--pf-t--global--text--color--regular);
+  background-color: var(--pf-t--global--background--color--primary--default);
+  border: var(--pf-t--global--border--width--box--status--default) solid var(--pf-t--global--border--color--status--info--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
 }

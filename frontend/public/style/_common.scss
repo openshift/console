@@ -234,7 +234,7 @@ dl.co-inline {
 }
 
 .co-m-pane__explanation code {
-  background-color: var(--pf-t--color--gray--10);
+  background-color: var(--pf-t--global--background--color--secondary--default);
   color: var(--pf-t--global--text--color--subtle);
 }
 
@@ -288,11 +288,11 @@ dl.co-inline {
   mask-image: $co-icon-external-link-alt;
 
   .pf-v6-c-dropdown__menu-item & {
-    color: var(--pf-t--color--gray--50);
+    color: var(--pf-t--global--text--color--subtle);
     margin-left: 5px;
   }
   .pf-v6-c-nav__link & {
-    color: var(--pf-t--color--gray--60);
+    color: var(--pf-t--global--text--color--subtle);
     margin-left: 4px;
   }
 }
@@ -314,7 +314,7 @@ dl.co-inline {
     color: var(--pf-t--global--text--color--link--default) !important;
     cursor: pointer;
     &:hover {
-      color: var(--pf-v6-global--Color--300);
+      color: var(--pf-t--global--text--color--link--hover);
     }
   }
   &__externallinkicon {
