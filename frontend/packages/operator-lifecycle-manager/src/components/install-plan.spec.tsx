@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Hint } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
@@ -18,7 +18,6 @@ import {
   ResourceIcon,
   Kebab,
   ConsoleEmptyState,
-  HintBlock,
   useAccessReview,
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
@@ -253,7 +252,7 @@ describe('InstallPlanPreview', () => {
         }}
       />,
     );
-    expect(wrapper.find(HintBlock).shallow().find(Button).at(0).render().text()).toEqual('Approve');
+    expect(wrapper.find(Hint).shallow().find(Button).at(0).render().text()).toEqual('Approve');
   });
 
   it('calls `k8sPatch` to set `approved: true` when button is clicked', (done) => {
@@ -292,7 +291,7 @@ describe('InstallPlanPreview', () => {
       />,
     );
 
-    wrapper.find(HintBlock).shallow().find(Button).at(0).simulate('click');
+    wrapper.find(Hint).shallow().find(Button).at(0).simulate('click');
   });
 
   it('renders button to deny install plan if requires approval', () => {
@@ -308,7 +307,7 @@ describe('InstallPlanPreview', () => {
         }}
       />,
     );
-    expect(wrapper.find(HintBlock).shallow().find(Button).at(1).render().text()).toEqual('Deny');
+    expect(wrapper.find(Hint).shallow().find(Button).at(1).render().text()).toEqual('Deny');
   });
 
   it('renders section for each resolving `ClusterServiceVersion`', () => {
@@ -356,7 +355,7 @@ describe('InstallPlanDetails', () => {
     installPlan.spec.approved = false;
     wrapper = wrapper.setProps({ obj: installPlan });
 
-    expect(wrapper.find(HintBlock).shallow().find<any>(Link).props().to).toEqual(
+    expect(wrapper.find(Hint).shallow().find<any>(Link).props().to).toEqual(
       `/k8s/ns/default/${referenceForModel(InstallPlanModel)}/${
         testInstallPlan.metadata.name
       }/components`,
@@ -364,7 +363,7 @@ describe('InstallPlanDetails', () => {
   });
 
   it('does not render link to "Components" tab if install plan does not need approval"', () => {
-    expect(wrapper.find(HintBlock).exists()).toBe(false);
+    expect(wrapper.find(Hint).exists()).toBe(false);
   });
 });
 

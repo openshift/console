@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Button } from '@patternfly/react-core';
+import { Alert, Button, Hint, HintTitle, HintBody, HintFooter } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
@@ -29,7 +29,6 @@ import {
   navFactory,
   ResourceSummary,
   history,
-  HintBlock,
   useAccessReview,
 } from '@console/internal/components/utils';
 import { authSvc } from '@console/internal/module/auth';
@@ -71,6 +70,16 @@ const componentsTableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
+
+const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, footer }) => {
+  return (
+    <Hint>
+      <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
+      <HintBody>{body}</HintBody>
+      <HintFooter>{footer}</HintFooter>
+    </Hint>
+  );
+};
 
 export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
@@ -304,20 +313,21 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
     <>
       {needsApproval && canPatchInstallPlans && (
         <div className="co-m-pane__body">
-          <HintBlock title={t('olm~Review manual InstallPlan')}>
-            <p>
-              {t(
-                'olm~Inspect the requirements for the components specified in this InstallPlan before approving.',
-              )}
-            </p>
-            <Link
-              to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
-                obj.metadata.name
-              }/components`}
-            >
-              <Button variant="primary">{t('olm~Preview InstallPlan')}</Button>
-            </Link>
-          </HintBlock>
+          <InstallPlanHint
+            title={t('olm~Review manual InstallPlan')}
+            body={t(
+              'olm~Inspect the requirements for the components specified in this InstallPlan before approving.',
+            )}
+            footer={
+              <Link
+                to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
+                  obj.metadata.name
+                }/components`}
+              >
+                <Button variant="primary">{t('olm~Preview InstallPlan')}</Button>
+              </Link>
+            }
+          />
         </div>
       )}
       {needsApproval && !canPatchInstallPlans && (
@@ -429,29 +439,32 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
       )}
       {needsApproval && !hideApprovalBlock && canPatchInstallPlans && (
         <div className="co-m-pane__body">
-          <HintBlock title={t('olm~Review manual InstallPlan')}>
-            <InstallPlanReview installPlan={obj} />
-            <div className="pf-v6-c-form">
-              <div className="pf-v6-c-form__actions">
-                <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
-                  {needsApproval ? t('olm~Approve') : t('olm~Approved')}
-                </Button>
-                <Button
-                  variant="secondary"
-                  isDisabled={false}
-                  onClick={() =>
-                    history.push(
-                      `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(SubscriptionModel)}/${
-                        subscription.name
-                      }?showDelete=true`,
-                    )
-                  }
-                >
-                  {t('olm~Deny')}
-                </Button>
+          <InstallPlanHint
+            title={t('olm~Review manual InstallPlan')}
+            body={<InstallPlanReview installPlan={obj} />}
+            footer={
+              <div className="pf-v6-c-form">
+                <div className="pf-v6-c-form__actions">
+                  <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
+                    {needsApproval ? t('olm~Approve') : t('olm~Approved')}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    isDisabled={false}
+                    onClick={() =>
+                      history.push(
+                        `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                          SubscriptionModel,
+                        )}/${subscription.name}?showDelete=true`,
+                      )
+                    }
+                  >
+                    {t('olm~Deny')}
+                  </Button>
+                </div>
               </div>
-            </div>
-          </HintBlock>
+            }
+          />
         </div>
       )}
       {stepsByCSV.map((steps) => (
@@ -536,6 +549,12 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
       ]}
     />
   );
+};
+
+type InstallPlanHintProps = {
+  title?: React.ReactNode;
+  body?: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
 export type InstallPlansListProps = {};

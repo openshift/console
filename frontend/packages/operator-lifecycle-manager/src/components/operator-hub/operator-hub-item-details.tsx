@@ -5,18 +5,17 @@ import {
   DescriptionListTerm,
   DescriptionListGroup,
   DescriptionListDescription,
+  Hint,
+  HintTitle,
+  HintBody,
+  HintFooter,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import {
-  ExternalLink,
-  HintBlock,
-  Timestamp,
-  getQueryArgument,
-} from '@console/internal/components/utils';
+import { ExternalLink, Timestamp, getQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   CloudCredentialKind,
@@ -49,6 +48,20 @@ const levels = [
   'Deep Insights',
   'Auto Pilot',
 ];
+
+const OperatorHubItemCustomizedHint: React.FC<OperatorHubItemCustomizedHintProps> = ({
+  title,
+  body,
+  footer,
+}) => {
+  return (
+    <Hint className="pf-v6-u-mb-sm">
+      <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
+      <HintBody>{body}</HintBody>
+      <HintFooter>{footer}</HintFooter>
+    </Hint>
+  );
+};
 
 const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabilityLevel }) => {
   const { t } = useTranslation();
@@ -84,7 +97,7 @@ type CapabilityLevelProps = {
   selectedChannelCapabilityLevel: string;
 };
 
-const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
+const InstalledHint: React.FC<OperatorHubItemDetailsHintProps> = ({
   latestVersion,
   subscription,
   installedChannel,
@@ -103,30 +116,35 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
   const installedVersion = installedCSV?.spec?.version;
   return (
-    <HintBlock className="co-catalog-page__hint" title={t('olm~Installed Operator')}>
-      <p>
-        {t('olm~This Operator has been installed on the cluster.')}{' '}
-        <Link to={to}>{t('olm~View it here.')}</Link>
-      </p>
-      {installedVersion !== latestVersion ? (
+    <OperatorHubItemCustomizedHint
+      title={t('olm~Installed Operator')}
+      body={
         <>
-          <DescriptionList columnModifier={{ default: '2Col' }}>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Installed Channel')}</DescriptionListTerm>
-              <DescriptionListDescription>{installedChannel}</DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Installed Version')}</DescriptionListTerm>
-              <DescriptionListDescription>{installedVersion}</DescriptionListDescription>
-            </DescriptionListGroup>
-          </DescriptionList>
+          {t('olm~This Operator has been installed on the cluster.')}{' '}
+          <Link to={to}>{t('olm~View it here.')}</Link>
         </>
-      ) : null}
-    </HintBlock>
+      }
+      footer={
+        installedVersion !== latestVersion ? (
+          <HintFooter>
+            <DescriptionList columnModifier={{ default: '2Col' }}>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Installed Channel')}</DescriptionListTerm>
+                <DescriptionListDescription>{installedChannel}</DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Installed Version')}</DescriptionListTerm>
+                <DescriptionListDescription>{installedVersion}</DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </HintFooter>
+        ) : null
+      }
+    />
   );
 };
 
-const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({ subscription }) => {
+const InstallingHint: React.FC<OperatorHubItemDetailsHintProps> = ({ subscription }) => {
   const { t } = useTranslation();
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
     subscription?.status?.installedCSV
@@ -144,64 +162,70 @@ const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({ s
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name}/subscription`
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
   return (
-    <HintBlock className="co-catalog-page__hint" title={t('olm~Installing Operator')}>
-      <p>
-        <span>
-          <Trans ns="olm">This Operator is being installed on the cluster.</Trans>
-        </span>
-        &nbsp;
-        <Link to={to}>{t('olm~View it here.')}</Link>
-      </p>
-    </HintBlock>
+    <OperatorHubItemCustomizedHint
+      title={t('olm~Installing Operator')}
+      body={t(
+        'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
+      )}
+      footer={
+        <>
+          <span>
+            <Trans ns="olm">This Operator is being installed on the cluster.</Trans>
+          </span>
+          &nbsp;
+          <Link to={to}>{t('olm~View it here.')}</Link>
+        </>
+      }
+    />
   );
 };
 
-const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = (props) => {
+const OperatorHubItemDetailsHint: React.FC<OperatorHubItemDetailsHintProps> = (props) => {
   const { t } = useTranslation();
   const { installed, isInstalling, catalogSource } = props;
   if (isInstalling) {
-    return <InstallingHintBlock {...props} />;
+    return <InstallingHint {...props} />;
   }
 
   if (installed) {
-    return <InstalledHintBlock {...props} />;
+    return <InstalledHint {...props} />;
   }
 
   if (catalogSource === DefaultCatalogSource.CommunityOperators) {
     return (
-      <HintBlock className="co-catalog-page__hint" title={t('olm~Community Operator')}>
-        <p>
-          {t(
-            'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
-          )}
-        </p>
-        {RH_OPERATOR_SUPPORT_POLICY_LINK && (
-          <span className="co-modal-ignore-warning__link">
-            <ExternalLink
-              href={RH_OPERATOR_SUPPORT_POLICY_LINK}
-              text={t('olm~Learn more about Red Hat’s third party software support policy')}
-            />
-          </span>
+      <OperatorHubItemCustomizedHint
+        title={t('olm~Community Operator')}
+        body={t(
+          'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
         )}
-      </HintBlock>
+        footer={
+          RH_OPERATOR_SUPPORT_POLICY_LINK && (
+            <HintFooter>
+              <ExternalLink
+                href={RH_OPERATOR_SUPPORT_POLICY_LINK}
+                text={t('olm~Learn more about Red Hat’s third party software support policy')}
+              />
+            </HintFooter>
+          )
+        }
+      />
     );
   }
 
   if (catalogSource === DefaultCatalogSource.RedHatMarketPlace) {
     return (
-      <HintBlock title={t('olm~Marketplace Operator')}>
-        <p>
-          {t(
-            'olm~This Operator is purchased through Red Hat Marketplace. After completing the purchase process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat Marketplace for more details and to track your usage of this application.',
-          )}
-        </p>
-        <p>
+      <OperatorHubItemCustomizedHint
+        title={t('olm~Marketplace Operator')}
+        body={t(
+          'olm~This Operator is purchased through Red Hat Marketplace. After completing the purchase process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat Marketplace for more details and to track your usage of this application.',
+        )}
+        footer={
           <ExternalLink
             href="https://marketplace.redhat.com/en-us?utm_source=openshift_console"
             text={t('olm~Learn more about the Red Hat Marketplace')}
           />
-        </p>
-      </HintBlock>
+        }
+      />
     );
   }
 
@@ -404,7 +428,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
               deprecatedVersion={deprecatedVersion}
             />
           )}
-          <OperatorHubItemDetailsHintBlock
+          <OperatorHubItemDetailsHint
             installed={installed}
             isInstalling={isInstalling}
             latestVersion={version}
@@ -429,7 +453,14 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
 OperatorHubItemDetails.defaultProps = {
   item: null,
 };
-type OperatorHubItemDetailsHintBlockProps = {
+
+type OperatorHubItemCustomizedHintProps = {
+  title?: React.ReactNode;
+  body?: React.ReactNode;
+  footer?: React.ReactNode;
+};
+
+type OperatorHubItemDetailsHintProps = {
   installed: boolean;
   isInstalling: boolean;
   latestVersion: string;
