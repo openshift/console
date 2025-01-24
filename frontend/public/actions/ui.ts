@@ -22,7 +22,13 @@ import {
   getUser,
   getImpersonate,
 } from '@console/dynamic-plugin-sdk';
+import {
+  MetricValuesByName,
+  NamespaceMetrics,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
+
+export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
@@ -54,15 +60,6 @@ export enum ActionType {
   SetDeprecatedChannel = 'setDeprecatedChannel',
   SetDeprecatedVersion = 'setDeprecatedVersion',
 }
-
-type MetricValuesByName = {
-  [name: string]: number;
-};
-
-export type NamespaceMetrics = {
-  cpu: MetricValuesByName;
-  memory: MetricValuesByName;
-};
 
 type MetricValuesByNamespace = {
   [namespace: string]: MetricValuesByName;
