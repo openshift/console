@@ -17,11 +17,11 @@ require (
 	github.com/gorilla/sessions v1.2.2
 	github.com/gorilla/websocket v1.5.0
 	github.com/graph-gophers/graphql-go v1.5.0
-	github.com/openshift/api v3.9.0+incompatible
+	github.com/openshift/api v0.0.0-20250122154204-28e2884ef1ab
 	github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1
 	github.com/openshift/library-go v0.0.0-20231020125034-5a2d9fe760b3
-	github.com/operator-framework/kubectl-operator v0.4.1-0.20230203190200-07b1999a3d68
-	github.com/operator-framework/operator-lifecycle-manager v0.23.1
+	github.com/operator-framework/kubectl-operator v0.4.0
+	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/prometheus/client_golang v1.19.1
 	github.com/prometheus/common v0.55.0
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
@@ -157,7 +157,6 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/operator-framework/api v0.17.3 // indirect
-	github.com/operator-framework/operator-controller v0.0.0-20230203004137-2d8dea88dad1 // indirect
 	github.com/operator-framework/operator-registry v1.26.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
@@ -228,7 +227,4 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 )
 
-replace (
-	github.com/openshift/api => github.com/openshift/api v0.0.0-20241211151016-1a7b90faeadf
-	go.opentelemetry.io/contrib => go.opentelemetry.io/contrib v1.12.0
-)
+replace go.opentelemetry.io/contrib => go.opentelemetry.io/contrib v1.12.0
