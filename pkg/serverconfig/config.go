@@ -119,11 +119,13 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
+	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
 	addI18nNamespaces(fs, config.I18nNamespaces)
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
 		return err
 	}
+
 	addContentSecurityPolicyEnabled(fs, &config.ContentSecurityPolicyEnabled)
 	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
 	addTelemetry(fs, config.Telemetry)
@@ -352,6 +354,13 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 	return alreadySet
 }
 
+func addContentSecurityPolicy(fs *flag.FlagSet, csp MultiKeyValue) {
+	for cspDirectiveName, cspDirectiveValue := range csp {
+		cspDirectiveKey := getCSPDirectiveKey(cspDirectiveName)
+		fs.Set("content-security-policy", fmt.Sprintf("%s=%s", cspDirectiveKey, cspDirectiveValue))
+	}
+}
+
 func addPlugins(fs *flag.FlagSet, plugins MultiKeyValue) {
 	for pluginName, pluginEndpoint := range plugins {
 		fs.Set("plugins", fmt.Sprintf("%s=%s", pluginName, pluginEndpoint))
@@ -368,18 +377,6 @@ func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
 }
 
-func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
-	if csp != nil {
-		marshaledCSP, err := json.Marshal(csp)
-		if err != nil {
-			klog.Fatalf("Could not marshal ConsoleConfig 'content-security-policy' field: %v", err)
-			return err
-		}
-		fs.Set("content-security-policy", string(marshaledCSP))
-	}
-	return nil
-}
-
 func addContentSecurityPolicyEnabled(fs *flag.FlagSet, enabled *bool) {
 	if enabled != nil && *enabled {
 		fs.Set("content-security-policy-enabled", "true")
@@ -389,5 +386,25 @@ func addContentSecurityPolicyEnabled(fs *flag.FlagSet, enabled *bool) {
 func SetIfUnset(flagVal *string, val string) {
 	if len(*flagVal) == 0 {
 		*flagVal = val
+	}
+}
+
+func getCSPDirectiveKey(directiveType string) string {
+	switch directiveType {
+	case string(consolev1.DefaultSrc):
+		return "default-src"
+	case string(consolev1.ScriptSrc):
+		return "script-src"
+	case string(consolev1.StyleSrc):
+		return "style-src"
+	case string(consolev1.ImgSrc):
+		return "img-src"
+	case string(consolev1.ConnectSrc):
+		return "connect-src"
+	case string(consolev1.FontSrc):
+		return "font-src"
+	default:
+		klog.Infof("ignored unsupported CSP directive: %q", directiveType)
+		return ""
 	}
 }
