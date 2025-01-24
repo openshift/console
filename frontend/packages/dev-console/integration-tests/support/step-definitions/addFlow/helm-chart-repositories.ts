@@ -45,6 +45,10 @@ Given('user is at Create Helm Chart Repository page', () => {
   addPage.selectCardFromOptions(addOptions.HelmChartRepositories);
 });
 
+When('user selects Form view', () => {
+  cy.get(`[data-test="form-view-input"]`).click();
+});
+
 Then('user enters Chart repository name as helm-test2', () => {
   cy.get(helmChartRepositoriesPO.name).should('be.visible').clear().type('helm-test2');
 });

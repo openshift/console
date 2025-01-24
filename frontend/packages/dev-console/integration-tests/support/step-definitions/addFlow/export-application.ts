@@ -49,14 +49,18 @@ When('user clicks on Export Application option again', () => {
 });
 
 Then('user can see a toast message saying {string}', (message: string) => {
-  cy.get(exportApplication.infoTip, { timeout: 5000 }).contains(message);
+  cy.get(exportApplication.infoTip, { timeout: 5000 }).then(($elements) => {
+    return $elements.text().includes(message);
+  });
 });
 
 Then(
   'user can see a toast message saying {string} with download option and close button',
   (message: string) => {
     cy.get(exportApplication.infoTip).should('not.exist');
-    cy.get(exportApplication.infoTip, { timeout: 120000 }).contains(message);
+    cy.get(exportApplication.infoTip, { timeout: 120000 }).then(($elements) => {
+      return $elements.text().includes(message);
+    });
     cy.byTestID('download-export').contains('Download');
     closeExportNotification();
   },

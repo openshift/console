@@ -16,8 +16,8 @@ Feature: Create Application from git form with repositories from In cluster Gite
               And user enters Name as "<name>"
               And user selects resource type as "<resource_type>"
               And user clicks Create button on Add page
-             Then user will be redirected to Topology page
-              And user can see toast notification saying "<resource_type>" created successfully
+             Then user can see toast notification saying "<resource_type>" created successfully
+              And user will be redirected to Topology page
               And user is able to see workload "<name>" in topology page
               And user deletes the Gitea Server
 

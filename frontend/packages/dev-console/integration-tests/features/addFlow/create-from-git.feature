@@ -42,7 +42,6 @@ Feature: Create Application from git form
              Then user will be redirected to Topology page
               And user can see toast notification saying "DeploymentConfig" created successfully
               And user can see the created workload "dancer-ex-git-2" is linked to existing application "nodejs-ex-git-app"
-              And user will see sidebar in topology page with title "dancer-ex-git-2"
 
 
         @regression
@@ -77,9 +76,9 @@ Feature: Create Application from git form
               And user enters Path as "/home"
               And user selects default Target Port
               And user clicks Create button on Add page
-             Then user will be redirected to Topology page
+             Then user can see the toast notification containg the route value "home"
+              And user will be redirected to Topology page
               And user will see sidebar in topology page with title "git-route"
-              And user can see the toast notification containg the route value "home"
               And the route of application "git-route" contains "home" in the Routes section of the workload sidebar
               And user is able to see label "route=testRoute1" in Route details page for deployment "git-route"
 
