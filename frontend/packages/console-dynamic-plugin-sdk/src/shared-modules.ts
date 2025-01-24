@@ -26,10 +26,10 @@ export const sharedPluginModules = [
   '@openshift-console/dynamic-plugin-sdk-internal',
   'react',
   'react-i18next',
+  'react-redux',
   'react-router',
   'react-router-dom',
   'react-router-dom-v5-compat',
-  'react-redux',
   'redux',
   'redux-thunk',
 ] as const;
@@ -44,10 +44,10 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   '@openshift-console/dynamic-plugin-sdk-internal': { singleton: true, allowFallback: false },
   react: { singleton: true, allowFallback: false },
   'react-i18next': { singleton: true, allowFallback: false },
+  'react-redux': { singleton: true, allowFallback: false },
   'react-router': { singleton: true, allowFallback: false },
   'react-router-dom': { singleton: true, allowFallback: false },
   'react-router-dom-v5-compat': { singleton: true, allowFallback: false },
-  'react-redux': { singleton: true, allowFallback: false },
   redux: { singleton: true, allowFallback: false },
   'redux-thunk': { singleton: true, allowFallback: false },
 };
