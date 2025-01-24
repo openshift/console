@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Icon } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -40,7 +39,8 @@ export const InventoryItemStatus: React.FC<InventoryItemStatusProps> = ({
 }) => {
   const body = (
     <>
-      <span className="co-inventory-card__status-count">{count}</span> <Icon size="xl">{icon}</Icon>
+      <span>{count}</span>
+      <span className="co-dashboard-icon co-icon-space-l">{icon}</span>
     </>
   );
   return (

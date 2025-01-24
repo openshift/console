@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ButtonVariant, Icon as PFIconWrapper } from '@patternfly/react-core';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
@@ -42,9 +42,9 @@ export const StatusItem: React.FC<StatusItemProps> = ({
   const { t } = useTranslation();
   return (
     <div className="co-status-card__alert-item">
-      <PFIconWrapper size="xl">
+      <div className="co-status-card__alert-item-icon co-dashboard-icon">
         <Icon />
-      </PFIconWrapper>
+      </div>
       <div className="co-status-card__alert-item-text">
         <div className="co-status-card__alert-item-message">
           {name && <span className="co-status-card__alert-item-header">{name}</span>}

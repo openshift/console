@@ -27,24 +27,14 @@
   display: flex;
   flex-shrink: 0;
   margin-left: 1.8rem;
-
-  &,
-  > a {
-    display: inline-flex;
-    align-items: center;
-
-    .co-inventory-card__status-count {
-      margin-right: var(--pf-t--global--spacer--sm);
-    }
-  }
 }
 
 .co-inventory-card__status-icon--question {
-  color: var(--pf-t--global--icon--color--severity--undefined--default);
+  color: var(--pf-t--color--gray--30);
 }
 
 .co-inventory-card__status-icon--progress {
-  color: var(--pf-t--global--icon--color--severity--minor--default);
+  color: var(--pf-t--color--gray--50);
 }
 
 .co-inventory-card__accordion.pf-v6-c-accordion {
