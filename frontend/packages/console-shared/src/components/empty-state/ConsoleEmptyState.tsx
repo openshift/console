@@ -17,7 +17,7 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
   ...props
 }) => {
   const dataTest = props['data-test'] || 'console-empty-state';
-  const variant = props.variant || EmptyStateVariant.xs;
+  const variant = props.variant || EmptyStateVariant.sm;
   const body = children && (
     <EmptyStateBody data-test={`${dataTest}-body`}>{children}</EmptyStateBody>
   );
@@ -36,7 +36,14 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
     </EmptyStateFooter>
   );
   return (
-    <EmptyState variant={variant} data-test={dataTest} titleText={title} icon={Icon} {...props}>
+    <EmptyState
+      className="pf-v6-u-pt-xl-on-md"
+      variant={variant}
+      data-test={dataTest}
+      titleText={title}
+      icon={Icon}
+      {...props}
+    >
       {body}
       {footer}
     </EmptyState>
