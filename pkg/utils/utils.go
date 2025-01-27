@@ -3,13 +3,13 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"k8s.io/klog/v2"
 
 	consolev1 "github.com/openshift/api/console/v1"
+	"github.com/openshift/console/pkg/serverconfig"
 )
 
 const (
@@ -19,6 +19,8 @@ const (
 	fontSrc       = "font-src"
 	scriptSrc     = "script-src"
 	styleSrc      = "style-src"
+	objectSrc     = "object-src"
+	connectSrc    = "connect-src"
 	consoleDot    = "console.redhat.com"
 	httpLocalHost = "http://localhost:8080"
 	wsLocalHost   = "ws://localhost:8080"
@@ -26,6 +28,7 @@ const (
 	data          = "data:"
 	unsafeEval    = "'unsafe-eval'"
 	unsafeInline  = "'unsafe-inline'"
+	none          = "'none'"
 )
 
 // Generate a cryptographically secure random array of bytes.
@@ -55,7 +58,7 @@ func RandomString(length int) (string, error) {
 // a complete set of directives for the Content-Security-Policy-Report-Only header.
 // The constructed directives will include the default sources and the supplied configuration.
 
-func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]string, error) {
+func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, indexPageScriptNonce string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
 
 	// The default sources are the sources that are allowed for all directives.
@@ -69,6 +72,10 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	fontSrcDirective := []string{fontSrc, self}
 	scriptSrcDirective := []string{scriptSrc, self, consoleDot}
 	styleSrcDirective := []string{styleSrc, self}
+	objectSrcDirective := []string{objectSrc}
+	connectSrcDirective := []string{connectSrc}
+
+	// If running off-cluster, append the localhost sources to the default sources
 	if k8sMode == "off-cluster" {
 		baseUriDirective = append(baseUriDirective, []string{httpLocalHost, wsLocalHost}...)
 		defaultSrcDirective = append(defaultSrcDirective, []string{httpLocalHost, wsLocalHost}...)
@@ -81,11 +88,9 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	// If the plugins are providing a content security policy configuration, parse it and add it to
 	// the appropriate directive. The configuration is a string that is parsed into a map of directive types to sources.
 	// The sources are added to the existing sources for each type.
-	if pluginsCSP != "" {
-		parsedCSP, err := ParseContentSecurityPolicyConfig(pluginsCSP)
-		if err != nil {
-			return nil, err
-		}
+	if pluginsCSP != nil {
+		parsedCSP := ParseContentSecurityPolicyConfig(pluginsCSP)
+
 		for directive, sources := range *parsedCSP {
 			switch directive {
 			case consolev1.DefaultSrc:
@@ -98,8 +103,12 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 				scriptSrcDirective = append(scriptSrcDirective, sources...)
 			case consolev1.StyleSrc:
 				styleSrcDirective = append(styleSrcDirective, sources...)
+			case consolev1.ObjectSrc:
+				objectSrcDirective = append(objectSrcDirective, sources...)
+			case consolev1.ConnectSrc:
+				connectSrcDirective = append(connectSrcDirective, sources...)
 			default:
-				klog.Warningf("ignored invalid CSP directive: %v", directive)
+				klog.Infof("ignored invalid CSP directive: %v", directive)
 			}
 		}
 	}
@@ -108,6 +117,16 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	fontSrcDirective = append(fontSrcDirective, data)
 	scriptSrcDirective = append(scriptSrcDirective, []string{unsafeEval, nonce}...)
 	styleSrcDirective = append(styleSrcDirective, unsafeInline)
+
+	// If the objectSrc directive is not set, add 'none' to it.
+	if len(objectSrcDirective) == 1 && objectSrcDirective[0] == "object-src" {
+		objectSrcDirective = append(objectSrcDirective, none)
+	}
+
+	// If the connectSrc directive is not set, add 'none' to it.
+	if len(connectSrcDirective) == 1 && connectSrcDirective[0] == "connect-src" {
+		connectSrcDirective = append(connectSrcDirective, none)
+	}
 
 	// Construct the full list of directives from the aggregated sources.
 	// This array is a list of directives, where each directive is a string
@@ -121,46 +140,19 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 		strings.Join(fontSrcDirective, " "),
 		strings.Join(scriptSrcDirective, " "),
 		strings.Join(styleSrcDirective, " "),
+		strings.Join(objectSrcDirective, " "),
+		strings.Join(connectSrcDirective, " "),
 		"frame-src 'none'",
 		"frame-ancestors 'none'",
-		"object-src 'none'",
 	}, nil
 }
 
-func ParseContentSecurityPolicyConfig(csp string) (*map[consolev1.DirectiveType][]string, error) {
+func ParseContentSecurityPolicyConfig(csp serverconfig.MultiKeyValue) *map[consolev1.DirectiveType][]string {
 	parsedCSP := &map[consolev1.DirectiveType][]string{}
-	err := json.Unmarshal([]byte(csp), parsedCSP)
-	if err != nil {
-		errMsg := fmt.Sprintf("Error unmarshaling ConsoleConfig contentSecurityPolicy field: %v", err)
-		klog.Error(errMsg)
-		return nil, fmt.Errorf(errMsg)
+	for cspDirectiveName, cspDirectiveValue := range csp {
+		parsedCSPKey := consolev1.DirectiveType(cspDirectiveName)
+		(*parsedCSP)[parsedCSPKey] = strings.Split(cspDirectiveValue, " ")
 	}
 
-	// Validate the keys to ensure they are all valid DirectiveTypes
-	for key := range *parsedCSP {
-		// Check if the key is a valid DirectiveType
-		if !isValidDirectiveType(key) {
-			return nil, fmt.Errorf("invalid CSP directive: %v", key)
-		}
-	}
-
-	return parsedCSP, nil
-}
-
-// Helper function to validate DirectiveTypes
-func isValidDirectiveType(d consolev1.DirectiveType) bool {
-	validTypes := []consolev1.DirectiveType{
-		consolev1.DefaultSrc,
-		consolev1.ScriptSrc,
-		consolev1.StyleSrc,
-		consolev1.ImgSrc,
-		consolev1.FontSrc,
-	}
-
-	for _, validType := range validTypes {
-		if d == validType {
-			return true
-		}
-	}
-	return false
+	return parsedCSP
 }
