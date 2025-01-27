@@ -8,6 +8,7 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 import { USERSETTINGS_PREFIX, useUserSettings } from '@console/shared';
+import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
 
 const SIDEBAR_ALERTS = 'sideBarAlerts';
 
@@ -16,14 +17,19 @@ const ResolveResourceAlerts: React.FC<{
   useResourceAlertsContent?: (element: GraphElement) => DetailsResourceAlertContent;
   element: GraphElement;
 }> = observer(function ResolveResourceAlerts({ id, useResourceAlertsContent, element }) {
-  const [showAlert, setShowAlert, loaded] = useUserSettings(
+  const [showAlertFromConfigMap, , loaded] = useUserSettings(
     `${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`,
+    true,
+  );
+  const [showAlert, setShowAlert] = useUserSettingsLocalStorage(
+    `${USERSETTINGS_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
+    `${element.getId()}`,
     true,
   );
   const alertConfigs = useResourceAlertsContent(element);
   if (!alertConfigs) return null;
   const { variant, content, actionLinks, dismissible, title } = alertConfigs;
-  return loaded && showAlert ? (
+  return showAlert || (showAlertFromConfigMap && loaded) ? (
     <Alert
       isInline
       variant={variant}
