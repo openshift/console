@@ -1445,6 +1445,7 @@
   "To learn more, visit the OpenShift <2>documentation</2>.": "To learn more, visit the OpenShift <2>documentation</2>.",
   "Download the <1>command-line tools</1>": "Download the <1>command-line tools</1>",
   "Create a new project": "Create a new project",
+  "Getting Started": "Getting Started",
   "StatefulSet details": "StatefulSet details",
   "StatefulSets": "StatefulSets",
   "Retain": "Retain",
