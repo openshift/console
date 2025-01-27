@@ -122,7 +122,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
             </label>
             <div>
               <input
-                className="pf-v6-c-form-control"
+                className="pf-v5-c-form-control"
                 type="text"
                 onChange={onNameChanged}
                 value={secret?.metadata?.name}
