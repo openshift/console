@@ -3,6 +3,10 @@ package utils
 import (
 	"reflect"
 	"testing"
+
+	consolev1 "github.com/openshift/api/console/v1"
+	v1 "github.com/openshift/api/console/v1"
+	"github.com/openshift/console/pkg/serverconfig"
 )
 
 const (
@@ -18,38 +22,40 @@ const (
 	offClusterFontSrc       = "font-src 'self' http://localhost:8080"
 	offClusterScriptSrc     = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
 	offClusterStyleSrc      = "style-src 'self' http://localhost:8080"
+	connectSrcDirective     = "connect-src"
+	objectSrcDirective      = "object-src"
 	frameSrcDirective       = "frame-src 'none'"
 	frameAncestorsDirective = "frame-ancestors 'none'"
-	objectSrcDirective      = "object-src 'none'"
 )
 
 func TestParseContentSecurityPolicyConfig(t *testing.T) {
 	tests := []struct {
-		name    string
-		csp     string
-		wantErr bool
+		name string
+		csp  serverconfig.MultiKeyValue
+		want *map[v1.DirectiveType][]string
 	}{
 		{
-			name:    "empty string",
-			csp:     `{}`,
-			wantErr: false,
+			name: "empty string",
+			csp:  serverconfig.MultiKeyValue{},
+			want: &map[consolev1.DirectiveType][]string{},
 		},
 		{
-			name:    "valid CSP",
-			csp:     `{"DefaultSrc": ["foo.bar.default"], "ScriptSrc": ["foo.bar.script"]}`,
-			wantErr: false,
-		},
-		{
-			name:    "invalid CSP",
-			csp:     `{"InvalidSrc": ["foo.bar"]}`,
-			wantErr: true,
+			name: "valid CSP",
+			csp: serverconfig.MultiKeyValue{
+				"DefaultSrc": "foo.bar.default",
+				"ScriptSrc":  "foo.bar.script",
+			},
+			want: &map[consolev1.DirectiveType][]string{
+				"DefaultSrc": {"foo.bar.default"},
+				"ScriptSrc":  {"foo.bar.script"},
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := ParseContentSecurityPolicyConfig(tt.csp)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParseContentSecurityPolicyConfig() error = %v, wantErr %v", err, tt.wantErr)
+			parsedCSP := ParseContentSecurityPolicyConfig(tt.csp)
+			if !reflect.DeepEqual(parsedCSP, tt.want) {
+				t.Errorf("ParseContentSecurityPolicyConfig() error = %v, want %v", parsedCSP, tt.want)
 			}
 		})
 	}
@@ -59,14 +65,14 @@ func TestBuildCSPDirectives(t *testing.T) {
 	tests := []struct {
 		name                  string
 		k8sMode               string
-		contentSecurityPolicy string
+		contentSecurityPolicy serverconfig.MultiKeyValue
 		indexPageScriptNonce  string
 		want                  []string
 	}{
 		{
 			name:                  "on-cluster",
 			k8sMode:               "on-cluster",
-			contentSecurityPolicy: "",
+			contentSecurityPolicy: serverconfig.MultiKeyValue{},
 			indexPageScriptNonce:  "foobar",
 			want: []string{
 				onClusterBaseUri,
@@ -75,15 +81,16 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterFontSrc + " data:",
 				onClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " 'unsafe-inline'",
+				objectSrcDirective + " 'none'",
+				connectSrcDirective + " 'none'",
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 		{
 			name:                  "off-cluster",
 			k8sMode:               "off-cluster",
-			contentSecurityPolicy: "",
+			contentSecurityPolicy: serverconfig.MultiKeyValue{},
 			indexPageScriptNonce:  "foobar",
 			want: []string{
 				offClusterBaseUri,
@@ -92,24 +99,25 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterFontSrc + " data:",
 				offClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " 'unsafe-inline'",
+				objectSrcDirective + " 'none'",
+				connectSrcDirective + " 'none'",
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 		{
 			name:                 "on-cluster with config",
 			k8sMode:              "on-cluster",
 			indexPageScriptNonce: "foobar",
-			contentSecurityPolicy: `
-				{
-					"DefaultSrc": ["foo.bar"],
-					"ImgSrc": ["foo.bar.baz"],
-					"FontSrc": ["foo.bar.baz"],
-					"ScriptSrc": ["foo.bar", "foo.bar.baz"],
-					"StyleSrc": ["foo.bar", "foo.bar.baz"]
-				}
-			`,
+			contentSecurityPolicy: serverconfig.MultiKeyValue{
+				"DefaultSrc": "foo.bar",
+				"ImgSrc":     "foo.bar.baz",
+				"FontSrc":    "foo.bar.baz",
+				"ScriptSrc":  "foo.bar foo.bar.baz",
+				"StyleSrc":   "foo.bar foo.bar.baz",
+				"ObjectSrc":  "foo.bar.baz",
+				"ConnectSrc": "foo.bar.baz",
+			},
 			want: []string{
 				onClusterBaseUri,
 				onClusterDefaultSrc + " foo.bar",
@@ -117,24 +125,25 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterFontSrc + " foo.bar.baz data:",
 				onClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
+				objectSrcDirective + " foo.bar.baz",
+				connectSrcDirective + " foo.bar.baz",
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 		{
 			name:                 "off-cluster with config",
 			k8sMode:              "off-cluster",
 			indexPageScriptNonce: "foobar",
-			contentSecurityPolicy: `
-				{
-					"DefaultSrc": ["foo.bar"],
-					"ImgSrc": ["foo.bar.baz"],
-					"FontSrc": ["foo.bar.baz"],
-					"ScriptSrc": ["foo.bar", "foo.bar.baz"],
-					"StyleSrc": ["foo.bar", "foo.bar.baz"]
-				}
-			`,
+			contentSecurityPolicy: serverconfig.MultiKeyValue{
+				"DefaultSrc": "foo.bar",
+				"ImgSrc":     "foo.bar.baz",
+				"FontSrc":    "foo.bar.baz",
+				"ScriptSrc":  "foo.bar foo.bar.baz",
+				"StyleSrc":   "foo.bar foo.bar.baz",
+				"ObjectSrc":  "foo.bar.baz",
+				"ConnectSrc": "foo.bar.baz",
+			},
 			want: []string{
 				offClusterBaseUri,
 				offClusterDefaultSrc + " foo.bar",
@@ -142,9 +151,10 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterFontSrc + " foo.bar.baz data:",
 				offClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
+				objectSrcDirective + " foo.bar.baz",
+				connectSrcDirective + " foo.bar.baz",
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 	}

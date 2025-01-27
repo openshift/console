@@ -150,7 +150,7 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
-	ContentSecurityPolicy               string
+	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier

@@ -465,6 +465,22 @@ this way, then 'none' will be used. Additionally, violation reporting is throttl
 spamming the telemetry service with repetitive data. Identical violations will not be
 reported more than once a day.
 
+In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
+
+Example:
+
+```
+./bin/bridge --content-security-policy ScriptSrc="localhost:1234 localhost:2345" --content-security-policy FontSrc="localhost:3456 localhost:4567"
+```
+
+List of configurable CSP directives is available in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L102-L137).
+
+The list is extended automatically by the console server with following CSP directives:
+- `"frame-src 'none'"`
+- `"frame-ancestors 'none'"`
+
+Currently this feature is behind feature gate.
+
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
 [[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)

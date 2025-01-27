@@ -125,7 +125,9 @@ func main() {
 	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
 	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
-	fContentSecurityPolicy := fs.String("content-security-policy", "", "Content security policy for the console. (JSON as string)")
+
+	consoleCSPFlags := serverconfig.MultiKeyValue{}
+	fs.Var(&consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value.")
 
 	telemetryFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
@@ -281,7 +283,7 @@ func main() {
 		EnabledConsolePlugins:        consolePluginsFlags,
 		I18nNamespaces:               i18nNamespaces,
 		PluginProxy:                  *fPluginProxy,
-		ContentSecurityPolicy:        *fContentSecurityPolicy,
+		ContentSecurityPolicy:        consoleCSPFlags,
 		QuickStarts:                  *fQuickStarts,
 		AddPage:                      *fAddPage,
 		ProjectAccessClusterRoles:    *fProjectAccessClusterRoles,
