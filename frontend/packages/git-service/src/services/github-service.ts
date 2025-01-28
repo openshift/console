@@ -2,7 +2,6 @@ import * as Octokit from '@octokit/rest';
 import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { API_PROXY_URL, ProxyResponse } from '@console/shared/src/utils/proxy';
 import {
   GitSource,
   SecretType,
@@ -138,11 +137,11 @@ export class GithubService extends BaseService {
     sslVerification: boolean,
     webhookSecret: string,
   ): Promise<boolean> => {
-    const headers = {
-      Accept: ['application/vnd.github+json'],
-      Authorization: [`Bearer ${token}`],
-      'X-GitHub-Api-Version': ['2022-11-28'],
-    };
+    const headers = new Headers({
+      Accept: 'application/vnd.github+json',
+      Authorization: `Bearer ${token}`,
+      'X-GitHub-Api-Version': '2022-11-28',
+    });
     const body = {
       name: 'web',
       active: true,
@@ -158,15 +157,14 @@ export class GithubService extends BaseService {
       this.metadata.host === 'github.com'
         ? `https://api.github.com`
         : `https://${this.metadata.host}/api/v3`;
-    /* Using DevConsole Proxy to create webhook as Octokit is giving CORS error */
-    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
-      url: `${AddWebhookBaseURL}/repos/${this.metadata.owner}/${this.metadata.repoName}/hooks`,
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
 
-    return webhookResponse.statusCode === 201;
+    const webhookResponse: Response = await consoleFetchJSON.post(
+      `${AddWebhookBaseURL}/repos/${this.metadata.owner}/${this.metadata.repoName}/hooks`,
+      body,
+      { headers },
+    );
+
+    return webhookResponse.status === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {

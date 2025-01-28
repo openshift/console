@@ -25,7 +25,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
-	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
+	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	gql "github.com/openshift/console/pkg/graphql"
 	"github.com/openshift/console/pkg/graphql/resolver"
@@ -480,11 +480,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/console/knative-event-sources", tokenReviewHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", tokenReviewHandler(s.handleKnativeChannelCRDs))
 
-	// Dev-Console Proxy
+	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsoleProxy.Handler(user, w, r)
+			devconsole.Handler(user, w, r, internalProxiedDynamic)
 		})),
 	)
 
