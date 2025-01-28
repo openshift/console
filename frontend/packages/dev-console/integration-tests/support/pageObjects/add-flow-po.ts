@@ -176,12 +176,12 @@ export const catalogPO = {
     Other: '[data-test="tab other"]',
   },
   cards: {
-    mariaDBTemplate: 'a[data-test="Template-MariaDB"]',
+    mariaDBTemplate: 'div[data-test="Template-MariaDB"]',
     phpCakeTemplate: '[data-test="Template-CakePHP + MySQL"]',
-    nodeJsBuilderImage: 'a[data-test="BuilderImage-Node.js"]',
-    nodejsPostgreSQL: 'a[data-test="Template-Node.js + PostgreSQL (Ephemeral)"]',
-    apacheHTTPServer: 'a[data-test="Template-Apache HTTP Server"]',
-    nginxHTTPServer: 'a[data-test="Template-Nginx HTTP server and a reverse proxy"]',
+    nodeJsBuilderImage: 'div[data-test="BuilderImage-Node.js"]',
+    nodejsPostgreSQL: 'div[data-test="Template-Node.js + PostgreSQL (Ephemeral)"]',
+    apacheHTTPServer: 'div[data-test="Template-Apache HTTP Server"]',
+    nginxHTTPServer: 'div[data-test="Template-Nginx HTTP server and a reverse proxy"]',
     knativeKafka: '[data-test="OperatorBackedService-Knative Kafka"]',
     helmNodejs: '[data-test="HelmChart-Nodejs"]',
     jenkinsTemplate: '[data-test="Template-Jenkins"]',
@@ -252,8 +252,8 @@ export const catalogPO = {
 export const samplesPO = {
   search: 'input[placeholder="Filter by keyword..."]',
   cards: {
-    httpdTemplate: 'a[data-test="BuilderImage-Httpd"]',
-    basicgoTemplate: 'a[data-test="Devfile-Basic Go"]',
+    httpdTemplate: 'div[data-test="BuilderImage-Httpd"]',
+    basicgoTemplate: 'div[data-test="Devfile-Basic Go"]',
     basicnodeTemplate: '[data-test="Devfile-Basic Node.js"]',
     goTemplate: '[data-test="BuilderImage-Go"]',
   },
