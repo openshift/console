@@ -35,6 +35,7 @@ import {
   InstallPlanPreview,
   InstallPlanDetails,
   InstallPlanDetailsProps,
+  InstallPlanHint,
 } from './install-plan';
 import * as modal from './modals/installplan-preview-modal';
 import { referenceForStepResource } from '.';
@@ -252,7 +253,9 @@ describe('InstallPlanPreview', () => {
         }}
       />,
     );
-    expect(wrapper.find(Hint).shallow().find(Button).at(0).render().text()).toEqual('Approve');
+    expect(
+      wrapper.find(InstallPlanHint).dive().find(Hint).shallow().find(Button).at(0).render().text(),
+    ).toEqual('Approve');
   });
 
   it('calls `k8sPatch` to set `approved: true` when button is clicked', (done) => {
@@ -291,7 +294,7 @@ describe('InstallPlanPreview', () => {
       />,
     );
 
-    wrapper.find(Hint).shallow().find(Button).at(0).simulate('click');
+    wrapper.find(InstallPlanHint).dive().find(Hint).shallow().find(Button).at(0).simulate('click');
   });
 
   it('renders button to deny install plan if requires approval', () => {
@@ -307,7 +310,9 @@ describe('InstallPlanPreview', () => {
         }}
       />,
     );
-    expect(wrapper.find(Hint).shallow().find(Button).at(1).render().text()).toEqual('Deny');
+    expect(
+      wrapper.find(InstallPlanHint).dive().find(Hint).shallow().find(Button).at(1).render().text(),
+    ).toEqual('Deny');
   });
 
   it('renders section for each resolving `ClusterServiceVersion`', () => {
@@ -355,7 +360,9 @@ describe('InstallPlanDetails', () => {
     installPlan.spec.approved = false;
     wrapper = wrapper.setProps({ obj: installPlan });
 
-    expect(wrapper.find(Hint).shallow().find<any>(Link).props().to).toEqual(
+    expect(
+      wrapper.find(InstallPlanHint).dive().find(Hint).shallow().find<any>(Link).props().to,
+    ).toEqual(
       `/k8s/ns/default/${referenceForModel(InstallPlanModel)}/${
         testInstallPlan.metadata.name
       }/components`,
@@ -363,7 +370,7 @@ describe('InstallPlanDetails', () => {
   });
 
   it('does not render link to "Components" tab if install plan does not need approval"', () => {
-    expect(wrapper.find(Hint).exists()).toBe(false);
+    expect(wrapper.find(InstallPlanHint).exists()).toBe(false);
   });
 });
 
