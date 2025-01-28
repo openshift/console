@@ -153,7 +153,7 @@ describe('ImagesSection', () => {
     renderResult.getByText('None');
 
     // Open first dropdown
-    userEvent.click(renderResult.getByText('Please select'));
+    await userEvent.click(renderResult.getByText('Please select'));
 
     // Assert options
     const options = renderResult.container
@@ -290,16 +290,16 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('Image Stream Tag'));
+    await userEvent.click(renderResult.getByText('Please select'));
+    await userEvent.click(renderResult.getByText('Image Stream Tag'));
 
     // Fill form
-    userEvent.click(renderResult.getByText('Select Project'));
-    userEvent.click(renderResult.getByText('project-a'));
-    userEvent.click(renderResult.getByText('Select Image Stream'));
-    userEvent.click(renderResult.getByText('imagestream-a'));
-    userEvent.click(renderResult.getByText('Select tag'));
-    userEvent.click(renderResult.getByText('latest'));
+    await userEvent.click(renderResult.getByText('Select Project'));
+    await userEvent.click(renderResult.getByText('project-a'));
+    await userEvent.click(renderResult.getByText('Select Image Stream'));
+    await userEvent.click(renderResult.getByText('imagestream-a'));
+    await userEvent.click(renderResult.getByText('Select tag'));
+    await userEvent.click(renderResult.getByText('latest'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
@@ -364,8 +364,8 @@ describe('ImagesSection', () => {
     );
 
     // Fill form
-    userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('Image Stream Image'));
+    await userEvent.click(renderResult.getByText('Please select'));
+    await userEvent.click(renderResult.getByText('Image Stream Image'));
     userEvent.type(renderResult.getByRole('textbox'), 'my-namespace/an-image');
 
     // Submit
@@ -406,8 +406,8 @@ describe('ImagesSection', () => {
     );
 
     // Fill form
-    userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('External container image'));
+    await userEvent.click(renderResult.getByText('Please select'));
+    await userEvent.click(renderResult.getByText('External container image'));
     userEvent.type(renderResult.getByRole('textbox'), 'centos');
 
     // Submit
