@@ -3,12 +3,6 @@ import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import 'whatwg-fetch';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
-  API_PROXY_URL,
-  ProxyResponse,
-  consoleProxyFetchJSON,
-  convertHeaders,
-} from '@console/shared/src/utils/proxy';
-import {
   GitSource,
   SecretType,
   RepoMetadata,
@@ -60,15 +54,6 @@ export class BitbucketService extends BaseService {
       ...authHeaders,
       ...headers,
     };
-
-    if (this.isServer) {
-      return consoleProxyFetchJSON({
-        url,
-        method: requestMethod || 'GET',
-        headers: convertHeaders(requestHeaders),
-        ...(body && { body: JSON.stringify(body) }),
-      });
-    }
 
     const response = await fetch(url, {
       method: requestMethod || 'GET',
@@ -183,10 +168,10 @@ export class BitbucketService extends BaseService {
     webhookURL: string,
     sslVerification: boolean,
   ): Promise<boolean> => {
-    const headers = {
-      'Content-Type': ['application/json'],
-      Authorization: [`Basic ${token}`],
-    };
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${token}`,
+    });
     const body = {
       url: webhookURL,
       events: ['repo:push', 'pullrequest:created', 'pullrequest:updated'],
@@ -197,15 +182,9 @@ export class BitbucketService extends BaseService {
       ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/hooks`
       : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/hooks`;
 
-    /* Using DevConsole Proxy to create webhook as Bitbucket is giving CORS error */
-    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
-      url,
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const webhookResponse: Response = await consoleFetchJSON.post(url, body, { headers });
 
-    return webhookResponse.statusCode === 201;
+    return webhookResponse.status === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {
