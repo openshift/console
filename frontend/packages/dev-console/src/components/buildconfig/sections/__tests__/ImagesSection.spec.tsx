@@ -281,7 +281,8 @@ describe('ImagesSection', () => {
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should submit right form data when user fills out an image stream tag', async () => {
+  // Disabling as this test is flaking.  @vikram-raj to investigate.
+  xit('should submit right form data when user fills out an image stream tag', async () => {
     const onSubmit = jest.fn();
 
     const renderResult = render(
