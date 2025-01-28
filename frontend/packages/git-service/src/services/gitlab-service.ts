@@ -3,7 +3,6 @@ import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { API_PROXY_URL, ProxyResponse } from '@console/shared/src/utils/proxy';
 import {
   GitSource,
   SecretType,
@@ -171,10 +170,10 @@ export class GitlabService extends BaseService {
     webhookSecret: string,
   ): Promise<boolean> => {
     const projectID = await this.getProjectId();
-    const headers = {
-      'Content-Type': ['application/json'],
-      'PRIVATE-TOKEN': [token],
-    };
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      'PRIVATE-TOKEN': token,
+    });
     const body = {
       url: webhookURL,
       push_events: true,
@@ -182,15 +181,13 @@ export class GitlabService extends BaseService {
       enable_ssl_verification: sslVerification,
       token: webhookSecret,
     };
-    /* Using DevConsole Proxy to create webhook as Gitlab is giving CORS error */
-    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
-      url: `${this.metadata.host}/api/v4/projects/${projectID}/hooks`,
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const webhookResponse: Response = await consoleFetchJSON.post(
+      `${this.metadata.host}/api/v4/projects/${projectID}/hooks`,
+      body,
+      { headers },
+    );
 
-    return webhookResponse.statusCode === 201;
+    return webhookResponse.status === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {

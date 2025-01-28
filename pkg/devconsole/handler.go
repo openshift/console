@@ -1,0 +1,77 @@
+package devconsole
+
+import (
+	"net/http"
+	"strings"
+
+	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/devconsole/artifacthub"
+	tektonresults "github.com/openshift/console/pkg/devconsole/tekton-results"
+	"github.com/openshift/console/pkg/serverutils"
+	"k8s.io/client-go/dynamic"
+)
+
+type handlerFunc func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (interface{}, error)
+
+func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, handler handlerFunc) {
+	response, err := handler(r, user, dynamicClient)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
+		return
+	}
+	serverutils.SendResponse(w, http.StatusOK, response)
+}
+
+func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicClient *dynamic.DynamicClient) {
+	path := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
+	if len(path) != 2 {
+		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "Invalid URL"})
+		return
+	}
+
+	// Define routes
+	routes := map[string]map[string]handlerFunc{
+		"artifacthub": {
+			// POST /api/dev-console/artifacthub/search
+			"search": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient) (interface{}, error) {
+				return artifacthub.SearchTasks(r, user)
+			},
+			// POST /api/dev-console/artifacthub/get
+			"get": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient) (interface{}, error) {
+				return artifacthub.GetTaskDetails(r, user)
+			},
+			// POST /api/dev-console/artifacthub/yaml
+			"yaml": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient) (interface{}, error) {
+				return artifacthub.GetTaskYAMLFromGithub(r, user)
+			},
+		},
+		"tekton-results": {
+			// POST /api/dev-console/tekton-results/get
+			"get": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (interface{}, error) {
+				return tektonresults.GetTektonResults(r, user, dynamicClient)
+			},
+			// POST /api/dev-console/tekton-results/logs
+			"logs": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (interface{}, error) {
+				return tektonresults.GetTaskRunLog(r, user, dynamicClient)
+			},
+			// POST /api/dev-console/tekton-results/summary
+			"summary": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (interface{}, error) {
+				return tektonresults.GetResultsSummary(r, user, dynamicClient)
+			},
+		},
+	}
+
+	// Check for valid route and method
+	if methodHandlers, ok := routes[path[0]]; ok {
+		if handler, ok := methodHandlers[path[1]]; ok {
+			if r.Method != http.MethodPost {
+				serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only POST is allowed"})
+				return
+			}
+			handleRequest(w, r, user, dynamicClient, handler)
+			return
+		}
+	}
+
+	serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "Invalid URL"})
+}

@@ -6,8 +6,9 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
 import { TaskProviders } from '../../pipelines/const';
 import { ARTIFACTHUB } from '../../quicksearch/const';
-import { ArtifactHubTask, useGetArtifactHubTasks } from '../apis/artifactHub';
+import { useGetArtifactHubTasks } from '../apis/artifactHub';
 import { TektonHubTask } from '../apis/tektonHub';
+import { ArtifactHubTask } from '../apis/utils';
 import { useTektonHubIntegration } from '../catalog-utils';
 
 const normalizeArtifactHubTasks = (artifactHubTasks: ArtifactHubTask[]): CatalogItem<any>[] => {
