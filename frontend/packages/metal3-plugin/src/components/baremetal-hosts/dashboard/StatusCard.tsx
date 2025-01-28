@@ -90,7 +90,7 @@ const HealthCard: React.FC<HealthCardProps> = ({
   const restartScheduled = isHostScheduledForRestart(obj);
 
   return (
-    <Card className="co-overview-card--gradient">
+    <Card>
       <CardHeader>
         <CardTitle>Status</CardTitle>
       </CardHeader>

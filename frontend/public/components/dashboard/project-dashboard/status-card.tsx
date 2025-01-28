@@ -36,7 +36,7 @@ export const StatusCard: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <Card data-test-id="status-card" className="co-overview-card--gradient">
+    <Card data-test-id="status-card">
       <CardHeader>
         <CardTitle>{t('public~Status')}</CardTitle>
       </CardHeader>

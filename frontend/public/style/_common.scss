@@ -581,24 +581,6 @@ dl.co-inline {
   margin: 0 !important;
 }
 
-.co-overview-card--gradient {
-  position: relative;
-  &:after {
-    background: linear-gradient(
-      rgba(255, 255, 255, 0),
-      var(--pf-v6-c-page__main-section--BackgroundColor)
-    );
-    border-bottom-left-radius: var(--pf-v6-c-card--BorderRadius);
-    bottom: 1px;
-    content: '';
-    left: 1px;
-    min-height: 2rem;
-    pointer-events: none;
-    position: absolute;
-    width: calc(100% - var(--pf-t--global--spacer--lg));
-  }
-}
-
 .co-overview-card__actions {
   align-self: center !important;
 }
