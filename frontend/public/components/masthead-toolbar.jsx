@@ -586,6 +586,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         toggle={(toggleRef) => (
           <MenuToggle
             aria-label={t('public~User menu')}
+            variant="plainText"
             ref={toggleRef}
             onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
             isExpanded={isUserDropdownOpen}
@@ -698,7 +699,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
-                  variant="read"
+                  variant="plain"
                   count={alertCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
                   className="co-masthead-button"
@@ -748,7 +749,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               <NotificationBadge
                 aria-label={t('public~Notification drawer')}
                 onClick={drawerToggle}
-                variant="read"
+                variant="plain"
                 count={alertCount}
                 data-quickstart-id="qs-masthead-notifications"
               >

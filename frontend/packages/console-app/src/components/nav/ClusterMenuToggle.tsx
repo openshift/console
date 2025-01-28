@@ -54,6 +54,7 @@ const ClusterMenuToggle = (props: {
       disabled={disabled}
       className="co-cluster-selector"
       data-test-id="cluster-dropdown-toggle"
+      variant="plainText"
     >
       {title}
     </MenuToggle>
