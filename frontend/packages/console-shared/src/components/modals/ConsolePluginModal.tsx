@@ -41,7 +41,7 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
         {csvPluginsCount > 1
-          ? t('console-shared~Console plugin enablement - {{plugin}}', { pluginName })
+          ? t('console-shared~Console plugin enablement - {{plugin}}', { plugin: pluginName })
           : t('console-shared~Console plugin enablement')}
       </ModalTitle>
       <ModalBody>

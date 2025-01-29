@@ -26,7 +26,8 @@ type ConsolePlugin struct {
 	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	metav1.ObjectMeta `json:"metadata"`
 
-	// +kubebuilder:validation:Required
+	// spec contains the desired configuration for the console plugin.
+	// +required
 	Spec ConsolePluginSpec `json:"spec"`
 }
 
@@ -34,12 +35,12 @@ type ConsolePlugin struct {
 type ConsolePluginSpec struct {
 	// displayName is the display name of the plugin.
 	// The dispalyName should be between 1 and 128 characters.
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=128
 	DisplayName string `json:"displayName"`
 	// backend holds the configuration of backend which is serving console's plugin .
-	// +kubebuilder:validation:Required
+	// +required
 	Backend ConsolePluginBackend `json:"backend"`
 	// proxy is a list of proxies that describe various service type
 	// to which the plugin needs to connect to.
@@ -158,7 +159,7 @@ type ConsolePluginCSP struct {
 	// FontSrc directive specifies valid sources for fonts loaded using @font-face.
 	// For more information about the FontSrc directive, see:
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/font-src
-	// +kubebuilder:validation:Required
+	// +required
 	Directive DirectiveType `json:"directive"`
 	// values defines an array of values to append to the console defaults for this directive.
 	// Each ConsolePlugin may define their own directives with their values. These will be set
@@ -168,7 +169,7 @@ type ConsolePluginCSP struct {
 	// quotes ('). The value '*' is not permitted.
 	// Each value in the array must be unique.
 	//
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:MaxItems=16
 	// +kubebuilder:validation:XValidation:rule="self.all(x, self.exists_one(y, x == y))",message="each CSP directive value must be unique"
@@ -201,7 +202,7 @@ type ConsolePluginI18n struct {
 	// When set to Preload, all localization resources are fetched when the plugin is loaded.
 	// When set to Lazy, localization resources are lazily loaded as and when they are required by the console.
 	// When omitted or set to the empty string, the behaviour is equivalent to Lazy type.
-	// +kubebuilder:validation:Required
+	// +required
 	LoadType LoadType `json:"loadType"`
 }
 
@@ -209,7 +210,7 @@ type ConsolePluginI18n struct {
 // to which console's backend will proxy the plugin's requests.
 type ConsolePluginProxy struct {
 	// endpoint provides information about endpoint to which the request is proxied to.
-	// +kubebuilder:validation:Required
+	// +required
 	Endpoint ConsolePluginProxyEndpoint `json:"endpoint"`
 	// alias is a proxy name that identifies the plugin's proxy. An alias name
 	// should be unique per plugin. The console backend exposes following
@@ -221,7 +222,7 @@ type ConsolePluginProxy struct {
 	//
 	// /api/proxy/plugin/acm/search/pods?namespace=openshift-apiserver
 	//
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=128
 	// +kubebuilder:validation:Pattern=`^[A-Za-z0-9-_]+$`
@@ -248,7 +249,7 @@ type ConsolePluginProxyEndpoint struct {
 	// ---
 	// + When handling unknown values, consumers should report an error and stop processing the plugin.
 	//
-	// +kubebuilder:validation:Required
+	// +required
 	// +unionDiscriminator
 	Type ConsolePluginProxyType `json:"type"`
 	// service is an in-cluster Service that the plugin will connect to.
@@ -288,18 +289,18 @@ const (
 // console's backend will proxy the plugin's requests.
 type ConsolePluginProxyServiceConfig struct {
 	// name of Service that the plugin needs to connect to.
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=128
 	Name string `json:"name"`
 	// namespace of Service that the plugin needs to connect to
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=128
 	Namespace string `json:"namespace"`
 	// port on which the Service that the plugin needs to connect to
 	// is listening on.
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:Maximum:=65535
 	// +kubebuilder:validation:Minimum:=1
 	Port int32 `json:"port"`
@@ -323,7 +324,7 @@ type ConsolePluginBackend struct {
 	// ---
 	// + When handling unknown values, consumers should report an error and stop processing the plugin.
 	//
-	// +kubebuilder:validation:Required
+	// +required
 	// +unionDiscriminator
 	Type ConsolePluginBackendType `json:"type"`
 	// service is a Kubernetes Service that exposes the plugin using a
@@ -338,17 +339,17 @@ type ConsolePluginBackend struct {
 // console dynamic plugin assets.
 type ConsolePluginService struct {
 	// name of Service that is serving the plugin assets.
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=128
 	Name string `json:"name"`
 	// namespace of Service that is serving the plugin assets.
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:MinLength=1
 	// +kubebuilder:validation:MaxLength=128
 	Namespace string `json:"namespace"`
 	// port on which the Service that is serving the plugin is listening to.
-	// +kubebuilder:validation:Required
+	// +required
 	// +kubebuilder:validation:Maximum:=65535
 	// +kubebuilder:validation:Minimum:=1
 	Port int32 `json:"port"`

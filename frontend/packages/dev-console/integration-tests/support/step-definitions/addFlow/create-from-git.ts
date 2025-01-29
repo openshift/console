@@ -214,7 +214,7 @@ When('user enters label as {string}', (labelName: string) => {
 });
 
 Then('user can see the toast notification containg the route value {string}', (message: string) => {
-  gitPage.notificationVerify(message);
+  cy.get(gitPO.resourceCreationAlert).find('a').contains(message);
 });
 
 Then('public url is not created for node {string} in the workload sidebar', (nodeName: string) => {
@@ -246,7 +246,6 @@ Then(
     topologyPage.verifyOrOpenSidebar(nodeName);
     topologySidePane.selectTab('Details');
     topologySidePane.verifyLabel(labelName);
-    topologySidePane.close();
   },
 );
 

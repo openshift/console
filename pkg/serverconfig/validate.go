@@ -128,8 +128,9 @@ func validateControlPlaneTopology(value string) (string, error) {
 
 	if !(value == string(configv1.SingleReplicaTopologyMode) ||
 		value == string(configv1.HighlyAvailableTopologyMode) ||
+		value == string(configv1.HighlyAvailableArbiterMode) ||
 		value == string(configv1.ExternalTopologyMode)) {
-		return value, fmt.Errorf("ControlPlaneTopologyMode %s is not valid; valid options are External, HighlyAvailable, or SingleReplica", value)
+		return value, fmt.Errorf("ControlPlaneTopologyMode %s is not valid; valid options are External, HighlyAvailable, HighlyAvailableArbiter, or SingleReplica", value)
 	}
 
 	return value, nil

@@ -16,7 +16,6 @@ type MyOperatorResource struct {
 	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	metav1.ObjectMeta `json:"metadata"`
 
-	// +kubebuilder:validation:Required
 	// +required
 	Spec   MyOperatorResourceSpec   `json:"spec"`
 	Status MyOperatorResourceStatus `json:"status"`
@@ -145,19 +144,19 @@ type OperatorStatus struct {
 // GenerationStatus keeps track of the generation for a given resource so that decisions about forced updates can be made.
 type GenerationStatus struct {
 	// group is the group of the thing you're tracking
-	// +kubebuilder:validation:Required
+	// +required
 	Group string `json:"group"`
 
 	// resource is the resource type of the thing you're tracking
-	// +kubebuilder:validation:Required
+	// +required
 	Resource string `json:"resource"`
 
 	// namespace is where the thing you're tracking is
-	// +kubebuilder:validation:Required
+	// +required
 	Namespace string `json:"namespace"`
 
 	// name is the name of the thing you're tracking
-	// +kubebuilder:validation:Required
+	// +required
 	Name string `json:"name"`
 
 	// TODO: Add validation for lastGeneration. The value for this field should generally increase, except when the associated
@@ -194,21 +193,18 @@ type OperatorCondition struct {
 	// useful (see .node.status.conditions), the ability to deconflict is important.
 	// The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
 	// +required
-	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Pattern=`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`
 	// +kubebuilder:validation:MaxLength=316
 	Type string `json:"type" protobuf:"bytes,1,opt,name=type"`
 
 	// status of the condition, one of True, False, Unknown.
 	// +required
-	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Enum=True;False;Unknown
 	Status ConditionStatus `json:"status"`
 
 	// lastTransitionTime is the last time the condition transitioned from one status to another.
 	// This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
 	// +required
-	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Type=string
 	// +kubebuilder:validation:Format=date-time
 	LastTransitionTime metav1.Time `json:"lastTransitionTime,omitempty"`
@@ -262,7 +258,7 @@ type StaticPodOperatorStatus struct {
 // NodeStatus provides information about the current state of a particular node managed by this operator.
 type NodeStatus struct {
 	// nodeName is the name of the node
-	// +kubebuilder:validation:Required
+	// +required
 	NodeName string `json:"nodeName"`
 
 	// currentRevision is the generation of the most recently successful deployment

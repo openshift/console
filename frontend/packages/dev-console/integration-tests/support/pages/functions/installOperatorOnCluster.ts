@@ -27,6 +27,7 @@ export const installOperator = (operatorName: operators) => {
   operatorsPage.verifySidePane();
   cy.get(operatorsPO.alertDialog).then(($sidePane) => {
     if ($sidePane.find(operatorsPO.sidePane.install).length) {
+      cy.wait(20000);
       cy.get(operatorsPO.sidePane.install).click({ force: true });
       cy.get(operatorsPO.installOperators.title).should('contain.text', pageTitle.InstallOperator);
       if (operatorName === operators.WebTerminalOperator) {
