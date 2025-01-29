@@ -94,7 +94,9 @@ export const addPage = {
         cy.byTestID('item upload-jar').click();
         app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.UploadJarFile);
-        cy.testA11y(pageTitle.UploadJarFile);
+        // Disabled due to upstream PatternFly issue with FileUpload
+        // see https://github.com/patternfly/patternfly-react/issues/11343
+        // cy.testA11y(pageTitle.UploadJarFile);
         break;
       case 'Broker':
       case addOptions.Broker:

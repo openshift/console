@@ -69,7 +69,7 @@ export const quickStartsPage = {
               .contains('Complete');
           }
         } else {
-          cy.get(quickStart).scrollIntoView().click();
+          cy.get(quickStart).scrollIntoView().find('[data-test="title"]').click();
           app.waitForDocumentLoad();
           cy.get(quickStartSidebarPO.quickStartSidebarBody).should('be.visible');
           cy.get(quickStartSidebarPO.quickStartSidebarBody)
