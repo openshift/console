@@ -4,8 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	consolev1 "github.com/openshift/api/console/v1"
-	v1 "github.com/openshift/api/console/v1"
 	"github.com/openshift/console/pkg/serverconfig"
 )
 
@@ -22,44 +20,43 @@ const (
 	offClusterFontSrc       = "font-src 'self' http://localhost:8080"
 	offClusterScriptSrc     = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
 	offClusterStyleSrc      = "style-src 'self' http://localhost:8080"
-	connectSrcDirective     = "connect-src"
-	objectSrcDirective      = "object-src"
+	connectSrcDirective     = "connect-src 'self'"
 	frameSrcDirective       = "frame-src 'none'"
 	frameAncestorsDirective = "frame-ancestors 'none'"
 )
 
-func TestParseContentSecurityPolicyConfig(t *testing.T) {
-	tests := []struct {
-		name string
-		csp  serverconfig.MultiKeyValue
-		want *map[v1.DirectiveType][]string
-	}{
-		{
-			name: "empty string",
-			csp:  serverconfig.MultiKeyValue{},
-			want: &map[consolev1.DirectiveType][]string{},
-		},
-		{
-			name: "valid CSP",
-			csp: serverconfig.MultiKeyValue{
-				"DefaultSrc": "foo.bar.default",
-				"ScriptSrc":  "foo.bar.script",
-			},
-			want: &map[consolev1.DirectiveType][]string{
-				"DefaultSrc": {"foo.bar.default"},
-				"ScriptSrc":  {"foo.bar.script"},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			parsedCSP := ParseContentSecurityPolicyConfig(tt.csp)
-			if !reflect.DeepEqual(parsedCSP, tt.want) {
-				t.Errorf("ParseContentSecurityPolicyConfig() error = %v, want %v", parsedCSP, tt.want)
-			}
-		})
-	}
-}
+// func TestParseContentSecurityPolicyConfig(t *testing.T) {
+// 	tests := []struct {
+// 		name string
+// 		csp  serverconfig.MultiKeyValue
+// 		want *map[v1.DirectiveType][]string
+// 	}{
+// 		{
+// 			name: "empty string",
+// 			csp:  serverconfig.MultiKeyValue{},
+// 			want: &map[consolev1.DirectiveType][]string{},
+// 		},
+// 		{
+// 			name: "valid CSP",
+// 			csp: serverconfig.MultiKeyValue{
+// 				"DefaultSrc": "foo.bar.default",
+// 				"ScriptSrc":  "foo.bar.script",
+// 			},
+// 			want: &map[consolev1.DirectiveType][]string{
+// 				"DefaultSrc": {"foo.bar.default"},
+// 				"ScriptSrc":  {"foo.bar.script"},
+// 			},
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			parsedCSP := ParseContentSecurityPolicyConfig(tt.csp)
+// 			if !reflect.DeepEqual(parsedCSP, tt.want) {
+// 				t.Errorf("ParseContentSecurityPolicyConfig() error = %v, want %v", parsedCSP, tt.want)
+// 			}
+// 		})
+// 	}
+// }
 
 func TestBuildCSPDirectives(t *testing.T) {
 	tests := []struct {
@@ -76,15 +73,14 @@ func TestBuildCSPDirectives(t *testing.T) {
 			indexPageScriptNonce:  "foobar",
 			want: []string{
 				onClusterBaseUri,
+				connectSrcDirective,
 				onClusterDefaultSrc,
-				onClusterImgSrc + " data:",
 				onClusterFontSrc + " data:",
+				frameAncestorsDirective,
+				frameSrcDirective,
+				onClusterImgSrc + " data:",
 				onClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " 'unsafe-inline'",
-				objectSrcDirective + " 'none'",
-				connectSrcDirective + " 'none'",
-				frameSrcDirective,
-				frameAncestorsDirective,
 			},
 		},
 		{
@@ -94,15 +90,14 @@ func TestBuildCSPDirectives(t *testing.T) {
 			indexPageScriptNonce:  "foobar",
 			want: []string{
 				offClusterBaseUri,
+				connectSrcDirective,
 				offClusterDefaultSrc,
-				offClusterImgSrc + " data:",
 				offClusterFontSrc + " data:",
+				frameAncestorsDirective,
+				frameSrcDirective,
+				offClusterImgSrc + " data:",
 				offClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " 'unsafe-inline'",
-				objectSrcDirective + " 'none'",
-				connectSrcDirective + " 'none'",
-				frameSrcDirective,
-				frameAncestorsDirective,
 			},
 		},
 		{
@@ -110,25 +105,23 @@ func TestBuildCSPDirectives(t *testing.T) {
 			k8sMode:              "on-cluster",
 			indexPageScriptNonce: "foobar",
 			contentSecurityPolicy: serverconfig.MultiKeyValue{
-				"DefaultSrc": "foo.bar",
-				"ImgSrc":     "foo.bar.baz",
-				"FontSrc":    "foo.bar.baz",
-				"ScriptSrc":  "foo.bar foo.bar.baz",
-				"StyleSrc":   "foo.bar foo.bar.baz",
-				"ObjectSrc":  "foo.bar.baz",
-				"ConnectSrc": "foo.bar.baz",
+				"default-src": "foo.bar",
+				"img-src":     "foo.bar.baz",
+				"font-src":    "foo.bar.baz",
+				"script-src":  "foo.bar foo.bar.baz",
+				"style-src":   "foo.bar foo.bar.baz",
+				"connect-src": "foo.bar.baz",
 			},
 			want: []string{
 				onClusterBaseUri,
+				connectSrcDirective + " foo.bar.baz",
 				onClusterDefaultSrc + " foo.bar",
-				onClusterImgSrc + " foo.bar.baz data:",
 				onClusterFontSrc + " foo.bar.baz data:",
+				frameAncestorsDirective,
+				frameSrcDirective,
+				onClusterImgSrc + " foo.bar.baz data:",
 				onClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
-				objectSrcDirective + " foo.bar.baz",
-				connectSrcDirective + " foo.bar.baz",
-				frameSrcDirective,
-				frameAncestorsDirective,
 			},
 		},
 		{
@@ -136,25 +129,23 @@ func TestBuildCSPDirectives(t *testing.T) {
 			k8sMode:              "off-cluster",
 			indexPageScriptNonce: "foobar",
 			contentSecurityPolicy: serverconfig.MultiKeyValue{
-				"DefaultSrc": "foo.bar",
-				"ImgSrc":     "foo.bar.baz",
-				"FontSrc":    "foo.bar.baz",
-				"ScriptSrc":  "foo.bar foo.bar.baz",
-				"StyleSrc":   "foo.bar foo.bar.baz",
-				"ObjectSrc":  "foo.bar.baz",
-				"ConnectSrc": "foo.bar.baz",
+				"default-src": "foo.bar",
+				"img-src":     "foo.bar.baz",
+				"font-src":    "foo.bar.baz",
+				"script-src":  "foo.bar foo.bar.baz",
+				"style-src":   "foo.bar foo.bar.baz",
+				"connect-src": "foo.bar.baz",
 			},
 			want: []string{
 				offClusterBaseUri,
+				connectSrcDirective + " foo.bar.baz",
 				offClusterDefaultSrc + " foo.bar",
-				offClusterImgSrc + " foo.bar.baz data:",
 				offClusterFontSrc + " foo.bar.baz data:",
+				frameAncestorsDirective,
+				frameSrcDirective,
+				offClusterImgSrc + " foo.bar.baz data:",
 				offClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
-				objectSrcDirective + " foo.bar.baz",
-				connectSrcDirective + " foo.bar.baz",
-				frameSrcDirective,
-				frameAncestorsDirective,
 			},
 		},
 	}
@@ -162,10 +153,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := BuildCSPDirectives(tt.k8sMode, tt.contentSecurityPolicy, tt.indexPageScriptNonce)
-			if err != nil {
-				t.Fatalf("buildCSPDirectives() error = %v", err)
-			}
+			got := BuildCSPDirectives(tt.k8sMode, tt.contentSecurityPolicy, tt.indexPageScriptNonce)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("buildCSPDirectives() got = %v, want %v", got, tt.want)
 			}

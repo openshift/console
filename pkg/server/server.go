@@ -573,7 +573,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			ConsoleCommit:         os.Getenv("SOURCE_GIT_COMMIT"),
 			Plugins:               pluginsHandler.GetPluginsList(),
 			Capabilities:          s.Capabilities,
-			ContentSecurityPolicy: s.ContentSecurityPolicy,
+			ContentSecurityPolicy: s.ContentSecurityPolicy.String(),
 		})
 	}))
 
@@ -685,7 +685,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s.ContentSecurityPolicyEnabled {
-		contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
+		contentSecurityPolicy := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
 		if err != nil {
 			klog.Fatalf("Error building Content Security Policy directives: %s", err)
 			os.Exit(1)
