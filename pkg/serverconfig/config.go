@@ -13,6 +13,8 @@ import (
 	"github.com/coreos/pkg/flagutil"
 	"gopkg.in/yaml.v2"
 	"k8s.io/klog/v2"
+
+	consolev1 "github.com/openshift/api/console/v1"
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
@@ -351,7 +353,8 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 
 func addContentSecurityPolicy(fs *flag.FlagSet, csp MultiKeyValue) {
 	for cspDirectiveName, cspDirectiveValue := range csp {
-		fs.Set("content-security-policy", fmt.Sprintf("%s=%s", cspDirectiveName, cspDirectiveValue))
+		cspDirectiveKey := getCSPDirectiveKey(cspDirectiveName)
+		fs.Set("content-security-policy", fmt.Sprintf("%s=%s", cspDirectiveKey, cspDirectiveValue))
 	}
 }
 
@@ -374,5 +377,25 @@ func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 func SetIfUnset(flagVal *string, val string) {
 	if len(*flagVal) == 0 {
 		*flagVal = val
+	}
+}
+
+func getCSPDirectiveKey(directiveType string) string {
+	switch directiveType {
+	case string(consolev1.DefaultSrc):
+		return "default-src"
+	case string(consolev1.ScriptSrc):
+		return "script-src"
+	case string(consolev1.StyleSrc):
+		return "style-src"
+	case string(consolev1.ImgSrc):
+		return "img-src"
+	case string(consolev1.ConnectSrc):
+		return "connect-src"
+	case string(consolev1.FontSrc):
+		return "font-src"
+	default:
+		klog.Infof("ignored unsupported CSP directive: %q", directiveType)
+		return ""
 	}
 }

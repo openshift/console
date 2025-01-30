@@ -300,7 +300,7 @@ func TestSetFlagsFromConfig(t *testing.T) {
 				},
 			},
 			expectedFlagValues: map[string]string{
-				"content-security-policy": "FontSrc=value2 value3, ScriptSrc=value1",
+				"content-security-policy": "font-src=value2 value3, script-src=value1",
 			},
 			expectedError: nil,
 		},
