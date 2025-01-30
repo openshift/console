@@ -5,6 +5,24 @@ import (
 	"testing"
 )
 
+const (
+	onClusterBaseUri        = "base-uri 'self'"
+	onClusterDefaultSrc     = "default-src 'self' console.redhat.com"
+	onClusterImgSrc         = "img-src 'self'"
+	onClusterFontSrc        = "font-src 'self'"
+	onClusterScriptSrc      = "script-src 'self' console.redhat.com"
+	onClusterStyleSrc       = "style-src 'self'"
+	offClusterBaseUri       = "base-uri 'self' http://localhost:8080 ws://localhost:8080"
+	offClusterDefaultSrc    = "default-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
+	offClusterImgSrc        = "img-src 'self' http://localhost:8080"
+	offClusterFontSrc       = "font-src 'self' http://localhost:8080"
+	offClusterScriptSrc     = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
+	offClusterStyleSrc      = "style-src 'self' http://localhost:8080"
+	frameSrcDirective       = "frame-src 'none'"
+	frameAncestorsDirective = "frame-ancestors 'none'"
+	objectSrcDirective      = "object-src 'none'"
+)
+
 func TestParseContentSecurityPolicyConfig(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -51,15 +69,15 @@ func TestBuildCSPDirectives(t *testing.T) {
 			contentSecurityPolicy: "",
 			indexPageScriptNonce:  "foobar",
 			want: []string{
-				"base-uri 'self'",
-				"default-src 'self'",
-				"img-src 'self' data:",
-				"font-src 'self' data:",
-				"script-src 'self' 'unsafe-eval' 'nonce-foobar'",
-				"style-src 'self' 'unsafe-inline'",
-				"frame-src 'none'",
-				"frame-ancestors 'none'",
-				"object-src 'none'",
+				onClusterBaseUri,
+				onClusterDefaultSrc,
+				onClusterImgSrc + " data:",
+				onClusterFontSrc + " data:",
+				onClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
+				onClusterStyleSrc + " 'unsafe-inline'",
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 		{
@@ -68,15 +86,15 @@ func TestBuildCSPDirectives(t *testing.T) {
 			contentSecurityPolicy: "",
 			indexPageScriptNonce:  "foobar",
 			want: []string{
-				"base-uri 'self' http://localhost:8080 ws://localhost:8080",
-				"default-src 'self' http://localhost:8080 ws://localhost:8080",
-				"img-src 'self' http://localhost:8080 ws://localhost:8080 data:",
-				"font-src 'self' http://localhost:8080 ws://localhost:8080 data:",
-				"script-src 'self' http://localhost:8080 ws://localhost:8080 'unsafe-eval' 'nonce-foobar'",
-				"style-src 'self' http://localhost:8080 ws://localhost:8080 'unsafe-inline'",
-				"frame-src 'none'",
-				"frame-ancestors 'none'",
-				"object-src 'none'",
+				offClusterBaseUri,
+				offClusterDefaultSrc,
+				offClusterImgSrc + " data:",
+				offClusterFontSrc + " data:",
+				offClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
+				offClusterStyleSrc + " 'unsafe-inline'",
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 		{
@@ -93,15 +111,15 @@ func TestBuildCSPDirectives(t *testing.T) {
 				}
 			`,
 			want: []string{
-				"base-uri 'self'",
-				"default-src 'self' foo.bar",
-				"img-src 'self' foo.bar.baz data:",
-				"font-src 'self' foo.bar.baz data:",
-				"script-src 'self' foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
-				"style-src 'self' foo.bar foo.bar.baz 'unsafe-inline'",
-				"frame-src 'none'",
-				"frame-ancestors 'none'",
-				"object-src 'none'",
+				onClusterBaseUri,
+				onClusterDefaultSrc + " foo.bar",
+				onClusterImgSrc + " foo.bar.baz data:",
+				onClusterFontSrc + " foo.bar.baz data:",
+				onClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
+				onClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 		{
@@ -118,15 +136,15 @@ func TestBuildCSPDirectives(t *testing.T) {
 				}
 			`,
 			want: []string{
-				"base-uri 'self' http://localhost:8080 ws://localhost:8080",
-				"default-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar",
-				"img-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar.baz data:",
-				"font-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar.baz data:",
-				"script-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
-				"style-src 'self' http://localhost:8080 ws://localhost:8080 foo.bar foo.bar.baz 'unsafe-inline'",
-				"frame-src 'none'",
-				"frame-ancestors 'none'",
-				"object-src 'none'",
+				offClusterBaseUri,
+				offClusterDefaultSrc + " foo.bar",
+				offClusterImgSrc + " foo.bar.baz data:",
+				offClusterFontSrc + " foo.bar.baz data:",
+				offClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
+				offClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
 			},
 		},
 	}
