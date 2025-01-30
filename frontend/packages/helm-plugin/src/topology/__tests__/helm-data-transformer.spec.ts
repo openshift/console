@@ -50,7 +50,7 @@ export function getTransformedTopologyData(mockData: TopologyDataResources) {
 
   const workloadResources = getWorkloadResources(data, TEST_KINDS_MAP, WORKLOAD_TYPES);
   const model = getHelmGraphModelFromMap(sampleHelmResourcesMap, data);
-  return baseDataModelGetter(model, 'test-project', data, workloadResources, []);
+  return baseDataModelGetter(model, data, workloadResources, []);
 }
 
 describe('HELM data transformer ', () => {

@@ -11,7 +11,9 @@ import {
   TopologyQuadrant,
   NodeShape,
 } from '@patternfly/react-topology';
-import { K8sVerb, PrometheusAlert } from '../api/common-types';
+import PFPoint from '@patternfly/react-topology/dist/esm/geom/Point';
+import { Alerts, K8sKind, K8sVerb, PrometheusAlert } from '../api/common-types';
+import { Action } from './actions';
 import {
   K8sResourceCommon,
   K8sResourceKind,
@@ -269,3 +271,37 @@ export type GetTopologyNodeItem = (
 ) => OdcNodeModel;
 
 export type MergeGroup = (newGroup: NodeModel, existingGroups: NodeModel[]) => void;
+
+export type GetModifyApplicationAction = (
+  kind: K8sKind,
+  obj: K8sResourceKind,
+  insertBefore?: string | string[],
+) => Action;
+
+export type BaseDataModelGetter = (
+  model: Model,
+  resources: TopologyDataResources,
+  workloadResources: K8sResourceKind[],
+  dataModelDepicters?: TopologyDataModelDepicted[],
+  trafficData?: TrafficData,
+  monitoringAlerts?: Alerts,
+) => Model;
+
+export interface KindsMap {
+  [key: string]: string;
+}
+export type GetWorkloadResources = (
+  resources: TopologyDataResources,
+  kindsMap: KindsMap,
+  workloadTypes?: string[],
+) => K8sResourceKind[];
+
+export type ContextMenuActions = (element: GraphElement) => Record<string, unknown>;
+
+export type CreateConnectorProps = {
+  startPoint: PFPoint;
+  endPoint: PFPoint;
+  hints: string[];
+  dragging?: boolean;
+  hover?: boolean;
+};

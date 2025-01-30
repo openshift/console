@@ -48,7 +48,6 @@ const spyAndReturn = (spy: Spy) => (returnValue: any) =>
 const getTopologyData = async (
   mockData: TopologyDataResources,
   name: string,
-  namespace: string,
   workloadType?: string,
   isKnativeResource?: boolean,
 ): Promise<OdcNodeModel> => {
@@ -69,14 +68,13 @@ const getTopologyData = async (
       edges: [...servingModel.edges, ...eventingModel.edges, ...kameletModel.edges],
     };
   }
-  const result = baseDataModelGetter(model, namespace, mockData, workloadResources, []);
+  const result = baseDataModelGetter(model, mockData, workloadResources, []);
   return result.nodes.find((n) => n.data.resources?.obj.metadata.name === name);
 };
 
 const getTopologyDataKafkaSink = async (
   mockData: TopologyDataResources,
   name: string,
-  namespace: string,
   workloadType?: string,
   isKnativeResource?: boolean,
 ): Promise<OdcNodeModel> => {
@@ -88,7 +86,7 @@ const getTopologyDataKafkaSink = async (
   if (isKnativeResource) {
     model = await getKafkaSinkKnativeTopologyData(name, mockData);
   }
-  const result = baseDataModelGetter(model, namespace, mockData, workloadResources, []);
+  const result = baseDataModelGetter(model, mockData, workloadResources, []);
   return result.nodes.find((n) => n.data.resources?.obj.metadata.name === name);
 };
 
@@ -122,7 +120,7 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to deployment config', async (done) => {
-    const nodeModel = await getTopologyData(MockResources, 'nodejs', 'test-project');
+    const nodeModel = await getTopologyData(MockResources, 'nodejs');
     mockBuilds = sampleBuilds.data;
     mockBuildConfigs = sampleBuildConfigs.data;
     mockSecrets = sampleSecrets;
@@ -144,7 +142,7 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to deployment config if the build config is not present i.e. for resource created through deploy image form', async (done) => {
-    const nodeModel = await getTopologyData(MockResources, 'nodejs-ex', 'test-project');
+    const nodeModel = await getTopologyData(MockResources, 'nodejs-ex');
 
     cleanUpWorkload(nodeModel.resource)
       .then(() => {
@@ -162,7 +160,7 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to deployment config if the build config is present', async (done) => {
-    const nodeModel = await getTopologyData(MockResources, 'nodejs-with-bc', 'testproject');
+    const nodeModel = await getTopologyData(MockResources, 'nodejs-with-bc');
 
     cleanUpWorkload(nodeModel.resource)
       .then(() => {
@@ -180,7 +178,7 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to daemonsets', async (done) => {
-    const nodeModel = await getTopologyData(MockResources, 'daemonset-testing', 'test-project');
+    const nodeModel = await getTopologyData(MockResources, 'daemonset-testing');
     cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
@@ -194,7 +192,7 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to statefulsets', async (done) => {
-    const nodeModel = await getTopologyData(MockResources, 'alertmanager-main', 'test-project');
+    const nodeModel = await getTopologyData(MockResources, 'alertmanager-main');
     cleanUpWorkload(nodeModel.resource)
       .then(() => {
         const allArgs = spy.calls.allArgs();
@@ -211,7 +209,6 @@ describe('ApplicationUtils ', () => {
     const nodeModel = await getTopologyData(
       MockKnativeResources,
       'overlayimage',
-      'testproject3',
       'ksservices',
       true,
     );
@@ -232,7 +229,6 @@ describe('ApplicationUtils ', () => {
     const nodeModel = await getTopologyData(
       MockKnativeResources,
       'overlayimage-kb',
-      'testproject3',
       CamelKameletBindingModel.plural,
       true,
     );
@@ -253,7 +249,6 @@ describe('ApplicationUtils ', () => {
     const nodeModel = await getTopologyDataKafkaSink(
       MockKnativeResources,
       'kafkasink-dummy',
-      'testproject3',
       CamelKameletBindingModel.plural,
       true,
     );
@@ -271,7 +266,7 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should not delete any of the models, if delete access is not available', async (done) => {
-    const nodeModel = await getTopologyData(MockResources, 'nodejs', 'test-project');
+    const nodeModel = await getTopologyData(MockResources, 'nodejs');
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: false } }));
     cleanUpWorkload(nodeModel.resource)
       .then(() => {

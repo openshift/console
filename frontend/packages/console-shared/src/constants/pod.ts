@@ -1,7 +1,11 @@
-import { global_palette_purple_300 as globalPurple300 } from '@patternfly/react-tokens/dist/js/global_palette_purple_300';
-import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
-import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
+import {
+  t_global_icon_color_status_warning_default as globalWarning100,
+  t_color_white as globalWhite,
+  t_color_purple_30 as globalPurple300,
+} from '@patternfly/react-tokens';
 import { AllPodStatus } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+
+export { AllPodStatus } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const podColor = {
   [AllPodStatus.Running]: '#0066CC',

@@ -13,6 +13,11 @@ import {
   GetTopologyGroupItems,
   GetTopologyNodeItem,
   MergeGroup,
+  GetModifyApplicationAction,
+  BaseDataModelGetter,
+  GetWorkloadResources,
+  ContextMenuActions,
+  CreateConnectorProps,
 } from '../extensions/topology-types';
 
 export const CpuCellComponent: React.FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
@@ -50,3 +55,21 @@ export const getTopologyNodeItem: GetTopologyNodeItem = require('@console/topolo
 
 export const mergeGroup: MergeGroup = require('@console/topology/src/data-transforms/transform-utils')
   .mergeGroup;
+
+export const getModifyApplicationAction: GetModifyApplicationAction = require('@console/topology/src/actions/modify-application')
+  .getModifyApplicationAction;
+
+export const baseDataModelGetter: BaseDataModelGetter = require('@console/topology/src/data-transforms/data-transformer')
+  .baseDataModelGetter;
+
+export const getWorkloadResources: GetWorkloadResources = require('@console/topology/src/data-transforms/transform-utils')
+  .getWorkloadResources;
+
+export const contextMenuActions: ContextMenuActions = require('@console/topology/src/actions/contextMenuActions')
+  .contextMenuActions;
+
+export const CreateConnector: CreateConnectorProps = require('@console/topology/src/components/graph-view')
+  .CreateConnector;
+
+export const createConnectorCallback = require('@console/topology/src/components/graph-view')
+  .createConnectorCallback;

@@ -9,6 +9,7 @@ import {
   GetTopologyEdgeItems,
   GetTopologyGroupItems,
   GetTopologyNodeItem,
+  GetWorkloadResources,
   MergeGroup,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -39,7 +40,6 @@ import {
 } from '../const';
 import {
   TopologyDataObject,
-  TopologyDataResources,
   TopologyDataModelDepicted,
   OdcNodeModel,
   TopologyResourcesObject,
@@ -332,14 +332,11 @@ export const addToTopologyDataModel = (
 /**
  * Mapping of TopologyResourcesObject key to k8s resource kind
  */
-export interface KindsMap {
-  [key: string]: string;
-}
 
-export const getWorkloadResources = (
-  resources: TopologyDataResources,
-  kindsMap: KindsMap,
-  workloadTypes: string[] = WORKLOAD_TYPES,
+export const getWorkloadResources: GetWorkloadResources = (
+  resources,
+  kindsMap,
+  workloadTypes = WORKLOAD_TYPES,
 ) => {
   return _.flatten(
     workloadTypes.map((resourceKind) => {
