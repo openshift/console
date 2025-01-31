@@ -9,9 +9,17 @@ import {
   ModelKind,
   GraphElement,
   TopologyQuadrant,
-} from '@patternfly/react-topology/dist/esm/types';
-import { PrometheusAlert } from '../api/common-types';
-import { K8sResourceCommon, K8sResourceKindReference, WatchK8sResults } from './console-types';
+  NodeShape,
+} from '@patternfly/react-topology';
+import { K8sVerb, PrometheusAlert } from '../api/common-types';
+import {
+  K8sResourceCommon,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  NamespaceMetrics,
+  PodRCData,
+  WatchK8sResults,
+} from './console-types';
 
 export type Point = [number, number];
 
@@ -179,3 +187,85 @@ export type BuildConfigData = {
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';
 export type ShowGroupingHintEventListener = EventListener<[Node, string]>;
+
+export type MetricsTooltipProps = {
+  metricLabel: string;
+  byPod: {
+    formattedValue: string;
+    name: string;
+    value: number;
+  }[];
+};
+
+export type CpuCellComponentProps = {
+  cpuByPod: MetricsTooltipProps['byPod'];
+  totalCores: number;
+};
+
+export type MemoryCellComponentProps = {
+  memoryByPod: MetricsTooltipProps['byPod'];
+  totalBytes: number;
+};
+
+export type TopologyListViewNodeProps = {
+  item: Node;
+  selectedIds: string[];
+  onSelect: (ids: string[]) => void;
+  badgeCell?: React.ReactNode;
+  labelCell?: React.ReactNode;
+  alertsCell?: React.ReactNode;
+  memoryCell?: React.ReactNode;
+  cpuCell?: React.ReactNode;
+  statusCell?: React.ReactNode;
+  groupResourcesCell?: React.ReactNode;
+  hideAlerts?: boolean;
+  noPods?: boolean;
+};
+
+export type UseOverviewMetrics = () => any;
+
+export type WithEditReviewAccessComponentProps = { element: Node };
+
+export type WithEditReviewAccess = (
+  verb: K8sVerb,
+) => (
+  WrappedComponent: React.ComponentType,
+) => React.ComponentType<WithEditReviewAccessComponentProps>;
+
+export type PodStats = {
+  name: string;
+  value: number;
+  formattedValue: string;
+};
+
+export type MetricStats = {
+  totalBytes?: number;
+  totalCores?: number;
+  memoryByPod?: PodStats[];
+  cpuByPod?: PodStats[];
+};
+
+export type GetPodMetricStats = (metrics: NamespaceMetrics, podData: PodRCData) => MetricStats;
+
+export type GetTopologyResourceObject = (topologyObject: TopologyDataObject) => K8sResourceKind;
+
+export type GetResource = <T extends K8sResourceKind = K8sResourceKind>(node: GraphElement) => T;
+
+export type GetTopologyEdgeItems = (
+  resource: K8sResourceKind,
+  resources: K8sResourceKind[],
+) => EdgeModel[];
+
+export type GetTopologyGroupItems = (resource: K8sResourceKind) => NodeModel | null;
+
+export type GetTopologyNodeItem = (
+  resource: K8sResourceKind,
+  type: string,
+  data: any,
+  nodeProps?: Omit<OdcNodeModel, 'type' | 'data' | 'children' | 'id' | 'label'>,
+  children?: string[],
+  resourceKind?: K8sResourceKindReference,
+  shape?: NodeShape,
+) => OdcNodeModel;
+
+export type MergeGroup = (newGroup: NodeModel, existingGroups: NodeModel[]) => void;

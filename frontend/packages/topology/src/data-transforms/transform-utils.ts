@@ -1,7 +1,16 @@
-import { EdgeModel, Model, NodeModel, NodeShape } from '@patternfly/react-topology';
+import { Model, NodeModel } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import {
+  WatchK8sResources,
+  WatchK8sResults,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import {
+  GetTopologyEdgeItems,
+  GetTopologyGroupItems,
+  GetTopologyNodeItem,
+  MergeGroup,
+} from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Alerts } from '@console/internal/components/monitoring/types';
 import { BuildConfigModel, HorizontalPodAutoscalerModel } from '@console/internal/models';
@@ -9,7 +18,6 @@ import {
   apiVersionForReference,
   isGroupVersionKind,
   K8sResourceKind,
-  K8sResourceKindReference,
   kindForReference,
   referenceFor,
 } from '@console/internal/module/k8s';
@@ -134,15 +142,15 @@ export const createTopologyNodeData = (
 /**
  * create node data for graphs
  */
-export const getTopologyNodeItem = (
-  resource: K8sResourceKind,
-  type: string,
-  data: any,
-  nodeProps?: Omit<OdcNodeModel, 'type' | 'data' | 'children' | 'id' | 'label'>,
-  children?: string[],
-  resourceKind?: K8sResourceKindReference,
-  shape?: NodeShape,
-): OdcNodeModel => {
+export const getTopologyNodeItem: GetTopologyNodeItem = (
+  resource,
+  type,
+  data,
+  nodeProps,
+  children,
+  resourceKind,
+  shape,
+) => {
   const uid = resource?.metadata.uid;
   const name = resource?.metadata.name;
   const label = resource?.metadata.labels?.['app.openshift.io/instance'];
@@ -173,10 +181,7 @@ export const WorkloadModelProps = {
 /**
  * create edge data for graph
  */
-export const getTopologyEdgeItems = (
-  dc: K8sResourceKind,
-  resources: K8sResourceKind[],
-): EdgeModel[] => {
+export const getTopologyEdgeItems: GetTopologyEdgeItems = (dc, resources) => {
   const annotations = _.get(dc, 'metadata.annotations');
   const edges = [];
 
@@ -220,7 +225,7 @@ export const getTopologyEdgeItems = (
 /**
  * create groups data for graph
  */
-export const getTopologyGroupItems = (dc: K8sResourceKind): NodeModel => {
+export const getTopologyGroupItems: GetTopologyGroupItems = (dc) => {
   const groupName = _.get(dc, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
   if (!groupName) {
     return null;
@@ -260,7 +265,7 @@ const mergeGroupData = (newGroup: NodeModel, existingGroup: NodeModel): void => 
   }
 };
 
-export const mergeGroup = (newGroup: NodeModel, existingGroups: NodeModel[]): void => {
+export const mergeGroup: MergeGroup = (newGroup, existingGroups) => {
   if (!newGroup) {
     return;
   }

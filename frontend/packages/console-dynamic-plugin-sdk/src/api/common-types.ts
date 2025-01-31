@@ -93,7 +93,7 @@ export type Selector = {
   matchExpressions?: MatchExpression[];
 };
 
-type K8sVerb =
+export type K8sVerb =
   | 'create'
   | 'get'
   | 'list'

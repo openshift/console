@@ -104,6 +104,7 @@ export const getCorePackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk',
     version: sdkPackage.version,
+    description: 'Provides core APIs, types and utilities used by dynamic plugins at runtime.',
     main: 'lib/lib-core.js',
     ...commonManifestFields,
     dependencies: {
@@ -133,6 +134,7 @@ export const getInternalPackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk-internal',
     version: sdkPackage.version,
+    description: 'Internal package exposing additional Console code.',
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
     dependencies: {
@@ -154,6 +156,7 @@ export const getWebpackPackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk-webpack',
     version: sdkPackage.version,
+    description: 'Provides webpack ConsoleRemotePlugin used to build all dynamic plugin assets.',
     main: 'lib/lib-webpack.js',
     ...commonManifestFields,
     dependencies: {
