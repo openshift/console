@@ -386,12 +386,14 @@ describe('getValidSubscription', () => {
     expect(subscriptions).toEqual([ValidSubscriptionValue.OpenShiftContainerPlatform]);
     expect(filters).toEqual([ValidSubscriptionValue.OpenShiftContainerPlatform]);
   });
-  it(`parses ${ValidSubscriptionValue.OpenShiftKubernetesEngine}`, () => {
+  it('parses OpenShift Kubernetes Engine', () => {
     const [subscriptions, filters] = getValidSubscription({
-      [OLMAnnotation.ValidSubscription]: `["${ValidSubscriptionValue.OpenShiftKubernetesEngine}"]`,
+      [OLMAnnotation.ValidSubscription]: `["OpenShift Kubernetes Engine"]`,
     });
-    expect(subscriptions).toEqual([ValidSubscriptionValue.OpenShiftKubernetesEngine]);
-    expect(filters).toEqual([ValidSubscriptionValue.OpenShiftKubernetesEngine]);
+    expect(subscriptions).toEqual([
+      ValidSubscriptionValue.OpenShiftKubernetesOrVirtualizationEngine,
+    ]);
+    expect(filters).toEqual([ValidSubscriptionValue.OpenShiftKubernetesOrVirtualizationEngine]);
   });
   it(`parses ${ValidSubscriptionValue.OpenShiftPlatformPlus}`, () => {
     const [subscriptions, filters] = getValidSubscription({
@@ -402,18 +404,18 @@ describe('getValidSubscription', () => {
   });
   it(`parses all valid subscription values`, () => {
     const [subscriptions, filters] = getValidSubscription({
-      [OLMAnnotation.ValidSubscription]: `["${ValidSubscriptionValue.OpenShiftContainerPlatform}", "${ValidSubscriptionValue.OpenShiftKubernetesEngine}", "${ValidSubscriptionValue.OpenShiftPlatformPlus}", "foo", "bar"]`,
+      [OLMAnnotation.ValidSubscription]: `["${ValidSubscriptionValue.OpenShiftContainerPlatform}", "OpenShift Kubernetes Engine", "${ValidSubscriptionValue.OpenShiftPlatformPlus}", "foo", "bar"]`,
     });
     expect(subscriptions).toEqual([
       ValidSubscriptionValue.OpenShiftContainerPlatform,
-      ValidSubscriptionValue.OpenShiftKubernetesEngine,
+      ValidSubscriptionValue.OpenShiftKubernetesOrVirtualizationEngine,
       ValidSubscriptionValue.OpenShiftPlatformPlus,
       'foo',
       'bar',
     ]);
     expect(filters).toEqual([
       ValidSubscriptionValue.OpenShiftContainerPlatform,
-      ValidSubscriptionValue.OpenShiftKubernetesEngine,
+      ValidSubscriptionValue.OpenShiftKubernetesOrVirtualizationEngine,
       ValidSubscriptionValue.OpenShiftPlatformPlus,
       ValidSubscriptionValue.RequiresSeparateSubscription,
     ]);

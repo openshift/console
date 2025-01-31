@@ -144,19 +144,26 @@ const parseValidSubscriptionAnnotation: AnnotationParser<string[]> = (annotation
     ...options,
   }) ?? [];
 
+const normalizeValidSubscription = (s: string): string =>
+  s === 'OpenShift Kubernetes Engine'
+    ? ValidSubscriptionValue.OpenShiftKubernetesOrVirtualizationEngine
+    : s;
+
 export const getValidSubscription: AnnotationParser<[string[], ValidSubscriptionValue[]]> = (
   annotations,
   options,
 ) => {
-  const validSubscription = parseValidSubscriptionAnnotation(annotations, options);
+  const validSubscription = parseValidSubscriptionAnnotation(annotations, options).map(
+    normalizeValidSubscription,
+  );
   const validSubscriptionFilters = validSubscription.reduce<ValidSubscriptionValue[]>(
     (acc, value) => {
       const filterValue =
         {
           [ValidSubscriptionValue.OpenShiftContainerPlatform]:
             ValidSubscriptionValue.OpenShiftContainerPlatform,
-          [ValidSubscriptionValue.OpenShiftKubernetesEngine]:
-            ValidSubscriptionValue.OpenShiftKubernetesEngine,
+          [ValidSubscriptionValue.OpenShiftKubernetesOrVirtualizationEngine]:
+            ValidSubscriptionValue.OpenShiftKubernetesOrVirtualizationEngine,
           [ValidSubscriptionValue.OpenShiftPlatformPlus]:
             ValidSubscriptionValue.OpenShiftPlatformPlus,
         }[value] ?? ValidSubscriptionValue.RequiresSeparateSubscription;
