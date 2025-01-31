@@ -14,9 +14,9 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
-  Page,
   PageSection,
   Title,
+  Stack,
 } from "@patternfly/react-core";
 
 const ExtensionConsumer: React.FC = () => {
@@ -26,45 +26,44 @@ const ExtensionConsumer: React.FC = () => {
   );
 
   return extensions.length ? (
-    <Page
-      additionalGroupedContent={
-        <PageSection variant="light">
-          <Title headingLevel="h1" data-test="test-consumer-title">
-            {t("Extensions of type Console.flag/Model")}
-          </Title>
-        </PageSection>
-      }
-    >
+    <>
       <PageSection>
-        {extensions.map((ext) => (
-          <Card key={ext.properties.flag}>
-            <CardTitle>{ext.properties.flag}</CardTitle>
-            <CardBody>
-              <DescriptionList>
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t("Group")}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    {ext.properties.model.group}
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t("Version")}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    {ext.properties.model.version}
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t("Kind")}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    {ext.properties.model.kind}
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              </DescriptionList>
-            </CardBody>
-          </Card>
-        ))}
+        <Title headingLevel="h1" data-test="test-consumer-title">
+          {t("Extensions of type Console.flag/Model")}
+        </Title>
       </PageSection>
-    </Page>
+      <PageSection>
+        <Stack hasGutter>
+          {extensions.map((ext) => (
+            <Card key={ext.properties.flag}>
+              <CardTitle>{ext.properties.flag}</CardTitle>
+              <CardBody>
+                <DescriptionList>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t("Group")}</DescriptionListTerm>
+                    <DescriptionListDescription>
+                      {ext.properties.model.group}
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t("Version")}</DescriptionListTerm>
+                    <DescriptionListDescription>
+                      {ext.properties.model.version}
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t("Kind")}</DescriptionListTerm>
+                    <DescriptionListDescription>
+                      {ext.properties.model.kind}
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
+                </DescriptionList>
+              </CardBody>
+            </Card>
+          ))}
+        </Stack>
+      </PageSection>
+    </>
   ) : null;
 };
 
