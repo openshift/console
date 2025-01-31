@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
+import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useBoundingClientRect } from '../../hooks';
 import { DetailsRendererFunction } from './QuickSearchDetails';
@@ -43,10 +43,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
       variant={ModalVariant.medium}
       aria-label={t('console-shared~Quick search')}
       isOpen={isOpen}
-      showClose={false}
       position="top"
-      positionOffset="15%"
-      hasNoBodyWrapper
       appendTo={viewContainer}
     >
       <QuickSearchModalBody

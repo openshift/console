@@ -1,6 +1,14 @@
 .ocs-quick-search-modal {
   --pf-v6-c-modal-box--BackgroundColor: none !important;
   box-shadow: none !important;
+  border-radius: 0 !important;
+  max-width: unset !important;
+  max-height: unset !important;
+  inset-block: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  overflow: hidden !important;
+
   &__no-backdrop {
     .pf-v6-c-backdrop {
       background: none;

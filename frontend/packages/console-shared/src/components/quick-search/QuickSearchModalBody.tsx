@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ResizeDirection } from 're-resizable';
-import { Rnd } from 'react-rnd';
+import { Rnd, RndDragCallback } from 'react-rnd';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getQueryArgument,
@@ -61,6 +61,10 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
   const [items, setItems] = React.useState<number>(limitItemCount);
   const [modalSize, setModalSize] = React.useState<{ height: number; width: number }>();
+  const [modalPosition, setModalPosition] = React.useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
   const [draggableBoundary, setDraggableBoundary] = React.useState<string>(null);
   const ref = React.useRef<HTMLDivElement>();
   const fireTelemetryEvent = useTelemetry();
@@ -98,11 +102,21 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   }, [catalogItems, maxDimension]);
 
   React.useEffect(() => {
-    if (ref.current) {
-      const { width, height } = ref.current.getBoundingClientRect();
-      setModalSize({ width, height });
+    let { width: boundingWidth, height: boundingHeight } = window.screen;
+
+    if (viewContainer) {
+      boundingWidth = viewContainer.offsetWidth;
+      boundingHeight = viewContainer.offsetHeight;
     }
-  }, []);
+
+    if (ref.current) {
+      const { width: unboundedWidth, height } = ref.current.getBoundingClientRect();
+      const width = Math.min(unboundedWidth, 840); // pf-v6-c-modal-box-md-width
+
+      setModalSize({ width, height });
+      setModalPosition({ x: boundingWidth / 2 - width / 2, y: 0.15 * boundingHeight });
+    }
+  }, [viewContainer]);
 
   React.useEffect(() => {
     if (searchTerm) {
@@ -135,6 +149,11 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
 
   const handleResizeStop = () => {
     setTimeout(() => setIsRndActive(false), 0);
+  };
+
+  const handleDragStop: RndDragCallback = (_e, d) => {
+    handleResizeStop();
+    setModalPosition({ x: d.x, y: d.y });
   };
 
   const onSearch = React.useCallback(
@@ -256,7 +275,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       style={{ position: 'relative' }}
       size={{ height: modalSize?.height, width: modalSize?.width }}
       onDrag={handleDrag}
-      onDragStop={handleResizeStop}
+      onDragStop={handleDragStop}
+      position={modalPosition}
       onResize={handleResize}
       maxHeight={maxHeight}
       maxWidth={maxDimension?.maxWidth || undefined}

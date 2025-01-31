@@ -21,12 +21,6 @@
         border-bottom: 0 !important;
       }
     }
-    &--highlight {
-      background-color: var(--pf-t--color--gray--10) !important;
-    }
-    &:hover {
-      background-color: var(--pf-t--color--gray--10);
-    }
   }
   &__item-row {
     padding: 0 var(--pf-t--global--spacer--sm) !important;
