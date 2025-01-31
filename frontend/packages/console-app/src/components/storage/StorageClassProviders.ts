@@ -68,7 +68,7 @@ export const validatePortworxBlockSize = (params: Parameters) => {
   return null;
 };
 
-export const validatePorworxReplicas = (params: Parameters) => {
+export const validatePortworxReplicas = (params: Parameters) => {
   if (params.repl.value !== '' && !params.repl.value.match(/^[1-9]\d*$/)) {
     // t('console-app~Number of replicas must be a number')
     return 'console-app~Number of replicas must be a number';

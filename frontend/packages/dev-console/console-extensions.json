@@ -874,17 +874,6 @@
     }
   },
   {
-    "type": "console.topology/details/tab-section",
-    "properties": {
-      "id": "topology-tab-section-vpas",
-      "tab": "topology-side-bar-tab-resource",
-      "provider": {
-        "$codeRef": "topology.useVpaTabSectionForTopologySideBar"
-      },
-      "insertAfter": "topology-tab-section-builds-overview"
-    }
-  },
-  {
     "type": "console.topology/details/tab",
     "properties": {
       "id": "topology-side-bar-tab-observe",

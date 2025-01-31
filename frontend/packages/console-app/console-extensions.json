@@ -1535,7 +1535,7 @@
         "title": "%console-app~Glusterfs%",
         "provisioner": "kubernetes.io/glusterfs",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.GLUSTER" },
+        "documentationLink": { "$codeRef": "storageProvisionerDocs.GLUSTERFS" },
         "parameters": {
           "resturl": {
             "name": "%console-app~Gluster REST/Heketi URL%",
