@@ -152,6 +152,7 @@ type Server struct {
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
 	ContentSecurityPolicy               string
+	ContentSecurityPolicyEnabled        bool
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
@@ -683,13 +684,14 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
-	if err != nil {
-		klog.Fatalf("Error building Content Security Policy directives: %s", err)
-		os.Exit(1)
+	if s.ContentSecurityPolicyEnabled {
+		contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
+		if err != nil {
+			klog.Fatalf("Error building Content Security Policy directives: %s", err)
+			os.Exit(1)
+		}
+		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(contentSecurityPolicy, "; "))
 	}
-
-	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(contentSecurityPolicy, "; "))
 
 	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
 	for plugin := range s.EnabledConsolePlugins {
