@@ -128,7 +128,7 @@ export class CircularDependencyPreset {
       }),
       {
         // Ad-hoc plugin to handle detected module cycle information
-        apply: (compiler) => {
+        apply: (compiler: webpack.Compiler) => {
           compiler.hooks.emit.tap(HandleCyclesPluginName, (compilation) => {
             if (cycles.length === 0) {
               return;
