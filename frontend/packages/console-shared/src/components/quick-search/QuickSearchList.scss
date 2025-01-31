@@ -2,6 +2,7 @@
 
 .ocs-quick-search-list {
   height: 100%;
+  max-height: 30rem;
   display: flex;
   flex-direction: column;
   &__list {
@@ -49,8 +50,5 @@
     text-align: center;
     display: flex;
     flex-direction: column;
-  }
-  &__secondary-label {
-    margin-left: var(--pf-t--global--border--width--md);
   }
 }
