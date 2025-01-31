@@ -124,6 +124,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	if err != nil {
 		return err
 	}
+	addContentSecurityPolicyEnabled(fs, &config.ContentSecurityPolicyEnabled)
 	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
 	addTelemetry(fs, config.Telemetry)
 
@@ -377,6 +378,12 @@ func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType]
 		fs.Set("content-security-policy", string(marshaledCSP))
 	}
 	return nil
+}
+
+func addContentSecurityPolicyEnabled(fs *flag.FlagSet, enabled *bool) {
+	if enabled != nil && *enabled {
+		fs.Set("content-security-policy-enabled", "true")
+	}
 }
 
 func SetIfUnset(flagVal *string, val string) {
