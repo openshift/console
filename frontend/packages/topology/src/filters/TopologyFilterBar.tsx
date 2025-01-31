@@ -119,7 +119,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   return (
     <Toolbar className="co-namespace-bar odc-topology-filter-bar" clearAllFilters={clearAll}>
       <ToolbarContent>
-        <ToolbarItem>
+        <ToolbarItem className="odc-topology-quick-search-toolbar-item">
           <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
         </ToolbarItem>
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
