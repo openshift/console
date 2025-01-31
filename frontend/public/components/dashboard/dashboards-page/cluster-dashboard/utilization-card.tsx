@@ -317,13 +317,15 @@ export const UtilizationCard = () => {
             actions: (
               <>
                 <Split>
-                  <SplitItem>
-                    <UtilizationCardNodeFilter
-                      machineConfigPools={machineConfigPools}
-                      onNodeSelect={onNodeSelect}
-                      selectedNodes={selectedNodes}
-                    />
-                  </SplitItem>
+                  {machineConfigPools.length > 0 && (
+                    <SplitItem>
+                      <UtilizationCardNodeFilter
+                        machineConfigPools={machineConfigPools}
+                        onNodeSelect={onNodeSelect}
+                        selectedNodes={selectedNodes}
+                      />
+                    </SplitItem>
+                  )}
                   <SplitItem>
                     <UtilizationDurationDropdown />
                   </SplitItem>
