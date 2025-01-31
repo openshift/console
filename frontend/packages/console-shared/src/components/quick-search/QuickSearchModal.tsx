@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useBoundingClientRect } from '../../hooks';
 import { DetailsRendererFunction } from './QuickSearchDetails';
 import QuickSearchModalBody from './QuickSearchModalBody';
 import { QuickSearchData } from './utils/quick-search-types';
@@ -33,9 +32,18 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   detailsRenderer,
 }) => {
   const { t } = useTranslation();
-  const clientRect = useBoundingClientRect(viewContainer);
-  const maxHeight = clientRect?.height;
-  const maxWidth = clientRect?.width;
+  const ref = React.useRef<HTMLDivElement>();
+
+  // close the modal when clicking outside of it
+  React.useEffect(() => {
+    const handleOnClick = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        closeModal();
+      }
+    };
+    document.addEventListener('click', handleOnClick);
+    return () => document.removeEventListener('click', handleOnClick);
+  }, [ref, closeModal]);
 
   return viewContainer ? (
     <Modal
@@ -44,20 +52,21 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
       aria-label={t('console-shared~Quick search')}
       isOpen={isOpen}
       position="top"
+      positionOffset="15%"
       appendTo={viewContainer}
     >
-      <QuickSearchModalBody
-        allCatalogItemsLoaded={allCatalogItemsLoaded}
-        searchCatalog={searchCatalog}
-        searchPlaceholder={searchPlaceholder}
-        namespace={namespace}
-        closeModal={closeModal}
-        limitItemCount={limitItemCount}
-        icon={icon}
-        detailsRenderer={detailsRenderer}
-        maxDimension={{ maxHeight, maxWidth }}
-        viewContainer={viewContainer}
-      />
+      <div ref={ref}>
+        <QuickSearchModalBody
+          allCatalogItemsLoaded={allCatalogItemsLoaded}
+          searchCatalog={searchCatalog}
+          searchPlaceholder={searchPlaceholder}
+          namespace={namespace}
+          closeModal={closeModal}
+          limitItemCount={limitItemCount}
+          icon={icon}
+          detailsRenderer={detailsRenderer}
+        />
+      </div>
     </Modal>
   ) : null;
 };

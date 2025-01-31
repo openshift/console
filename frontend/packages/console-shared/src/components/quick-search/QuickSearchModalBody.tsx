@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ResizeDirection } from 're-resizable';
-import { Rnd, RndDragCallback } from 'react-rnd';
+import { ModalBody, ModalHeader } from '@patternfly/react-core';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getQueryArgument,
@@ -16,8 +15,6 @@ import { DetailsRendererFunction } from './QuickSearchDetails';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
-import './QuickSearchModalBody.scss';
-
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
   searchCatalog: (searchTerm: string) => QuickSearchData;
@@ -27,8 +24,6 @@ interface QuickSearchModalBodyProps {
   limitItemCount?: number;
   icon?: React.ReactNode;
   detailsRenderer?: DetailsRendererFunction;
-  maxDimension?: { maxHeight: number; maxWidth: number };
-  viewContainer?: HTMLElement; // pass the html container element to specify the movement boundary
 }
 
 const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
@@ -40,19 +35,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   allCatalogItemsLoaded,
   icon,
   detailsRenderer,
-  maxDimension,
-  viewContainer,
 }) => {
-  const DEFAULT_HEIGHT_WITH_NO_ITEMS = 60;
-  const DEFAULT_HEIGHT_WITH_ITEMS = 483;
-  const MIN_HEIGHT = 240;
-  const MIN_WIDTH = 225;
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = React.useState<CatalogType[]>([]);
-  const [isRndActive, setIsRndActive] = React.useState(false);
-  const [maxHeight, setMaxHeight] = React.useState(DEFAULT_HEIGHT_WITH_NO_ITEMS);
-  const [minHeight, setMinHeight] = React.useState(DEFAULT_HEIGHT_WITH_NO_ITEMS);
-  const [minWidth, setMinWidth] = React.useState(MIN_WIDTH);
   const [searchTerm, setSearchTerm] = React.useState<string>(
     getQueryArgument('catalogSearch') || '',
   );
@@ -60,63 +45,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const [selectedItem, setSelectedItem] = React.useState<CatalogItem>(null);
   const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
   const [items, setItems] = React.useState<number>(limitItemCount);
-  const [modalSize, setModalSize] = React.useState<{ height: number; width: number }>();
-  const [modalPosition, setModalPosition] = React.useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
-  const [draggableBoundary, setDraggableBoundary] = React.useState<string>(null);
-  const ref = React.useRef<HTMLDivElement>();
+  const ref = React.useRef<HTMLInputElement>();
   const fireTelemetryEvent = useTelemetry();
   const listCatalogItems = limitItemCount > 0 ? catalogItems?.slice(0, items) : catalogItems;
-
-  const getModalHeight = () => {
-    let height: number = DEFAULT_HEIGHT_WITH_NO_ITEMS;
-    if (catalogItems?.length > 0) {
-      if (modalSize?.height >= minHeight) {
-        return modalSize?.height;
-      }
-      setModalSize({ ...modalSize, height: DEFAULT_HEIGHT_WITH_ITEMS });
-      height = DEFAULT_HEIGHT_WITH_ITEMS;
-    }
-    return height;
-  };
-
-  React.useEffect(() => {
-    if (viewContainer) {
-      const className = viewContainer.classList;
-      setDraggableBoundary(`.${className[0]}`);
-    }
-  }, [viewContainer]);
-
-  React.useEffect(() => {
-    if (catalogItems === null || catalogItems?.length === 0) {
-      setMaxHeight(DEFAULT_HEIGHT_WITH_NO_ITEMS);
-      setMinHeight(DEFAULT_HEIGHT_WITH_NO_ITEMS);
-      setMinWidth(MIN_WIDTH);
-    } else if (catalogItems?.length > 0) {
-      setMaxHeight(maxDimension?.maxHeight || undefined);
-      setMinHeight(MIN_HEIGHT);
-      setMinWidth(MIN_WIDTH);
-    }
-  }, [catalogItems, maxDimension]);
-
-  React.useEffect(() => {
-    let { width: boundingWidth, height: boundingHeight } = window.screen;
-
-    if (viewContainer) {
-      boundingWidth = viewContainer.offsetWidth;
-      boundingHeight = viewContainer.offsetHeight;
-    }
-
-    if (ref.current) {
-      const { width: unboundedWidth, height } = ref.current.getBoundingClientRect();
-      const width = Math.min(unboundedWidth, 840); // pf-v6-c-modal-box-md-width
-
-      setModalSize({ width, height });
-      setModalPosition({ x: boundingWidth / 2 - width / 2, y: 0.15 * boundingHeight });
-    }
-  }, [viewContainer]);
 
   React.useEffect(() => {
     if (searchTerm) {
@@ -134,27 +65,6 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       setSelectedItem(catalogItems[0]);
     }
   }, [catalogItems, selectedItemId]);
-
-  const handleDrag = () => {
-    setIsRndActive(true);
-  };
-
-  const handleResize = (e: MouseEvent, direction: ResizeDirection, elementRef: HTMLElement) => {
-    setIsRndActive(true);
-    setModalSize({
-      height: elementRef.offsetHeight,
-      width: elementRef.offsetWidth,
-    });
-  };
-
-  const handleResizeStop = () => {
-    setTimeout(() => setIsRndActive(false), 0);
-  };
-
-  const handleDragStop: RndDragCallback = (_e, d) => {
-    handleResizeStop();
-    setModalPosition({ x: d.x, y: d.y });
-  };
 
   const onSearch = React.useCallback(
     (_event: React.FormEvent<HTMLInputElement>, value: string) => {
@@ -176,7 +86,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   );
 
   const onCancel = React.useCallback(() => {
-    const searchInput = ref.current?.firstElementChild?.children?.[1] as HTMLInputElement;
+    const searchInput = ref?.current as HTMLInputElement;
     if (searchInput?.value) {
       document.activeElement !== searchInput && searchInput.focus();
       onSearch(null, '');
@@ -254,60 +164,16 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       }
     };
 
-    const onOutsideClick = (e: MouseEvent) => {
-      const modalBody = ref.current.parentElement;
-      if (!modalBody?.contains(e.target as Node) && !isRndActive) {
-        closeModal();
-      }
-    };
-
-    document.addEventListener('click', onOutsideClick);
     document.addEventListener('keydown', onKeyDown);
 
     return () => {
-      document.removeEventListener('click', onOutsideClick);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [closeModal, onCancel, onEnter, selectNext, selectPrevious, isRndActive]);
+  }, [closeModal, onCancel, onEnter, selectNext, selectPrevious]);
 
   return (
-    <Rnd
-      style={{ position: 'relative' }}
-      size={{ height: modalSize?.height, width: modalSize?.width }}
-      onDrag={handleDrag}
-      onDragStop={handleDragStop}
-      position={modalPosition}
-      onResize={handleResize}
-      maxHeight={maxHeight}
-      maxWidth={maxDimension?.maxWidth || undefined}
-      minHeight={minHeight}
-      minWidth={minWidth}
-      bounds={draggableBoundary}
-      onResizeStop={handleResizeStop}
-      dragHandleClassName="ocs-quick-search-bar"
-      cancel=".ocs-quick-search-bar__input"
-      enableResizing={
-        catalogItems === null || catalogItems?.length === 0
-          ? {
-              bottom: false,
-              bottomLeft: false,
-              bottomRight: false,
-              left: true,
-              right: true,
-              top: false,
-              topLeft: false,
-              topRight: false,
-            }
-          : true
-      }
-    >
-      <div
-        ref={ref}
-        className="ocs-quick-search-modal-body"
-        style={{
-          height: getModalHeight(),
-        }}
-      >
+    <>
+      <ModalHeader className="pf-v6-u-p-md pf-v6-u-pb-0">
         <QuickSearchBar
           searchTerm={searchTerm}
           searchPlaceholder={searchPlaceholder}
@@ -316,7 +182,10 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           itemsLoaded={allCatalogItemsLoaded}
           icon={icon}
           autoFocus
+          ref={ref}
         />
+      </ModalHeader>
+      <ModalBody className="pf-v6-u-p-md pf-v6-u-pt-0" style={{ minHeight: 0 }}>
         {catalogItems && selectedItem && (
           <QuickSearchContent
             catalogItems={catalogItems}
@@ -336,8 +205,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
             }}
           />
         )}
-      </div>
-    </Rnd>
+      </ModalBody>
+    </>
   );
 };
 

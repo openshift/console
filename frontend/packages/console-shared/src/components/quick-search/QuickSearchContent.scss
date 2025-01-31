@@ -1,16 +1,17 @@
 .ocs-quick-search-content {
   flex: 1;
   overflow-y: hidden;
-  border-top: 1px solid var(--pf-t--global--border--color--default);
+  position: relative;
   &__list {
-    width: 40%;
     height: 100%;
+    width: 40%;
   }
   &__details {
-    background-color: var(--pf-t--global--background--color--primary--default);
-    width: 60%;
-    overflow-y: auto;
     height: 100%;
+    overflow-y: auto;
     padding-right: var(--pf-t--global--spacer--md);
+    position: absolute;
+    right: 0;
+    width: 60%;
   }
 }
