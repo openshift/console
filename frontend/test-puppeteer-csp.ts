@@ -10,12 +10,25 @@ import {
   install,
   resolveBuildId,
 } from '@puppeteer/browsers';
-import { Browser, Page, launch } from 'puppeteer-core';
+import { Browser, HTTPResponse, launch } from 'puppeteer-core';
 
 // Use 'Chrome for Testing' build of the Chrome web browser.
 // https://googlechromelabs.github.io/chrome-for-testing/
 const testBrowser = BrowserType.CHROME;
 const testBrowserTag = 'stable';
+
+const baseDir = path.resolve(__dirname, '.puppeteer');
+const cacheDir = path.resolve(baseDir, 'cache');
+const userDataDir = path.resolve(baseDir, 'user-data');
+
+const parseNumValue = (value: string, fallback: number) => {
+  if (!value) {
+    return fallback;
+  }
+
+  const num = Number(value);
+  return !isNaN(num) && isFinite(num) ? num : fallback;
+};
 
 const envParameters = {
   // The 'NO_SANDBOX' env. variable can be used to run Chrome under the root user.
@@ -27,11 +40,14 @@ const envParameters = {
 
   // CSP reporting endpoint to be used for testing Console pages.
   cspReportURL: process.env.CSP_REPORT_URL || 'http://localhost:7777',
-};
 
-const baseDir = path.resolve(__dirname, '.puppeteer');
-const cacheDir = path.resolve(baseDir, 'cache');
-const userDataDir = path.resolve(baseDir, 'user-data');
+  // Timeout [ms] when loading Console pages. Default value 60s should give
+  // the browser enough time to load all Console resources over the network.
+  pageLoadTimeout: parseNumValue(process.env.PAGE_LOAD_TIMEOUT, 60000),
+
+  // Timeout [ms] used for "no network activity" check after loading a page.
+  pageNetIdleTimeout: parseNumValue(process.env.PAGE_NET_IDLE_TIMEOUT, 20000),
+};
 
 const findInstalledBrowser = async () => {
   const allBrowsers = await getInstalledBrowsers({ cacheDir });
@@ -73,7 +89,6 @@ const testPage = async (
   browser: Browser,
   pageURL: URL,
   cspReportURL: URL,
-  pageLoadCallback: (page: Page) => Promise<void>,
   errorCallback: VoidFunction,
 ) => {
   const page = await browser.newPage();
@@ -101,9 +116,13 @@ const testPage = async (
     // When such request occurs, we manually fulfill that request before it is sent over
     // the network and therefore avoiding the need to implement that reporting endpoint.
     else if (resourceType === 'CSPViolationReport' && request.url === cspReportURL.href) {
-      console.error('CSP violation detected', request.postData);
-      errorCallback();
+      try {
+        console.error('CSP violation detected:', JSON.parse(request.postData));
+      } catch (e) {
+        console.error('CSP violation detected, but request POST data failed to parse as JSON');
+      }
 
+      errorCallback();
       cdpSession.send('Fetch.fulfillRequest', { requestId, responseCode: 200 });
     }
 
@@ -115,20 +134,28 @@ const testPage = async (
 
   console.info(`Loading page ${pageURL}`);
 
-  // At this point, CDP session is already set up.
-  const httpResponse = await page.goto(pageURL.href);
+  let response: HTTPResponse;
 
-  if (httpResponse.ok()) {
+  try {
+    console.time('page-load');
+    response = await page.goto(pageURL.href, { timeout: envParameters.pageLoadTimeout });
+  } catch (e) {
+    console.warn('Page was not fully loaded within the timeout');
+  } finally {
+    console.timeEnd('page-load');
+  }
+
+  if (response && response.ok()) {
     try {
-      // Wait for the page to finish loading.
-      await pageLoadCallback(page);
+      console.time('page-net-idle');
+      await page.waitForNetworkIdle({ idleTime: 2000, timeout: envParameters.pageNetIdleTimeout });
     } catch (e) {
-      console.error(e);
-      errorCallback();
+      console.warn('Page could not reach idle network state within the timeout');
+    } finally {
+      console.timeEnd('page-net-idle');
     }
-  } else {
-    // Treat non-OK HTTP status code as error.
-    console.error(`Non-OK response: status ${httpResponse.status()} ${httpResponse.statusText()}`);
+  } else if (response && !response.ok()) {
+    console.error(`Non-OK response: status ${response.status()} ${response.statusText()}`);
     errorCallback();
   }
 
@@ -136,13 +163,11 @@ const testPage = async (
   await page.close();
 };
 
-const waitForNetworkIdle = async (page: Page) => {
-  await page.waitForNetworkIdle({ idleTime: 2000 });
-};
-
 (async () => {
   try {
     let errorsDetected = false;
+
+    console.info('Using env. parameters:', envParameters);
 
     const browser = await initBrowserInstance();
 
@@ -154,7 +179,6 @@ const waitForNetworkIdle = async (page: Page) => {
       browser,
       new URL('/dashboards', envParameters.consoleBaseURL),
       new URL(envParameters.cspReportURL),
-      waitForNetworkIdle,
       errorCallback,
     );
 
