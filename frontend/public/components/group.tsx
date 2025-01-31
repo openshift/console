@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
 
 import * as UIActions from '../actions/ui';
@@ -70,23 +70,20 @@ const getImpersonateAction = (
   },
 });
 
-const GroupKebab_: React.FC<GroupKebabProps & GroupKebabDispatchProps> = ({
-  group,
-  startImpersonate,
-}) => {
+export const GroupKebab: React.FC<GroupKebabProps> = ({ group }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   return (
     <ResourceKebab
-      actions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
+      actions={[
+        getImpersonateAction(dispatch(UIActions.startImpersonate), navigate),
+        ...menuActions,
+      ]}
       kind={referenceForModel(GroupModel)}
       resource={group}
     />
   );
 };
-
-const GroupKebab = connect<{}, GroupKebabDispatchProps, GroupKebabProps>(null, {
-  startImpersonate: UIActions.startImpersonate,
-})(GroupKebab_);
 
 const GroupTableRow: React.FC<RowFunctionArgs<GroupKind>> = ({ obj }) => {
   return (
@@ -221,14 +218,18 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   />
 );
 
-const GroupDetailsPage_: React.FC<GroupKebabDispatchProps> = ({ startImpersonate, ...props }) => {
+export const GroupDetailsPage: React.FC = (props) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(GroupModel)}
-      menuActions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
+      menuActions={[
+        getImpersonateAction(dispatch(UIActions.startImpersonate), navigate),
+        ...menuActions,
+      ]}
       pages={[
         navFactory.details(GroupDetails),
         navFactory.editYaml(),
@@ -238,15 +239,7 @@ const GroupDetailsPage_: React.FC<GroupKebabDispatchProps> = ({ startImpersonate
   );
 };
 
-export const GroupDetailsPage = connect<{}, GroupKebabDispatchProps>(null, {
-  startImpersonate: UIActions.startImpersonate,
-})(GroupDetailsPage_);
-
 type StartImpersonate = (kind: string, name: string) => (dispatch, store) => Promise<void>;
-
-type GroupKebabDispatchProps = {
-  startImpersonate: StartImpersonate;
-};
 
 type GroupKebabProps = {
   group: GroupKind;

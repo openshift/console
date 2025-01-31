@@ -1,6 +1,4 @@
 import { merge } from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { KebabAction, Kebab } from '@console/internal/components/utils';
@@ -17,12 +15,12 @@ const mergeAnnotationsWithResource = (annotations: AnnotationMap, resource: K8sR
 export const useUserAnnotationForManualStart = (): AnnotationMap => {
   const user = useSelector(getUser);
 
-  if (!user?.metadata?.name) {
+  if (!user?.username) {
     return {};
   }
 
   return {
-    [StartedByAnnotation.user]: user.metadata.name,
+    [StartedByAnnotation.user]: user.username,
   };
 };
 

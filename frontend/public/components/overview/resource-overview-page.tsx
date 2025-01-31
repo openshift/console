@@ -9,8 +9,7 @@ import {
   useBuildConfigsWatcher,
 } from '@console/shared';
 import { K8sModel } from '@console/dynamic-plugin-sdk';
-import { connectToModel } from '../../kinds';
-import { modelFor, referenceFor, referenceForModel } from '../../module/k8s';
+import { referenceFor, referenceForModel } from '../../module/k8s';
 import { AsyncComponent, Kebab, KebabAction, ResourceSummary } from '../utils';
 import { BuildOverview } from './build-overview';
 import { HPAOverview } from './hpa-overview';
@@ -20,6 +19,7 @@ import { resourceOverviewPages } from './resource-overview-pages';
 import { ManagedByOperatorLink } from '../utils/managed-by';
 import { useTranslation } from 'react-i18next';
 import { ResourceOverviewDetails } from './resource-overview-details';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const { common } = Kebab.factory;
 
@@ -79,11 +79,11 @@ const DefaultSideBar: React.FC<{
   );
 };
 
-export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActions }) => {
-  if (!kindObj && !item?.obj) {
+export const ResourceOverviewPage = ({ item, customActions }) => {
+  const [resourceModel] = useK8sModel(referenceFor(item.obj));
+  if (!resourceModel || !item?.obj) {
     return null;
   }
-  const resourceModel = kindObj || modelFor(referenceFor(item.obj));
   const ref = referenceForModel(resourceModel);
   const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultSideBar));
   return (
@@ -94,7 +94,7 @@ export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActio
       customActions={customActions}
     />
   );
-});
+};
 
 export type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
