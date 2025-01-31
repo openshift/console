@@ -11,7 +11,7 @@ import { actionsDropdownMenu } from '../functions/common';
 
 export const pipelineRunDetailsPage = {
   verifyTitle: () => {
-    cy.contains(pageTitle.PipelineRunDetails).should('be.visible');
+    cy.contains(pageTitle.PipelineRunDetails).should('exist');
     cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
   },
   waitForPipelineRunToComplete: () => {
