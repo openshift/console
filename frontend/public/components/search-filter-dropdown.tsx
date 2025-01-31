@@ -70,7 +70,7 @@ export const SearchFilterDropdown: React.FC<SearchFilterDropdownProps> = ({
                 icon={<FilterIcon />}
                 id="search-filter-toggle"
               >
-                {selected}
+                {t(selected)}
               </MenuToggle>
             );
           }}
