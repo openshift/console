@@ -151,7 +151,7 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
-	ContentSecurityPolicy               string
+	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
@@ -683,11 +683,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
-	if err != nil {
-		klog.Fatalf("Error building Content Security Policy directives: %s", err)
-		os.Exit(1)
-	}
+	contentSecurityPolicy := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
 
 	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(contentSecurityPolicy, "; "))
 
