@@ -32,6 +32,36 @@ export const TestModal: React.FC<{ closeModal: () => void }> = (props) => {
   );
 };
 
+const TEST_ID_1 = 'TEST_ID_1';
+const TestComponentWithID1 = ({ closeModal }) => (
+  <div style={{
+    backgroundColor: 'gray',
+    position: 'absolute',
+    right: '5rem',
+    top: '5rem',
+    width: '20rem',
+    zIndex: 100,
+  }}>
+    <p>Test Modal with ID "{TEST_ID_1}"</p>
+    <Button onClick={closeModal}>Close</Button>
+  </div>
+);
+
+const TEST_ID_2 = 'TEST_ID_2';
+const TestComponentWithID2 = ({ closeModal, ...rest }) => (
+  <div style={{
+    backgroundColor: 'gray',
+    bottom: '5rem',
+    position: 'absolute',
+    right: '5rem',
+    width: '20rem',
+    zIndex: 100,
+  }}>
+    <p>Test Modal with ID "{TEST_ID_2}" and testProp "{rest.testProp}"</p>
+    <Button onClick={closeModal}>Close</Button>
+  </div>
+);
+
 const LoadingComponent: React.FC = () => {
   const { t } = useTranslation();
 
@@ -70,6 +100,14 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   };
 
   const onClick = React.useCallback(() => launchModal(TestComponent, {}), [launchModal]);
+  const onClickWithID1 = React.useCallback(
+    () => launchModal(TestComponentWithID1, {}, TEST_ID_1),
+    [launchModal],
+  );
+  const onClickWithID2 = React.useCallback(
+    () => launchModal(TestComponentWithID2, { testProp: 'abc' }, TEST_ID_2),
+    [launchModal],
+  );
   const onAsyncClick = React.useCallback(() => launchModal(AsyncTestComponent, {}), [launchModal]);
 
   return (
@@ -81,6 +119,12 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       className="demo-modal__page"
     >
       <Button onClick={onClick}>{t('plugin__console-demo-plugin~Launch Modal')}</Button>
+      <Button onClick={onClickWithID1}>
+        {t('plugin__console-demo-plugin~Launch Modal with ID 1')}
+      </Button>
+      <Button onClick={onClickWithID2}>
+        {t('plugin__console-demo-plugin~Launch Modal with ID 2')}
+      </Button>
       <Button onClick={onAsyncClick}>
         {t('plugin__console-demo-plugin~Launch Modal Asynchronously')}
       </Button>
