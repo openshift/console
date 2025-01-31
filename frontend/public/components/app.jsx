@@ -490,9 +490,17 @@ const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
     prevUpdateData?.capabilities,
     updateData?.capabilities,
   );
+  const consoleCSPChanged = !_.isEqual(
+    prevUpdateData?.contentSecurityPolicy,
+    updateData?.contentSecurityPolicy,
+  );
   const consoleCommitChanged = prevUpdateData?.consoleCommit !== updateData?.consoleCommit;
 
-  if (stateInitialized && (consoleCommitChanged || consoleCapabilitiesChanged) && !consoleChanged) {
+  if (
+    stateInitialized &&
+    (consoleCommitChanged || consoleCapabilitiesChanged || consoleCSPChanged) &&
+    !consoleChanged
+  ) {
     setConsoleChanged(true);
   }
 
