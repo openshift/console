@@ -11,7 +11,7 @@ Feature: Add repositories tab in Helm navigation item
         @regression
         Scenario: Helm Page on developer perspective: HR-09-TC01
             Given user is at developer perspective
-             When user clicks on the Helm tab
+             When user clicks on the Helm tab in dev perspective
              Then user is able to see Helm Releases and Repositories Tabs
               And user is able to see the message "No Helm Releases found"
               And user is able to see the link "Browse the catalog to discover available Helm Charts"

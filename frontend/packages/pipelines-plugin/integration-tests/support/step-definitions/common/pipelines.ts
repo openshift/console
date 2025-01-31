@@ -87,6 +87,13 @@ Given('user is at pipelines page', () => {
   cy.get(pipelinesPO.pipelinesTab).click();
 });
 
+Given('user is at pipelines page in admin view', () => {
+  cy.get('[data-test="nav"][data-quickstart-id="qs-nav-pipelines"]')
+    .should('exist')
+    .click({ force: true });
+  cy.get(pipelinesPO.pipelinesTab).click();
+});
+
 Given('user has installed OpenShift Pipelines operator using cli', () => {
   cy.exec(`oc apply -f testData/installPipelinesOperator.yaml`);
   cy.exec(

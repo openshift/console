@@ -1,4 +1,5 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { installPipelinesOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
@@ -8,6 +9,7 @@ before(() => {
   cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
   cy.document().its('readyState').should('eq', 'complete');
   installPipelinesOperatorUsingCLI();
+  guidedTour.close();
 });
 
 after(() => {
@@ -20,7 +22,8 @@ after(() => {
 });
 
 beforeEach(() => {
-  cy.initDeveloper();
+  cy.initAdmin();
+  cy.byLegacyTestID('topology-header').should('exist').click({ force: true });
 });
 
 afterEach(() => {

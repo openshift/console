@@ -59,6 +59,17 @@ Given('user is at Pipeline Builder page', () => {
     .should('be.checked');
 });
 
+Given('user is at Pipeline Builder page in admin view', () => {
+  cy.get('[data-test="nav"][data-quickstart-id="qs-nav-pipelines"]')
+    .should('exist')
+    .click({ force: true });
+  pipelinesPage.clickOnCreatePipeline();
+  pipelineBuilderPage.verifyTitle();
+  cy.get(pipelineBuilderPO.configureVia.pipelineBuilder)
+    .check({ force: true })
+    .should('be.checked');
+});
+
 When('user enters pipeline name as {string}', (pipelineName: string) => {
   Cypress.env('PIPELINE_NAME', pipelineName);
   pipelineBuilderPage.enterPipelineName(pipelineName);

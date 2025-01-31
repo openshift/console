@@ -5,12 +5,13 @@ Feature: Perform actions on topology
 
         @pre-condition
         Scenario: Background steps
-            Given user is at developer perspective
+            Given user is at administrator perspective
+              And user is at Topology page in the admin view
               And user has created or selected namespace "aut-topology-ci"
 
 
         Scenario: Empty state of topology: T-06-TC01
-             When user navigates to Topology page
+             When user navigates to Topology page in admin view
              Then user sees Topology page with message "No resources found"
               And user is able to see Start building your application, Add page links
               And Display options dropdown, Filter by resource and Find by name fields are disabled
@@ -57,4 +58,4 @@ Feature: Perform actions on topology
               And user clicks on Action menu
               And user clicks "Delete Deployment" from action menu
               And user clicks on Delete button from modal
-             Then user will see workload disappeared from topology
+             Then user will see workload disappeared from topology in admin view

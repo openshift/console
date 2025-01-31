@@ -1,4 +1,3 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { switchPerspective } from '@console/dev-console/integration-tests/support/constants';
 import { formPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { webTerminalPO } from '@console/dev-console/integration-tests/support/pageObjects/webterminal-po';
@@ -35,11 +34,11 @@ export const initTerminalPage = {
         cy.get(webTerminalPO.terminalCloseWindowBtn).click();
         cy.reload();
         app.waitForDocumentLoad();
-        perspective.switchTo(switchPerspective.Developer);
+        perspective.switchTo(switchPerspective.Administrator);
+        cy.byLegacyTestID('topology-header').should('exist').click({ force: true });
         projectNameSpace.selectProject('openshift-terminal');
-        guidedTour.close();
         webTerminalPage.clickOpenCloudShellBtn();
-        searchResource.searchResourceByNameAsDev('DevWorkspace');
+        searchResource.searchResourceByNameAsAdmin('DevWorkspace');
         searchResource.selectSearchedItem('terminal');
         // cy.get('[data-test="loading-indicator"]').should('not.exist', { timeout: 210000 });
       } else {

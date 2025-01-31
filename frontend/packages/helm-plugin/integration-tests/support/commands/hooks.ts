@@ -1,3 +1,5 @@
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+
 //  To ignore the resizeObserverLoopErrors on CI, adding below code
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
 /* eslint-disable consistent-return */
@@ -15,16 +17,17 @@ before(() => {
   const bridgePasswordPassword: string = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
   cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
   cy.document().its('readyState').should('eq', 'complete');
-  // set the user settings location to local storage, so that no need of deleting config map from openshift-console-user-settings namespace
   cy.window().then((win: any) => {
     win.SERVER_FLAGS.userSettingsLocation = 'localstorage';
   });
   // Default helm repo has been changed to a new repo, so executing below line to fix that issue
   cy.exec('oc apply -f test-data/red-hat-helm-charts.yaml');
+  guidedTour.close();
 });
 
 beforeEach(() => {
-  cy.initDeveloper();
+  cy.initAdmin();
+  cy.byLegacyTestID('topology-header').should('exist').click({ force: true });
 });
 
 after(() => {

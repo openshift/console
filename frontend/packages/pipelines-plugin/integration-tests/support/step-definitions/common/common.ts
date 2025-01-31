@@ -38,6 +38,10 @@ Given('user is at developer perspective', () => {
   cy.testA11y('Developer perspective');
 });
 
+Given('user is at administrator perspective', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+});
+
 Given('user has created or selected namespace {string}', (projectName: string) => {
   Cypress.env('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(projectName);

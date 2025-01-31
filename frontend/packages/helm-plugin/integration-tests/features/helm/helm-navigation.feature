@@ -9,7 +9,7 @@ Feature: Navigations on Helm Chart
         # The test expects that there are no helm releases but there is from the previous feature run.
         @broken-test
         Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-05-TC01
-             When user clicks on the Helm tab
+             When user clicks on the Helm tab in dev perspective
              Then user will be redirected to Helm releases page
               And user is able to see the message "No Helm Releases found"
               And user will get the link to install helm charts from developer catalog
@@ -49,7 +49,7 @@ Feature: Navigations on Helm Chart
         @smoke
         Scenario: Open the Helm tab on the navigation bar when helm charts are present: HR-05-TC05
             Given user is at the Helm page
-             When user clicks on the Helm tab
+             When user clicks on the Helm tab in dev perspective
              Then user will be redirected to Helm releases page
               And user will see the helm charts listed
 
