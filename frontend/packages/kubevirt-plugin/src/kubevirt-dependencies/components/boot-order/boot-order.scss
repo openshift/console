@@ -1,0 +1,35 @@
+.kubevirt-boot-order-summary__expandable.pf-v5-c-expandable .pf-v5-c-expandable__content {
+  margin-top: 0;
+}
+
+.kubevirt-boot-order-summary__empty-text {
+  margin-bottom: 0;
+}
+
+.kubevirt-boot-order__boot-order-empty-btn {
+  margin-top: var(--pf-v5-global--spacer--md);
+}
+
+.pf-v5-c-button.pf-m-link.kubevirt-boot-order__add-device-delete-btn {
+  --pf-v5-c-button--PaddingTop: 0;
+  --pf-v5-c-button--PaddingRight: 0;
+  --pf-v5-c-button--PaddingBottom: 0;
+  --pf-v5-c-button--PaddingLeft: 0;
+  --pf-v5-c-button--m-link--Color: var(--pf-v5-global--Color--100);
+}
+
+.kubevirt-boot-order__add-device-select {
+  margin-left: var(--pf-v5-global--spacer--lg);
+  margin-right: var(--pf-v5-global--spacer--lg);
+}
+
+.kubevirt-boot-order__add-device {
+  display: flex;
+  padding-top: var(--pf-v5-global--spacer--md);
+  padding-left: var(--pf-v5-global--spacer--lg);
+  padding-right: var(--pf-v5-global--spacer--lg);
+}
+
+.kubevirt-boot-order__data-list-item {
+  background: var(--pf-v5-global--BackgroundColor--100);
+}
