@@ -211,7 +211,7 @@
     "sanitize-html": "^2.3.2",
     "screenfull": "4.x",
     "semver": "6.x",
-    "showdown": "1.8.6",
+    "showdown": "1.9.1",
     "subscriptions-transport-ws": "^0.9.16",
     "text-encoding": "0.x",
     "typesafe-actions": "^4.2.1",
