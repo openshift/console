@@ -154,10 +154,14 @@ export const NameKeyDropdownPair = ({
 const FieldRef = ({ data: { fieldPath } }) => (
   <>
     <div className="pairs-list__value-ro-field">
-      <input type="text" className="pf-v5-c-form-control" value="FieldRef" disabled />
+      <span className="pf-v6-c-form-control pf-m-disabled">
+        <input type="text" value="FieldRef" disabled />
+      </span>
     </div>
     <div className="pairs-list__value-ro-field">
-      <input type="text" className="pf-v5-c-form-control" value={fieldPath} disabled />
+      <span className="pf-v6-c-form-control pf-m-disabled">
+        <input type="text" value={fieldPath} disabled />
+      </span>
     </div>
   </>
 );
@@ -183,15 +187,14 @@ const ConfigMapSecretKeyRef = ({
     return (
       <>
         <div className="pairs-list__value-ro-field">
-          <input
-            type="text"
-            className="pf-v5-c-form-control"
-            value={`${name} - ${kind}`}
-            disabled
-          />
+          <span className="pf-v6-c-form-control pf-m-disabled">
+            <input type="text" value={`${name} - ${kind}`} disabled />
+          </span>
         </div>
         <div className="pairs-list__value-ro-field">
-          <input type="text" className="pf-v5-c-form-control" value={key} disabled />
+          <span className="pf-v6-c-form-control pf-m-disabled">
+            <input type="text" value={key} disabled />
+          </span>
         </div>
       </>
     );
@@ -233,13 +236,14 @@ const ConfigMapSecretRef = ({
   if (disabled) {
     return (
       <div className="pairs-list__value-ro-field">
-        <input
-          type="text"
-          className="pf-v5-c-form-control"
-          value={nameString}
-          disabled
-          placeholder={t('public~ConfigMap/Secret')}
-        />
+        <span className="pf-v6-c-form-control pf-m-disabled">
+          <input
+            type="text"
+            value={nameString}
+            disabled
+            placeholder={t('public~ConfigMap/Secret')}
+          />
+        </span>
       </div>
     );
   }
@@ -262,15 +266,19 @@ const ConfigMapSecretRef = ({
 const ResourceFieldRef = ({ data: { containerName, resource } }) => (
   <>
     <div className="pairs-list__value-ro-field">
-      <input
-        type="text"
-        className="pf-v5-c-form-control value-from"
-        value={`${containerName} - Resource Field`}
-        disabled
-      />
+      <span className="pf-v6-c-form-control pf-m-disabled">
+        <input
+          type="text"
+          className="value-from"
+          value={`${containerName} - Resource Field`}
+          disabled
+        />
+      </span>
     </div>
     <div className="pairs-list__value-ro-field">
-      <input type="text" className="pf-v5-c-form-control value-from" value={resource} disabled />
+      <span className="pf-v6-c-form-control pf-m-disabled">
+        <input type="text" className="value-from" value={resource} disabled />
+      </span>
     </div>
   </>
 );

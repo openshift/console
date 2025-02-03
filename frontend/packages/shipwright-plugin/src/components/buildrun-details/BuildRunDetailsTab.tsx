@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, Content, ContentVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
@@ -30,31 +30,25 @@ const BuildRunDetailsTab: React.FC<BuildRunDetailsTabProps> = ({ obj: buildRun }
                 <BuildRunSection buildRun={buildRun} />
               </FlexItem>
               <FlexItem>
-                <dl>
-                  <dt>{t('shipwright-plugin~BuildSpec details')}</dt>
-                  <dd>
-                    {buildRun.status?.buildSpec || isV1Alpha1Resource(buildRun) ? (
-                      <BuildSpecSection
-                        obj={buildRun}
-                        buildSpec={
-                          buildRun.status?.buildSpec ||
-                          (isV1Alpha1Resource(buildRun)
-                            ? buildRun.spec?.buildSpec
-                            : buildRun.spec?.build?.spec)
-                        }
-                        path={
-                          buildRun.status?.buildSpec
-                            ? 'status.buildSpec'
-                            : isV1Alpha1Resource(buildRun)
-                            ? 'spec.buildSpec'
-                            : 'spec.build.spec'
-                        }
-                      />
-                    ) : (
-                      '-'
-                    )}
-                  </dd>
-                </dl>
+                <Content component={ContentVariants.h3}>
+                  {t('shipwright-plugin~BuildSpec details')}
+                </Content>
+                <BuildSpecSection
+                  obj={buildRun}
+                  buildSpec={
+                    buildRun.status?.buildSpec ||
+                    (isV1Alpha1Resource(buildRun)
+                      ? buildRun.spec?.buildSpec
+                      : buildRun.spec?.build?.spec)
+                  }
+                  path={
+                    buildRun.status?.buildSpec
+                      ? 'status.buildSpec'
+                      : isV1Alpha1Resource(buildRun)
+                      ? 'spec.buildSpec'
+                      : 'spec.build.spec'
+                  }
+                />
               </FlexItem>
             </Flex>
           </div>

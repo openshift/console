@@ -5,7 +5,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  EmptyStateHeader,
   EmptyStateFooter,
   MenuToggle,
   MenuToggleElement,
@@ -151,7 +150,7 @@ const LogControls: React.FC<LogControlsProps> = ({
             </ToolbarItem>
           )}
         </ToolbarGroup>
-        <ToolbarItem className="pf-v5-u-flex-fill pf-v5-u-align-self-center pf-v5-u-justify-content-flex-end">
+        <ToolbarItem className="pf-v6-u-flex-fill pf-v6-u-align-self-center pf-v6-u-justify-content-flex-end">
           <Checkbox
             label={t('public~Wrap lines')}
             id="wrapLogLines"
@@ -365,21 +364,22 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         )}
         {isLoadingLog ? (
           !isJournal && !logFilename ? (
-            <EmptyState variant={EmptyStateVariant.full} isFullHeight>
-              <EmptyStateHeader
-                titleText={
-                  <>
-                    {isLoadingFilenames ? (
-                      <LoadingInline />
-                    ) : logFilenamesExist ? (
-                      t('public~No log file selected')
-                    ) : (
-                      t('public~No log files exist')
-                    )}
-                  </>
-                }
-                headingLevel="h2"
-              />
+            <EmptyState
+              headingLevel="h2"
+              titleText={
+                <>
+                  {isLoadingFilenames ? (
+                    <LoadingInline />
+                  ) : logFilenamesExist ? (
+                    t('public~No log file selected')
+                  ) : (
+                    t('public~No log files exist')
+                  )}
+                </>
+              }
+              variant={EmptyStateVariant.full}
+              isFullHeight
+            >
               <EmptyStateFooter>
                 {logFilenamesExist && (
                   <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>

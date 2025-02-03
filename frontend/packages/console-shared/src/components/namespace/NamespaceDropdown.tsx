@@ -15,7 +15,6 @@ import {
   Switch,
   TextInput,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import fuzzysearch from 'fuzzysearch';
@@ -44,17 +43,16 @@ export const NoResults: React.FC<{
   return (
     <>
       <Divider />
-      <EmptyState>
-        <EmptyStateHeader
-          titleText={
-            <>
-              {isProjects
-                ? t('console-shared~No projects found')
-                : t('console-shared~No namespaces found')}
-            </>
-          }
-          headingLevel="h4"
-        />
+      <EmptyState
+        headingLevel="h4"
+        titleText={
+          <>
+            {isProjects
+              ? t('console-shared~No projects found')
+              : t('console-shared~No namespaces found')}
+          </>
+        }
+      >
         <EmptyStateBody>{t('console-shared~No results match the filter criteria.')}</EmptyStateBody>
         <EmptyStateFooter>
           <EmptyStateActions>
@@ -131,7 +129,7 @@ const SystemSwitch: React.FC<{
             }
             isChecked={isChecked}
             onChange={(_, value) => onChange(value)}
-            className="pf-v5-c-select__menu-item pf-m-action co-namespace-dropdown__switch"
+            className="pf-v6-c-select__menu-item pf-m-action co-namespace-dropdown__switch"
           />
         </MenuSearchInput>
       </MenuSearch>
@@ -342,7 +340,7 @@ const NamespaceMenu: React.FC<{
       data-test="namespace-dropdown-menu"
       isScrollable
     >
-      <MenuContent maxMenuHeight="60vh">
+      <MenuContent maxMenuHeight="60vh" className="co-namespace-dropdown__menu-content">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}

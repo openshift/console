@@ -6,7 +6,6 @@ import {
   TextInput,
   EmptyStateBody,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
   FormHelperText,
   HelperText,
@@ -158,11 +157,10 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
             </div>
           )}
           {showFilter && itemCount === 0 ? (
-            <EmptyState>
-              <EmptyStateHeader
-                titleText={<>{t('console-shared~No results match the filter criteria')}</>}
-                headingLevel="h2"
-              />
+            <EmptyState
+              headingLevel="h2"
+              titleText={<>{t('console-shared~No results match the filter criteria')}</>}
+            >
               <EmptyStateFooter>
                 {emptyStateMessage && <EmptyStateBody>{emptyStateMessage}</EmptyStateBody>}
                 <EmptyStateActions>

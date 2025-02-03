@@ -1,49 +1,49 @@
 //Prevent layout shift when Advanced section is opened
-.pf-v5-c-modal-box__body {
+.pf-v6-c-modal-box__body {
   scrollbar-gutter: stable;
-  padding-right: var(--pf-v5-global--spacer--sm);
+  padding-right: var(--pf-t--global--spacer--sm);
 
   @-moz-document url-prefix() {
     /* Firefox scrollbar fix */
-    padding-right: var(--pf-v5-global--spacer--lg);
+    padding-right: var(--pf-t--global--spacer--lg);
   }
 }
 
-.pf-v5-c-modal-box__header {
-  padding-bottom: var(--pf-v5-global--spacer--md);
+.pf-v6-c-modal-box__header {
+  padding-bottom: var(--pf-t--global--spacer--md);
 }
 
 .kn-test-sf-modal {
   &__body {
-    padding-bottom: var(--pf-v5-global--FontSize--3xl);
+    padding-bottom: var(--pf-t--global--font--size--3xl);
   }
 }
 
 .kn-test-sf-modal__editor {
   @media screen and (max-width: 768px) {
-    margin-top: var(--pf-v5-global--FontSize--4xl);
-    margin-left: var(--pf-v5-global--spacer--md);
-    margin-right: var(--pf-v5-global--spacer--md);
+    margin-top: var(--pf-t--global--font--size--4xl);
+    margin-left: var(--pf-t--global--spacer--md);
+    margin-right: var(--pf-t--global--spacer--md);
   }
 }
 
 .kn-test-sf-modal-request {
   &__advanced-settings {
-    margin-top: var(--pf-v5-global--spacer--md);
-    margin-bottom: var(--pf-v5-global--spacer--md);
+    margin-top: var(--pf-t--global--spacer--md);
+    margin-bottom: var(--pf-t--global--spacer--md);
   }
   &__custom-headers {
-    margin-top: var(--pf-v5-global--spacer--xl);
+    margin-top: var(--pf-t--global--spacer--xl);
   }
 }
 
 .kn-test-sf-modal-response {
   &__notification {
-    padding-bottom: var(--pf-v5-global--FontSize--xl);
+    padding-bottom: var(--pf-t--global--font--size--xl);
   }
 
   &__headers {
-    margin-bottom: var(--pf-v5-global--FontSize--xl);
+    margin-bottom: var(--pf-t--global--font--size--xl);
   }
 
   &__loading {
@@ -52,18 +52,18 @@
 }
 
 .header-section {
-  color: var(--pf-v5-global--Color--100);
-  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-  padding: var(--pf-v5-global--spacer--md);
+  color: var(--pf-t--global--text--color--regular);
+  border: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--border--color--default);
+  padding: var(--pf-t--global--spacer--md);
 }
 
 .header-row {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: var(--pf-v5-global--spacer--xs);
+  margin-bottom: var(--pf-t--global--spacer--xs);
 }
 
 .header-name {
   font-weight: bold;
-  margin-right: var(--pf-v5-global--spacer--xs);
+  margin-right: var(--pf-t--global--spacer--xs);
 }

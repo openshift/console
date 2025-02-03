@@ -1,11 +1,11 @@
-$co-icon-and-text-icon-lg: 1.2rem;
+$co-icon-and-text-icon-lg: var(--pf-t--global--font--size--xl); // same as <Icon size="heading_2xl" />
 
 .co-icon-and-text {
   align-items: baseline;
   display: flex;
 
-  // fix bug where concurrent .pf-v5-c-label are misaligned vertically
-  .pf-v5-c-label__icon & {
+  // fix bug where concurrent .pf-v6-c-label are misaligned vertically
+  .pf-v6-c-label__icon & {
     display: block;
   }
 }

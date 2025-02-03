@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {
   Popover,
-  Modal,
-  ModalVariant,
   Button,
   Alert,
   Select,
@@ -11,6 +9,7 @@ import {
   MenuToggle,
   MenuToggleElement,
 } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -201,24 +200,24 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
           </label>{' '}
           <Popover aria-label={t('console-shared~Naming information')} bodyContent={popoverText}>
             <Button
+              icon={<OutlinedQuestionCircleIcon />}
               className="co-button-help-icon"
               variant="plain"
               aria-label={t('console-shared~View naming information')}
-            >
-              <OutlinedQuestionCircleIcon />
-            </Button>
+            />
           </Popover>
           <div className="modal-body__field">
-            <input
-              id="input-name"
-              data-test="input-name"
-              name="name"
-              type="text"
-              className="pf-v5-c-form-control"
-              onChange={(e) => setName(e.target.value)}
-              value={name || ''}
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                id="input-name"
+                data-test="input-name"
+                name="name"
+                type="text"
+                onChange={(e) => setName(e.target.value)}
+                value={name || ''}
+                required
+              />
+            </span>
           </div>
         </div>
         <div className="form-group">

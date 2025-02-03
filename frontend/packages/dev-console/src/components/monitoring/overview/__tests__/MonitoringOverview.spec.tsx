@@ -29,13 +29,11 @@ describe('Monitoring Metric Section', () => {
   });
 
   it('metrics accordion should be expanded by default', () => {
-    expect(component.find('#metrics').prop('isExpanded')).toBe(true);
-    expect(component.find('#metrics-content').prop('isHidden')).toBe(false);
+    expect(component.find('#metrics-accordian-item').prop('isExpanded')).toBe(true);
   });
 
   it('alerts accordion should expanded by default if there are firing alerts', () => {
-    expect(component.find('#monitoring-alerts').prop('isExpanded')).toBe(true);
-    expect(component.find('#monitoring-alerts-content').prop('isHidden')).toBe(false);
+    expect(component.find('#monitoring-alerts-accordian-item').prop('isExpanded')).toBe(true);
   });
 
   it('monitoring alerts should be 5', () => {
@@ -52,16 +50,13 @@ describe('Monitoring Metric Section', () => {
   });
 
   it('all events accordion should not be expanded by default', () => {
-    expect(component.find('#all-events').prop('isExpanded')).toBe(false);
-    expect(component.find('#all-events-content').prop('isHidden')).toBe(true);
+    expect(component.find('#all-events-accordian-item').prop('isExpanded')).toBe(false);
   });
 
   it('should expand & collapse Metric Section accordion', () => {
     component.find('#metrics').simulate('click');
-    expect(component.find('#metrics').prop('isExpanded')).toBe(false);
-    expect(component.find('#metrics-content').prop('isHidden')).toBe(true);
+    expect(component.find('#metrics-accordian-item').prop('isExpanded')).toBe(false);
     component.find('#metrics').simulate('click');
-    expect(component.find('#metrics').prop('isExpanded')).toBe(true);
-    expect(component.find('#metrics-content').prop('isHidden')).toBe(false);
+    expect(component.find('#metrics-accordian-item').prop('isExpanded')).toBe(true);
   });
 });

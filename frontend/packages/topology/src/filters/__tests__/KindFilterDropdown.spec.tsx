@@ -136,8 +136,8 @@ describe(KindFilterDropdown.displayName, () => {
     const firstType = selectOptions.at(0);
     const secondType = selectOptions.at(1);
     const thirdType = selectOptions.at(2);
-    expect(firstType.find('.pf-v5-c-menu__item-text').text()).toContain('(4)');
-    expect(secondType.find('.pf-v5-c-menu__item-text').text()).toContain('(3)');
-    expect(thirdType.find('.pf-v5-c-menu__item-text').text()).toContain('(2)');
+    expect(firstType.find('.pf-v6-c-menu__item-text').text()).toContain('(4)');
+    expect(secondType.find('.pf-v6-c-menu__item-text').text()).toContain('(3)');
+    expect(thirdType.find('.pf-v6-c-menu__item-text').text()).toContain('(2)');
   });
 });

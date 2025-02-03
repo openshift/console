@@ -35,20 +35,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         </label>
         <div className="row">
           <div className="col-sm-7">
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              id="slack-api-url"
-              aria-describedby="slack-api-url-help"
-              data-test-id="slack-api-url"
-              value={formValues.slack_api_url}
-              onChange={(e) =>
-                dispatchFormChange({
-                  type: 'setFormValues',
-                  payload: { slack_api_url: e.target.value },
-                })
-              }
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                id="slack-api-url"
+                aria-describedby="slack-api-url-help"
+                data-test-id="slack-api-url"
+                value={formValues.slack_api_url}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { slack_api_url: e.target.value },
+                  })
+                }
+              />
+            </span>
           </div>
           <div className="col-sm-5">
             <SaveAsDefaultCheckbox
@@ -71,20 +72,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         <label className="control-label co-required" htmlFor="slack-channel">
           {t('public~Channel')}
         </label>
-        <input
-          className="pf-v5-c-form-control"
-          type="text"
-          id="slack-channel"
-          aria-describedby="slack-channel-help"
-          data-test-id="slack-channel"
-          value={formValues.slackChannel}
-          onChange={(e) =>
-            dispatchFormChange({
-              type: 'setFormValues',
-              payload: { slackChannel: e.target.value },
-            })
-          }
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            id="slack-channel"
+            aria-describedby="slack-channel-help"
+            data-test-id="slack-channel"
+            value={formValues.slackChannel}
+            onChange={(e) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { slackChannel: e.target.value },
+              })
+            }
+          />
+        </span>
         <div className="help-block" id="slack-channel-help">
           {t('public~The Slack channel or user to send notifications to.')}
         </div>
@@ -137,20 +139,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </label>
               {formValues.slackIconType === 'url' && (
                 <>
-                  <input
-                    className="pf-v5-c-form-control"
-                    type="text"
-                    aria-describedby="slack-icon-url-help"
-                    aria-label={t('public~The URL of the icon.')}
-                    data-test-id="slack-icon-url"
-                    value={formValues.slack_icon_url}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { slack_icon_url: e.target.value },
-                      })
-                    }
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      type="text"
+                      aria-describedby="slack-icon-url-help"
+                      aria-label={t('public~The URL of the icon.')}
+                      data-test-id="slack-icon-url"
+                      value={formValues.slack_icon_url}
+                      onChange={(e) =>
+                        dispatchFormChange({
+                          type: 'setFormValues',
+                          payload: { slack_icon_url: e.target.value },
+                        })
+                      }
+                    />
+                  </span>
                   <div className="help-block" id="slack-icon-url-help">
                     {t('public~The URL of the icon.')}
                   </div>
@@ -158,21 +161,22 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               )}
               {formValues.slackIconType === 'emoji' && (
                 <>
-                  <input
-                    className="pf-v5-c-form-control"
-                    type="text"
-                    aria-describedby="slack-icon-emoji-help"
-                    aria-label={t('public~An emoji code to use in place of the default icon.')}
-                    name="slackIconEmoji"
-                    data-test-id="slack-icon-emoji"
-                    value={formValues.slack_icon_emoji}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { slack_icon_emoji: e.target.value },
-                      })
-                    }
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      type="text"
+                      aria-describedby="slack-icon-emoji-help"
+                      aria-label={t('public~An emoji code to use in place of the default icon.')}
+                      name="slackIconEmoji"
+                      data-test-id="slack-icon-emoji"
+                      value={formValues.slack_icon_emoji}
+                      onChange={(e) =>
+                        dispatchFormChange({
+                          type: 'setFormValues',
+                          payload: { slack_icon_emoji: e.target.value },
+                        })
+                      }
+                    />
+                  </span>
                   <div className="help-block" id="slack-icon-emoji-help">
                     <Trans ns="public">
                       An{' '}
@@ -190,20 +194,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               <label className="control-label" htmlFor="slack-username">
                 {t('public~Username')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                aria-describedby="slack-username-help"
-                id="slack-username"
-                data-test-id="slack-username"
-                value={formValues.slack_username}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { slack_username: e.target.value },
-                  })
-                }
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  aria-describedby="slack-username-help"
+                  id="slack-username"
+                  data-test-id="slack-username"
+                  value={formValues.slack_username}
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { slack_username: e.target.value },
+                    })
+                  }
+                />
+              </span>
               <div className="help-block" id="slack-username-help">
                 {t('public~The displayed username.')}
               </div>

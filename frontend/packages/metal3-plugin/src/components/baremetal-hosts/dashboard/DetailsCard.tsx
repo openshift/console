@@ -21,7 +21,7 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
   const hostRole = <BareMetalHostRole machine={machine} node={node} />;
 
   return (
-    <Card isClickable isSelectable>
+    <Card>
       <CardHeader
         actions={{
           actions: (

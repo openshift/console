@@ -2,14 +2,14 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
-import { Button } from '@patternfly/react-core';
+import { Button, Hint, HintTitle, HintBody } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { createProjectMessageStateToProps } from '../reducers/ui';
-import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
+import { Disabled, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
@@ -91,6 +91,7 @@ export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true)
   )(({ flags, ...rest }: any) => {
     const { kindObj } = rest;
     const kind = _.get(kindObj, 'kind', rest.kind);
+    const { t } = useTranslation();
 
     // The start guide does not need to be shown on the Projects list page.
     if (kind === ProjectModel.kind) {
@@ -100,13 +101,14 @@ export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true)
     if (flags[FLAGS.SHOW_OPENSHIFT_START_GUIDE]) {
       return (
         <>
-          <div className="co-m-pane__body">
-            <HintBlock title="Getting Started">
+          <Hint className="pf-v6-u-m-md">
+            <HintTitle>{t('public~Getting Started')}</HintTitle>
+            <HintBody>
               <OpenShiftGettingStarted
                 canCreate={flags[FLAGS.CAN_CREATE_NS] || flags[FLAGS.CAN_CREATE_PROJECT]}
               />
-            </HintBlock>
-          </div>
+            </HintBody>
+          </Hint>
           {!disable || (rest.kindObj && !rest.kindObj.namespaced) ? (
             <WrappedComponent {...rest} noProjectsAvailable />
           ) : (

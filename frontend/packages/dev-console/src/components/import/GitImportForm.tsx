@@ -98,7 +98,7 @@ const GitImportForm: React.FC<
                   </>
                 )}
                 {showSecureRouteSectionForDevfile && (
-                  <div className="pf-v5-c-form co-m-pane__form">
+                  <div className="pf-v6-c-form co-m-pane__form">
                     <SecureRoute />
                   </div>
                 )}

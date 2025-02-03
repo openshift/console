@@ -3,10 +3,8 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateVariant,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
@@ -19,12 +17,12 @@ type CatalogEmptyStateProps = {
 const CatalogEmptyState: React.FC<CatalogEmptyStateProps> = ({ onClear }) => {
   const { t } = useTranslation();
   return (
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader
-        titleText={<>{t('console-shared~No results found')}</>}
-        icon={<EmptyStateIcon icon={SearchIcon} />}
-        headingLevel="h2"
-      />
+    <EmptyState
+      headingLevel="h2"
+      icon={SearchIcon}
+      titleText={<>{t('console-shared~No results found')}</>}
+      variant={EmptyStateVariant.full}
+    >
       <EmptyStateBody>
         {t(
           'console-shared~No results match the filter criteria. Remove filters or clear all filters to show results.',

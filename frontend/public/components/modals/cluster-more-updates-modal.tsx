@@ -40,18 +40,18 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
         {clusterUpgradeableFalseAndNotExternallyManaged && (
           <ClusterNotUpgradeableAlert cv={cv} onCancel={cancel} />
         )}
-        <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-          <thead className="pf-v5-c-table__thead">
-            <tr className="pf-v5-c-table__tr">
-              <th className="pf-v5-c-table__th">{t('public~Version')}</th>
-              {releaseNotes && <th className="pf-v5-c-table__th">{t('public~Release notes')}</th>}
+        <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+          <thead className="pf-v6-c-table__thead">
+            <tr className="pf-v6-c-table__tr">
+              <th className="pf-v6-c-table__th">{t('public~Version')}</th>
+              {releaseNotes && <th className="pf-v6-c-table__th">{t('public~Release notes')}</th>}
             </tr>
           </thead>
-          <tbody className="pf-v5-c-table__tbody">
+          <tbody className="pf-v6-c-table__tbody">
             {moreAvailableUpdates.map((update) => {
               return (
-                <tr className="pf-v5-c-table__tr" key={update.version}>
-                  <td className="pf-v5-c-table__td">
+                <tr className="pf-v6-c-table__tr" key={update.version}>
+                  <td className="pf-v6-c-table__td">
                     {update.version}
                     {clusterUpgradeableFalseAndNotExternallyManaged &&
                       isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
@@ -59,7 +59,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
                       )}
                   </td>
                   {releaseNotes && (
-                    <td className="pf-v5-c-table__td">
+                    <td className="pf-v6-c-table__td">
                       {getReleaseNotesLink(update.version) ? (
                         <ReleaseNotesLink version={update.version} />
                       ) : (
@@ -74,7 +74,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
         </table>
       </ModalBody>
       <ModalFooter inProgress={false}>
-        <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
+        <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right pf-v6-c-form__group--no-top-margin">
           <Button
             type="button"
             variant="primary"

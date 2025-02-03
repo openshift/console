@@ -88,8 +88,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
                         setShowDetails(checked);
                       }}
                       data-test="switch"
-                      label={t('devconsole~Details on')}
-                      labelOff={t('devconsole~Details off')}
+                      label={showDetails ? t('devconsole~Details on') : t('devconsole~Details off')}
                       className="odc-add-page-layout__hint-block__details-switch__text"
                     />
                   </Tooltip>

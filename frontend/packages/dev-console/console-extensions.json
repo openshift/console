@@ -214,8 +214,7 @@
       "id": "serverless-function",
       "name": "%devconsole~Serverless function%",
       "insertAfter": "eventing",
-      "insertBefore": "git-repository",
-      "icon": "icon-serverless-function"
+      "insertBefore": "git-repository"
     }
   },
   {

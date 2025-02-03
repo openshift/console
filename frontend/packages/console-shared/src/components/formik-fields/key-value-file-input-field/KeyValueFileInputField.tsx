@@ -67,6 +67,7 @@ const KeyValueFileInputField: React.FC<KeyValueEntryFormProps & FieldProps> = ({
                 {!disableRemoveAction && (
                   <FlexItem className="key-value--remove-button">
                     <Button
+                      icon={<MinusCircleIcon className="co-icon-space-r" />}
                       type="button"
                       data-test="remove-key-value-button"
                       onClick={() => {
@@ -75,7 +76,6 @@ const KeyValueFileInputField: React.FC<KeyValueEntryFormProps & FieldProps> = ({
                       }}
                       variant="link"
                     >
-                      <MinusCircleIcon className="co-icon-space-r" />
                       {t('console-shared~Remove key/value')}
                     </Button>
                   </FlexItem>
@@ -107,13 +107,13 @@ const KeyValueFileInputField: React.FC<KeyValueEntryFormProps & FieldProps> = ({
             );
           })}
           <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
             className="pf-m-link--align-left"
             onClick={() => arrayHelpers.push({ key: '', value: '' })}
             type="button"
             data-test="add-key-value-button"
             variant="link"
           >
-            <PlusCircleIcon className="co-icon-space-r" />
             {t('console-shared~Add key/value')}
           </Button>
 

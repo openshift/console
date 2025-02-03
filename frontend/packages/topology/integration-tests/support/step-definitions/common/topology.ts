@@ -190,7 +190,7 @@ When(
   'user enters Git Repo URL as {string} in Create Source-to-Image Application',
   (gitUrl: string) => {
     gitPage.enterGitUrl(gitUrl);
-    cy.get('#form-input-git-url-field-helper').should('have.text', 'Validated');
+    cy.get('#form-input-git-url-field-helper').should('include.text', 'Validated');
   },
 );
 

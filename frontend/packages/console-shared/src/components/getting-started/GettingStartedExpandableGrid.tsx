@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {
+  Button,
   Card,
   CardBody,
-  Title,
-  TitleSizes,
+  CardHeader,
+  CardTitle,
+  CardExpandableContent,
   Popover,
-  ExpandableSection,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
@@ -43,41 +44,47 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
   };
 
   return (
-    <ExpandableSection
-      onToggle={() => setIsOpen(!isOpen)}
+    <Card
+      className="ocs-getting-started-expandable-grid"
+      variant="secondary"
+      data-test="getting-started"
+      isClickable
+      isSelectable
       isExpanded={isOpen}
-      displaySize="lg"
-      className="ocs-getting-started-expandable-section"
-      toggleContent={
-        <div className="ocs-getting-started-expandable-section__header">
-          <div className="ocs-getting-started-expandable-section__toggle-text">
-            <Title headingLevel="h2" size={TitleSizes.lg} data-test="title">
-              {title}{' '}
-              <Popover bodyContent={titleTooltip} triggerAction="hover">
-                <span
-                  role="button"
-                  aria-label={t('console-shared~More info')}
-                  className="ocs-getting-started-expandable-grid__tooltip-icon"
-                >
-                  <OutlinedQuestionCircleIcon />
-                </span>
-              </Popover>
-            </Title>
-          </div>
-          {setShowState && (
-            <TimesIcon onClick={handleClose} className="ocs-getting-started-close-icon" />
-          )}
-        </div>
-      }
     >
-      <Card
-        className="ocs-getting-started-expandable-grid"
-        data-test="getting-started"
-        isClickable
-        isSelectable
+      <CardHeader
+        onExpand={() => setIsOpen(!isOpen)}
+        actions={
+          setShowState && {
+            actions: (
+              <Button
+                variant="plain"
+                aria-label={t('console-shared~Close')}
+                icon={<TimesIcon />}
+                onClick={handleClose}
+              />
+            ),
+          }
+        }
+        toggleButtonProps={{
+          id: 'toggle-button1',
+          'aria-label': t('console-shared~Expandable details'),
+          'aria-labelledby': 'expandable-card-title toggle-button1',
+          'aria-expanded': isOpen,
+        }}
       >
+        <CardTitle data-test="title" id="expandable-card-title">
+          {title}{' '}
+          <Popover bodyContent={titleTooltip} triggerAction="hover">
+            <span role="button" aria-label={t('console-shared~More info')}>
+              <OutlinedQuestionCircleIcon />
+            </span>
+          </Popover>
+        </CardTitle>
+      </CardHeader>
+      <CardExpandableContent>
         <CardBody className="ocs-getting-started-expandable-grid__content">{children}</CardBody>
-      </Card>
-    </ExpandableSection>
+      </CardExpandableContent>
+    </Card>
   );
 };

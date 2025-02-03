@@ -85,24 +85,23 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
                     {t('public~Key')}
                   </div>
-                  <input
-                    type="text"
-                    className="pf-v5-c-form-control taint-modal__input"
-                    value={c.key}
-                    onChange={(e) => change(e, i, 'key')}
-                    required
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      type="text"
+                      className="taint-modal__input"
+                      value={c.key}
+                      onChange={(e) => change(e, i, 'key')}
+                      required
+                    />
+                  </span>
                 </div>
                 <div className="col-md-3 col-xs-5 taint-modal__field">
                   <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
                     {t('public~Value')}
                   </div>
-                  <input
-                    type="text"
-                    className="pf-v5-c-form-control taint-modal__input"
-                    value={c.value}
-                    onChange={(e) => change(e, i, 'value')}
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input type="text" value={c.value} onChange={(e) => change(e, i, 'value')} />
+                  </span>
                 </div>
                 <div className="clearfix visible-sm visible-xs" />
                 <div className="col-md-4 col-xs-5 taint-modal__field">
@@ -121,22 +120,28 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                 <div className="col-md-1 col-md-offset-0 col-sm-offset-10 col-xs-offset-10">
                   <Tooltip content="Remove">
                     <Button
+                      icon={
+                        <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                      }
                       type="button"
                       className="taint-modal__delete-icon"
                       onClick={() => remove(i)}
                       aria-label={t('public~Remove')}
                       variant="plain"
-                    >
-                      <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                    </Button>
+                    />
                   </Tooltip>
                 </div>
               </div>
             ))}
           </>
         )}
-        <Button className="pf-m-link--align-left" onClick={addRow} type="button" variant="link">
-          <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+        <Button
+          icon={<PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />}
+          className="pf-m-link--align-left"
+          onClick={addRow}
+          type="button"
+          variant="link"
+        >
           {t('public~Add more')}
         </Button>
       </ModalBody>

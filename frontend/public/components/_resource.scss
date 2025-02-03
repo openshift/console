@@ -1,7 +1,7 @@
 .co-m-resource-icon {
   background-color: $color-container-dark;
   border-radius: 20px;
-  color: var(--pf-v5-global--palette--white);
+  color: var(--pf-t--color--white);
   display: inline-block;
   flex-shrink: 0;
   font-size: $font-size-base;
@@ -105,7 +105,7 @@
 
 @keyframes co-resource-icon__deleting {
   to {
-    color: $pf-v5-color-black-600;
+    color: var(--pf-t--color--gray--50);
   }
 }
 
@@ -131,7 +131,7 @@
       infinite;
     flex: 0 0 auto;
     font-size: ($font-size-base - 1);
-    font-weight: var(--pf-v5-global--FontWeight--bold);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
     margin: 0 0 0 15px;
     overflow: hidden;
     padding: 0 0 2px;
@@ -150,5 +150,5 @@
 .co-namespace-summary__description {
   max-height: 15rem;
   overflow-y: auto;
-  padding-right: var(--pf-v5-global--spacer--sm);
+  padding-right: var(--pf-t--global--spacer--sm);
 }

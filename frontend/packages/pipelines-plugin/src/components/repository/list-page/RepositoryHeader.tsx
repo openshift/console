@@ -3,13 +3,13 @@ import i18next from 'i18next';
 import { Kebab } from '@console/internal/components/utils';
 
 export const repositoriesTableColumnClasses = [
-  'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // name
-  'pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-30-on-xs', // namespace
-  'pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-30-on-xs', // Event type
-  'pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-30-on-xs', // Last run
-  'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // Task status
+  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // name
+  'pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-30-on-xs', // namespace
+  'pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-30-on-xs', // Event type
+  'pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-30-on-xs', // Last run
+  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // Task status
   'pf-m-hidden pf-m-visible-on-xl', // last run status
-  'pf-m-hidden pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-33-on-xs pf-m-visible-on-xl', // Last run time
+  'pf-m-hidden pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-33-on-xs pf-m-visible-on-xl', // Last run time
   'pf-m-hidden pf-m-visible-on-xl', // Last run duration
   Kebab.columnClass,
 ];

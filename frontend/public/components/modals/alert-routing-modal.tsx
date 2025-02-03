@@ -70,16 +70,17 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
-                <input
-                  placeholder="cluster, alertname"
-                  type="text"
-                  className="pf-v5-c-form-control"
-                  id="input-group-by"
-                  data-test-id="input-group-by"
-                  defaultValue={_.get(config, ['route', 'group_by'])}
-                  aria-describedby="input-group-by-help"
-                />
+              <div className="pf-v6-c-input-group">
+                <span className="pf-v6-c-form-control">
+                  <input
+                    placeholder="cluster, alertname"
+                    type="text"
+                    id="input-group-by"
+                    data-test-id="input-group-by"
+                    defaultValue={_.get(config, ['route', 'group_by'])}
+                    aria-describedby="input-group-by-help"
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -92,16 +93,17 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
-                <input
-                  placeholder="30s"
-                  type="text"
-                  className="pf-v5-c-form-control"
-                  id="input-group-wait"
-                  data-test-id="input-group-wait"
-                  defaultValue={_.get(config, ['route', 'group_wait'])}
-                  aria-describedby="input-group-wait-help"
-                />
+              <div className="pf-v6-c-input-group">
+                <span className="pf-v6-c-form-control">
+                  <input
+                    placeholder="30s"
+                    type="text"
+                    id="input-group-wait"
+                    data-test-id="input-group-wait"
+                    defaultValue={_.get(config, ['route', 'group_wait'])}
+                    aria-describedby="input-group-wait-help"
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -114,16 +116,17 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
-                <input
-                  placeholder="5m"
-                  type="text"
-                  className="pf-v5-c-form-control"
-                  id="input-group-interval"
-                  data-test-id="input-group-interval"
-                  defaultValue={_.get(config, ['route', 'group_interval'])}
-                  aria-describedby="input-group-interval-help"
-                />
+              <div className="pf-v6-c-input-group">
+                <span className="pf-v6-c-form-control">
+                  <input
+                    placeholder="5m"
+                    type="text"
+                    id="input-group-interval"
+                    data-test-id="input-group-interval"
+                    defaultValue={_.get(config, ['route', 'group_interval'])}
+                    aria-describedby="input-group-interval-help"
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -136,16 +139,18 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
-              <div className="pf-v5-c-input-group">
-                <input
-                  placeholder="3h"
-                  type="text"
-                  className="pf-v5-c-form-control"
-                  id="input-repeat-interval"
-                  data-test-id="input-repeat-interval"
-                  defaultValue={_.get(config, ['route', 'repeat_interval'])}
-                  aria-describedby="input-repeat-interval-help"
-                />
+              <div className="pf-v6-c-input-group">
+                <span className="pf-v6-c-form-control">
+                  {' '}
+                  <input
+                    placeholder="3h"
+                    type="text"
+                    id="input-repeat-interval"
+                    data-test-id="input-repeat-interval"
+                    defaultValue={_.get(config, ['route', 'repeat_interval'])}
+                    aria-describedby="input-repeat-interval-help"
+                  />
+                </span>
               </div>
             </div>
           </div>

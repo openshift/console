@@ -387,21 +387,22 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
           })}
         >
           <label className="control-label co-required">{t('public~Receiver name')}</label>
-          <input
-            className="pf-v5-c-form-control"
-            type="text"
-            value={formValues.receiverName}
-            onChange={(e) =>
-              dispatchFormChange({
-                type: 'setFormValues',
-                payload: { receiverName: e.target.value },
-              })
-            }
-            aria-describedby="receiver-name-help"
-            name="receiverName"
-            data-test-id="receiver-name"
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              type="text"
+              value={formValues.receiverName}
+              onChange={(e) =>
+                dispatchFormChange({
+                  type: 'setFormValues',
+                  payload: { receiverName: e.target.value },
+                })
+              }
+              aria-describedby="receiver-name-help"
+              name="receiverName"
+              data-test-id="receiver-name"
+              required
+            />
+          </span>
           {receiverNameAlreadyExist && (
             <span className="help-block">
               <span data-test-id="receiver-name-already-exists-error">
@@ -446,7 +447,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
         )}
 
         <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
-          <ActionGroup className="pf-v5-c-form">
+          <ActionGroup className="pf-v6-c-form">
             <Button
               type="submit"
               variant="primary"

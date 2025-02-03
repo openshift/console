@@ -32,7 +32,7 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
         <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">
           {displayName}{' '}
           {deprecation && (
-            <DeprecatedOperatorWarningBadge className="pf-v5-u-ml-sm" deprecation={deprecation} />
+            <DeprecatedOperatorWarningBadge className="pf-v6-u-ml-sm" deprecation={deprecation} />
           )}
         </h1>
         {provider && (

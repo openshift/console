@@ -38,9 +38,9 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   onListChange,
 }) => {
   return (
-    <Split className="ocs-quick-search-content">
+    <Split className="ocs-quick-search-content" tabIndex={-1}>
       <SplitItem
-        className={cx('ocs-quick-search-content__list', {
+        className={cx('ocs-quick-search-content__list pf-v6-u-pt-xs', {
           'ocs-quick-search-content__list--overflow': catalogItems.length >= limitItemCount,
         })}
       >
@@ -57,8 +57,8 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
           onListChange={onListChange}
         />
       </SplitItem>
-      <Divider component="div" orientation={{ default: 'vertical' }} />
-      <SplitItem className="ocs-quick-search-content__details">
+      <Divider component="div" orientation={{ default: 'vertical' }} tabIndex={-1} />
+      <SplitItem className="ocs-quick-search-content__details pf-v6-u-pt-xs">
         <QuickSearchDetails
           detailsRenderer={detailsRenderer}
           selectedItem={selectedItem}

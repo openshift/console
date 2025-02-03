@@ -1,16 +1,20 @@
 @import '../../../../../public/style/vars';
 
 .ocs-form-footer {
-  padding: var(--pf-v5-global--spacer--md) $pf-v5-global-gutter;
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding: var(--pf-v5-global--spacer--md) $pf-v5-global-gutter--md;
+  padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter;
+  z-index: calc(
+    var(--pf-t--global--z-index--xs) + 1
+  ); // bump above --pf-v6-c-menu-toggle--border--ZIndex (100) to prevent menu borders from appearing in the footer
+
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter--md;
   }
   &__sticky {
     position: sticky;
-    background-color: var(--pf-v5-global--BackgroundColor--100);
+    background-color: var(--pf-t--global--background--color--primary--default);
     bottom: 0;
   }
   &__shadow {
-    box-shadow: var(--pf-v5-global--BoxShadow--sm-top);
+    box-shadow: var(--pf-t--global--box-shadow--sm--top);
   }
 }

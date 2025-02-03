@@ -91,7 +91,7 @@ const MoveConnectionForm: React.FC<
             Connect <strong>{{ sourceLabel }}</strong> to
           </Trans>
         </Title>
-        <div className="pf-v5-c-form">
+        <div className="pf-v6-c-form">
           <FormGroup fieldId="target-node" label="Target">
             <Select
               id="target-node-dropdown"

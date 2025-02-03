@@ -39,14 +39,20 @@ class Terminal_ extends React.Component {
     this.terminal && this.terminal.focus();
   }
 
-  enableiOSFix() {
-    document.getElementsByClassName('pf-v5-c-page__main')[0].classList.add('default-overflow');
+  enableLayoutFix() {
+    document.getElementsByClassName('pf-v6-c-page__main')[0].classList.add('default-overflow');
     document.getElementById('content-scrollable').classList.add('default-overflow');
+    document
+      .getElementsByClassName('pf-v6-c-page__main-container')[0]
+      .classList.add('fullscreen-fix');
   }
 
-  disableiOSFix() {
-    document.getElementsByClassName('pf-v5-c-page__main')[0].classList.remove('default-overflow');
+  disableLayoutFix() {
+    document.getElementsByClassName('pf-v6-c-page__main')[0].classList.remove('default-overflow');
     document.getElementById('content-scrollable').classList.remove('default-overflow');
+    document
+      .getElementsByClassName('pf-v6-c-page__main-container')[0]
+      .classList.remove('fullscreen-fix');
   }
 
   setFullscreen(fullscreen) {
@@ -54,9 +60,10 @@ class Terminal_ extends React.Component {
     this.isFullscreen = fullscreen;
     this.focus();
     this.onResize();
+    document.getElementsByClassName('pf-v6-c-page__main-container');
     // fix iOS bug where masthead overlays fullscreen terminal
     // see https://bugs.webkit.org/show_bug.cgi?id=160953
-    fullscreen ? this.enableiOSFix() : this.disableiOSFix();
+    fullscreen ? this.enableLayoutFix() : this.disableLayoutFix();
   }
 
   onConnectionClosed(reason) {
@@ -90,7 +97,7 @@ class Terminal_ extends React.Component {
       return;
     }
 
-    const pageRect = document.getElementsByClassName('pf-v5-c-page')[0].getBoundingClientRect();
+    const pageRect = document.getElementsByClassName('pf-v6-c-page')[0].getBoundingClientRect();
     const bodyRect = document.body.getBoundingClientRect();
     const nodeRect = node.getBoundingClientRect();
 
@@ -131,11 +138,11 @@ class Terminal_ extends React.Component {
         <div ref={this.innerRef} className="co-terminal">
           {this.isFullscreen && (
             <Button
+              icon={<CompressIcon className="co-icon-space-r" />}
               className="co-terminal-collapse-link"
               onClick={() => this.setFullscreen(false)}
               variant="link"
             >
-              <CompressIcon className="co-icon-space-r" />
               {t('public~Collapse')}
             </Button>
           )}
@@ -155,7 +162,7 @@ Terminal.propTypes = {
 };
 
 Terminal.defaultProps = {
-  padding: 30,
+  padding: 52,
   options: {
     fontFamily: 'monospace',
     fontSize: 16,

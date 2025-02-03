@@ -12,13 +12,10 @@
 }
 
 .modal-dialog {
-  --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--100);
+  --os-modal-dialog--BackgroundColor: var(--pf-t--global--background--color--floating--default);
 
   background: var(--os-modal-dialog--BackgroundColor);
-
-  :where(.pf-v5-theme-dark) & {
-    --os-modal-dialog--BackgroundColor: var(--pf-v5-global--BackgroundColor--300);
-  }
+  border-radius: var(--pf-t--global--border--radius--large);
 }
 
 .modal-body {
@@ -32,14 +29,14 @@
 }
 
 .modal-body-border {
-  border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+  border-top: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
 }
 
 .modal-body-content {
   height: 100%;
-  padding: 0 var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
+  padding: 0 var(--pf-t--global--spacer--xl) var(--pf-t--global--spacer--xl);
   p {
-    margin-bottom: var(--pf-v5-c-content--MarginBottom);
+    margin-bottom: var(--pf-v6-c-content--MarginBottom);
   }
 }
 
@@ -54,20 +51,20 @@
 }
 
 .modal-dialog {
-  margin: var(--pf-v5-global--spacer--md);
-  max-width: calc(100% - var(--pf-v5-global--spacer--xl));
+  margin: var(--pf-t--global--spacer--md);
+  max-width: calc(100% - var(--pf-t--global--spacer--xl));
   outline: 0;
   position: relative;
   width: 100%;
-  @media (min-width: $pf-v5-global--breakpoint--md) {
+  @media (min-width: $pf-v6-global--breakpoint--md) {
     margin: 30px auto;
     &:not(.modal-lg) {
       max-width: 600px;
     }
   }
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
     &.modal-lg {
-      // Manually set to match --pf-v5-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v5-c-modal-box
+      // Manually set to match --pf-v6-c-modal-box--m-lg--lg--MaxWidth because the PF variable is scoped to .pf-v6-c-modal-box
       max-width: 70rem;
     }
   }
@@ -75,13 +72,13 @@
 
 .modal-footer {
   margin-top: 0;
-  padding: var(--pf-v5-global--spacer--md) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl);
+  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--xl)
+    var(--pf-t--global--spacer--xl) var(--pf-t--global--spacer--xl);
 }
 
 .modal-header {
-  padding: var(--pf-v5-global--spacer--xl) var(--pf-v5-global--spacer--xl)
-    var(--pf-v5-global--spacer--lg);
+  padding: var(--pf-t--global--spacer--xl) var(--pf-t--global--spacer--xl)
+    var(--pf-t--global--spacer--lg);
 }
 
 .modal__inline-resource-link {
@@ -115,5 +112,5 @@
 }
 
 .modal-paragraph {
-  margin-bottom: var(--pf-v5-c-content--MarginBottom);
+  margin-bottom: var(--pf-v6-c-content--MarginBottom);
 }

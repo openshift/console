@@ -69,6 +69,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
                 }).format(loadError.labels),
               },
             )}
+            className="co-catalog-page__alert"
           />
           {props.children}
         </Data>

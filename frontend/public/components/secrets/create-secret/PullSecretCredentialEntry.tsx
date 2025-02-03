@@ -46,18 +46,19 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
           {t('public~Registry server address')}
         </label>
         <div>
-          <input
-            className="pf-v5-c-form-control"
-            id={`${id}-address`}
-            aria-describedby={`${id}-address-help`}
-            type="text"
-            name="address"
-            onChange={handleChangeEvent}
-            value={address}
-            onBlur={handleBlurEvent}
-            data-test="image-secret-address"
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id={`${id}-address`}
+              aria-describedby={`${id}-address-help`}
+              type="text"
+              name="address"
+              onChange={handleChangeEvent}
+              value={address}
+              onBlur={handleBlurEvent}
+              data-test="image-secret-address"
+              required
+            />
+          </span>
         </div>
         <p className="help-block" id={`${id}-address-help`}>
           {t('public~For example quay.io or docker.io')}
@@ -68,17 +69,18 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
           {t('public~Username')}
         </label>
         <div>
-          <input
-            className="pf-v5-c-form-control"
-            id={`${id}-username`}
-            type="text"
-            name="username"
-            onChange={handleChangeEvent}
-            value={username}
-            onBlur={handleBlurEvent}
-            data-test="image-secret-username"
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id={`${id}-username`}
+              type="text"
+              name="username"
+              onChange={handleChangeEvent}
+              value={username}
+              onBlur={handleBlurEvent}
+              data-test="image-secret-username"
+              required
+            />
+          </span>
         </div>
       </div>
       <div className="form-group">
@@ -86,17 +88,18 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
           {t('public~Password')}
         </label>
         <div>
-          <input
-            className="pf-v5-c-form-control"
-            id={`${id}-password`}
-            type="password"
-            name="password"
-            onChange={handleChangeEvent}
-            value={password}
-            onBlur={handleBlurEvent}
-            data-test="image-secret-password"
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id={`${id}-password`}
+              type="password"
+              name="password"
+              onChange={handleChangeEvent}
+              value={password}
+              onBlur={handleBlurEvent}
+              data-test="image-secret-password"
+              required
+            />
+          </span>
         </div>
       </div>
       <div className="form-group">
@@ -104,16 +107,17 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
           {t('public~Email')}
         </label>
         <div>
-          <input
-            className="pf-v5-c-form-control"
-            id={`${id}-email`}
-            type="text"
-            name="email"
-            onChange={handleChangeEvent}
-            value={email}
-            onBlur={handleBlurEvent}
-            data-test="image-secret-email"
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id={`${id}-email`}
+              type="text"
+              name="email"
+              onChange={handleChangeEvent}
+              value={email}
+              onBlur={handleBlurEvent}
+              data-test="image-secret-email"
+            />
+          </span>
         </div>
       </div>
     </div>

@@ -95,8 +95,14 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
           toolbarLinks={
             !sidebarOpen &&
             hasSidebarContent && [
-              <Button isInline variant="link" onClick={() => setSidebarOpen(true)}>
-                <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+              <Button
+                icon={
+                  <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+                }
+                isInline
+                variant="link"
+                onClick={() => setSidebarOpen(true)}
+              >
                 {t('console-shared~View sidebar')}
               </Button>,
             ]

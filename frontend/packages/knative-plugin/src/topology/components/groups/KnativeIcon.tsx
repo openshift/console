@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
+import { t_color_white as globalWhite } from '@patternfly/react-tokens';
 import { createSvgIdUrl, SVGDefs } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 

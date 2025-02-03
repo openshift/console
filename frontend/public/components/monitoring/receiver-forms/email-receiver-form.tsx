@@ -33,20 +33,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         <label className="control-label co-required" htmlFor="email-to">
           {t('public~To address')}
         </label>
-        <input
-          className="pf-v5-c-form-control"
-          type="text"
-          aria-describedby="email-to-help"
-          id="email-to"
-          data-test-id="email-to"
-          value={formValues.emailTo}
-          onChange={(e) =>
-            dispatchFormChange({
-              type: 'setFormValues',
-              payload: { emailTo: e.target.value },
-            })
-          }
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            aria-describedby="email-to-help"
+            id="email-to"
+            data-test-id="email-to"
+            value={formValues.emailTo}
+            onChange={(e) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { emailTo: e.target.value },
+              })
+            }
+          />
+        </span>
         <div className="help-block" id="email-to-help">
           {t('public~The email address to send notifications to.')}
         </div>
@@ -74,20 +75,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <label className="control-label co-required" htmlFor="email-from">
               {t('public~From address')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              aria-describedby="email-from-help"
-              id="email-from"
-              data-test-id="email-from"
-              value={formValues.smtp_from}
-              onChange={(e) =>
-                dispatchFormChange({
-                  type: 'setFormValues',
-                  payload: { smtp_from: e.target.value },
-                })
-              }
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                aria-describedby="email-from-help"
+                id="email-from"
+                data-test-id="email-from"
+                value={formValues.smtp_from}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { smtp_from: e.target.value },
+                  })
+                }
+              />
+            </span>
             <div className="help-block" id="email-from-help">
               {t('public~The email address to send notifications from.')}
             </div>
@@ -98,20 +100,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 <label className="control-label co-required" htmlFor="email-smarthost">
                   {t('public~SMTP smarthost')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  type="text"
-                  aria-describedby="email-smarthost-help"
-                  id="email-smarthost"
-                  data-test-id="email-smarthost"
-                  value={formValues.smtp_smarthost}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { smtp_smarthost: e.target.value },
-                    })
-                  }
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    aria-describedby="email-smarthost-help"
+                    id="email-smarthost"
+                    data-test-id="email-smarthost"
+                    value={formValues.smtp_smarthost}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { smtp_smarthost: e.target.value },
+                      })
+                    }
+                  />
+                </span>
                 <div className="help-block" id="email-smarthost-help">
                   {t('public~Smarthost used for sending emails, including port number.')}
                 </div>
@@ -122,20 +125,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 <label className="control-label co-required" htmlFor="email-hello">
                   {t('public~SMTP hello')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  type="text"
-                  aria-describedby="email-hello-help"
-                  id="email-hello"
-                  data-test-id="email-hello"
-                  value={formValues.smtp_hello}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { smtp_hello: e.target.value },
-                    })
-                  }
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    aria-describedby="email-hello-help"
+                    id="email-hello"
+                    data-test-id="email-hello"
+                    value={formValues.smtp_hello}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { smtp_hello: e.target.value },
+                      })
+                    }
+                  />
+                </span>
                 <div className="help-block" id="email-hello-help">
                   {t('public~The hostname to identify to the SMTP server.')}
                 </div>
@@ -148,19 +152,20 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 <label className="control-label" htmlFor="email-auth-username">
                   {t('public~Auth username')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  type="text"
-                  id="email-auth-username"
-                  data-test-id="email-auth-username"
-                  value={formValues.smtp_auth_username}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { smtp_auth_username: e.target.value },
-                    })
-                  }
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    id="email-auth-username"
+                    data-test-id="email-auth-username"
+                    value={formValues.smtp_auth_username}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { smtp_auth_username: e.target.value },
+                      })
+                    }
+                  />
+                </span>
               </div>
             </div>
             <div className="col-sm-6">
@@ -168,19 +173,20 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 <label className="control-label" htmlFor="email-auth-password">
                   {t('public~Auth password (using LOGIN and PLAIN)')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  type="password"
-                  id="email-auth-password"
-                  data-test-id="email-auth-password"
-                  value={formValues.smtp_auth_password}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { smtp_auth_password: e.target.value },
-                    })
-                  }
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="password"
+                    id="email-auth-password"
+                    data-test-id="email-auth-password"
+                    value={formValues.smtp_auth_password}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { smtp_auth_password: e.target.value },
+                      })
+                    }
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -190,19 +196,20 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 <label className="control-label" htmlFor="email-auth-identity">
                   {t('public~Auth identity (using PLAIN)')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  type="text"
-                  id="email-auth-identity"
-                  data-test-id="email-auth-identity"
-                  value={formValues.smtp_auth_identity}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { smtp_auth_identity: e.target.value },
-                    })
-                  }
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    id="email-auth-identity"
+                    data-test-id="email-auth-identity"
+                    value={formValues.smtp_auth_identity}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { smtp_auth_identity: e.target.value },
+                      })
+                    }
+                  />
+                </span>
               </div>
             </div>
             <div className="col-sm-6">
@@ -210,19 +217,20 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 <label className="control-label" htmlFor="email-auth-secret">
                   {t('public~Auth secret (CRAM-MDS)')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  type="password"
-                  id="email-auth-secret"
-                  data-test-id="email-auth-secret"
-                  value={formValues.smtp_auth_secret}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { smtp_auth_secret: e.target.value },
-                    })
-                  }
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="password"
+                    id="email-auth-secret"
+                    data-test-id="email-auth-secret"
+                    value={formValues.smtp_auth_secret}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { smtp_auth_secret: e.target.value },
+                      })
+                    }
+                  />
+                </span>
               </div>
             </div>
           </div>
@@ -266,20 +274,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               <label className="control-label co-required" htmlFor="email-html">
                 {t('public~Body of email notifications (HTML)')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                aria-describedby="html-help"
-                id="email-html"
-                data-test-id="email-html"
-                value={formValues.email_html}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { email_html: e.target.value },
-                  })
-                }
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  aria-describedby="html-help"
+                  id="email-html"
+                  data-test-id="email-html"
+                  value={formValues.email_html}
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { email_html: e.target.value },
+                    })
+                  }
+                />
+              </span>
             </div>
           </div>
         </ExpandCollapse>

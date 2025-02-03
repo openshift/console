@@ -1,3 +1,17 @@
 .odc-topology-quick-search-button {
-  padding: 0px;
+  --co-button-icon-size: var(--pf-t--global--icon--size--xl);
+
+  // equates to ~37px. calculates the height (including padding) of toolbar actions
+  --co-desired-button-size: calc(var(--pf-t--global--font--size--body--default) * var(--pf-t--global--font--line-height--body) + var(--pf-t--global--spacer--control--vertical--default) * 2);
+
+  padding: calc((var(--co-desired-button-size) - var(--co-button-icon-size)) / 2);
+
+  .pf-v6-c-button__icon {
+    line-height: 0;
+  }
+
+  .pf-v6-svg {
+    width: var(--co-button-icon-size);
+    height: var(--co-button-icon-size);
+  }
 }

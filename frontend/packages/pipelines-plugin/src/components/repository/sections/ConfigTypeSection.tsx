@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { FormGroup, Flex, FlexItem, Tile, Text } from '@patternfly/react-core';
+import { FormGroup, Flex, FlexItem, Content } from '@patternfly/react-core';
+import { Tile } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -23,11 +24,11 @@ const ConfigTypeSection: React.FC<ConfigTypeSectionProps> = ({ pac, formContextF
 
   return (
     <>
-      <Text>
+      <Content component="p">
         {t(
           'pipelines-plugin~A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
         )}
-      </Text>
+      </Content>
       <br />
       <FormSection extraMargin>
         <FormGroup fieldId="method">

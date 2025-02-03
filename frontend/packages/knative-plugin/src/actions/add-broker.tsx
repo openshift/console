@@ -3,15 +3,9 @@ import i18next from 'i18next';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { Action } from '@console/dynamic-plugin-sdk/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import channelIcon from '../imgs/channel.svg';
+import { ChannelIcon } from '../utils/icons';
 
-const eventBrokerStyles = {
-  width: '1em',
-  height: '1em',
-};
-const EventBrokerIcon: React.FC = () => (
-  <img style={eventBrokerStyles} src={channelIcon} alt="Eventking Broker icon" />
-);
+const EventBrokerIcon: React.FC = () => <ChannelIcon title="Eventing Broker" />;
 
 export const AddBrokerAction = (namespace: string, application?: string, path?: string): Action => {
   const params = new URLSearchParams();

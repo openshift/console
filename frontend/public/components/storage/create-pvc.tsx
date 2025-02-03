@@ -157,18 +157,19 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         {t('public~PersistentVolumeClaim name')}
       </label>
       <div className="form-group">
-        <input
-          className="pf-v5-c-form-control"
-          type="text"
-          onChange={handlePvcName}
-          placeholder="my-storage-claim"
-          aria-describedby="pvc-name-help"
-          id="pvc-name"
-          data-test="pvc-name"
-          name="pvcName"
-          value={pvcName}
-          required
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            onChange={handlePvcName}
+            placeholder="my-storage-claim"
+            aria-describedby="pvc-name-help"
+            id="pvc-name"
+            data-test="pvc-name"
+            name="pvcName"
+            value={pvcName}
+            required
+          />
+        </span>
         <p className="help-block" id="pvc-name-help">
           {t('public~A unique name for the storage claim within the project')}
         </p>
@@ -283,7 +284,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
         <form className="co-m-pane__body-group" onSubmit={save}>
           <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
                 {t('public~Create')}
               </Button>

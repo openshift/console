@@ -1,18 +1,11 @@
-import { global_BackgroundColor_200 as globalBackground200 } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
-import { global_BackgroundColor_dark_100 as darkEditorBackground } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_dark_100';
-import { global_BackgroundColor_dark_200 as globalBackgroundDark200 } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_dark_200';
-import { global_BackgroundColor_light_100 as lightEditorBackground } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
-import { global_Color_dark_100 as globalColorDark100 } from '@patternfly/react-tokens/dist/js/global_Color_dark_100';
-import { global_Color_light_100 as globalColorLight100 } from '@patternfly/react-tokens/dist/js/global_Color_light_100';
-
 (window as any).monaco.editor.defineTheme('console-light', {
   base: 'vs',
   inherit: true,
   colors: {
-    'editor.background': lightEditorBackground.value,
+    'editor.background': '#fff',
     'editorGutter.background': '#f5f5f5', // black-150
-    'editorLineNumber.activeForeground': globalColorDark100.value,
-    'editorLineNumber.foreground': globalBackgroundDark200.value,
+    'editorLineNumber.activeForeground': '#151515',
+    'editorLineNumber.foreground': '#151515',
   },
   rules: [
     { token: 'number', foreground: '486b00' }, // light-green-600
@@ -26,10 +19,10 @@ import { global_Color_light_100 as globalColorLight100 } from '@patternfly/react
   base: 'vs-dark',
   inherit: true,
   colors: {
-    'editor.background': darkEditorBackground.value,
+    'editor.background': '#151515',
     'editorGutter.background': '#292e34', // no pf token defined
-    'editorLineNumber.activeForeground': globalColorLight100.value,
-    'editorLineNumber.foreground': globalBackground200.value,
+    'editorLineNumber.activeForeground': '#fff',
+    'editorLineNumber.foreground': '#f0f0f0',
   },
   rules: [
     { token: 'number', foreground: 'ace12e' }, // light-green-600

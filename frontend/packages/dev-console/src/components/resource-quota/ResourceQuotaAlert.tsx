@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import {
-  useK8sWatchResources,
-  YellowExclamationTriangleIcon,
-} from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '@console/internal/models';
 import { AppliedClusterResourceQuotaKind, ResourceQuotaKind } from '@console/internal/module/k8s';
@@ -108,7 +105,7 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
   return (
     <>
       {warningMessageFlag && resourcequotas.loaded && appliedclusterresourcequotas.loaded ? (
-        <Label color="orange" icon={<YellowExclamationTriangleIcon />}>
+        <Label status="warning" variant="outline">
           <Link
             to={getRedirectLink()}
             data-test="resource-quota-warning"

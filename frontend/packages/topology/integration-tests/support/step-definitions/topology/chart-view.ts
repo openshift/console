@@ -244,7 +244,7 @@ Then('Display options dropdown, Filter by resource and Find by name fields are d
 });
 
 Then('switch view is disabled', () => {
-  cy.get(topologyPO.switcher).should('have.attr', 'aria-disabled', 'true');
+  cy.get(topologyPO.switcher).should('have.attr', 'disabled', 'disabled');
 });
 
 When('user right clicks on the node {string} to open context menu', (nodeName: string) => {

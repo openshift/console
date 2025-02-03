@@ -2,9 +2,8 @@ import * as React from 'react';
 import {
   Alert,
   AboutModal as PfAboutModal,
-  TextContent,
-  TextList,
-  TextListItem,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
@@ -27,6 +26,8 @@ import {
   getOpenShiftVersion,
   hasAvailableUpdates,
 } from '../module/k8s/cluster-settings';
+import redHatFedoraImg from '../imgs/red-hat-fedora.svg';
+import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
 const DynamicPlugins: React.FC = () => {
   const { t } = useTranslation();
@@ -42,16 +43,19 @@ const DynamicPlugins: React.FC = () => {
     setItems(
       sortedLoadedPlugins?.map((plugin) => {
         return (
-          <TextListItem
+          <Content
+            component="li"
             key={plugin.pluginID}
-          >{`${plugin.metadata.name} (${plugin.metadata.version})`}</TextListItem>
+          >{`${plugin.metadata.name} (${plugin.metadata.version})`}</Content>
         );
       }),
     );
   }, [pluginInfoEntries]);
 
   return items.length > 0 ? (
-    <TextList className="co-text-list-plain">{items}</TextList>
+    <Content component="ul" className="co-text-list-plain">
+      {items}
+    </Content>
   ) : (
     t('public~None')
   );
@@ -89,67 +93,67 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
           customIcon={<BlueArrowCircleUpIcon />}
         />
       )}
-      <TextContent>
-        <TextList component="dl">
+      <Content>
+        <Content component="dl">
           {openshiftVersion && (
             <>
-              <TextListItem component="dt">{t('public~OpenShift version')}</TextListItem>
-              <TextListItem component="dd">
+              <Content component="dt">{t('public~OpenShift version')}</Content>
+              <Content component="dd">
                 <div className="co-select-to-copy">{openshiftVersion}</div>
                 <ReleaseNotesLink version={getCurrentVersion(clusterVersion)} />
-              </TextListItem>
+              </Content>
             </>
           )}
-          <TextListItem component="dt">{t('public~Kubernetes version')}</TextListItem>
-          <TextListItem component="dd" className="co-select-to-copy">
+          <Content component="dt">{t('public~Kubernetes version')}</Content>
+          <Content component="dd" className="co-select-to-copy">
             {kubernetesVersion}
-          </TextListItem>
+          </Content>
           {channel && (
             <>
-              <TextListItem component="dt">{t('public~Channel')}</TextListItem>
-              <TextListItem component="dd" className="co-select-to-copy">
+              <Content component="dt">{t('public~Channel')}</Content>
+              <Content component="dd" className="co-select-to-copy">
                 {channel}
-              </TextListItem>
+              </Content>
             </>
           )}
           {clusterID && (
             <>
-              <TextListItem component="dt">{t('public~Cluster ID')}</TextListItem>
-              <TextListItem component="dd" className="co-select-to-copy">
+              <Content component="dt">{t('public~Cluster ID')}</Content>
+              <Content component="dd" className="co-select-to-copy">
                 {clusterID}
-              </TextListItem>
+              </Content>
             </>
           )}
-          <TextListItem component="dt">{t('public~API server')}</TextListItem>
-          <TextListItem component="dd" className="co-select-to-copy">
+          <Content component="dt">{t('public~API server')}</Content>
+          <Content component="dd" className="co-select-to-copy">
             {window.SERVER_FLAGS.kubeAPIServerURL}
-          </TextListItem>
+          </Content>
 
           <ServiceLevel
             clusterID={clusterID}
             loading={
               <>
-                <TextListItem component="dt">{serviceLevelTitle}</TextListItem>
-                <TextListItem component="dd">
+                <Content component="dt">{serviceLevelTitle}</Content>
+                <Content component="dd">
                   <ServiceLevelLoading />
-                </TextListItem>
+                </Content>
               </>
             }
           >
             <>
-              <TextListItem component="dt">{serviceLevelTitle}</TextListItem>
-              <TextListItem component="dd" className="co-select-to-copy">
+              <Content component="dt">{serviceLevelTitle}</Content>
+              <Content component="dd" className="co-select-to-copy">
                 <ServiceLevelText inline clusterID={clusterID} />
-              </TextListItem>
+              </Content>
             </>
           </ServiceLevel>
 
-          <TextListItem component="dt">{t('public~Dynamic plugins')}</TextListItem>
-          <TextListItem component="dd">
+          <Content component="dt">{t('public~Dynamic plugins')}</Content>
+          <Content component="dd">
             <DynamicPlugins />
-          </TextListItem>
-        </TextList>
-      </TextContent>
+          </Content>
+        </Content>
+      </Content>
     </>
   );
 };
@@ -160,22 +164,24 @@ export const AboutModal: React.FC<AboutModalProps> = (props) => {
   const { t } = useTranslation();
   const details = getBrandingDetails();
   const customBranding = window.SERVER_FLAGS.customLogoURL || window.SERVER_FLAGS.customProductName;
+  const openShiftBranding = window.SERVER_FLAGS.branding !== 'okd' && !customBranding;
   return (
     <PfAboutModal
       isOpen={isOpen}
       onClose={closeAboutModal}
-      productName=""
-      brandImageSrc={details.logoImg}
-      brandImageAlt={details.productName}
+      productName={details.productName}
+      brandImageSrc={openShiftBranding && redHatFedoraImg}
+      brandImageAlt={openShiftBranding && details.productName}
+      backgroundImageSrc={openShiftBranding && `/${redHatFedoraWatermarkImg}`}
       hasNoContentContainer
       aria-label="About modal"
     >
       {!customBranding && (
-        <p>
+        <Content component={ContentVariants.p}>
           {t(
             "public~OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.",
           )}
-        </p>
+        </Content>
       )}
       <AboutModalItems {...(props as any)} />
     </PfAboutModal>

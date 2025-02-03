@@ -315,16 +315,17 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
             {t('public~Device path')}
           </label>
           <div>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={handleDevicePathChange}
-              aria-describedby="volume-device-help"
-              name="devicePath"
-              id="device-path"
-              value={devicePath}
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={handleDevicePathChange}
+                aria-describedby="volume-device-help"
+                name="devicePath"
+                id="device-path"
+                value={devicePath}
+                required
+              />
+            </span>
             <p className="help-block" id="volume-device-help">
               {t('public~Device path for the block volume inside the container.')}
             </p>
@@ -336,17 +337,18 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
             {t('public~Mount path')}
           </label>
           <div>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={handleMountPathChange}
-              aria-describedby="mount-path-help"
-              name="mountPath"
-              id="mount-path"
-              data-test="mount-path"
-              value={mountPath}
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={handleMountPathChange}
+                aria-describedby="mount-path-help"
+                name="mountPath"
+                id="mount-path"
+                data-test="mount-path"
+                value={mountPath}
+                required
+              />
+            </span>
             <p className="help-block" id="mount-path-help">
               {t('public~Mount path for the volume inside the container.')}
             </p>
@@ -362,15 +364,16 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
               {t('public~Subpath')}
             </label>
             <div>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                onChange={handleSubPathChange}
-                aria-describedby="subpath-help"
-                id="subpath"
-                name="subPath"
-                value={subPath}
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  onChange={handleSubPathChange}
+                  aria-describedby="subpath-help"
+                  id="subpath"
+                  name="subPath"
+                  value={subPath}
+                />
+              </span>
               <p className="help-block" id="subpath-help">
                 {t(
                   'public~Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
@@ -409,7 +412,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
         </div>
       )}
       <ButtonBar errorMessage={error} inProgress={inProgress}>
-        <ActionGroup className="pf-v5-c-form">
+        <ActionGroup className="pf-v6-c-form">
           <Button
             type="submit"
             variant="primary"

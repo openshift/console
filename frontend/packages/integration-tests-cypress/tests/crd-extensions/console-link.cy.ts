@@ -14,6 +14,7 @@ describe(`${crd} CRD`, () => {
     {
       name,
       dropdownMenuName: 'help menu',
+      dropdownMenu: '[data-test=help-dropdown]',
       dropdownToggle: '[data-test=help-dropdown-toggle]',
       menuLinkLocation: 'HelpMenu',
       menuLinkText: `${name} help menu link`,
@@ -21,7 +22,8 @@ describe(`${crd} CRD`, () => {
     {
       name,
       dropdownMenuName: 'user menu',
-      dropdownToggle: '[data-test=user-dropdown]',
+      dropdownMenu: '[data-test=user-dropdown]',
+      dropdownToggle: '[data-test=user-dropdown-toggle]',
       menuLinkLocation: 'UserMenu',
       menuLinkText: `${name} user menu link`,
     },
@@ -44,7 +46,14 @@ describe(`${crd} CRD`, () => {
   });
 
   testObjs.forEach(
-    ({ name: instanceName, dropdownMenuName, dropdownToggle, menuLinkLocation, menuLinkText }) => {
+    ({
+      name: instanceName,
+      dropdownMenuName,
+      dropdownMenu,
+      dropdownToggle,
+      menuLinkLocation,
+      menuLinkText,
+    }) => {
       it(`creates, displays, and deletes a new ${crd} ${dropdownMenuName} instance`, () => {
         cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
         listPage.isCreateButtonVisible();
@@ -73,8 +82,7 @@ describe(`${crd} CRD`, () => {
         detailsPage.titleShouldContain(name);
 
         cy.get(dropdownToggle).click();
-        cy.get(dropdownToggle)
-          .parent()
+        cy.get(dropdownMenu)
           .find('[data-test="application-launcher-item"]')
           .contains(menuLinkText)
           .should('exist');

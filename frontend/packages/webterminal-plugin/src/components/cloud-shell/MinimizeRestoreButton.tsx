@@ -28,14 +28,13 @@ const MinimizeRestoreButton: React.FC<MinimizeRestoreButtonProps> = ({
       content={minimize ? minimizeText : restoreText}
     >
       <Button
+        icon={minimize ? <OutlinedWindowMinimizeIcon /> : <OutlinedWindowRestoreIcon />}
         variant="plain"
         type="button"
         onClick={minimize ? onMinimize : onRestore}
         aria-label={minimize ? minimizeText : restoreText}
         isInline
-      >
-        {minimize ? <OutlinedWindowMinimizeIcon /> : <OutlinedWindowRestoreIcon />}
-      </Button>
+      />
     </Tooltip>
   );
 };

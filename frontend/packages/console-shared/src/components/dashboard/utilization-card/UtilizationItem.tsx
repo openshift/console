@@ -120,7 +120,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       <div className="co-utilization-card__item" data-test-id="utilization-item">
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section-multiline">
-            <h4 className="pf-v5-c-title pf-m-md" data-test="utilization-item-title">
+            <h4 className="pf-v6-c-title pf-m-md" data-test="utilization-item-title">
               {title}
             </h4>
             {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
@@ -255,7 +255,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             className="co-utilization-card__item-section"
           >
             <FlexItem>
-              <h4 className="pf-v5-c-title pf-m-md" data-test="utilization-item-title">
+              <h4 className="pf-v6-c-title pf-m-md" data-test="utilization-item-title">
                 {title}
               </h4>
             </FlexItem>

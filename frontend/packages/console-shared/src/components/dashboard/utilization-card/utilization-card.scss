@@ -1,7 +1,6 @@
-@import '~@patternfly/patternfly/sass-utilities/colors';
-
 .co-utilization-card__body {
   padding: 0;
+  overflow: hidden;
 }
 
 .co-utilization-card__item .co-u-hidden {
@@ -9,23 +8,24 @@
 }
 
 .co-utilization-card__item .co-utilization-card__item-chart.co-utilization-card__item-chart--times {
-  padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg)
-    var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--md);
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg)
+    var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
   svg {
     overflow: visible;
   }
 }
 
 .co-utilization-card__item-header {
-  border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
 }
 
-.co-utilization-card__item .pf-v5-c-title {
+.co-utilization-card__item .pf-v6-c-title {
   margin-bottom: 0;
 }
 
 .co-utilization-card__item > * {
-  padding: var(--pf-v5-global--spacer--md);
+  padding: var(--pf-t--global--spacer--md);
 }
 
 .co-utilization-card__item-chart .graph-wrapper {
@@ -42,6 +42,7 @@
 
 .co-utilization-card__item-section {
   width: 100%;
+  overflow: hidden;
 }
 
 .co-utilization-card__item-section-multiline {
@@ -52,12 +53,12 @@
 }
 
 .co-utilization-card__item-text {
-  color: var(--pf-v5-global--Color--200);
-  font-size: var(--pf-v5-global--FontSize--sm);
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--sm);
 }
 
 .co-utilization-card__item-icon {
-  margin-right: var(--pf-v5-global--spacer--sm);
+  margin-right: var(--pf-t--global--spacer--sm);
 }
 
 @media screen and (min-width: 1200px) {
@@ -81,11 +82,11 @@
 
   .co-utilization-card__item > *:nth-child(even) {
     align-items: center;
-    padding: 0 var(--pf-v5-global--spacer--lg) 0 var(--pf-v5-global--spacer--md);
+    padding: 0 var(--pf-t--global--spacer--lg) 0 var(--pf-t--global--spacer--md);
   }
 
   .co-utilization-card__item > *:nth-child(odd) {
     align-items: flex-start;
-    padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg);
+    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);
   }
 }

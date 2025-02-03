@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import classnames from 'classnames';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -120,19 +121,26 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
             </div>
             {_.map(tolerations, (toleration, i) => {
               const { key, operator, value, effect = '' } = toleration;
+              const keyReadOnly = !isEditable(toleration);
+              const valueReadOnly = !isEditable(toleration) || operator === 'Exists';
               return (
                 <div className="row toleration-modal__row" key={i}>
                   <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
                       {t('public~Key')}
                     </div>
-                    <input
-                      type="text"
-                      className="pf-v5-c-form-control"
-                      value={key}
-                      onChange={(e) => change(e, i, 'key')}
-                      readOnly={!isEditable(toleration)}
-                    />
+                    <span
+                      className={classnames('pf-v6-c-form-control', {
+                        'pf-m-readonly': keyReadOnly,
+                      })}
+                    >
+                      <input
+                        type="text"
+                        value={key}
+                        onChange={(e) => change(e, i, 'key')}
+                        readOnly={keyReadOnly}
+                      />
+                    </span>
                   </div>
                   <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
@@ -148,12 +156,9 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                         title={operators[operator]}
                       />
                     ) : (
-                      <input
-                        type="text"
-                        className="pf-v5-c-form-control"
-                        value={operator}
-                        readOnly
-                      />
+                      <span className="pf-v6-c-form-control pf-m-readonly">
+                        <input type="text" value={operator} readOnly />
+                      </span>
                     )}
                   </div>
                   <div className="clearfix visible-sm visible-xs" />
@@ -161,13 +166,18 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
                       {t('public~Value')}
                     </div>
-                    <input
-                      type="text"
-                      className="pf-v5-c-form-control"
-                      value={value}
-                      onChange={(e) => change(e, i, 'value')}
-                      readOnly={!isEditable(toleration) || operator === 'Exists'}
-                    />
+                    <span
+                      className={classnames('pf-v6-c-form-control', {
+                        'pf-m-readonly': valueReadOnly,
+                      })}
+                    >
+                      <input
+                        type="text"
+                        value={value}
+                        onChange={(e) => change(e, i, 'value')}
+                        readOnly={valueReadOnly}
+                      />
+                    </span>
                   </div>
                   <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
@@ -183,26 +193,24 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                         title={effects[effect]}
                       />
                     ) : (
-                      <input
-                        type="text"
-                        className="pf-v5-c-form-control"
-                        value={effects[effect]}
-                        readOnly
-                      />
+                      <span className="pf-v6-c-form-control pf-m-readonly">
+                        <input type="text" value={effects[effect]} readOnly />
+                      </span>
                     )}
                   </div>
                   <div className="col-md-1 col-sm-2 col-xs-2">
                     {isEditable(toleration) && (
                       <Tooltip content={t('public~Remove')}>
                         <Button
+                          icon={
+                            <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                          }
                           type="button"
                           className="toleration-modal__delete-icon"
                           onClick={() => remove(i)}
                           aria-label={t('public~Remove')}
                           variant="plain"
-                        >
-                          <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                        </Button>
+                        />
                       </Tooltip>
                     )}
                   </div>
@@ -211,8 +219,13 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
             })}
           </>
         )}
-        <Button className="pf-m-link--align-left" onClick={addRow} type="button" variant="link">
-          <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+        <Button
+          icon={<PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />}
+          className="pf-m-link--align-left"
+          onClick={addRow}
+          type="button"
+          variant="link"
+        >
           {t('public~Add more')}
         </Button>
       </ModalBody>

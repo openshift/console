@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Checkbox, Switch } from '@patternfly/react-core';
 import { WidgetProps } from '@rjsf/core';
 import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup } from '@console/internal/components/radio';
@@ -27,47 +28,55 @@ export const TextWidget: React.FC<WidgetProps> = (props) => {
   return JSON_SCHEMA_NUMBER_TYPES.includes(schemaType) ? (
     <NumberWidget {...props} />
   ) : (
-    <input
-      className="pf-v5-c-form-control"
-      disabled={disabled}
-      id={id}
-      key={id}
-      onBlur={onBlur && ((event) => onBlur(id, event.target.value))}
-      onChange={({ currentTarget }) => onChange(currentTarget.value)}
-      onFocus={onFocus && ((event) => onFocus(id, event.target.value))}
-      readOnly={readonly}
-      type="text"
-      value={value}
-    />
+    <span
+      className={classNames('pf-v6-c-form-control', {
+        'pf-m-disabled': disabled,
+        'pf-m-readonly': readonly,
+      })}
+    >
+      <input
+        disabled={disabled}
+        id={id}
+        key={id}
+        onBlur={onBlur && ((event) => onBlur(id, event.target.value))}
+        onChange={({ currentTarget }) => onChange(currentTarget.value)}
+        onFocus={onFocus && ((event) => onFocus(id, event.target.value))}
+        readOnly={readonly}
+        type="text"
+        value={value}
+      />
+    </span>
   );
 };
 
 export const NumberWidget: React.FC<WidgetProps> = ({ value, id, onChange }) => {
   const numberValue = _.toNumber(value);
   return (
-    <input
-      className="pf-v5-c-form-control"
-      id={id}
-      key={id}
-      onChange={({ currentTarget }) =>
-        onChange(currentTarget.value !== '' ? _.toNumber(currentTarget.value) : '')
-      }
-      type="number"
-      value={_.isFinite(numberValue) ? numberValue : ''}
-    />
+    <span className="pf-v6-c-form-control">
+      <input
+        id={id}
+        key={id}
+        onChange={({ currentTarget }) =>
+          onChange(currentTarget.value !== '' ? _.toNumber(currentTarget.value) : '')
+        }
+        type="number"
+        value={_.isFinite(numberValue) ? numberValue : ''}
+      />
+    </span>
   );
 };
 
 export const PasswordWidget: React.FC<WidgetProps> = ({ value = '', id, onChange }) => {
   return (
-    <input
-      className="pf-v5-c-form-control"
-      key={id}
-      id={id}
-      type="password"
-      onChange={({ currentTarget }) => onChange(currentTarget.value)}
-      value={value}
-    />
+    <span className="pf-v6-c-form-control">
+      <input
+        key={id}
+        id={id}
+        type="password"
+        onChange={({ currentTarget }) => onChange(currentTarget.value)}
+        value={value}
+      />
+    </span>
   );
 };
 
@@ -86,7 +95,7 @@ export const CheckboxWidget: React.FC<WidgetProps> = ({ value = false, id, label
 
 export const SwitchWidget: React.FC<WidgetProps> = ({ value, id, label, onChange, options }) => {
   const { t } = useTranslation();
-  const { labelOn = t('console-shared~true'), labelOff = t('console-shared~false') } = options;
+  const { labelOn = t('console-shared~true') } = options;
   return (
     <Switch
       id={id || label}
@@ -94,7 +103,6 @@ export const SwitchWidget: React.FC<WidgetProps> = ({ value, id, label, onChange
       isChecked={_.isNil(value) ? false : value}
       onChange={(_event, v) => onChange(v)}
       label={labelOn as string}
-      labelOff={labelOff as string}
     />
   );
 };

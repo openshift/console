@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
+import { chart_color_red_orange_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_orange_300';
 import * as _ from 'lodash';
 import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';

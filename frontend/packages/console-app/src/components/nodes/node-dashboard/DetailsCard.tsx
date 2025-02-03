@@ -19,7 +19,7 @@ const DetailsCard: React.FC = () => {
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
   const { t } = useTranslation();
   return (
-    <Card data-test-id="details-card" isClickable isSelectable>
+    <Card data-test-id="details-card">
       <CardHeader
         actions={{
           actions: (

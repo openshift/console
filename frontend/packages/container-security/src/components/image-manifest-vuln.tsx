@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateVariant, Tooltip, EmptyStateHeader } from '@patternfly/react-core';
+import { EmptyState, EmptyStateVariant, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
@@ -245,17 +245,16 @@ export const ImageManifestVulnTableHeader = (t: TFunction) => () => [
 export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (props) => {
   const { t } = useTranslation();
   const EmptyMsg = () => (
-    <EmptyState variant={EmptyStateVariant.lg}>
-      <EmptyStateHeader
-        titleText={
-          <>
-            <EmptyStateResourceBadge model={ImageManifestVulnModel} />
-            {t('container-security~No Image vulnerabilities found')}
-          </>
-        }
-        headingLevel="h4"
-      />
-    </EmptyState>
+    <EmptyState
+      headingLevel="h4"
+      titleText={
+        <>
+          <EmptyStateResourceBadge model={ImageManifestVulnModel} />
+          {t('container-security~No Image vulnerabilities found')}
+        </>
+      }
+      variant={EmptyStateVariant.lg}
+    />
   );
 
   return (

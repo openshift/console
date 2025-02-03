@@ -71,7 +71,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
       {releaseName}
       <Badge
         isRead
-        style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-v5-global--spacer--md)' }}
+        style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-t--global--spacer--md)' }}
       >
         <Status
           status={releaseStatus(latestSecretStatus)}

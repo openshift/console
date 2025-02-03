@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +24,7 @@ export const getNumberOrPercent = (value) => {
 export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (props) => {
   const { showDescription = true } = props;
   const { t } = useTranslation();
+  const strategyIsNotRollingUpdate = props.strategyType !== 'RollingUpdate';
   return (
     <>
       {showDescription && (
@@ -58,20 +60,25 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                 </div>
                 <div className="co-m-form-col col-sm-9">
                   <div className="form-inline">
-                    <div className="pf-v5-c-input-group">
-                      <input
-                        disabled={props.strategyType !== 'RollingUpdate'}
-                        placeholder="25%"
-                        size={5}
-                        type="text"
-                        className="pf-v5-c-form-control"
-                        id="input-max-unavailable"
-                        value={props.maxUnavailable}
-                        onChange={(e) => props.onChangeMaxUnavailable(e.target.value)}
-                        aria-describedby="input-max-unavailable-help"
-                      />
+                    <div className="pf-v6-c-input-group">
+                      <span
+                        className={classNames('pf-v6-c-form-control', {
+                          'pf-m-disabled': strategyIsNotRollingUpdate,
+                        })}
+                      >
+                        <input
+                          disabled={strategyIsNotRollingUpdate}
+                          placeholder="25%"
+                          size={5}
+                          type="text"
+                          id="input-max-unavailable"
+                          value={props.maxUnavailable}
+                          onChange={(e) => props.onChangeMaxUnavailable(e.target.value)}
+                          aria-describedby="input-max-unavailable-help"
+                        />
+                      </span>
                       {props.replicas && (
-                        <span className="pf-v5-c-input-group__text">
+                        <span className="pf-v6-c-input-group__text">
                           <Tooltip content={t('public~Current desired pod count')}>
                             <span>{t('public~of pod', { count: props.replicas })}</span>
                           </Tooltip>
@@ -96,19 +103,24 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                 </div>
                 <div className="co-m-form-col col-sm-9">
                   <div className="form-inline">
-                    <div className="pf-v5-c-input-group">
-                      <input
-                        disabled={props.strategyType !== 'RollingUpdate'}
-                        placeholder="25%"
-                        size={5}
-                        type="text"
-                        className="pf-v5-c-form-control"
-                        id="input-max-surge"
-                        value={props.maxSurge}
-                        onChange={(e) => props.onChangeMaxSurge(e.target.value)}
-                        aria-describedby="input-max-surge-help"
-                      />
-                      <span className="pf-v5-c-input-group__text">
+                    <div className="pf-v6-c-input-group">
+                      <span
+                        className={classNames('pf-v6-c-form-control', {
+                          'pf-m-disabled': strategyIsNotRollingUpdate,
+                        })}
+                      >
+                        <input
+                          disabled={strategyIsNotRollingUpdate}
+                          placeholder="25%"
+                          size={5}
+                          type="text"
+                          id="input-max-surge"
+                          value={props.maxSurge}
+                          onChange={(e) => props.onChangeMaxSurge(e.target.value)}
+                          aria-describedby="input-max-surge-help"
+                        />
+                      </span>
+                      <span className="pf-v6-c-input-group__text">
                         <Tooltip content={t('public~Current desired pod count')}>
                           <span>{t('public~greater than pod', { count: props.replicas })}</span>
                         </Tooltip>

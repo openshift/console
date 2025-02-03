@@ -17,9 +17,6 @@
 // Ancillary Styles to support removing Bootstrap
 @import 'style/ancillary/bootstrap';
 
-// Ancillary Styles to achieve likeness with PatternFly 5
-@import 'style/ancillary/patternfly5';
-
 // Overrides
 @import 'style/overrides';
 
@@ -48,10 +45,8 @@
 @import 'components/utils/log-window';
 @import 'components/utils/resource-log';
 @import 'components/utils/list-input';
-@import 'components/utils/hint-block';
 @import 'components/utils/field-level-help';
 @import 'components/image-stream';
-@import 'components/about-modal';
 @import 'components/build-pipeline';
 @import 'components/configure-ports';
 @import 'components/detail-table';

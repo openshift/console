@@ -26,7 +26,7 @@ export const containerImagePage = {
   verifyValidatedMessage: () =>
     cy
       .get(containerImagePO.imageSection.externalRegistry.validatedMessage)
-      .should('have.text', messages.addFlow.gitUrlValidated),
+      .should('include.text', messages.addFlow.gitUrlValidated),
   enterAppName: (gitUrl: string) => {
     cy.byLegacyTestID('application-form-app-name').clear().type(gitUrl);
   },

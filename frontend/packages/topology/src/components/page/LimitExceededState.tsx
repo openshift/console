@@ -3,9 +3,7 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
@@ -19,12 +17,11 @@ type LimitExceededStateProps = {
 export const LimitExceededState: React.FC<LimitExceededStateProps> = ({ onShowTopologyAnyway }) => {
   const { t } = useTranslation();
   return (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText={<>{t(`topology~Loading is taking longer than expected`)}</>}
-        icon={<EmptyStateIcon icon={TopologyIcon} />}
-        headingLevel="h4"
-      />
+    <EmptyState
+      headingLevel="h4"
+      icon={TopologyIcon}
+      titleText={<>{t(`topology~Loading is taking longer than expected`)}</>}
+    >
       <EmptyStateBody>
         {t(
           `topology~We noticed that it is taking a long time to visualize your application Topology. You can use Search to find specific resources or click Continue to keep waiting.`,

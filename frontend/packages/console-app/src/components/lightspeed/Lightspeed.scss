@@ -1,18 +1,18 @@
-@import '~@patternfly/patternfly/sass-utilities/all';
+@import '~@patternfly/patternfly/sass-utilities/index';
 @import '../../../../../public/style/vars';
 
 :root {
   --popover-border-radius: 12px;
-  --popover-button-size: var(--pf-v5-global--spacer--2xl);
-  --popover-margin: var(--pf-v5-global--spacer--lg);
+  --popover-button-size: var(--pf-t--global--spacer--2xl);
+  --popover-margin: var(--pf-t--global--spacer--lg);
   --popover-bottom: calc(
-    var(--popover-button-size) + var(--popover-margin) + var(--pf-v5-global--spacer--sm)
+    var(--popover-button-size) + var(--popover-margin) + var(--pf-t--global--spacer--sm)
   );
 }
 
 .lightspeed__popover,
 .lightspeed__popover-button {
-  box-shadow: var(--pf-v5-global--BoxShadow--lg);
+  box-shadow: var(--pf-t--global--box-shadow--lg);
   position: absolute;
   right: var(--popover-margin);
   z-index: 199;
@@ -20,37 +20,48 @@
 
 .lightspeed__popover {
   border-radius: 12px;
-  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+  background-color: var(--pf-t--global--background--color--primary--default);
   bottom: var(--popover-bottom);
-  overflow: hidden;
+  overflow: auto;
+  padding-block-end: var(--pf-t--global--spacer--md);
+  padding-block-start: var(--pf-t--global--spacer--md);
+  padding-inline-end: var(--pf-t--global--spacer--md);
+  padding-inline-start: var(--pf-t--global--spacer--md);
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-block-end: var(--pf-t--global--spacer--lg);
+    padding-block-start: var(--pf-t--global--spacer--lg);
+    padding-inline-end: var(--pf-t--global--spacer--lg);
+    padding-inline-start: var(--pf-t--global--spacer--lg);
+  }
 }
 
 .lightspeed__popover--collapsed {
-  top: calc(var(--popover-margin) * 5);
+  top: calc(var(--popover-margin) * 5.5);
   width: 90%;
 
-  @media (min-width: $pf-v5-global--breakpoint--sm) {
+  @media (min-width: $pf-v6-global--breakpoint--sm) {
     height: 70vh;
     top: auto;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--md) {
+  @media (min-width: $pf-v6-global--breakpoint--md) {
     width: 50%;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--lg) and (min-height: $pf-v5-global--breakpoint--lg) {
+  @media (min-width: $pf-v6-global--breakpoint--lg) and (min-height: $pf-v6-global--breakpoint--lg) {
     height: 60vh;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--lg) and (min-height: $pf-v5-global--breakpoint--xl) {
+  @media (min-width: $pf-v6-global--breakpoint--lg) and (min-height: $pf-v6-global--breakpoint--xl) {
     height: 55vh;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
     width: 40%;
   }
 
-  @media (min-width: $pf-v5-global--breakpoint--2xl) {
+  @media (min-width: $pf-v6-global--breakpoint--2xl) {
     width: 35%;
   }
 }
@@ -67,7 +78,7 @@
   background-size: calc(var(--popover-button-size) + 3px);
   border-radius: var(--popover-border-radius) !important;
   bottom: var(--popover-margin);
-  box-shadow: var(--pf-v5-global--BoxShadow--lg);
+  box-shadow: var(--pf-t--global--box-shadow--lg);
   height: var(--popover-button-size);
   padding: 0;
   position: absolute !important;
@@ -78,21 +89,21 @@
     border-width: 0 !important;
   }
 
-  .pf-v5-theme-dark & {
+  .pf-v6-theme-dark & {
     background-image: url('logo-dark.svg');
-    background-color: var(--pf-v5-global--BackgroundColor--100) !important;
+    background-color: var(--pf-t--global--background--color--primary--default) !important;
   }
 }
 
 .lightspeed__welcome-logo {
-  --logo-size: var(--pf-v5-global--spacer--4xl);
+  --logo-size: var(--pf-t--global--spacer--4xl);
 
   background-image: url('logo.svg');
   height: var(--logo-size);
-  margin: 0 0 var(--pf-v5-global--spacer--xl);
+  margin: 0 0 var(--pf-t--global--spacer--xl);
   width: var(--logo-size);
 
-  .pf-v5-theme-dark & {
+  .pf-v6-theme-dark & {
     background-image: url('logo-dark.svg');
   }
 }

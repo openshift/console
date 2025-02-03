@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text } from '@patternfly/react-core';
+import { Content } from '@patternfly/react-core';
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
@@ -80,15 +80,14 @@ describe('AddCardItem', () => {
     it('should render description if showDetails is set to "show"', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true]);
       wrapper = shallow(<AddCardItem {...props} />);
-
-      expect(wrapper.find(Text).exists()).toBe(true);
+      expect(wrapper.find(Content).exists()).toBe(true);
     });
 
     it('should render description if showDetails is set to "hide"', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([false]);
       wrapper = shallow(<AddCardItem {...props} />);
 
-      expect(wrapper.find(Text).exists()).toBe(false);
+      expect(wrapper.find(Content).exists()).toBe(false);
     });
   });
 });

@@ -63,7 +63,7 @@ describe('Editing labels', () => {
     labels.confirmDetailsPageLabelExists(label1Key);
     labels.clickDetailsPageLabel();
     detailsPage.isLoaded();
-    cy.url().should('include', `/search/ns/${testName}?kind=core~v1~ConfigMap&q=${label1Key}`);
+    cy.url().should('include', `/search?kind=core~v1~ConfigMap&q=${encodeURIComponent(label1)}`);
     labels.chipExists(label1);
     removeLabelByCLI(label1Key);
   });

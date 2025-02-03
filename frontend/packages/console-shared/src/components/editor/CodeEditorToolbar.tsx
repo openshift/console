@@ -26,9 +26,9 @@ const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ showShortcuts, to
   if (!showShortcuts && !toolbarLinks?.length) return null;
   return (
     <div className="co-toolbar__group co-toolbar__group--right">
-      <div className="ocs-yaml-editor-toolbar pf-v5-u-pb-sm pf-v5-l-flex">
+      <div className="ocs-yaml-editor-toolbar pf-v6-u-pb-sm pf-v6-l-flex">
         {showLightspeedButton && (
-          <div className="ocs-yaml-editor-toolbar__link pf-v5-l-flex">
+          <div className="ocs-yaml-editor-toolbar__link pf-v6-l-flex">
             <Button
               variant="secondary"
               size="sm"
@@ -58,7 +58,7 @@ const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ showShortcuts, to
           </div>
         </div>
         {showShortcuts && (
-          <div className="ocs-yaml-editor-toolbar__link pf-v5-l-flex">
+          <div className="ocs-yaml-editor-toolbar__link pf-v6-l-flex">
             <Divider
               orientation={{
                 default: 'vertical',
@@ -70,7 +70,7 @@ const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ showShortcuts, to
         {toolbarLinks &&
           toolbarLinks.map((link, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <div key={`${index}`} className="ocs-yaml-editor-toolbar__link pf-v5-l-flex">
+            <div key={`${index}`} className="ocs-yaml-editor-toolbar__link pf-v6-l-flex">
               {(showShortcuts || index > 0) && link ? (
                 <Divider
                   orientation={{

@@ -41,7 +41,7 @@ const InfoPanel: React.FC = () => {
               {'  '}
             </strong>
             <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>
-              image-registry.openshift-image-registry.svc:5000/{namespace}/{name}
+              {`image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`}
             </ClipboardCopy>
           </li>
         </ul>

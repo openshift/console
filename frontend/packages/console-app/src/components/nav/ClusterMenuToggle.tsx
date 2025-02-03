@@ -50,11 +50,11 @@ const ClusterMenuToggle = (props: {
       ref={toggleRef}
       onClick={() => onToggle(!isOpen)}
       isExpanded={isOpen}
-      variant="plainText"
       isFullHeight
       disabled={disabled}
       className="co-cluster-selector"
       data-test-id="cluster-dropdown-toggle"
+      variant="plainText"
     >
       {title}
     </MenuToggle>

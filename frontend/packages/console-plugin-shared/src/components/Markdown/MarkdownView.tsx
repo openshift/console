@@ -226,7 +226,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   body {
     background-color: transparent !important;
     color: ${isEmpty ? '#999' : '#333'};
-    font-family: var(--pf-v5-global--FontFamily--text);
+    font-family: var(--pf-t--global--font--family--body);
     min-width: auto !important;
   }
   table {
@@ -236,7 +236,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   }
   td,
   th {
-    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+    border-bottom: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--border--color--default);
     padding: 10px;
     vertical-align: top;
   }
@@ -244,7 +244,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     padding-top: 0;
   }
   </style>
-  <body class="pf-m-redhat-font pf-v5-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
+  <body class="pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
 
   // update the iframe's content
   React.useEffect(() => {

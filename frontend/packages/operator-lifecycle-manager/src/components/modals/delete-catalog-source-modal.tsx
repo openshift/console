@@ -52,13 +52,14 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
             <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
           </Trans>
         </p>
-        <input
-          type="text"
-          className="pf-v5-c-form-control"
-          onKeyUp={isConfirmed}
-          placeholder={t('olm~Enter name')}
-          data-test="delete-catalogsource-input"
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            onKeyUp={isConfirmed}
+            placeholder={t('olm~Enter name')}
+            data-test="delete-catalogsource-input"
+          />
+        </span>
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('public~Delete')}

@@ -145,7 +145,7 @@ export const DetailsCard = withDashboardResources(
     const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
     return (
-      <Card data-test-id="details-card" isClickable isSelectable>
+      <Card data-test-id="details-card">
         <CardHeader
           actions={{
             actions: (

@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Label } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import {
-  useK8sWatchResource,
-  YellowExclamationTriangleIcon,
-} from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { PodDisruptionBudgetModel } from '../../models';
@@ -48,7 +45,7 @@ export const PDBAlert: React.FC<PDBAlertProps> = ({ namespace }) => {
   return (
     <>
       {pdbCount > 0 && loaded && !loadError && (
-        <Label color="orange" icon={<YellowExclamationTriangleIcon />}>
+        <Label status="warning" variant="outline">
           <Link to={getRedirectLink()} data-test="pdb-warning" onClick={onWarningLinkClick}>
             <Trans t={t} ns="console-app" count={pdbCount}>
               {{ count: pdbCount }} PodDisruptionBudget violated

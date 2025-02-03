@@ -206,15 +206,16 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
             <div className="co-m-radio-desc">
               <div className="form-group">
                 <label htmlFor="co-add-secret-to-workload__prefix">{t('public~Prefix')}</label>
-                <input
-                  className="pf-v5-c-form-control"
-                  name="prefix"
-                  id="co-add-secret-to-workload__prefix"
-                  data-test="add-secret-to-workload-prefix"
-                  placeholder="(optional)"
-                  type="text"
-                  onChange={(e) => setPrefix(e.currentTarget.value)}
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    name="prefix"
+                    id="co-add-secret-to-workload__prefix"
+                    data-test="add-secret-to-workload-prefix"
+                    placeholder="(optional)"
+                    type="text"
+                    onChange={(e) => setPrefix(e.currentTarget.value)}
+                  />
+                </span>
               </div>
             </div>
           )}
@@ -232,15 +233,16 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
                 <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
                   {t('public~Mount path')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  name="mountPath"
-                  id="co-add-secret-to-workload__mountpath"
-                  data-test="add-secret-to-workload-mountpath"
-                  type="text"
-                  onChange={(e) => setMountPath(e.currentTarget.value)}
-                  required
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    name="mountPath"
+                    id="co-add-secret-to-workload__mountpath"
+                    data-test="add-secret-to-workload-mountpath"
+                    type="text"
+                    onChange={(e) => setMountPath(e.currentTarget.value)}
+                    required
+                  />
+                </span>
               </div>
             </div>
           )}

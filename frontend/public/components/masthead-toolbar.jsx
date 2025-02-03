@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
-import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { ThIcon } from '@patternfly/react-icons/dist/esm/icons/th-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
@@ -50,6 +49,7 @@ import { ConsoleLinkModel } from '../models';
 import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
+import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useFeedbackLocal } from './feedback-local';
 import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
@@ -76,7 +76,7 @@ const MultiClusterToolbarGroup = () => {
   const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
   return (
     !!acmPerspectiveExtension && (
-      <ToolbarGroup spacer={{ default: 'spacerNone' }}>
+      <ToolbarGroup gap={{ default: 'gapNone' }}>
         <ClusterMenu />
       </ToolbarGroup>
     )
@@ -102,13 +102,13 @@ const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
     <a
-      className="pf-v5-c-button pf-m-plain"
+      className="pf-v6-c-button pf-m-plain co-masthead-button"
       aria-label={t('public~System status')}
       href={statuspageData.page.url}
       target="_blank"
       rel="noopener noreferrer"
     >
-      <YellowExclamationTriangleIcon className="co-masthead-icon" />
+      <YellowExclamationTriangleIcon />
     </a>
   ) : null;
 };
@@ -332,7 +332,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
           : []),
         {
           component: () => (
-            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v5-c-menu__item" />
+            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
           ),
         },
         ...(reportBugLink
@@ -523,7 +523,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             component: () => (
               <QuickCreateImportFromGit
                 namespace={activeNamespace}
-                className="pf-v5-c-menu__item"
+                className="pf-v6-c-menu__item"
               />
             ),
           },
@@ -531,12 +531,12 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             component: () => (
               <QuickCreateContainerImages
                 namespace={activeNamespace}
-                className="pf-v5-c-menu__item"
+                className="pf-v6-c-menu__item"
               />
             ),
           },
           {
-            component: () => <CloudShellMastheadAction className="pf-v5-c-menu__item" />,
+            component: () => <CloudShellMastheadAction className="pf-v6-c-menu__item" />,
           },
         ],
       });
@@ -556,7 +556,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               aria-label={t('public~Utility menu')}
               ref={toggleRef}
               variant="plain"
-              onClick={(open) => setIsKebabDropdownOpen(open)}
+              onClick={() => setIsKebabDropdownOpen(!isKebabDropdownOpen)}
               isExpanded={isKebabDropdownOpen}
               data-quickstart-id="qs-masthead-utilitymenu"
             >
@@ -572,11 +572,8 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     }
 
     const userToggle = (
-      <span className="pf-v5-c-dropdown__toggle">
-        <span className="co-username" data-test="username">
-          {authEnabledFlag ? username : t('public~Auth disabled')}
-        </span>
-        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      <span className="co-username" data-test="username">
+        {authEnabledFlag ? username : t('public~Auth disabled')}
       </span>
     );
 
@@ -589,19 +586,21 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         toggle={(toggleRef) => (
           <MenuToggle
             aria-label={t('public~User menu')}
+            variant="plainText"
             ref={toggleRef}
-            variant="plain"
-            onClick={(open) => setIsUserDropdownOpen(open)}
+            onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
             isExpanded={isUserDropdownOpen}
-            data-test="user-dropdown"
+            data-test="user-dropdown-toggle"
             data-tour-id="tour-user-button"
             data-quickstart-id="qs-masthead-usermenu"
+            className="co-user-menu"
           >
             {userToggle}
           </MenuToggle>
         )}
         ref={userMenuRef}
         popperProps={{ position: 'right' }}
+        data-test="user-dropdown"
       >
         {renderApplicationItems(actions)}
       </Dropdown>
@@ -665,11 +664,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         <ToolbarContent>
           <MultiClusterToolbarGroup />
           <ToolbarGroup
-            align={{ default: 'alignRight' }}
-            spacer={{ default: 'spacerNone' }}
+            align={{ default: 'alignEnd' }}
             visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}
+            gap={{ default: 'gapNone', md: 'gapMd' }}
           >
-            <ToolbarItem spacer={{ default: 'spacerNone', lg: 'spacerLg' }}>
+            <ToolbarItem>
               <SystemStatusButton statuspageData={statusPageData} />
               {!_.isEmpty(launchActions) && (
                 <Dropdown
@@ -683,7 +682,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                       aria-label={t('public~Application launcher')}
                       ref={toggleRef}
                       variant="plain"
-                      onClick={(open) => setIsAppLauncherDropdownOpen(open)}
+                      onClick={() => setIsAppLauncherDropdownOpen(!isAppLauncherDropdownOpen)}
                       isExpanded={isKebabDropdownOpen}
                       data-test-id="application-launcher"
                     >
@@ -700,12 +699,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
-                  variant="read"
+                  variant="plain"
                   count={alertCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
-                >
-                  <BellIcon alt="" />
-                </NotificationBadge>
+                  className="co-masthead-button"
+                />
               )}
               <QuickCreate namespace={activeNamespace} />
               <CloudShellMastheadButton />
@@ -719,13 +717,13 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                     aria-label={t('public~Help menu')}
                     ref={toggleRef}
                     variant="plain"
-                    onClick={(open) => setIsHelpDropdownOpen(open)}
+                    onClick={() => setIsHelpDropdownOpen(!isHelpDropdownOpen)}
                     isExpanded={isHelpDropdownOpen}
                     data-test="help-dropdown-toggle"
                     data-tour-id="tour-help-button"
                     data-quickstart-id="qs-masthead-help"
                   >
-                    <QuestionCircleIcon className="co-masthead-icon" alt="" />
+                    <QuestionCircleIcon alt="" />
                   </MenuToggle>
                 )}
                 ref={helpMenuRef}
@@ -742,8 +740,8 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             <ToolbarItem>{renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
           <ToolbarGroup
-            align={{ default: 'alignRight' }}
-            spacer={{ default: 'spacerNone' }}
+            align={{ default: 'alignEnd' }}
+            gap={{ default: 'gapNone' }}
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
             <SystemStatusButton statuspageData={statusPageData} />
@@ -751,7 +749,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               <NotificationBadge
                 aria-label={t('public~Notification drawer')}
                 onClick={drawerToggle}
-                variant="read"
+                variant="plain"
                 count={alertCount}
                 data-quickstart-id="qs-masthead-notifications"
               >

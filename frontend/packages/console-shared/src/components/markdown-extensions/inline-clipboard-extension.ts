@@ -19,11 +19,11 @@ const useInlineCopyClipboardShowdownExtension = () => {
         groupId: string,
       ): string => {
         if (!group || !subGroup || !groupType || !groupId) return text;
-        return `<b><div class="pf-v5-c-code-block">
-        <div class="pf-v5-c-code-block__header">
-          <div class="pf-v5-c-code-block__actions">
-            <div class="pf-v5-c-code-block__actions-item">
-              <button class="pf-v5-c-button pf-m-plain" type="button" aria-label="${t(
+        return `<b><div class="pf-v6-c-code-block">
+        <div class="pf-v6-c-code-block__header">
+          <div class="pf-v6-c-code-block__actions">
+            <div class="pf-v6-c-code-block__actions-item">
+              <button class="pf-v6-c-button pf-m-plain" type="button" aria-label="${t(
                 'console-shared~Copy to clipboard',
               )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
                 ${getSvgFromPfIconConfig(CopyIconConfig)}
@@ -31,9 +31,9 @@ const useInlineCopyClipboardShowdownExtension = () => {
             </div>
           </div>
         </div>
-        <div class="pf-v5-c-code-block__content">
-          <pre class="pf-v5-c-code-block__pre ocs-code-block__pre">
-            <code class="pf-v5-c-code-block__code"
+        <div class="pf-v6-c-code-block__content">
+          <pre class="pf-v6-c-code-block__pre ocs-code-block__pre">
+            <code class="pf-v6-c-code-block__code"
               ${MARKDOWN_SNIPPET_ID}="${groupType}">${group.trim()}</code>
           </pre>
         </div>

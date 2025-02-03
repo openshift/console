@@ -9,7 +9,7 @@ module.exports = {
         '[static-methods]',
         '[properties]',
         '[conventional-private-properties]',
-        'constructor',
+        'function Object() { [native code] }',
         '[methods]',
         '[conventional-private-methods]',
         '[everything-else]',

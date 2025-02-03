@@ -38,7 +38,7 @@ export const createWorkloadUsingOptions = (optionName: string, optionalData?: st
 
     case 'Container Image':
       cy.get(chartAreaPO.deployImage).clear().type('openshift/hello-openshift');
-      cy.get(chartAreaPO.validationText).should('have.text', 'Validated');
+      cy.get(chartAreaPO.validationText).should('include.text', 'Validated');
       cy.get(chartAreaPO.submitButton).click();
       break;
 

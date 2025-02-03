@@ -1,5 +1,4 @@
 import { projectDropdown } from '@console/cypress-integration-tests/views/common';
-import { listPage } from '@console/cypress-integration-tests/views/list-page';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
@@ -53,17 +52,7 @@ describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
     projectDropdown.selectProject(GlobalInstalledNamespace);
     projectDropdown.shouldContain(GlobalInstalledNamespace);
     cy.get('.loading-skeleton--table').should('not.exist');
-    // eslint-disable-next-line promise/catch-or-return
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="console-empty-state-title"]').length > 0) {
-        // when running test in CI on a new cluster
-        cy.byTestID('console-empty-state-title').should('contain', 'No Operators found');
-      } else {
-        // when running test on a shared cluster
-        operator.filterByName(testOperator.name);
-        listPage.rows.countShouldBe(0);
-      }
-    });
+    cy.byTestID('console-empty-state').should('contain', 'No Operators found');
 
     operator.createOperand(testOperator.name, testOperand, testOperator.installedNamespace);
     cy.byTestID(testOperand.exampleName).should('exist');

@@ -7,7 +7,7 @@ import {
   ChartStack,
   ChartThemeColor,
   getCustomTheme,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';
 import { humanizeNumber, useRefWidth } from '../utils';

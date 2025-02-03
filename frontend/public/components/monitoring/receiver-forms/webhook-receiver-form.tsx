@@ -14,20 +14,21 @@ export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) =>
       <label className="control-label co-required" htmlFor="webhook-url">
         {t('public~URL')}
       </label>
-      <input
-        className="pf-v5-c-form-control"
-        type="text"
-        aria-describedby="webhook-url-help"
-        id="webhook-url"
-        data-test-id="webhook-url"
-        value={formValues.webhookUrl}
-        onChange={(e) =>
-          dispatchFormChange({
-            type: 'setFormValues',
-            payload: { webhookUrl: e.target.value },
-          })
-        }
-      />
+      <span className="pf-v6-c-form-control">
+        <input
+          type="text"
+          aria-describedby="webhook-url-help"
+          id="webhook-url"
+          data-test-id="webhook-url"
+          value={formValues.webhookUrl}
+          onChange={(e) =>
+            dispatchFormChange({
+              type: 'setFormValues',
+              payload: { webhookUrl: e.target.value },
+            })
+          }
+        />
+      </span>
       <div className="help-block" id="webhook-url-help">
         {t('public~The endpoint to send HTTP POST requests to.')}
       </div>

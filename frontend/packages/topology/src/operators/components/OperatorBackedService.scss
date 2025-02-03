@@ -30,7 +30,7 @@
   }
 
   &.pf-m-highlight &__bg {
-    fill: $pf-v5-color-black-150;
+    fill: var(--pf-t--color--gray--10);
     stroke: $interactive-stroke-color;
   }
 

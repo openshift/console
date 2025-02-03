@@ -1,6 +1,6 @@
 .odc-functions__empty-list {
   &__image {
-    height: var(--pf-v5-c-empty-state__icon--FontSize);
+    height: var(--pf-v6-c-empty-state__icon--FontSize);
     max-width: 100%;
   }
 
@@ -10,11 +10,12 @@
   }
 
   &__dropdown {
-    padding-top: var(--pf-v5-global--spacer--md);
+    display: inline-block;
+    padding-top: var(--pf-t--global--spacer--md);
   }
 }
 
-.pf-v5-c-empty-state__icon {
+.pf-v6-c-empty-state__icon {
   margin-bottom: 0;
 }
 

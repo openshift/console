@@ -2,11 +2,13 @@ import { AngleDoubleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angl
 import { AngleDoubleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-up-icon';
 import { CriticalRiskIcon } from '@patternfly/react-icons/dist/esm/icons/critical-risk-icon';
 import { EqualsIcon } from '@patternfly/react-icons/dist/esm/icons/equals-icon';
-import { global_palette_blue_300 as blue300 } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { global_palette_blue_50 as blue50 } from '@patternfly/react-tokens/dist/js/global_palette_blue_50';
-import { global_palette_gold_400 as gold400 } from '@patternfly/react-tokens/dist/js/global_palette_gold_400';
-import { global_palette_orange_300 as orange300 } from '@patternfly/react-tokens/dist/js/global_palette_orange_300';
-import { global_palette_red_200 as red200 } from '@patternfly/react-tokens/dist/js/global_palette_red_200';
+import {
+  t_color_blue_10 as blue50,
+  t_color_blue_50 as blue300,
+  t_color_yellow_40 as gold400,
+  t_color_orange_40 as orange300,
+  t_color_red_60 as red200,
+} from '@patternfly/react-tokens';
 import * as _ from 'lodash';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 

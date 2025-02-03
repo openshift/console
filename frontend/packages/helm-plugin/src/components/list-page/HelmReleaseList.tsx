@@ -1,17 +1,14 @@
 import * as React from 'react';
 import {
   EmptyState,
-  EmptyStateIcon,
   EmptyStateVariant,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
@@ -24,9 +21,9 @@ import {
   filterHelmReleasesByStatus,
   fetchHelmReleases,
 } from '../../utils/helm-utils';
+import { HelmCatalogIcon } from '../../utils/icons';
 import HelmReleaseListHeader from './HelmReleaseListHeader';
 import HelmReleaseListRow from './HelmReleaseListRow';
-import './HelmReleaseList.scss';
 
 const getRowProps = (obj) => ({
   id: obj.name,
@@ -108,24 +105,17 @@ const HelmReleaseList: React.FC = () => {
 
   const emptyState = () => {
     const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
-    const helmImage = () => (
-      <img
-        className="odc-helm-release__empty-list__image"
-        src={getImageForIconClass('icon-helm')}
-        alt=""
-      />
-    );
     const installURL = {
       pathname: `/catalog/ns/${namespace || 'default'}`,
       search: '?catalogType=HelmChart',
     };
     return (
-      <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateHeader
-          titleText={<>{t('helm-plugin~No Helm Releases found')}</>}
-          icon={<EmptyStateIcon icon={helmImage} />}
-          headingLevel="h3"
-        />
+      <EmptyState
+        headingLevel="h3"
+        icon={HelmCatalogIcon}
+        titleText={<>{t('helm-plugin~No Helm Releases found')}</>}
+        variant={EmptyStateVariant.full}
+      >
         <EmptyStateFooter>
           {isHelmEnabled ? (
             <EmptyStateActions>

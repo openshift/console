@@ -21,7 +21,7 @@ export const VSphereConnectionForm = () => {
     <Form id="vsphere-connection-modal-form">
       <FormGroup
         label={t('vCenter')}
-        labelIcon={
+        labelHelp={
           <PopoverHelpButton
             content={t(
               'Enter the network address of the vCenter server. It can either be a domain name or IP address',
@@ -37,7 +37,7 @@ export const VSphereConnectionForm = () => {
         label={t('vCenter cluster')}
         isRequired
         fieldId="connection-vcenter-cluster"
-        labelIcon={
+        labelHelp={
           <PopoverHelpButton
             content={t(
               'Enter the name of the vSphere vCenter cluster where OpenShift Container Platform is installed.',
@@ -51,7 +51,7 @@ export const VSphereConnectionForm = () => {
         label={t('Username')}
         isRequired
         fieldId="connection-username"
-        labelIcon={
+        labelHelp={
           <PopoverHelpButton
             content={t(
               'Enter the vSphere vCenter username. An incorrect username will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).',
@@ -63,7 +63,7 @@ export const VSphereConnectionForm = () => {
       </FormGroup>
       <FormGroup
         label={t('Password')}
-        labelIcon={
+        labelHelp={
           <PopoverHelpButton
             content={t(
               'Enter the vSphere vCenter password. The password will be stored in a Secret in the kube-system namespace for this cluster. An incorrect password will render the cluster nodes unschedulable (known issue: OCPBUGS-2353).',
@@ -77,7 +77,7 @@ export const VSphereConnectionForm = () => {
       </FormGroup>
       <FormGroup
         label={t('Datacenter')}
-        labelIcon={
+        labelHelp={
           <PopoverHelpButton
             content={
               <>
@@ -107,7 +107,7 @@ export const VSphereConnectionForm = () => {
       </FormGroup>
       <FormGroup
         label={t('Default data store')}
-        labelIcon={
+        labelHelp={
           <PopoverHelpButton
             content={
               <>
@@ -132,7 +132,7 @@ export const VSphereConnectionForm = () => {
       </FormGroup>
       <FormGroup
         label={t('Virtual Machine Folder')}
-        labelIcon={
+        labelHelp={
           <PopoverHelpButton
             content={
               <Trans t={t}>

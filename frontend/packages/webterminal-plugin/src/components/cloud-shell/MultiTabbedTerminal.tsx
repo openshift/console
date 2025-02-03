@@ -91,24 +91,22 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
               <TabTitleIcon>
                 {terminalTabs.length > 1 ? (
                   <Button
+                    icon={<CloseIcon />}
                     variant="plain"
                     style={{ padding: '0' }}
                     aria-label={t('webterminal-plugin~Close terminal tab')}
                     data-test="close-terminal-icon"
                     onClick={(event) => removeCurrentTerminal(event, tabIndex)}
-                  >
-                    <CloseIcon />
-                  </Button>
+                  />
                 ) : (
                   <Button
+                    icon={<CloseIcon />}
                     variant="plain"
                     style={{ padding: '0' }}
                     aria-label={t('webterminal-plugin~Close terminal')}
                     data-test="close-terminal-icon"
                     onClick={onClose}
-                  >
-                    <CloseIcon />
-                  </Button>
+                  />
                 )}
               </TabTitleIcon>
             </div>
@@ -128,13 +126,12 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
           title={
             <TabTitleIcon>
               <Button
+                icon={<PlusIcon />}
                 variant="plain"
                 style={{ padding: '0' }}
                 aria-label={t('webterminal-plugin~Add new tab')}
                 data-test="add-terminal-icon"
-              >
-                <PlusIcon />
-              </Button>
+              />
             </TabTitleIcon>
           }
         />

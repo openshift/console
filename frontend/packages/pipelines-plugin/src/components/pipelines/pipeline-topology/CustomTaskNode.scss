@@ -10,7 +10,7 @@
 }
 
 .odc-pipeline-vis-task {
-  fill: var(--pf-v5-global--BackgroundColor--light-100);
+  fill: var(--pf-t--global--background--color--primary--default);
   stroke-width: 1;
   cursor: default;
 
@@ -25,8 +25,8 @@
 .odc-pipeline-vis-task-text {
   cursor: default;
   dominant-baseline: middle;
-  fill: var(--pf-v5-global--Color--100);
-  font-size: var(--pf-v5-global--FontSize--sm);
+  fill: var(--pf-t--global--text--color--regular);
+  font-size: var(--pf-t--global--font--size--sm);
 
   &.is-text-center {
     text-anchor: middle;

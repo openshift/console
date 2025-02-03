@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
@@ -222,7 +221,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   }, []);
 
   return (
-    <div className={cx('co-catalog-page', { 'co-catalog-page--with-sidebar': showSidebar })}>
+    <div className="co-catalog-page">
       {showSidebar && (
         <div className="co-catalog-page__tabs">
           {showCategories && (
