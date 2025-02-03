@@ -174,7 +174,7 @@ export const getExecutableCodeRefSource = (
 /** Deeply look at all properties of an object and find the code refs. */
 const recursivelyTraverseCodeRefs = (ext: object, codeRefs: Set<string>) => {
   for (const key in ext) {
-    if (Object.prototype.hasOwnProperty.call(ext, key)) {
+    if (ext.hasOwnProperty(key)) {
       const value = ext[key];
 
       if (isEncodedCodeRef(value)) {
