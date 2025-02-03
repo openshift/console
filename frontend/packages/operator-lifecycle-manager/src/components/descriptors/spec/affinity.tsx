@@ -104,13 +104,9 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
           <label className="control-label co-required" htmlFor={`preference-${key}`}>
             {t('olm~Weight')}
           </label>
-          <input
-            className="pf-v5-c-form-control"
-            type="number"
-            value={weight}
-            onChange={onChangeWeight}
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input type="number" value={weight} onChange={onChangeWeight} required />
+          </span>
         </div>
       )}
       <MatchExpressions
@@ -307,27 +303,24 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
             <label className="control-label co-required" htmlFor={`preference-${key}`}>
               {t('olm~Weight')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="number"
-              value={weight}
-              onChange={onChangeWeight}
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input type="number" value={weight} onChange={onChangeWeight} required />
+            </span>
           </div>
         )}
         <div className="co-affinity-term__topology-input">
           <label className="control-label co-required" htmlFor={`topology-${key}`}>
             {t('olm~Topology key')}
           </label>
-          <input
-            id={`topology-${key}`}
-            className="pf-v5-c-form-control"
-            type="text"
-            value={topologyKey}
-            onChange={onChangeTopologyKey}
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id={`topology-${key}`}
+              type="text"
+              value={topologyKey}
+              onChange={onChangeTopologyKey}
+              required
+            />
+          </span>
         </div>
       </div>
       <MatchExpressions

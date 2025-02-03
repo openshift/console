@@ -44,16 +44,17 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
             {t('public~Key')}
           </label>
           <div>
-            <input
-              className="pf-v5-c-form-control"
-              id={`${this.props.id}-key`}
-              type="text"
-              name="key"
-              onChange={this.onKeyChange}
-              value={this.state.key}
-              data-test="secret-key"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                id={`${this.props.id}-key`}
+                type="text"
+                name="key"
+                onChange={this.onKeyChange}
+                value={this.state.key}
+                data-test="secret-key"
+                required
+              />
+            </span>
           </div>
         </div>
         <div className="form-group">

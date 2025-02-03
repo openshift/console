@@ -65,14 +65,15 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
         <div className="row form-group" key="default">
           <div className="col-xs-10">
             <div className="form-group">
-              <input
-                type="text"
-                className="pf-v5-c-form-control"
-                data-test-id="label-default"
-                value={DEFAULT_RECEIVER_LABEL}
-                disabled
-                required
-              />
+              <span className="pf-v6-c-form-control pf-m-disabled">
+                <input
+                  type="text"
+                  data-test-id="label-default"
+                  value={DEFAULT_RECEIVER_LABEL}
+                  disabled
+                  required
+                />
+              </span>
             </div>
           </div>
         </div>
@@ -82,15 +83,16 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
           <div className="row form-group" key={i}>
             <div className="col-xs-10">
               <div className="form-group">
-                <input
-                  type="text"
-                  className="pf-v5-c-form-control"
-                  data-test-id={`label-${i}`}
-                  onChange={onRoutingLabelChange(i)}
-                  placeholder={t('public~Matcher')}
-                  value={routeLabel}
-                  required
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    data-test-id={`label-${i}`}
+                    onChange={onRoutingLabelChange(i)}
+                    placeholder={t('public~Matcher')}
+                    value={routeLabel}
+                    required
+                  />
+                </span>
               </div>
             </div>
             <div className="col-xs-2">

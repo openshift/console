@@ -56,17 +56,18 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
         {_.map(values, (v: string, i: number) => (
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                value={v}
-                onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                  this.valueChanged(i, e.currentTarget.value)
-                }
-                required={missingValues && i === 0}
-                aria-describedby={helpText ? this.helpID : undefined}
-                data-test-list-input-for={label}
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  value={v}
+                  onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                    this.valueChanged(i, e.currentTarget.value)
+                  }
+                  required={missingValues && i === 0}
+                  aria-describedby={helpText ? this.helpID : undefined}
+                  data-test-list-input-for={label}
+                />
+              </span>
             </div>
             <Button
               icon={<MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />}

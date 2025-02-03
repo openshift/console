@@ -241,16 +241,17 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
           <label className="co-required" htmlFor="name">
             {t('console-app~Policy name')}
           </label>
-          <input
-            className="pf-v5-c-form-control"
-            type="text"
-            onChange={handleNameChange}
-            value={networkPolicy.name}
-            placeholder="my-policy"
-            id="name"
-            name="name"
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              type="text"
+              onChange={handleNameChange}
+              value={networkPolicy.name}
+              placeholder="my-policy"
+              id="name"
+              name="name"
+              required
+            />
+          </span>
         </div>
         {isMulti && (
           <NADsSelector

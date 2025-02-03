@@ -28,18 +28,19 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
         <label className="co-required" htmlFor="cidr">
           {t('console-app~CIDR')}
         </label>
-        <input
-          className="pf-v5-c-form-control"
-          type="text"
-          onChange={handleCIDRChange}
-          value={ipBlock.cidr}
-          placeholder="10.2.1.0/16"
-          id="cidr"
-          name="cidr"
-          aria-describedby="ipblock-help"
-          data-test="ipblock-cidr-input"
-          required
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            onChange={handleCIDRChange}
+            value={ipBlock.cidr}
+            placeholder="10.2.1.0/16"
+            id="cidr"
+            name="cidr"
+            aria-describedby="ipblock-help"
+            data-test="ipblock-cidr-input"
+            required
+          />
+        </span>
         <div className="help-block">
           <p>
             {direction === 'ingress'
@@ -57,17 +58,18 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           <label>{t('console-app~Exceptions')}</label>
           {ipBlock.except.map((exc, idx) => (
             <div className="pf-v6-c-input-group" key={exc.key}>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
-                placeholder="10.2.1.0/12"
-                aria-describedby="ports-help"
-                name={`exception-${idx}`}
-                id={`exception-${idx}`}
-                value={exc.value}
-                data-test="ipblock-exception-input"
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
+                  placeholder="10.2.1.0/12"
+                  aria-describedby="ports-help"
+                  name={`exception-${idx}`}
+                  id={`exception-${idx}`}
+                  value={exc.value}
+                  data-test="ipblock-exception-input"
+                />
+              </span>
               <Button
                 icon={<MinusCircleIcon />}
                 aria-label={t('console-app~Remove exception')}

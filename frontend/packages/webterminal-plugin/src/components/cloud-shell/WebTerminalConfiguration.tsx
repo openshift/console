@@ -256,7 +256,6 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
           id="web-terminal-image"
           type="text"
           aria-label="web-terminal-image"
-          className="pf-v5-c-form-control"
           data-test="web-terminal-image"
           isDisabled={readonly}
         />

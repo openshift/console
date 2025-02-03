@@ -481,19 +481,20 @@ class Dropdown_ extends DropdownMixin {
             {autocompleteFilter && (
               <>
                 <div className="pf-v6-c-menu__search">
-                  <input
-                    autoFocus
-                    type="text"
-                    ref={(input) => (this.input = input)}
-                    onChange={this.changeTextFilter}
-                    placeholder={autocompletePlaceholder}
-                    value={autocompleteText || ''}
-                    autoCapitalize="none"
-                    onKeyDown={this.onKeyDown}
-                    className="pf-v5-c-form-control pf-m-search"
-                    onClick={(e) => e.stopPropagation()}
-                    data-test-id="dropdown-text-filter"
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      autoFocus
+                      type="text"
+                      ref={(input) => (this.input = input)}
+                      onChange={this.changeTextFilter}
+                      placeholder={autocompletePlaceholder}
+                      value={autocompleteText || ''}
+                      autoCapitalize="none"
+                      onKeyDown={this.onKeyDown}
+                      onClick={(e) => e.stopPropagation()}
+                      data-test-id="dropdown-text-filter"
+                    />
+                  </span>
                 </div>
                 <Divider />
               </>

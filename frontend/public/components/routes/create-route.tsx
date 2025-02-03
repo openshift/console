@@ -2,6 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
+import classnames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -304,34 +305,38 @@ class CreateRouteWithTranslation extends React.Component<
           <label className="co-required" htmlFor="name">
             {t('public~Name')}
           </label>
-          <input
-            className="pf-v5-c-form-control"
-            type="text"
-            onChange={this.handleChange}
-            value={this.state.name}
-            disabled={!!existingRoute}
-            placeholder="my-route"
-            id="name"
-            name="name"
-            aria-describedby="name-help"
-            required
-          />
+          <span
+            className={classnames('pf-v6-c-form-control', { 'pf-m-disabled': !!existingRoute })}
+          >
+            <input
+              type="text"
+              onChange={this.handleChange}
+              value={this.state.name}
+              disabled={!!existingRoute}
+              placeholder="my-route"
+              id="name"
+              name="name"
+              aria-describedby="name-help"
+              required
+            />
+          </span>
           <div className="help-block" id="name-help">
             <p>{t('public~A unique name for the Route within the project.')}</p>
           </div>
         </div>
         <div className="form-group co-create-route__hostname">
           <label htmlFor="hostname">{t('public~Hostname')}</label>
-          <input
-            className="pf-v5-c-form-control"
-            type="text"
-            onChange={this.handleChange}
-            value={this.state.hostname}
-            placeholder="www.example.com"
-            id="hostname"
-            name="hostname"
-            aria-describedby="hostname-help"
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              type="text"
+              onChange={this.handleChange}
+              value={this.state.hostname}
+              placeholder="www.example.com"
+              id="hostname"
+              name="hostname"
+              aria-describedby="hostname-help"
+            />
+          </span>
           <div className="help-block" id="hostname-help">
             <p>
               {t(
@@ -342,16 +347,17 @@ class CreateRouteWithTranslation extends React.Component<
         </div>
         <div className="form-group co-create-route__path">
           <label htmlFor="path">{t('public~Path')}</label>
-          <input
-            className="pf-v5-c-form-control"
-            type="text"
-            onChange={this.handleChange}
-            value={this.state.path ?? ''} // this.state.path can be set to undefined in componentDidMount
-            placeholder="/"
-            id="path"
-            name="path"
-            aria-describedby="path-help"
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              type="text"
+              onChange={this.handleChange}
+              value={this.state.path ?? ''} // this.state.path can be set to undefined in componentDidMount
+              placeholder="/"
+              id="path"
+              name="path"
+              aria-describedby="path-help"
+            />
+          </span>
           <div className="help-block" id="path-help">
             <p>{t('public~Path that the router watches to route traffic to the service.')}</p>
           </div>
@@ -389,14 +395,16 @@ class CreateRouteWithTranslation extends React.Component<
           <>
             <div className="form-group co-create-route__weight">
               <label htmlFor="weight">{t('public~Weight')}</label>
-              <input
-                className="pf-v5-c-form-control co-create-route__weight-label"
-                type="number"
-                onChange={this.handleWeightChange}
-                value={this.state.weight}
-                id="weight"
-                aria-describedby="weight-help"
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  className="co-create-route__weight-label"
+                  type="number"
+                  onChange={this.handleWeightChange}
+                  value={this.state.weight}
+                  id="weight"
+                  aria-describedby="weight-help"
+                />
+              </span>
               <div className="help-block" id="weight-help">
                 <p>
                   {t(
@@ -602,14 +610,16 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
       </div>
       <div className="form-group">
         <label htmlFor={`${index}-weight`}>{t('public~Alternate Service weight')}</label>
-        <input
-          className="pf-v5-c-form-control co-create-route__weight-label"
-          id={`${index}-weight`}
-          type="number"
-          onChange={onWeightChange}
-          value={weight}
-          aria-describedby={`${index}-alt-weight-help`}
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            className="co-create-route__weight-label"
+            id={`${index}-weight`}
+            type="number"
+            onChange={onWeightChange}
+            value={weight}
+            aria-describedby={`${index}-alt-weight-help`}
+          />
+        </span>
         <div className="help-block" id={`${index}-alt-weight-help`}>
           <p>
             {t(
