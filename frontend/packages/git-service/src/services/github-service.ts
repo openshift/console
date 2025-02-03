@@ -2,6 +2,7 @@ import * as Octokit from '@octokit/rest';
 import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { DevConsoleEndpointRequest, DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -13,6 +14,27 @@ import {
 } from '../types';
 import { BaseService } from './base-service';
 
+type GHWebhookBody = {
+  name: string;
+  active: boolean;
+  config: {
+    url: string;
+    content_type: string;
+    insecure_ssl: string;
+    secret: string;
+  };
+  events: string[];
+};
+
+type GithubWebhookRequest = {
+  headers: Headers;
+  hostName: string;
+  owner: string;
+  repoName: string;
+  body: GHWebhookBody;
+} & DevConsoleEndpointRequest;
+
+export const GITHUB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/github';
 export class GithubService extends BaseService {
   private readonly client: Octokit;
 
@@ -142,7 +164,7 @@ export class GithubService extends BaseService {
       Authorization: `Bearer ${token}`,
       'X-GitHub-Api-Version': '2022-11-28',
     });
-    const body = {
+    const body: GHWebhookBody = {
       name: 'web',
       active: true,
       config: {
@@ -158,13 +180,23 @@ export class GithubService extends BaseService {
         ? `https://api.github.com`
         : `https://${this.metadata.host}/api/v3`;
 
-    const webhookResponse: Response = await consoleFetchJSON.post(
-      `${AddWebhookBaseURL}/repos/${this.metadata.owner}/${this.metadata.repoName}/hooks`,
+    const webhookRequestBody: GithubWebhookRequest = {
+      headers,
+      hostName: AddWebhookBaseURL,
+      owner: this.metadata.owner,
+      repoName: this.metadata.repoName,
       body,
-      { headers },
-    );
+    };
 
-    return webhookResponse.status === 201;
+    const webhookResponse: DevConsoleEndpointResponse = await consoleFetchJSON.post(
+      GITHUB_WEBHOOK_BACKEND_URL,
+      webhookRequestBody,
+    );
+    if (!webhookResponse.statusCode) {
+      throw new Error('Unexpected proxy response: Status code is missing!');
+    }
+
+    return webhookResponse.statusCode === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {

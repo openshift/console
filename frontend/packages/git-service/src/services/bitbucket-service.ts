@@ -2,6 +2,7 @@ import { Base64 } from 'js-base64';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import 'whatwg-fetch';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { DevConsoleEndpointRequest, DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -12,6 +13,24 @@ import {
   RepoStatus,
 } from '../types';
 import { BaseService } from './base-service';
+
+type BBWebhookBody = {
+  url: string;
+  events: string[];
+  skip_cert_verification: boolean;
+  active: boolean;
+};
+
+type BitbucketWebhookRequest = {
+  headers: Headers;
+  isServer: boolean;
+  baseURL: string;
+  owner: string;
+  repoName: string;
+  body: BBWebhookBody;
+} & DevConsoleEndpointRequest;
+
+export const BITBUCKET_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/bitbucket';
 
 export class BitbucketService extends BaseService {
   private readonly metadata: RepoMetadata;
@@ -172,19 +191,30 @@ export class BitbucketService extends BaseService {
       'Content-Type': 'application/json',
       Authorization: `Basic ${token}`,
     });
-    const body = {
+    const body: BBWebhookBody = {
       url: webhookURL,
       events: ['repo:push', 'pullrequest:created', 'pullrequest:updated'],
       skip_cert_verification: !sslVerification,
       active: true,
     };
-    const url = this.isServer
-      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/hooks`
-      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/hooks`;
 
-    const webhookResponse: Response = await consoleFetchJSON.post(url, body, { headers });
+    const webhookRequestBody: BitbucketWebhookRequest = {
+      headers,
+      isServer: this.isServer,
+      baseURL: this.baseURL,
+      owner: this.metadata.owner,
+      repoName: this.metadata.repoName,
+      body,
+    };
 
-    return webhookResponse.status === 201;
+    const webhookResponse: DevConsoleEndpointResponse = await consoleFetchJSON.post(
+      BITBUCKET_WEBHOOK_BACKEND_URL,
+      webhookRequestBody,
+    );
+    if (!webhookResponse.statusCode) {
+      throw new Error('Unexpected proxy response: Status code is missing!');
+    }
+    return webhookResponse.statusCode === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {

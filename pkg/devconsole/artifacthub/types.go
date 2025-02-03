@@ -1,5 +1,7 @@
 package artifacthub
 
+import "github.com/openshift/console/pkg/devconsole/common"
+
 type ArtifactHubRepository struct {
 	Name                    string `json:"name"`
 	Kind                    int    `json:"kind"`
@@ -20,21 +22,18 @@ type ArtifactHubTask struct {
 }
 
 type SearchRequest struct {
-	AllowInsecure   bool   `json:"allowInsecure,omitempty"`
-	AllowAuthHeader bool   `json:"allowAuthHeader,omitempty"`
-	SearchQuery     string `json:"searchQuery"`
+	SearchQuery string `json:"searchQuery"`
+	common.DevConsoleCommonRequest
 }
 
 type TaskYAMLRequest struct {
-	AllowInsecure   bool   `json:"allowInsecure,omitempty"`
-	AllowAuthHeader bool   `json:"allowAuthHeader,omitempty"`
-	YamlPath        string `json:"yamlPath"`
+	YamlPath string `json:"yamlPath"`
+	common.DevConsoleCommonRequest
 }
 
 type TaskDetailsRequest struct {
-	AllowInsecure   bool   `json:"allowInsecure,omitempty"`
-	AllowAuthHeader bool   `json:"allowAuthHeader,omitempty"`
-	RepoName        string `json:"repoName"`
-	Name            string `json:"name"`
-	Version         string `json:"version"`
+	RepoName string `json:"repoName"`
+	Name     string `json:"name"`
+	Version  string `json:"version"`
+	common.DevConsoleCommonRequest
 }

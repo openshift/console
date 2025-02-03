@@ -7,6 +7,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/artifacthub"
 	tektonresults "github.com/openshift/console/pkg/devconsole/tekton-results"
+	"github.com/openshift/console/pkg/devconsole/webhooks"
 	"github.com/openshift/console/pkg/serverutils"
 	"k8s.io/client-go/dynamic"
 )
@@ -57,6 +58,20 @@ func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicCli
 			// POST /api/dev-console/tekton-results/summary
 			"summary": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (interface{}, error) {
 				return tektonresults.GetResultsSummary(r, user, dynamicClient)
+			},
+		},
+		"webhooks": {
+			// POST /api/dev-console/webhooks/github
+			"github": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient) (interface{}, error) {
+				return webhooks.CreateGithubWebhook(r, user)
+			},
+			// POST /api/dev-console/webhooks/gitlab
+			"gitlab": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient) (interface{}, error) {
+				return webhooks.CreateGitlabWebhook(r, user)
+			},
+			// POST /api/dev-console/webhooks/bitbucket
+			"bitbucket": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient) (interface{}, error) {
+				return webhooks.CreateBitbucketWebhook(r, user)
 			},
 		},
 	}
