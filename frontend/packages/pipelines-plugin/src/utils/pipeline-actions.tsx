@@ -56,7 +56,7 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
   callback: () => {
     const namespace = _.get(pipelineRun, 'metadata.namespace');
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;
-    if (namespace && (pipelineRef?.name || pipelineSpec)) {
+    if (namespace && (pipelineRef?.name || pipelineSpec || pipelineRef?.resolver)) {
       k8sCreate(returnValidPipelineRunModel(pipelineRun), getPipelineRunData(null, pipelineRun));
     } else {
       errorModal({
