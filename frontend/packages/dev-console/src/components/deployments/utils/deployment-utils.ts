@@ -595,7 +595,12 @@ export const convertEditFormToDeployment = (
           containers: getUpdatedContainers(containers, fromImageStreamTag, isi, imageName, envs),
           imagePullSecrets: [
             ...(deployment.spec.template.spec.imagePullSecrets ?? []),
-            ...(imagePullSecret ? [{ name: imagePullSecret }] : []),
+            ...(imagePullSecret &&
+            !(deployment.spec.template.spec.imagePullSecrets ?? []).some(
+              (secret) => secret.name === imagePullSecret,
+            )
+              ? [{ name: imagePullSecret }]
+              : []),
           ],
         },
       },
