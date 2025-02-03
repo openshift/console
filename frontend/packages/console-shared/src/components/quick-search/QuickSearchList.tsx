@@ -139,7 +139,11 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                         </SplitItem>
                         {item?.secondaryLabel && (
                           <SplitItem>
-                            <Label variant="outline">{item.secondaryLabel}</Label>
+                            {typeof item.secondaryLabel === 'string' ? (
+                              <Label variant="outline">{item.secondaryLabel}</Label>
+                            ) : (
+                              item.secondaryLabel
+                            )}
                           </SplitItem>
                         )}
                         <SplitItem>

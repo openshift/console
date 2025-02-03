@@ -4,6 +4,7 @@
   position: relative;
   &__list {
     height: 100%;
+    min-height: 350px;
     width: 40%;
   }
   &__details {
