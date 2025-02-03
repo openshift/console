@@ -27,7 +27,6 @@ import {
 
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
-import '@console/shared/src/components/editor/theme';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
@@ -125,6 +124,7 @@ const EditYAMLInner = (props) => {
   const [notAllowed, setNotAllowed] = React.useState();
   const [displayResults, setDisplayResults] = React.useState();
   const [resourceObjects, setResourceObjects] = React.useState();
+  const [editorMounted, setEditorMounted] = React.useState(false);
 
   const [callbackCommand, setCallbackCommand] = React.useState('');
   const [showReplaceCodeModal, setShowReplaceCodeModal] = React.useState(false);
@@ -145,6 +145,7 @@ const EditYAMLInner = (props) => {
   const displayedVersion = React.useRef('0');
   const onCancel = 'onCancel' in props ? props.onCancel : navigateBack;
 
+  /** @return {import('monaco-editor').editor.IStandaloneCodeEditor | null} */
   const getEditor = () => {
     return monacoRef.current?.editor;
   };
@@ -209,16 +210,14 @@ const EditYAMLInner = (props) => {
         .then((resp) => {
           const notAll = !resp.status.allowed;
           setNotAllowed(notAll);
-          if (monacoRef.current) {
-            monacoRef.current.editor?.updateOptions({ readOnly: notAll });
-          }
+          editorMounted && getEditor()?.updateOptions({ readOnly: notAll });
         })
         .catch((e) => {
           // eslint-disable-next-line no-console
           console.warn('Error while check edit access', e);
         });
     },
-    [props.readOnly, props.impersonate, create, getModel],
+    [props.readOnly, props.impersonate, create, getModel, editorMounted],
   );
 
   const appendYAMLString = React.useCallback((yaml) => {
@@ -269,11 +268,11 @@ const EditYAMLInner = (props) => {
 
       const yaml = convertObjToYAMLString(obj);
       displayedVersion.current = _.get(obj, 'metadata.resourceVersion');
-      getEditor()?.setValue(yaml);
+      editorMounted && getEditor()?.setValue(yaml);
       setInitialized(true);
       setStale(false);
     },
-    [convertObjToYAMLString, initialized, props.obj],
+    [convertObjToYAMLString, initialized, props.obj, editorMounted],
   );
 
   const handleCodeReplace = (_event) => {
@@ -306,7 +305,7 @@ const EditYAMLInner = (props) => {
       return;
     }
 
-    const currentYAML = getEditor()?.getValue();
+    const currentYAML = editorMounted && getEditor()?.getValue();
 
     if (_.isEmpty(currentYAML) || currentYAML === olsCode) {
       getEditor()?.setValue(olsCodeBlock?.value);
@@ -320,7 +319,7 @@ const EditYAMLInner = (props) => {
 
     setOLSCode(olsCodeBlock?.value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [olsCodeBlock, initialized, isCodeImportRedirect]);
+  }, [olsCodeBlock, initialized, isCodeImportRedirect, editorMounted]);
 
   const handleError = (err, value = null) => {
     setSuccess(value);
@@ -362,9 +361,9 @@ const EditYAMLInner = (props) => {
     if (props.error) {
       handleError(props.error);
     }
-    loadYaml();
+    editorMounted && loadYaml();
     loadCSVs();
-  }, [loadCSVs, loadYaml, props.error]);
+  }, [loadCSVs, loadYaml, props.error, editorMounted]);
 
   const prevProps = React.useRef(props);
 
@@ -375,17 +374,18 @@ const EditYAMLInner = (props) => {
     }
 
     const newVersion = _.get(props.obj, 'metadata.resourceVersion');
-    const s = displayedVersion.current !== newVersion;
+    const s = displayedVersion.current !== newVersion && editorMounted;
     setStale(s);
     handleError(props.error, success);
     if (props.sampleObj) {
-      loadYaml(!_.isEqual(sampleObj, props.sampleObj), props.sampleObj);
+      editorMounted && loadYaml(!_.isEqual(sampleObj, props.sampleObj), props.sampleObj);
     } else if (props.fileUpload) {
-      loadYaml(!_.isEqual(prevProps.current.fileUpload, props.fileUpload), props.fileUpload);
+      editorMounted &&
+        loadYaml(!_.isEqual(prevProps.current.fileUpload, props.fileUpload), props.fileUpload);
     } else {
-      loadYaml();
+      editorMounted && loadYaml();
     }
-  }, [props, isOver, loadYaml, sampleObj, success]);
+  }, [props, isOver, loadYaml, sampleObj, success, editorMounted]);
 
   const reload = () => {
     loadYaml(true);
@@ -508,12 +508,12 @@ const EditYAMLInner = (props) => {
     let obj;
 
     if (onSave) {
-      onSave(getEditor().getValue());
+      onSave(editorMounted && getEditor()?.getValue());
       return;
     }
 
     try {
-      obj = safeLoad(getEditor().getValue());
+      obj = safeLoad(editorMounted && getEditor()?.getValue());
     } catch (e) {
       handleError(t('public~Error parsing YAML: {{e}}', { e }));
       return;
@@ -582,7 +582,7 @@ const EditYAMLInner = (props) => {
       }
     }
     updateYAML(obj);
-  }, [create, owner, t, updateYAML, validate, onSave, props.obj]);
+  }, [create, owner, t, updateYAML, validate, onSave, props.obj, editorMounted]);
 
   const save = () => {
     setErrors([]);
@@ -595,7 +595,7 @@ const EditYAMLInner = (props) => {
     let hasErrors = false;
 
     try {
-      objs = safeLoadAll(getEditor().getValue()).filter((obj) => obj);
+      objs = safeLoadAll(editorMounted && getEditor()?.getValue()).filter((obj) => obj);
     } catch (e) {
       handleError(t('public~Error parsing YAML: {{e}}', { e }));
       return;
@@ -647,7 +647,7 @@ const EditYAMLInner = (props) => {
       setResourceObjects(objs);
       setDisplay(true);
     }
-  }, [t, setDisplay, validate]);
+  }, [t, setDisplay, validate, editorMounted]);
 
   const saveAll = () => {
     setErrors([]);
@@ -710,6 +710,10 @@ const EditYAMLInner = (props) => {
     return sanitizedYaml;
   };
 
+  React.useEffect(() => {
+    editorMounted && getEditor()?.updateOptions({ hover: { enabled: showTooltips } });
+  }, [showTooltips, editorMounted]);
+
   if (!create && !props.obj) {
     return <Loading />;
   }
@@ -717,8 +721,6 @@ const EditYAMLInner = (props) => {
   const klass = classNames('co-file-dropzone-container', {
     'co-file-dropzone--drop-over': isOver,
   });
-
-  monacoRef.current?.editor?.updateOptions({ hover: showTooltips });
 
   if (displayResults) {
     return (
@@ -799,6 +801,7 @@ const EditYAMLInner = (props) => {
                 toolbarLinks={sidebarLink ? [tooltipCheckBox, sidebarLink] : [tooltipCheckBox]}
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
+                onEditorDidMount={() => setEditorMounted(true)}
               />
               <div className="yaml-editor__buttons" ref={buttons}>
                 {customAlerts}

@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, Level, LevelItem } from '@patternfly/react-core';
-import MonacoEditor from 'react-monaco-editor';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import Editor, { Monaco } from '@monaco-editor/react';
+import { useConsoleMonacoTheme } from '@console/shared/src/components/editor/theme';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
 import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
@@ -60,15 +60,16 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
 
 const lineHeight = 18;
 const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
-  const theme = React.useContext(ThemeContext);
+  const [monaco, setMonaco] = React.useState<Monaco | null>(null);
+  useConsoleMonacoTheme(monaco?.editor);
 
   return (
     <div style={{ paddingTop: 10 }}>
-      <MonacoEditor
+      <Editor
         height={Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}
         language="yaml"
         value={yaml}
-        theme={theme === 'light' ? 'console-light' : 'console-dark'}
+        onMount={(_e, m) => setMonaco(m)}
         options={{
           lineHeight,
           readOnly: true,
