@@ -28,15 +28,16 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
         >
           {t('olm~CPU cores')}
         </label>
-        <input
-          value={cpu}
-          onChange={(e) => onChangeCPU(e.target.value)}
-          id={`${path}.cpu`}
-          name="cpu"
-          type="text"
-          className="pf-v5-c-form-control"
-          placeholder="500m"
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            value={cpu}
+            onChange={(e) => onChangeCPU(e.target.value)}
+            id={`${path}.cpu`}
+            name="cpu"
+            type="text"
+            placeholder="500m"
+          />
+        </span>
       </div>
       <div className="col-xs-4">
         <label
@@ -46,15 +47,16 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
         >
           {t('olm~Memory')}
         </label>
-        <input
-          value={memory}
-          onChange={(e) => onChangeMemory(e.target.value)}
-          id={`${path}.memory`}
-          name="memory"
-          type="text"
-          className="pf-v5-c-form-control"
-          placeholder="50Mi"
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            value={memory}
+            onChange={(e) => onChangeMemory(e.target.value)}
+            id={`${path}.memory`}
+            name="memory"
+            type="text"
+            placeholder="50Mi"
+          />
+        </span>
       </div>
       <div className="col-xs-4">
         <label
@@ -64,15 +66,16 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
         >
           {t('olm~Storage')}
         </label>
-        <input
-          value={storage}
-          onChange={(e) => onChangeStorage(e.target.value)}
-          id={`${path}.ephemeral-storage`}
-          name="ephemeral-storage"
-          type="text"
-          className="pf-v5-c-form-control"
-          placeholder="50Mi"
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            value={storage}
+            onChange={(e) => onChangeStorage(e.target.value)}
+            id={`${path}.ephemeral-storage`}
+            name="ephemeral-storage"
+            type="text"
+            placeholder="50Mi"
+          />
+        </span>
       </div>
     </div>
   );

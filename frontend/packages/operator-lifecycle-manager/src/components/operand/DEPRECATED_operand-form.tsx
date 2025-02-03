@@ -766,9 +766,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     }
     if (capabilities.includes(SpecCapability.password)) {
       return (
-        <div>
+        <div className="pf-v6-c-form-control">
           <input
-            className="pf-v5-c-form-control"
             id={id}
             type="password"
             onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
@@ -860,10 +859,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     }
     if (capabilities.includes(SpecCapability.text)) {
       return (
-        <div>
+        <div className="pf-v6-c-form-control">
           <input
             key={id}
-            className="pf-v5-c-form-control"
             id={id}
             type="text"
             onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
@@ -874,10 +872,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     }
     if (capabilities.includes(SpecCapability.number)) {
       return (
-        <div>
+        <div className="pf-v6-c-form-control">
           <input
             key={path}
-            className="pf-v5-c-form-control"
             id={id}
             type="number"
             onChange={({ currentTarget: { value } }) =>
@@ -1113,14 +1110,17 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 <label className="form-label co-required" htmlFor="DEPRECATED_root_metadata_name">
                   {t('public~Name')}
                 </label>
-                <input
-                  className="pf-v5-c-form-control"
-                  type="text"
-                  onChange={({ target: { value } }) => handleFormDataUpdate('metadata.name', value)}
-                  value={immutableFormData.getIn(['metadata', 'name']) || 'example'}
-                  id="DEPRECATED_root_metadata_name"
-                  required
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    onChange={({ target: { value } }) =>
+                      handleFormDataUpdate('metadata.name', value)
+                    }
+                    value={immutableFormData.getIn(['metadata', 'name']) || 'example'}
+                    id="DEPRECATED_root_metadata_name"
+                    required
+                  />
+                </span>
               </div>
               <div
                 id="DEPRECATED_root_metadata_labels_field"

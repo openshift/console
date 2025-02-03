@@ -171,41 +171,44 @@ export const AddOpenIDIDPPage = () => {
             <label className="control-label co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setClientID(e.currentTarget.value)}
-              value={clientID}
-              id="client-id"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setClientID(e.currentTarget.value)}
+                value={clientID}
+                id="client-id"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="password"
-              onChange={(e) => setClientSecret(e.currentTarget.value)}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="password"
+                onChange={(e) => setClientSecret(e.currentTarget.value)}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="issuer">
               {t('public~Issuer URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setIssuer(e.currentTarget.value)}
-              value={issuer}
-              id="issuer"
-              required
-              aria-describedby="issuer-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setIssuer(e.currentTarget.value)}
+                value={issuer}
+                id="issuer"
+                required
+                aria-describedby="issuer-help"
+              />
+            </span>
             <div className="help-block" id="issuer-help">
               {t(
                 'public~The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.',

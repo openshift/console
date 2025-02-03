@@ -47,18 +47,19 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   onChange={(protocol) => onSingleChange({ ...port, protocol }, idx)}
                   data-test="port-protocol"
                 />
-                <input
-                  className="pf-v5-c-form-control"
-                  onChange={(event) =>
-                    onSingleChange({ ...port, port: event.currentTarget.value }, idx)
-                  }
-                  placeholder="443"
-                  aria-describedby="ports-help"
-                  name={`${key}-port`}
-                  id={`${key}-port`}
-                  value={port.port}
-                  data-test="port-input"
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    onChange={(event) =>
+                      onSingleChange({ ...port, port: event.currentTarget.value }, idx)
+                    }
+                    placeholder="443"
+                    aria-describedby="ports-help"
+                    name={`${key}-port`}
+                    id={`${key}-port`}
+                    value={port.port}
+                    data-test="port-input"
+                  />
+                </span>
                 <Button
                   icon={<MinusCircleIcon />}
                   aria-label={t('console-app~Remove port')}

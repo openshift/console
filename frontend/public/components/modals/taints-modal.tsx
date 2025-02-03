@@ -85,24 +85,23 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
                     {t('public~Key')}
                   </div>
-                  <input
-                    type="text"
-                    className="pf-v5-c-form-control taint-modal__input"
-                    value={c.key}
-                    onChange={(e) => change(e, i, 'key')}
-                    required
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      type="text"
+                      className="taint-modal__input"
+                      value={c.key}
+                      onChange={(e) => change(e, i, 'key')}
+                      required
+                    />
+                  </span>
                 </div>
                 <div className="col-md-3 col-xs-5 taint-modal__field">
                   <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
                     {t('public~Value')}
                   </div>
-                  <input
-                    type="text"
-                    className="pf-v5-c-form-control taint-modal__input"
-                    value={c.value}
-                    onChange={(e) => change(e, i, 'value')}
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input type="text" value={c.value} onChange={(e) => change(e, i, 'value')} />
+                  </span>
                 </div>
                 <div className="clearfix visible-sm visible-xs" />
                 <div className="col-md-4 col-xs-5 taint-modal__field">

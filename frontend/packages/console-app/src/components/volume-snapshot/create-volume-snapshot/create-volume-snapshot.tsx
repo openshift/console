@@ -268,15 +268,16 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               <label className="control-label co-required" htmlFor="snapshot-name">
                 {t('console-app~Name')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                onChange={handleSnapshotName}
-                name="snapshotName"
-                id="snapshot-name"
-                value={snapshotName}
-                required
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  onChange={handleSnapshotName}
+                  name="snapshotName"
+                  id="snapshot-name"
+                  value={snapshotName}
+                  required
+                />
+              </span>
             </div>
             {pvcObj && (
               <div className="form-group co-volume-snapshot__form">

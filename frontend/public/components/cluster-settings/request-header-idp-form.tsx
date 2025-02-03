@@ -144,14 +144,15 @@ export const AddRequestHeaderPage = () => {
             <label className="control-label" htmlFor="challenge-url">
               {t('public~Challenge URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setChallengeURL(e.currentTarget.value)}
-              value={challengeURL}
-              id="challenge-url"
-              aria-describedby="challenge-url-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setChallengeURL(e.currentTarget.value)}
+                value={challengeURL}
+                id="challenge-url"
+                aria-describedby="challenge-url-help"
+              />
+            </span>
             <div className="help-block" id="challenge-url-help">
               {t(
                 'public~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
@@ -162,14 +163,15 @@ export const AddRequestHeaderPage = () => {
             <label className="control-label" htmlFor="login-url">
               {t('public~Login URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setLoginURL(e.currentTarget.value)}
-              value={loginURL}
-              id="login-url"
-              aria-describedby="login-url-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setLoginURL(e.currentTarget.value)}
+                value={loginURL}
+                id="login-url"
+                aria-describedby="login-url-help"
+              />
+            </span>
             <div className="help-block" id="login-url-help">
               {t(
                 'public~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',

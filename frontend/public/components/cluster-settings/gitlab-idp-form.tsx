@@ -159,15 +159,16 @@ export const AddGitLabPage = () => {
             <label className="control-label co-required" htmlFor="url">
               {t('public~URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setUrl(e.currentTarget.value)}
-              value={url}
-              id="url"
-              aria-describedby="idp-url-help"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setUrl(e.currentTarget.value)}
+                value={url}
+                id="url"
+                aria-describedby="idp-url-help"
+                required
+              />
+            </span>
             <p className="help-block" id="idp-url-help">
               {t('public~The OAuth server base URL.')}
             </p>
@@ -176,27 +177,29 @@ export const AddGitLabPage = () => {
             <label className="control-label co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setClientID(e.currentTarget.value)}
-              value={clientID}
-              id="client-id"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setClientID(e.currentTarget.value)}
+                value={clientID}
+                id="client-id"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="password"
-              onChange={(e) => setClientSecret(e.currentTarget.value)}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="password"
+                onChange={(e) => setClientSecret(e.currentTarget.value)}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </span>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>

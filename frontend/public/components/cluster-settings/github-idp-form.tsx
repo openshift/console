@@ -167,40 +167,43 @@ export const AddGitHubPage = () => {
             <label className="control-label co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setClientID(e.currentTarget.value)}
-              value={clientID}
-              id="client-id"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setClientID(e.currentTarget.value)}
+                value={clientID}
+                id="client-id"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="password"
-              onChange={(e) => setClientSecret(e.currentTarget.value)}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="password"
+                onChange={(e) => setClientSecret(e.currentTarget.value)}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="hostname">
               {t('public~Hostname')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setHostname(e.currentTarget.value)}
-              value={hostname}
-              id="hostname"
-              aria-describedby="idp-hostname-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setHostname(e.currentTarget.value)}
+                value={hostname}
+                id="hostname"
+                aria-describedby="idp-hostname-help"
+              />
+            </span>
             <p className="help-block" id="idp-hostname-help">
               {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
             </p>

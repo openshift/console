@@ -518,15 +518,16 @@ const PairElement_ = DragSource(
                 </div>
               )}
               <div className="col-xs-5 pairs-list__name-field">
-                <input
-                  type="text"
-                  data-test="pairs-list-name"
-                  className="pf-v5-c-form-control"
-                  placeholder={nameString}
-                  value={pair[NameValueEditorPair.Name]}
-                  onChange={this._onChangeName}
-                  disabled={readOnly}
-                />
+                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                  <input
+                    type="text"
+                    data-test="pairs-list-name"
+                    placeholder={nameString}
+                    value={pair[NameValueEditorPair.Name]}
+                    onChange={this._onChangeName}
+                    disabled={readOnly}
+                  />
+                </span>
               </div>
               {_.isPlainObject(pair[NameValueEditorPair.Value]) ? (
                 <div className="col-xs-5 pairs-list__value-pair-field">
@@ -541,15 +542,18 @@ const PairElement_ = DragSource(
                 </div>
               ) : (
                 <div className="col-xs-5 pairs-list__value-field">
-                  <input
-                    type="text"
-                    data-test="pairs-list-value"
-                    className="pf-v5-c-form-control"
-                    placeholder={valueString}
-                    value={pair[NameValueEditorPair.Value] || ''}
-                    onChange={this._onChangeValue}
-                    disabled={readOnly}
-                  />
+                  <span
+                    className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}
+                  >
+                    <input
+                      type="text"
+                      data-test="pairs-list-value"
+                      placeholder={valueString}
+                      value={pair[NameValueEditorPair.Value] || ''}
+                      onChange={this._onChangeValue}
+                      disabled={readOnly}
+                    />
+                  </span>
                 </div>
               )}
               {!readOnly && (
@@ -681,15 +685,16 @@ const EnvFromPairElement_ = DragSource(
                 />
               </div>
               <div className="col-xs-5 pairs-list__name-field">
-                <input
-                  data-test-id="env-prefix"
-                  type="text"
-                  className="pf-v5-c-form-control"
-                  placeholder={valueString}
-                  value={pair[EnvFromPair.Prefix]}
-                  onChange={this._onChangePrefix}
-                  disabled={readOnly}
-                />
+                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                  <input
+                    data-test-id="env-prefix"
+                    type="text"
+                    placeholder={valueString}
+                    value={pair[EnvFromPair.Prefix]}
+                    onChange={this._onChangePrefix}
+                    disabled={readOnly}
+                  />
+                </span>
               </div>
               {readOnly ? null : (
                 <div className="col-xs-1 pairs-list__action">
