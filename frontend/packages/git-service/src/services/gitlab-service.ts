@@ -3,6 +3,7 @@ import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { DevConsoleEndpointRequest, DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -18,6 +19,23 @@ type GitlabRepo = {
   id: number;
   path_with_namespace: string;
 };
+
+type GLWebhookBody = {
+  url: string;
+  push_events: boolean;
+  merge_requests_events: boolean;
+  enable_ssl_verification: boolean;
+  token: string;
+};
+
+type GitlabWebhookRequest = {
+  headers: Headers;
+  hostName: string;
+  projectID: string;
+  body: GLWebhookBody;
+} & DevConsoleEndpointRequest;
+
+export const GITLAB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/gitlab';
 
 const removeLeadingSlash = (str: string) => str?.replace(/^\//, '') || '';
 
@@ -174,20 +192,29 @@ export class GitlabService extends BaseService {
       'Content-Type': 'application/json',
       'PRIVATE-TOKEN': token,
     });
-    const body = {
+    const body: GLWebhookBody = {
       url: webhookURL,
       push_events: true,
       merge_requests_events: true,
       enable_ssl_verification: sslVerification,
       token: webhookSecret,
     };
-    const webhookResponse: Response = await consoleFetchJSON.post(
-      `${this.metadata.host}/api/v4/projects/${projectID}/hooks`,
-      body,
-      { headers },
-    );
 
-    return webhookResponse.status === 201;
+    const webhookRequestBody: GitlabWebhookRequest = {
+      headers,
+      hostName: this.metadata.host,
+      projectID: projectID.toString(),
+      body,
+    };
+
+    const webhookResponse: DevConsoleEndpointResponse = await consoleFetchJSON.post(
+      GITLAB_WEBHOOK_BACKEND_URL,
+      webhookRequestBody,
+    );
+    if (!webhookResponse.statusCode) {
+      throw new Error('Unexpected proxy response: Status code is missing!');
+    }
+    return webhookResponse.statusCode === 201;
   };
 
   isFilePresent = async (path: string): Promise<boolean> => {

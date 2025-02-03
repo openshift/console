@@ -1,21 +1,20 @@
 package tektonresults
 
+import "github.com/openshift/console/pkg/devconsole/common"
+
 type TektonResultsRequest struct {
-	AllowInsecure   bool   `json:"allowInsecure,omitempty"`
-	AllowAuthHeader bool   `json:"allowAuthHeader,omitempty"`
 	SearchNamespace string `json:"searchNamespace"`
 	SearchParams    string `json:"searchParams"`
+	common.DevConsoleCommonRequest
 }
 
 type SummaryRequest struct {
-	AllowInsecure   bool   `json:"allowInsecure,omitempty"`
-	AllowAuthHeader bool   `json:"allowAuthHeader,omitempty"`
 	SearchNamespace string `json:"searchNamespace"`
 	SearchParams    string `json:"searchParams"`
+	common.DevConsoleCommonRequest
 }
 
 type TaskRunLogRequest struct {
-	AllowInsecure   bool   `json:"allowInsecure,omitempty"`
-	AllowAuthHeader bool   `json:"allowAuthHeader,omitempty"`
-	TaskRunPath     string `json:"taskRunPath"`
+	TaskRunPath string `json:"taskRunPath"`
+	common.DevConsoleCommonRequest
 }
