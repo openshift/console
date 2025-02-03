@@ -91,17 +91,16 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
           </label>
           <div className="modal-body__field">
             <div className="pf-v6-c-input-group">
-              <span className="pf-v6-c-form-control pf-m-disabled pf-m-readonly">
+              <span className="pf-v6-c-form-control pf-m-readonly">
                 <input
                   type="text"
                   aria-label={t('public~Filename')}
                   value={this.props.inputFileName}
                   aria-describedby={this.props.inputFieldHelpText ? `${id}-help` : undefined}
                   readOnly
-                  disabled
                 />
               </span>
-              <span className="pf-v6-c-button pf-m-tertiary co-btn-file">
+              <span className="pf-v6-c-button pf-m-control co-btn-file">
                 <input id={id} type="file" onChange={this.onFileUpload} data-test="file-input" />
                 {t('public~Browse...')}
               </span>
@@ -112,7 +111,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
               </p>
             ) : null}
             {!hideContents && (
-              <span className="pf-v6-c-form-control pf-m-resize-both">
+              <span className="pf-v6-c-form-control pf-m-resize-both pf-v6-u-mt-sm">
                 <textarea
                   data-test-id={
                     this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
