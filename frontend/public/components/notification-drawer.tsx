@@ -2,40 +2,24 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
-import {
-  NotificationDrawer as PFNotificationDrawer,
-  NotificationEntry,
-  NotificationCategory,
-  NotificationTypes,
-} from '@console/patternfly';
+import { NotificationEntry, NotificationCategory, NotificationTypes } from '@console/patternfly';
 import {
   isNotLoadedDynamicPluginInfo,
   useDynamicPluginInfo,
   DynamicPluginInfo,
 } from '@console/plugin-sdk';
-import {
-  alertingErrored,
-  alertingLoaded,
-  alertingLoading,
-  setAlertCount,
-} from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
-import { RootState } from '@console/internal/redux';
 import { history, resourcePath } from '@console/internal/components/utils';
 
-import { getClusterID } from '../module/k8s/cluster-settings';
+import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
 
 import {
   ServiceLevelNotification,
   useShowServiceLevelNotifications,
 } from '@console/internal/components/utils/service-level';
-import {
-  alertURL,
-  getAlertsAndRules,
-  silenceMatcherEqualitySymbol,
-} from '@console/internal/components/monitoring/utils';
-import { NotificationAlerts } from '@console/internal/reducers/observe';
+import { alertURL } from '@console/internal/components/monitoring/utils';
 import { RedExclamationCircleIcon, useCanClusterUpgrade } from '@console/shared';
 import {
   getAlertDescription,
@@ -50,9 +34,11 @@ import {
   EmptyStateVariant,
   EmptyStateActions,
   EmptyStateFooter,
+  NotificationDrawer as PfNotificationDrawer,
+  NotificationDrawerBody,
+  NotificationDrawerHeader,
 } from '@patternfly/react-core';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
-import { usePrevious } from '@console/shared/src/hooks/previous';
 import {
   Alert,
   AlertAction,
@@ -61,7 +47,6 @@ import {
   useResolvedExtensions,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import { coFetchJSON } from '../co-fetch';
 import { ConsolePluginModel } from '../models';
 import {
   ClusterVersionKind,
@@ -73,11 +58,9 @@ import {
   VersionUpdate,
 } from '../module/k8s';
 import { LinkifyExternal } from './utils';
-import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
-import { useModal, PrometheusRulesResponse } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -218,103 +201,15 @@ const getUpdateNotificationEntries = (
   return entries;
 };
 
-const pollerTimeouts = {};
-const pollers = {};
-
-export const refreshNotificationPollers = () => {
-  _.each(pollerTimeouts, clearTimeout);
-  _.invoke(pollers, 'silences');
-  _.invoke(pollers, 'notificationAlerts');
-};
-
 export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
-  isDesktop,
+  isDrawerExpanded,
   onDrawerChange,
-  children,
 }) => {
   const { t } = useTranslation();
-  const isDrawerExpanded = useSelector<RootState, boolean>(
-    ({ UI }) => !!UI.getIn(['notifications', 'isExpanded']),
-  );
-  const dispatch = useDispatch();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const [pluginInfoEntries] = useDynamicPluginInfo();
-  const toggleNotificationDrawer = () => dispatch(UIActions.notificationDrawerToggleExpanded());
-
-  React.useEffect(() => {
-    const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
-      dispatch(alertingLoading(key));
-      const notificationPoller = (): void => {
-        coFetchJSON(url)
-          .then((response) => dataHandler(response))
-          .then((data) => {
-            dispatch(alertingLoaded(key, data));
-            pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000);
-          })
-          .catch((e) => {
-            dispatch(alertingErrored(key, e));
-
-            // If the API returned an error, poll less frequently to avoid excessive calls. For
-            // example, if the user doesn't have permission to access the API, polling will probably
-            // continue to fail, but it is possible that permissions will be granted so we don't
-            // stop completely.
-            pollerTimeouts[key] = setTimeout(notificationPoller, 60 * 1000);
-          });
-      };
-      pollers[key] = notificationPoller;
-      notificationPoller();
-    };
-
-    const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
-
-    if (prometheusBaseURL) {
-      poll(
-        `${prometheusBaseURL}/${PrometheusEndpoint.RULES}`,
-        'notificationAlerts',
-        (alertsResults: PrometheusRulesResponse): Alert[] =>
-          alertsResults
-            ? getAlertsAndRules(alertsResults.data)
-                .alerts.filter(
-                  (a) =>
-                    a.state === 'firing' &&
-                    getAlertName(a) !== 'Watchdog' &&
-                    getAlertName(a) !== 'UpdateAvailable',
-                )
-                .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
-            : [],
-      );
-    } else {
-      dispatch(
-        alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
-      );
-    }
-
-    if (alertManagerBaseURL) {
-      poll(`${alertManagerBaseURL}/api/v2/silences`, 'silences', (silences) => {
-        // Set a name field on the Silence to make things easier
-        _.each(silences, (s) => {
-          s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
-          if (!s.name) {
-            // No alertname, so fall back to displaying the other matchers
-            s.name = s.matchers
-              .map(
-                (m) => `${m.name}${silenceMatcherEqualitySymbol(m.isEqual, m.isRegex)}${m.value}`,
-              )
-              .join(', ');
-          }
-        });
-        return silences;
-      });
-    } else {
-      dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
-    }
-
-    return () => {
-      _.each(pollerTimeouts, clearTimeout);
-    };
-  }, [dispatch, t]);
-
+  const dispatch = useDispatch();
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();
@@ -325,6 +220,10 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
       [alertIds],
     ),
   );
+
+  const toggleNotificationDrawer = () => {
+    dispatch(UIActions.notificationDrawerToggleExpanded());
+  };
 
   const alertActionExtensionsMap = React.useMemo(() => getAlertActions(alertActionExtensions), [
     alertActionExtensions,
@@ -357,30 +256,18 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     true,
   );
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(true);
-  const prevDrawerToggleState = usePrevious(isDrawerExpanded);
   React.useEffect(() => {
-    if (hasCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
+    if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
     }
-    if (hasNonCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
+    if (hasNonCriticalAlerts && isDrawerExpanded) {
       toggleNonCriticalAlertExpanded(true);
     }
-  }, [
-    hasCriticalAlerts,
-    hasNonCriticalAlerts,
-    isAlertExpanded,
-    isDrawerExpanded,
-    prevDrawerToggleState,
-  ]);
+  }, [hasCriticalAlerts, hasNonCriticalAlerts, isAlertExpanded, isDrawerExpanded]);
+
   React.useEffect(() => {
     onDrawerChange();
   }, [isDrawerExpanded, onDrawerChange]);
-
-  // Update alert count.
-  const alertCount = alerts?.length ?? 0;
-  React.useEffect(() => {
-    dispatch(setAlertCount(alertCount));
-  }, [alertCount, dispatch]);
 
   const emptyState = loadError ? (
     <AlertErrorState errorText={loadError.toString()} />
@@ -474,38 +361,19 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   ) : null;
 
   return (
-    <PFNotificationDrawer
-      className="co-notification-drawer"
-      isInline={isDesktop}
-      isExpanded={isDrawerExpanded}
-      notificationEntries={[
-        criticalAlertCategory,
-        nonCriticalAlertCategory,
-        recommendationsCategory,
-      ]}
-      onClose={toggleNotificationDrawer}
-    >
-      {children}
-    </PFNotificationDrawer>
+    <PfNotificationDrawer>
+      <NotificationDrawerHeader onClose={toggleNotificationDrawer} />
+      <NotificationDrawerBody>
+        {[criticalAlertCategory, nonCriticalAlertCategory, recommendationsCategory]}
+      </NotificationDrawerBody>
+    </PfNotificationDrawer>
   );
 };
 
-type NotificationPoll = (
-  url: string,
-  key: 'notificationAlerts' | 'silences',
-  dataHandler: (data) => any,
-) => void;
-
-export type WithNotificationsProps = {
-  isDrawerExpanded: boolean;
-  alerts?: NotificationAlerts;
-  silences?: any;
-};
-
 export type NotificationDrawerProps = {
-  isDesktop: boolean;
+  toggleNotificationDrawer: () => any;
+  isDrawerExpanded: boolean;
   onDrawerChange: () => void;
-  alerts: NotificationAlerts;
 };
 
 type AlertErrorProps = {
