@@ -5,7 +5,7 @@ import { catalogPO } from '../../pageObjects';
 import { addPage, catalogPage, gitPage } from '../../pages';
 
 When('user selects From Catalog card from add page', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
 When('user searches {string} card from catalog page', (cardName: string) => {
@@ -63,10 +63,6 @@ Then(
     cy.get(catalogPO.catalogTypes.serviceClass).should('not.be.checked');
   },
 );
-
-Then('search option is displayed in Developer Catalog page', () => {
-  cy.get(catalogPO.search).should('be.visible');
-});
 
 Then('GroupBy filter is selected with default option A-Z', () => {
   cy.get(catalogPO.groupBy).should('have.text', 'A-Z');

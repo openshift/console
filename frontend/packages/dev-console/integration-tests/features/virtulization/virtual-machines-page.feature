@@ -18,14 +18,14 @@ Feature: Virtual Machines page
 
 
         @smoke @to-do
-        Scenario: Virtual Machines on Developer Catalog page: VM-03-TC02
-            Given user is at Developer Catalog page
+        Scenario: Virtual Machines on Software Catalog page: VM-03-TC02
+            Given user is at Software Catalog page
              Then user will see Virtual Machines type
 
 
         @smoke @to-do
         Scenario: Virtual Machines page - Empty View: VM-03-TC03
-            Given user is at Developer Catalog page
+            Given user is at Software Catalog page
              When user clicks on Virtual Machines type
              Then user will see "No Catalog items found"
 

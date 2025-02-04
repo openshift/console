@@ -3,7 +3,6 @@ import { detailsPage } from '@console/cypress-integration-tests/views/details-pa
 import { operators } from '@console/dev-console/integration-tests/support/constants/global';
 import { verifyAndInstallOperator } from '@console/dev-console/integration-tests/support/pages';
 import {
-  catalogTypes,
   devNavigationMenu,
   addOptions,
   pageTitle,
@@ -15,10 +14,6 @@ import { perspective, catalogPage, addPage, navigateTo, topologyPage } from '../
 
 const d = new Date();
 const timestamp = d.getTime();
-
-Given('Operator Backed is selected on Developer Catalog page', () => {
-  catalogPage.selectCatalogType(catalogTypes.OperatorBacked);
-});
 
 Given('user is at OperatorBacked page', () => {
   perspective.switchTo(switchPerspective.Developer);
@@ -55,8 +50,8 @@ Then(
   },
 );
 
-Then('user will be redirected to Developer Catalog page', () => {
-  detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
+Then('user will be redirected to Software Catalog page', () => {
+  detailsPage.titleShouldContain(pageTitle.SoftwareCatalog);
 });
 
 When('user selects knative Kafka card', () => {

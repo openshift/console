@@ -151,8 +151,8 @@ Given('user created workload {string} from add page with pipeline', (pipelineNam
   topologyPage.verifyTopologyPage();
 });
 
-Given('user is at Developer Catalog form with builder images', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+Given('user is at Software Catalog form with builder images', () => {
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
 When('user searches builder image {string} in developer catalog', (searchItem: string) => {

@@ -10,7 +10,7 @@ Feature: Create Application from Catalog file
 
         @regression
         Scenario: Create the workload using Builder Image: A-01-TC01
-            Given user is at Developer Catalog page
+            Given user is at Software Catalog page
              When user selects "Builder Image" option from Type section
               And user searches and selects Builder Image card "Node.js" from catalog page
               And user clicks Create Application button on side bar
@@ -25,7 +25,7 @@ Feature: Create Application from Catalog file
 
         @smoke
         Scenario Outline: Deploy Application using Catalog Template "<template_category>": A-01-TC02
-            Given user is at Developer Catalog page
+            Given user is at Software Catalog page
               And user is at Templates page
              When user selects Template category "<template_category>"
               And user searches and selects Template card "<card_name>" from catalog page
