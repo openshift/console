@@ -104,8 +104,8 @@ export const isMinorVersionNewer = (currentVersion, otherVersion) => {
   const currentVersionParsed = semver.parse(currentVersion);
   const otherVersionParsed = semver.parse(otherVersion);
   return semver.gt(
-    semver.coerce(`${otherVersionParsed.major}.${otherVersionParsed.minor}`),
-    semver.coerce(`${currentVersionParsed.major}.${currentVersionParsed.minor}`),
+    semver.coerce(`${otherVersionParsed?.major}.${otherVersionParsed?.minor}`),
+    semver.coerce(`${currentVersionParsed?.major}.${currentVersionParsed?.minor}`),
   );
 };
 
