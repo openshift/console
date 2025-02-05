@@ -11,8 +11,14 @@ const SampleRepo = (props) => {
   const { t } = useTranslation();
   return (
     <FormHelperText>
-      <Button {...props} type="button" variant={ButtonVariant.link} isInline>
-        {t('devconsole~Try sample')} <LevelUpAltIcon />
+      <Button
+        icon={<LevelUpAltIcon />}
+        {...props}
+        type="button"
+        variant={ButtonVariant.link}
+        isInline
+      >
+        {t('devconsole~Try sample')}
       </Button>
     </FormHelperText>
   );

@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 
 class ConstructorType extends tsj.BaseType {
   getId() {
-    return 'constructor';
+    return 'function Object() { [native code] }';
   }
 }
 

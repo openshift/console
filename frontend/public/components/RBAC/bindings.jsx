@@ -662,16 +662,17 @@ const BaseEditRoleBinding = (props) => {
               {_.get(fixed, 'metadata.name') ? (
                 <ResourceName kind={data?.kind} name={data?.metadata?.name} />
               ) : (
-                <input
-                  className="pf-v5-c-form-control"
-                  type="text"
-                  onChange={changeName}
-                  placeholder={t('public~RoleBinding name')}
-                  value={data?.metadata?.name}
-                  required
-                  id="role-binding-name"
-                  data-test="role-binding-name"
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    type="text"
+                    onChange={changeName}
+                    placeholder={t('public~RoleBinding name')}
+                    value={data?.metadata?.name}
+                    required
+                    id="role-binding-name"
+                    data-test="role-binding-name"
+                  />
+                </span>
               )}
             </div>
             {data?.kind === 'RoleBinding' && (
@@ -736,24 +737,25 @@ const BaseEditRoleBinding = (props) => {
               <label htmlFor="subject-name" className="co-required">
                 {t('public~Subject name')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                onChange={changeSubjectName}
-                placeholder={t('public~Subject name')}
-                value={subject?.name}
-                required
-                id="subject-name"
-                disabled={isSubjectDisabled}
-                data-test="subject-name"
-              />
+              <span className={classNames('pf-v6-c-form-control', { disabled: isSubjectDisabled })}>
+                <input
+                  type="text"
+                  onChange={changeSubjectName}
+                  placeholder={t('public~Subject name')}
+                  value={subject?.name}
+                  required
+                  id="subject-name"
+                  disabled={isSubjectDisabled}
+                  data-test="subject-name"
+                />
+              </span>
             </div>
           </Section>
 
           <div className="co-form-section__separator" />
 
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
                 {saveButtonText || t('public~Create')}
               </Button>

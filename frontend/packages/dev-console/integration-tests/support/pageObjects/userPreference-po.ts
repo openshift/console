@@ -1,5 +1,5 @@
 export const userPreferencePO = {
-  userMenu: '[data-test="user-dropdown"]',
+  userMenu: '[data-test="user-dropdown-toggle"]',
   namespaceTypeahead: '[id="console.preferredNamespace-select-typeahead"]',
   languageTab: '[data-test="tab language"]',
   creteProjectButton: '[data-test="footer create-namespace-button"]',

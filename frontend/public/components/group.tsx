@@ -168,20 +168,20 @@ const UsersTable: React.FC<UsersTableProps> = ({ group, users }) => {
   return _.isEmpty(users) ? (
     <EmptyBox label={t('public~Users')} />
   ) : (
-    <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-      <thead className="pf-v5-c-table__thead">
-        <tr className="pf-v5-c-table__tr">
-          <th className="pf-v5-c-table__th">{t('public~Name')}</th>
-          <th className="pf-v5-c-table__th" />
+    <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+      <thead className="pf-v6-c-table__thead">
+        <tr className="pf-v6-c-table__tr">
+          <th className="pf-v6-c-table__th">{t('public~Name')}</th>
+          <th className="pf-v6-c-table__th" />
         </tr>
       </thead>
-      <tbody className="pf-v5-c-table__tbody">
+      <tbody className="pf-v6-c-table__tbody">
         {users.map((user: string) => (
-          <tr className="pf-v5-c-table__tr" key={user}>
-            <td className="pf-v5-c-table__td">
+          <tr className="pf-v6-c-table__tr" key={user}>
+            <td className="pf-v6-c-table__td">
               <ResourceLink kind={referenceForModel(UserModel)} name={user} />
             </td>
-            <td className="pf-v5-c-table__td dropdown-kebab-pf pf-v5-c-table__action">
+            <td className="pf-v6-c-table__td dropdown-kebab-pf pf-v6-c-table__action">
               <UserKebab group={group} user={user} />
             </td>
           </tr>

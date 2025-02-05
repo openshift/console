@@ -2,7 +2,11 @@ import * as React from 'react';
 import { ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { ResourceLink, DetailsItem, ExternalLink } from '@console/internal/components/utils';
+import {
+  ResourceLink,
+  DetailsItem,
+  ExternalLinkWithCopy,
+} from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import {
   ClusterBuildStrategyModel,
@@ -75,9 +79,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           obj={obj}
           path={isV1Alpha1Resource(obj) ? `${path}.source.url` : `${path}.source.git.url`}
         >
-          <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>
-            <ExternalLink href={url} text={url} />
-          </ClipboardCopy>
+          <ExternalLinkWithCopy text={url} link={url} />
         </DetailsItem>
       ) : null}
 
@@ -114,9 +116,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           {buildSpec.sources?.map((source) => (
             <React.Fragment key={source.name}>
               {source.name}:<br />
-              <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>
-                <ExternalLink href={source.url} text={source.url} />
-              </ClipboardCopy>
+              <ExternalLinkWithCopy link={source.url} text={source.url} />
               <br />
             </React.Fragment>
           ))}

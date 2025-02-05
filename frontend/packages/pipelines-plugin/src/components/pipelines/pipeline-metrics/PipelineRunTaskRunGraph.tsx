@@ -5,7 +5,7 @@ import {
   getInteractiveLegendItemStyles,
   ChartLegendTooltip,
   ChartLegend,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import Measure from 'react-measure';
@@ -156,7 +156,10 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
                   name="legend"
                   data={getLegendData()}
                   style={{
-                    labels: { fontSize: 11, fill: 'var(--pf-v5-global--Color--100)' },
+                    labels: {
+                      fontSize: 11,
+                      fill: 'var(--pf-t--global--text--color--regular)',
+                    },
                   }}
                 />
               )

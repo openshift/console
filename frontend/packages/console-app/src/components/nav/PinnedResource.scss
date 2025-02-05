@@ -1,9 +1,5 @@
-.oc-pinned-resource.pf-v5-c-nav__item {
-  --pf-v5-c-nav__link--PaddingRight: 0;
-
-  display: flex;
-
-  .pf-v5-c-nav__link {
+.oc-pinned-resource.pf-v6-c-nav__item {
+  .pf-v6-c-nav__link {
     display: block;
     flex-grow: 1;
     overflow: hidden;
@@ -12,7 +8,7 @@
     white-space: nowrap;
 
     &:hover {
-      --pf-v5-c-nav__section-title--PaddingRight: 30px;
+      --pf-v6-c-nav__section-title--PaddingRight: 30px;
       .oc-pinned-resource__unpin-button,
       .oc-pinned-resource__drag-button {
         .oc-pinned-resource__delete-icon,
@@ -24,18 +20,10 @@
   }
 
   .oc-pinned-resource__unpin-button {
-    background-color: var(--pf-v5-c-nav--m-dark__item--BackgroundColor);
-    color: var(--pf-v5-c-nav__link--after--BorderColor);
-    padding-bottom: 0;
-    padding-top: 0;
+    background-color: transparent !important;
+    padding: 0;
     position: absolute;
     right: 0;
-    top: 0;
-    bottom: 0;
-
-    .pf-m-current & {
-      background-color: var(--pf-v5-c-nav--m-dark__item--m-current--BackgroundColor);
-    }
 
     .oc-pinned-resource__delete-icon {
       opacity: 0;
@@ -43,30 +31,29 @@
   }
 
   .oc-pinned-resource__drag-button {
-    background-color: var(--pf-v5-c-nav--m-dark__item--BackgroundColor);
-    color: var(--pf-v5-c-nav__link--after--BorderColor);
-    padding: 0;
+    background-color: transparent !important;
     cursor: move;
-    width: 14px;
+    left: -10px;
+    padding: 0;
     position: absolute;
-    left: 4px;
-    top: 0;
-    bottom: 0;
-
-    .pf-m-current & {
-      background-color: var(--pf-v5-c-nav--m-dark__item--m-current--BackgroundColor);
-    }
 
     .oc-pinned-resource__drag-icon {
       opacity: 0;
     }
   }
+
+  .oc-pinned-resource__unpin-button:focus-visible,
+  .oc-pinned-resource__drag-button:focus-visible {
+    .oc-pinned-resource__delete-icon,
+    .oc-pinned-resource__drag-icon {
+      opacity: 1;
+    }
+  }
 }
 
 .oc-pinned-resource--dragging {
-  outline: 1px dashed var(--pf-v5-global--Color--400);
+  outline: 1px dashed var(--pf-t--global--border--color--on-secondary);
   overflow: hidden;
-  background-color: var(--pf-v5-global--Color--200) !important;
   div {
     opacity: 0.5;
   }

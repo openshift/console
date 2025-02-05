@@ -1331,7 +1331,7 @@ This extension allows plugins to contribute an add action item to the add page o
 | `groupId` | `string` | yes | IDs used to identify the action groups the action would belong to. |
 | `href` | `string` | yes | The href to navigate to. |
 | `callback` | `CodeRef<(props: Record<string, any>) => void>` | yes | A callback that performs an action on click |
-| `icon` | `CodeRef<React.ReactNode>` | yes | The perspective display icon. |
+| `icon` | `CodeRef<React.ReactNode>` | yes | The perspective display icon. If possible, use a PatternFly icon for consistent icon colours and styling. |
 | `accessReview` | `AccessReviewResourceAttributes[]` | yes | Optional access review to control visibility / enablement of the action. |
 
 ---

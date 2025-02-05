@@ -173,7 +173,7 @@ export const CreateCatalogSource: React.FC = withHandlePromise(
               </FormGroup>
             )}
             <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-              <ActionGroup className="pf-v5-c-form__group--no-top-margin">
+              <ActionGroup className="pf-v6-c-form__group--no-top-margin">
                 <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
                   {t('olm~Create')}
                 </Button>

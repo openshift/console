@@ -13,6 +13,7 @@ type ActionMenuProps = {
   isDisabled?: boolean;
   variant?: ActionMenuVariant;
   label?: string;
+  className?: string;
 };
 
 const ActionMenu: React.FC<ActionMenuProps> = ({
@@ -21,6 +22,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   isDisabled,
   variant = ActionMenuVariant.KEBAB,
   label,
+  className,
 }) => {
   const isKebabVariant = variant === ActionMenuVariant.KEBAB;
   const [isVisible, setVisible] = useSafetyFirst(isKebabVariant);
@@ -76,7 +78,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   const menu = (
     <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>
       <MenuContent data-test-id="action-items">
-        <MenuList>
+        <MenuList className={className}>
           <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={menuOptions[0]} />
         </MenuList>
       </MenuContent>

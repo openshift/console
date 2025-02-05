@@ -1,7 +1,5 @@
 import * as React from 'react';
 import {
-  Modal,
-  ModalVariant,
   Button,
   Alert,
   AlertVariant,
@@ -12,6 +10,7 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { Formik, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';

@@ -1,8 +1,7 @@
 .co-sysevent-icon {
-  background-color: var(--pf-v5-global--BackgroundColor--100);
-  border: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--300);
-  border-radius: var(--pf-v5-global--BorderRadius--lg);
-  color: var(--pf-v5-global--Color--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
+  border: var(--pf-t--global--border--width--extra-strong) solid var(--pf-t--global--color--nonstatus--gray--default);
+  border-radius: var(--pf-t--global--border--radius--400);
   position: relative;
   z-index: 10;
   height: 18px;
@@ -12,9 +11,9 @@
 .co-sysevent--warning {
   .co-sysevent-icon,
   .co-sysevent__box {
-    border-color: var(--pf-v5-global--warning-color--100);
+    border-color: var(--pf-t--global--border--color--status--warning--default);
   }
   .co-sysevent__icon-line {
-    background-color: var(--pf-v5-global--warning-color--100);
+    background-color: var(--pf-t--global--border--color--status--warning--default);
   }
 }

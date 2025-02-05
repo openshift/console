@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 
 export const ReplaceCodeModal = ({ handleCodeReplace }) => {
   const { t } = useTranslation();

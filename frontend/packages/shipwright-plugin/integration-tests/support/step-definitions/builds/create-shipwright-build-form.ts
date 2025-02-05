@@ -46,7 +46,7 @@ Then('user will see Strategy {string}', (buildStrategy: string) => {
 });
 
 Then('user will see Source URL {string}', (gitUrl: string) => {
-  cy.get(createShipwrightBuildPO.detailsPageSourceURLItem).should('have.text', gitUrl);
+  cy.get(createShipwrightBuildPO.detailsPageSourceURLItem).should('include.text', gitUrl);
 });
 
 Then('user will see Builder image {string}', (builderImage: string) => {

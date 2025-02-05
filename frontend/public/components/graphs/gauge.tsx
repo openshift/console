@@ -3,7 +3,7 @@ import {
   ChartDonutThreshold,
   ChartDonutUtilization,
   ChartThemeColor,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 

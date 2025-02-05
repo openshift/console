@@ -1,9 +1,9 @@
-$global-notification-text: $pf-v5-color-white;
+$global-notification-text: var(--pf-t--color--white);
 
 .co-global-telemetry-notification {
-  background-color: $pf-v5-color-blue-400;
+  background-color: var(--pf-t--color--blue--50);
   color: $global-notification-text;
-  padding: 4px $pf-v5-global-gutter;
+  padding: 4px $pf-v6-global-gutter;
   text-align: center;
   &__content {
     display: inline-flex;
@@ -11,6 +11,6 @@ $global-notification-text: $pf-v5-color-white;
   }
 
   &__button {
-    margin-left: var(--pf-v5-global--spacer--md);
+    margin-left: var(--pf-t--global--spacer--md);
   }
 }

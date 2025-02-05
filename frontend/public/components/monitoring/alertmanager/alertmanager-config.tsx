@@ -13,7 +13,6 @@ import {
   EmptyStateVariant,
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
-  EmptyStateHeader,
   Breadcrumb,
   BreadcrumbItem,
 } from '@patternfly/react-core';
@@ -90,9 +89,9 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
 };
 
 const tableColumnClasses = [
-  'pf-v5-u-w-50-on-xs pf-v5-u-w-25-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-25-on-lg',
-  'pf-v5-u-w-50-on-xs',
+  'pf-v6-u-w-50-on-xs pf-v6-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-lg',
+  'pf-v6-u-w-50-on-xs',
   Kebab.columnClass,
 ];
 
@@ -306,8 +305,8 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
           <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-            <PencilAltIcon className="co-icon-space-r pf-v5-c-button-icon--plain" />
             {t('public~Configure')}
+            <PencilAltIcon className="co-icon-space-l" />
           </Link>
         ) : (
           integrationTypesLabel
@@ -402,8 +401,11 @@ ReceiversTable.displayName = 'ReceiversTable';
 const ReceiversEmptyState: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader titleText={<>{t('public~No receivers found')}</>} headingLevel="h2" />
+    <EmptyState
+      headingLevel="h2"
+      titleText={<>{t('public~No receivers found')}</>}
+      variant={EmptyStateVariant.full}
+    >
       <EmptyStateBody>
         {t(
           'public~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
@@ -528,10 +530,10 @@ export const AlertmanagerConfig: React.FC = () => {
 
   return (
     <>
-      <div className="pf-c-page__main-breadcrumb">
+      <div className="pf-v6-c-page__main-breadcrumb">
         <Breadcrumb className="monitoring-breadcrumbs">
           <BreadcrumbItem>
-            <Link className="pf-c-breadcrumb__link" to={breadcrumbs[0].path}>
+            <Link className="pf-v6-c-breadcrumb__link" to={breadcrumbs[0].path}>
               {breadcrumbs[0].name}
             </Link>
           </BreadcrumbItem>

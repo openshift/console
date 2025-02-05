@@ -22,7 +22,7 @@ const InputGroupField: React.FC<GroupInputProps> = ({
                 <TextInput {...props} />
               )}
             </InputGroupItem>
-            <InputGroupItem>{afterInput}</InputGroupItem>
+            {afterInput}
           </InputGroup>
         );
       }}

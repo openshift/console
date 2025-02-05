@@ -5,7 +5,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  EmptyStateHeader,
   EmptyStateFooter,
   Truncate,
 } from '@patternfly/react-core';
@@ -93,8 +92,8 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
 };
 
 const Badge = ({ text }) => (
-  <span key={text} className="pf-v5-c-badge pf-m-read">
-    <Truncate className="pf-v5-c-truncate--no-min-width" content={text} />
+  <span key={text} className="pf-v6-c-badge pf-m-read">
+    <Truncate className="pf-v6-c-truncate--no-min-width" content={text} />
   </span>
 );
 
@@ -375,7 +374,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       {item?.obj?.status?.deprecation && (
         <div>
           <DeprecatedOperatorWarningBadge
-            className="pf-v5-u-mt-xs"
+            className="pf-v6-u-mt-xs"
             deprecation={item.obj.status.deprecation}
           />
         </div>
@@ -548,8 +547,12 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   if (_.isEmpty(filteredItems)) {
     return (
       <>
-        <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
-          <EmptyStateHeader titleText={<>{t('olm~No Operators available')}</>} headingLevel="h5" />
+        <EmptyState
+          headingLevel="h5"
+          titleText={<>{t('olm~No Operators available')}</>}
+          variant={EmptyStateVariant.full}
+          className="co-status-card__alerts-msg"
+        >
           <EmptyStateFooter>
             {window.SERVER_FLAGS.GOOS && window.SERVER_FLAGS.GOARCH && (
               <EmptyStateBody>
@@ -582,7 +585,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       {detailsItem.name}
       {detailsItem?.obj?.status?.deprecation && (
         <DeprecatedOperatorWarningBadge
-          className="pf-v5-u-ml-sm"
+          className="pf-v6-u-ml-sm"
           deprecation={detailsItem.obj.status.deprecation}
         />
       )}
@@ -609,6 +612,9 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           className="co-catalog-page__overlay co-catalog-page__overlay--right"
           data-test-id="operator-modal-box"
           aria-labelledby="catalog-item-header"
+          isOpen={!!detailsItem && showDetails}
+          onClose={closeOverlay}
+          title={detailsItem.name}
           header={
             <>
               <CatalogItemHeader
@@ -627,7 +633,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               <div className="co-catalog-page__overlay-actions">
                 {remoteWorkflowUrl && (
                   <ExternalLink
-                    additionalClassName="pf-v5-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
+                    additionalClassName="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
                     href={remoteWorkflowUrl}
                     text={
                       <div className="co-catalog-page__overlay-action-label">
@@ -639,7 +645,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 {!detailsItem.installed ? (
                   <Link
                     className={classNames(
-                      'pf-v5-c-button',
+                      'pf-v6-c-button',
                       {
                         'pf-m-secondary': remoteWorkflowUrl,
                       },
@@ -670,9 +676,6 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               </div>
             </>
           }
-          isOpen={!!detailsItem && showDetails}
-          onClose={closeOverlay}
-          title={detailsItem.name}
         >
           <OperatorHubItemDetails
             item={detailsItem}

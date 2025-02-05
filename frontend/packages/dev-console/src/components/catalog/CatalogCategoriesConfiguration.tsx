@@ -1,9 +1,6 @@
 import * as React from 'react';
-import {
-  DualListSelector,
-  DualListSelectorTreeItemData,
-  FormSection,
-} from '@patternfly/react-core';
+import { DualListSelectorTreeItemData, FormSection } from '@patternfly/react-core';
+import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';

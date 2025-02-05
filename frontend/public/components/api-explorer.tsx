@@ -126,10 +126,10 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
 };
 
 const tableClasses = [
-  'pf-v5-u-w-25-on-2xl',
-  'pf-v5-u-w-16-on-2xl',
-  'pf-v5-u-w-16-on-lg pf-v5-u-w-10-on-2xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-v5-u-w-16-on-lg',
+  'pf-v6-u-w-25-on-2xl',
+  'pf-v6-u-w-16-on-2xl',
+  'pf-v6-u-w-16-on-lg pf-v6-u-w-10-on-2xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-16-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
 ];
 
@@ -314,7 +314,7 @@ const APIResourcesList = compose(
   return (
     <>
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
-        <Toolbar className="co-toolbar-no-padding pf-m-toggle-group-container">
+        <Toolbar className="pf-m-toggle-group-container">
           <ToolbarContent>
             <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
               <ToolbarItem>

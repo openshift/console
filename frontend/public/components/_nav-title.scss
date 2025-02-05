@@ -1,7 +1,7 @@
 .co-actions {
   align-items: flex-end;
   display: flex;
-  font-family: var(--pf-v5-global--FontFamily--text);
+  font-family: var(--pf-t--global--font--family--body);
   @media (max-width: $screen-xs) {
     flex-direction: column;
   }
@@ -13,17 +13,16 @@
   }
 }
 
-.co-action-buttons__btn, // btn along with drowdown actions
-.co-actions-menu {
+.co-action-buttons__btn {
   margin-left: 10px;
 }
 
 .co-m-nav-title {
-  margin-top: $pf-v5-global-gutter--md;
-  padding: 0 $pf-v5-global-gutter 0;
-  @media (min-width: $pf-v5-global--breakpoint--xl) {
-    padding-left: $pf-v5-global-gutter--md;
-    padding-right: $pf-v5-global-gutter--md;
+  margin-top: $pf-v6-global-gutter--md;
+  padding: 0 $pf-v6-global-gutter 0;
+  @media (min-width: $pf-v6-global--breakpoint--xl) {
+    padding-left: $pf-v6-global-gutter--md;
+    padding-right: $pf-v6-global-gutter--md;
   }
   &--row {
     @media (min-width: $screen-sm) {
@@ -33,7 +32,8 @@
     }
   }
   &--detail {
-    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+    border-bottom: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
     flex-shrink: 0; // do not allow to shrink
   }
   // Positioned after --detail to take precedence, since they will be a siblings

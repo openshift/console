@@ -93,17 +93,18 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
             <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
           </Trans>
         </p>
-        <input
-          type="text"
-          data-test="project-name-input"
-          className="pf-v5-c-form-control"
-          onKeyUp={onKeyUp}
-          placeholder={t('public~Enter name')}
-          aria-label={t('public~Enter the name of the {{label}} to delete', {
-            label: t(kind.labelKey),
-          })}
-          autoFocus={true}
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            data-test="project-name-input"
+            onKeyUp={onKeyUp}
+            placeholder={t('public~Enter name')}
+            aria-label={t('public~Enter the name of the {{label}} to delete', {
+              label: t(kind.labelKey),
+            })}
+            autoFocus={true}
+          />
+        </span>
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('public~Delete')}

@@ -20,7 +20,7 @@ export type AddAction = ExtensionDeclaration<
     href?: string;
     /** A callback that performs an action on click */
     callback?: CodeRef<(props: Record<string, any>) => void>;
-    /** The perspective display icon. */
+    /** The perspective display icon. If possible, use a PatternFly icon for consistent icon colours and styling. */
     icon?: CodeRef<React.ReactNode>;
     /** Optional access review to control visibility / enablement of the action. */
     accessReview?: AccessReviewResourceAttributes[];

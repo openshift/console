@@ -39,6 +39,8 @@ export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> =
 const EditButton: React.SFC<EditButtonProps> = (props) => {
   return (
     <Button
+      icon={<PencilAltIcon />}
+      iconPosition="end"
       type="button"
       variant="link"
       isInline
@@ -48,7 +50,6 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
       }
     >
       {props.children}
-      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
     </Button>
   );
 };

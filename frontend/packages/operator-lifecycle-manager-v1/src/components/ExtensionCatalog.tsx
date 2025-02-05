@@ -66,7 +66,7 @@ const ExtensionCatalog = () => {
 
   return (
     <Page>
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         <Helmet>
           <title>{t('Extension Catalog')}</title>
         </Helmet>

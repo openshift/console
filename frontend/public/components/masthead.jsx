@@ -3,14 +3,16 @@ import * as PropTypes from 'prop-types';
 import {
   Brand,
   Masthead as PfMasthead,
-  MastheadBrand,
+  MastheadLogo,
   MastheadContent,
   MastheadMain,
   MastheadToggle,
+  MastheadBrand,
   PageToggleButton,
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
+import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
 import { getBrandingDetails } from './utils/branding';
 
@@ -29,14 +31,25 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
 
   return (
     <PfMasthead id="page-main-header" display={{ default: isMastheadStacked ? 'stack' : 'inline' }}>
-      <MastheadToggle>
-        <PageToggleButton onSidebarToggle={onNavToggle} isSidebarOpen={isNavOpen}>
-          <BarsIcon />
-        </PageToggleButton>
-      </MastheadToggle>
       <MastheadMain>
-        <MastheadBrand component="a" {...logoProps}>
-          <Brand src={details.logoImg} alt={details.productName} data-test="brand-image" />
+        <MastheadToggle>
+          <PageToggleButton onSidebarToggle={onNavToggle} isSidebarOpen={isNavOpen}>
+            <BarsIcon />
+          </PageToggleButton>
+        </MastheadToggle>
+        <MastheadBrand>
+          <MastheadLogo
+            component="a"
+            aria-label={window.SERVER_FLAGS.customLogoURL ? undefined : details.productName}
+            data-test="masthead-logo"
+            {...logoProps}
+          >
+            {window.SERVER_FLAGS.customLogoURL ? (
+              <Brand src={details.logoImg} alt={details.productName} />
+            ) : (
+              <ReactSVG src={details.logoImg} aria-hidden className="pf-v6-c-brand" />
+            )}
+          </MastheadLogo>
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>

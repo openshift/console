@@ -744,7 +744,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           {!props.packageManifest.data[0].metadata.labels.provider?.includes('Red Hat') && (
             <Alert
               isInline
-              className="co-alert pf-v5-c-alert--top-margin"
+              className="co-alert pf-v6-c-alert--top-margin"
               variant="warning"
               title={t('olm~Namespace monitoring')}
             >
@@ -804,7 +804,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           />
           <Alert
             isInline
-            className="co-alert pf-v5-c-alert--top-margin"
+            className="co-alert pf-v6-c-alert--top-margin"
             variant="warning"
             title={t(
               'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
@@ -1145,7 +1145,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             )}
             <div className="co-form-section__separator" />
             {formError()}
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button
                 data-test="install-operator"
                 onClick={() => submit()}

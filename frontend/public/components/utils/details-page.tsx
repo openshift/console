@@ -119,13 +119,14 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         <DetailsItem label={t('public~Tolerations')} obj={resource} path={tolerationsPath}>
           {canUpdate ? (
             <Button
+              icon={<PencilAltIcon />}
+              iconPosition="end"
               type="button"
               isInline
               onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
               variant="link"
             >
               {t('public~{{count}} toleration', { count: _.size(tolerations) })}
-              <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
             </Button>
           ) : (
             t('public~{{count}} toleration', { count: _.size(tolerations) })
@@ -136,6 +137,8 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         <DetailsItem label={t('public~Annotations')} obj={resource} path="metadata.annotations">
           {canUpdate ? (
             <Button
+              icon={<PencilAltIcon />}
+              iconPosition="end"
               data-test="edit-annotations"
               type="button"
               isInline
@@ -143,7 +146,6 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               variant="link"
             >
               {t('public~{{count}} annotation', { count: _.size(metadata.annotations) })}
-              <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
             </Button>
           ) : (
             t('public~{{count}} annotation', { count: _.size(metadata.annotations) })
@@ -212,9 +214,10 @@ export const UpstreamConfigDetailsItem: React.SFC<UpstreamConfigDetailsItemProps
           }}
           variant="link"
           isDisabled={!canUpgrade}
+          icon={<PencilAltIcon />}
+          iconPosition="end"
         >
           {resource?.spec?.upstream || t('public~Default update server')}
-          {canUpgrade && <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />}
         </Button>
       </div>
     </DetailsItem>

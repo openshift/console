@@ -59,7 +59,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               })}
           </Alert>
         )}
-        <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+        <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
           {!hideSubmit && (
             <Button
               type={handleSubmit ? 'button' : 'submit'}
@@ -98,7 +98,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               type="button"
               data-test-id="download-button"
               variant={ButtonVariant.secondary}
-              className="pf-v5-c-button--align-right hidden-sm hidden-xs"
+              className="pf-v6-c-button--align-right hidden-sm hidden-xs"
               onClick={handleDownload}
               icon={<DownloadIcon />}
             >

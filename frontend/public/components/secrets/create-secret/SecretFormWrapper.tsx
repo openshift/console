@@ -121,16 +121,17 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
               {t('public~Secret name')}
             </label>
             <div>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                onChange={onNameChanged}
-                value={secret?.metadata?.name}
-                aria-describedby="secret-name-help"
-                id="secret-name"
-                data-test="secret-name"
-                required
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  onChange={onNameChanged}
+                  value={secret?.metadata?.name}
+                  aria-describedby="secret-name-help"
+                  id="secret-name"
+                  data-test="secret-name"
+                  required
+                />
+              </span>
               <p className="help-block" id="secret-name-help">
                 {t('public~Unique name of the new secret.')}
               </p>
@@ -171,7 +172,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
         <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
           {renderBody()}
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button
                 type="submit"
                 data-test="save-changes"

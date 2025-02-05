@@ -27,7 +27,6 @@ const GuidedTour: React.FC = () => {
     return (
       <StepComponent
         {...end}
-        showClose={false}
         showStepBadge={false}
         nextButtonText={t('console-app~Okay, got it!')}
         backButtonText={t('console-app~Back')}

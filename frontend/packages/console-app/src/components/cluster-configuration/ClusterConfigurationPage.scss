@@ -6,21 +6,21 @@
   // Fix missing white background color above the header.
   .ocs-page-layout__title {
     margin-top: 0;
-    padding-top: var(--pf-v5-global--spacer--lg);
+    padding-top: var(--pf-t--global--spacer--lg);
   }
 
   .ocs-page-layout__content {
     display: inline;
   }
 
-  .pf-v5-c-empty-state {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
+  .pf-v6-c-empty-state {
+    background-color: var(--pf-t--global--background--color--primary--default);
     flex: 1;
     align-items: flex-start;
   }
 
-  .pf-v5-c-tabs.pf-m-vertical {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
+  .pf-v6-c-tabs.pf-m-vertical {
+    background-color: var(--pf-t--global--background--color--primary--default);
 
     @media (min-width: 769px) {
       max-width: 100%;
@@ -36,7 +36,7 @@
   }
 
   // Fix padding which is causes the buttons to show even when isVertical prop is true
-  .pf-v5-c-tabs__scroll-button {
+  .pf-v6-c-tabs__scroll-button {
     display: none;
   }
 }
@@ -44,7 +44,7 @@
 .co-cluster-configuration-page-content {
   display: flex;
   flex-direction: row;
-  background-color: var(--pf-v5-global--BackgroundColor--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
   min-height: 100%;
   &__tabs {
     @media (min-width: 769px) {
@@ -60,12 +60,12 @@
     }
   }
   &__tab-content {
-    margin: var(--pf-v5-global--spacer--lg);
+    margin: var(--pf-t--global--spacer--lg);
     max-width: 100%;
   }
 
   //workaround for patternfly bug which causes the buttons to show even when isVertical prop is true
-  .pf-v5-c-tabs__scroll-button {
+  .pf-v6-c-tabs__scroll-button {
     display: none;
   }
 }

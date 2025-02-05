@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
-import { TextList, TextListItem } from '@patternfly/react-core';
+import { Content } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
@@ -18,12 +18,14 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
             {prerequisites?.length > 0 && (
               <>
                 <h5>{t('topology~Prerequisites')}</h5>
-                <TextList>
+                <Content component="ul">
                   {prerequisites.map((prerequisite, index) => (
                     // eslint-disable-next-line react/no-array-index-key
-                    <TextListItem key={index}>{prerequisite}</TextListItem>
+                    <Content component="li" key={index}>
+                      {prerequisite}
+                    </Content>
                   ))}
-                </TextList>
+                </Content>
               </>
             )}
           </>

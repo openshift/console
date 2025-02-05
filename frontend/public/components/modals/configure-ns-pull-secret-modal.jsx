@@ -153,13 +153,14 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
             </div>
 
             <div className="col-xs-9">
-              <input
-                type="text"
-                className="pf-v5-c-form-control"
-                id="namespace-pull-secret-name"
-                aria-describedby="namespace-pull-secret-name-help"
-                required
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  id="namespace-pull-secret-name"
+                  aria-describedby="namespace-pull-secret-name-help"
+                  required
+                />
+              </span>
               <p className="help-block text-muted" id="namespace-pull-secret-name-help">
                 {t('public~Friendly name to help you manage this in the future')}
               </p>
@@ -207,13 +208,14 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   </label>
                 </div>
                 <div className="col-xs-9">
-                  <input
-                    type="text"
-                    className="pf-v5-c-form-control"
-                    id="namespace-pull-secret-address"
-                    placeholder={t('public~quay.io')}
-                    required
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      type="text"
+                      id="namespace-pull-secret-address"
+                      placeholder={t('public~quay.io')}
+                      required
+                    />
+                  </span>
                 </div>
               </div>
               <div className="row co-m-form-row">
@@ -221,12 +223,13 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
                 </div>
                 <div className="col-xs-9">
-                  <input
-                    type="email"
-                    className="pf-v5-c-form-control"
-                    id="namespace-pull-secret-email"
-                    aria-describedby="namespace-pull-secret-email-help"
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      type="email"
+                      id="namespace-pull-secret-email"
+                      aria-describedby="namespace-pull-secret-email-help"
+                    />
+                  </span>
                   <p className="help-block text-muted" id="namespace-pull-secret-email-help">
                     {t('public~Optional, depending on registry provider')}
                   </p>
@@ -237,12 +240,9 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
                 </div>
                 <div className="col-xs-9">
-                  <input
-                    type="text"
-                    className="pf-v5-c-form-control"
-                    id="namespace-pull-secret-username"
-                    required
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input type="text" id="namespace-pull-secret-username" required />
+                  </span>
                 </div>
               </div>
               <div className="row co-m-form-row">
@@ -250,12 +250,9 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
                 </div>
                 <div className="col-xs-9">
-                  <input
-                    type="password"
-                    className="pf-v5-c-form-control"
-                    id="namespace-pull-secret-password"
-                    required
-                  />
+                  <span className="pf-v6-c-form-control">
+                    <input type="password" id="namespace-pull-secret-password" required />
+                  </span>
                 </div>
               </div>
             </div>

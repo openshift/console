@@ -4,7 +4,7 @@ import {
   VerticalTabsTab,
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
-import { Modal } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 import { mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';

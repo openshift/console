@@ -3,7 +3,7 @@ import i18next from 'i18next';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { EventSourceIcon, eventIconStyle } from '../utils/icons';
+import { EventSourceIcon } from '../utils/icons';
 
 export const AddEventSourceAction = (
   namespace: string,
@@ -21,7 +21,7 @@ export const AddEventSourceAction = (
   return {
     id: 'event-source-add',
     label: i18next.t('knative-plugin~Event Source'),
-    icon: <EventSourceIcon style={eventIconStyle} />,
+    icon: <EventSourceIcon />,
     cta: {
       href: `${pageUrl}?${params.toString()}`,
     },

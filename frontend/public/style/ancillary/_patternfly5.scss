@@ -2,83 +2,81 @@
 // These are either components we don't currently use or that our current
 // markup structure doesn't align with PF so we must apply through targeted css
 
+// Override PF5 font size
+:root {
+  // Numerical value required
+  --pf-v5-global--FontSize--md: 14px; // same as $font-size-base
+  --pf-v5-global--FontSize--sm: 13px;
+}
+
 // Assigning PF component specific variables globally so we can use
 :root {
-  --pf-v5-c-code-block--BackgroundColor: var(--pf-v5-global--BackgroundColor--200);
-  --pf-v5-c-code-block__pre--FontFamily: var(--pf-v5-global--FontFamily--monospace);
-  --pf-v5-c-code-block__pre--FontSize: var(--pf-v5-global--FontSize--sm);
-  --pf-v5-c-content--MarginBottom: var(--pf-v5-global--spacer--md);
+  --pf-v6-c-code-block--BackgroundColor: var(--pf-v6-c-code-block--BackgroundColor);
+  --pf-v6-c-code-block__pre--FontFamily: var(--pf-v6-c-code-block__pre--FontFamily);
+  --pf-v6-c-code-block__pre--FontSize: var(--pf-t--global--font--size--sm);
+  --pf-v6-c-content--MarginBottom: var(--pf-t--global--spacer--md);
 }
-:where(:not([class*='pf-v5-c-'])) {
+:where(:not([class*='pf-v6-c-'])) {
   @at-root h1#{&} {
-    font-size: var(--pf-v5-global--FontSize--2xl);
-    font-family: var(--pf-v5-global--FontFamily--heading);
-    font-weight: var(--pf-v5-global--FontWeight--normal);
-    line-height: var(--pf-v5-global--LineHeight--md);
-    margin-bottom: var(--pf-v5-global--spacer--sm);
+    font-size: var(--pf-v6-c-content--h1--FontSize);
+    font-family: var(--pf-v6-c-content--heading--FontFamily);
+    font-weight: var(--pf-v6-c-content--h1--FontWeight);
+    line-height: var(--pf-v6-c-content--h1--LineHeight);
+    margin-bottom: var(--pf-v6-c-content--h1--MarginBlockEnd);
     word-break: break-word;
   }
 
   @at-root h2#{&} {
-    font-size: var(--pf-v5-global--FontSize--xl);
-    font-family: var(--pf-v5-global--FontFamily--heading);
-    font-weight: var(--pf-v5-global--FontWeight--normal);
-    line-height: var(--pf-v5-global--LineHeight--md);
-    margin-bottom: var(--pf-v5-global--spacer--sm);
+    font-size: var(--pf-v6-c-content--h2--FontSize);
+    font-family: var(--pf-v6-c-content--heading--FontFamily);
+    font-weight: var(--pf-v6-c-content--h2--FontWeight);
+    line-height: var(--pf-v6-c-content--h2--LineHeight);
+    margin-bottom: var(--pf-v6-c-content--h2--MarginBlockEnd);
     word-break: break-word;
   }
 
   @at-root h3#{&} {
-    font-size: var(--pf-v5-global--FontSize--lg);
-    font-family: var(--pf-v5-global--FontFamily--heading);
-    font-weight: var(--pf-v5-global--FontWeight--normal);
-    line-height: var(--pf-v5-global--LineHeight--md);
-    margin-bottom: var(--pf-v5-global--spacer--sm);
+    font-size: var(--pf-v6-c-content--h3--FontSize);
+    font-family: var(--pf-v6-c-content--heading--FontFamily);
+    font-weight: var(--pf-v6-c-content--h3--FontWeight);
+    line-height: var(--pf-v6-c-content--h3--LineHeight);
+    margin-bottom: var(--pf-v6-c-content--h3--MarginBlockEnd);
     word-break: break-word;
   }
 
   @at-root h4#{&} {
-    font-size: var(--pf-v5-global--FontSize--md);
-    font-family: var(--pf-v5-global--FontFamily--heading);
-    font-weight: var(--pf-v5-global--FontWeight--normal);
-    line-height: var(--pf-v5-global--LineHeight--md);
-    margin-bottom: var(--pf-v5-global--spacer--sm);
+    font-size: var(--pf-v6-c-content--h4--FontSize);
+    font-family: var(--pf-v6-c-content--heading--FontFamily);
+    font-weight: var(--pf-v6-c-content--h4--FontWeight);
+    line-height: var(--pf-v6-c-content--h4--LineHeight);
+    margin-bottom: var(--pf-v6-c-content--h4--MarginBlockEnd);
     word-break: break-word;
   }
 
   @at-root h5#{&} {
-    font-size: var(--pf-v5-global--FontSize--md);
-    font-family: var(--pf-v5-global--FontFamily--heading);
-    font-weight: var(--pf-v5-global--FontWeight--normal);
-    line-height: var(--pf-v5-global--LineHeight--md);
-    margin-bottom: var(--pf-v5-global--spacer--sm);
+    font-size: var(--pf-v6-c-content--h5--FontSize);
+    font-family: var(--pf-v6-c-content--heading--FontFamily);
+    font-weight: var(--pf-v6-c-content--h5--FontWeight);
+    line-height: var(--pf-v6-c-content--h5--LineHeight);
+    margin-bottom: var(--pf-v6-c-content--h5--MarginBlockEnd);
     word-break: break-word;
   }
 
   @at-root h6#{&} {
-    font-size: var(--pf-v5-global--FontSize--md);
-    font-family: var(--pf-v5-global--FontFamily--heading);
-    font-weight: var(--pf-v5-global--FontWeight--normal);
-    line-height: var(--pf-v5-global--LineHeight--md);
-    margin-bottom: var(--pf-v5-global--spacer--sm);
+    font-size: var(--pf-v6-c-content--h6--FontSize);
+    font-family: var(--pf-v6-c-content--heading--FontFamily);
+    font-weight: var(--pf-v6-c-content--h6--FontWeight);
+    line-height: var(--pf-v6-c-content--h6--LineHeight);
+    margin-bottom: var(--pf-v6-c-content--h6--MarginBlockEnd);
     word-break: break-word;
   }
 
-  // Override PF4 inheritance
-  input,
-  optgroup,
-  select,
-  textarea,
-  .pf-v5-c-badge {
-    font-family: var(--pf-v5-global--FontFamily--text);
-  }
-
   @at-root button#{&} {
-    font-family: var(--pf-v5-global--FontFamily--text);
+    font-family: var(--pf-t--global--font--family--body);
   }
 }
 
-// Reuse PF5 form-control styling that is modified to match our legacy components using PF4 markup
+// PatternFly 5 styling for backwards-compatibility with plugins
 
 .pf-v5-c-form-control {
   --pf-v5-c-form-control--ColumnGap: var(--pf-v5-global--spacer--sm);
@@ -223,9 +221,6 @@
   --pf-v5-c-form-control__toggle-icon--PaddingLeft: var(--pf-v5-c-form-control--inset--base);
   --pf-v5-c-form-control__toggle-icon--Color: var(--pf-v5-global--Color--100);
   --pf-v5-c-form-control--m-disabled__toggle-icon--Color: var(--pf-v5-global--disabled-color--100);
-
-  // This component always needs to be light
-  @include pf-v5-t-light('--pf-v5-c-form-control--Color');
 
   position: relative;
   display: grid;

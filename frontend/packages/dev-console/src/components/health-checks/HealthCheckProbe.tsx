@@ -65,27 +65,27 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
       return (
         <>
           <Button
+            icon={
+              <span className="odc-heath-check-probe__successText">
+                <GreenCheckCircleIcon />{' '}
+                {t('devconsole~{{healthCheckProbeAdded}} added', {
+                  healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
+                })}
+              </span>
+            }
             className="odc-heath-check-probe__successButton"
             variant={ButtonVariant.plain}
             isInline
             onClick={showProbe}
-          >
-            <span className="odc-heath-check-probe__successText">
-              <GreenCheckCircleIcon />{' '}
-              {t('devconsole~{{healthCheckProbeAdded}} added', {
-                healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
-              })}
-            </span>
-          </Button>
+          />
           {!viewOnly && (
             <Tooltip content={t('devconsole~Remove')} position="right">
               <Button
+                icon={<MinusCircleIcon />}
                 className="pf-m-plain--align-left"
                 variant={ButtonVariant.plain}
                 onClick={handleDeleteProbe}
-              >
-                <MinusCircleIcon />
-              </Button>
+              />
             </Tooltip>
           )}
         </>
@@ -124,7 +124,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
           </Button>
         )}
       </div>
-      <div className="pf-v5-c-form__helper-text">
+      <div className="pf-v6-c-form__helper-text">
         {getHealthChecksProbeConfig(probeType, t).formSubtitle}
       </div>
       <div className="co-toolbar__group co-toolbar__group--left">{renderProbe()}</div>

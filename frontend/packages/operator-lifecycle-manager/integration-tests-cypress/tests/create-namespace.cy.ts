@@ -23,6 +23,7 @@ describe('Create namespace from install operators', () => {
     cy.log('test namespace creation from dropdown');
     cy.visit(`/operatorhub/ns/${testName}`);
     cy.byTestID('search-operatorhub').type(operatorName);
+    cy.url().should('include', 'keyword');
     cy.byTestID(operatorSelector).click();
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
 

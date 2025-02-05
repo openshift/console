@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartLabel } from '@patternfly/react-charts';
+import { ChartLabel } from '@patternfly/react-charts/victory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
 import { PodStatus } from '@console/shared';
@@ -34,7 +34,7 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
         </div>
         {trafficPercent && (
-          <span className="col-sm-4 col-xs-3 pf-v5-u-text-align-right">{trafficPercent}</span>
+          <span className="col-sm-4 col-xs-3 pf-v6-u-text-align-right">{trafficPercent}</span>
         )}
       </div>
       {deploymentData.name && (

@@ -3,15 +3,9 @@ import i18next from 'i18next';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import channelIcon from '../imgs/channel.svg';
+import { ChannelIcon } from '../utils/icons';
 
-const eventChannelStyles = {
-  width: '1em',
-  height: '1em',
-};
-const EventChannelIcon: React.FC = () => (
-  <img style={eventChannelStyles} src={channelIcon} alt="Eventing Channel logo" />
-);
+const EventChannelIcon: React.FC = () => <ChannelIcon title="Eventing Channel" />;
 
 export const AddChannelAction = (
   namespace: string,

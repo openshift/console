@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
+import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts/victory';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { global_Color_200 as grayColor } from '@patternfly/react-tokens/dist/js/global_Color_200';
-import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+import {
+  t_color_gray_50 as grayColor,
+  t_global_icon_color_status_danger_default as dangerColor,
+} from '@patternfly/react-tokens';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import Measure from 'react-measure';

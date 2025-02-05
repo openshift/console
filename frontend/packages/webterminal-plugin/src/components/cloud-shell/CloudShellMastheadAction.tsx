@@ -32,15 +32,15 @@ const ClouldShellMastheadAction: React.FC<Props> = ({ onClick, className, open }
       data-tour-id="tour-cloud-shell-button"
       data-quickstart-id="qs-masthead-cloudshell"
     >
-      <Split className="pf-v5-u-w-100">
+      <Split className="pf-v6-u-w-100">
         <SplitItem isFilled>{t('webterminal-plugin~OpenShift command line')}</SplitItem>
         {open ? (
           <SplitItem>
             <span
               style={{
-                color: 'var(--pf-v5-global--active-color--100)',
-                fontSize: 'var(--pf-v5-global--FontSize--xs)',
-                paddingLeft: 'var(--pf-v5-global--spacer--md)',
+                color: 'var(--pf-t--global--icon--color--brand--default)',
+                fontSize: 'var(--pf-t--global--font--size--xs)',
+                paddingLeft: 'var(--pf-t--global--spacer--md)',
               }}
             >
               <CheckIcon />

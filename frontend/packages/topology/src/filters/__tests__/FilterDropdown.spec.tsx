@@ -112,6 +112,6 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find('[disabled].pf-v5-c-menu-toggle')).toBeTruthy();
+    expect(wrapper.find('[disabled].pf-v6-c-menu-toggle')).toBeTruthy();
   });
 });

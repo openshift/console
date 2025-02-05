@@ -132,8 +132,7 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
     setStatus(STREAM_ACTIVE);
   };
   return (
-    <Button className={className} onClick={handleClick} isBlock>
-      <OutlinedPlayCircleIcon />
+    <Button icon={<OutlinedPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
       &nbsp;{resumeText}
     </Button>
   );
@@ -429,7 +428,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 onClick={onDropdownToggleClick}
                 isExpanded={isDropdownOpen}
                 variant="plain"
-                className="pf-v5-u-mt-xs"
+                className="pf-v6-u-mt-xs"
                 aria-label={t('public~Dropdown toggle')}
               >
                 <EllipsisVIcon />
@@ -476,7 +475,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             </DropdownGroup>
           </Dropdown>
         ) : (
-          <div className="pf-v5-l-flex">
+          <div className="pf-v6-l-flex">
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
             <div>{fullLog}</div>
             <Divider

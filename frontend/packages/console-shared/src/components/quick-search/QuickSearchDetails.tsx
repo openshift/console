@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
+import { Button, ButtonVariant, Content, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { useTelemetry } from '../../hooks/useTelemetry';
@@ -51,9 +51,9 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
         >
           {props.selectedItem.cta.label}
         </Button>
-        <TextContent className="ocs-quick-search-details__description">
+        <Content className="ocs-quick-search-details__description">
           {props.selectedItem.description}
-        </TextContent>
+        </Content>
       </>
     );
   };

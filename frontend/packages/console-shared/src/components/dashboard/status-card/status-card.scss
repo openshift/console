@@ -1,15 +1,17 @@
-@import '~@patternfly/patternfly/sass-utilities/colors';
 @import '../../../styles/skeleton-screen';
 
 .co-status-card__alerts-body {
-  border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+  border-top: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  /* cuts off 1 pixel at the bottom of the status alerts container - fixes scrollable content leaks on border */
+  clip-path: inset(0 0 1px 0);
   max-height: 19rem;
   min-height: 6rem;
   overflow-x: hidden;
   overflow-y: auto;
 
-  .pf-v5-c-empty-state {
-    --pf-v5-c-empty-state__icon--MarginBottom: 0 !important;
+  .pf-v6-c-empty-state {
+    --pf-v6-c-empty-state__icon--MarginBottom: 0 !important;
   }
 }
 
@@ -20,7 +22,7 @@
   width: 100%;
 }
 
-.co-status-card__alerts-msg.pf-v5-c-empty-state {
+.co-status-card__alerts-msg.pf-v6-c-empty-state {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -28,15 +30,15 @@
   justify-content: center;
 }
 
-.co-status-card__alerts-icon.pf-v5-c-empty-state__icon {
-  --pf-v5-c-empty-state__icon--Color: $pf-v5-color-black-400;
+.co-status-card__alerts-icon.pf-v6-c-empty-state__icon {
+  --pf-v6-c-empty-state__icon--Color: var(--pf-t--global--icon--color--severity--undefined--default);
 }
 
 .co-status-card__alert-item {
   display: flex;
-  padding-bottom: 0.5rem;
-  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
-  padding-right: var(--pf-v5-c-card--child--PaddingRight);
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+  padding-right: var(--pf-v6-c-card--child--PaddingInlineEnd);
 }
 
 .co-status-card__alert-item-icon {
@@ -52,7 +54,7 @@
   display: flex;
   flex-shrink: 0;
   justify-content: flex-end;
-  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
 .co-status-card__alert-item-text {
@@ -65,7 +67,6 @@
 .co-status-card__alert-item-header {
   margin-left: 1rem;
   font-weight: bold;
-  color: var(--pf-v5-global--Color--black);
 }
 
 .co-status-card__alert-item-doc-link {
@@ -81,19 +82,19 @@
 }
 
 .co-status-card__alert-item:first-of-type {
-  padding-top: var(--pf-v5-c-card--first-child--PaddingTop);
+  padding-top: var(--pf-v6-c-card--first-child--PaddingBlockStart);
 }
 
 .co-status-card__alert-item:last-of-type {
-  padding-bottom: var(--pf-v5-c-card--child--PaddingBottom);
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
 }
 
 .co-status-card__health-body {
   display: flex;
   flex-wrap: wrap;
-  padding-left: var(--pf-v5-c-card--child--PaddingLeft);
-  padding-right: var(--pf-v5-c-card--child--PaddingRight);
-  padding-bottom: var(--pf-v5-c-card__title--not--last-child--PaddingBottom);
+  padding-bottom: var(--pf-v6-c-card--child--PaddingBlockEnd);
+  padding-left: var(--pf-v6-c-card--child--PaddingInlineStart);
+  padding-right: var(--pf-v6-c-card--child--PaddingInlineEnd);
 }
 
 .co-status-card__health-item {

@@ -125,7 +125,7 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
   return (
     <div>
       <div className="co-section-heading-tertiary odc-lifecycle-hook-field__title">{title}</div>
-      <div className="pf-v5-c-form__helper-text">{subTitle}</div>
+      <div className="pf-v6-c-form__helper-text">{subTitle}</div>
       {!showForm && (
         <Button
           className="pf-m-link--align-left"
@@ -150,12 +150,11 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
       {!showForm && lifecycleHookExist && (
         <Tooltip content={t('devconsole~Remove')} position="right">
           <Button
+            icon={<MinusCircleIcon />}
             className="pf-m-plain--align-left"
             variant={ButtonVariant.plain}
             onClick={onRemove}
-          >
-            <MinusCircleIcon />
-          </Button>
+          />
         </Tooltip>
       )}
       {showForm && (

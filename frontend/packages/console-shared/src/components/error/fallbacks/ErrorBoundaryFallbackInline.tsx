@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, Button, Modal, ModalVariant, Split, SplitItem } from '@patternfly/react-core';
+import { Alert, Button, Split, SplitItem } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import ErrorDetailsBlock from './ErrorDetailsBlock';

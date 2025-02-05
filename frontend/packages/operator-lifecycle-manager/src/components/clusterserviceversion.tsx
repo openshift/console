@@ -307,12 +307,13 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
                   })
                 }
                 variant="link"
+                icon={<PencilAltIcon />}
+                iconPosition="end"
               >
                 <>
                   {isPluginEnabled(consoleOperatorConfig, pluginName)
                     ? t('olm~Enabled')
-                    : t('olm~Disabled')}{' '}
-                  <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
+                    : t('olm~Disabled')}
                 </>
               </Button>
             </dd>
@@ -425,7 +426,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           {csvPlugins.length > 0 && <ConsolePluginStatus csv={obj} csvPlugins={csvPlugins} />}
           {deprecatedPackage.deprecation && (
             <DeprecatedOperatorWarningBadge
-              className="pf-v5-u-mt-xs"
+              className="pf-v6-u-mt-xs"
               deprecation={deprecatedPackage.deprecation}
             />
           )}
@@ -1139,9 +1140,11 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                     }
                     maxWidth="30rem"
                   >
-                    <Button variant="plain" className="details-item__popover-button">
-                      {t('olm~Managed Namespaces')}
-                    </Button>
+                    <Button
+                      icon={t('olm~Managed Namespaces')}
+                      variant="plain"
+                      className="details-item__popover-button"
+                    />
                   </Popover>
                 </dt>
                 <dd>

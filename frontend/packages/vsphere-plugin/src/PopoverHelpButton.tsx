@@ -7,9 +7,13 @@ export const PopoverHelpButton: React.FC<{ content: React.ReactNode }> = ({ cont
   const { t } = useTranslation('vsphere-plugin');
   return (
     <Popover aria-label={t('Help')} bodyContent={content}>
-      <Button aria-label={t('Help')} variant="link" isInline className="co-field-level-help">
-        <OutlinedQuestionCircleIcon className="co-field-level-help__icon" />
-      </Button>
+      <Button
+        icon={<OutlinedQuestionCircleIcon className="co-field-level-help__icon" />}
+        aria-label={t('Help')}
+        variant="link"
+        isInline
+        className="co-field-level-help"
+      />
     </Popover>
   );
 };

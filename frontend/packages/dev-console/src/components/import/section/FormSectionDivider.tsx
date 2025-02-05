@@ -4,7 +4,7 @@ const FormSectionDivider: React.FC = () => (
   <hr
     style={{
       margin: 0,
-      borderBottom: '0.5px solid var(--pf-v5-global--Color--400)',
+      borderBottom: 'var(--pf-t--global--border--color--default)',
       width: '100%',
     }}
   />

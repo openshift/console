@@ -26,7 +26,7 @@ export const GettingStartedSection: React.FC = () => {
         displaySize="lg"
       >
         <Card className="odc-functions-getting-started-grid" data-test="getting-started">
-          <span style={{ marginLeft: '16px' }}>
+          <span className="odc-functions-getting-started-grid__title">
             {t('knative-plugin~Choose how to create a function from below methods')}
           </span>
           <CardBody className="odc-functions-getting-started-grid__content">

@@ -18,7 +18,7 @@ const flexStyle: React.CSSProperties = {
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
-  margin: 'var(--pf-v5-global--spacer--md) 0',
+  margin: 'var(--pf-t--global--spacer--md)',
 };
 
 const FormSection: React.FC<FormSectionProps> = ({
@@ -32,7 +32,7 @@ const FormSection: React.FC<FormSectionProps> = ({
   style,
 }) => (
   <div
-    className={cx('pf-v5-c-form', {
+    className={cx('pf-v6-c-form', {
       'co-m-pane__form': !fullWidth,
       'odc-form-section--extra-margin': extraMargin,
     })}

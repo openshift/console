@@ -28,18 +28,19 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
         <label className="co-required" htmlFor="cidr">
           {t('console-app~CIDR')}
         </label>
-        <input
-          className="pf-v5-c-form-control"
-          type="text"
-          onChange={handleCIDRChange}
-          value={ipBlock.cidr}
-          placeholder="10.2.1.0/16"
-          id="cidr"
-          name="cidr"
-          aria-describedby="ipblock-help"
-          data-test="ipblock-cidr-input"
-          required
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            onChange={handleCIDRChange}
+            value={ipBlock.cidr}
+            placeholder="10.2.1.0/16"
+            id="cidr"
+            name="cidr"
+            aria-describedby="ipblock-help"
+            data-test="ipblock-cidr-input"
+            required
+          />
+        </span>
         <div className="help-block">
           <p>
             {direction === 'ingress'
@@ -56,19 +57,21 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
         <div className="form-group co-create-networkpolicy__exceptions">
           <label>{t('console-app~Exceptions')}</label>
           {ipBlock.except.map((exc, idx) => (
-            <div className="pf-v5-c-input-group" key={exc.key}>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
-                placeholder="10.2.1.0/12"
-                aria-describedby="ports-help"
-                name={`exception-${idx}`}
-                id={`exception-${idx}`}
-                value={exc.value}
-                data-test="ipblock-exception-input"
-              />
+            <div className="pf-v6-c-input-group" key={exc.key}>
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
+                  placeholder="10.2.1.0/12"
+                  aria-describedby="ports-help"
+                  name={`exception-${idx}`}
+                  id={`exception-${idx}`}
+                  value={exc.value}
+                  data-test="ipblock-exception-input"
+                />
+              </span>
               <Button
+                icon={<MinusCircleIcon />}
                 aria-label={t('console-app~Remove exception')}
                 className="co-create-networkpolicy__remove-exception"
                 onClick={() => {
@@ -81,13 +84,12 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
                 type="button"
                 variant="plain"
                 data-test="ipblock-remove-exception"
-              >
-                <MinusCircleIcon />
-              </Button>
+              />
             </div>
           ))}
           <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__add-exception">
             <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
               className="pf-m-link--align-left"
               onClick={() => {
                 ipBlock.except.push({ key: _.uniqueId('exception-'), value: '' });
@@ -97,7 +99,6 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
               variant="link"
               data-test="ipblock-add-exception"
             >
-              <PlusCircleIcon className="co-icon-space-r" />
               {t('console-app~Add exception')}
             </Button>
           </div>

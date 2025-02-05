@@ -322,7 +322,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
           fieldId="basic-settings-name"
           isRequired
           label={t('network-attachment-definition-plugin~Name')}
-          labelIcon={
+          labelHelp={
             <Popover
               aria-label={'Help'}
               bodyContent={() =>
@@ -408,7 +408,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
         </div>
 
         <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>
-          <ActionGroup className="pf-v5-c-form">
+          <ActionGroup className="pf-v6-c-form">
             <Button
               id="save-changes"
               isDisabled={!formIsValid}

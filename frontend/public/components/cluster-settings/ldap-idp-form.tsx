@@ -177,15 +177,16 @@ export const AddLDAPPage = () => {
             <label className="control-label co-required" htmlFor="url">
               {t('public~URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setUrl(e.currentTarget.value)}
-              value={url}
-              id="url"
-              required
-              aria-describedby="url-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setUrl(e.currentTarget.value)}
+                value={url}
+                id="url"
+                required
+                aria-describedby="url-help"
+              />
+            </span>
             <div className="help-block" id="url-help">
               {t('public~An RFC 2255 URL which specifies the LDAP search parameters to use.')}
             </div>
@@ -194,14 +195,15 @@ export const AddLDAPPage = () => {
             <label className="control-label" htmlFor="bind-dn">
               {t('public~Bind DN')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setBindDN(e.currentTarget.value)}
-              value={bindDN}
-              id="bind-dn"
-              aria-describedby="bind-dn-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setBindDN(e.currentTarget.value)}
+                value={bindDN}
+                id="bind-dn"
+                aria-describedby="bind-dn-help"
+              />
+            </span>
             <div className="help-block" id="bind-dn-help">
               {t('public~DN to bind with during the search phase.')}
             </div>
@@ -210,14 +212,15 @@ export const AddLDAPPage = () => {
             <label className="control-label" htmlFor="bind-password">
               {t('public~Bind password')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="password"
-              onChange={(e) => setBindPassword(e.currentTarget.value)}
-              value={bindPassword}
-              id="bind-password"
-              aria-describedby="bind-password-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="password"
+                onChange={(e) => setBindPassword(e.currentTarget.value)}
+                value={bindPassword}
+                id="bind-password"
+                aria-describedby="bind-password-help"
+              />
+            </span>
             <div className="help-block" id="bind-password-help">
               {t('public~Password to bind with during the search phase.')}
             </div>
@@ -263,7 +266,7 @@ export const AddLDAPPage = () => {
           <h3>{t('public~More options')}</h3>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

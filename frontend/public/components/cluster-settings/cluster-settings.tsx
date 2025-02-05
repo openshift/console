@@ -14,16 +14,13 @@ import {
   Progress,
   ProgressSize,
   ProgressVariant,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 
-import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
-import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
@@ -174,6 +171,8 @@ export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }
   const label = cv.spec.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
+      icon={<PencilAltIcon />}
+      iconPosition="end"
       type="button"
       isInline
       data-test-id="current-channel-update-link"
@@ -181,7 +180,6 @@ export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }
       variant="link"
     >
       {label}
-      <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
     </Button>
   ) : (
     <>{label}</>
@@ -284,18 +282,18 @@ const ChannelHeader: React.FC<{}> = () => {
     <>
       {t('public~Channel')}
       <FieldLevelHelp>
-        <TextContent>
-          <Text component={TextVariants.p}>
+        <Content>
+          <Content component={ContentVariants.p}>
             {t(
               'public~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
             )}
-          </Text>
+          </Content>
           {!isManaged() && (
-            <Text component={TextVariants.p}>
+            <Content component={ContentVariants.p}>
               <ChannelDocLink />
-            </Text>
+            </Content>
           )}
-        </TextContent>
+        </Content>
       </FieldLevelHelp>
     </>
   );
@@ -372,9 +370,9 @@ export const UpdateBlockedLabel = () => {
 
   return (
     <Label
-      color="orange"
-      icon={<YellowExclamationTriangleIcon />}
-      className="pf-v5-u-ml-sm"
+      status="warning"
+      variant="outline"
+      className="pf-v6-u-ml-sm"
       data-test="cv-update-blocked"
     >
       {t('public~Update blocked')}
@@ -540,7 +538,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
           {!isMaster && !isUpdated && machineConfigPoolIsEditable && (
             <Button
               variant="secondary"
-              className="pf-v5-u-mt-md"
+              className="pf-v6-u-mt-md"
               onClick={() =>
                 togglePaused(MachineConfigPoolModel, machineConfigPool).catch((err) =>
                   errorModal({ error: err.message }),
@@ -965,7 +963,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                   <>
                     {!hasAvailableUpdates(cv) && hasNotRecommendedUpdates(cv) && (
                       <Alert
-                        className="pf-v5-u-my-sm"
+                        className="pf-v6-u-my-sm"
                         isInline
                         isPlain
                         title={t(
@@ -1094,44 +1092,44 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
           <EmptyBox label={t('public~History')} />
         ) : (
           <>
-            <TextContent>
-              <Text component={TextVariants.p} className="help-block pf-v5-u-mb-lg">
+            <Content>
+              <Content component={ContentVariants.p} className="help-block pf-v6-u-mb-lg">
                 {t(
                   'public~There is a threshold for rendering update data which may cause gaps in the information below.',
                 )}
-              </Text>
-            </TextContent>
+              </Content>
+            </Content>
             <div className="co-table-container">
-              <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-                <thead className="pf-v5-c-table__thead">
-                  <tr className="pf-v5-c-table__tr">
-                    <th className="pf-v5-c-table__th">{t('public~Version')}</th>
-                    <th className="pf-v5-c-table__th">{t('public~State')}</th>
-                    <th className="pf-v5-c-table__th">{t('public~Started')}</th>
-                    <th className="pf-v5-c-table__th">{t('public~Completed')}</th>
+              <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+                <thead className="pf-v6-c-table__thead">
+                  <tr className="pf-v6-c-table__tr">
+                    <th className="pf-v6-c-table__th">{t('public~Version')}</th>
+                    <th className="pf-v6-c-table__th">{t('public~State')}</th>
+                    <th className="pf-v6-c-table__th">{t('public~Started')}</th>
+                    <th className="pf-v6-c-table__th">{t('public~Completed')}</th>
                     {releaseNotes && (
-                      <th className="pf-v5-c-table__th pf-m-hidden pf-m-visible-on-md">
+                      <th className="pf-v6-c-table__th pf-m-hidden pf-m-visible-on-md">
                         {t('public~Release notes')}
                       </th>
                     )}
                   </tr>
                 </thead>
-                <tbody className="pf-v5-c-table__tbody">
+                <tbody className="pf-v6-c-table__tbody">
                   {_.map(history, (update, i) => (
-                    <tr className="pf-v5-c-table__tr" key={i}>
+                    <tr className="pf-v6-c-table__tr" key={i}>
                       <td
-                        className="pf-v5-c-table__td pf-m-break-word co-select-to-copy"
+                        className="pf-v6-c-table__td pf-m-break-word co-select-to-copy"
                         data-test-id="cv-details-table-version"
                       >
                         {update.version || '-'}
                       </td>
-                      <td className="pf-v5-c-table__td" data-test-id="cv-details-table-state">
+                      <td className="pf-v6-c-table__td" data-test-id="cv-details-table-state">
                         {update.state || '-'}
                       </td>
-                      <td className="pf-v5-c-table__td">
+                      <td className="pf-v6-c-table__td">
                         <Timestamp timestamp={update.startedTime} />
                       </td>
-                      <td className="pf-v5-c-table__td">
+                      <td className="pf-v6-c-table__td">
                         {update.completionTime ? (
                           <Timestamp timestamp={update.completionTime} />
                         ) : (
@@ -1139,7 +1137,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                         )}
                       </td>
                       {releaseNotes && (
-                        <td className="pf-v5-c-table__td pf-m-hidden pf-m-visible-on-md">
+                        <td className="pf-v6-c-table__td pf-m-hidden pf-m-visible-on-md">
                           {getReleaseNotesLink(update.version) ? (
                             <ReleaseNotesLink version={update.version} />
                           ) : (

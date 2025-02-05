@@ -1,15 +1,7 @@
 .co-code {
-  --co-code--BackgroundColor: var(--pf-v5-global--palette--blue-50);
-  --co-code--Color: var(--pf-v5-global--palette--light-blue-600);
-
-  background-color: var(--co-code--BackgroundColor);
-  color: var(--co-code--Color);
-  padding: 3px var(--pf-v5-global--spacer--xs);
-
-  :where(.pf-v5-theme-dark) & {
-    --co-code--BackgroundColor: var(--pf-v5-global--palette--blue-700);
-    --co-code--Color: var(--pf-v5-global--palette--light-blue-100);
-  }
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  color: var(--pf-t--global--text--color--status--custom--default);
+  padding: 3px var(--pf-t--global--spacer--xs);
 }
 
 // Extend the co-pre and co-code rules to their html elements within iframe content
@@ -24,7 +16,7 @@
 }
 
 .co-pre {
-  background-color: var(--pf-v5-c-code-block--BackgroundColor); // supports dark theme
-  padding: var(--pf-v5-global--spacer--md);
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  padding: var(--pf-t--global--spacer--md);
   white-space: pre-wrap;
 }

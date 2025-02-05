@@ -5,6 +5,7 @@ import { PodModel } from '@console/internal/models';
 import { TaskRunKind } from '../../types';
 import LogsWrapperComponent from '../pipelineruns/logs/LogsWrapperComponent';
 import './TaskRunLog.scss';
+import { TektonResourceLabel } from '../pipelines/const';
 
 export type TaskRunLogProps = {
   obj: TaskRunKind;
@@ -24,6 +25,7 @@ const TaskRunLog: React.FC<TaskRunLogProps> = ({ obj }) => {
       <div className="odc-task-run-log">
         <LogsWrapperComponent
           taskRun={obj}
+          taskName={obj?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || ''}
           resource={podResources}
           downloadAllLabel={t('pipelines-plugin~Download all TaskRun logs')}
         />

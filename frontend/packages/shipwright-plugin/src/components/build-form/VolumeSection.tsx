@@ -104,9 +104,12 @@ const VolumeForm: React.FC<VolumeFormProps> = ({ namePrefix, onDelete, namespace
       </GridItem>
       <GridItem span={1}>
         <Bullseye>
-          <Button variant={ButtonVariant.plain} type={ButtonType.button} onClick={onDelete}>
-            <MinusCircleIcon />
-          </Button>
+          <Button
+            icon={<MinusCircleIcon />}
+            variant={ButtonVariant.plain}
+            type={ButtonType.button}
+            onClick={onDelete}
+          />
         </Bullseye>
       </GridItem>
     </Grid>

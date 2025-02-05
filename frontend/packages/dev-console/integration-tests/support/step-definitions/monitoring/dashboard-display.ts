@@ -208,7 +208,7 @@ When('user clicks on Dashboard dropdown', () => {
 
 When('user can see {string} and {string} option', (option1: string, option2: string) => {
   // Uncommented after story ODC-6340 is implemented
-  // cy.get('.pf-v5-c-select__menu')
+  // cy.get('.pf-v6-c-select__menu')
   //   .should('contain', option1)
   //   .and('contain', option2);
   cy.log(option1, option2); // to avoid lint issues

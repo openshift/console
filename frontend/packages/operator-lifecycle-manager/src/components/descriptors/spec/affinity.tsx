@@ -90,12 +90,12 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
     <div className="co-affinity-term">
       {showRemoveButton && (
         <Button
+          icon={<MinusCircleIcon className="co-icon-space-r" />}
           type="button"
           className="co-affinity-term__remove"
           onClick={onClickRemove}
           variant="link"
         >
-          <MinusCircleIcon className="co-icon-space-r" />
           {t('olm~Remove {{item}}', { item: type })}
         </Button>
       )}
@@ -104,13 +104,9 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
           <label className="control-label co-required" htmlFor={`preference-${key}`}>
             {t('olm~Weight')}
           </label>
-          <input
-            className="pf-v5-c-form-control"
-            type="number"
-            value={weight}
-            onChange={onChangeWeight}
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input type="number" value={weight} onChange={onChangeWeight} required />
+          </span>
         </div>
       )}
       <MatchExpressions
@@ -203,8 +199,12 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
           />
         ))}
         <div className="row">
-          <Button type="button" onClick={addRequiredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addRequiredRule}
+            variant="link"
+          >
             {t('olm~Add required')}
           </Button>
         </div>
@@ -230,8 +230,12 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
           />
         ))}
         <div className="row">
-          <Button type="button" onClick={addPreferredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addPreferredRule}
+            variant="link"
+          >
             {t('olm~Add preferred')}
           </Button>
         </div>
@@ -284,12 +288,12 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
     <div className="co-affinity-term">
       {showRemoveButton && (
         <Button
+          icon={<MinusCircleIcon className="co-icon-space-r" />}
           type="button"
           className="co-affinity-term__remove"
           onClick={onClickRemove}
           variant="link"
         >
-          <MinusCircleIcon className="co-icon-space-r" />
           {t('olm~Remove {{item}}', { item: type })}
         </Button>
       )}
@@ -299,27 +303,24 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
             <label className="control-label co-required" htmlFor={`preference-${key}`}>
               {t('olm~Weight')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="number"
-              value={weight}
-              onChange={onChangeWeight}
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input type="number" value={weight} onChange={onChangeWeight} required />
+            </span>
           </div>
         )}
         <div className="co-affinity-term__topology-input">
           <label className="control-label co-required" htmlFor={`topology-${key}`}>
             {t('olm~Topology key')}
           </label>
-          <input
-            id={`topology-${key}`}
-            className="pf-v5-c-form-control"
-            type="text"
-            value={topologyKey}
-            onChange={onChangeTopologyKey}
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id={`topology-${key}`}
+              type="text"
+              value={topologyKey}
+              onChange={onChangeTopologyKey}
+              required
+            />
+          </span>
         </div>
       </div>
       <MatchExpressions
@@ -412,8 +413,12 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
           />
         ))}
         <div className="row">
-          <Button type="button" onClick={addRequiredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addRequiredRule}
+            variant="link"
+          >
             {t('olm~Add required')}
           </Button>
         </div>
@@ -442,8 +447,12 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
         })}
 
         <div className="row">
-          <Button type="button" onClick={addPreferredRule} variant="link">
-            <PlusCircleIcon className="co-icon-space-r" />
+          <Button
+            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            type="button"
+            onClick={addPreferredRule}
+            variant="link"
+          >
             {t('olm~Add preferred')}
           </Button>
         </div>

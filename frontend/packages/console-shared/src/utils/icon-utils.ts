@@ -18,7 +18,7 @@ export const getSvgFromPfIconConfig = (
   const viewBox = [xOffset, yOffset, width, height].join(' ');
 
   return `
-<svg className="pf-v5-svg ${className || ''}"
+<svg className="pf-v6-svg ${className || ''}"
   viewBox='${viewBox}'
   fill="currentColor"
   role="img"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartAxis, ChartContainer } from '@patternfly/react-charts';
+import { ChartAxis, ChartContainer } from '@patternfly/react-charts/victory';
 import { Flex, FlexItem, Grid } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UtilizationBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
@@ -23,7 +23,7 @@ const UtilizationAxis: React.FC = () => {
         orientation="top"
         height={15}
         width={width}
-        padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
+        padding={{ top: 31, bottom: 0, left: 70, right: 0 }}
         style={{
           axis: { visibility: 'hidden' },
         }}

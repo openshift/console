@@ -21,11 +21,11 @@ const useInlineExecuteCommandShowdownExtension = () => {
         groupId: string,
       ): string => {
         if (!group || !subGroup || !groupType || !groupId) return text;
-        return `<div class="pf-v5-c-code-block">
-        <div class="pf-v5-c-code-block__header">
-          <div class="pf-v5-c-code-block__actions">
-            <div class="pf-v5-c-code-block__actions-item">
-              <button class="pf-v5-c-button pf-m-plain" type="button" aria-label="${t(
+        return `<div class="pf-v6-c-code-block">
+        <div class="pf-v6-c-code-block__header">
+          <div class="pf-v6-c-code-block__actions">
+            <div class="pf-v6-c-code-block__actions-item">
+              <button class="pf-v6-c-button pf-m-plain" type="button" aria-label="${t(
                 'console-shared~Copy to clipboard',
               )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
                 ${getSvgFromPfIconConfig(CopyIconConfig)}
@@ -33,8 +33,8 @@ const useInlineExecuteCommandShowdownExtension = () => {
             </div>
             ${
               showExecuteButton
-                ? `<div class="pf-v5-c-code-block__actions-item ocs-markdown-execute-snippet__action">
-                <button class="pf-v5-c-button pf-m-plain ocs-markdown-execute-snippet__button" type="button" aria-label="${t(
+                ? `<div class="pf-v6-c-code-block__actions-item ocs-markdown-execute-snippet__action">
+                <button class="pf-v6-c-button pf-m-plain ocs-markdown-execute-snippet__button" type="button" aria-label="${t(
                   'console-shared~Run in Web Terminal',
                 )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupType}">
                   ${getSvgFromPfIconConfig(PlayIconConfig)}
@@ -45,9 +45,9 @@ const useInlineExecuteCommandShowdownExtension = () => {
             }
           </div>
         </div>
-        <div class="pf-v5-c-code-block__content">
-          <pre class="pf-v5-c-code-block__pre pfext-code-block__pre">
-            <code class="pf-v5-c-code-block__code" ${MARKDOWN_SNIPPET_ID}="${groupType}">${group.trim()}</code>
+        <div class="pf-v6-c-code-block__content">
+          <pre class="pf-v6-c-code-block__pre pfext-code-block__pre">
+            <code class="pf-v6-c-code-block__code" ${MARKDOWN_SNIPPET_ID}="${groupType}">${group.trim()}</code>
           </pre>
         </div>
       </div>`;

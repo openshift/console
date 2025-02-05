@@ -139,7 +139,7 @@ Component for displaying a green check mark circle icon.
 | -------------- | ----------- |
 | `className` | (optional) additional class name for the component |
 | `title` | (optional) icon title |
-| `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl') |
+| `size` | (optional) icon size: ('sm', 'md', 'lg', 'xl', '2xl', '3xl', 'headingSm', 'headingMd', 'headingLg', 'headingXl', 'heading_2xl', 'heading_3xl', 'bodySm', 'bodyDefault', 'bodyLg') |
 
 
 
@@ -570,7 +570,7 @@ const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs })
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       // Important:  the kebab menu cell should include the id and className prop values below
-      <TableData id='' className='pf-v5-c-table__action' activeColumnIDs={activeColumnIDs}>
+      <TableData id='' className='pf-v6-c-table__action' activeColumnIDs={activeColumnIDs}>
         <MockKebabMenu obj={obj} />
      </TableData>
     </>
