@@ -95,9 +95,6 @@ const config: Configuration = {
       prettier: false,
       'prettier/parser-yaml': false,
     },
-    fallback: {
-      net: false, // for YAML language server
-    },
   },
   node: {
     global: true, // see https://github.com/browserify/randombytes/issues/36
