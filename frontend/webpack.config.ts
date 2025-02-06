@@ -1,27 +1,26 @@
 /* eslint-env node */
 import * as webpack from 'webpack';
 import * as path from 'path';
-import * as _ from 'lodash';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
+import { escapeRegExp } from 'lodash';
+import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
-import { getActivePluginsModuleData } from '@console/plugin-sdk/src/codegen/active-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { CircularDependencyPreset } from './webpack.circular-deps';
-
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 interface Configuration extends webpack.Configuration {
   devServer?: WebpackDevServerConfiguration;
 }
 
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -33,7 +32,8 @@ const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
 const WDS_PORT = 8080;
 
 /* Helpers */
-const staticPluginPackages = resolvePluginPackages();
+const pluginPackages = resolvePluginPackages();
+
 const extractCSS = new MiniCssExtractPlugin({
   filename: 'app-bundle.[name].[contenthash].css',
   // We follow BEM naming to scope CSS.
@@ -42,7 +42,7 @@ const extractCSS = new MiniCssExtractPlugin({
 });
 
 const getVendorModuleRegExp = (vendorModules: string[]) =>
-  new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
+  new RegExp(`node_modules\\/(${vendorModules.map(escapeRegExp).join('|')})\\/`);
 
 const sharedPluginModulesTest = getVendorModuleRegExp(
   // Map shared module names to actual webpack modules as per shared-modules-init.ts
@@ -112,9 +112,7 @@ const config: Configuration = {
       {
         test: path.resolve(__dirname, 'get-active-plugins.js'),
         loader: 'val-loader',
-        options: {
-          getModuleData: () => getActivePluginsModuleData(staticPluginPackages),
-        },
+        options: { pluginPackages },
       },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
@@ -241,6 +239,7 @@ const config: Configuration = {
     runtimeChunk: 'single',
   },
   plugins: [
+    new ExtensionValidatorPlugin({ pluginPackages }),
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new ForkTsCheckerWebpackPlugin({
       typescript: {

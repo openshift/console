@@ -9,13 +9,15 @@ import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
 import { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
+import { guessModuleFilePath } from '@console/dynamic-plugin-sdk/src/validation/ExtensionValidator';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { validateConsoleExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 import { Extension, ActivePlugin } from '../typings';
 import { trimStartMultiLine } from '../utils/string';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
 
-const getExtensionsFilePath = (pkg: PluginPackage) => path.resolve(pkg._path, extensionsFile);
+export const getExtensionsFilePath = (pkg: PluginPackage) =>
+  path.resolve(pkg._path, extensionsFile);
 
 export type ActivePluginsModuleData = {
   /** Generated module source code. */
@@ -26,58 +28,15 @@ export type ActivePluginsModuleData = {
   fileDependencies: string[];
 };
 
-/**
- * Guess the file path of the module (e.g., the extension,
- * any barrel/index file) based on the given base path.
- *
- * Returns the base path if no file is found.
- */
-const guessModuleFilePath = (
-  basePath: string,
-  diagnostics: ActivePluginsModuleData['diagnostics'],
-) => {
-  const extensions = ['.tsx', '.ts', '.jsx', '.js'];
-
-  // Sometimes the module is an index file, but the exposed module path only specifies the directory.
-  // In that case, we need an explicit check for the index file.
-  const indexModulePaths = ['index.ts', 'index.js'].map((i) => path.resolve(basePath, i));
-
-  for (const p of indexModulePaths) {
-    if (fs.existsSync(p)) {
-      // TODO(OCPBUGS-45847): uncomment when warnings are resolved
-      // diagnostics.warnings.push(
-      //   `The module ${basePath} refers to an index file ${p}. Index/barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`,
-      // );
-      return p;
-    }
-  }
-
-  const pathsToCheck = [...extensions.map((ext) => `${basePath}${ext}`)];
-
-  for (const p of pathsToCheck) {
-    if (fs.existsSync(p)) {
-      diagnostics.warnings.push(
-        `The module ${basePath} refers to a file ${p}, but a file extension was not specified.`,
-      );
-      return p;
-    }
-  }
-
-  // A file couldn't be found, return the original module path. A compilation warning
-  // may be pushed by `getActivePluginsModuleData`
-  return basePath;
-};
-
 const getExposedModuleFilePath = (
   pkg: PluginPackage,
   moduleName: string,
   diagnostics: ActivePluginsModuleData['diagnostics'],
 ) => {
   const modulePath = path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
-
-  return path.extname(modulePath)
-    ? modulePath // Path already contains a file extension (no extra guessing needed)
-    : guessModuleFilePath(modulePath, diagnostics);
+  return guessModuleFilePath(modulePath, (msg) =>
+    diagnostics.warnings.push(`[${pkg.name}] ${msg}`),
+  );
 };
 
 /**
@@ -172,52 +131,6 @@ export const getExecutableCodeRefSource = (
   return `() => import('${importPath}' ${webpackMagicComment}).then((m) => m.${exportName})`;
 };
 
-/** Deeply look at all properties of an object and find the code refs. */
-const recursivelyTraverseCodeRefs = (ext: object, codeRefs: Set<string>) => {
-  for (const key in ext) {
-    if (ext.hasOwnProperty(key)) {
-      const value = ext[key];
-
-      if (isEncodedCodeRef(value)) {
-        const [moduleName] = parseEncodedCodeRefValue(value.$codeRef);
-        if (moduleName) {
-          codeRefs.add(moduleName);
-        }
-      } else if (typeof value === 'object') {
-        recursivelyTraverseCodeRefs(value, codeRefs);
-      }
-    }
-  }
-};
-
-/**
- * Find exposed modules that are not referenced by any extension.
- * but not used by the plugin's extensions, and log a warning via `msgCallback`.
- */
-const getUnusedModules = (
-  ext: ConsoleExtensionsJSON,
-  pkg: PluginPackage,
-  msgCallback: (msg: string) => void,
-): void => {
-  const usedCodeRefs = new Set<string>();
-
-  for (const extension of ext) {
-    recursivelyTraverseCodeRefs(extension.properties, usedCodeRefs);
-  }
-
-  // get unused code refs
-  const exposedModules = pkg.consolePlugin.exposedModules || {};
-  const unusedModules = _.difference(Object.keys(exposedModules), Array.from(usedCodeRefs));
-
-  if (unusedModules.length > 0) {
-    msgCallback(
-      `The following exposed modules in static plugin ${pkg.name} are unused: ${unusedModules.join(
-        ', ',
-      )}`,
-    );
-  }
-};
-
 /**
  * Returns the array source containing the given plugin's dynamic extensions.
  *
@@ -288,8 +201,6 @@ export const getActivePluginsModuleData = (
 
   for (const pkg of pluginPackages) {
     fileDependencies.push(getExtensionsFilePath(pkg));
-    const ext = parseJSONC<ConsoleExtensionsJSON>(getExtensionsFilePath(pkg));
-    getUnusedModules(ext, pkg, (msg) => warnings.push(msg));
 
     Object.keys(pkg.consolePlugin.exposedModules || {}).forEach((moduleName) => {
       const moduleFilePath = getExposedModuleFilePath(pkg, moduleName, { errors, warnings });
