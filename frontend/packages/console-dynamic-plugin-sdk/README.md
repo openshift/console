@@ -102,7 +102,7 @@ Console.
 
 | Console Version | PatternFly Versions | Notes                                 |
 | --------------- | ------------------- | ------------------------------------- |
-| 4.19.x          | 5.x                 |                                       |
+| 4.19.x          | 6.x + 5.x           | New dynamic plugins should use PF 6.x |
 | 4.15.x - 4.18.x | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
 | 4.12.x - 4.14.x | 4.x                 |                                       |
 
@@ -163,6 +163,7 @@ This section documents notable changes in the Console provided shared modules ac
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
 - Removed PatternFly 4.x shared modules.
+- Upgraded PatternFly to v6.
 
 ### PatternFly dynamic modules
 
