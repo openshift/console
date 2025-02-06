@@ -2,12 +2,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
+import TertiaryHeading from '../../heading/TertiaryHeading';
 
 const ErrorDetailsBlock: React.FC<ErrorBoundaryFallbackProps> = (props) => {
   const { t } = useTranslation();
   return (
     <>
-      <h3 className="co-section-heading-tertiary">{props.title}</h3>
+      <TertiaryHeading>{props.title}</TertiaryHeading>
       <div className="form-group">
         <label htmlFor="description">{t('console-shared~Description:')}</label>
         <p>{props.errorMessage}</p>

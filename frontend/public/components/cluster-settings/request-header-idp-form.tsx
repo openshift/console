@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind, K8sResourceKind } from '../../module/k8s';
@@ -138,7 +138,9 @@ export const AddRequestHeaderPage = () => {
         <form onSubmit={submit} name="form" className="co-m-pane__body-group">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="co-form-section__separator" />
-          <h3 className="co-required">{t('public~URLs')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm co-required">
+            {t('public~URLs')}
+          </Title>
           <p className="co-m-pane__explanation">{t('public~At least one URL must be provided.')}</p>
           <div className="form-group">
             <label className="control-label" htmlFor="challenge-url">
@@ -179,7 +181,9 @@ export const AddRequestHeaderPage = () => {
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~More options')}
+          </Title>
           <IDPCAFileInput
             value={caFileContent}
             onChange={(c: string) => setCaFileContent(c)}

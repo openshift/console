@@ -9,6 +9,7 @@ import { safeLoad } from 'js-yaml';
 import * as classNames from 'classnames';
 
 import { APIError } from '@console/shared';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { ButtonBar } from '../../utils/button-bar';
 import { Dropdown } from '../../utils/dropdown';
 import { Firehose } from '../../utils/firehose';
@@ -367,13 +368,13 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
         <title>{t('public~{{titleVerb}} Receiver', { titleVerb })}</title>
       </Helmet>
       <form className="co-m-pane__body-group" onSubmit={save}>
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           {t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
             titleVerb,
             receiverTypeLabel,
             defaultString,
           })}
-        </h1>
+        </PrimaryHeading>
         {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
         {formValues.receiverName === 'Critical' && !formValues.receiverType && (
           <ReceiverInfoTip type={InitialReceivers.Critical} />

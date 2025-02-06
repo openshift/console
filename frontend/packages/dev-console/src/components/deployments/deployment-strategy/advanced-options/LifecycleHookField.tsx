@@ -6,6 +6,7 @@ import { FormikValues, useField, useFormikContext } from 'formik';
 import { cloneDeep } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { getResourcesType } from '../../../edit-application/edit-application-utils';
 import { getStrategyData } from '../../utils/deployment-utils';
 import LifecycleHookForm from './LifecycleHookForm';
@@ -124,7 +125,7 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
 
   return (
     <div>
-      <div className="co-section-heading-tertiary odc-lifecycle-hook-field__title">{title}</div>
+      <TertiaryHeading className="odc-lifecycle-hook-field__title">{title}</TertiaryHeading>
       <div className="pf-v6-c-form__helper-text">{subTitle}</div>
       {!showForm && (
         <Button

@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Button, Divider } from '@patternfly/react-core';
 
 import { FLAGS, useCopyLoginCommands } from '@console/shared';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
@@ -29,9 +31,7 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
     return (
       <React.Fragment key={tool.metadata.uid}>
         <Divider className="co-divider" />
-        <h2 className="co-section-heading" data-test-id={displayName}>
-          {displayName}
-        </h2>
+        <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
         <SyncMarkdownView content={tool.spec.description} exactHeight />
         {tool.spec.links.length === 1 && (
           <p>
@@ -60,9 +60,9 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
         <title>{t('public~Command Line Tools')}</title>
       </Helmet>
       <div className="co-m-pane__body">
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           <div className="co-m-pane__name">{t('public~Command Line Tools')}</div>
-        </h1>
+        </PrimaryHeading>
         {showCopyLoginCommand && (
           <>
             <Divider className="co-divider" />

@@ -2,6 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Title } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
@@ -142,7 +143,9 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
             />
-            <h3>{t('public~Client details')}</h3>
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~Client details')}
+            </Title>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-client">
                 {t('public~Client')}
@@ -189,7 +192,9 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 {t('public~A backlink to the sender of the notification.')}
               </div>
             </div>
-            <h3>{t('public~Incident details')}</h3>
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~Incident details')}
+            </Title>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-description">
                 {t('public~Description')}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
@@ -210,7 +210,9 @@ export const AddGitHubPage = () => {
           </div>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <div className="co-form-section__separator" />
-          <h3>{t('public~Organizations')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Organizations')}
+          </Title>
           <p className="co-help-text">
             <Trans
               t={t}
@@ -228,7 +230,9 @@ export const AddGitHubPage = () => {
             helpText={t('public~Restricts which organizations are allowed to log in.')}
           />
           <div className="co-form-section__separator" />
-          <h3>{t('public~Teams')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Teams')}
+          </Title>
           <p className="co-help-text">
             <Trans
               t={t}

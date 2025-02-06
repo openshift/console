@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
@@ -216,7 +216,9 @@ export const AddOpenIDIDPPage = () => {
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>{t('public~Claims')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Claims')}
+          </Title>
           <p className="co-help-text">
             {t(
               'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
@@ -245,7 +247,9 @@ export const AddOpenIDIDPPage = () => {
             )}
           />
           <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~More options')}
+          </Title>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ListInput
             label={t('public~Extra scopes')}

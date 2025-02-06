@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts/victory';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Stack, StackItem, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ErrorState } from '@console/internal/components/error';
@@ -157,7 +157,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
           </div>
           {clusterID ? (
             <>
-              <h6 className="pf-v6-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
+              <Title headingLevel="h6">{t('insights-plugin~Fixable issues')}</Title>
               <div>
                 <ExternalLink
                   href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}`}

@@ -302,7 +302,7 @@ export const pipelinesPO = {
     },
     secretForm: '.odc-secret-form',
     advancedOptions: {
-      secretFormTitle: 'h1.odc-secret-form__title',
+      secretFormTitle: 'h3.odc-secret-form__title',
       secretName: '#form-input-secretName-field',
       accessTo: '#form-dropdown-annotations-key-field',
       serverUrl: '#form-input-annotations-value-field',

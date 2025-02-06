@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
@@ -226,7 +226,9 @@ export const AddLDAPPage = () => {
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>{t('public~Attributes')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Attributes')}
+          </Title>
           <p className="co-help-text">
             {t('public~Attributes map LDAP attributes to identities.')}
           </p>
@@ -263,7 +265,9 @@ export const AddLDAPPage = () => {
             )}
           />
           <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~More options')}
+          </Title>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">

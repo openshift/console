@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
 import { ResourceLimitField } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { MemoryUnits, CPUUnits } from '../import-types';
 import FormSection from '../section/FormSection';
 
@@ -30,7 +31,7 @@ const ResourceLimitSection: React.FC<ResourceLimitSectionProps> = ({ hideTitle }
           <ResourceIcon kind={ContainerModel.kind} /> {container}
         </span>
       )}
-      <div className="co-section-heading-tertiary">{t('devconsole~CPU')}</div>
+      <TertiaryHeading>{t('devconsole~CPU')}</TertiaryHeading>
       <ResourceLimitField
         name="limits.cpu.request"
         label={t('devconsole~Request')}
@@ -49,7 +50,7 @@ const ResourceLimitSection: React.FC<ResourceLimitSectionProps> = ({ hideTitle }
         )}
       />
 
-      <div className="co-section-heading-tertiary">{t('devconsole~Memory')}</div>
+      <TertiaryHeading>{t('devconsole~Memory')}</TertiaryHeading>
       <ResourceLimitField
         name="limits.memory.request"
         label={t('devconsole~Request')}

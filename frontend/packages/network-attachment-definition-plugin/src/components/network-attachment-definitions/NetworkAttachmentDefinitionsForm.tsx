@@ -39,6 +39,7 @@ import {
   validateDNS1123SubdomainValue,
   ValidationErrorType,
 } from '@console/shared';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import {
   NET_ATTACH_DEF_HEADER_LABEL,
@@ -303,7 +304,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
-      <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
+      <PrimaryHeading alignItemsBaseline>
         <div className="co-m-pane__name">{NET_ATTACH_DEF_HEADER_LABEL}</div>
         <div className="co-m-pane__heading-link">
           <Link
@@ -316,7 +317,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
             {t('network-attachment-definition-plugin~Edit YAML')}
           </Link>
         </div>
-      </h1>
+      </PrimaryHeading>
       <Form>
         <FormGroup
           fieldId="basic-settings-name"

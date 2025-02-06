@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Split, SplitItem } from '@patternfly/react-core';
+import { Split, SplitItem, Title } from '@patternfly/react-core';
 
 import './ModalContent.scss';
 
@@ -14,7 +14,9 @@ const ModalContent: React.FC<ModalContentProps> = ({ icon, message, title }) => 
     <Split className="odc-modal-content" hasGutter>
       {icon && <SplitItem>{icon}</SplitItem>}
       <SplitItem isFilled>
-        <h2 className="co-break-word odc-modal-content__confirm-title">{title}</h2>
+        <Title headingLevel="h2" className="odc-modal-content__confirm-title">
+          {title}
+        </Title>
         <p className="co-break-word">{message}</p>
       </SplitItem>
     </Split>

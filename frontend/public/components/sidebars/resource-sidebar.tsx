@@ -13,6 +13,7 @@ import {
 import { ExploreType } from './explore-type-sidebar';
 import { SimpleTabNav, Tab } from '../utils';
 import { Sample } from '@console/shared';
+import { Title } from '@patternfly/react-core';
 
 const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
@@ -36,7 +37,9 @@ const ResourceSidebarWrapper: React.FC<{
           ariaLabel={t('public~Close')}
           onClick={toggleSidebar}
         />
-        <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">{label}</h2>
+        <Title headingLevel="h2" className="co-p-has-sidebar__sidebar-heading text-capitalize">
+          {label}
+        </Title>
         {children}
       </div>
     </div>

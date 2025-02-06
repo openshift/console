@@ -20,6 +20,7 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';
@@ -541,13 +542,13 @@ export const AlertmanagerConfig: React.FC = () => {
         </Breadcrumb>
       </div>
       <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
               {t('public~Alertmanager')}
             </span>
           </div>
-        </h1>
+        </PrimaryHeading>
       </div>
       <ul className="co-m-horizontal-nav__menu">
         <li

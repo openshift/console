@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Routes, Route } from 'react-router-dom-v5-compat';
 
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 import { AlertmanagerConfig } from './alertmanager-config';
 import AlertmanagerYAML from './alertmanager-yaml-editor';
@@ -31,13 +32,13 @@ const AlertmanagerPage: React.FC<{ match: { url: string } }> = ({ match }) => {
         </Breadcrumb>
       </div>
       <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
               {t('public~Alertmanager')}
             </span>
           </div>
-        </h1>
+        </PrimaryHeading>
       </div>
       <ul className="co-m-horizontal-nav__menu">
         <li
