@@ -19,7 +19,6 @@ import { Masthead } from './masthead';
 import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
 import { NotificationDrawer } from './notification-drawer';
-import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
 import { history, AsyncComponent, LoadingBox, useSafeFetch, usePoll } from './utils';
 import * as UIActions from '../actions/ui';
