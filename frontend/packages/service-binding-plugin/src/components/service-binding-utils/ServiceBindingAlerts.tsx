@@ -5,7 +5,6 @@ import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-ap
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { ServiceBindingModel } from '../../models';
 import { getBrandingDetails } from '../../utils';
-import './ServiceBindingAlerts.scss';
 
 export interface ServiceBindingWarningProps {
   namespace: string;
