@@ -3,23 +3,9 @@ import {
   t_color_white as globalWhite,
   t_color_purple_30 as globalPurple300,
 } from '@patternfly/react-tokens';
+import { AllPodStatus } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
-export enum AllPodStatus {
-  Running = 'Running',
-  NotReady = 'Not Ready',
-  Warning = 'Warning',
-  Empty = 'Empty',
-  Failed = 'Failed',
-  Pending = 'Pending',
-  Succeeded = 'Succeeded',
-  Terminating = 'Terminating',
-  Unknown = 'Unknown',
-  ScaledTo0 = 'Scaled to 0',
-  Idle = 'Idle',
-  AutoScaledTo0 = 'Autoscaled to 0',
-  ScalingUp = 'Scaling Up',
-  CrashLoopBackOff = 'CrashLoopBackOff',
-}
+export { AllPodStatus } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const podColor = {
   [AllPodStatus.Running]: '#0066CC',

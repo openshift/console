@@ -1,16 +1,20 @@
 import { JSONSchema7 } from 'json-schema';
 import {
+  Selector,
+  MatchLabels,
+  K8sModel,
+  K8sVerb,
+} from '@console/dynamic-plugin-sdk/src/api/common-types';
+import {
   NodeAddress,
   ObjectReference,
   ObjectMetadata,
   K8sResourceCommon,
-  K8sVerb,
   K8sResourceCondition,
   NodeCondition,
   TaintEffect,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
-import { Selector, MatchLabels, K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 export * from '@console/dynamic-plugin-sdk/src/api/common-types';

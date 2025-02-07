@@ -64,12 +64,15 @@ as a reference point for writing an OLM operator that ships with its own Console
 
 ## Distributable SDK package overview
 
-| Package Name                                     | Description                                                                                                                              |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `@openshift-console/dynamic-plugin-sdk`          | Provides core APIs, types and utilities used by dynamic plugins at runtime.                                                              |
-| `@openshift-console/dynamic-plugin-sdk-webpack`  | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.                                                          |
-| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code.                                                                                               |
-| `@openshift-console/plugin-shared`               | Provides reusable components and utility functions to build OCP dynamic plugins. Compatible with multiple versions of OpenShift Console. |
+| Package Name                                           | Description                                                                      |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `@openshift-console/dynamic-plugin-sdk` ★              | Provides core APIs, types and utilities used by dynamic plugins at runtime.      |
+| `@openshift-console/dynamic-plugin-sdk-webpack` ★      | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.  |
+| `@openshift-console/dynamic-plugin-sdk-internal`       | Internal package exposing additional Console code.                               |
+| `@openshift-console/plugin-shared`                     | Provides reusable components and utility functions to build OCP dynamic plugins. |
+
+Packages marked with ★ provide essential plugin APIs with backwards compatibility. Other packages may be
+used with multiple versions of OpenShift Console but don't provide any backwards compatibility guarantees.
 
 ## OpenShift Console Versions vs SDK Versions
 
@@ -124,12 +127,6 @@ The following shared modules are provided by Console, without plugins providing 
 - `react-router-dom-v5-compat`
 - `redux`
 - `redux-thunk`
-
-For backwards compatibility, Console also provides the following PatternFly **4.x** shared modules:
-
-- `@patternfly/react-core`
-- `@patternfly/react-table`
-- `@patternfly/quickstarts`
 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
