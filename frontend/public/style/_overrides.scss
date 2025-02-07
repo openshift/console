@@ -53,8 +53,6 @@ form.pf-v6-c-form {
 .odc-catalog-tile {
   // Get rid of weird stretching of catalog grid items
   .pf-v6-c-card__header-main {
-    flex: unset;
-
     // When images are too wide, scale them instead of squishing
     img {
       object-fit: contain;
