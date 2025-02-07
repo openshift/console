@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { bundleHasProperty } from './bundles';
-import { putItem, getItems, clearObjectStores } from './indexeddb';
+import { clearObjectStores, getItems, putItem } from './indexeddb';
 import { fetchAndProcessJSONLines } from './jsonl';
 import { addPackagesToExtensionCatalog } from './packages';
 import { isFileBasedCatalogBundle } from './type-guards';
@@ -46,7 +46,7 @@ const injestClusterCatalog = async (
   const catalogName = catalog.metadata.name;
   console.log('[Extension Catalog Database] Injesting FBC from ClusterCatalog', catalogName);
   return fetchAndProcessJSONLines<FileBasedCatalogItem>(
-    `/api/catalogd/catalogs/${catalogName}/all.json`,
+    `/api/catalogd/catalogs/${catalogName}/api/v1/all`,
     { 'Content-Type': 'application/jsonl' },
   )
     .then((reader) => streamFBCObjectsToIndexedDB(db, catalogName, reader))

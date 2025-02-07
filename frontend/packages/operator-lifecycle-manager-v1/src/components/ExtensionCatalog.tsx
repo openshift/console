@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Page, PageSection } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import {
@@ -65,30 +64,32 @@ const ExtensionCatalog = () => {
   const legacyOpertorHubItems = mapExtensionItemsToLegacyOperatorHubItems(extensionCatalogItems);
 
   return (
-    <Page>
-      <PageSection hasBodyWrapper={false}>
-        <Helmet>
-          <title>{t('Extension Catalog')}</title>
-        </Helmet>
-        <PageHeading title={t('Extension Catalog')} />
-        <StatusBox
-          skeleton={skeletonCatalog}
-          data={legacyOpertorHubItems}
-          loaded={!loading}
-          loadError={error}
-          label={t('Extension Catalog items')}
-          EmptyMsg={() => (
-            <ConsoleEmptyState title={t('No Extension Catalog items found')}>
-              {t(
-                'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
-              )}
-            </ConsoleEmptyState>
-          )}
-        >
-          <OperatorHubTileView items={legacyOpertorHubItems} namespace={namespace} />
-        </StatusBox>
-      </PageSection>
-    </Page>
+    <>
+      <Helmet>
+        <title>{t('Extension Catalog')}</title>
+      </Helmet>
+      <div className="co-m-page__body">
+        <div className="co-catalog">
+          <PageHeading title={t('Extension Catalog')} />
+          <StatusBox
+            skeleton={skeletonCatalog}
+            data={legacyOpertorHubItems}
+            loaded={!loading}
+            loadError={error}
+            label={t('Extension Catalog items')}
+            EmptyMsg={() => (
+              <ConsoleEmptyState title={t('No Extension Catalog items found')}>
+                {t(
+                  'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
+                )}
+              </ConsoleEmptyState>
+            )}
+          >
+            <OperatorHubTileView items={legacyOpertorHubItems} namespace={namespace} />
+          </StatusBox>
+        </div>
+      </div>
+    </>
   );
 };
 
