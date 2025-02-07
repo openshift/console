@@ -1,7 +1,8 @@
 import * as React from 'react';
-import Editor, { OnChange, EditorProps, Monaco } from '@monaco-editor/react';
+import { CodeEditor, ChangeHandler, Language } from '@patternfly/react-code-editor';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
+import type * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
 import { useConsoleMonacoTheme } from '@console/shared/src/components/editor/theme';
 
@@ -11,7 +12,10 @@ type EditorFieldProps = {
   helpText?: React.ReactNode;
   required?: boolean;
   isDisabled?: boolean;
-} & EditorProps;
+  onChange?: ChangeHandler;
+  language?: Language;
+  options?: Monaco.editor.IEditorOptions;
+};
 
 const EditorField: React.FC<EditorFieldProps> = ({
   name,
@@ -24,10 +28,10 @@ const EditorField: React.FC<EditorFieldProps> = ({
 }) => {
   const { getFieldMeta, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { error, value } = getFieldMeta<string>(name);
-  const [monaco, setMonaco] = React.useState<Monaco | null>(null);
+  const [monaco, setMonaco] = React.useState<typeof Monaco | null>(null);
   useConsoleMonacoTheme(monaco?.editor);
 
-  const debouncedOnChange = useDebounceCallback<OnChange>((newValue, event) => {
+  const debouncedOnChange = useDebounceCallback<ChangeHandler>((newValue, event) => {
     if (onChange) {
       onChange(newValue, event);
     }
@@ -37,13 +41,15 @@ const EditorField: React.FC<EditorFieldProps> = ({
 
   return (
     <FormGroup fieldId="" label={label} isRequired={required}>
-      <Editor
-        {...otherProps}
+      <CodeEditor
         value={value}
         onChange={debouncedOnChange}
-        onMount={(_e, m) => {
-          setMonaco(m);
-        }}
+        onEditorDidMount={(_e, m) => setMonaco(m)}
+        isReadOnly={false}
+        isMinimapVisible={false}
+        height="sizeToFit"
+        language={otherProps?.language}
+        options={otherProps?.options}
       />
 
       <FormHelperText>

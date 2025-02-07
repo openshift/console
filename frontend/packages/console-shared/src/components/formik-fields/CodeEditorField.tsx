@@ -99,7 +99,6 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
                 icon={
                   <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
                 }
-                isInline
                 variant="link"
                 onClick={() => setSidebarOpen(true)}
               >

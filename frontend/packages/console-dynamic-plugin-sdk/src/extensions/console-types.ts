@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { QuickStartContextValues } from '@patternfly/quickstarts';
+import { Language } from '@patternfly/react-code-editor';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
@@ -636,7 +637,7 @@ export type UserInfo = {
 
 export type CodeEditorProps = {
   value?: string;
-  language?: string;
+  language?: Language;
   options?: object;
   minHeight?: string | number;
   showShortcuts?: boolean;
@@ -645,6 +646,9 @@ export type CodeEditorProps = {
   onChange?: (newValue, event) => void;
   onSave?: () => void;
   onEditorDidMount?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
+  isDownloadEnabled?: boolean;
+  isCopyEnabled?: boolean;
+  isLanguageLabelVisible?: boolean;
 };
 
 export type CodeEditorRef = {

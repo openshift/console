@@ -132,12 +132,12 @@
     "resolver": "./jest-resolver.js"
   },
   "dependencies": {
-    "@monaco-editor/react": "^4.6.0",
     "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2",
     "@patternfly/patternfly": "^6.2.0-prerelease.2",
     "@patternfly/quickstarts": "^6.2.0-prerelease.4",
     "@patternfly/react-catalog-view-extension": "^6.1.0-prerelease.3",
     "@patternfly/react-charts": "^8.2.0-prerelease.13",
+    "@patternfly/react-code-editor": "^6.1.0",
     "@patternfly/react-component-groups": "^6.2.0-prerelease.4",
     "@patternfly/react-console": "^6.0.0",
     "@patternfly/react-core": "^6.2.0-prerelease.15",

@@ -1,9 +1,10 @@
 import * as React from 'react';
-import Editor, { OnMount } from '@monaco-editor/react';
+import { CodeEditor as PfEditor, Language } from '@patternfly/react-code-editor';
 import type * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import Measure from 'react-measure';
+import { useTranslation } from 'react-i18next';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import CodeEditorToolbar from './CodeEditorToolbar';
+import { useShortcutLink } from './ShortcutsLink';
 import { useConsoleMonacoTheme } from './theme';
 import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
@@ -20,8 +21,12 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     onSave,
     language,
     onEditorDidMount,
+    isDownloadEnabled,
+    isCopyEnabled,
+    isLanguageLabelVisible,
   } = props;
-
+  const { t } = useTranslation('console-shared');
+  const shortcutPopover = useShortcutLink();
   const [editorRef, setEditorRef] = React.useState<Monaco.editor.IStandaloneCodeEditor | null>(
     null,
   );
@@ -29,7 +34,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   useConsoleMonacoTheme(monacoRef?.editor);
 
   const [usesValue] = React.useState<boolean>(value !== undefined);
-  const editorDidMount: OnMount = React.useCallback(
+  const editorDidMount = React.useCallback(
     (editor, monaco) => {
       setEditorRef(editor);
       setMonacoRef(monaco);
@@ -59,6 +64,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
       minimap: {
         enabled: showMiniMap,
       },
+      automaticLayout: true,
     };
   }, [options, showMiniMap]);
 
@@ -72,26 +78,35 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     [editorRef, monacoRef],
   );
 
+  const ToolbarLinks = React.useMemo(() => {
+    // fixes PF bug where empty toolbar renders if a component is null
+    if (!showShortcuts && !toolbarLinks?.length) return undefined;
+
+    return <CodeEditorToolbar toolbarLinks={toolbarLinks} showShortcuts={showShortcuts} />;
+  }, [toolbarLinks, showShortcuts]);
+
   return (
-    <>
-      <CodeEditorToolbar showShortcuts={showShortcuts} toolbarLinks={toolbarLinks} />
-      <Measure bounds>
-        {({ measureRef, contentRect }) => (
-          <div ref={measureRef} className="ocs-yaml-editor__root" style={{ minHeight }}>
-            <Editor
-              language={language ?? 'yaml'}
-              height={contentRect.bounds.height}
-              width={contentRect.bounds.width}
-              value={value}
-              options={editorOptions}
-              onMount={editorDidMount}
-              onChange={onChange}
-              className="ocs-yaml-editor"
-            />
-          </div>
-        )}
-      </Measure>
-    </>
+    <PfEditor
+      className="ocs-yaml-editor"
+      language={language ?? Language.yaml}
+      code={value}
+      options={editorOptions}
+      onEditorDidMount={editorDidMount}
+      onChange={onChange}
+      isFullHeight
+      style={{ minHeight }}
+      customControls={ToolbarLinks ?? undefined}
+      shortcutsPopoverProps={showShortcuts ? shortcutPopover : undefined}
+      shortcutsPopoverButtonText={t('View shortcuts')}
+      isCopyEnabled={isCopyEnabled}
+      copyButtonAriaLabel={t('Copy code to clipboard')}
+      copyButtonSuccessTooltipText={t('Content copied to clipboard')}
+      copyButtonToolTipText={t('Copy code to clipboard')}
+      isDownloadEnabled={isDownloadEnabled}
+      downloadButtonAriaLabel={t('Download code')}
+      downloadButtonToolTipText={t('Download code')}
+      isLanguageLabelVisible={isLanguageLabelVisible}
+    />
   );
 });
 

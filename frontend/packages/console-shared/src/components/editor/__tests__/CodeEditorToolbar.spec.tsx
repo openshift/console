@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '../../../hooks/ols-hook';
 import CodeEditorToolbar from '../CodeEditorToolbar';
-import ShortcutsLink from '../ShortcutsLink';
 
 jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
@@ -35,11 +34,6 @@ describe('CodeEditorToolbar', () => {
   it('should render null when showShortcuts is false and toolbarLinks is empty', () => {
     wrapper = shallow(<CodeEditorToolbar />);
     expect(wrapper.isEmptyRender()).toBe(true);
-  });
-
-  it('should render toolbar with shortcuts when showShortcuts is true', () => {
-    wrapper = shallow(<CodeEditorToolbar showShortcuts />);
-    expect(wrapper.find(ShortcutsLink).exists()).toBe(true);
   });
 
   it('should render toolbar with custom links when toolbarLinks are provided', () => {

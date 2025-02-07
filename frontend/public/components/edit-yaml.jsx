@@ -8,7 +8,7 @@ import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
-import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Switch } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { Trans, useTranslation } from 'react-i18next';
@@ -747,21 +747,20 @@ const EditYAMLInner = (props) => {
     !showSidebar && hasSidebarContent ? (
       <Button
         icon={<InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />}
-        type="button"
         variant="link"
-        isInline
         onClick={toggleSidebar}
       >
         {t('public~View sidebar')}
       </Button>
     ) : null;
   const tooltipCheckBox = (
-    <Checkbox
-      label={t('public~Show tooltips')}
+    <Switch
+      label={t('public~Tooltips')}
       id="showTooltips"
       isChecked={showTooltips}
       data-checked-state={showTooltips}
       onChange={toggleShowTooltips}
+      hasCheckIcon
     />
   );
 
@@ -807,6 +806,7 @@ const EditYAMLInner = (props) => {
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
                 onEditorDidMount={() => setEditorMounted(true)}
+                isLanguageLabelVisible
               />
               <div className="yaml-editor__buttons" ref={buttons}>
                 {customAlerts}

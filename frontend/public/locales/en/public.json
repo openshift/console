@@ -486,7 +486,7 @@
   "Failed to parse YAML sample": "Failed to parse YAML sample",
   "An error occurred.": "An error occurred.",
   "View sidebar": "View sidebar",
-  "Show tooltips": "Show tooltips",
+  "Tooltips": "Tooltips",
   "Drop file here": "Drop file here",
   "Drag and drop YAML or JSON files into the editor, or manually enter files and use <2>---</2> to separate each definition.": "Drag and drop YAML or JSON files into the editor, or manually enter files and use <2>---</2> to separate each definition.",
   "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.",

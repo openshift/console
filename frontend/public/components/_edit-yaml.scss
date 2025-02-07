@@ -23,22 +23,6 @@
   }
 }
 
-// only used in packages and will be orphaned when packages move out
-.yaml-editor__header {
-  border-bottom: var(--pf-t--global--border--width--divider--default) solid
-    var(--pf-t--global--border--color--default);
-  padding: 20px $pf-v6-global-gutter;
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-left: $pf-v6-global-gutter--md;
-    padding-right: $pf-v6-global-gutter--md;
-  }
-}
-
-// only used in packages and will be orphaned when packages move out
-.yaml-editor__header-text {
-  margin: 0;
-}
-
 .yaml-editor__link {
   display: inline-block;
 }

@@ -54,10 +54,32 @@ const defineThemes = (editor: typeof monacoEditor) => {
   });
 };
 
+const useSystemTheme = () => {
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const updateTheme = () => {
+      setTheme(query.matches ? 'dark' : 'light');
+    };
+
+    updateTheme();
+
+    query.addEventListener('change', updateTheme);
+    return () => {
+      query.removeEventListener('change', updateTheme);
+    };
+  }, []);
+
+  return theme;
+};
+
 /**
  * Sets the theme of a provided Monaco editor instance based on the current theme.
  */
 export const useConsoleMonacoTheme = (editor: typeof monacoEditor | null) => {
+  const systemTheme = useSystemTheme();
   const theme = useContext(ThemeContext);
   const [themeLoaded, setThemeLoaded] = useState(false);
 
@@ -70,9 +92,11 @@ export const useConsoleMonacoTheme = (editor: typeof monacoEditor | null) => {
 
       if (theme === 'light') {
         editor.setTheme('console-light');
-      } else {
+      } else if (theme === 'dark') {
         editor.setTheme('console-dark');
+      } else if (theme === 'systemDefault') {
+        editor.setTheme(`console-${systemTheme}`);
       }
     }
-  }, [theme, editor, themeLoaded]);
+  }, [theme, editor, themeLoaded, systemTheme]);
 };

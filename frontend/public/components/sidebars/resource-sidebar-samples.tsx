@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
-import Editor, { Monaco } from '@monaco-editor/react';
+import type * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { CodeEditor, Language } from '@patternfly/react-code-editor';
 import { useConsoleMonacoTheme } from '@console/shared/src/components/editor/theme';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
 import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
@@ -60,16 +61,16 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
 
 const lineHeight = 18;
 const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
-  const [monaco, setMonaco] = React.useState<Monaco | null>(null);
+  const [monaco, setMonaco] = React.useState<typeof Monaco | null>(null);
   useConsoleMonacoTheme(monaco?.editor);
 
   return (
     <div style={{ paddingTop: 10 }}>
-      <Editor
-        height={Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}
-        language="yaml"
+      <CodeEditor
+        height={`${Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}px`}
+        language={Language.yaml}
         value={yaml}
-        onMount={(_e, m) => setMonaco(m)}
+        onEditorDidMount={(_e, m) => setMonaco(m)}
         options={{
           lineHeight,
           readOnly: true,
