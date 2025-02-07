@@ -30,7 +30,7 @@ export const getGuidedTour = (): TourDataType => ({
       // t('devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.')
       content:
         '%devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.%',
-      selector: getSelector('tour-monitoring-nav'),
+      selector: getSelector('tour-software-catalog-nav'),
     },
     {
       placement: 'right',

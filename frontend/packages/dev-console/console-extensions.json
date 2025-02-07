@@ -631,8 +631,9 @@
       "href": "/topology",
       "namespaced": true,
       "dataAttributes": {
-        "data-quickstart-id": "qs-nav-topology",
-        "data-test-id": "topology-header"
+        "data-quickstart-id": "qs-admin-nav-topology",
+        "data-test-id": "topology-header",
+        "data-tour-id": "tour-admin-topology-nav"
       }
     }
   },
@@ -719,7 +720,8 @@
       "namespaced": true,
       "insertAfter": "search",
       "dataAttributes": {
-        "data-test-id": "developer-catalog-header"
+        "data-test-id": "developer-catalog-header",
+        "data-tour-id": "tour-software-catalog-nav"
       }
     },
     "flags": {
