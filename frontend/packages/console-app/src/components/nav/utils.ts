@@ -172,9 +172,7 @@ export const navItemHrefIsActive = (
 ): boolean => {
   const scopelessLocation = stripScopeFromPath(location);
   const scopelessHref = stripScopeFromPath(href);
-  const locationSegments = scopelessLocation.split('/');
-  const hrefSegments = scopelessHref.split('/');
-  const hrefMatch = hrefSegments.every((segment, i) => segment === locationSegments?.[i]);
+  const hrefMatch = scopelessLocation === scopelessHref;
   return hrefMatch || startsWithSome(scopelessLocation, ...(startsWith ?? []));
 };
 
