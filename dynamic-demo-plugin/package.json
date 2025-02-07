@@ -75,8 +75,7 @@
       "projectOverview": "./utils/project-overview",
       "modalPage": "./components/Modals/ModalPage",
       "sampleErrorBoundaryPage": "./components/ErrorBoundary/SampleErrorBoundaryPage",
-      "createProjectModal": "./components/Modals/CreateProjectModal",
-      "exampleTopologyPage": "./components/ExampleTopologyPage"
+      "createProjectModal": "./components/Modals/CreateProjectModal"
     },
     "disableStaticPlugins": [
       "@console/demo-plugin"

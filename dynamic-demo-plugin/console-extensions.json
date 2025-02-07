@@ -444,25 +444,5 @@
       "name": "%plugin__console-demo-plugin~Example Namespaced Page%",
       "href": "/example-namespaced-page"
     }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/example-topology-page"],
-      "component": {
-        "$codeRef": "exampleTopologyPage.ExampleTopologyPage"
-      }
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "demo-example-topology-page",
-      "perspective": "admin",
-      "section": "admin-demo-section",
-      "name": "%plugin__console-demo-plugin~Example Topology Page%",
-      "href": "/example-topology-page"
-    }
   }
 ]
