@@ -48,6 +48,7 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
       data-test={
         props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
       }
+      className={props.className}
     >
       {props.children}
     </Button>
@@ -107,7 +108,11 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
             <>
               <SplitItem isFilled />
               <SplitItem>
-                <EditButton testId={label} onClick={onEdit}>
+                <EditButton
+                  testId={label}
+                  onClick={onEdit}
+                  className="details-item__edit-button--within-dt"
+                >
                   {t('public~Edit')}
                 </EditButton>
               </SplitItem>
@@ -150,6 +155,7 @@ export type DetailsItemProps = {
 type EditButtonProps = {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
+  className?: string;
 };
 
 DetailsItem.displayName = 'DetailsItem';
