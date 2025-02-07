@@ -234,6 +234,11 @@ form.pf-v6-c-form {
   --pf-v6-c-card--BoxShadow: var(--pf-t--global--box-shadow--md);
 }
 
+.pf-v6-c-wizard__nav-list > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
 .table {
   margin-bottom: 0;
   &--layout-fixed {
@@ -279,7 +284,7 @@ ul {
   list-style: disc;
 }
 // And here we explicitly remove it from PF components, except for the List and Content components.
-:where([class^='pf-']:not(.pf-v6-c-list, .pf-v5-c-list, .pf-c-list, .pf-v6-c-content--ul)) {
+:where([class^='pf-']:not(.pf-v6-c-list, .pf-v5-c-list, .pf-c-list, .pf-v6-c-content--ol, .pf-v6-c-content--ul)) {
   @at-root :is(ul, ol)#{&} {
     list-style: none !important;
   }
