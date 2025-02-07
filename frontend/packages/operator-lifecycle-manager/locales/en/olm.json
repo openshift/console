@@ -37,7 +37,6 @@
   "{{count}} Namespaces_other": "{{count}} Namespaces",
   "Console plugin_one": "Console plugin",
   "Console plugin_other": "Console plugins",
-  "{{plugin}}:": "{{plugin}}:",
   "Enabled": "Enabled",
   "Console plugin available": "Console plugin available",
   "To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.": "To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.",
