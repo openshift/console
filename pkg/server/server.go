@@ -157,6 +157,7 @@ type Server struct {
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
 	CustomLogoFile                      string
+	CustomLogoFiles                     string
 	CustomProductName                   string
 	DevCatalogCategories                string
 	DevCatalogTypes                     string
@@ -298,12 +299,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
-
-	if s.CustomLogoFile != "" {
-		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFile(w, r, s.CustomLogoFile)
-		})
-	}
 
 	// Scope of Service Worker needs to be higher than the requests it is intercepting (https://stackoverflow.com/a/35780776/6909941)
 	handleFunc("/load-test.sw.js", func(w http.ResponseWriter, r *http.Request) {
@@ -581,7 +576,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	config := &serverconfig.Config{
 		Plugins: s.EnabledConsolePlugins,
 		Customization: serverconfig.Customization{
-			Perspectives: []serverconfig.Perspective{},
+			Perspectives:    []serverconfig.Perspective{},
+			CustomLogoFiles: []serverconfig.CustomLogoFiles{},
 		},
 	}
 	if len(s.Perspectives) > 0 {
@@ -589,6 +585,15 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		if err != nil {
 			klog.Errorf("Unable to parse perspective JSON: %v", err)
 		}
+	}
+	if len(s.CustomLogoFiles) > 0 {
+		err := json.Unmarshal([]byte(s.CustomLogoFiles), &config.Customization.CustomLogoFiles)
+		if err != nil {
+			klog.Errorf("Unable to parse custom logos JSON: %v", err)
+		}
+		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
+			serverconfig.CustomLogosHandler(w, r, config.Customization.CustomLogoFiles)
+		})
 	}
 	serverconfigMetrics := serverconfig.NewMetrics(config)
 	serverconfigMetrics.MonitorPlugins(internalProxiedDynamic)
