@@ -3,7 +3,7 @@ import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 
 export const THEME_USER_SETTING_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
-export const THEME_SYSTEM_DEFAULT = 'systemDefault';
+const THEME_SYSTEM_DEFAULT = 'systemDefault';
 const THEME_DARK_CLASS = 'pf-v6-theme-dark';
 const THEME_DARK_CLASS_LEGACY = 'pf-v5-theme-dark'; // legacy class name needed to support PF5
 export const THEME_DARK = 'dark';
