@@ -72,6 +72,11 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const importYAMLURL = formatNamespacedRouteForResource('import', namespace);
 
+  // TODO: remove these three refs when upstream fix is merged (see https://github.com/patternfly/patternfly-react/issues/11358)
+  const importYAMLTooltipRef = React.useRef(null);
+  const importGitTooltipRef = React.useRef(null);
+  const containerImgTooltipRef = React.useRef(null);
+
   const onToggleClick = () => {
     setIsOpen(!isOpen);
   };
@@ -112,11 +117,13 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
             ev.preventDefault();
             history.push(importYAMLURL);
           }}
-          // TODO: PF6 upgrade -- PatternFly bug that needs to be addressed upstream (see https://github.com/patternfly/patternfly-react/issues/11358)
-          // tooltipProps={{
-          //   content: t('public~Create resources from their YAML or JSON definitions'),
-          //   position: 'left',
-          // }}
+          // TODO: remove ref & triggerRef when upstream fix is merged (see https://github.com/patternfly/patternfly-react/issues/11358)
+          ref={importYAMLTooltipRef}
+          tooltipProps={{
+            content: t('public~Create resources from their YAML or JSON definitions'),
+            position: 'left',
+            triggerRef: importYAMLTooltipRef,
+          }}
           data-test="qc-import-yaml"
         >
           {t('public~Import YAML')}
@@ -131,11 +138,13 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 ev.preventDefault();
                 history.push(getImportFromGitURL(namespace));
               }}
-              // TODO: PF6 upgrade -- PatternFly bug that needs to be addressed upstream (see https://github.com/patternfly/patternfly-react/issues/11358)
-              // tooltipProps={{
-              //   content: t('public~Import code from your Git repository to be built and deployed'),
-              //   position: 'left',
-              // }}
+              // TODO: remove ref & triggerRef when upstream fix is merged (see https://github.com/patternfly/patternfly-react/issues/11358)
+              ref={importGitTooltipRef}
+              tooltipProps={{
+                content: t('public~Import code from your Git repository to be built and deployed'),
+                position: 'left',
+                triggerRef: importGitTooltipRef,
+              }}
               data-test="qc-import-from-git"
             >
               {t('public~Import from Git')}
@@ -148,13 +157,15 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
                 ev.preventDefault();
                 history.push(getContainerImageURL(namespace));
               }}
-              // TODO: PF6 upgrade -- PatternFly bug that needs to be addressed upstream (see https://github.com/patternfly/patternfly-react/issues/11358)
-              // tooltipProps={{
-              //   content: t(
-              //     'public~Deploy an existing Image from an Image registry or Image stream tag',
-              //   ),
-              //   position: 'left',
-              // }}
+              // TODO: remove ref & triggerRef when upstream fix is merged (see https://github.com/patternfly/patternfly-react/issues/11358)
+              ref={containerImgTooltipRef}
+              tooltipProps={{
+                content: t(
+                  'public~Deploy an existing Image from an Image registry or Image stream tag',
+                ),
+                position: 'left',
+                triggerRef: containerImgTooltipRef,
+              }}
               data-test="qc-container-images"
             >
               {t('public~Container images')}
