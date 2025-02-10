@@ -1,5 +1,5 @@
 import { Location } from 'history';
-import { getBrandingDetails } from './branding';
+import { getBrandingProductName } from './branding';
 
 /**
  * Removes sensitive informations from the pathname.
@@ -21,7 +21,7 @@ export const withoutSensitiveInformations = (location: Location): Location => {
   };
 };
 
-const titleProductNameSuffix = ` · ${getBrandingDetails().productName}`;
+const titleProductNameSuffix = ` · ${getBrandingProductName()}`;
 
 export const getTelemetryTitle = () => {
   const titleElement = document.querySelector('title');

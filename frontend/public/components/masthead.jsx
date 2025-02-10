@@ -14,12 +14,13 @@ import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
-import { getBrandingDetails } from './utils/branding';
+import { useBrandingProductLogoURL, getBrandingProductName } from './utils/branding';
 
 export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
-  const details = getBrandingDetails();
+  const productName = getBrandingProductName();
   const navigate = useNavigate();
   const defaultRoute = '/';
+  const logoUrl = useBrandingProductLogoURL();
   const logoProps = {
     href: defaultRoute,
     // use onClick to prevent browser reload
@@ -40,14 +41,14 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
         <MastheadBrand>
           <MastheadLogo
             component="a"
-            aria-label={window.SERVER_FLAGS.customLogoURL ? undefined : details.productName}
+            aria-label={window.SERVER_FLAGS.customLogoURL ? undefined : productName}
             data-test="masthead-logo"
             {...logoProps}
           >
             {window.SERVER_FLAGS.customLogoURL ? (
-              <Brand src={details.logoImg} alt={details.productName} />
+              <Brand src={logoUrl} alt={productName} />
             ) : (
-              <ReactSVG src={details.logoImg} aria-hidden className="pf-v6-c-brand" />
+              <ReactSVG src={logoUrl} aria-hidden className="pf-v6-c-brand" />
             )}
           </MastheadLogo>
         </MastheadBrand>
