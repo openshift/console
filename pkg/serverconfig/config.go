@@ -15,11 +15,33 @@ import (
 	"k8s.io/klog/v2"
 
 	consolev1 "github.com/openshift/api/console/v1"
+	operatorv1 "github.com/openshift/api/operator/v1"
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
 // ... --plugins plugin-name=plugin-endpoint plugin-name2=plugin-endpoint2
 type MultiKeyValue map[string]string
+
+func parseKeyValuePairs[T comparable](value string, parseKey func(string) (T, error)) (map[T]string, error) {
+	result := make(map[T]string)
+	keyValuePairs := strings.Split(value, ",")
+	for _, keyValuePair := range keyValuePairs {
+		keyValuePair = strings.TrimSpace(keyValuePair)
+		if len(keyValuePair) == 0 {
+			continue
+		}
+		splitted := strings.SplitN(keyValuePair, "=", 2)
+		if len(splitted) != 2 {
+			return nil, fmt.Errorf("invalid key value pair %s", keyValuePair)
+		}
+		parsedKey, err := parseKey(splitted[0])
+		if err != nil {
+			return nil, fmt.Errorf("invalid key pair %s", keyValuePair)
+		}
+		result[parsedKey] = splitted[1]
+	}
+	return result, nil
+}
 
 func (mkv *MultiKeyValue) String() string {
 	keyValuePairs := []string{}
@@ -31,18 +53,38 @@ func (mkv *MultiKeyValue) String() string {
 }
 
 func (mkv *MultiKeyValue) Set(value string) error {
-	keyValuePairs := strings.Split(value, ",")
-	for _, keyValuePair := range keyValuePairs {
-		keyValuePair = strings.TrimSpace(keyValuePair)
-		if len(keyValuePair) == 0 {
-			continue
-		}
-		splitted := strings.SplitN(keyValuePair, "=", 2)
-		if len(splitted) != 2 {
-			return fmt.Errorf("invalid key value pair %s", keyValuePair)
-		}
-		(*mkv)[splitted[0]] = splitted[1]
+	parsedMap, err := parseKeyValuePairs(value, func(key string) (string, error) {
+		return key, nil
+	})
+	if err != nil {
+		return err
 	}
+	*mkv = parsedMap
+	return nil
+}
+
+// LogosKeyValue is used for configuring entries of custom logos, where keys are
+// themes (Light | Dark | Default) and values are paths to the image files eg.:
+// ... --custom-logo-files Dark=/path/to/dark-logo.svg Light=/path/to/light-logo.svg
+type LogosKeyValue map[operatorv1.ThemeType]string
+
+func (mkv *LogosKeyValue) String() string {
+	keyValuePairs := []string{}
+	for k, v := range *mkv {
+		keyValuePairs = append(keyValuePairs, fmt.Sprintf("%s=%s", k, v))
+	}
+	sort.Strings(keyValuePairs)
+	return strings.Join(keyValuePairs, ", ")
+}
+
+func (mkv *LogosKeyValue) Set(value string) error {
+	parsedMap, err := parseKeyValuePairs(value, func(key string) (operatorv1.ThemeType, error) {
+		return ParseCustomLogoTheme(key)
+	})
+	if err != nil {
+		return err
+	}
+	*mkv = parsedMap
 	return nil
 }
 
@@ -276,10 +318,6 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		fs.Set("custom-product-name", customization.CustomProductName)
 	}
 
-	if customization.CustomLogoFile != "" {
-		fs.Set("custom-logo-file", customization.CustomLogoFile)
-	}
-
 	if customization.DeveloperCatalog.Categories != nil {
 		categories, err := json.Marshal(customization.DeveloperCatalog.Categories)
 		if err == nil {
@@ -320,6 +358,24 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 			klog.Fatalf("Could not marshal ConsoleConfig customization.projectAccess field: %v", err)
 		} else {
 			fs.Set("project-access-cluster-roles", string(projectAccessClusterRoles))
+		}
+	}
+
+	if customization.CustomLogoFiles != nil {
+		customLogos, err := json.Marshal(customization.CustomLogoFiles)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.customLogoFiles field: %v", err)
+		} else {
+			fs.Set("custom-logo-files", string(customLogos))
+		}
+	}
+
+	if customization.CustomFaviconFiles != nil {
+		customLogos, err := json.Marshal(customization.CustomFaviconFiles)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.customFaviconFiles field: %v", err)
+		} else {
+			fs.Set("custom-favicon-files", string(customLogos))
 		}
 	}
 

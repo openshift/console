@@ -162,16 +162,16 @@ AboutModalItems.displayName = 'AboutModalItems';
 export const AboutModal: React.FC<AboutModalProps> = (props) => {
   const { isOpen, closeAboutModal } = props;
   const { t } = useTranslation();
-  const details = getBrandingDetails();
+  const { productName } = getBrandingDetails();
   const customBranding = window.SERVER_FLAGS.customLogoURL || window.SERVER_FLAGS.customProductName;
   const openShiftBranding = window.SERVER_FLAGS.branding !== 'okd' && !customBranding;
   return (
     <PfAboutModal
       isOpen={isOpen}
       onClose={closeAboutModal}
-      productName={details.productName}
+      productName={productName}
       brandImageSrc={openShiftBranding && redHatFedoraImg}
-      brandImageAlt={openShiftBranding && details.productName}
+      brandImageAlt={openShiftBranding && productName}
       backgroundImageSrc={openShiftBranding && `/${redHatFedoraWatermarkImg}`}
       hasNoContentContainer
       aria-label="About modal"
