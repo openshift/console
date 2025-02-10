@@ -229,6 +229,7 @@ const infraFeaturesSort = (infrastructure) => {
 const validSubscriptionSort = (validSubscription) => {
   switch (validSubscription.value) {
     case ValidSubscriptionValue.OpenShiftKubernetesEngine:
+    case ValidSubscriptionValue.OpenShiftVirtualizationEngine:
       return 0;
     case ValidSubscriptionValue.OpenShiftContainerPlatform:
       return 1;
