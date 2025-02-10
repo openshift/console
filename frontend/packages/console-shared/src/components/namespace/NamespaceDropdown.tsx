@@ -179,9 +179,6 @@ export const NamespaceGroup: React.FC<{
 
 /* ****************************************** */
 
-// The items in the footer are not accessible via the keyboard.
-// This is being tracked in: https://github.com/patternfly/patternfly-react/issues/6031
-
 export const Footer: React.FC<{
   canCreateNew: boolean;
   isProject?: boolean;
