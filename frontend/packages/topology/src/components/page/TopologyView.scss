@@ -43,19 +43,19 @@
 
       &:focus {
         z-index: 10;
-        color: var(--pf-v6-global--active-color--400);
+        color: var(--pf-t--color--blue--30);
       }
 
       &.pf-m-active {
-        background-color: var(--pf-v6-global--Color--light-300);
-        color: var(--pf-v6-global--icon--Color--dark);
+        background-color: var(--pf-t--color--gray--50);
+        color: var(--pf-t--color--gray--95);
       }
 
       &:hover {
         z-index: 20;
-        color: var(--pf-v6-global--active-color--400);
+        color: var(--pf-t--color--blue--30);
         &.pf-m-active {
-          color: var(--pf-v6-global--icon--Color--dark);
+          color: var(--pf-t--color--gray--95);
         }
       }
     }
