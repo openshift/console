@@ -300,10 +300,6 @@ const config: Configuration = {
         { from: path.resolve(__dirname, './packages/patternfly/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/insights-plugin/locales'), to: 'locales' },
         {
-          from: path.resolve(__dirname, './packages/local-storage-operator-plugin/locales'),
-          to: 'locales',
-        },
-        {
           from: path.resolve(__dirname, './packages/console-telemetry-plugin/locales'),
           to: 'locales',
         },
