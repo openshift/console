@@ -60,13 +60,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="text/javascript" nonce="[[ .ScriptNonce ]]">
       window.SERVER_FLAGS = [[ .ServerFlags ]];
-      let theme = localStorage.getItem('bridge/theme') || 'systemDefault';
-      if (theme === 'systemDefault' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        theme = 'dark';
-      }
-      if (theme === 'dark') {
-        document.documentElement.classList.add('pf-v6-theme-dark', 'pf-v5-theme-dark'); // legacy pf-theme-dark class needed for PF5 component styling
-      }
     </script>
   </head>
 
