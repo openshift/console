@@ -310,6 +310,7 @@
   "BinaryData contains the binary data that is not in UTF-8 range": "BinaryData contains the binary data that is not in UTF-8 range",
   "Create ConfigMap": "Create ConfigMap",
   "Edit ConfigMap": "Edit ConfigMap",
+  "{{containerName}} from image {{containerImage}}": "{{containerName}} from image {{containerImage}}",
   "PostStart: {{postStartLabel}} <3>{{postStart}}</3>": "PostStart: {{postStartLabel}} <3>{{postStart}}</3>",
   "PreStop: {{preStopLabel}} <3>{{preStop}}</3>": "PreStop: {{preStopLabel}} <3>{{preStop}}</3>",
   "No ports have been exposed": "No ports have been exposed",
