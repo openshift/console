@@ -237,11 +237,6 @@ form.pf-v6-c-form {
   }
 }
 
-// Remove when upstream issue is addressed. https://github.com/patternfly/patternfly/issues/4889
-.pf-v6-theme-dark .pf-v6-c-card {
-  --pf-v6-c-card--BoxShadow: var(--pf-t--global--box-shadow--md);
-}
-
 .pf-v6-c-wizard__nav-list > ul {
   list-style: none;
   padding-left: 0;
