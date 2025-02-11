@@ -70,7 +70,6 @@ func isLocalhost(r *http.Request) (bool, error) {
 }
 
 func getTRHost(r *http.Request, dynamicClient *dynamic.DynamicClient) (string, error) {
-
 	// If running on localhost, use the route to get the host.
 	// Required for local development.
 	localHost, err := isLocalhost(r)
@@ -78,7 +77,6 @@ func getTRHost(r *http.Request, dynamicClient *dynamic.DynamicClient) (string, e
 		return "", err
 	}
 	if localHost {
-		fmt.Println("!!!!Running on localhost:", r.RemoteAddr, localHost)
 		route, err := dynamicClient.Resource(*TektonResultsAPIRoute).Namespace("openshift-pipelines").Get(context.TODO(), "tekton-results-api-service", metav1.GetOptions{})
 		if err != nil {
 			return "", err
