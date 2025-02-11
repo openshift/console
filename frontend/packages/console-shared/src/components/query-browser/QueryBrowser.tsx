@@ -328,10 +328,7 @@ const TooltipWrapped: React.FC<TooltipProps> = ({
 const Tooltip = withFallback(TooltipWrapped);
 
 const graphContainer = (
-  // Set activateData to false to work around VictoryVoronoiContainer crash (see
-  // https://github.com/FormidableLabs/victory/issues/1314)
   <ChartVoronoiContainer
-    activateData={false}
     labelComponent={<Tooltip />}
     labels={() => ' '}
     mouseFollowTooltips
