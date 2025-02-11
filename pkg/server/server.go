@@ -96,6 +96,7 @@ type jsGlobals struct {
 	Branding                        string                     `json:"branding"`
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
+	ContentSecurityPolicy           string                     `json:"contentSecurityPolicy"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
 	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
@@ -563,13 +564,15 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, struct {
-			ConsoleCommit string                  `json:"consoleCommit"`
-			Plugins       []string                `json:"plugins"`
-			Capabilities  []operatorv1.Capability `json:"capabilities,omitempty"`
+			ConsoleCommit         string                  `json:"consoleCommit"`
+			Plugins               []string                `json:"plugins"`
+			Capabilities          []operatorv1.Capability `json:"capabilities,omitempty"`
+			ContentSecurityPolicy string                  `json:"contentSecurityPolicy,omitempty"`
 		}{
-			ConsoleCommit: os.Getenv("SOURCE_GIT_COMMIT"),
-			Plugins:       pluginsHandler.GetPluginsList(),
-			Capabilities:  s.Capabilities,
+			ConsoleCommit:         os.Getenv("SOURCE_GIT_COMMIT"),
+			Plugins:               pluginsHandler.GetPluginsList(),
+			Capabilities:          s.Capabilities,
+			ContentSecurityPolicy: s.ContentSecurityPolicy,
 		})
 	}))
 
