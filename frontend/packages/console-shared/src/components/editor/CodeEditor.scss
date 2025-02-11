@@ -1,16 +1,5 @@
 @import '../../../../../public/style/vars';
 
-// match the token in theme.ts. it already matches for light theme
-.pf-v6-theme-dark {
-  .pf-v6-c-code-editor__main {
-    --pf-v6-c-code-editor__main--BackgroundColor: var(--pf-t--color--gray--90);
-  }
-
-  .pf-v6-c-code-editor__tab {
-    --pf-v6-c-code-editor__tab--BackgroundColor: var(--pf-t--color--gray--90);
-  }
-}
-
 .ocs-yaml-editor {
   /* Makes automaticLayout work properly. note that this breaks height="sizeToFit" */
   .monaco-editor {
@@ -36,10 +25,14 @@
   }
 
   /* Dividers in toolbar */
-  .ocs-yaml-editor-toolbar__link:not(:last-child) {
-    border-inline-end: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--border--color--default);
-    margin-inline-end: var(--pf-t--global--spacer--sm);
-    padding-inline-end: var(--pf-t--global--spacer--sm);
+  .ocs-yaml-editor-toolbar__links {
+    padding-inline-start: var(--pf-t--global--spacer--xs);
+
+    .ocs-yaml-editor-toolbar__link:not(:last-of-type) {
+      border-inline-end: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--border--color--default);
+      margin-inline-end: var(--pf-t--global--spacer--sm);
+      padding-inline-end: var(--pf-t--global--spacer--sm);
+    }
   }
 
   /* Accessibility shortcuts hint styling */

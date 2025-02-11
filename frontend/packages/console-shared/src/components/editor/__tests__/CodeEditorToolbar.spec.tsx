@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '../../../hooks/ols-hook';
-import CodeEditorToolbar from '../CodeEditorToolbar';
+import { AskOpenShiftLightspeedButton, CodeEditorToolbar } from '../CodeEditorToolbar';
 
 jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
@@ -44,19 +44,19 @@ describe('CodeEditorToolbar', () => {
 
   it('should render "Ask OpenShift Lightspeed" button when showLightspeedButton is true', () => {
     (useOLSConfig as jest.Mock).mockReturnValue(true);
-    wrapper = shallow(<CodeEditorToolbar showShortcuts />);
+    wrapper = shallow(<AskOpenShiftLightspeedButton />);
     expect(wrapper.find(Button).prop('children')).toBe('console-shared~Ask OpenShift Lightspeed');
   });
 
   it('should not render "Ask OpenShift Lightspeed" button when showLightspeedButton is false', () => {
     (useOLSConfig as jest.Mock).mockReturnValue(false);
-    wrapper = shallow(<CodeEditorToolbar showShortcuts />);
+    wrapper = shallow(<AskOpenShiftLightspeedButton />);
     expect(wrapper.find(Button).exists()).toBe(false);
   });
 
   it('should dispatch OpenOLS action when "Ask OpenShift Lightspeed" button is clicked', () => {
     (useOLSConfig as jest.Mock).mockReturnValue(true);
-    wrapper = shallow(<CodeEditorToolbar showShortcuts />);
+    wrapper = shallow(<AskOpenShiftLightspeedButton />);
     wrapper.find(Button).simulate('click');
     expect(mockDispatch).toHaveBeenCalledWith({ type: ActionType.OpenOLS });
   });

@@ -635,21 +635,25 @@ export type UserInfo = {
   extra?: object;
 };
 
-// Omit the ref as we have our own ref type, which is completely different
-export type BaseCodeEditorProps = Partial<Omit<PfCodeEditorProps, 'ref'>>;
-
-export type CodeEditorProps = Omit<BaseCodeEditorProps, 'code'> & {
-  /** Code displayed in code editor. */
-  value?: string;
-  /** Minimum editor height in valid CSS height values. */
-  minHeight?: CSSStyleDeclaration['minHeight'];
+export type CodeEditorToolbarProps = {
   /** Whether to show a toolbar with shortcuts on top of the editor. */
   showShortcuts?: boolean;
-  /** Toolbar links section on top of the editor */
+  /** Toolbar links section on the left side of the editor */
   toolbarLinks?: React.ReactNodeArray;
-  /** Callback that is run when CTRL / CMD + S is pressed */
-  onSave?: () => void;
 };
+
+// Omit the ref as we have our own ref type, which is completely different
+export type BasicCodeEditorProps = Partial<Omit<PfCodeEditorProps, 'ref'>>;
+
+export type CodeEditorProps = Omit<BasicCodeEditorProps, 'code'> &
+  CodeEditorToolbarProps & {
+    /** Code displayed in code editor. */
+    value?: string;
+    /** Minimum editor height in valid CSS height values. */
+    minHeight?: CSSStyleDeclaration['minHeight'];
+    /** Callback that is run when CTRL / CMD + S is pressed */
+    onSave?: () => void;
+  };
 
 export type CodeEditorRef = {
   editor: monaco.editor.IStandaloneCodeEditor;

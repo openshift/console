@@ -1,20 +1,18 @@
 import * as React from 'react';
-import { ChangeHandler, Language } from '@patternfly/react-code-editor';
+import { ChangeHandler } from '@patternfly/react-code-editor';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
-import type * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
 import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 
-type EditorFieldProps = {
+type EditorFieldProps = Partial<BasicCodeEditorProps> & {
   name: string;
   label?: React.ReactNode;
   helpText?: React.ReactNode;
   required?: boolean;
   isDisabled?: boolean;
   onChange?: ChangeHandler;
-  language?: Language;
-  options?: Monaco.editor.IEditorOptions;
 };
 
 const EditorField: React.FC<EditorFieldProps> = ({
@@ -40,15 +38,12 @@ const EditorField: React.FC<EditorFieldProps> = ({
   return (
     <FormGroup fieldId="" label={label} isRequired={required}>
       <BasicCodeEditor
+        isMinimapVisible={false}
+        height="sizeToFit"
+        isFullHeight={false}
+        {...otherProps}
         code={value}
         onChange={debouncedOnChange}
-        isFullHeight={false}
-        height="sizeToFit"
-        language={otherProps?.language}
-        options={{
-          minimap: { enabled: false },
-          ...otherProps?.options,
-        }}
       />
 
       <FormHelperText>

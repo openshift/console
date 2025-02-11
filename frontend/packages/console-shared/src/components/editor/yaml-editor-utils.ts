@@ -6,7 +6,6 @@ import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-jso
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 
 export const defaultEditorOptions: monaco.editor.IEditorOptions = {
-  readOnly: false,
   scrollBeyondLastLine: false,
   automaticLayout: true,
 };

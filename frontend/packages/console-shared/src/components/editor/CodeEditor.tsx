@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { EditorDidMount, Language } from '@patternfly/react-code-editor';
+import classNames from 'classnames';
 import type * as monaco from 'monaco-editor';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { BasicCodeEditor } from './BasicCodeEditor';
-import CodeEditorToolbar from './CodeEditorToolbar';
+import { CodeEditorToolbar } from './CodeEditorToolbar';
 import { useShortcutLink } from './ShortcutsLink';
 import { useConsoleMonacoTheme } from './theme';
 import { registerYAMLinMonaco, registerAutoFold, defaultEditorOptions } from './yaml-editor-utils';
@@ -74,7 +75,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   return (
     <BasicCodeEditor
       {...props}
-      className={`ocs-yaml-editor ${props?.className}`}
+      className={classNames('ocs-yaml-editor', props?.className)}
       language={language ?? Language.yaml}
       code={value}
       options={{ ...defaultEditorOptions, ...options }}
