@@ -161,6 +161,14 @@ form.pf-v6-c-form {
   --pf-v6-c-masthead__logo--Width: auto; // Do not set a width to maintain backwards compatibility
 }
 
+// TODO: remove the following two menu overrides when upstream fix is merged (see https://github.com/patternfly/patternfly/issues/7256)
+.pf-v6-c-menu.pf-m-scrollable .pf-v6-c-menu__content {
+  overflow: auto;
+}
+.pf-v6-c-menu.pf-m-drilldown:not(.pf-m-scrollable) {
+  overflow: hidden;
+}
+
 // PF components that calculate their correct height based on --pf-t--global--font--size--md: 1rem
 .pf-v6-c-modal-box,
 .pf-v6-c-switch {
