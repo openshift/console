@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import { Alert, Progress, ProgressSize } from '@patternfly/react-core';
+import { Alert, Progress, ProgressSize, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -324,7 +324,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     showOperandsContent && (
       <>
         <span className="co-operator-uninstall__operands-section">
-          <h2>{t('olm~Operand instances')}</h2>
+          <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+            {t('olm~Operand instances')}
+          </Title>
           <OperandsTable
             operands={operands}
             loaded={operandsLoaded}
@@ -390,7 +392,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             {!optedOut && <>{instructions}</>}
             {uninstallMessage && (
               <>
-                <h2>{t('olm~Message from Operator developer')}</h2>
+                <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+                  {t('olm~Message from Operator developer')}
+                </Title>
                 <p>{uninstallMessage}</p>
               </>
             )}

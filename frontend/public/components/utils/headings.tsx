@@ -14,6 +14,7 @@ import {
   SplitItem,
   Content,
   ContentVariants,
+  Title,
 } from '@patternfly/react-core';
 import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
@@ -25,6 +26,9 @@ import {
   useCsvWatchResource,
 } from '@console/shared';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+
 import {
   ActionsMenu,
   FirehoseResult,
@@ -162,14 +166,13 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         style={style}
       >
         {showHeading && (
-          <Content
-            component={ContentVariants.h1}
-            className={classNames('co-m-pane__heading', {
-              'co-m-pane__heading--baseline': link,
-              'co-m-pane__heading--center': centerText,
+          <PrimaryHeading
+            className={classNames({
               'co-m-pane__heading--logo': props.icon,
               'co-m-pane__heading--with-help-text': helpText,
             })}
+            alignItemsBaseline={!!link}
+            centerText={centerText}
           >
             {props.icon ? (
               <props.icon obj={data} />
@@ -212,7 +215,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
                   : customActionMenu}
               </div>
             )}
-          </Content>
+          </PrimaryHeading>
         )}
         {helpText && (
           <Content>
@@ -237,7 +240,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
   required,
   id,
 }) => (
-  <h2 className="co-section-heading" style={style} data-test-section-heading={text} id={id}>
+  <SecondaryHeading style={style} data-test-section-heading={text} id={id}>
     <span
       className={classNames({
         'co-required': required,
@@ -246,7 +249,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
       {text}
     </span>
     {children}
-  </h2>
+  </SecondaryHeading>
 );
 
 export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
@@ -255,10 +258,10 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
   style,
   className,
 }) => (
-  <h2 className={`sidebar__section-heading ${className}`} style={style}>
+  <Title headingLevel="h2" className={`sidebar__section-heading ${className}`} style={style}>
     {text}
     {children}
-  </h2>
+  </Title>
 );
 
 export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({
@@ -272,7 +275,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
   const isDeleting = !!resource.metadata.deletionTimestamp;
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
-      <h1 className="co-m-pane__heading">
+      <PrimaryHeading>
         <div className="co-m-pane__name co-resource-item">
           <ResourceIcon
             className="co-m-resource-icon--lg"
@@ -297,7 +300,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
             />
           </div>
         )}
-      </h1>
+      </PrimaryHeading>
       <HealthChecksAlert resource={resource} />
     </div>
   );

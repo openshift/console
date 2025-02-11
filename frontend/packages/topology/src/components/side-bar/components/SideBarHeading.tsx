@@ -2,6 +2,7 @@ import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
 import { DeploymentConfigModel } from '@console/internal/models';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import TopologyActions from '../../../actions/TopologyActions';
 import { useDetailsResourceLink } from '../providers/useDetailsResourceLink';
 import SideBarAlerts from './SideBarAlerts';
@@ -13,12 +14,12 @@ const SideBarHeading: React.FC<{ element: GraphElement }> = ({ element }) => {
   const resourceKind = element.getData()?.resource?.kind;
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
-      <h1 className="co-m-pane__heading">
+      <PrimaryHeading>
         <div className="co-m-pane__name co-resource-item">{resourceLink ?? resourceLabel}</div>
         <div className="co-actions">
           <TopologyActions element={element} />
         </div>
-      </h1>
+      </PrimaryHeading>
       {resourceKind === DeploymentConfigModel.kind && (
         <div className="dc-deprecation-sidebar-alert">
           <DeploymentConfigDeprecationAlert />

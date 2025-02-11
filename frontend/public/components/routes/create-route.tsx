@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import classnames from 'classnames';
-import { Alert, Button } from '@patternfly/react-core';
+import { Alert, Button, Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { connect, FormikContextType, FormikValues } from 'formik';
@@ -508,7 +508,9 @@ class CreateRouteWithTranslation extends React.Component<
               </div>
               {termination && termination !== 'passthrough' && (
                 <>
-                  <h2 className="h3">{t('public~Certificates')}</h2>
+                  <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+                    {t('public~Certificates')}
+                  </Title>
                   <div className="help-block">
                     <p>
                       {t(

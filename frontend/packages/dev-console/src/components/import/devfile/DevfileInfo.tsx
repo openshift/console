@@ -4,6 +4,7 @@ import { LayerGroupIcon } from '@patternfly/react-icons/dist/esm/icons/layer-gro
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ExternalLink } from '@console/internal/components/utils';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { DevfileSample } from './devfile-types';
 
 export type DevfileInfoProps = {
@@ -37,7 +38,9 @@ const DevfileInfo: React.FC<DevfileInfoProps> = ({ devfileSample }) => {
         )}
         &nbsp;
         <div>
-          <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
+          <SecondaryHeading className="co-catalog-item-details__name">
+            {displayName}
+          </SecondaryHeading>
           {tags && (
             <p className="co-catalog-item-details__tags">
               {tags.map((tag) => (

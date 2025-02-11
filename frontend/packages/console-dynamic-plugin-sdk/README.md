@@ -161,6 +161,7 @@ This section documents notable changes in the Console provided shared modules ac
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
 - Removed PatternFly 4.x shared modules.
 - Upgraded PatternFly to v6.
+- Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve correct styling.
 
 ### PatternFly dynamic modules
 

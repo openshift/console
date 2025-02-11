@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   TextInput,
+  Title,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
@@ -1168,7 +1169,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               provider={provider}
               deprecation={packageManifest?.status?.deprecation}
             />
-            <h4>{t('olm~Provided APIs')}</h4>
+            <Title headingLevel="h4" className="pf-v6-u-mb-sm">
+              {t('olm~Provided APIs')}
+            </Title>
             <div className="co-crd-card-row">
               {!providedAPIs.length ? (
                 <span className="text-muted">

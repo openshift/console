@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Flex } from '@patternfly/react-core';
+import { Alert, Flex, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageHeading, ResourceLink } from '@console/internal/components/utils';
 
@@ -24,7 +24,7 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
   return (
     <PageHeading>
       <Flex direction={{ default: 'column' }}>
-        <h1 className="pf-v6-c-title pf-m-2xl">{title}</h1>
+        <Title headingLevel="h1">{title}</Title>
         {validSupportedType ? (
           <>
             <div>

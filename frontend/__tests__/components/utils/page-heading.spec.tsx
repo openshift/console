@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { shallow, ShallowWrapper } from 'enzyme';
 
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import {
   PageHeading,
   PageHeadingProps,
@@ -62,7 +63,7 @@ describe(PageHeading.displayName, () => {
     const title = <span>My Custom Title</span>;
     wrapper.setProps({ title });
 
-    expect(wrapper.find('.co-m-pane__heading').contains(title)).toBe(true);
+    expect(wrapper.find(PrimaryHeading).contains(title)).toBe(true);
   });
 
   it('renders breadcrumbs if given `breadcrumbsFor` function', () => {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Stack, StackItem, Title } from '@patternfly/react-core';
 import { FormikErrors, useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import CloseButton from '@console/shared/src/components/close-button';
@@ -95,7 +95,9 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
         {params.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Parameters')}</h2>
+            <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+              {t('pipelines-plugin~Parameters')}
+            </Title>
             <p className="co-help-text opp-task-sidebar__paragraph">
               <Trans ns="pipelines-plugin">
                 Use this format when you reference variables in this form:{' '}
@@ -120,7 +122,9 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
         )}
         {workspaces.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Workspaces')}</h2>
+            <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+              {t('pipelines-plugin~Workspaces')}
+            </Title>
             {workspaces.map((workspace) => {
               const taskWorkspaces: TektonWorkspace[] = thisTask.workspaces || [];
               const workspaceIdx = safeIndex(
@@ -143,13 +147,17 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
         {inputResources.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Input resources')}</h2>
+            <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+              {t('pipelines-plugin~Input resources')}
+            </Title>
             {inputResources.map(renderResource('inputs'))}
           </div>
         )}
         {outputResources.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Output resources')}</h2>
+            <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+              {t('pipelines-plugin~Output resources')}
+            </Title>
             {outputResources.map(renderResource('outputs'))}
           </div>
         )}

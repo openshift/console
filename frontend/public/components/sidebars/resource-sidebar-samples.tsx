@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button, Level, LevelItem } from '@patternfly/react-core';
+import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
 import MonacoEditor from 'react-monaco-editor';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
@@ -23,9 +23,9 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   const { t } = useTranslation();
   return (
     <li className="co-resource-sidebar-item">
-      <h3 className="h4">
+      <Title headingLevel="h3" className="pf-v6-u-mb-sm">
         <span className="text-uppercase">{highlightText}</span> {title}
-      </h3>
+      </Title>
       {img && <img src={img} className="co-resource-sidebar-item__img img-responsive" />}
       <p>{description}</p>
       <Level>
@@ -124,9 +124,9 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
 
   return (
     <li className="co-resource-sidebar-item">
-      <h3 className="h4">
+      <Title headingLevel="h3" className="pf-v6-u-mb-sm">
         <span className="text-uppercase">{highlightText}</span> {title}
-      </h3>
+      </Title>
       <p>{description}</p>
       <Level>
         <LevelItem>

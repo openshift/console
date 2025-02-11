@@ -12,6 +12,7 @@ import {
   PrometheusGraphLink,
 } from '@console/internal/components/graphs/prometheus-graph';
 import store from '@console/internal/redux';
+import { Title } from '@patternfly/react-core';
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn(),
@@ -22,7 +23,13 @@ const useActivePerspectiveMock = useActivePerspective as jest.Mock;
 describe('<PrometheusGraph />', () => {
   it('should render a title', () => {
     const wrapper = shallow(<PrometheusGraph title="Test" />);
-    expect(wrapper.contains(<h5 className="graph-title">Test</h5>)).toBe(true);
+    expect(
+      wrapper.contains(
+        <Title headingLevel="h5" className="graph-title">
+          Test
+        </Title>,
+      ),
+    ).toBe(true);
   });
 
   it('should not render a title', () => {

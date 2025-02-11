@@ -13,6 +13,7 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { getSuggestedName } from '@console/dev-console/src/utils/imagestream-utils';
 import { AsyncComponent } from '@console/internal/components/utils';
 import { InputField, TextColumnField } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { EventSources } from '../import-types';
 
 const templateSpec = `formData.data.${EventSources.ContainerSource}.template.spec.containers[0]`;
@@ -58,7 +59,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
   );
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
-      <h3 className="co-section-heading-tertiary">{t('knative-plugin~Container')}</h3>
+      <TertiaryHeading>{t('knative-plugin~Container')}</TertiaryHeading>
       <InputField
         data-test-id="container-image-field"
         type={TextInputTypes.text}

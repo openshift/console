@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Humanize, TopConsumerPopoverProps, LIMIT_STATE } from '@console/dynamic-plugin-sdk';
@@ -120,9 +120,9 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       <div className="co-utilization-card__item" data-test-id="utilization-item">
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section-multiline">
-            <h4 className="pf-v6-c-title pf-m-md" data-test="utilization-item-title">
+            <Title headingLevel="h4" data-test="utilization-item-title">
               {title}
-            </h4>
+            </Title>
             {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
               <div className="text-secondary">{t('console-shared~Not available')}</div>
             ) : (
@@ -255,9 +255,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             className="co-utilization-card__item-section"
           >
             <FlexItem>
-              <h4 className="pf-v6-c-title pf-m-md" data-test="utilization-item-title">
+              <Title headingLevel="h4" data-test="utilization-item-title">
                 {title}
-              </h4>
+              </Title>
             </FlexItem>
             <FlexItem>
               {error || (!isLoading && !utilizationData?.length) ? (

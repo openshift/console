@@ -5,6 +5,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { GreenCheckCircleIcon } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
 import { HealthCheckContext } from './health-checks-utils';
@@ -111,7 +112,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
 
   return (
     <>
-      <div className="co-section-heading-tertiary odc-heath-check-probe__formTitle">
+      <TertiaryHeading className="odc-heath-check-probe__formTitle">
         {getHealthChecksProbeConfig(probeType, t).formTitle}
         {healthChecks?.[probeType]?.enabled && (
           <Button
@@ -123,7 +124,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
             {`${viewOnly ? t('devconsole~View') : t('devconsole~Edit')} ${t('devconsole~Probe')}`}
           </Button>
         )}
-      </div>
+      </TertiaryHeading>
       <div className="pf-v6-c-form__helper-text">
         {getHealthChecksProbeConfig(probeType, t).formSubtitle}
       </div>

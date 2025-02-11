@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, StackItem, Split, SplitItem, Card, CardBody } from '@patternfly/react-core';
+import { Stack, StackItem, Split, SplitItem, Card, CardBody, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { GitOpsEnvironmentService, GitOpsHealthResources } from '../utils/gitops-types';
@@ -73,7 +73,12 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({
     <>
       <StackItem className="gop-gitops-resources">
         <Card>
-          <h3 className="gop-gitops-resources__title co-nowrap">{t('gitops-plugin~Resources')}</h3>
+          <Title
+            headingLevel="h3"
+            className="pf-v6-u-mb-sm gop-gitops-resources__title pf-v6-u-text-nowrap"
+          >
+            {t('gitops-plugin~Resources')}
+          </Title>
           <CardBody>
             <Split hasGutter>
               <span className="gop-gitops-resources__list">

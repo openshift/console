@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared';
 import { PipelineWorkspaces } from '../detail-page-tabs';
@@ -48,10 +48,10 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       </div>
 
       <div>
-        <h2>
+        <Title headingLevel="h2" className="pf-v6-u-mb-sm">
           {t('pipelines-plugin~Tasks')}
           <span className="pf-v6-c-form__label-required">*</span>
-        </h2>
+        </Title>
         <PipelineBuilderVisualization
           onTaskSelection={onTaskSelection}
           onUpdateTasks={onUpdateTasks}
@@ -62,7 +62,9 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       </div>
 
       <div>
-        <h2>{t('pipelines-plugin~Parameters')}</h2>
+        <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+          {t('pipelines-plugin~Parameters')}
+        </Title>
         <PipelineParameters
           fieldName="formData.params"
           addLabel={t('pipelines-plugin~Add parameter')}
@@ -78,7 +80,9 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       </div>
 
       <div>
-        <h2>{t('pipelines-plugin~Workspaces')}</h2>
+        <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+          {t('pipelines-plugin~Workspaces')}
+        </Title>
         <PipelineWorkspaces
           addLabel={t('pipelines-plugin~Add workspace')}
           fieldName="formData.workspaces"

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TimesIcon } from '@patternfly/react-icons';
+import { Title } from '@patternfly/react-core';
 
 const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
   count,
@@ -11,9 +12,9 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
   return (
     <div className="pf-v6-c-notification-drawer">
       <div className="pf-v6-c-notification-drawer__header">
-        <h1 className="pf-v6-c-notification-drawer__header-title">
+        <Title headingLevel="h1" className="pf-v6-c-notification-drawer__header-title">
           {t('notification-drawer~Notifications')}
-        </h1>
+        </Title>
         {count && (
           <span className="pf-v6-c-notification-drawer__header-status">
             {t('notification-drawer~{{count}} unread', { count })}

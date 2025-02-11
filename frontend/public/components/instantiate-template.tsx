@@ -25,6 +25,7 @@ import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
   getImageForIconClass,
@@ -105,7 +106,9 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
           </span>
         </div>
         <div>
-          <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
+          <SecondaryHeading className="co-catalog-item-details__name">
+            {displayName}
+          </SecondaryHeading>
           {!_.isEmpty(tags) && (
             <p className="co-catalog-item-details__tags">
               {_.map(tags, (tag, i) => (

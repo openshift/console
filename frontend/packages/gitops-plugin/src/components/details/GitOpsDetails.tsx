@@ -19,6 +19,7 @@ import { ExternalLink, Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { GitOpsEnvironment } from '../utils/gitops-types';
 import ArgoCdLink from './ArgoCdLink';
 import GitOpsRenderStatusLabel from './GitOpsRenderStatusLabel';
@@ -83,11 +84,11 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestUR
                   <CardTitle className="gop-gitops-details__env-section__header">
                     <Stack>
                       <StackItem>
-                        <h2 className="co-section-heading co-truncate co-nowrap gop-gitops-details__env-section__app-name">
+                        <SecondaryHeading className="pf-v6-c-truncate pf-v6-u-text-nowrap gop-gitops-details__env-section__app-name">
                           <Tooltip content={env.environment}>
                             <span>{env.environment}</span>
                           </Tooltip>
-                        </h2>
+                        </SecondaryHeading>
                       </StackItem>
                       <StackItem className="co-truncate co-nowrap">
                         {env.cluster ? (

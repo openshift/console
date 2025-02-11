@@ -11,6 +11,7 @@ import i18next from 'i18next';
 
 import { Status } from '@console/shared';
 import { FLAGS } from '@console/shared/src/constants';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
   CopyToClipboard,
@@ -392,7 +393,7 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
               )}
             </DetailsItem>
           </dl>
-          <h3 className="co-section-heading-secondary">{t('public~Conditions')}</h3>
+          <TertiaryHeading increasedMargins>{t('public~Conditions')}</TertiaryHeading>
           <Conditions conditions={ingress.conditions} />
         </div>
       ))}

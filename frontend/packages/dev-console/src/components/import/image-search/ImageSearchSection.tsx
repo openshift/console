@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { RadioGroupField } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import { hasSampleQueryParameter } from '../../../utils/samples';
 import FormSection from '../section/FormSection';
@@ -39,10 +40,10 @@ const ImageSearchSection: React.FC<{ disabled?: boolean }> = ({ disabled = false
       subTitle={t('devconsole~Deploy an existing Image from an Image Stream or Image registry.')}
     >
       {!_.isEmpty(values.containers) && (
-        <div className="co-section-heading-tertiary">
+        <TertiaryHeading>
           {t('devconsole~Container')}
           <ResourceLink kind="Container" name={values.containers[0].name} linkTo={false} />
-        </div>
+        </TertiaryHeading>
       )}
       {showSample ? (
         <ImageSearch />

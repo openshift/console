@@ -9,7 +9,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { history, Timestamp, ExternalLink } from '@console/internal/components/utils';
-import { Button, ButtonVariant } from '@patternfly/react-core';
+import { Button, ButtonVariant, Title } from '@patternfly/react-core';
 
 // eslint-disable-next-line no-shadow
 export enum NotificationTypes {
@@ -116,10 +116,10 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
         <span className="pf-v6-c-notification-drawer__list-item-header-icon">
           <NotificationIcon type={type} />
         </span>
-        <h4 className="pf-v6-c-notification-drawer__list-item-header-title">
+        <Title headingLevel="h4" className="pf-v6-c-notification-drawer__list-item-header-title">
           <span className="pf-v6-screen-reader">{notificationTypeString(type)}</span>
           {title}
-        </h4>
+        </Title>
         {actionText && (actionPath || alertAction || actionExternalLinkURL) && (
           <NotificationAction
             text={actionText}

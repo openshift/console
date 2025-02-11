@@ -5,7 +5,7 @@ import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { Divider, Popper } from '@patternfly/react-core';
+import { Divider, Popper, Title } from '@patternfly/react-core';
 import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
@@ -499,7 +499,11 @@ class Dropdown_ extends DropdownMixin {
                 <Divider />
               </>
             )}
-            {_.size(bookMarkRows) ? <h1 className="pf-v6-c-menu__group-title">Favorites</h1> : null}
+            {_.size(bookMarkRows) ? (
+              <Title headingLevel="h1" className="pf-v6-c-menu__group-title">
+                Favorites
+              </Title>
+            ) : null}
             <ul
               role="listbox"
               ref={this.dropdownList}

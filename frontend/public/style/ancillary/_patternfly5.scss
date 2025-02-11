@@ -9,68 +9,7 @@
   --pf-v5-global--FontSize--sm: 13px;
 }
 
-// Assigning PF component specific variables globally so we can use
-:root {
-  --pf-v6-c-code-block--BackgroundColor: var(--pf-v6-c-code-block--BackgroundColor);
-  --pf-v6-c-code-block__pre--FontFamily: var(--pf-v6-c-code-block__pre--FontFamily);
-  --pf-v6-c-code-block__pre--FontSize: var(--pf-t--global--font--size--sm);
-  --pf-v6-c-content--MarginBottom: var(--pf-t--global--spacer--md);
-}
-:where(:not([class*='pf-v6-c-'])) {
-  @at-root h1#{&} {
-    font-size: var(--pf-v6-c-content--h1--FontSize);
-    font-family: var(--pf-v6-c-content--heading--FontFamily);
-    font-weight: var(--pf-v6-c-content--h1--FontWeight);
-    line-height: var(--pf-v6-c-content--h1--LineHeight);
-    margin-bottom: var(--pf-v6-c-content--h1--MarginBlockEnd);
-    word-break: break-word;
-  }
-
-  @at-root h2#{&} {
-    font-size: var(--pf-v6-c-content--h2--FontSize);
-    font-family: var(--pf-v6-c-content--heading--FontFamily);
-    font-weight: var(--pf-v6-c-content--h2--FontWeight);
-    line-height: var(--pf-v6-c-content--h2--LineHeight);
-    margin-bottom: var(--pf-v6-c-content--h2--MarginBlockEnd);
-    word-break: break-word;
-  }
-
-  @at-root h3#{&} {
-    font-size: var(--pf-v6-c-content--h3--FontSize);
-    font-family: var(--pf-v6-c-content--heading--FontFamily);
-    font-weight: var(--pf-v6-c-content--h3--FontWeight);
-    line-height: var(--pf-v6-c-content--h3--LineHeight);
-    margin-bottom: var(--pf-v6-c-content--h3--MarginBlockEnd);
-    word-break: break-word;
-  }
-
-  @at-root h4#{&} {
-    font-size: var(--pf-v6-c-content--h4--FontSize);
-    font-family: var(--pf-v6-c-content--heading--FontFamily);
-    font-weight: var(--pf-v6-c-content--h4--FontWeight);
-    line-height: var(--pf-v6-c-content--h4--LineHeight);
-    margin-bottom: var(--pf-v6-c-content--h4--MarginBlockEnd);
-    word-break: break-word;
-  }
-
-  @at-root h5#{&} {
-    font-size: var(--pf-v6-c-content--h5--FontSize);
-    font-family: var(--pf-v6-c-content--heading--FontFamily);
-    font-weight: var(--pf-v6-c-content--h5--FontWeight);
-    line-height: var(--pf-v6-c-content--h5--LineHeight);
-    margin-bottom: var(--pf-v6-c-content--h5--MarginBlockEnd);
-    word-break: break-word;
-  }
-
-  @at-root h6#{&} {
-    font-size: var(--pf-v6-c-content--h6--FontSize);
-    font-family: var(--pf-v6-c-content--heading--FontFamily);
-    font-weight: var(--pf-v6-c-content--h6--FontWeight);
-    line-height: var(--pf-v6-c-content--h6--LineHeight);
-    margin-bottom: var(--pf-v6-c-content--h6--MarginBlockEnd);
-    word-break: break-word;
-  }
-
+:where(:not([class*='pf-v5-c-'])) {
   @at-root button#{&} {
     font-family: var(--pf-t--global--font--family--body);
   }
