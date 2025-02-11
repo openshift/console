@@ -16,11 +16,13 @@
   ); // matches --pf-v6-c-helper-text__item-text--Color and picks up dark theme variable
 }
 
-label {
-  display: inline-block;
-  max-width: 100%;
-  margin-bottom: 5px;
-  font-weight: bold;
+:where(:not([class*='pf-v6-c-'])) {
+  @at-root label#{&} {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
 }
 
 //
