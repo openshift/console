@@ -3,8 +3,8 @@
   margin-bottom: var(--pf-t--global--spacer--lg);
 }
 
-.details-item__label {
-  font-weight: bold;
+.details-item__edit-button--within-dt {
+  font-weight: var(--pf-t--global--font--weight--body--default);
 }
 
 .details-item__popover-button {
