@@ -61,11 +61,7 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 
 const config: Configuration = {
   entry: {
-    main: [
-      './public/components/app.jsx',
-      'monaco-editor/esm/vs/editor/editor.worker.js',
-      '/node_modules/@patternfly-5/patternfly/patternfly.scss',
-    ],
+    main: ['./public/components/app.jsx', '/node_modules/@patternfly-5/patternfly/patternfly.scss'],
   },
   cache: {
     type: 'filesystem',

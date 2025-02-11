@@ -4,6 +4,8 @@
   height: 100%;
   flex: 1;
   flex-direction: column;
+  padding-top: $pf-v6-global-gutter;
+
   @media (min-width: $pf-v6-global--breakpoint--md) {
     margin-left: $pf-v6-global-gutter;
     margin-right: $pf-v6-global-gutter;

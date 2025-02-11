@@ -5,7 +5,11 @@ import * as yaml from 'yaml-ast-parser';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 
-export const defaultEditorOptions = { readOnly: false, scrollBeyondLastLine: false };
+export const defaultEditorOptions: monaco.editor.IEditorOptions = {
+  readOnly: false,
+  scrollBeyondLastLine: false,
+  automaticLayout: true,
+};
 
 const findManagedMetadata = (model: monaco.editor.ITextModel) => {
   const modelValue = model.getValue();
@@ -66,7 +70,6 @@ export const fold = (
 
 /**
  * Register auto fold for the editor
- * This should probably be a React hook
  */
 export const registerAutoFold = (
   editor: monaco.editor.IStandaloneCodeEditor,
@@ -90,21 +93,17 @@ export const registerAutoFold = (
   });
 };
 
-export const registerYAMLinMonaco = (
-  editor: monaco.editor.IStandaloneCodeEditor,
-  monacoInstance: typeof monaco,
-  alreadyInUse: boolean = false,
-) => {
+export const registerYAMLinMonaco = (monacoInstance: typeof monaco) => {
   /**
    * This exists because we enabled globalAPI in the webpack config. This means that the
    * the monaco instance may have already been setup with the YAML language features.
-   * Otherwise, you would register all the features again, getting duplicate results.
+   * Otherwise, we might register all the features again, getting duplicate results.
    *
    * Monaco does not provide any APIs for unregistering or checking if the features have already
    * been registered for a language.
    *
    * We check that > 1 YAML language exists because one is the default and
-   * the other is the initial register that setups our features.
+   * the other is the language server that we register.
    */
   if (monacoInstance.languages.getLanguages().filter((x) => x.id === 'yaml').length <= 1) {
     // Prepare the schema
@@ -128,9 +127,5 @@ export const registerYAMLinMonaco = (
       hover: true,
       completion: true,
     });
-  }
-
-  if (!alreadyInUse) {
-    registerAutoFold(editor);
   }
 };

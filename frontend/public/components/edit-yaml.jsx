@@ -10,7 +10,6 @@ import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { ActionGroup, Alert, Button, Switch } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
-import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import {
@@ -743,17 +742,18 @@ const EditYAMLInner = (props) => {
   const definition = model ? definitionFor(model) : { properties: [] };
   const showSchema = definition && !_.isEmpty(definition.properties);
   const hasSidebarContent = showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
-  const sidebarLink =
-    !showSidebar && hasSidebarContent ? (
-      <Button
-        icon={<InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />}
-        variant="link"
-        onClick={toggleSidebar}
-      >
-        {t('public~View sidebar')}
-      </Button>
-    ) : null;
-  const tooltipCheckBox = (
+  const sidebarSwitch = hasSidebarContent && (
+    <Switch
+      label={t('public~Sidebar')}
+      id="showSidebar"
+      isChecked={showSidebar}
+      data-checked-state={showSidebar}
+      onChange={toggleSidebar}
+      hasCheckIcon
+    />
+  );
+
+  const tooltipSwitch = (
     <Switch
       label={t('public~Tooltips')}
       id="showTooltips"
@@ -802,11 +802,10 @@ const EditYAMLInner = (props) => {
                 options={options}
                 showShortcuts={!genericYAML}
                 minHeight="100px"
-                toolbarLinks={sidebarLink ? [tooltipCheckBox, sidebarLink] : [tooltipCheckBox]}
+                toolbarLinks={sidebarSwitch ? [tooltipSwitch, sidebarSwitch] : [tooltipSwitch]}
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
                 onEditorDidMount={() => setEditorMounted(true)}
-                isLanguageLabelVisible
               />
               <div className="yaml-editor__buttons" ref={buttons}>
                 {customAlerts}

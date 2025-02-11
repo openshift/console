@@ -12,33 +12,43 @@
 }
 
 .ocs-yaml-editor {
-  // makes automaticLayout work properly
+  /* Makes automaticLayout work properly. note that this breaks height="sizeToFit" */
   .monaco-editor {
     position: absolute !important;
   }
 
-  .pf-v6-c-code-editor__controls, .ocs-yaml-editor-toolbar {
-    // needed to get the CodeEditorToolbar to place buttons on the right side
-    width: 100%;
-    height: 100% !important;
-  }
+  /* Hide CodeEditor toolbar on mobile */
+  @media (max-width: $screen-sm-max) {
+    .pf-v6-c-code-editor__header {
+      display: none;
 
-  .ocs-yaml-editor-toolbar {
-    align-items: center;
-
-    .ocs-yaml-editor-toolbar__link {
-      @media (max-width: $screen-sm-max) {
-        display: none;
+      + .pf-v6-c-code-editor__main {
+        border-block-start-width: var(--pf-t--global--border--width--box--default);
       }
     }
+  }
 
-    .ocs-yaml-editor-toolbar__shortcuts {
-      padding: var(--pf-t--global--spacer--md) var(--pf-v6-global-gutter);
+  /* Needed to get the CodeEditorToolbar to place buttons on the right side */
+  .pf-v6-c-code-editor__controls, .ocs-yaml-editor-toolbar {
+    width: 100%;
+    height: 100% !important;
+    align-items: center;
+  }
 
-      .ocs-yaml-editor-shortcut__text {
-        color: var(--pf-t--global--text--color--subtle);
-        margin-left: var(--pf-t--global--spacer--sm);
-      }
+  /* Dividers in toolbar */
+  .ocs-yaml-editor-toolbar__link:not(:last-child) {
+    border-inline-end: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--border--color--default);
+    margin-inline-end: var(--pf-t--global--spacer--sm);
+    padding-inline-end: var(--pf-t--global--spacer--sm);
+  }
+
+  /* Accessibility shortcuts hint styling */
+  .ocs-yaml-editor-toolbar__shortcuts {
+    padding: var(--pf-t--global--spacer--md) var(--pf-v6-global-gutter);
+
+    .ocs-yaml-editor-shortcut__text {
+      color: var(--pf-t--global--text--color--subtle);
+      margin-inline-start: var(--pf-t--global--spacer--sm);
     }
   }
 }

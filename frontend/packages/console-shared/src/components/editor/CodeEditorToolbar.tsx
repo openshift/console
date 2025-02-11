@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem, Button, Divider } from '@patternfly/react-core';
+import { Flex, FlexItem, Button } from '@patternfly/react-core';
 import { MagicIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -44,13 +44,6 @@ const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ showShortcuts, to
           toolbarLinks.map((link, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <div key={`${index}`} className="ocs-yaml-editor-toolbar__link">
-              {(showShortcuts || index > 0) && link ? (
-                <Divider
-                  orientation={{
-                    default: 'vertical',
-                  }}
-                />
-              ) : null}
               {link}
             </div>
           ))}

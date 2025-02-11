@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { CodeEditor, ChangeHandler, Language } from '@patternfly/react-code-editor';
+import { ChangeHandler, Language } from '@patternfly/react-code-editor';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import type * as Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
-import { useConsoleMonacoTheme } from '@console/shared/src/components/editor/theme';
+import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 
 type EditorFieldProps = {
   name: string;
@@ -28,8 +28,6 @@ const EditorField: React.FC<EditorFieldProps> = ({
 }) => {
   const { getFieldMeta, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { error, value } = getFieldMeta<string>(name);
-  const [monaco, setMonaco] = React.useState<typeof Monaco | null>(null);
-  useConsoleMonacoTheme(monaco?.editor);
 
   const debouncedOnChange = useDebounceCallback<ChangeHandler>((newValue, event) => {
     if (onChange) {
@@ -41,15 +39,16 @@ const EditorField: React.FC<EditorFieldProps> = ({
 
   return (
     <FormGroup fieldId="" label={label} isRequired={required}>
-      <CodeEditor
-        value={value}
+      <BasicCodeEditor
+        code={value}
         onChange={debouncedOnChange}
-        onEditorDidMount={(_e, m) => setMonaco(m)}
-        isReadOnly={false}
-        isMinimapVisible={false}
+        isFullHeight={false}
         height="sizeToFit"
         language={otherProps?.language}
-        options={otherProps?.options}
+        options={{
+          minimap: { enabled: false },
+          ...otherProps?.options,
+        }}
       />
 
       <FormHelperText>

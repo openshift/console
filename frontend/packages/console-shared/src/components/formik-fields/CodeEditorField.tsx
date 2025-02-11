@@ -32,7 +32,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   schema,
   showSamples,
   showShortcuts,
-  showMiniMap,
+  isMinimapVisible,
   minHeight,
   onSave,
   language,
@@ -90,7 +90,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
           onChange={(yaml: string) => setFieldValue(name, yaml)}
           onSave={onSave}
           showShortcuts={showShortcuts}
-          showMiniMap={showMiniMap}
+          isMinimapVisible={isMinimapVisible}
           language={language}
           toolbarLinks={
             !sidebarOpen &&

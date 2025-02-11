@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { QuickStartContextValues } from '@patternfly/quickstarts';
-import { Language } from '@patternfly/react-code-editor';
+import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
@@ -635,20 +635,20 @@ export type UserInfo = {
   extra?: object;
 };
 
-export type CodeEditorProps = {
+// Omit the ref as we have our own ref type, which is completely different
+export type BaseCodeEditorProps = Partial<Omit<PfCodeEditorProps, 'ref'>>;
+
+export type CodeEditorProps = Omit<BaseCodeEditorProps, 'code'> & {
+  /** Code displayed in code editor. */
   value?: string;
-  language?: Language;
-  options?: object;
-  minHeight?: string | number;
+  /** Minimum editor height in valid CSS height values. */
+  minHeight?: CSSStyleDeclaration['minHeight'];
+  /** Whether to show a toolbar with shortcuts on top of the editor. */
   showShortcuts?: boolean;
-  showMiniMap?: boolean;
+  /** Toolbar links section on top of the editor */
   toolbarLinks?: React.ReactNodeArray;
-  onChange?: (newValue, event) => void;
+  /** Callback that is run when CTRL / CMD + S is pressed */
   onSave?: () => void;
-  onEditorDidMount?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
-  isDownloadEnabled?: boolean;
-  isCopyEnabled?: boolean;
-  isLanguageLabelVisible?: boolean;
 };
 
 export type CodeEditorRef = {
