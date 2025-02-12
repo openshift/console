@@ -8,7 +8,8 @@
     "exposedModules": {
       "ExtensionCatalog": "src/components/ExtensionCatalog.tsx",
       "useExtensionCatalogDatabaseContextValues": "src/contexts/useExtensionCatalogDatabaseContextValues.ts",
-      "ExtensionCatalogDatabaseContextProvider": "src/contexts/ExtensionCatalogDatabaseContext.ts"
+      "ExtensionCatalogDatabaseContextProvider": "src/contexts/ExtensionCatalogDatabaseContext.ts",
+      "useExtensionCatalogItems": "src/hooks/useExtensionCatalogItems.ts"
     }
   }
 }
