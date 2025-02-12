@@ -3,9 +3,8 @@
  */
 import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu } from '@console/internal/components/utils';
+import { ActionsMenu, SimpleTabNav } from '@console/internal/components/utils';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { edgeActions } from '../../actions/edgeActions';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
@@ -44,19 +43,14 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
           </div>
         </PrimaryHeading>
       </div>
-      <ul
-        className={classNames(
-          'co-m-horizontal-nav__menu',
-          'co-m-horizontal-nav__menu--within-sidebar',
-          'co-m-horizontal-nav__menu--within-overview-sidebar',
-          'odc-application-resource-tab',
-        )}
-      >
-        <li className="co-m-horizontal-nav__menu-item">
-          <button type="button">{t('topology~Resources')}</button>
-        </li>
-      </ul>
-      <TopologyEdgeResourcesPanel edge={edge} />
+      <SimpleTabNav
+        tabs={[
+          {
+            name: t('topology~Resources'),
+            component: <TopologyEdgeResourcesPanel edge={edge} />,
+          },
+        ]}
+      />
     </div>
   );
 };
