@@ -46,7 +46,7 @@ const injestClusterCatalog = async (
   const catalogName = catalog.metadata.name;
   console.log('[Extension Catalog Database] Injesting FBC from ClusterCatalog', catalogName);
   return fetchAndProcessJSONLines<FileBasedCatalogItem>(
-    `/api/catalogd/catalogs/${catalogName}/all.json`,
+    `/api/catalogd/catalogs/${catalogName}/api/v1/all`,
     { 'Content-Type': 'application/jsonl' },
   )
     .then((reader) => streamFBCObjectsToIndexedDB(db, catalogName, reader))

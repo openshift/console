@@ -3,8 +3,8 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
-        "group": "catalogd.operatorframework.io",
-        "version": "v1alpha1",
+        "group": "olm.operatorframework.io",
+        "version": "v1",
         "kind": "ClusterCatalog"
       },
       "flag": "CLUSTER_CATALOG_API"
@@ -15,7 +15,7 @@
     "properties": {
       "model": {
         "group": "olm.operatorframework.io",
-        "version": "v1alpha1",
+        "version": "v1",
         "kind": "ClusterExtension"
       },
       "flag": "CLUSTER_EXTENSION_API"
@@ -30,7 +30,7 @@
       "insertAfter": "usermanagement"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // Disable per https://issues.redhat.com/browse/OCPBUGS-41637
+      "required": ["CLUSTER_CATALOG_API"]
     }
   },
   {
@@ -43,7 +43,7 @@
       "href": "/ecosystem/catalog"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // Disable per https://issues.redhat.com/browse/OCPBUGS-41637
+      "required": ["CLUSTER_CATALOG_API"]
     }
   },
   {
