@@ -6,9 +6,10 @@ import { navigateToAdminMenu } from '../app';
 const dataTestIdPref: string = 'data-test-id';
 
 export function performResourceSearching(resourceName: string) {
-  cy.get('div').contains('Resources').click();
-  cy.get('input[placeholder="Select Resource"]').clear().type(resourceName);
-  cy.get(`input[id$=${resourceName}]`).click();
+  cy.get('[aria-label="Type to filter"]').click();
+
+  cy.get('input[placeholder="Resources"]').clear().type(resourceName);
+  cy.get(`label[id$="${resourceName}"]`).click();
 }
 
 export const searchResource = {
@@ -26,6 +27,7 @@ export const searchResource = {
     });
     cy.get(adminNavigationMenuPO.home.search).click();
     performResourceSearching(resourceName);
+    cy.byLegacyTestID('close-icon').should('be.visible').click({ force: true });
   },
 
   verifyItemInSearchResults: (item: string) => {
@@ -37,6 +39,6 @@ export const searchResource = {
   },
 
   selectSearchedItem: (searchedItem: string) => {
-    cy.get(`[${dataTestIdPref}^=${searchedItem}]`).should('be.visible').click();
+    cy.get(`[${dataTestIdPref}^=${searchedItem}]`).should('be.visible').click({ force: true });
   },
 };
