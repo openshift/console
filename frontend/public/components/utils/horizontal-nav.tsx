@@ -423,8 +423,6 @@ export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
 
 export type NavBarProps = {
   pages: Page[];
-  baseURL?: string;
-  basePath?: string;
 };
 
 export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resource'> & {
