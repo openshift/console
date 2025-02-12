@@ -144,27 +144,47 @@ const parseValidSubscriptionAnnotation: AnnotationParser<string[]> = (annotation
     ...options,
   }) ?? [];
 
-export const getValidSubscription: AnnotationParser<[string[], ValidSubscriptionValue[]]> = (
+export const getValidSubscription: AnnotationParser<[string[], string[]]> = (
   annotations,
   options,
 ) => {
-  const validSubscription = parseValidSubscriptionAnnotation(annotations, options);
-  const validSubscriptionFilters = validSubscription.reduce<ValidSubscriptionValue[]>(
-    (acc, value) => {
-      const filterValue =
-        {
-          [ValidSubscriptionValue.OpenShiftContainerPlatform]:
-            ValidSubscriptionValue.OpenShiftContainerPlatform,
-          [ValidSubscriptionValue.OpenShiftKubernetesEngine]:
+  const validSubscriptionMap = parseValidSubscriptionAnnotation(annotations, options).reduce<{
+    [key: string]: string[];
+  }>((acc, value) => {
+    switch (value) {
+      case ValidSubscriptionValue.OpenShiftContainerPlatform:
+      case ValidSubscriptionValue.OpenShiftPlatformPlus:
+        return {
+          ...acc,
+          [value]: [value],
+        };
+      case ValidSubscriptionValue.OpenShiftKubernetesEngine:
+      case ValidSubscriptionValue.OpenShiftVirtualizationEngine:
+        return {
+          ...acc,
+          [ValidSubscriptionValue.OpenShiftKubernetesEngine]: [
             ValidSubscriptionValue.OpenShiftKubernetesEngine,
-          [ValidSubscriptionValue.OpenShiftPlatformPlus]:
-            ValidSubscriptionValue.OpenShiftPlatformPlus,
-        }[value] ?? ValidSubscriptionValue.RequiresSeparateSubscription;
-      return acc.includes(filterValue) ? acc : [...acc, filterValue];
-    },
+          ],
+          [ValidSubscriptionValue.OpenShiftVirtualizationEngine]: [
+            ValidSubscriptionValue.OpenShiftVirtualizationEngine,
+          ],
+        };
+      default:
+        return {
+          ...acc,
+          [ValidSubscriptionValue.RequiresSeparateSubscription]: [
+            ...(acc?.[ValidSubscriptionValue.RequiresSeparateSubscription] ?? []),
+            value,
+          ],
+        };
+    }
+  }, {});
+
+  const validSubscriptions = Object.values(validSubscriptionMap).reduce(
+    (acc, subscriptions) => [...acc, ...subscriptions],
     [],
   );
-  return [validSubscription, validSubscriptionFilters];
+  return [validSubscriptions, Object.keys(validSubscriptionMap)];
 };
 
 const parseInfrastructureFeaturesAnnotation: AnnotationParser<string[]> = (annotations, options) =>
