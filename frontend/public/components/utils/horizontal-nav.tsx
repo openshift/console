@@ -377,7 +377,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
 
   return (
     <div className={classNames('co-m-page__body', props.className)}>
-      <div className="co-m-horizontal-nav">{!props.hideNav && <NavBar pages={pages} />}</div>
+      {!props.hideNav && <NavBar pages={pages} />}
       {renderContent(routes)}
     </div>
   );
