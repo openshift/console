@@ -5,7 +5,14 @@ import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { Link, Routes, Route, useParams, Navigate, useLocation } from 'react-router-dom-v5-compat';
+import {
+  Routes,
+  Route,
+  useParams,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom-v5-compat';
 import {
   HorizontalNavTab as DynamicResourceNavTab,
   isHorizontalNavTab as DynamicIsResourceNavTab,
@@ -14,6 +21,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
@@ -174,6 +182,7 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
   const { t } = useTranslation();
   const { telemetryPrefix, titlePrefix } = React.useContext(PageTitleContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const sliced = location.pathname.split('/');
   const lastElement = sliced.pop();
@@ -184,25 +193,30 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
   const baseURL = defaultPage ? location.pathname : sliced.join('/');
 
   const tabs = (
-    <>
+    <Tabs
+      activeKey={defaultPage ? '' : lastElement}
+      inset={{ default: 'insetNone', xl: 'insetSm' }}
+      component="nav"
+    >
       {pages.map(({ name, nameKey, href }) => {
-        const isURLMatch = defaultPage ? href === '' : lastElement === href;
+        const to = `${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`;
 
-        const klass = classNames('co-m-horizontal-nav__menu-item', {
-          'co-m-horizontal-nav-item--active': isURLMatch,
-        });
         return (
-          <li className={klass} key={href}>
-            <Link
-              to={`${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`}
-              data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
-            >
-              {nameKey ? t(nameKey) : name}
-            </Link>
-          </li>
+          <Tab
+            key={href}
+            eventKey={href}
+            href={to}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(to);
+            }}
+            data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
+            title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
+            aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
+          />
         );
       })}
-    </>
+    </Tabs>
   );
 
   const activePage = pages.find(({ href }) => {
@@ -219,7 +233,7 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
             : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`}
         </title>
       </Helmet>
-      <ul className="co-m-horizontal-nav__menu">{tabs}</ul>
+      {tabs}
     </>
   );
 };
