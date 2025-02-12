@@ -84,5 +84,48 @@
     "flags": {
       "required": ["CLUSTER_CATALOG_API"]
     }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "olm-extension-catalog",
+      "type": "ExtensionCatalogItem",
+      "provider": { "$codeRef": "useExtensionCatalogItems" }
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "ExtensionCatalogItem",
+      "title": "%olm-v1~Extension Catalog Items%",
+      "filters": [
+        {
+          "label": "%olm-v1~Source%",
+          "attribute": "source"
+        },
+        {
+          "label": "%olm-v1~Provider%",
+          "attribute": "provider"
+        },
+        {
+          "label": "%olm-v1~Capability level%",
+          "attribute": "capabilities"
+        },
+        {
+          "label": "%olm-v1~Infrastructure features%",
+          "attribute": "infrastructureFeatures"
+        },
+        {
+          "label": "%olm-v1~Valid subscription%",
+          "attribute": "validSubscription"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API"]
+    }
   }
 ]

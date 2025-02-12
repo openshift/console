@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavItem } from '@patternfly/react-core';
 
-export const ExternalLink = ({ href, name }: ExternalLinkProps): React.ReactElement => (
+export const ExternalNavLink = ({ href, name }: ExternalLinkProps): React.ReactElement => (
   <NavItem isActive={false}>
     <a
       className="pf-v6-c-nav__link"
