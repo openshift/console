@@ -34,6 +34,7 @@ export enum InfrastructureFeature {
 
 export enum ValidSubscriptionValue {
   OpenShiftKubernetesEngine = 'OpenShift Kubernetes Engine',
+  OpenShiftVirtualizationEngine = 'OpenShift Virtualization Engine',
   OpenShiftContainerPlatform = 'OpenShift Container Platform',
   OpenShiftPlatformPlus = 'OpenShift Platform Plus',
   RequiresSeparateSubscription = 'Requires separate subscription',
