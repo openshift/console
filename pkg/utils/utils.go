@@ -53,7 +53,7 @@ func RandomString(length int) (string, error) {
 
 // BuildCSPDirectives constructs a complete set of Content Security Policy (CSP) directives
 // based on the provided configuration and mode.
-func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, indexPageScriptNonce string) []string {
+func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, indexPageScriptNonce string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
 
 	// Initialize directives with default values
@@ -62,12 +62,12 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 	// default sources. Image source, font source, and style source only use 'self' and
 	directives := map[string][]string{
 		baseURI:        {self},
-		defaultSrc:     {self, consoleDot},
+		defaultSrc:     {self},
 		imgSrc:         {self},
 		fontSrc:        {self},
 		scriptSrc:      {self, consoleDot},
 		styleSrc:       {self},
-		connectSrc:     {self},
+		connectSrc:     {self, consoleDot},
 		frameSrc:       {none},
 		frameAncestors: {none},
 	}
@@ -98,7 +98,8 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 		case connectSrc:
 			directives[connectSrc] = append(directives[connectSrc], sources)
 		default:
-			klog.Infof("ignored unsupported CSP directive: %v", directive)
+			klog.Errorf("ignored unsupported CSP directive: %v", directive)
+			return nil, fmt.Errorf("unsupported CSP directive: %v", directive)
 		}
 	}
 
@@ -120,5 +121,5 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 	for _, directive := range directiveKeys {
 		cspDirectives = append(cspDirectives, fmt.Sprintf("%s %s", directive, strings.Join(directives[directive], " ")))
 	}
-	return cspDirectives
+	return cspDirectives, nil
 }

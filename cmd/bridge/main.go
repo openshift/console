@@ -129,7 +129,7 @@ func main() {
 	fContentSecurityPolicyEnabled := fs.Bool("content-security-policy-enabled", false, "Flag to indicate if Content Secrity Policy features should be enabled.")
 
 	consoleCSPFlags := serverconfig.MultiKeyValue{}
-	fs.Var(&consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value. Example: --content-security-policy ScriptSrc=\"https://example.com\" --content-security-policy FontSrc=\"https://example2.com https://example3.com\"")
+	fs.Var(&consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value. Example: --content-security-policy script-src=\"https://example.com\" --content-security-policy font-src=\"https://example2.com https://example3.com\"")
 
 	telemetryFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
