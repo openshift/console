@@ -7,61 +7,14 @@ import {
   skeletonCatalog,
   StatusBox,
 } from '@console/internal/components/utils';
-import {
-  InstalledState,
-  OperatorHubItem,
-} from '@console/operator-lifecycle-manager/src/components/operator-hub';
 import { OperatorHubTileView } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-items';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ExtensionCatalogItem } from '../database/types';
 import { useExtensionCatalogItems } from '../hooks/useExtensionCatalogItems';
-
-const mapExtensionItemsToLegacyOperatorHubItems = (packages: ExtensionCatalogItem[]) => {
-  return (packages ?? []).map<OperatorHubItem>(
-    ({
-      categories,
-      capabilities,
-      description,
-      displayName,
-      icon,
-      infrastructureFeatures,
-      keywords,
-      longDescription,
-      name,
-      provider,
-      source,
-      validSubscription,
-    }) => ({
-      authentication: null,
-      capabilityLevel: capabilities,
-      catalogSource: '',
-      catalogSourceNamespace: '',
-      categories,
-      cloudCredentials: null,
-      description: description || longDescription,
-      infraFeatures: infrastructureFeatures,
-      infrastructure: null,
-      installed: false,
-      installState: InstalledState.NotInstalled,
-      kind: null,
-      longDescription: longDescription || description,
-      name: displayName || name,
-      obj: null,
-      provider,
-      source,
-      tags: keywords,
-      uid: name,
-      validSubscription,
-      ...(icon ? { imgUrl: `data:${icon.mediatype};base64,${icon.base64data}` } : {}),
-    }),
-  );
-};
 
 const ExtensionCatalog = () => {
   const { t } = useTranslation('olm-v1');
-  const [extensionCatalogItems, loading, error] = useExtensionCatalogItems();
+  const [items, loading, error] = useExtensionCatalogItems();
   const [namespace] = useActiveNamespace();
-  const legacyOpertorHubItems = mapExtensionItemsToLegacyOperatorHubItems(extensionCatalogItems);
 
   return (
     <>
@@ -73,7 +26,7 @@ const ExtensionCatalog = () => {
           <PageHeading title={t('Extension Catalog')} />
           <StatusBox
             skeleton={skeletonCatalog}
-            data={legacyOpertorHubItems}
+            data={items}
             loaded={!loading}
             loadError={error}
             label={t('Extension Catalog items')}
@@ -85,7 +38,7 @@ const ExtensionCatalog = () => {
               </ConsoleEmptyState>
             )}
           >
-            <OperatorHubTileView items={legacyOpertorHubItems} namespace={namespace} />
+            <OperatorHubTileView items={items} namespace={namespace} />
           </StatusBox>
         </div>
       </div>

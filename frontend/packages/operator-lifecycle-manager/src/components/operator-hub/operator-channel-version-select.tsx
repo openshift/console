@@ -29,7 +29,7 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
 
   const getChannelLabel = (ch) => (
     <>
-      {ch.name}{' '}
+      {ch?.name || '-'}{' '}
       {ch?.deprecation && (
         <DeprecatedOperatorWarningIcon
           deprecation={ch?.deprecation}
@@ -111,7 +111,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
   const { t } = useTranslation();
   const { setDeprecatedVersion } = useDeprecatedOperatorWarnings();
   const [isVersionSelectOpen, setIsVersionSelectOpen] = React.useState(false);
-  const [defaultVersionForChannel, setDefaultVersionForChannel] = React.useState('');
+  const [defaultVersionForChannel, setDefaultVersionForChannel] = React.useState('-');
   const { channels = [] } = packageManifest?.status ?? {};
 
   React.useEffect(() => {
@@ -130,7 +130,7 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
 
   const getVersionLabel = (v) => (
     <>
-      {v?.version}{' '}
+      {v?.version ?? '-'}{' '}
       {v?.deprecation && (
         <DeprecatedOperatorWarningIcon
           deprecation={v?.deprecation}
