@@ -76,13 +76,22 @@ used with multiple versions of OpenShift Console but don't provide any backwards
 
 ## OpenShift Console Versions vs SDK Versions
 
-Not all NPM packages are fully compatible with all versions of the Console. This table will help align
-compatible versions of distributable SDK packages to versions of the OpenShift Console.
+Console plugin SDK packages follow a semver scheme where the major and minor version number indicates
+the earliest supported OCP Console version, and the patch version number indicates the release of that
+particular package.
+
+During development, we will publish prerelease versions of plugin SDK packages, e.g. `4.19.0-prerelease.1`.
+Once the given Console version is released (GA), we will publish corresponding plugin SDK packages without
+the prerelease tag, e.g. `4.19.0`.
+
+For older 1.x plugin SDK packages, refer to the following version compatibility table:
 
 | Console Version | SDK Package                                     | Last Package Version |
 | --------------- | ----------------------------------------------- | -------------------- |
-| 4.17.x          | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
-|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
+| 4.18.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.8.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.3.0                |
+| 4.17.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.6.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.2.0                |
 | 4.16.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
 |                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.1                |
 | 4.15.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
@@ -156,20 +165,20 @@ This section documents notable changes in the Console provided shared modules ac
 
 #### Console 4.19.x
 
+- Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
+  styles for compatibility with existing plugins.
 - Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
-- Removed PatternFly 4.x shared modules.
-- Upgraded PatternFly to v6.
-- Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve correct styling.
+- Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve
+  correct styling.
 
-### PatternFly dynamic modules
+### PatternFly 5+ dynamic modules
 
-Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package (1.0.0 and higher) include
-support for automatic detection and sharing of individual PatternFly 5.x dynamic modules.
+Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic
+detection and sharing of individual PatternFly 5+ dynamic modules.
 
-Plugins using PatternFly 5.x dependencies should generally avoid non-index imports for any PatternFly
-packages, for example:
+Plugins using PatternFly 5.x and newer should avoid non-index imports, for example:
 
 ```ts
 // Do _not_ do this:
@@ -186,20 +195,47 @@ Console application uses [Content Security Policy](https://developer.mozilla.org
 includes the document origin `'self'` and Console webpack dev server when running off-cluster.
 
 All dynamic plugin assets _should_ be loaded using `/api/plugins/<plugin-name>` Bridge endpoint which
-matches the `'self'` CSP source of Console application.
+matches the `'self'` CSP source for all Console assets served via Bridge.
 
-See `cspSources` and `cspDirectives` in
-[`pkg/server/server.go`](https://github.com/openshift/console/blob/master/pkg/server/server.go)
+Refer to `BuildCSPDirectives` function in
+[`pkg/utils/utils.go`](https://github.com/openshift/console/blob/master/pkg/utils/utils.go)
 for details on the current Console CSP implementation.
+
+Refer to [Dynamic Plugins feature page][console-doc-feature-page] section on Content Security Policy
+for more details.
 
 ### Changes in Console CSP
 
-This section documents notable changes in the Console Content Security Policy.
+This section documents notable changes in the Console Content Security Policy implementation.
 
 #### Console 4.18.x
 
-Console CSP is deployed in report-only mode. CSP violations will be logged in the browser console
-but the associated CSP directives will not be enforced.
+Console deploys CSP in report-only mode; CSP violations will be logged in the browser console
+and CSP violation data may be reported through telemetry service in production deployments.
+
+In a future release, Console will begin enforcing CSP. To test your plugin with CSP, enable
+the `ConsolePluginContentSecurityPolicy` feature gate on a test cluster. This feature gate
+should **not** be enabled on production clusters. Enabling this feature gate also allows you
+to set `spec.contentSecurityPolicy` in your `ConsolePlugin` resource to extend existing Console
+CSP directives, for example:
+
+```yaml
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: cron-tab
+spec:
+  displayName: 'Cron Tab'
+  contentSecurityPolicy:
+  - directive: 'ScriptSrc'
+    values:
+    - 'https://example1.com/'
+    - 'https://example2.com/'
+```
+
+#### Console 4.19.x
+
+The CSP feature is enabled by default. CSP implementation remains in report-only mode.
 
 ## Plugin metadata
 
