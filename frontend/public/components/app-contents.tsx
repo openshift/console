@@ -835,13 +835,7 @@ const AppContents: React.FC<{}> = () => {
           </ErrorBoundaryPage>
         </PageSection>
       </div>
-      <PageSection
-        hasBodyWrapper={false}
-        padding={{ default: 'noPadding' }}
-        className="pf-v6-c-page__main-section--no-gap"
-      >
-        <TelemetryNotifier />
-      </PageSection>
+      <TelemetryNotifier />
     </div>
   );
 };
