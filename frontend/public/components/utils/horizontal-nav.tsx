@@ -192,31 +192,34 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
     }).length === 0;
   const baseURL = defaultPage ? location.pathname : sliced.join('/');
 
+  // the div wrapper prevents the tabs from collapsing in a flexbox
   const tabs = (
-    <Tabs
-      activeKey={defaultPage ? '' : lastElement}
-      inset={{ default: 'insetNone', xl: 'insetSm' }}
-      component="nav"
-    >
-      {pages.map(({ name, nameKey, href }) => {
-        const to = `${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`;
+    <div>
+      <Tabs
+        activeKey={defaultPage ? '' : lastElement}
+        inset={{ default: 'insetNone', xl: 'insetSm' }}
+        component="nav"
+      >
+        {pages.map(({ name, nameKey, href }) => {
+          const to = `${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`;
 
-        return (
-          <Tab
-            key={href}
-            eventKey={href}
-            href={to}
-            onClick={(e) => {
-              e.preventDefault();
-              navigate(to);
-            }}
-            data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
-            title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
-            aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
-          />
-        );
-      })}
-    </Tabs>
+          return (
+            <Tab
+              key={href}
+              eventKey={href}
+              href={to}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(to);
+              }}
+              data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
+              title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
+              aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
+            />
+          );
+        })}
+      </Tabs>
+    </div>
   );
 
   const activePage = pages.find(({ href }) => {
