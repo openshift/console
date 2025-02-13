@@ -16,7 +16,7 @@ import {
   ContentVariants,
   Title,
 } from '@patternfly/react-core';
-import { ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import {
   OverviewItem,
@@ -45,6 +45,7 @@ import {
   referenceForModel,
 } from '../../module/k8s';
 import { ManagedByOperatorLink } from './managed-by';
+import { FavoriteButton } from './favorite-button';
 
 export const ResourceItemDeleting = () => {
   const { t } = useTranslation();
@@ -123,6 +124,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     helpText,
     'data-test': dataTestId,
   } = props;
+  const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
     props.resourceKeys,
     (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
@@ -170,6 +172,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             className={classNames({
               'co-m-pane__heading--logo': props.icon,
               'co-m-pane__heading--with-help-text': helpText,
+              'co-m-pane__heading--full-width': !showActions,
             })}
             alignItemsBaseline={!!link}
             centerText={centerText}
@@ -196,25 +199,32 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <span className="co-m-pane__heading-badge">{badge}</span>
             )}
             {link && <div className="co-m-pane__heading-link">{link}</div>}
-            {showActions && (
-              <div className="co-actions" data-test-id="details-actions">
-                {hasButtonActions && (
-                  <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-                )}
-                {hasMenuActions && (
-                  <ActionsMenu
-                    actions={
-                      _.isFunction(menuActions)
-                        ? menuActions(kindObj, data, extraResources, customData)
-                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                    }
-                  />
-                )}
-                {_.isFunction(customActionMenu)
-                  ? customActionMenu(kindObj, data)
-                  : customActionMenu}
-              </div>
-            )}
+            <div className="co-actions" data-test-id="details-actions">
+              {perspective === 'admin' && (
+                <div>
+                  <FavoriteButton />
+                </div>
+              )}
+              {showActions && (
+                <>
+                  {hasButtonActions && (
+                    <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                  )}
+                  {hasMenuActions && (
+                    <ActionsMenu
+                      actions={
+                        _.isFunction(menuActions)
+                          ? menuActions(kindObj, data, extraResources, customData)
+                          : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                      }
+                    />
+                  )}
+                  {_.isFunction(customActionMenu)
+                    ? customActionMenu(kindObj, data)
+                    : customActionMenu}
+                </>
+              )}
+            </div>
           </PrimaryHeading>
         )}
         {helpText && (

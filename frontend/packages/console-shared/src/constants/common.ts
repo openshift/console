@@ -50,6 +50,7 @@ export const LOG_WRAP_LINES_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.log.wrapL
 export const SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.showYAMLEditorTooltips`;
 export const SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/showYAMLEditorTooltips`;
 export const SHOW_FULL_LOG_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.show.full.log`;
+export const FAVORITES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/favorites`;
 // Bootstrap user for OpenShift 4.0 clusters (kube:admin)
 export const KUBE_ADMIN_USERNAMES = ['kube:admin'];
 
