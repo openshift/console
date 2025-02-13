@@ -144,6 +144,33 @@ export const getIndexedItems = <Item = unknown>(
     };
   });
 
+export const getUniqueIndexKeys = (
+  db: IDBDatabase,
+  storeName: string,
+  index: string,
+): Promise<IDBValidKey[]> =>
+  new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readonly');
+    const objectStore = transaction.objectStore(storeName);
+    const storeIndex = objectStore.index(index);
+    const request = storeIndex.openKeyCursor();
+    const keys = {};
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (cursor) {
+        if (typeof cursor.key === 'string') {
+          keys[cursor.key] = true;
+        }
+        cursor.continue();
+      } else {
+        resolve(Object.keys(keys));
+      }
+    };
+    request.onerror = () => {
+      reject(request.error);
+    };
+  });
+
 export const clearObjectStore = (db: IDBDatabase, name: string): Promise<void> =>
   new Promise((resolve, reject) => {
     const objectStore = getObjectStore(db, name, 'readwrite');

@@ -1,33 +1,23 @@
 /* eslint-disable no-console */
-import * as _ from 'lodash';
 import {
   NormalizedOLMAnnotation,
   OLMAnnotation,
 } from '@console/operator-lifecycle-manager/src/components/operator-hub';
-import {
-  infrastructureFeatureMap,
-  normalizeInfrastructureFeature,
-} from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
+import { getProviderValue } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-items';
+import { infrastructureFeatureMap } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
 import {
   CommaSeparatedList,
   PackageMetadata,
   FileBasedCatalogBundle,
   CSVMetadata,
   SerializedJSONArray,
+  ProviderMetadataValue,
 } from './types';
 
 const aggregateValue = <T = any>(acc: PackageMetadata, key: string, value: T): PackageMetadata => ({
   ...acc,
   [key]: value,
 });
-
-const aggregateNestedValue = <TObject extends object, TKey extends keyof TObject>(
-  acc: PackageMetadata,
-  key: string,
-  value: TObject,
-  nestedPath: TKey | [TKey],
-): PackageMetadata =>
-  aggregateValue<TObject[TKey]>(acc, key, _.get<TObject, TKey>(value, nestedPath));
 
 const aggregateArray = <T = any>(acc: PackageMetadata, key: string, value: T[]): PackageMetadata =>
   aggregateValue<T[]>(acc, key, [...(acc[key] ?? []), ...(value ?? [])]);
@@ -69,23 +59,34 @@ const aggregateCommaSeparatedList = (
 };
 
 const aggregateLegacyInfrastructureFeatures = (acc, key, value) => {
-  const { infrastructureFeatures } = aggregateSerializedJSONArray(acc, key, value);
+  const { infrastructureFeatures } = aggregateSerializedJSONArray({}, key, value);
   if (!infrastructureFeatures) return acc;
-  return {
-    ...acc,
-    infrastructureFeatures: infrastructureFeatures.map(normalizeInfrastructureFeature),
-  };
+  const newFeatures = infrastructureFeatures.reduce(
+    (featureAcc, feature) =>
+      infrastructureFeatureMap[feature]
+        ? [...featureAcc, infrastructureFeatureMap[feature]]
+        : featureAcc,
+    [],
+  );
+  return aggregateArray(acc, NormalizedOLMAnnotation.InfrastructureFeatures, newFeatures);
 };
+
 const aggregateInfrastructureFeature = (
   acc: PackageMetadata,
   key: string,
   value: string,
 ): PackageMetadata =>
-  value === 'true'
+  value === 'true' && infrastructureFeatureMap[key]
     ? aggregateArray(acc, NormalizedOLMAnnotation.InfrastructureFeatures, [
         infrastructureFeatureMap[key],
       ])
     : acc;
+
+const aggregateProvider = (acc: PackageMetadata, providerValue: ProviderMetadataValue) => {
+  const provider = typeof providerValue === 'string' ? providerValue : providerValue?.name ?? '';
+  const normalizedProvider = getProviderValue(provider);
+  return aggregateValue(acc, 'provider', normalizedProvider);
+};
 
 const aggregateAnnotations = (
   packageMetadata: PackageMetadata,
@@ -125,11 +126,7 @@ const aggregateAnnotations = (
       case OLMAnnotation.TokenAuthAWS:
       case OLMAnnotation.TokenAuthAzure:
       case OLMAnnotation.TokenAuthGCP:
-        return aggregateInfrastructureFeature(
-          acc,
-          NormalizedOLMAnnotation.InfrastructureFeatures,
-          value,
-        );
+        return aggregateInfrastructureFeature(acc, key, value);
       default:
         return acc;
     }
@@ -154,7 +151,7 @@ const aggregateMetadata = (
         case 'displayName':
           return aggregateValue(acc, key, value);
         case 'provider':
-          return aggregateNestedValue(acc, key, value, 'name');
+          return aggregateProvider(acc, value);
         case 'keywords':
           return aggregateArray(acc, key, value);
         default:
