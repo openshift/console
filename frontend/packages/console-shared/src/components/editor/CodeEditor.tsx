@@ -3,6 +3,7 @@ import { EditorDidMount, Language } from '@patternfly/react-code-editor';
 import classNames from 'classnames';
 import type * as monaco from 'monaco-editor';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import { BasicCodeEditor } from './BasicCodeEditor';
 import { CodeEditorToolbar } from './CodeEditorToolbar';
 import { useShortcutLink } from './ShortcutsLink';
@@ -17,7 +18,6 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     showShortcuts,
     toolbarLinks,
     onSave,
-    options,
     language,
     onEditorDidMount,
   } = props;
@@ -73,18 +73,20 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   }, [toolbarLinks, showShortcuts]);
 
   return (
-    <BasicCodeEditor
-      {...props}
-      className={classNames('ocs-yaml-editor', props?.className)}
-      language={language ?? Language.yaml}
-      code={value}
-      options={{ ...defaultEditorOptions, ...options }}
-      onEditorDidMount={editorDidMount}
-      isFullHeight={props?.isFullHeight ?? true}
-      style={{ ...props?.style, minHeight }}
-      customControls={ToolbarLinks ?? undefined}
-      shortcutsPopoverProps={showShortcuts ? shortcutPopover : undefined}
-    />
+    <ErrorBoundaryInline>
+      <BasicCodeEditor
+        {...props}
+        className={classNames('ocs-yaml-editor', props?.className)}
+        language={language ?? Language.yaml}
+        code={value}
+        options={{ ...defaultEditorOptions, ...props?.options }}
+        onEditorDidMount={editorDidMount}
+        isFullHeight={props?.isFullHeight ?? true}
+        style={{ ...props?.style, minHeight }}
+        customControls={ToolbarLinks ?? undefined}
+        shortcutsPopoverProps={showShortcuts ? shortcutPopover : undefined}
+      />
+    </ErrorBoundaryInline>
   );
 });
 
