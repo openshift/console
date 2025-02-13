@@ -40,7 +40,7 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
         <MastheadBrand>
           <MastheadLogo
             component="a"
-            aria-label={window.SERVER_FLAGS.customLogoURL ? undefined : details.productName}
+            aria-label={details.productName}
             data-test="masthead-logo"
             {...logoProps}
           >
