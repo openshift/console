@@ -104,5 +104,6 @@
 
   .pf-v6-theme-dark & {
     background-image: url('logo-dark.svg');
+    background-color: var(--pf-t--global--background--color--primary--default) !important;
   }
 }
