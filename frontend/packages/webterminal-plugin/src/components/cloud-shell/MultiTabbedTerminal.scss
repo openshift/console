@@ -4,5 +4,9 @@
     position: relative;
     height: 100%;
     overflow: auto;
+
+    &.pf-v6-c-tab-content {
+      background-color: var(--pf-t--global--background--color--primary--default) !important;
+    }
   }
 }
