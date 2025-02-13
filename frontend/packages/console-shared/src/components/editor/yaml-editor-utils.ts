@@ -7,7 +7,6 @@ import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 
 export const defaultEditorOptions: monaco.editor.IEditorOptions = {
   scrollBeyondLastLine: false,
-  automaticLayout: true, // paired with position: absolute for auto-resizing
 };
 
 const findManagedMetadata = (model: monaco.editor.ITextModel) => {

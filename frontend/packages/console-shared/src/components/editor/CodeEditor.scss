@@ -2,9 +2,6 @@
 
 .ocs-yaml-editor {
   .monaco-editor {
-    // Makes automaticLayout work properly. note that this breaks height="sizeToFit"
-    position: absolute !important;
-
     .monaco-hover-content .markdown-hover {
       // matches tooltip styling seen back in OpenShift 4.18
       max-width: 500px;

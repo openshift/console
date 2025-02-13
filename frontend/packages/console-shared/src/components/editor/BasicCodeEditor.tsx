@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { loader, Monaco } from '@monaco-editor/react';
 import { CodeEditor } from '@patternfly/react-code-editor';
+import { getResizeObserver } from '@patternfly/react-core';
 import classNames from 'classnames';
 import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +23,22 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
   const { t } = useTranslation('console-shared');
   const [monacoRef, setMonacoRef] = React.useState<Monaco | null>(null);
   useConsoleMonacoTheme(monacoRef?.editor);
+
+  // TODO(PF6): remove this when https://github.com/patternfly/patternfly-react/issues/11531 is fixed
+  const handleResize = React.useCallback(() => {
+    monacoRef?.editor?.getEditors()?.forEach((editor) => {
+      editor.layout({ width: 0, height: 0 });
+      editor.layout();
+    });
+  }, [monacoRef]);
+
+  React.useEffect(() => {
+    const observer = getResizeObserver(undefined, handleResize, true);
+
+    return () => {
+      observer();
+    };
+  }, [handleResize]);
 
   return (
     <CodeEditor
