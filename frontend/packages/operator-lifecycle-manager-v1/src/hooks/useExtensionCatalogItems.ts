@@ -38,7 +38,7 @@ export const useExtensionCatalogItems: UseExtensionCatalogItems = () => {
   }, [initDone, initError]);
 
   // Poll IndexedDB (IDB) every 10 seconds
-  usePoll(tick, 3000);
+  usePoll(tick, 10000);
 
   const normalizedItems = React.useMemo<CatalogItem[]>(
     () => items.map(normalizeExtensionCatalogItem),
