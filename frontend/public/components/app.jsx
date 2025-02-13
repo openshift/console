@@ -224,6 +224,8 @@ const App = (props) => {
       <QuickStartDrawer>
         <div id="app-content" className="co-m-app__content">
           <Page
+            isContentFilled
+            id="content"
             // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
             mainTabIndex={null}
             masthead={
