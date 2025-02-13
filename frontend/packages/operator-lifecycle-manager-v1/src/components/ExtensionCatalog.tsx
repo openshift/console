@@ -9,7 +9,7 @@ import { useExtensionCatalogCategories } from '../hooks/useExtensionCatalogCateg
 const ExtensionCatalog = () => {
   const { t } = useTranslation('olm-v1');
   const [namespace] = useActiveNamespace();
-  const [categories] = useExtensionCatalogCategories();
+  const [categories, loading, error] = useExtensionCatalogCategories();
 
   return (
     <CatalogServiceProvider
@@ -24,6 +24,8 @@ const ExtensionCatalog = () => {
           categories={categories}
           title={t('Extension Catalog')}
           type="ExtensionCatalogItem"
+          loaded={!loading}
+          loadError={error}
           description={
             <Trans ns="olm-v1">
               Discover Operators from the Kubernetes community and Red Hat partners, curated by Red
