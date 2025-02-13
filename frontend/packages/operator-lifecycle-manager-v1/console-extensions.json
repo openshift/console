@@ -30,7 +30,7 @@
       "insertAfter": "usermanagement"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -43,7 +43,7 @@
       "href": "/ecosystem/catalog"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -55,7 +55,7 @@
       }
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -72,7 +72,7 @@
       "startsWith": ["olm.operatorframework.io"]
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API"]
+      "required": ["CLUSTER_EXTENSION_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -82,7 +82,7 @@
       "useValueHook": { "$codeRef": "useExtensionCatalogDatabaseContextValues" }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -93,7 +93,7 @@
       "provider": { "$codeRef": "useExtensionCatalogItems" }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -140,7 +140,7 @@
       ]
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   }
 ]
