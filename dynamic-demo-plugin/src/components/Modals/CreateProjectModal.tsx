@@ -6,6 +6,9 @@ import {
   FormAlert,
   FormGroup,
   Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   ModalVariant,
   Spinner,
   TextArea,
@@ -70,64 +73,67 @@ const CreateProjectModal: React.FC<{ closeModal: () => void }> = ({ closeModal }
       variant={ModalVariant.small}
       isOpen
       onClose={closeModal}
-      title={t('Create Project')}
-      description={t('This modal is created with an extension.')}
-      actions={
-        inProgress
-          ? [<Spinner key="foo" />]
-          : [
-              <Button key="create" variant="primary" onClick={create}>
-                {t('Create')}
-              </Button>,
-              <Button key="cancel" variant="link" onClick={closeModal}>
-                {t('Cancel')}
-              </Button>,
-            ]
-      }
     >
-      <Form>
-        <FormGroup label={t('Name')} isRequired fieldId="input-name">
-          <TextInput
-            id="input-name"
-            data-test="input-name"
-            name="name"
-            type="text"
-            onChange={(e, v) => setName(v)}
-            value={name || ''}
-            autoFocus
-            required
-          />
-        </FormGroup>
-        <FormGroup label={t('Display name')} fieldId="input-display-name">
-          <TextInput
-            id="input-display-name"
-            name="displayName"
-            type="text"
-            onChange={(e, v) => setDisplayName(v)}
-            value={displayName || ''}
-          />
-        </FormGroup>
-        <FormGroup label={t('Description')} fieldId="input-description">
-          <TextArea
-            id="input-description"
-            name="description"
-            onChange={(e, v) => setDescription(v)}
-            value={description || ''}
-          />
-        </FormGroup>
-        {errorMessage && (
-          <FormAlert>
-            <Alert
-              isInline
-              variant="danger"
-              title={t('An error occurred.')}
-              data-test="alert-error"
-            >
-              {errorMessage}
-            </Alert>
-          </FormAlert>
-        )}
-      </Form>
+      <ModalHeader title={t('Create Project')} description={t('This modal is created with an extension.')} />
+      <ModalBody>
+        <Form>
+          <FormGroup label={t('Name')} isRequired fieldId="input-name">
+            <TextInput
+              id="input-name"
+              data-test="input-name"
+              name="name"
+              type="text"
+              onChange={(e, v) => setName(v)}
+              value={name || ''}
+              autoFocus
+              required
+            />
+          </FormGroup>
+          <FormGroup label={t('Display name')} fieldId="input-display-name">
+            <TextInput
+              id="input-display-name"
+              name="displayName"
+              type="text"
+              onChange={(e, v) => setDisplayName(v)}
+              value={displayName || ''}
+            />
+          </FormGroup>
+          <FormGroup label={t('Description')} fieldId="input-description">
+            <TextArea
+              id="input-description"
+              name="description"
+              onChange={(e, v) => setDescription(v)}
+              value={description || ''}
+            />
+          </FormGroup>
+          {errorMessage && (
+            <FormAlert>
+              <Alert
+                isInline
+                variant="danger"
+                title={t('An error occurred.')}
+                data-test="alert-error"
+              >
+                {errorMessage}
+              </Alert>
+            </FormAlert>
+          )}
+        </Form>
+      </ModalBody>
+      <ModalFooter>
+        {
+          inProgress
+            ? [<Spinner key="foo" />]
+            : [
+                <Button key="create" variant="primary" onClick={create}>
+                  {t('Create')}
+                </Button>,
+                <Button key="cancel" variant="link" onClick={closeModal}>
+                  {t('Cancel')}
+                </Button>,
+              ]
+        }
+      </ModalFooter>
     </Modal>
   );
 };

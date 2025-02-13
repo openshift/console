@@ -10,7 +10,6 @@ import {
   Hint,
   HintBody,
   HintTitle,
-  Page,
   PageSection,
   Stack,
   StackItem,
@@ -28,14 +27,10 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
   });
 
   return (
-    <Page
-      additionalGroupedContent={
-        <PageSection variant="light">
-          <Title headingLevel="h1" data-test="title">{title}</Title>
-        </PageSection>
-      }
-      groupProps={{ stickyOnBreakpoint: { 'default': 'top' }}}
-    >
+    <>
+      <PageSection>
+        <Title headingLevel="h1" data-test="title">{title}</Title>
+      </PageSection>
       <PageSection>
         <Stack hasGutter>
           <AlertGroup>
@@ -79,7 +74,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
           </StackItem>
         </Stack>
       </PageSection>
-    </Page>
+    </>
   );
 };
 
