@@ -303,7 +303,7 @@
     "mochawesome-merge": "^4.1.0",
     "mochawesome-report-generator": "^5.1.0",
     "mock-socket": "^9.0.3",
-    "monaco-editor": "^0.52.2",
+    "monaco-editor": "^0.51.0",
     "monaco-editor-webpack-plugin": "^7.1.0",
     "prettier": "2.0.5",
     "react-refresh": "^0.10.0",
