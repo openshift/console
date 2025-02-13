@@ -42,7 +42,7 @@ export const determineSecretType = (stringData): SecretType => {
     return SecretType.dockercfg;
   } else if (_.isEqual(dataKeys, ['.dockerconfigjson'])) {
     return SecretType.dockerconfigjson;
-  } else if (_.isEqual(dataKeys, ['password', 'username'])) {
+  } else if (dataKeys.includes('password')) {
     return SecretType.basicAuth;
   } else if (_.isEqual(dataKeys, ['ssh-privatekey'])) {
     return SecretType.sshAuth;

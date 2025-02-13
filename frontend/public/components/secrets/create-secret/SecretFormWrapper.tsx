@@ -21,13 +21,13 @@ import {
 import { SecretSubForm } from './SecretSubForm';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
-  const { isCreate, modal, onCancel } = props;
+  const { isCreate, modal, onCancel, secretTypeAbstraction } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams();
 
   const existingSecret = _.pick(props.obj, ['metadata', 'type']);
-  const defaultSecretType = toDefaultSecretType(props.secretTypeAbstraction);
+  const defaultSecretType = toDefaultSecretType(secretTypeAbstraction);
   const initialSecret = _.defaultsDeep({}, props.fixed, existingSecret, {
     apiVersion: 'v1',
     data: {},
@@ -38,7 +38,6 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     type: defaultSecretType,
   });
 
-  const [secretTypeAbstraction] = React.useState(props.secretTypeAbstraction);
   const [secret, setSecret] = React.useState(initialSecret);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState();
