@@ -196,7 +196,7 @@
       },
       "page": {
         "name": "Demo Plugin",
-        "href": "/demo-plugin"
+        "href": "demo-plugin"
       },
       "component": { "$codeRef": "projectTabContent" }
     }
