@@ -53,7 +53,7 @@ describe('Alertmanager', () => {
 
   it('displays the Alertmanager YAML page and saves Alertmanager YAML', () => {
     alertmanager.visitAlertmanagerPage();
-    detailsPage.selectTab('yaml');
+    detailsPage.selectTab('YAML');
     yamlEditor.isLoaded();
     cy.byTestID('alert-success').should('not.exist');
     yamlEditor.clickSaveCreateButton();
@@ -98,7 +98,7 @@ receivers:
     yamlEditor.setEditorContent(yaml);
     yamlEditor.clickSaveCreateButton();
     cy.byTestID('alert-success').should('exist');
-    detailsPage.selectTab('details');
+    detailsPage.selectTab('Details');
     cy.get('[data-test-rows="resource-row"]')
       .contains('team-X-pager')
       .parents('tr')
@@ -178,7 +178,7 @@ route:
     yamlEditor.setEditorContent(yaml);
     yamlEditor.clickSaveCreateButton();
     cy.get('.yaml-editor__buttons .pf-m-success').should('exist');
-    detailsPage.selectTab('details');
+    detailsPage.selectTab('Details');
     listPage.rows.shouldExist(receiverName);
     alertmanager.visitEditPage(receiverName);
     cy.byLegacyTestID('label-0').should('have.value', matcher1);
