@@ -210,13 +210,10 @@ This section documents notable changes in the Console Content Security Policy im
 
 #### Console 4.18.x
 
-Console deploys CSP in report-only mode; CSP violations will be logged in the browser console
-and CSP violation data may be reported through telemetry service in production deployments.
-
-In a future release, Console will begin enforcing CSP. To test your plugin with CSP, enable
-the `ConsolePluginContentSecurityPolicy` feature gate on a test cluster. This feature gate
-should **not** be enabled on production clusters. Enabling this feature gate also allows you
-to set `spec.contentSecurityPolicy` in your `ConsolePlugin` resource to extend existing Console
+Console CSP feature is disabled by default. To test your plugins with CSP, enable the
+`ConsolePluginContentSecurityPolicy` feature gate on a test cluster. This feature gate
+should **not** be enabled on production clusters. Enabling this feature gate allows you
+to set `spec.contentSecurityPolicy` in your `ConsolePlugin` resource to extend existing
 CSP directives, for example:
 
 ```yaml
@@ -232,6 +229,13 @@ spec:
     - 'https://example1.com/'
     - 'https://example2.com/'
 ```
+
+When enabled, Console CSP operates in report-only mode; CSP violations will be logged in
+the browser and CSP violation data will be reported through telemetry service in production
+deployments.
+
+In a future release, Console will begin enforcing CSP. Consider testing and preparing your
+plugins now to avoid CSP related issues in future.
 
 #### Console 4.19.x
 
