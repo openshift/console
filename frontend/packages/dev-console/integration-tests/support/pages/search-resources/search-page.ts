@@ -8,7 +8,7 @@ const dataTestIdPref: string = 'data-test-id';
 export function performResourceSearching(resourceName: string) {
   cy.get('[aria-label="Type to filter"]').click();
 
-  cy.get('input[placeholder="Resources"]').clear().type(resourceName);
+  cy.get('input[placeholder="Resources"]').clear().focus().type(resourceName);
   cy.get(`label[id$="${resourceName}"]`).click();
 }
 
@@ -27,6 +27,7 @@ export const searchResource = {
     });
     cy.get(adminNavigationMenuPO.home.search).click();
     performResourceSearching(resourceName);
+    cy.get('[id="resource-dropdown-listbox"]').scrollTo('top', { ensureScrollable: false });
     cy.byLegacyTestID('close-icon').should('be.visible').click({ force: true });
   },
 

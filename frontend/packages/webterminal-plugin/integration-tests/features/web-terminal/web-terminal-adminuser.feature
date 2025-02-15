@@ -5,7 +5,7 @@ Feature: Web Terminal for Admin user
 
         Background:
             Given user has logged in as admin user
-              And user is at developer perspective
+              And user is at administrator perspective
             #   And user has created or selected namespace "aut-terminal"
 
 

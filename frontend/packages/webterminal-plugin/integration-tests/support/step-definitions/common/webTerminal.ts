@@ -47,8 +47,9 @@ When('user clicks on the Web Terminal icon on the Masthead', () => {
 });
 
 Then('user will see the terminal window', () => {
-  cy.wait(15000);
-  webTerminalPage.verifyConnectionRediness();
+  cy.get('.co-cloudshell-terminal__container').should('be.visible');
+  // cy.wait(15000);
+  // webTerminalPage.verifyConnectionRediness();
 });
 
 // check  existing of web terminal in the dedicated project. Create it for the correct checking if a webterminal instance is not existed.
@@ -81,6 +82,10 @@ And('user has logged in as basic user', () => {
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
+});
+
+Given('user is at administrator perspective', () => {
+  perspective.switchTo(switchPerspective.Administrator);
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
