@@ -145,7 +145,7 @@ func CustomLogosHandler(w http.ResponseWriter, r *http.Request, logoFiles []Cust
 		return
 	}
 	// logo is a public content, revalidate each new request before releasing cached files
-	w.Header().Set("Cache-Control", "public, no-cache")
+	w.Header().Set("Cache-Control", "public, no-cache, no-store, must-revalidate")
 	// Filter the logos based on the specific type and theme
 	for _, logos := range logoFiles {
 		if logos.Type == queryType {

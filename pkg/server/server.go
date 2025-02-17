@@ -302,6 +302,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	if s.CustomLogoFile != "" {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Cache-Control", "public, no-cache, no-store, must-revalidate")
 			http.ServeFile(w, r, s.CustomLogoFile)
 		})
 	}
@@ -766,7 +767,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 
-	if s.CustomLogoFile != "" {
+	if s.CustomLogoFile != "" || s.CustomLogoFiles != "" {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
 	}
 

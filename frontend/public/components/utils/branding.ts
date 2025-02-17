@@ -16,73 +16,64 @@ export const FAVICON_TYPE = 'favicon';
 export const MASTHEAD_TYPE = 'masthead';
 
 export const getBrandingDetails = () => {
-  let logoImg, productName;
+  let staticLogo, productName;
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch (window.SERVER_FLAGS.branding) {
     case 'openshift':
-      logoImg = openshiftLogoImg;
+      staticLogo = openshiftLogoImg;
       productName = 'Red Hat OpenShift';
       break;
     case 'ocp':
-      logoImg = openshiftLogoImg;
+      staticLogo = openshiftLogoImg;
       productName = 'Red Hat OpenShift';
       break;
     case 'online':
-      logoImg = onlineLogoImg;
+      staticLogo = onlineLogoImg;
       productName = 'Red Hat OpenShift Online';
       break;
     case 'dedicated':
-      logoImg = dedicatedLogoImg;
+      staticLogo = dedicatedLogoImg;
       productName = 'Red Hat OpenShift Dedicated';
       break;
     case 'azure':
-      logoImg = openshiftLogoImg;
+      staticLogo = openshiftLogoImg;
       productName = 'Azure Red Hat OpenShift';
       break;
     case 'rosa':
-      logoImg = rosaLogoImg;
+      staticLogo = rosaLogoImg;
       productName = 'Red Hat OpenShift Service on AWS';
       break;
     default:
-      logoImg = okdLogoImg;
+      staticLogo = okdLogoImg;
       productName = 'OKD';
-  }
-  if (window.SERVER_FLAGS.customLogoURL) {
-    logoImg = window.SERVER_FLAGS.customLogoURL;
   }
   if (window.SERVER_FLAGS.customProductName) {
     productName = window.SERVER_FLAGS.customProductName;
   }
-  return { logoImg, productName };
+  return { staticLogo, productName };
 };
 
-export const useCustomLogoURL = (type: CUSTOM_LOGO = MASTHEAD_TYPE): string => {
+// when user specifies logo with customLogoFile instead of customLogoFiles the URL
+// query parameters will be ignored and the single specified logo will always be provided
+export const useCustomLogoURL = (type: CUSTOM_LOGO): string => {
   const [logoUrl, setLogoUrl] = React.useState('');
   const theme = React.useContext(ThemeContext);
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      const reqTheme = applyThemeBehaviour(
-        theme,
-        () => {
-          return THEME_DARK;
-        },
-        () => {
-          return THEME_LIGHT;
-        },
-      );
-      const fetchURL = `${window.SERVER_FLAGS.basePath}custom-logo?type=${type}&theme=${reqTheme}-theme`;
-      const response = await fetch(fetchURL);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${fetchURL}: ${response.statusText}`);
-      }
-      const data = await response.blob();
-      setLogoUrl(URL.createObjectURL(data));
-    };
-    fetchData().catch((err) => {
-      // eslint-disable-next-line no-console
-      console.warn(`Error while fetching ${type} logo: ${err}`);
-    });
+    if (!window.SERVER_FLAGS.customLogoURL) {
+      return;
+    }
+    const reqTheme = applyThemeBehaviour(
+      theme,
+      () => {
+        return THEME_DARK;
+      },
+      () => {
+        return THEME_LIGHT;
+      },
+    );
+    const fetchURL = `${window.SERVER_FLAGS.customLogoURL}?type=${type}&theme=${reqTheme}-theme`;
+    setLogoUrl(fetchURL);
   }, [theme, type]);
 
   return logoUrl;
