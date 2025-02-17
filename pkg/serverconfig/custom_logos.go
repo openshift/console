@@ -127,7 +127,7 @@ func CustomLogosHandler(w http.ResponseWriter, r *http.Request, logoFiles []Cust
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
 	}
-	// logo is a public content and revalidate the each new request before releasing cached files
+	// logo is a public content, revalidate each new request before releasing cached files
 	w.Header().Set("Cache-Control", "public, no-cache")
 	// Filter the logos based on the specific type and theme
 	for _, logos := range logoFiles {

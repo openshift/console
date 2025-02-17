@@ -111,7 +111,7 @@ func main() {
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
 
-	fCustomLogoFiles := fs.String("custom-logo-files", "", "List of custom product images for console branding. Each entry consist of theme type as a key and path as a value.")
+	fCustomLogoFiles := fs.String("custom-logo-files", "", "List of custom product images for console branding. Each entry consist of logo type as a key and a list of themed logo objects as value.")
 	fCustomLogoFile := fs.String("custom-logo-file", "", "Custom product image for console branding.")
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")

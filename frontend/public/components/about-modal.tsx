@@ -10,7 +10,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
 import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { getBrandingProductName } from './utils/branding';
+import { getBrandingDetails } from './utils/branding';
 import {
   ReleaseNotesLink,
   ServiceLevel,
@@ -162,7 +162,7 @@ AboutModalItems.displayName = 'AboutModalItems';
 export const AboutModal: React.FC<AboutModalProps> = (props) => {
   const { isOpen, closeAboutModal } = props;
   const { t } = useTranslation();
-  const productName = getBrandingProductName();
+  const { productName } = getBrandingDetails();
   const customBranding = window.SERVER_FLAGS.customLogoURL || window.SERVER_FLAGS.customProductName;
   const openShiftBranding = window.SERVER_FLAGS.branding !== 'okd' && !customBranding;
   return (

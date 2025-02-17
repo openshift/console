@@ -14,13 +14,13 @@ import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
-import { useBrandingProductLogoURL, getBrandingProductName } from './utils/branding';
+import { useCustomLogoURL, getBrandingDetails } from './utils/branding';
 
 export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
-  const productName = getBrandingProductName();
+  const { productName } = getBrandingDetails();
   const navigate = useNavigate();
   const defaultRoute = '/';
-  const logoUrl = useBrandingProductLogoURL();
+  const logoUrl = useCustomLogoURL() || getBrandingDetails().logoImg;
   const logoProps = {
     href: defaultRoute,
     // use onClick to prevent browser reload

@@ -300,6 +300,12 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
 
+	if s.CustomLogoFile != "" {
+		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, s.CustomLogoFile)
+		})
+	}
+
 	// Scope of Service Worker needs to be higher than the requests it is intercepting (https://stackoverflow.com/a/35780776/6909941)
 	handleFunc("/load-test.sw.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, path.Join(s.PublicDir, "load-test.sw.js"))

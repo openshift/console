@@ -16,7 +16,7 @@ import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
 import AppContents from './app-contents';
 import { Masthead } from './masthead';
-import { getBrandingProductName } from './utils/branding';
+import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
@@ -215,7 +215,7 @@ const App = (props) => {
     }
   };
 
-  const productName = getBrandingProductName();
+  const { productName } = getBrandingDetails();
 
   const content = (
     <>
