@@ -17,10 +17,10 @@ import { MastheadToolbar } from './masthead-toolbar';
 import { useCustomLogoURL, getBrandingDetails } from './utils/branding';
 
 export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
-  const { productName } = getBrandingDetails();
+  const { productName, logoImg } = getBrandingDetails();
   const navigate = useNavigate();
   const defaultRoute = '/';
-  const logoUrl = useCustomLogoURL() || getBrandingDetails().logoImg;
+  const logoUrl = useCustomLogoURL() || logoImg;
   const logoProps = {
     href: defaultRoute,
     // use onClick to prevent browser reload

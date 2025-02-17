@@ -594,12 +594,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 	if len(s.CustomLogoFiles) > 0 {
 		err := json.Unmarshal([]byte(s.CustomLogoFiles), &config.Customization.CustomLogoFiles)
+		fmt.Println(err)
 		if err != nil {
 			klog.Errorf("Unable to parse custom logos JSON: %v", err)
+		} else {
+			handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
+				serverconfig.CustomLogosHandler(w, r, config.Customization.CustomLogoFiles)
+			})
 		}
-		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
-			serverconfig.CustomLogosHandler(w, r, config.Customization.CustomLogoFiles)
-		})
 	}
 	serverconfigMetrics := serverconfig.NewMetrics(config)
 	serverconfigMetrics.MonitorPlugins(internalProxiedDynamic)

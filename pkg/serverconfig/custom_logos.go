@@ -49,9 +49,26 @@ func ParseCustomLogoType(s string) (c CustomLogoType, err error) {
 	clt := CustomLogoType(s)
 	_, ok := types[clt]
 	if !ok {
-		return c, fmt.Errorf("invalid custom logo theme: %q. Must be one of [dark-theme, light-theme]", s)
+		return c, fmt.Errorf("unknown custom logo type: \"%s\". Must be one of [masthead, favicon]", s)
 	}
 	return clt, nil
+}
+
+func (t *CustomLogoType) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+
+	switch s {
+	case "masthead":
+		*t = MastheadType
+	case "favicon":
+		*t = FaviconType
+	default:
+		return fmt.Errorf("unknown custom logo type: \"%s\". Must be one of [masthead, favicon]", s)
+	}
+	return nil
 }
 
 func (a *CustomLogoType) Set(value string) error {
@@ -62,7 +79,7 @@ func (a *CustomLogoType) Set(value string) error {
 		*a = FaviconType
 	case "":
 	default:
-		return fmt.Errorf("invalid custom logo type: %q. Must be one of [masthead, favicon]", value)
+		return fmt.Errorf("unknown custom logo type: \"%s\". Must be one of [masthead, favicon]", value)
 	}
 	return nil
 }
@@ -76,7 +93,7 @@ func ParseCustomLogoTheme(s string) (c CustomLogoTheme, err error) {
 	clt := CustomLogoTheme(s)
 	_, ok := themes[clt]
 	if !ok {
-		return c, fmt.Errorf("invalid custom logo theme: %q. Must be one of [dark-theme, light-theme]", s)
+		return c, fmt.Errorf("unknown custom logo theme: \"%s\". Must be one of [dark-theme, light-theme]", s)
 	}
 	return clt, nil
 }
@@ -93,7 +110,7 @@ func (t *CustomLogoTheme) UnmarshalJSON(data []byte) error {
 	case "dark-theme":
 		*t = DarkTheme
 	default:
-		return fmt.Errorf("unknown theme: %s", s)
+		return fmt.Errorf("unknown custom logo theme: \"%s\". Must be one of [dark-theme, light-theme]", s)
 	}
 	return nil
 }
@@ -108,7 +125,7 @@ func CustomLogosHandler(w http.ResponseWriter, r *http.Request, logoFiles []Cust
 	queryTypeString := query.Get("type")
 	queryThemeString := query.Get("theme")
 	if queryTypeString == "" || queryThemeString == "" {
-		errMsg := fmt.Sprintf("GET request %q is missing 'theme' or 'type' query parameter", r.URL.String())
+		errMsg := fmt.Sprintf("GET request \"%q\" is missing 'theme' or 'type' query parameter", r.URL.String())
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
