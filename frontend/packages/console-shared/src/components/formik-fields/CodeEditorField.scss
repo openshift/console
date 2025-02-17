@@ -2,35 +2,28 @@
 @import '../../../../../public/style/vars';
 
 .osc-yaml-editor {
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: row;
   margin-right: -$pf-v6-global-gutter;
+  margin-top: -$pf-v6-global-gutter--md;
+
   @media (max-width: $pf-v6-global--breakpoint--md) {
     margin-left: -$pf-v6-global-gutter;
-    margin-top: -$pf-v6-global-gutter--md;
   }
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     margin-right: -$pf-v6-global-gutter--md;
   }
 
   &__editor {
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
     @media (min-width: $pf-v6-global--breakpoint--md) {
       margin-right: $pf-v6-global-gutter;
     }
     @media (min-width: $pf-v6-global--breakpoint--xl) {
       margin-right: $pf-v6-global-gutter--md;
     }
+
+    padding-left: 0 !important;
+    margin-left: 0 !important;
   }
   &__sidebar {
-    display: flex;
-    width: 34%;
     margin-top: -$pf-v6-global-gutter--md;
-    @media screen and (max-width: $pf-v6-global--breakpoint--lg) {
-      display: none;
-    }
   }
 }

@@ -1,6 +1,15 @@
 @import '../../../../../public/style/vars';
 
 .ocs-yaml-editor {
+  // ensure editor stays fills the parent container while remaining in bounds
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  .co-code-editor {
+    flex-grow: 1;
+  }
+
   .monaco-editor {
     .monaco-hover-content .markdown-hover {
       // matches tooltip styling seen back in OpenShift 4.18
@@ -45,7 +54,7 @@
 
   /* Accessibility shortcuts hint styling */
   .ocs-yaml-editor-toolbar__shortcuts {
-    padding: var(--pf-t--global--spacer--md) var(--pf-v6-global-gutter);
+    padding: var(--pf-t--global--spacer--sm);
 
     .ocs-yaml-editor-shortcut__text {
       color: var(--pf-t--global--text--color--subtle);

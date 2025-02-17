@@ -1,17 +1,10 @@
 :root {
   // Co Palette
-  --co-global--palette--blue-400: var(--pf-t--color--blue--50);
-  --co-global--palette--purple-600: var(--pf-t--color--purple--60);
-  --co-global--palette--orange-400: var(--pf-t--color--orange--50);
-  --co-global--palette--purple-700: var(--pf-t--color--purple--70);
+  --co-global--palette--blue-400: var(--pf-t--global--icon--color--brand--default);
+  --co-global--palette--purple-600: var(--pf-t--global--icon--color--status--info--default); // minor difference
+  --co-global--palette--orange-400: var(--pf-t--global--icon--color--severity--important--default); // minor difference
 
-  // Co Palette Dark
-  --co-global--dark--palette--blue-400: var(--pf-t--color--blue--20);
-  --co-global--dark--palette--purple-600: var(--pf-t--color--purple--20);
-  --co-global--dark--palette--orange-400: var(--pf-t--color--orange--20);
-  --co-global--dark--palette--purple-700: var(--pf-t--color--purple--20);
-
-  // Skeleton
+  // Skeleton colors are fully custom, PF skeleton's are darker in dark theme
   --co-skeleton--Color: var(--pf-t--color--gray--20);
   --co-skeleton--Color--300: var(--pf-t--color--gray--30);
 
@@ -21,12 +14,6 @@
 }
 
 :root:where(.pf-v6-theme-dark) {
-  // Co palette updates
-  --co-global--palette--blue-400: var(--co-global--dark--palette--blue-400);
-  --co-global--palette--purple-600: var(--co-global--dark--palette--purple-600);
-  --co-global--palette--orange-400: var(--co-global--dark--palette--orange-400);
-  --co-global--palette--purple-700: var(--co-global--dark--palette--purple-600);
-
   // Skeleton
   --co-skeleton--Color: var(--co-skeleton--dark--Color);
   --co-skeleton--Color--300: var(--co-skeleton--dark--Color--300);

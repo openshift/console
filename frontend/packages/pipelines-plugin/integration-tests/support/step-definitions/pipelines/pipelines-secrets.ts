@@ -42,6 +42,20 @@ Given('user is at Start Pipeline modal for pipeline {string}', (pipelineName: st
   app.waitForLoad();
 });
 
+Given(
+  'user is at Start Pipeline modal in admin view for pipeline {string}',
+  (pipelineName: string) => {
+    cy.get('[data-test="nav"][data-quickstart-id="qs-nav-pipelines"]')
+      .should('exist')
+      .click({ force: true });
+    cy.get(pipelinesPO.pipelinesTab).click();
+    pipelinesPage.search(pipelineName);
+    pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
+    modal.modalTitleShouldContain('Start Pipeline');
+    app.waitForLoad();
+  },
+);
+
 When('user enters URL, Revision as {string} and {string}', (gitUrl: string, revision: string) => {
   startPipelineInPipelinesPage.addGitResource(gitUrl, revision);
 });

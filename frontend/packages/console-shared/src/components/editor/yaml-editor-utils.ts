@@ -67,7 +67,7 @@ export const fold = (
 };
 
 /**
- * Register auto fold for the editor
+ * Register automatic for managedFields folding in the editor
  */
 export const registerAutoFold = (
   editor: monaco.editor.IStandaloneCodeEditor,

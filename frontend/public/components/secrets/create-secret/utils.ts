@@ -1,8 +1,16 @@
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { Base64 } from 'js-base64';
 import { WebHookSecretKey } from './const';
-import { SecretTypeAbstraction, SecretType, PullSecretCredential } from './types';
+import {
+  SecretTypeAbstraction,
+  SecretType,
+  PullSecretCredential,
+  Base64StringData,
+  OpaqueDataEntry,
+  SecretChangeData,
+} from './types';
+import { isBinary } from 'istextorbinary';
+import { Base64 } from 'js-base64';
 
 export const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
   switch (typeAbstraction) {
@@ -178,3 +186,41 @@ type DockerCfg = {
 };
 
 type PullSecretData = DockerCfg | DockerConfigJSON;
+
+export const opaqueEntriesToObject = (
+  opaqueEntriesArray: OpaqueDataEntry[] = [],
+): SecretChangeData => {
+  return opaqueEntriesArray.reduce(
+    (acc, { key, value }) => {
+      return {
+        base64StringData: { ...acc.base64StringData, [key]: value },
+      };
+    },
+    { base64StringData: {} },
+  );
+};
+
+export const newOpaqueSecretEntry = (): OpaqueDataEntry => {
+  return {
+    key: '',
+    value: '',
+    isBinary_: false,
+    uid: _.uniqueId(),
+  };
+};
+
+export const opaqueSecretObjectToArray = (
+  base64StringData: Base64StringData,
+): OpaqueDataEntry[] => {
+  if (_.isEmpty(base64StringData)) {
+    return [newOpaqueSecretEntry()];
+  }
+  return Object.entries(base64StringData).map(([key, value]) => {
+    return {
+      key,
+      value,
+      isBinary_: isBinary(null, Buffer.from(value || '', 'base64')),
+      uid: _.uniqueId(),
+    };
+  });
+};

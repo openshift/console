@@ -24,14 +24,16 @@ describe('Auth test', () => {
       const passwd = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
       cy.login(idp, username, passwd);
       cy.url().should('include', Cypress.config('baseUrl'));
+
       // test Developer perspective is default for test user and guided tour is displayed
-      nav.sidenav.switcher.shouldHaveText('Developer');
+      // Below line to be uncommented after pr https://github.com/openshift/console-operator/pull/954 is merged
+      // nav.sidenav.switcher.shouldHaveText('Administrator');
       guidedTour.isOpen();
       guidedTour.close();
       masthead.username.shouldHaveText(username);
 
       cy.log('switches from dev to admin perspective');
-      nav.sidenav.switcher.shouldHaveText('Developer');
+      // nav.sidenav.switcher.shouldHaveText('Developer');
       nav.sidenav.switcher.changePerspectiveTo('Administrator');
       nav.sidenav.switcher.shouldHaveText('Administrator');
 
@@ -69,8 +71,8 @@ describe('Auth test', () => {
     // test guided tour is displayed first time switching to 'Developer' perspective
     // skip if running localhost
     if (!Cypress.config('baseUrl').includes('localhost')) {
-      nav.sidenav.switcher.changePerspectiveTo('Developer');
-      nav.sidenav.switcher.shouldHaveText('Developer');
+      // nav.sidenav.switcher.changePerspectiveTo('Developer');
+      // nav.sidenav.switcher.shouldHaveText('Developer');
       guidedTour.isOpen();
       guidedTour.close();
       nav.sidenav.switcher.changePerspectiveTo('Administrator');

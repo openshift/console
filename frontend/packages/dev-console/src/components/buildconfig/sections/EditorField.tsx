@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ChangeHandler } from '@patternfly/react-code-editor';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
@@ -12,7 +11,6 @@ type EditorFieldProps = Partial<BasicCodeEditorProps> & {
   helpText?: React.ReactNode;
   required?: boolean;
   isDisabled?: boolean;
-  onChange?: ChangeHandler;
 };
 
 const EditorField: React.FC<EditorFieldProps> = ({
@@ -27,7 +25,7 @@ const EditorField: React.FC<EditorFieldProps> = ({
   const { getFieldMeta, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { error, value } = getFieldMeta<string>(name);
 
-  const debouncedOnChange = useDebounceCallback<ChangeHandler>((newValue, event) => {
+  const debouncedOnChange = useDebounceCallback((newValue, event) => {
     if (onChange) {
       onChange(newValue, event);
     }

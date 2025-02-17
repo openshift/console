@@ -794,7 +794,11 @@ const EditYAMLInner = (props) => {
 
       <div className="pf-v6-c-form co-m-page__body">
         <div className="co-p-has-sidebar">
-          <div className="co-p-has-sidebar__body">
+          <div
+            className={classNames('co-p-has-sidebar__body', {
+              'co-p-has-sidebar__body--sidebar-open': showSidebar && hasSidebarContent,
+            })}
+          >
             <div className={classNames('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor

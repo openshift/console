@@ -19,6 +19,7 @@ import {
   useSecretDescription,
 } from './utils';
 import { SecretSubForm } from './SecretSubForm';
+import { isBinary } from 'istextorbinary';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const { isCreate, modal, onCancel, secretTypeAbstraction } = props;
@@ -43,10 +44,13 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const [error, setError] = React.useState();
   const [stringData, setStringData] = React.useState(
     _.mapValues(_.get(props.obj, 'data'), (value) => {
+      if (isBinary(null, Buffer.from(value, 'base64'))) {
+        return null;
+      }
       return value ? Base64.decode(value) : '';
     }),
   );
-  const [base64StringData, setBase64StringData] = React.useState({});
+  const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
   const title = useSecretTitle(isCreate, secretTypeAbstraction);
   const helptext = useSecretDescription(secretTypeAbstraction);
@@ -145,6 +149,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           stringData={stringData}
           secretType={secret.type}
           isCreate={isCreate}
+          base64StringData={base64StringData}
         />
       </>
     );

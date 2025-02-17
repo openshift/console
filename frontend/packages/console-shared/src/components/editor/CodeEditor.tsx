@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { EditorDidMount, Language } from '@patternfly/react-code-editor';
-import classNames from 'classnames';
-import type * as monaco from 'monaco-editor';
+import { getResizeObserver } from '@patternfly/react-core';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import { BasicCodeEditor } from './BasicCodeEditor';
 import { CodeEditorToolbar } from './CodeEditorToolbar';
 import { useShortcutLink } from './ShortcutsLink';
-import { useConsoleMonacoTheme } from './theme';
 import { registerYAMLinMonaco, registerAutoFold, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
 
@@ -22,12 +19,9 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     onEditorDidMount,
   } = props;
   const shortcutPopover = useShortcutLink();
-  const [editorRef, setEditorRef] = React.useState<monaco.editor.IStandaloneCodeEditor | null>(
-    null,
-  );
-  const [monacoRef, setMonacoRef] = React.useState<typeof monaco | null>(null);
+  const [editorRef, setEditorRef] = React.useState<CodeEditorRef['editor'] | null>(null);
+  const [monacoRef, setMonacoRef] = React.useState<CodeEditorRef['monaco'] | null>(null);
   const [usesValue] = React.useState<boolean>(value !== undefined);
-  useConsoleMonacoTheme(monacoRef?.editor);
 
   const editorDidMount: EditorDidMount = React.useCallback(
     (mountedEditor, mountedMonaco) => {
@@ -65,18 +59,33 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     [editorRef, monacoRef],
   );
 
+  // do not render toolbar if the component is null
   const ToolbarLinks = React.useMemo(() => {
-    // fixes PF bug where empty toolbar renders if a component is null
     if (!showShortcuts && !toolbarLinks?.length) return undefined;
-
     return <CodeEditorToolbar toolbarLinks={toolbarLinks} showShortcuts={showShortcuts} />;
   }, [toolbarLinks, showShortcuts]);
 
+  // recalculate bounds when viewport is changed
+  const handleResize = React.useCallback(() => {
+    monacoRef?.editor?.getEditors()?.forEach((editor) => {
+      editor.layout({ width: 0, height: 0 });
+      editor.layout();
+    });
+  }, [monacoRef]);
+
+  React.useEffect(() => {
+    const observer = getResizeObserver(undefined, handleResize, true);
+    return () => observer();
+  }, [handleResize]);
+
+  React.useEffect(() => {
+    handleResize();
+  }, [handleResize, minHeight, ToolbarLinks]);
+
   return (
-    <ErrorBoundaryInline>
+    <div style={{ minHeight }} className="ocs-yaml-editor">
       <BasicCodeEditor
         {...props}
-        className={classNames('ocs-yaml-editor', props?.className)}
         language={language ?? Language.yaml}
         code={value}
         options={{ ...defaultEditorOptions, ...props?.options }}
@@ -86,7 +95,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
         customControls={ToolbarLinks ?? undefined}
         shortcutsPopoverProps={showShortcuts ? shortcutPopover : undefined}
       />
-    </ErrorBoundaryInline>
+    </div>
   );
 });
 

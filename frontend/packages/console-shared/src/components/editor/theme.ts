@@ -59,17 +59,12 @@ const useSystemTheme = () => {
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const updateTheme = () => {
-      setTheme(query.matches ? 'dark' : 'light');
-    };
-
-    updateTheme();
+    const updateTheme = () => setTheme(query.matches ? 'dark' : 'light');
 
     query.addEventListener('change', updateTheme);
-    return () => {
-      query.removeEventListener('change', updateTheme);
-    };
+    updateTheme();
+
+    return () => query.removeEventListener('change', updateTheme);
   }, []);
 
   return theme;
