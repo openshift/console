@@ -607,15 +607,16 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     );
   };
 
-  React.useEffect(() => {
-    if (window.SERVER_FLAGS.statuspageID) {
-      fetch(`https://${window.SERVER_FLAGS.statuspageID}.statuspage.io/api/v2/summary.json`, {
-        headers: { Accept: 'application/json' },
-      })
-        .then((response) => response.json())
-        .then((newStatusPageData) => setStatusPageData(newStatusPageData));
-    }
-  }, [setStatusPageData]);
+  // DO NOT COMMIT
+  // React.useEffect(() => {
+  //   if (window.SERVER_FLAGS.statuspageID) {
+  //     fetch(`https://${window.SERVER_FLAGS.statuspageID}.statuspage.io/api/v2/summary.json`, {
+  //       headers: { Accept: 'application/json' },
+  //     })
+  //       .then((response) => response.json())
+  //       .then((newStatusPageData) => setStatusPageData(newStatusPageData));
+  //   }
+  // }, [setStatusPageData]);
 
   const setLastConsoleActivityTimestamp = () =>
     localStorage.setItem(LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY, Date.now().toString());

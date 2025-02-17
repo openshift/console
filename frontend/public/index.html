@@ -7,8 +7,6 @@
     [[ if .ServerFlags.CustomProductName ]]
     <title>[[ .ServerFlags.CustomProductName ]]</title>
     <meta name="application-name" content="[[ .ServerFlags.CustomProductName ]]" />
-    <!-- put this in a separate if statement -->
-    <link rel="shortcut icon" href="<%= require('./imgs/github.png') %>" />
     [[ else ]] [[ if eq .ServerFlags.Branding "okd" ]]
     <title>OKD</title>
     <meta name="application-name" content="OKD" />
@@ -30,8 +28,10 @@
     [[ end ]] [[ if eq .ServerFlags.Branding "rosa" ]]
     <title>Red Hat OpenShift Service on AWS</title>
     <meta name="application-name" content="Red Hat OpenShift Service on AWS" />
-    [[ end ]] [[ if eq .ServerFlags.Branding "okd" ]]
-    <link rel="shortcut icon" href="<%= require('./imgs/okd-favicon.png') %>" />
+    [[ end ]]
+    <!-- [[/*  if ne .ServerFlags.CustomFavicon */]] -->
+    [[ if ne .ServerFlags.StatuspageID "GitHub" ]] [[ if eq .ServerFlags.Branding "okd" ]]
+    <link rel="icon" href="<%= require('./imgs/okd-favicon.png') %>" />
     <link
       rel="apple-touch-icon-precomposed"
       sizes="144x144"
@@ -44,7 +44,7 @@
       content="<%= require('./imgs/okd-mstile-144x144.png') %>"
     />
     [[ else ]]
-    <link rel="shortcut icon" href="<%= require('./imgs/openshift-favicon.png') %>" />
+    <link rel="icon" href="<%= require('./imgs/openshift-favicon.png') %>" />
     <link
       rel="apple-touch-icon-precomposed"
       sizes="144x144"
@@ -57,21 +57,35 @@
       content="<%= require('./imgs/openshift-mstile-144x144.png') %>"
     />
     [[ end ]] [[ end ]]
+    <!-- [[/* end */]] -->
+    [[ end ]]
+    <!-- update this condition to use the custom favicon serverflag -->
+    [[ if eq .ServerFlags.StatuspageID "GitHub"]]
+    <link rel="icon" href="<%= require('./imgs/github.png') %>" id="custom-favicon" />
+    [[ end ]]
 
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="text/javascript" nonce="[[ .ScriptNonce ]]">
+      const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       window.SERVER_FLAGS = [[ .ServerFlags ]];
       let theme = localStorage.getItem('bridge/theme') || 'systemDefault';
-      if (theme === 'systemDefault' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      // update this condition to use the custom favicon serverflag
+      [[ if eq .ServerFlags.StatuspageID "GitHub"]]
+        let link = document.getElementById("custom-favicon");
+        let faviconDark = '<%= require("./imgs/github-dark.png") %>';
+        darkModeMediaQuery.addEventListener('change', (e) => {
+          link.href = e.matches ? faviconDark : '<%= require("./imgs/github.png") %>';
+        });
+      [[ end ]]
+      if (theme === 'systemDefault' && darkModeMediaQuery.matches) {
         theme = 'dark';
       }
       if (theme === 'dark') {
         document.documentElement.classList.add('pf-v6-theme-dark', 'pf-v5-theme-dark'); // legacy pf-theme-dark class needed for PF5 component styling
-        // put this in a unique if statement
-        [[ if .ServerFlags.CustomProductName ]]
-        var link = document.querySelector("link[rel~='icon']");
-        link.href = '<%= require("./imgs/github-dark.png") %>';
+        // update this condition to use the custom favicon serverflag
+        [[ if eq .ServerFlags.StatuspageID "GitHub"]]
+        link.href = faviconDark;
         [[ end ]]
       }
     </script>
