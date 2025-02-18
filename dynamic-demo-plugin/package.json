@@ -15,13 +15,11 @@
   },
   "devDependencies": {
     "@openshift-console/dynamic-plugin-sdk": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/core",
-    "@openshift-console/dynamic-plugin-sdk-internal": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/internal",
     "@openshift-console/dynamic-plugin-sdk-webpack": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
     "@openshift-console/plugin-shared": "file:../frontend/packages/console-plugin-shared/dist",
     "@patternfly/react-core": "^6.2.0-prerelease.15",
     "@patternfly/react-icons": "^6.2.0-prerelease.2",
     "@patternfly/react-table": "^6.2.0-prerelease.16",
-    "@patternfly/react-topology": "6.1.0",
     "@types/react": "16.8.13",
     "@types/react-measure": "^2.0.6",
     "@types/react-router": "^5.1.20",
