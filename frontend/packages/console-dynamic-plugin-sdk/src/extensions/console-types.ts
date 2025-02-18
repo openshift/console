@@ -7,6 +7,7 @@ import MonacoEditor from 'react-monaco-editor/lib/editor';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
+  K8sVerb,
   MatchLabels,
   PrometheusEndpoint,
   PrometheusLabels,
@@ -69,17 +70,6 @@ export type K8sResourceKind = K8sResourceCommon & {
   status?: { [key: string]: any };
   data?: { [key: string]: any };
 };
-
-export type K8sVerb =
-  | 'create'
-  | 'get'
-  | 'list'
-  | 'update'
-  | 'patch'
-  | 'delete'
-  | 'deletecollection'
-  | 'watch'
-  | 'impersonate';
 
 export type AccessReviewResourceAttributes = {
   group?: string;
@@ -827,3 +817,73 @@ export type CertificateSigningRequestKind = {
 export type NodeCertificateSigningRequestKind = CertificateSigningRequestKind & {
   metadata: K8sResourceCommon['metadata'] & { originalName: string };
 };
+
+export type MetricValuesByName = {
+  [name: string]: number;
+};
+
+export type NamespaceMetrics = {
+  cpu: MetricValuesByName;
+  memory: MetricValuesByName;
+};
+
+export type OverviewItemAlerts = {
+  [key: string]: {
+    message: string;
+    severity: string;
+  };
+};
+
+export type PodReadiness = string;
+export type PodPhase = string;
+
+export enum AllPodStatus {
+  Running = 'Running',
+  NotReady = 'Not Ready',
+  Warning = 'Warning',
+  Empty = 'Empty',
+  Failed = 'Failed',
+  Pending = 'Pending',
+  Succeeded = 'Succeeded',
+  Terminating = 'Terminating',
+  Unknown = 'Unknown',
+  ScaledTo0 = 'Scaled to 0',
+  Idle = 'Idle',
+  AutoScaledTo0 = 'Autoscaled to 0',
+  ScalingUp = 'Scaling Up',
+  CrashLoopBackOff = 'CrashLoopBackOff',
+}
+
+export type ExtPodPhase =
+  | AllPodStatus.Empty
+  | AllPodStatus.Warning
+  | AllPodStatus.Idle
+  | AllPodStatus.NotReady
+  | AllPodStatus.ScaledTo0
+  | AllPodStatus.AutoScaledTo0
+  | AllPodStatus.Terminating
+  | AllPodStatus.ScalingUp;
+
+export type ExtPodStatus = {
+  phase: ExtPodPhase | PodPhase;
+};
+
+export type ExtPodKind = {
+  status?: ExtPodStatus;
+} & K8sResourceKind;
+
+export type PodControllerOverviewItem = {
+  alerts: OverviewItemAlerts;
+  revision: number;
+  obj: K8sResourceKind;
+  phase?: string;
+  pods: ExtPodKind[];
+};
+
+export interface PodRCData {
+  current: PodControllerOverviewItem;
+  previous: PodControllerOverviewItem;
+  obj?: K8sResourceKind;
+  isRollingOut: boolean;
+  pods: ExtPodKind[];
+}

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { K8sVerb } from '../../../api/common-types';
 import {
   AccessReviewResourceAttributes,
-  K8sVerb,
   SelfSubjectAccessReviewKind,
 } from '../../../extensions/console-types';
 import { ProjectModel, SelfSubjectAccessReviewModel } from '../../../models';

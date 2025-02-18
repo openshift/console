@@ -64,32 +64,37 @@ as a reference point for writing an OLM operator that ships with its own Console
 
 ## Distributable SDK package overview
 
-| Package Name | Description |
-| ------------ | ----------- |
-| `@openshift-console/dynamic-plugin-sdk`          | Provides core APIs, types and utilities used by dynamic plugins at runtime. |
-| `@openshift-console/dynamic-plugin-sdk-webpack`  | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets. |
-| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code. |
-| `@openshift-console/plugin-shared`               | Provides reusable components and utility functions to build OCP dynamic plugins. Compatible with multiple versions of OpenShift Console. |
+| Package Name                                           | Description                                                                      |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `@openshift-console/dynamic-plugin-sdk` ★              | Provides core APIs, types and utilities used by dynamic plugins at runtime.      |
+| `@openshift-console/dynamic-plugin-sdk-webpack` ★      | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.  |
+| `@openshift-console/dynamic-plugin-sdk-internal`       | Internal package exposing additional Console code.                               |
+| `@openshift-console/plugin-shared`                     | Provides reusable components and utility functions to build OCP dynamic plugins. |
+
+Packages marked with ★ provide essential plugin APIs with backwards compatibility. Other packages may be
+used with multiple versions of OpenShift Console but don't provide any backwards compatibility guarantees.
 
 ## OpenShift Console Versions vs SDK Versions
 
 Not all NPM packages are fully compatible with all versions of the Console. This table will help align
 compatible versions of distributable SDK packages to versions of the OpenShift Console.
 
-| Console Version   | SDK Package                                     | Last Package Version |
-| ----------------- | ----------------------------------------------- | -------------------- |
-| 4.17.x            | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
-| 4.16.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.1                |
-| 4.15.x            | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.2                |
-| 4.14.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
-| 4.13.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
-| 4.12.x            | `@openshift-console/dynamic-plugin-sdk`         | 0.0.18               |
-|                   | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
+| Console Version | SDK Package                                     | Last Package Version |
+| --------------- | ----------------------------------------------- | -------------------- |
+| 4.18.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.8.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.3.0                |
+| 4.17.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.6.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.2.0                |
+| 4.16.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.1                |
+| 4.15.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.0.2                |
+| 4.14.x          | `@openshift-console/dynamic-plugin-sdk`         | 0.0.21               |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.11               |
+| 4.13.x          | `@openshift-console/dynamic-plugin-sdk`         | 0.0.19               |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
+| 4.12.x          | `@openshift-console/dynamic-plugin-sdk`         | 0.0.18               |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 0.0.9                |
 
 Note: this table includes Console versions which currently receive technical support, as per
 [Red Hat OpenShift Container Platform Life Cycle Policy](https://access.redhat.com/support/policy/updates/openshift).
@@ -159,13 +164,12 @@ This section documents notable changes in the Console provided shared modules ac
 - All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
   Plugins should upgrade to React Router v6 via `react-router-dom-v5-compat` module.
 
-### PatternFly dynamic modules
+### PatternFly 5+ dynamic modules
 
-Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package (1.0.0 and higher) include
-support for automatic detection and sharing of individual PatternFly 5.x dynamic modules.
+Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic
+detection and sharing of individual PatternFly 5+ dynamic modules.
 
-Plugins using PatternFly 5.x dependencies should generally avoid non-index imports for any PatternFly
-packages, for example:
+Plugins using PatternFly 5.x and newer should avoid non-index imports, for example:
 
 ```ts
 // Do _not_ do this:
@@ -182,20 +186,47 @@ Console application uses [Content Security Policy](https://developer.mozilla.org
 includes the document origin `'self'` and Console webpack dev server when running off-cluster.
 
 All dynamic plugin assets _should_ be loaded using `/api/plugins/<plugin-name>` Bridge endpoint which
-matches the `'self'` CSP source of Console application.
+matches the `'self'` CSP source for all Console assets served via Bridge.
 
-See `cspSources` and `cspDirectives` in
-[`pkg/server/server.go`](https://github.com/openshift/console/blob/master/pkg/server/server.go)
+Refer to `BuildCSPDirectives` function in
+[`pkg/utils/utils.go`](https://github.com/openshift/console/blob/release-4.18/pkg/utils/utils.go)
 for details on the current Console CSP implementation.
+
+Refer to [Dynamic Plugins feature page][console-doc-feature-page] section on Content Security Policy
+for more details.
 
 ### Changes in Console CSP
 
-This section documents notable changes in the Console Content Security Policy.
+This section documents notable changes in the Console Content Security Policy implementation.
 
 #### Console 4.18.x
 
-Console CSP is deployed in report-only mode. CSP violations will be logged in the browser console
-but the associated CSP directives will not be enforced.
+Console CSP feature is disabled by default. To test your plugins with CSP, enable the
+`ConsolePluginContentSecurityPolicy` feature gate on a test cluster. This feature gate
+should **not** be enabled on production clusters. Enabling this feature gate allows you
+to set `spec.contentSecurityPolicy` in your `ConsolePlugin` resource to extend existing
+CSP directives, for example:
+
+```yaml
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: cron-tab
+spec:
+  displayName: 'Cron Tab'
+  contentSecurityPolicy:
+  - directive: 'ScriptSrc'
+    values:
+    - 'https://example1.com/'
+    - 'https://example2.com/'
+```
+
+When enabled, Console CSP operates in report-only mode; CSP violations will be logged in
+the browser and CSP violation data will be reported through telemetry service in production
+deployments.
+
+In a future release, Console will begin enforcing CSP. Consider testing and preparing your
+plugins now to avoid CSP related issues in future.
 
 ## Plugin metadata
 

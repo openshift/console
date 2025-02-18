@@ -1,6 +1,18 @@
+import {
+  ExtPodKind,
+  PodControllerOverviewItem,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { DeploymentKind, K8sResourceKind, PodKind, PodPhase } from '@console/internal/module/k8s';
-import { AllPodStatus } from '../constants';
+import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
+
+export type {
+  PodRCData,
+  ExtPodPhase,
+  ExtPodStatus,
+  ExtPodKind,
+  OverviewItemAlerts,
+  PodControllerOverviewItem,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export interface PodDataResources {
   replicationControllers: FirehoseResult;
@@ -8,14 +20,6 @@ export interface PodDataResources {
   pods: FirehoseResult<PodKind[]>;
   deploymentConfigs?: FirehoseResult;
   deployments?: FirehoseResult<DeploymentKind[]>;
-}
-
-export interface PodRCData {
-  current: PodControllerOverviewItem;
-  previous: PodControllerOverviewItem;
-  obj?: K8sResourceKind;
-  isRollingOut: boolean;
-  pods: ExtPodKind[];
 }
 
 export interface PodRingResources {
@@ -34,36 +38,3 @@ export interface PodRingData {
     isRollingOut: boolean;
   };
 }
-
-export type ExtPodPhase =
-  | AllPodStatus.Empty
-  | AllPodStatus.Warning
-  | AllPodStatus.Idle
-  | AllPodStatus.NotReady
-  | AllPodStatus.ScaledTo0
-  | AllPodStatus.AutoScaledTo0
-  | AllPodStatus.Terminating
-  | AllPodStatus.ScalingUp;
-
-export type ExtPodStatus = {
-  phase: ExtPodPhase | PodPhase;
-};
-
-export type ExtPodKind = {
-  status?: ExtPodStatus;
-} & K8sResourceKind;
-
-export type OverviewItemAlerts = {
-  [key: string]: {
-    message: string;
-    severity: string;
-  };
-};
-
-export type PodControllerOverviewItem = {
-  alerts: OverviewItemAlerts;
-  revision: number;
-  obj: K8sResourceKind;
-  phase?: string;
-  pods: ExtPodKind[];
-};
