@@ -12,16 +12,24 @@
     margin-right: -$pf-v6-global-gutter--md;
   }
 
-  &__editor {
-    @media (min-width: $pf-v6-global--breakpoint--md) {
-      margin-right: $pf-v6-global-gutter;
-    }
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      margin-right: $pf-v6-global-gutter--md;
-    }
+  .co-p-has-sidebar__body {
+    flex-direction: column;
+    display: flex;
+  }
 
-    padding-left: 0 !important;
-    margin-left: 0 !important;
+  &__editor {
+    position: relative;
+    display: flex;
+    height: 100%;
+    flex-grow: 1;
+    flex-direction: column;
+    padding-top: $pf-v6-global-gutter;
+    width: 100%;
+    max-width: calc(100% - $pf-v6-global-gutter--md);
+
+    @media (max-width: $pf-v6-global--breakpoint--md) {
+      max-width: 100%;
+    }
   }
   &__sidebar {
     margin-top: -$pf-v6-global-gutter--md;
