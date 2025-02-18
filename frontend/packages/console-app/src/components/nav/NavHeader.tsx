@@ -133,7 +133,8 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       : []),
   ];
 
-  return activePerspective !== ACM_PERSPECTIVE_ID && perspectiveItems.length > 1 ? (
+  return activePerspective !== ACM_PERSPECTIVE_ID &&
+    perspectiveItems.filter((perspective) => perspective !== ACM_PERSPECTIVE_ID).length > 1 ? (
     <div
       className="oc-nav-header"
       data-tour-id="tour-perspective-dropdown"
