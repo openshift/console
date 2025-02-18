@@ -166,7 +166,13 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
         <SelectList>{perspectiveDropdownItems}</SelectList>
       </Select>
     </div>
-  ) : null;
+  ) : (
+    <div
+      className="pf-v6-u-display-none"
+      data-test-id="perspective-switcher-toggle"
+      aria-hidden="true"
+    />
+  ); // Empty div for e2e purposes
 };
 
 export default NavHeader;
