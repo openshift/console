@@ -565,10 +565,12 @@ class Dropdown_ extends DropdownMixin {
     );
 
     const menu = (
-      <div className="pf-v6-c-menu dropdown-menu" ref={this.dropdownMenuRef}>
-        <ul ref={this.dropdownList} className={classNames('pf-v6-c-menu-list', menuClassName)}>
-          {rows}
-        </ul>
+      <div className="pf-v6-c-menu" ref={this.dropdownMenuRef}>
+        <div className="pf-v6-c-menu__content">
+          <ul ref={this.dropdownList} className={classNames('pf-v6-c-menu-list', menuClassName)}>
+            {rows}
+          </ul>
+        </div>
       </div>
     );
 
@@ -586,6 +588,7 @@ class Dropdown_ extends DropdownMixin {
             triggerRef={this.dropdownToggleRef}
             popper={menu}
             popperRef={this.dropdownMenuRef}
+            preventOverflow={menuClassName === 'prevent-overflow' ? true : false}
             isVisible={active}
             zIndex={9999}
             appendTo="inline"
