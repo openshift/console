@@ -37,10 +37,10 @@ const initSharedScope = () => {
   );
   addModule('react', async () => () => require('react'));
   addModule('react-i18next', async () => () => require('react-i18next'));
+  addModule('react-redux', async () => () => require('react-redux'));
   addModule('react-router', async () => () => require('react-router'));
   addModule('react-router-dom', async () => () => require('react-router-dom'));
   addModule('react-router-dom-v5-compat', async () => () => require('react-router-dom-v5-compat'));
-  addModule('react-redux', async () => () => require('react-redux'));
   addModule('redux', async () => () => require('redux'));
   addModule('redux-thunk', async () => () => require('redux-thunk'));
 
