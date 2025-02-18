@@ -56,20 +56,3 @@
     color: var(--pf-t--global--text--color--disabled);
   }
 }
-
-// The PatternFly switch is displayed to the left of the label
-// The design for the namespace/project drop down has the switch to
-// the right of the label.  These styles allow for the variance to the
-// normal PatternFly display.
-// Tracked in https://github.com/patternfly/patternfly-react/issues/6059
-
-.co-namespace-dropdown__switch {
-  .pf-v6-c-switch__label {
-    padding-right: 60px; // Ensure switch doesn't land on top of text
-  }
-
-  .pf-v6-c-switch__toggle {
-    position: absolute;
-    right: 0;
-  }
-}

@@ -129,7 +129,8 @@ const SystemSwitch: React.FC<{
             }
             isChecked={isChecked}
             onChange={(_, value) => onChange(value)}
-            className="pf-v6-c-select__menu-item pf-m-action co-namespace-dropdown__switch"
+            className="pf-v6-c-select__menu-item pf-m-action"
+            isReversed
           />
         </MenuSearchInput>
       </MenuSearch>
@@ -178,9 +179,6 @@ export const NamespaceGroup: React.FC<{
 };
 
 /* ****************************************** */
-
-// The items in the footer are not accessible via the keyboard.
-// This is being tracked in: https://github.com/patternfly/patternfly-react/issues/6031
 
 export const Footer: React.FC<{
   canCreateNew: boolean;
