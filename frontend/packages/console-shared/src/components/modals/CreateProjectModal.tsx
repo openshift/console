@@ -206,7 +206,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
             {t('console-shared~Description')}
           </label>
           <div className="modal-body__field">
-            <span className="pf-v6-c-form-control pf-m-resize-both">
+            <span className="pf-v6-c-form-control pf-m-resize-vertical">
               <textarea
                 id="input-description"
                 name="description"

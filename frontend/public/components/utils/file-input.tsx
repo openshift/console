@@ -111,7 +111,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
               </p>
             ) : null}
             {!hideContents && (
-              <span className="pf-v6-c-form-control pf-m-resize-both pf-v6-u-mt-sm">
+              <span className="pf-v6-c-form-control pf-m-resize-vertical pf-v6-u-mt-sm">
                 <textarea
                   data-test-id={
                     this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
