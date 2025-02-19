@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Nav, NavExpandable, NavList, Button } from '@patternfly/react-core';
+import { Nav, NavExpandable, NavList, Button, FlexItem, Flex } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +50,7 @@ export const FavoriteNavItemResources: React.FC = () => {
     };
     if (!loaded) return null;
     if (!favorites || favorites.length === 0) {
-      return <div className="oc-no-favorites-message">{t('public~No favorites added')}</div>;
+      return <li className="oc-no-favorites-message">{t('public~No favorites added')}</li>;
     }
 
     return favorites.map((favorite) => (
@@ -63,23 +63,32 @@ export const FavoriteNavItemResources: React.FC = () => {
         to={favorite.url}
         isActive={activeItem === `favorites-item-${favorite.url}`}
       >
-        {favorite.name}
-        <Button
-          variant="plain"
-          aria-label={`Unfavorite ${favorite.name}`}
-          onClick={(e) => {
-            e.preventDefault();
-            handleUnfavorite(favorite.url);
-          }}
-          className="oc-favorite-delete-button"
-          icon={<StarIcon color="gold" />}
-        />
+        <Flex
+          justifyContent={{ default: 'justifyContentSpaceBetween' }}
+          alignItems={{ default: 'alignItemsCenter' }}
+          flexWrap={{ default: 'nowrap' }}
+          style={{ width: '100%' }}
+        >
+          <FlexItem className="pf-m-truncate">{favorite.name}</FlexItem>
+          <FlexItem>
+            <Button
+              variant="plain"
+              aria-label={`Unfavorite ${favorite.name}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleUnfavorite(favorite.url);
+              }}
+              className="oc-favorite-delete-button"
+              icon={<StarIcon color="gold" />}
+            />
+          </FlexItem>
+        </Flex>
       </FavoriteNavItemResource>
     ));
   }, [favorites, activeItem, loaded, t, setFavorites]);
 
   return (
-    <Nav onSelect={onSelect} aria-label="favorite-resources" className="oc-favorite-menu">
+    <Nav onSelect={onSelect} aria-label="favorite-resources" className="pf-v6-u-py-0">
       <NavList>
         <NavExpandable
           title={t('public~Favorites')}
