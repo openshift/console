@@ -1,8 +1,12 @@
+import {
+  finishTourText,
+  helpTourText,
+  userPreferencesTourText,
+} from '@console/app/src/components/guided-tour/GuidedTourText';
 import { TourDataType } from '@console/app/src/components/tour';
 import {
   perspectiveSwitcherTourText,
   searchTourText,
-  finishTourText,
   devPerspectiveTourText,
   webTerminalGuidedTourText,
 } from './GuidedTourText';
@@ -51,18 +55,14 @@ export const getGuidedTour = (): TourDataType => ({
       placement: 'bottom',
       // t('devconsole~Help')
       heading: '%devconsole~Help%',
-      // t('devconsole~Restart this tour or access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console.')
-      content:
-        '%devconsole~Restart this tour or access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console.%',
+      content: helpTourText,
       selector: getSelector('tour-help-button'),
     },
     {
       placement: 'bottom',
       // t('devconsole~User Preferences')
       heading: '%devconsole~User Preferences%',
-      // t('devconsole~Set your individual console preferences including default views, language, import settings, and more.')
-      content:
-        '%devconsole~Set your individual console preferences including default views, language, import settings, and more.%',
+      content: userPreferencesTourText,
       selector: getSelector('tour-user-button'),
     },
   ],
