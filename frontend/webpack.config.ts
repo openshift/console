@@ -1,16 +1,16 @@
 /* eslint-env node */
-import * as webpack from 'webpack';
-import * as path from 'path';
-import * as HtmlWebpackPlugin from 'html-webpack-plugin';
-import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+import * as _ from 'lodash';
+import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as path from 'path';
+import * as webpack from 'webpack';
 
-import { escapeRegExp } from 'lodash';
+import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
+import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
-import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { CircularDependencyPreset } from './webpack.circular-deps';
 
 interface Configuration extends webpack.Configuration {
@@ -42,7 +42,7 @@ const extractCSS = new MiniCssExtractPlugin({
 });
 
 const getVendorModuleRegExp = (vendorModules: string[]) =>
-  new RegExp(`node_modules\\/(${vendorModules.map(escapeRegExp).join('|')})\\/`);
+  new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
 
 const sharedPluginModulesTest = getVendorModuleRegExp(
   // Map shared module names to actual webpack modules as per shared-modules-init.ts

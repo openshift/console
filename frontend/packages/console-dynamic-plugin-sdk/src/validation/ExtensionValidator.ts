@@ -14,46 +14,46 @@ type ExtensionCodeRefData = {
 };
 
 /**
- * Guess the file path of the module (e.g., the extension, any barrel file)
- * based on the given base path.
+ * Guess the file path of the module (e.g., full path with extension,
+ * or relevant barrel file) based on the given base path.
  *
- * Returns the base path if no file is found.
+ * Returns the base path if no relevant module file is found.
  *
  * @param basePath The base file path to start guessing from.
  * @param msgCallback Optional callback to log messages.
  */
-export const guessModuleFilePath = (basePath: string, msgCallback?: (msg: string) => void) => {
+export const guessModuleFilePath = (
+  basePath: string,
+  msgCallback: (msg: string) => void = _.noop,
+) => {
   // Path already contains a file extension (no extra guessing needed)
   if (path.extname(basePath)) {
     return basePath;
   }
 
-  // Check if the module is an index file (base path only specified the directory)
-  const indexModulePaths = ['index.ts', 'index.js'].map((i) => path.resolve(basePath, i));
+  // Check if the path refers to an barrel file (base path only specified the directory)
+  const barrelFile = ['index.ts', 'index.js']
+    .map((i) => path.resolve(basePath, i))
+    .find(fs.existsSync);
 
-  for (const p of indexModulePaths) {
-    if (fs.existsSync(p)) {
-      // TODO(OCPBUGS-45847): uncomment when warnings are resolved
-      // msgCallback && msgCallback(`The module ${basePath} refers to an barrel file ${p}. Barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`);
-      return p;
-    }
+  if (barrelFile) {
+    // TODO(OCPBUGS-45847): uncomment when warnings are resolved
+    // msgCallback(`The module ${basePath} refers to an barrel file ${indexModule}. Barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file path directly.`);
+    return barrelFile;
   }
 
   // Check if the base path neglected to include a file extension
   const extensions = ['.tsx', '.ts', '.jsx', '.js'];
-  const pathsToCheck = [...extensions.map((ext) => `${basePath}${ext}`)];
+  const moduleFile = [...extensions.map((ext) => `${basePath}${ext}`)].find(fs.existsSync);
 
-  for (const p of pathsToCheck) {
-    if (fs.existsSync(p)) {
-      msgCallback &&
-        msgCallback(
-          `The module ${basePath} refers to a file ${p}, but a file extension was not specified.`,
-        );
-      return p;
-    }
+  if (moduleFile) {
+    msgCallback(
+      `The module ${basePath} refers to file ${moduleFile}, but a file extension was not specified.`,
+    );
+    return moduleFile;
   }
 
-  // A file couldn't be found, return the original module path.
+  // No relevant file could be found, return the original base path.
   return basePath;
 };
 
@@ -75,24 +75,27 @@ export const collectCodeRefData = (extensions: Extension[]) =>
 export const findWebpackModules = (
   compilation: webpack.Compilation,
   exposedModules: ConsolePluginBuildMetadata['exposedModules'],
-  basePath?: string,
+  pluginBasePath?: string,
 ) => {
   const webpackModules = Array.from(compilation.modules);
   return Object.keys(exposedModules).reduce((acc, moduleName) => {
     const absolutePath =
-      basePath && guessModuleFilePath(path.resolve(basePath, exposedModules[moduleName]));
+      pluginBasePath &&
+      guessModuleFilePath(path.resolve(pluginBasePath, exposedModules[moduleName]));
 
-    acc[moduleName] = webpackModules.find((m) => {
-      // first strategy: check if the module name matches the rawRequest
-      const rawRequest: string = _.get(m, 'rawRequest') || _.get(m, 'rootModule.rawRequest');
-      const matchesRawRequest = exposedModules[moduleName] === rawRequest;
-      if (matchesRawRequest || !basePath) {
-        return matchesRawRequest;
-      }
+    acc[moduleName] = webpackModules.find((m: webpack.NormalModule) => {
+      // @ts-expect-error rootModule is internal to webpack's ModuleConcatenationPlugin
+      const rootModule = m?.rootModule as webpack.NormalModule;
 
-      // second strategy: check if the absolute path matches the resource
-      const absoluteRequest: string = _.get(m, 'resource') || _.get(m, 'rootModule.resource');
-      return absoluteRequest === absolutePath;
+      /* first strategy: check if the module name matches the rawRequest */
+      const rawRequest = m?.rawRequest || rootModule?.rawRequest;
+      const matchesRawRequest = rawRequest && rawRequest === exposedModules[moduleName];
+
+      /* second strategy: check if the absolute path matches the resource */
+      const resource = m?.resource || rootModule?.resource;
+      const matchesAbsolutePath = resource && resource === absolutePath;
+
+      return matchesRawRequest || matchesAbsolutePath;
     });
     return acc;
   }, {} as { [moduleName: string]: webpack.Module });
@@ -103,10 +106,10 @@ export class ExtensionValidator extends BaseValidator {
     compilation: webpack.Compilation,
     extensions: Extension[],
     exposedModules: ConsolePluginBuildMetadata['exposedModules'],
-    basePath?: string,
+    pluginBasePath?: string,
   ) {
     const codeRefs = collectCodeRefData(extensions);
-    const webpackModules = findWebpackModules(compilation, exposedModules, basePath);
+    const webpackModules = findWebpackModules(compilation, exposedModules, pluginBasePath);
 
     // Each exposed module must have at least one code reference
     Object.keys(exposedModules).forEach((moduleName) => {

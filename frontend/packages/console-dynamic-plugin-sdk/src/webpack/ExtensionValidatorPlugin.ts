@@ -1,5 +1,5 @@
-import { dirname } from 'path';
-import { WebpackPluginInstance, Compiler, WebpackError } from 'webpack';
+import * as path from 'path';
+import * as webpack from 'webpack';
 import { getExtensionsFilePath } from '@console/plugin-sdk/src/codegen/active-plugins';
 import { PluginPackage } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsolePluginPackageJSON } from '../build-types';
@@ -13,24 +13,30 @@ export type ExtensionValidatorPluginOptions = {
 };
 
 /**
- * Validate the integrity of the exposed modules and codeRefs for static
+ * Validate the integrity of the exposed modules and code references for the provided
  * plugin packages.
  */
-export class ExtensionValidatorPlugin implements WebpackPluginInstance {
-  constructor(private readonly options: ExtensionValidatorPluginOptions) {}
+export class ExtensionValidatorPlugin implements webpack.WebpackPluginInstance {
+  constructor(private readonly options: ExtensionValidatorPluginOptions) {
+    if (options.pluginPackages.length === 0) {
+      throw new Error('List of plugin packages to validate must not be empty!');
+    }
+  }
 
-  apply(compiler: Compiler) {
+  apply(compiler: webpack.Compiler) {
     compiler.hooks.emit.tap(ExtensionValidatorPlugin.name, (compilation) => {
       this.options.pluginPackages.forEach((pkg) => {
         const result = new ExtensionValidator(pkg.name).validate(
           compilation,
           parseJSONC<ConsoleExtensionsJSON>(getExtensionsFilePath(pkg)),
           pkg.consolePlugin.exposedModules ?? {},
-          dirname(getExtensionsFilePath(pkg)),
+          path.dirname(getExtensionsFilePath(pkg)),
         );
 
         if (result.hasErrors()) {
-          const error = new WebpackError(`ExtensionValidator has reported errors for ${pkg.name}`);
+          const error = new webpack.WebpackError(
+            `ExtensionValidator has reported errors for plugin ${pkg.name}`,
+          );
           error.details = result.formatErrors();
           error.file = getExtensionsFilePath(pkg);
           compilation.errors.push(error);

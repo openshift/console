@@ -414,6 +414,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
           compilation,
           extensions,
           exposedModules ?? {},
+          path.dirname(path.resolve(this.baseDir, extensionsFile)),
         );
 
         if (result.hasErrors()) {
