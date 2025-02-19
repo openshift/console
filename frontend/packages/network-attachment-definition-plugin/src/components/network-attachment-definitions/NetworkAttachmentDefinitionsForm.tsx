@@ -15,7 +15,7 @@ import {
 import { HelpIcon } from '@patternfly/react-icons/dist/esm/icons/help-icon';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
 import {
@@ -440,7 +440,7 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
   );
 };
 
-const mapStateToProps = ({ k8s }) => {
+const selector = ({ k8s }) => {
   const kindsInFlight = k8s.getIn(['RESOURCES', 'inFlight']);
   const hasHyperConvergedCRD =
     !kindsInFlight &&
@@ -468,15 +468,19 @@ const networkAttachmentDefinitionFormResources = [
   },
 ];
 
-export default connect(mapStateToProps)((props) => {
-  const { hasSriovNetNodePolicyCRD } = props;
+export default (props) => {
+  const { hasSriovNetNodePolicyCRD, hasHyperConvergedCRD } = useSelector(selector);
   const resources = hasSriovNetNodePolicyCRD ? networkAttachmentDefinitionFormResources : [];
   return (
     <Firehose resources={resources}>
-      <NetworkAttachmentDefinitionFormBase {...props} />
+      <NetworkAttachmentDefinitionFormBase
+        hasSrioNetNodPolicyCRD={hasSriovNetNodePolicyCRD}
+        hasHyperConvergedCRD={hasHyperConvergedCRD}
+        {...props}
+      />
     </Firehose>
   );
-});
+};
 
 type FieldErrors = {
   nameValidationMsg?: string;
