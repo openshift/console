@@ -2,8 +2,6 @@ package webhooks
 
 import (
 	"net/http"
-
-	"github.com/openshift/console/pkg/devconsole/common"
 )
 
 type GHWebhookBody struct {
@@ -24,7 +22,6 @@ type GithubWebhookRequest struct {
 	Owner    string        `json:"owner"`
 	RepoName string        `json:"repoName"`
 	Body     GHWebhookBody `json:"body"`
-	common.DevConsoleCommonRequest
 }
 
 type GLWebhookBody struct {
@@ -40,7 +37,6 @@ type GitlabWebhookRequest struct {
 	HostName  string        `json:"hostName"`
 	ProjectID string        `json:"projectID"`
 	Body      GLWebhookBody `json:"body"`
-	common.DevConsoleCommonRequest
 }
 
 type BBWebhookBody struct {
@@ -57,5 +53,4 @@ type BitbucketWebhookRequest struct {
 	Owner    string        `json:"owner"`
 	RepoName string        `json:"repoName"`
 	Body     BBWebhookBody `json:"body"`
-	common.DevConsoleCommonRequest
 }

@@ -1,7 +1,6 @@
 package artifacthub
 
 import (
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -32,23 +31,10 @@ func GetTaskYAMLFromGithub(r *http.Request, user *auth.User) (common.DevConsoleC
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	serviceTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
 	}
 
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
 	serviceClient := &http.Client{
 		Transport: serviceTransport,
 	}
@@ -87,23 +73,10 @@ func GetTaskDetails(r *http.Request, user *auth.User) (common.DevConsoleCommonRe
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	serviceTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
 	}
 
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
 	serviceClient := &http.Client{
 		Transport: serviceTransport,
 	}
@@ -146,23 +119,10 @@ func SearchTasks(r *http.Request, user *auth.User) (common.DevConsoleCommonRespo
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	serviceTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
 	}
 
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
 	serviceClient := &http.Client{
 		Transport: serviceTransport,
 	}

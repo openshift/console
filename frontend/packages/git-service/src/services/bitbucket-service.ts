@@ -2,7 +2,7 @@ import { Base64 } from 'js-base64';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import 'whatwg-fetch';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { DevConsoleEndpointRequest, DevConsoleEndpointResponse } from '@console/shared/src';
+import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -28,7 +28,7 @@ type BitbucketWebhookRequest = {
   owner: string;
   repoName: string;
   body: BBWebhookBody;
-} & DevConsoleEndpointRequest;
+};
 
 export const BITBUCKET_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/bitbucket';
 

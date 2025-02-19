@@ -4,10 +4,8 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 
 	"github.com/openshift/console/pkg/auth"
@@ -16,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
+	"k8s.io/klog/v2"
 )
 
 var (
@@ -32,51 +31,11 @@ var (
 	cachedTektonResultsHost string = ""
 )
 
-func isLocalhost(r *http.Request) (bool, error) {
-	host := r.RemoteAddr
-	switch {
-	case host == "::1":
-		return true, nil
-	case host == "[::1]":
-		return true, nil
-	}
-	h, p, err := net.SplitHostPort(host)
-
-	// addrError helps distinguish between errors of form
-	// "no colon in address" and "too many colons in address".
-	// The former is fine as the host string need not have a
-	// port. Latter needs to be handled.
-	addrError := &net.AddrError{
-		Err:  "missing port in address",
-		Addr: host,
-	}
-	if err != nil {
-		if err.Error() != addrError.Error() {
-			return false, err
-		}
-		// host string without any port specified
-		h = host
-	} else if len(p) == 0 {
-		return false, errors.New("invalid host name format")
-	}
-
-	// use ipv4 dotted decimal for further checking
-	if h == "localhost" {
-		h = "127.0.0.1"
-	}
-	ip := net.ParseIP(h)
-
-	return ip.IsLoopback(), nil
-}
-
-func getTRHost(r *http.Request, dynamicClient *dynamic.DynamicClient) (string, error) {
+func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, error) {
 	// If running on localhost, use the route to get the host.
 	// Required for local development.
-	localHost, err := isLocalhost(r)
-	if err != nil {
-		return "", err
-	}
-	if localHost {
+	klog.Infof("k8sMode: %s", k8sMode)
+	if k8sMode == "off-cluster" {
 		route, err := dynamicClient.Resource(*TektonResultsAPIRoute).Namespace("openshift-pipelines").Get(context.TODO(), "tekton-results-api-service", metav1.GetOptions{})
 		if err != nil {
 			return "", err
@@ -119,14 +78,14 @@ func getTRHost(r *http.Request, dynamicClient *dynamic.DynamicClient) (string, e
 	return cachedTektonResultsHost, nil
 }
 
-func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (common.DevConsoleCommonResponse, error) {
+func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
 	var request TektonResultsRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
 
-	TEKTON_RESULTS_HOST, err := getTRHost(r, dynamicClient)
+	TEKTON_RESULTS_HOST, err := getTRHost(dynamicClient, k8sMode)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to get TektonResults host: %v", err)
 	}
@@ -179,14 +138,14 @@ func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.D
 
 }
 
-func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (common.DevConsoleCommonResponse, error) {
+func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
 	var request SummaryRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
 
-	TEKTON_RESULTS_HOST, err := getTRHost(r, dynamicClient)
+	TEKTON_RESULTS_HOST, err := getTRHost(dynamicClient, k8sMode)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to get TektonResults host: %v", err)
 	}
@@ -238,14 +197,14 @@ func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.
 	}, nil
 }
 
-func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient) (common.DevConsoleCommonResponse, error) {
+func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
 	var request TaskRunLogRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
 
-	TEKTON_RESULTS_HOST, err := getTRHost(r, dynamicClient)
+	TEKTON_RESULTS_HOST, err := getTRHost(dynamicClient, k8sMode)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to get TektonResults host: %v", err)
 	}

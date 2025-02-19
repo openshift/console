@@ -2,7 +2,7 @@ import * as Octokit from '@octokit/rest';
 import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { DevConsoleEndpointRequest, DevConsoleEndpointResponse } from '@console/shared/src';
+import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -32,7 +32,7 @@ type GithubWebhookRequest = {
   owner: string;
   repoName: string;
   body: GHWebhookBody;
-} & DevConsoleEndpointRequest;
+};
 
 export const GITHUB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/github';
 export class GithubService extends BaseService {

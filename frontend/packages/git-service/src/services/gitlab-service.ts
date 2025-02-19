@@ -3,7 +3,7 @@ import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { DevConsoleEndpointRequest, DevConsoleEndpointResponse } from '@console/shared/src';
+import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -33,7 +33,7 @@ type GitlabWebhookRequest = {
   hostName: string;
   projectID: string;
   body: GLWebhookBody;
-} & DevConsoleEndpointRequest;
+};
 
 export const GITLAB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/gitlab';
 
