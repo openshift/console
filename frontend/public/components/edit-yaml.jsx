@@ -805,7 +805,6 @@ const EditYAMLInner = (props) => {
                 ref={monacoRef}
                 options={options}
                 showShortcuts={!genericYAML}
-                minHeight="100px"
                 toolbarLinks={sidebarSwitch ? [tooltipSwitch, sidebarSwitch] : [tooltipSwitch]}
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
