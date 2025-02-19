@@ -1,19 +1,20 @@
-.oc-favorite-resource.pf-v6-c-nav__item {
+.co-favorite-delete-button {
+  background-color: transparent !important;
+  margin-left: auto;
+  margin-right: var(--pf-t--global--spacer--lg);
+}
+
+.co-favorite-resource.pf-v6-c-nav__item {
   .pf-v6-c-nav__link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-grow: 1;
-    overflow: hidden;
-    position: relative;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-top: 0;
     padding-bottom: 0;
     padding-right: 0;
+    padding-top: 0;
+    white-space: nowrap;
+
     &:hover {
       --pf-v6-c-nav__section-title--PaddingRight: 30px;
-      .oc-favorite-delete-button {
+
+      .co-favorite-delete-button {
         .pf-v6-c-button__text {
           opacity: 1;
         }
@@ -22,17 +23,7 @@
   }
 }
 
-.oc-favorite-delete-button {
-  background-color: transparent !important;
-  margin-left: auto;
-  margin-right: var(--pf-t--global--spacer--lg);
-}
-
-.oc-favorite-menu {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-.oc-no-favorites-message {
-  padding-left: var(--pf-t--global--spacer--md);
+.co-no-favorites-message {
+  color: var(--pf-v6-c-nav__link--Color);
+  padding-left: var(--pf-v6-c-nav__link--PaddingInlineStart);
 }

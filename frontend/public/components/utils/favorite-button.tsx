@@ -10,15 +10,11 @@ import {
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
-import { ModalVariant } from '@patternfly/react-core/deprecated';
-import {
-  FAVORITES_LOCAL_STORAGE_KEY,
-  Modal,
-  RedExclamationCircleIcon,
-  useUserSettingsCompatibility,
-} from '@console/shared';
-import { connectToModel } from '../../kinds';
 import { StarIcon } from '@patternfly/react-icons';
+import { ModalVariant } from '@patternfly/react-core/deprecated';
+import { Modal, RedExclamationCircleIcon, useUserSettingsCompatibility } from '@console/shared';
+import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
+import { connectToModel } from '../../kinds';
 
 export type FavoritesType = Array<{
   name: string;
@@ -26,6 +22,7 @@ export type FavoritesType = Array<{
 }>;
 
 export const FAVORITES_CONFIG_MAP_KEY = 'console.favorites';
+export const FAVORITES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/favorites`;
 const MAX_FAVORITE_COUNT = 10;
 
 export const FavoriteButton = connectToModel(() => {
@@ -98,7 +95,7 @@ export const FavoriteButton = connectToModel(() => {
   const handleNameChange = (value: string) => {
     const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
     if (!alphanumericRegex.test(value)) {
-      setError(t('Name can only contain letters, numbers, spaces, and hyphens.'));
+      setError(t('public~Name can only contain letters, numbers, spaces, and hyphens.'));
     } else {
       setError(null);
       setName(value);
