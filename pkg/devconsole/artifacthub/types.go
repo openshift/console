@@ -1,7 +1,5 @@
 package artifacthub
 
-import "github.com/openshift/console/pkg/devconsole/common"
-
 type ArtifactHubRepository struct {
 	Name                    string `json:"name"`
 	Kind                    int    `json:"kind"`
@@ -23,17 +21,14 @@ type ArtifactHubTask struct {
 
 type SearchRequest struct {
 	SearchQuery string `json:"searchQuery"`
-	common.DevConsoleCommonRequest
 }
 
 type TaskYAMLRequest struct {
 	YamlPath string `json:"yamlPath"`
-	common.DevConsoleCommonRequest
 }
 
 type TaskDetailsRequest struct {
 	RepoName string `json:"repoName"`
 	Name     string `json:"name"`
 	Version  string `json:"version"`
-	common.DevConsoleCommonRequest
 }

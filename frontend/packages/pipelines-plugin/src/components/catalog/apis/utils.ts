@@ -52,22 +52,16 @@ export type DevConsoleEndpointResponse = {
 };
 
 type TaskSearchRequest = {
-  allowInsecure?: boolean;
-  allowAuthHeader?: boolean;
   searchQuery?: string;
 };
 
 type TaskDetailsRequest = {
-  allowInsecure?: boolean;
-  allowAuthHeader?: boolean;
   repoName: string;
   name: string;
   version: string;
 };
 
 type TaskYAMLRequest = {
-  allowInsecure?: boolean;
-  allowAuthHeader?: boolean;
   yamlPath: string;
 };
 

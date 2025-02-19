@@ -484,7 +484,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle(devConsoleEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsole.Handler(user, w, r, internalProxiedDynamic)
+			devconsole.Handler(user, w, r, internalProxiedDynamic, s.K8sMode)
 		})),
 	)
 

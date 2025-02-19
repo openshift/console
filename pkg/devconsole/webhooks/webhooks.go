@@ -2,7 +2,6 @@ package webhooks
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -34,28 +33,18 @@ func CreateGithubWebhook(r *http.Request, user *auth.User) (common.DevConsoleCom
 	}
 
 	for key, values := range request.Headers {
+		if key == "Cookie" || key == "X-CSRF-Token" {
+			continue
+		}
 		for _, value := range values {
 			serviceRequest.Header.Add(key, value)
 		}
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	serviceTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
 	}
 
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
 	serviceClient := &http.Client{
 		Transport: serviceTransport,
 	}
@@ -101,27 +90,16 @@ func CreateGitlabWebhook(r *http.Request, user *auth.User) (common.DevConsoleCom
 	}
 
 	for key, values := range request.Headers {
+		if key == "Cookie" || key == "X-CSRF-Token" {
+			continue
+		}
 		for _, value := range values {
 			serviceRequest.Header.Add(key, value)
 		}
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-	}
-
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
+	serviceTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
 	}
 	serviceClient := &http.Client{
 		Transport: serviceTransport,
@@ -172,28 +150,18 @@ func CreateBitbucketWebhook(r *http.Request, user *auth.User) (common.DevConsole
 	}
 
 	for key, values := range request.Headers {
+		if key == "Cookie" || key == "X-CSRF-Token" {
+			continue
+		}
 		for _, value := range values {
 			serviceRequest.Header.Add(key, value)
 		}
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	serviceTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
 	}
 
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
 	serviceClient := &http.Client{
 		Transport: serviceTransport,
 	}
