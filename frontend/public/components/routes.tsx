@@ -393,7 +393,7 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
               )}
             </DetailsItem>
           </dl>
-          <TertiaryHeading increasedMargins>{t('public~Conditions')}</TertiaryHeading>
+          <TertiaryHeading altSpacing="pf-v6-u-my-xl">{t('public~Conditions')}</TertiaryHeading>
           <Conditions conditions={ingress.conditions} />
         </div>
       ))}
