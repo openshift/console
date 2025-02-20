@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import * as _ from 'lodash';
 import * as webpack from 'webpack';
 import { ConsolePluginBuildMetadata } from '../build-types';
@@ -9,6 +11,50 @@ import { BaseValidator } from './BaseValidator';
 type ExtensionCodeRefData = {
   index: number;
   propToCodeRefValue: { [propName: string]: string };
+};
+
+/**
+ * Guess the file path of the module (e.g., full path with extension,
+ * or relevant barrel file) based on the given base path.
+ *
+ * Returns the base path if no relevant module file is found.
+ *
+ * @param basePath The base file path to start guessing from.
+ * @param msgCallback Optional callback to log messages.
+ */
+export const guessModuleFilePath = (
+  basePath: string,
+  msgCallback: (msg: string) => void = _.noop,
+) => {
+  // Path already contains a file extension (no extra guessing needed)
+  if (path.extname(basePath)) {
+    return basePath;
+  }
+
+  // Check if the path refers to an barrel file (base path only specified the directory)
+  const barrelFile = ['index.ts', 'index.js']
+    .map((i) => path.resolve(basePath, i))
+    .find(fs.existsSync);
+
+  if (barrelFile) {
+    // TODO(OCPBUGS-45847): uncomment when warnings are resolved
+    // msgCallback(`The module ${basePath} refers to an barrel file ${indexModule}. Barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file path directly.`);
+    return barrelFile;
+  }
+
+  // Check if the base path neglected to include a file extension
+  const extensions = ['.tsx', '.ts', '.jsx', '.js'];
+  const moduleFile = [...extensions.map((ext) => `${basePath}${ext}`)].find(fs.existsSync);
+
+  if (moduleFile) {
+    msgCallback(
+      `The module ${basePath} refers to file ${moduleFile}, but a file extension was not specified.`,
+    );
+    return moduleFile;
+  }
+
+  // No relevant file could be found, return the original base path.
+  return basePath;
 };
 
 export const collectCodeRefData = (extensions: Extension[]) =>
@@ -29,13 +75,27 @@ export const collectCodeRefData = (extensions: Extension[]) =>
 export const findWebpackModules = (
   compilation: webpack.Compilation,
   exposedModules: ConsolePluginBuildMetadata['exposedModules'],
+  pluginBasePath?: string,
 ) => {
   const webpackModules = Array.from(compilation.modules);
-
   return Object.keys(exposedModules).reduce((acc, moduleName) => {
-    acc[moduleName] = webpackModules.find((m) => {
-      const rawRequest = _.get(m, 'rawRequest') || _.get(m, 'rootModule.rawRequest');
-      return exposedModules[moduleName] === rawRequest;
+    const absolutePath =
+      pluginBasePath &&
+      guessModuleFilePath(path.resolve(pluginBasePath, exposedModules[moduleName]));
+
+    acc[moduleName] = webpackModules.find((m: webpack.NormalModule) => {
+      // @ts-expect-error rootModule is internal to webpack's ModuleConcatenationPlugin
+      const rootModule = m?.rootModule as webpack.NormalModule;
+
+      /* first strategy: check if the module name matches the rawRequest */
+      const rawRequest = m?.rawRequest || rootModule?.rawRequest;
+      const matchesRawRequest = rawRequest && rawRequest === exposedModules[moduleName];
+
+      /* second strategy: check if the absolute path matches the resource */
+      const resource = m?.resource || rootModule?.resource;
+      const matchesAbsolutePath = resource && resource === absolutePath;
+
+      return matchesRawRequest || matchesAbsolutePath;
     });
     return acc;
   }, {} as { [moduleName: string]: webpack.Module });
@@ -46,9 +106,10 @@ export class ExtensionValidator extends BaseValidator {
     compilation: webpack.Compilation,
     extensions: Extension[],
     exposedModules: ConsolePluginBuildMetadata['exposedModules'],
+    pluginBasePath?: string,
   ) {
     const codeRefs = collectCodeRefData(extensions);
-    const webpackModules = findWebpackModules(compilation, exposedModules);
+    const webpackModules = findWebpackModules(compilation, exposedModules, pluginBasePath);
 
     // Each exposed module must have at least one code reference
     Object.keys(exposedModules).forEach((moduleName) => {

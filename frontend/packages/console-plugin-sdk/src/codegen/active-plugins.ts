@@ -9,13 +9,15 @@ import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
 import { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
+import { guessModuleFilePath } from '@console/dynamic-plugin-sdk/src/validation/ExtensionValidator';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { validateConsoleExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 import { Extension, ActivePlugin } from '../typings';
 import { trimStartMultiLine } from '../utils/string';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
 
-const getExtensionsFilePath = (pkg: PluginPackage) => path.resolve(pkg._path, extensionsFile);
+export const getExtensionsFilePath = (pkg: PluginPackage) =>
+  path.resolve(pkg._path, extensionsFile);
 
 export type ActivePluginsModuleData = {
   /** Generated module source code. */
@@ -26,58 +28,15 @@ export type ActivePluginsModuleData = {
   fileDependencies: string[];
 };
 
-/**
- * Guess the file path of the module (e.g., the extension,
- * any barrel/index file) based on the given base path.
- *
- * Returns the base path if no file is found.
- */
-const guessModuleFilePath = (
-  basePath: string,
-  diagnostics: ActivePluginsModuleData['diagnostics'],
-) => {
-  const extensions = ['.tsx', '.ts', '.jsx', '.js'];
-
-  // Sometimes the module is an index file, but the exposed module path only specifies the directory.
-  // In that case, we need an explicit check for the index file.
-  const indexModulePaths = ['index.ts', 'index.js'].map((i) => path.resolve(basePath, i));
-
-  for (const p of indexModulePaths) {
-    if (fs.existsSync(p)) {
-      // TODO(OCPBUGS-45847): uncomment when warnings are resolved
-      // diagnostics.warnings.push(
-      //   `The module ${basePath} refers to an index file ${p}. Index/barrel files are not recommended as they may cause unnecessary code to be loaded. Consider specifying the module file directly.`,
-      // );
-      return p;
-    }
-  }
-
-  const pathsToCheck = [...extensions.map((ext) => `${basePath}${ext}`)];
-
-  for (const p of pathsToCheck) {
-    if (fs.existsSync(p)) {
-      diagnostics.warnings.push(
-        `The module ${basePath} refers to a file ${p}, but a file extension was not specified.`,
-      );
-      return p;
-    }
-  }
-
-  // A file couldn't be found, return the original module path. A compilation warning
-  // may be pushed by `getActivePluginsModuleData`
-  return basePath;
-};
-
 const getExposedModuleFilePath = (
   pkg: PluginPackage,
   moduleName: string,
   diagnostics: ActivePluginsModuleData['diagnostics'],
 ) => {
   const modulePath = path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
-
-  return path.extname(modulePath)
-    ? modulePath // Path already contains a file extension (no extra guessing needed)
-    : guessModuleFilePath(modulePath, diagnostics);
+  return guessModuleFilePath(modulePath, (msg) =>
+    diagnostics.warnings.push(`[${pkg.name}] ${msg}`),
+  );
 };
 
 /**
