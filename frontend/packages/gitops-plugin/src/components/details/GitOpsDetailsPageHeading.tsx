@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PageBreadcrumb } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import { BreadCrumbs, ExternalLink } from '@console/internal/components/utils';
@@ -32,9 +33,9 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
 
   return (
     <>
-      <div className="pf-v6-c-page__main-breadcrumb">
+      <PageBreadcrumb>
         <BreadCrumbs breadcrumbs={breadcrumbs} />
-      </div>
+      </PageBreadcrumb>
       <div className="gop-gitops-details-page-heading co-m-nav-title co-m-nav-title--breadcrumbs">
         <PrimaryHeading className="pf-v6-u-mr-sm">
           <div className="co-m-pane__name co-resource-item">
