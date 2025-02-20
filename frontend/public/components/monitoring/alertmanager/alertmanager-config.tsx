@@ -15,6 +15,7 @@ import {
   LabelGroup as PfLabelGroup,
   Breadcrumb,
   BreadcrumbItem,
+  PageBreadcrumb,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { Helmet } from 'react-helmet';
@@ -530,7 +531,7 @@ export const AlertmanagerConfig: React.FC = () => {
 
   return (
     <>
-      <div className="pf-v6-c-page__main-breadcrumb">
+      <PageBreadcrumb>
         <Breadcrumb className="monitoring-breadcrumbs">
           <BreadcrumbItem>
             <Link className="pf-v6-c-breadcrumb__link" to={breadcrumbs[0].path}>
@@ -539,7 +540,7 @@ export const AlertmanagerConfig: React.FC = () => {
           </BreadcrumbItem>
           <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
         </Breadcrumb>
-      </div>
+      </PageBreadcrumb>
       <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
         <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
