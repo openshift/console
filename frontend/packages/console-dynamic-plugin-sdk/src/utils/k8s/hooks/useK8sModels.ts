@@ -1,7 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
+import { SDKStoreState } from '../../../app/redux-types';
 import { UseK8sModels } from '../../../extensions/console-types';
+import { K8sModel } from '../../../lib-core';
 
 /**
  * Hook that retrieves all current k8s models from redux.
@@ -16,6 +16,8 @@ import { UseK8sModels } from '../../../extensions/console-types';
  * ```
  */
 export const useK8sModels: UseK8sModels = () => [
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'models']))?.toJS() ?? {},
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
+  useSelector<SDKStoreState, { [key: string]: K8sModel }>(
+    ({ k8s }) => k8s.getIn(['RESOURCES', 'models'])?.toJS() ?? {},
+  ),
+  useSelector<SDKStoreState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
 ];

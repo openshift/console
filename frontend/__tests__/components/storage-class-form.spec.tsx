@@ -14,10 +14,7 @@ jest.mock('react-router-dom-v5-compat', () => ({
 }));
 
 describe(ConnectedStorageClassForm.displayName, () => {
-  const Component: React.ComponentType<Omit<
-    StorageClassFormProps,
-    't' | 'i18n' | 'tReady'
-  >> = ConnectedStorageClassForm.WrappedComponent as any;
+  const Component = ConnectedStorageClassForm.WrappedComponent;
   let wrapper: ShallowWrapper<StorageClassFormProps>;
   let onClose: Spy;
   let watchK8sList: Spy;
@@ -37,7 +34,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
         stopK8sWatch={stopK8sWatch}
         k8s={k8s}
       />,
-    ).dive();
+    );
   });
 
   it('renders the proper header', () => {

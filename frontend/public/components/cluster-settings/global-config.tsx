@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ import {
   getResourceDescription,
   modelFor,
   referenceForGroupVersionKind,
+  K8sModel,
 } from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
 import { TextFilter } from '../factory';
@@ -27,11 +28,6 @@ import filterNonUpgradableResources from './filterNonUpgradableResources';
 import { IDP_TYPES } from '@console/shared/src/constants/auth';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
-
-const stateToProps = (state: RootState) => ({
-  configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
-  clusterOperatorConfigResources: state.k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']),
-});
 
 export const breadcrumbsForGlobalConfig = (detailsPageKind: string, detailsPagePath: string) => [
   {
@@ -63,16 +59,24 @@ const ItemRow = ({ item, showAPIGroup }) => {
   );
 };
 
-const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtensionProps> = ({
-  clusterOperatorConfigResources,
-  configResources,
-  globalConfigs,
-}) => {
+export const GlobalConfigPage: React.FC = () => {
+  const { t } = useTranslation();
+  const canClusterUpgrade = useCanClusterUpgrade();
+  const [globalConfigs] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
+  const [configResources, clusterOperatorConfigResources] = useSelector<
+    RootState,
+    [K8sModel[], K8sModel[]]
+  >(({ k8s }) => [
+    k8s
+      .getIn(['RESOURCES', 'configResources'])
+      ?.filter((r) => canClusterUpgrade || filterNonUpgradableResources(r)) ?? [],
+    k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']) ?? [],
+  ]);
+
   const [errors, setErrors] = React.useState([]);
   const [items, setItems] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [textFilter, setTextFilter] = React.useState('');
-  const { t } = useTranslation();
 
   React.useEffect(() => {
     const oauthMenuItems = _.map(IDP_TYPES, (label: string, id: string) => ({
@@ -161,12 +165,14 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
     });
     return () => (isSubscribed = false);
   }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
+
   const visibleItems = items.filter(({ label, description = '' }) => {
     return (
       fuzzyCaseInsensitive(textFilter, label) ||
       description.toLowerCase().indexOf(textFilter.toLowerCase()) !== -1
     );
   });
+
   const groupedItems = _.groupBy(visibleItems, _.property('label'));
   const showAPIGroup = (item) => groupedItems?.[item]?.length > 1;
 
@@ -213,30 +219,4 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
         ))}
     </div>
   );
-};
-
-export const GlobalConfigPage = connect(stateToProps)(({ configResources, ...props }) => {
-  const [resolvedExtensions] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
-
-  const canClusterUpgrade = useCanClusterUpgrade();
-  const adjustedConfigResources = canClusterUpgrade
-    ? configResources
-    : configResources.filter(filterNonUpgradableResources);
-
-  return (
-    <GlobalConfigPage_
-      globalConfigs={resolvedExtensions}
-      configResources={adjustedConfigResources}
-      {...props}
-    />
-  );
-});
-
-type GlobalConfigPageExtensionProps = {
-  globalConfigs: ClusterGlobalConfig[];
-};
-
-type GlobalConfigPageProps = GlobalConfigPageExtensionProps & {
-  clusterOperatorConfigResources: K8sKind[];
-  configResources: K8sKind[];
 };

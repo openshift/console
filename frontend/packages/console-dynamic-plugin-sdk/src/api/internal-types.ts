@@ -273,7 +273,11 @@ export type UseDashboardResources = ({
 }) => {
   urlResults: RequestMap<any>;
   prometheusResults: RequestMap<PrometheusResponse>;
-  notificationAlerts: { alerts: Alert[]; loaded: boolean; loadError: Error };
+  notificationAlerts: {
+    alerts: Alert[];
+    loaded: boolean;
+    loadError: Error;
+  };
 };
 
 export type QuickStartsLoaderProps = {
