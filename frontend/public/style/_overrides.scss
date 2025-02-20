@@ -235,6 +235,7 @@ form.pf-v6-c-form {
 
 .pf-v6-c-page__main-breadcrumb {
   // so breadcrumb padding matches .co-m-nav-title
+  // TODO: remove when .co-m-nav-title is updated
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding-inline-start: $pf-v6-global-gutter--md;
     padding-inline-end: $pf-v6-global-gutter--md;
