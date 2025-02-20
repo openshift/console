@@ -46,8 +46,8 @@ export const helmDetailsPage = {
   selectedHelmTab: (name: string) => {
     cy.byLegacyTestID(`horizontal-link-${name}`)
       .should('exist')
-      .parent('li')
-      .should('have.class', 'co-m-horizontal-nav-item--active');
+      .parent('.pf-v6-c-tabs__item')
+      .should('have.class', 'pf-m-current');
   },
   verifyHelmActionsDropdown: () => cy.byLegacyTestID('dropdown-button').should('be.visible'),
   clickHelmActionButton: () => cy.byLegacyTestID('dropdown-button').click(),

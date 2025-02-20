@@ -93,7 +93,7 @@ export const topologyPO = {
     podText: 'text.pod-ring__center-text',
     applicationGroupingsTitle: '.overview__sidebar-pane-head.resource-overview__heading',
     applicationGroupingsSidepane: 'overview__sidebar-pane resource-overview',
-    resourcesTabApplicationGroupings: '.co-m-horizontal-nav__menu-item',
+    resourcesTabApplicationGroupings: '.pf-v6-c-tabs__item',
     pipelineRunsDetails: '.sidebar__section-heading',
     pipelineRunsLogSnippet: '.ocs-log-snippet__log-snippet',
     pipelineRunsStatus: '.ocs-log-snippet__status-message',

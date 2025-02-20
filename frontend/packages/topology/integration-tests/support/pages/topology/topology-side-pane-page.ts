@@ -10,8 +10,8 @@ export const topologySidePane = {
     cy
       .get(topologyPO.sidePane.tabName)
       .contains(tabName)
-      .parent('li')
-      .should('have.class', 'co-m-horizontal-nav-item--active'),
+      .parent('.pf-v6-c-tabs__item')
+      .should('have.class', 'pf-m-current'),
   verifyTab: (tabName: string) =>
     cy.get(topologyPO.sidePane.tabName).contains(tabName).should('be.visible'),
   verifyTabNotVisible: (tabName: string) =>

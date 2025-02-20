@@ -51,7 +51,7 @@ export const pipelinesPage = {
   },
 
   verifySelectedTab: (tabName: pipelineTabs) => {
-    cy.get('.co-m-horizontal-nav__menu-item.co-m-horizontal-nav-item--active > a').should(
+    cy.get('.pf-v6-c-tabs__item.pf-m-current .pf-v6-c-tabs__item-text').should(
       'have.text',
       tabName,
     );

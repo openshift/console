@@ -2,7 +2,7 @@ export const isLoaded = () => cy.get(`[data-test=resource-sidebar]`).should('exi
 export const isSampleListLoaded = () => cy.get(`[data-test=resource-samples-list]`).should('exist');
 
 export const selectTab = (name: string) => {
-  cy.get(`[data-test-id="horizontal-link-${name}"]`).should('exist').click();
+  cy.get(`[data-test="horizontal-link-${name}"]`).should('exist').click();
 };
 
 export const loadFirstSample = () => {

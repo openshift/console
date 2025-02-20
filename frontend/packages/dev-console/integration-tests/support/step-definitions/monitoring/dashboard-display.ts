@@ -272,7 +272,7 @@ When('user clicks on Inspect on {string} chart', (chartTitle: string) => {
 });
 
 Then('user will see Metrics tab in Observe page', () => {
-  cy.get('.co-m-horizontal-nav-item--active').find(monitoringPO.tabs.metrics).should('be.visible');
+  cy.get('.pf-v6-c-tabs__item.pf-m-current').find(monitoringPO.tabs.metrics).should('be.visible');
 });
 
 Then('{string} option selected by default', (metric) => {
