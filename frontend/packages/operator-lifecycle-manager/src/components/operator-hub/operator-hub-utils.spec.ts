@@ -7,11 +7,9 @@ import { PackageManifestKind } from '../../types';
 import {
   defaultPackageSourceMap,
   getPackageSource,
-  infrastructureFeatureMap,
   isAWSSTSCluster,
   isAzureWIFCluster,
   isGCPWIFCluster,
-  normalizeInfrastructureFeature,
   isArrayOfStrings,
   getClusterServiceVersionPlugins,
   isK8sResource,
@@ -155,17 +153,6 @@ describe('isGCPWIFCluster', () => {
     const auth = { spec: { serviceAccountIssuer: '' } } as AuthenticationKind;
     const result = isGCPWIFCluster(cloudcreds, infra, auth);
     expect(result).toEqual(false);
-  });
-});
-
-describe('normalizeInfrastructureFeature', () => {
-  Object.entries(infrastructureFeatureMap).forEach(([key, value]) => {
-    it(`should map ${key} to ${value}`, () => {
-      expect(normalizeInfrastructureFeature(key)).toEqual(value);
-    });
-  });
-  it('should fall back to the argument if not known', () => {
-    expect(normalizeInfrastructureFeature('foo')).toEqual('foo');
   });
 });
 
