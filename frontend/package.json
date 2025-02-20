@@ -133,7 +133,7 @@
   },
   "dependencies": {
     "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2",
-    "@patternfly/patternfly": "^6.2.0-prerelease.2",
+    "@patternfly/patternfly": "^6.2.0-prerelease.3",
     "@patternfly/quickstarts": "^6.2.0-prerelease.4",
     "@patternfly/react-catalog-view-extension": "^6.1.0-prerelease.3",
     "@patternfly/react-charts": "^8.2.0-prerelease.13",
