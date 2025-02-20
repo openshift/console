@@ -32,7 +32,8 @@ form.pf-v6-c-form {
     max-width: 100%;
     min-width: 50px; // prevent collapsed state before img loads
     width: fit-content;
-    :where(.pf-v6-theme-dark) & { // custom styling needed to provide extra padding on dark mode due to white background imgs
+    :where(.pf-v6-theme-dark) & {
+      // custom styling needed to provide extra padding on dark mode due to white background imgs
       margin-left: 0;
       margin-top: 0;
     }
@@ -212,6 +213,7 @@ form.pf-v6-c-form {
 
 .pf-v6-c-page__main-breadcrumb {
   // so breadcrumb padding matches .co-m-nav-title
+  // TODO: remove when .co-m-nav-title is updated
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     padding-inline-start: $pf-v6-global-gutter--md;
     padding-inline-end: $pf-v6-global-gutter--md;
