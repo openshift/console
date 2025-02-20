@@ -139,11 +139,6 @@
 .pf-v6-c-dropdown__menu {
   list-style: none;
   -webkit-overflow-scrolling: touch;
-  @media (min-width: $pf-v6-global--breakpoint--md) {
-    &.pf-m-align-right-on-md {
-      right: 0;
-    }
-  }
 }
 
 .pf-v6-c-menu-toggle {

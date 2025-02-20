@@ -88,7 +88,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
             {items && (
               <Dropdown
                 buttonClassName="pf-m-primary"
-                menuClassName="pf-m-align-right-on-md"
+                menuClassName="prevent-overflow"
                 title={t('console-shared~Create')}
                 noSelection
                 items={items}

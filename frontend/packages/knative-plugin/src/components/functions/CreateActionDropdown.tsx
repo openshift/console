@@ -48,7 +48,7 @@ export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ name
   return (
     <Dropdown
       buttonClassName="pf-m-primary"
-      menuClassName="pf-m-align-right-on-md"
+      menuClassName="prevent-overflow"
       title={t('knative-plugin~Create function')}
       noSelection
       items={items}
