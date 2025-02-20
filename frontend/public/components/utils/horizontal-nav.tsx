@@ -377,10 +377,19 @@ export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({
   resource,
   pages,
   customData,
+  contextId,
 }) => {
   const obj = { data: resource, loaded: true };
 
-  return <HorizontalNav obj={obj} pages={pages} customData={customData} noStatusBox />;
+  return (
+    <HorizontalNav
+      obj={obj}
+      pages={pages}
+      customData={customData}
+      contextId={contextId}
+      noStatusBox
+    />
+  );
 };
 
 export type PodsComponentProps = {
