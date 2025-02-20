@@ -13,6 +13,7 @@ import {
   setQueryArgument,
 } from '@console/internal/components/utils';
 import { useQueryParams } from '../../hooks';
+import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
@@ -184,7 +185,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <div className="co-m-page__body">
+      <PageBody>
         <div className="co-catalog">
           <PageHeading title={title} breadcrumbs={type ? breadcrumbs : null} />
           <p data-test-id="catalog-page-description" className="co-catalog-page__description">
@@ -214,7 +215,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
             </StatusBox>
           </div>
         </div>
-      </div>
+      </PageBody>
     </>
   );
 };
