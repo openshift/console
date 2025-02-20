@@ -34,6 +34,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
         className={additionalClassNames}
         defaultActiveKey={selectedTab || tabs[0]?.name}
         inset={{ default: 'insetNone', xl: 'insetSm' }}
+        unmountOnExit
       >
         {tabs.map((tab) => {
           const content =
