@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/common"
@@ -32,9 +33,6 @@ var (
 )
 
 func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, error) {
-	// If running on localhost, use the route to get the host.
-	// Required for local development.
-	klog.Infof("k8sMode: %s", k8sMode)
 	if k8sMode == "off-cluster" {
 		route, err := dynamicClient.Resource(*TektonResultsAPIRoute).Namespace("openshift-pipelines").Get(context.TODO(), "tekton-results-api-service", metav1.GetOptions{})
 		if err != nil {
@@ -57,14 +55,17 @@ func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, er
 	}
 	targetNamespace, isTargetNsPresent, err := unstructured.NestedString(host.Object, "spec", "targetNamespace")
 	if err != nil || !isTargetNsPresent {
+		klog.Errorf("spec.targetNamespace not found in TektonResults resource")
 		targetNamespace = ""
 	}
 	serverPort, isPortPresent, err := unstructured.NestedString(host.Object, "spec", "server_port")
 	if err != nil || !isPortPresent {
+		klog.Errorf("spec.server_port not found in TektonResults resource. Using default port 8080")
 		serverPort = "8080"
 	}
 	tlsHostname, isTLSHostnamePresent, err := unstructured.NestedString(host.Object, "spec", "tls_hostname_override")
 	if err != nil || !isTLSHostnamePresent {
+		klog.Errorf("spec.tls_hostname_override not found in TektonResults resource")
 		tlsHostname = ""
 	}
 
@@ -78,33 +79,19 @@ func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, er
 	return cachedTektonResultsHost, nil
 }
 
-func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
-	var request TektonResultsRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to parse request: %v", err)
-	}
-
-	TEKTON_RESULTS_HOST, err := getTRHost(dynamicClient, k8sMode)
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to get TektonResults host: %v", err)
-	}
-
-	TEKTON_RESULTS_URL := fmt.Sprintf("https://%s/apis/results.tekton.dev/v1alpha2/parents/%s/results/-/records?%s", TEKTON_RESULTS_HOST, request.SearchNamespace, request.SearchParams)
-
-	var serviceRequest *http.Request
-	serviceRequest, err = http.NewRequest(http.MethodGet, TEKTON_RESULTS_URL, nil)
+func makeHTTPRequest(url, userToken string, allowAuthHeader, allowInsecure bool) (common.DevConsoleCommonResponse, error) {
+	serviceRequest, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	if allowAuthHeader {
+		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", userToken))
 	}
 
 	var serviceTransport *http.Transport
-	if request.AllowInsecure {
+	if allowInsecure {
 		serviceTransport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
@@ -135,7 +122,31 @@ func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.D
 		Headers:    serviceResponse.Header,
 		Body:       string(serviceResponseBody),
 	}, nil
+}
 
+func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
+	var request TektonResultsRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to parse request: %v", err)
+	}
+	TEKTON_RESULTS_HOST, err := getTRHost(dynamicClient, k8sMode)
+	if err != nil {
+		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to get TektonResults host: %v", err)
+	}
+
+	parsedParams, err := url.ParseQuery(request.SearchParams)
+	if err != nil {
+		return common.DevConsoleCommonResponse{}, fmt.Errorf("error parsing search params: %v", err)
+	}
+
+	TEKTON_RESULTS_URL := fmt.Sprintf("https://%s/apis/results.tekton.dev/v1alpha2/parents/%s/results/-/records?%s",
+		TEKTON_RESULTS_HOST,
+		url.PathEscape(request.SearchNamespace),
+		parsedParams.Encode(),
+	)
+
+	return makeHTTPRequest(TEKTON_RESULTS_URL, user.Token, request.AllowAuthHeader, request.AllowInsecure)
 }
 
 func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -144,57 +155,23 @@ func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
-
 	TEKTON_RESULTS_HOST, err := getTRHost(dynamicClient, k8sMode)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to get TektonResults host: %v", err)
 	}
 
-	SUMMARY_URL := fmt.Sprintf("https://%s/apis/results.tekton.dev/v1alpha2/parents/%s/results/-/records/summary?%s", TEKTON_RESULTS_HOST, request.SearchNamespace, request.SearchParams)
-
-	var serviceRequest *http.Request
-	serviceRequest, err = http.NewRequest(http.MethodGet, SUMMARY_URL, nil)
-
+	parsedParams, err := url.ParseQuery(request.SearchParams)
 	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
+		return common.DevConsoleCommonResponse{}, fmt.Errorf("error parsing search params: %v", err)
 	}
 
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-	}
+	SUMMARY_URL := fmt.Sprintf("https://%s/apis/results.tekton.dev/v1alpha2/parents/%s/results/-/records/summary?%s",
+		TEKTON_RESULTS_HOST,
+		url.PathEscape(request.SearchNamespace),
+		parsedParams.Encode(),
+	)
 
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
-	serviceClient := &http.Client{
-		Transport: serviceTransport,
-	}
-
-	serviceResponse, err := serviceClient.Do(serviceRequest)
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to send request: %v", err)
-	}
-	defer serviceResponse.Body.Close()
-	serviceResponseBody, err := io.ReadAll(serviceResponse.Body)
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read response body: %v", err)
-	}
-
-	return common.DevConsoleCommonResponse{
-		StatusCode: serviceResponse.StatusCode,
-		Headers:    serviceResponse.Header,
-		Body:       string(serviceResponseBody),
-	}, nil
+	return makeHTTPRequest(SUMMARY_URL, user.Token, request.AllowAuthHeader, request.AllowInsecure)
 }
 
 func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -203,56 +180,15 @@ func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.Dyna
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to parse request: %v", err)
 	}
-
 	TEKTON_RESULTS_HOST, err := getTRHost(dynamicClient, k8sMode)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to get TektonResults host: %v", err)
 	}
 
-	TASKRUN_LOG_URL := fmt.Sprintf("https://%s/apis/results.tekton.dev/v1alpha2/parents/%s", TEKTON_RESULTS_HOST, request.TaskRunPath)
+	TASKRUN_LOG_URL := fmt.Sprintf("https://%s/apis/results.tekton.dev/v1alpha2/parents/%s",
+		TEKTON_RESULTS_HOST,
+		request.TaskRunPath,
+	)
 
-	var serviceRequest *http.Request
-	serviceRequest, err = http.NewRequest(http.MethodGet, TASKRUN_LOG_URL, nil)
-
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
-	}
-
-	if request.AllowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-	}
-
-	var serviceTransport *http.Transport
-	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
-	}
-	serviceClient := &http.Client{
-		Transport: serviceTransport,
-	}
-
-	serviceResponse, err := serviceClient.Do(serviceRequest)
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to send request: %v", err)
-	}
-	defer serviceResponse.Body.Close()
-	serviceResponseBody, err := io.ReadAll(serviceResponse.Body)
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read response body: %v", err)
-	}
-
-	return common.DevConsoleCommonResponse{
-		StatusCode: serviceResponse.StatusCode,
-		Headers:    serviceResponse.Header,
-		Body:       string(serviceResponseBody),
-	}, nil
-
+	return makeHTTPRequest(TASKRUN_LOG_URL, user.Token, request.AllowAuthHeader, request.AllowInsecure)
 }
