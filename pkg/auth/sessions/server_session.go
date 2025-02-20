@@ -2,6 +2,7 @@ package sessions
 
 import (
 	"fmt"
+	"net/http"
 	"slices"
 	"sort"
 	"sync"
@@ -191,4 +192,16 @@ func spliceOut(slice []*LoginState, toRemove *LoginState) []*LoginState {
 		}
 	}
 	return slice
+}
+
+func GetSessionTokenFromCookie(r *http.Request) (string, error) {
+	cookie, err := r.Cookie(OpenshiftAccessTokenCookieName)
+	if err != nil {
+		return "", err
+	}
+
+	if cookie.Value == "" {
+		return "", fmt.Errorf("unauthenticated, no value for cookie %s", OpenshiftAccessTokenCookieName)
+	}
+	return cookie.Value, nil
 }
