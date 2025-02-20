@@ -198,7 +198,7 @@ All dynamic plugin assets _should_ be loaded using `/api/plugins/<plugin-name>` 
 matches the `'self'` CSP source for all Console assets served via Bridge.
 
 Refer to `BuildCSPDirectives` function in
-[`pkg/utils/utils.go`](https://github.com/openshift/console/blob/master/pkg/utils/utils.go)
+[`pkg/utils/utils.go`](https://github.com/openshift/console/blob/main/pkg/utils/utils.go)
 for details on the current Console CSP implementation.
 
 Refer to [Dynamic Plugins feature page][console-doc-feature-page] section on Content Security Policy
@@ -594,7 +594,7 @@ ii. Create a Project Template to include the supported language in the Phrase TM
 
 ### Step 3: Create utility scripts to automate i18n-related tasks
 
-Create scripts for uploading and downloading the i18n JSON files to/from the Phrase portal. See the [console](https://github.com/openshift/console/tree/master/frontend/i18n-scripts) repository or [Advanced Cluster Management (ACM) console plugin](https://github.com/stolostron/console/tree/main/frontend/i18n-scripts) repository for similar scripts.
+Create scripts for uploading and downloading the i18n JSON files to/from the Phrase portal. See the [console](https://github.com/openshift/console/tree/main/frontend/i18n-scripts) repository or [Advanced Cluster Management (ACM) console plugin](https://github.com/stolostron/console/tree/main/frontend/i18n-scripts) repository for similar scripts.
 
 ### Step 4: Upload to Phrase portal
 
@@ -626,7 +626,7 @@ iii. Commit, review and merge the changes accordingly.
 
 iv. Reach out to the localization team if you have any questions or concerns regarding the translated strings.
 
-For more information on OpenShift Internationalization, see the console [Internationalization README page](https://github.com/openshift/console/blob/master/INTERNATIONALIZATION.md).
+For more information on OpenShift Internationalization, see the console [Internationalization README page](https://github.com/openshift/console/blob/main/INTERNATIONALIZATION.md).
 
 [console-doc-extensions]: ./docs/console-extensions.md
 [console-doc-api]: ./docs/api.md

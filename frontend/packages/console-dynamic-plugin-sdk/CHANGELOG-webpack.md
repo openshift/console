@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
-## 4.19.0-prerelease.1 - 2025-02-14
+## 4.19.0-prerelease.1 - 2025-02-17
 
 - Remove Console provided PatternFly 4 shared modules ([CONSOLE-4379], [#14615])
 - Change generated JS build target from `es2016` to `es2021` ([CONSOLE-4400], [#14620])
