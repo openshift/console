@@ -13,6 +13,7 @@ import {
   Content,
   ContentVariants,
   Title,
+  PageBreadcrumb,
 } from '@patternfly/react-core';
 import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
@@ -144,7 +145,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   return (
     <>
       {showBreadcrumbs && (
-        <div className="pf-v6-c-page__main-breadcrumb">
+        <PageBreadcrumb>
           <Split style={{ alignItems: 'baseline' }}>
             <SplitItem isFilled>
               <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
@@ -153,7 +154,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
             )}
           </Split>
-        </div>
+        </PageBreadcrumb>
       )}
       <div
         data-test-id={dataTestId}
