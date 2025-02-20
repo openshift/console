@@ -1,0 +1,336 @@
+import * as React from 'react';
+import {
+  Checkbox,
+  Form,
+  FormGroup,
+  FormHelperText,
+  FormSelect,
+  FormSelectOption,
+  HelperText,
+  HelperTextItem,
+  TextArea,
+  TextInput,
+} from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
+import {
+  createModalLauncher,
+  ModalBody,
+  ModalComponentProps,
+  ModalTitle,
+} from '@console/internal/components/factory';
+import {
+  Firehose,
+  FirehoseResource,
+  FirehoseResult,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
+import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { cloneVM } from '../../../k8s/requests/vm/clone';
+import { DataVolumeModel, VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { getDescription, getName, getNamespace } from '../../../selectors/k8sCommon';
+import { ValidationErrorType } from '../../../selectors/types';
+import { getVolumes, isVMExpectedRunning } from '../../../selectors/vm/selectors';
+import {
+  getVolumeDataVolumeName,
+  getVolumePersistentVolumeClaimName,
+} from '../../../selectors/vm/volume';
+import { V1alpha1DataVolume } from '../../../types/api';
+import { VMKind } from '../../../types/vm';
+import { VMIKind } from '../../../types/vmi';
+import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
+import { getLoadedData, getLoadError, prefixedID } from '../../../utils/utils';
+import { validateVmLikeEntityName } from '../../../utils/validations/vm/vm';
+import { Errors } from '../../errors/errors';
+import { ModalFooter } from '../modal/modal-footer';
+import { ConfigurationSummary } from './configuration-summary';
+
+import './clone-vm-modal.scss';
+
+export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
+  const {
+    vm,
+    vmi,
+    namespace,
+    vmNamespace,
+    onNamespaceChanged,
+    namespaces,
+    virtualMachines,
+    persistentVolumeClaims,
+    dataVolumes,
+    requestsDataVolumes,
+    requestsPVCs,
+    inProgress,
+    errorMessage,
+    handlePromise,
+    close,
+    cancel,
+  } = props;
+  const { t } = useTranslation();
+  const asId = prefixedID.bind(null, 'clone-dialog-vm');
+
+  const [name, setName] = React.useState(`${getName(vm)}-clone`);
+  const [description, setDescription] = React.useState(getDescription(vm));
+  const [startVM, setStartVM] = React.useState(false);
+
+  const namespacesError = getLoadError(namespaces, NamespaceModel);
+  const pvcsError = requestsPVCs
+    ? getLoadError(persistentVolumeClaims, PersistentVolumeClaimModel)
+    : null;
+  const dataVolumesError = requestsDataVolumes ? getLoadError(dataVolumes, DataVolumeModel) : null;
+
+  const persistentVolumeClaimsData = getLoadedData<PersistentVolumeClaimKind[]>(
+    persistentVolumeClaims,
+    [],
+  );
+  const dataVolumesData = getLoadedData<V1alpha1DataVolume[]>(dataVolumes, []);
+
+  const nameError = validateVmLikeEntityName(name, namespace, getLoadedData(virtualMachines, []), {
+    // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
+    existsErrorMessage:
+      'kubevirt-plugin~Name is already used by another virtual machine in this namespace',
+  });
+
+  const dataVolumesValid = !(dataVolumesError || (requestsDataVolumes && !dataVolumes.loaded));
+  const pvcsValid = !(pvcsError || (requestsPVCs && !persistentVolumeClaims.loaded));
+
+  const isValid =
+    !nameError && dataVolumesValid && pvcsValid && !namespacesError && name && namespace;
+
+  const [pvcs] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
+    kind: PersistentVolumeClaimModel.kind,
+    namespace: vmNamespace,
+    isList: true,
+  });
+
+  const submit = (e) => {
+    e.preventDefault();
+
+    const promise = cloneVM(
+      {
+        vm,
+        vmi,
+        dataVolumes: dataVolumesData,
+        persistentVolumeClaims: persistentVolumeClaimsData,
+      },
+      { name, namespace, description, startVM },
+      pvcs,
+    );
+    handlePromise(promise, close);
+  };
+
+  const onCancelClick = (e) => {
+    e.stopPropagation();
+    cancel();
+  };
+
+  const vmRunningWarning =
+    isVMExpectedRunning(vm, vmi) &&
+    t('kubevirt-plugin~The VM {{vmName}} is still running. It will be powered off while cloning.', {
+      vmName: getName(vm),
+    });
+
+  return (
+    <div className="modal-content">
+      <ModalTitle>{t('kubevirt-plugin~Clone Virtual Machine')}</ModalTitle>
+      <ModalBody>
+        <Errors
+          endMargin
+          errors={[
+            {
+              key: 'namespacesError',
+              message: namespacesError,
+              title: COULD_NOT_LOAD_DATA,
+            },
+            {
+              key: 'pvcsError',
+              message: pvcsError,
+              title: COULD_NOT_LOAD_DATA,
+            },
+            {
+              key: 'dataVolumesError',
+              message: dataVolumesError,
+              title: COULD_NOT_LOAD_DATA,
+            },
+          ].filter((err) => err.message)}
+        />
+        <Form isHorizontal>
+          <FormGroup label={t('kubevirt-plugin~Name')} isRequired fieldId={asId('name')}>
+            <TextInput
+              validated={!(nameError?.type === ValidationErrorType.Error) ? 'default' : 'error'}
+              isRequired
+              type="text"
+              id={asId('name')}
+              value={name}
+              onChange={(_event, v) => setName(v)}
+              aria-label={t('kubevirt-plugin~new VM name')}
+            />
+
+            {nameError?.type === ValidationErrorType.Error && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                    {t(nameError?.messageKey)}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            )}
+          </FormGroup>
+          <FormGroup label={t('kubevirt-plugin~Description')} fieldId={asId('description')}>
+            <TextArea
+              id={asId('description')}
+              value={description}
+              onChange={(_event, v) => setDescription(v)}
+              className="kubevirt-clone-vm-modal__description"
+            />
+          </FormGroup>
+          <FormGroup isRequired label={t('kubevirt-plugin~Namespace')} fieldId={asId('namespace')}>
+            <FormSelect
+              value={namespace}
+              onChange={(_event, v) => onNamespaceChanged(v)}
+              id={asId('namespace')}
+            >
+              {[...getLoadedData(namespaces, [])]
+                .sort((n1, n2) => {
+                  const n1Name = getName(n1);
+                  const n2Name = getName(n2);
+                  return n1Name.localeCompare(n2Name);
+                })
+                .map((n) => {
+                  const namespaceName = getName(n);
+                  return (
+                    <FormSelectOption
+                      key={namespaceName}
+                      value={namespaceName}
+                      label={namespaceName}
+                    />
+                  );
+                })}
+            </FormSelect>
+          </FormGroup>
+          <FormGroup fieldId={asId('start')}>
+            <Checkbox
+              label={t('kubevirt-plugin~Start virtual machine on clone')}
+              id={asId('start')}
+              isChecked={startVM}
+              data-checked-state={startVM}
+              onChange={(_event, value) => setStartVM(value)}
+              className="kubevirt-clone-vm-modal__start_vm_checkbox"
+            />
+          </FormGroup>
+          <FormGroup
+            label={t('kubevirt-plugin~Configuration')}
+            fieldId={asId('configuration-summary')}
+          >
+            <ConfigurationSummary
+              id={asId('configuration-summary')}
+              vm={vm}
+              persistentVolumeClaims={persistentVolumeClaimsData}
+              dataVolumes={dataVolumesData}
+            />
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooter
+        id="clone-vm"
+        errorMessage={errorMessage}
+        isSimpleError={!!vmRunningWarning && !errorMessage}
+        warningMessage={vmRunningWarning}
+        inProgress={inProgress}
+        isDisabled={!isValid || inProgress}
+        submitButtonText={t('kubevirt-plugin~Clone')}
+        onSubmit={submit}
+        onCancel={onCancelClick}
+      />
+    </div>
+  );
+});
+
+export type CloneVMModalProps = CloneVMModalFirehoseProps &
+  HandlePromiseProps & {
+    namespace: string;
+    vmNamespace?: string;
+    onNamespaceChanged: (namespace: string) => void;
+    namespaces?: FirehoseResult<K8sResourceKind[]>;
+    virtualMachines?: FirehoseResult<VMKind[]>;
+    dataVolumes?: FirehoseResult<V1alpha1DataVolume[]>;
+    persistentVolumeClaims?: FirehoseResult<PersistentVolumeClaimKind[]>;
+    requestsDataVolumes: boolean;
+    requestsPVCs: boolean;
+  };
+
+const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
+  const { vm, useProjects } = props;
+  const vmNamespace = getNamespace(vm);
+  const [namespace, setNamespace] = React.useState(vmNamespace);
+
+  const requestsDataVolumes = !!getVolumes(vm).find(getVolumeDataVolumeName);
+  const requestsPVCs = !!getVolumes(vm).find(getVolumePersistentVolumeClaimName);
+
+  const resources: FirehoseResource[] = [
+    {
+      kind: (useProjects ? ProjectModel : NamespaceModel).kind,
+      isList: true,
+      prop: 'namespaces',
+    },
+    {
+      kind: kubevirtReferenceForModel(VirtualMachineModel),
+      namespace,
+      isList: true,
+      prop: 'virtualMachines',
+    },
+  ];
+
+  if (requestsPVCs) {
+    resources.push({
+      kind: PersistentVolumeClaimModel.kind,
+      namespace: vmNamespace,
+      isList: true,
+      prop: 'persistentVolumeClaims',
+    });
+  }
+
+  if (requestsDataVolumes) {
+    resources.push({
+      kind: kubevirtReferenceForModel(DataVolumeModel),
+      namespace: vmNamespace,
+      isList: true,
+      prop: 'dataVolumes',
+    });
+  }
+
+  return (
+    <Firehose resources={resources}>
+      <CloneVMModal
+        {...props}
+        namespace={namespace}
+        vmNamespace={vmNamespace}
+        onNamespaceChanged={(n) => setNamespace(n)}
+        requestsDataVolumes={requestsDataVolumes}
+        requestsPVCs={requestsPVCs}
+      />
+    </Firehose>
+  );
+};
+
+type CloneVMModalFirehoseProps = ModalComponentProps & {
+  vm: VMKind;
+  vmi: VMIKind;
+  useProjects: boolean;
+};
+
+const cloneVMModalStateToProps = ({ k8s }) => {
+  const useProjects = k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]);
+  return {
+    useProjects,
+  };
+};
+
+const CloneVMModalConnected = connect(cloneVMModalStateToProps)(CloneVMModalFirehose);
+
+export const cloneVMModal = createModalLauncher(CloneVMModalConnected);
