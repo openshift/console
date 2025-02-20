@@ -1834,10 +1834,10 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.4.2.tgz#4a87d6a5fb2ffd526b4b9597b651f13ecf8ddd4f"
   integrity sha512-+BaokNR8/AmTYMESxby9UtQXPGACg449BXQd0KejAvW/uGxlgO6mY1X1205DeBEHoK3e/vXkYXjvZPpv/tcxSA==
 
-"@patternfly/patternfly@^6.2.0-prerelease.2":
-  version "6.2.0-prerelease.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-6.2.0-prerelease.2.tgz#38b9d9586ef9fe4b8215c626d907559989513096"
-  integrity sha512-gAPWGpi833f5e4HcZvkm9GOzFoHd+DcQackDQSi9IRo6WEepWxOA93QC49BTEJZeK4vsIX98XQfb0zn2YUHUYg==
+"@patternfly/patternfly@^6.2.0-prerelease.3":
+  version "6.2.0-prerelease.5"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-6.2.0-prerelease.5.tgz#beb568a269b2f30ab591e9cee671a2409349d5f2"
+  integrity sha512-El+oVuK8IA7EtoFDoKNsMHARW2Z1P1XhbcTCuBCKODurIVuBXv1+UkEbA0GN4768qg18Hl6FwCLLiReYGsCwfw==
 
 "@patternfly/quickstarts@^6.2.0-prerelease.4":
   version "6.2.0-prerelease.4"
