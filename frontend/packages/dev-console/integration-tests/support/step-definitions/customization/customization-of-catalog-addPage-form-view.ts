@@ -43,7 +43,7 @@ When('user clicks on Developer tab', () => {
   cy.get(customizationPO.role.presentation).contains('Developer').should('be.visible').click();
 });
 
-When('user disables all the items in Developer Catalog', () => {
+When('user disables all the items in Software Catalog', () => {
   cy.byTestID(customizationPO.developerCatalog.formSection)
     .find(customizationPO.developerCatalog.removeAllAction)
     .scrollIntoView()
@@ -59,7 +59,7 @@ When('user disables all the items in Developer Catalog', () => {
     .click();
 });
 
-When('user disables {string} the item in Developer Catalog', (actionName: string) => {
+When('user disables {string} the item in Software Catalog', (actionName: string) => {
   cy.byTestID(customizationPO.developerCatalog.formSection)
     .find(customizationPO.developerCatalog.removeAllAction)
     .click();
@@ -132,7 +132,7 @@ Then('user will see Save message', () => {
 });
 
 Then(
-  'user will not see "Developer Catalog" and all the sub-catalogs in Add page and Topology page',
+  'user will not see "Software Catalog" and all the sub-catalogs in Add page and Topology page',
   () => {
     perspective.switchTo(switchPerspective.Administrator);
     perspective.switchTo(switchPerspective.Developer);
@@ -161,7 +161,7 @@ Then(
 );
 
 Then(
-  'user will see "Developer Catalog" and all the sub-catalogs in Add page and Topology page except "HelmChart"',
+  'user will see "Software Catalog" and all the sub-catalogs in Add page and Topology page except "HelmChart"',
   () => {
     perspective.switchTo(switchPerspective.Administrator);
     perspective.switchTo(switchPerspective.Developer);
@@ -186,7 +186,7 @@ Then(
 );
 
 Then(
-  'user will only see "Developer Catalog" and "HelmChart" type in Add page and Topology page',
+  'user will only see "Software Catalog" and "HelmChart" type in Add page and Topology page',
   () => {
     perspective.switchTo(switchPerspective.Administrator);
     perspective.switchTo(switchPerspective.Developer);
