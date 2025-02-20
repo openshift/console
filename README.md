@@ -79,10 +79,13 @@ oc get oauthclient console-oauth-client -o jsonpath='{.secret}' > examples/conso
 ```
 
 If the CA bundle of the OpenShift API server is unavailable, fetch the CA
-certificates from a service account secret. Otherwise copy the CA bundle to
+certificates from a service account secret. Due to [upstream changes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#manually-create-an-api-token-for-a-serviceaccount),
+these service account secrets need to be created manually.
+Otherwise copy the CA bundle to
 `examples/ca.crt`:
 
 ```
+oc apply -f examples/sa-secrets.yaml
 oc get secrets -n default --field-selector type=kubernetes.io/service-account-token -o json | \
     jq '.items[0].data."ca.crt"' -r | python -m base64 -d > examples/ca.crt
 # Note: use "openssl base64" because the "base64" tool is different between mac and linux
