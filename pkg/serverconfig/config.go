@@ -323,6 +323,15 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		}
 	}
 
+	if customization.CustomLogoFiles != nil {
+		customLogos, err := json.Marshal(customization.CustomLogoFiles)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.customLogoFiles field: %v", err)
+		} else {
+			fs.Set("custom-logo-files", string(customLogos))
+		}
+	}
+
 	if customization.Perspectives != nil {
 		perspectives, err := json.Marshal(customization.Perspectives)
 		if err != nil {
