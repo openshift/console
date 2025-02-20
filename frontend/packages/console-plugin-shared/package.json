@@ -23,7 +23,7 @@
     "classnames": "2.x",
     "lodash-es": "^4.17.21",
     "sanitize-html": "^2.3.2",
-    "showdown": "1.8.6"
+    "showdown": "1.9.1"
   },
   "devDependencies": {
     "@types/showdown": "1.9.4"
