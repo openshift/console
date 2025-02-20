@@ -17,7 +17,7 @@ Feature: Feature flag for Helm
               And user clicks on Save
              Then user is not able to see the Helm tab in the navigation menu
               And user can not see Helm Chart card in Add page
-              And user can not see Helm Charts filter in the Developer Catalog page
+              And user can not see Helm Charts filter in the Software Catalog page
 
 
         @regression @manual
@@ -30,4 +30,4 @@ Feature: Feature flag for Helm
               And user clicks on Save
              Then user is able to see the Helm tab in the navigation menu
               And user can see Helm Chart card in Add page
-              And user can see Helm Charts filter in the Developer Catalog page
+              And user can see Helm Charts filter in the Software Catalog page

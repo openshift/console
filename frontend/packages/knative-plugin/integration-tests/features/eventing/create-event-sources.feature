@@ -9,7 +9,7 @@ Feature: Create event sources
 
 
         @smoke
-        Scenario: Event Sources on default Developer Catalog: KE-02-TC01
+        Scenario: Event Sources on default Software Catalog: KE-02-TC01
              Then user will see the cards of Event Sources
               And user will see Filter by Keyword field
               And user will see A-Z, Z-A sort by dropdown

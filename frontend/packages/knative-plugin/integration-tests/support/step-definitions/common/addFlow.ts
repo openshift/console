@@ -41,8 +41,8 @@ Given('user has opened application {string} in topology page', (componentName: s
   topologyPage.verifyWorkloadInTopologyPage(componentName);
 });
 
-Given('user is at Developer Catalog page', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+Given('user is at Software Catalog page', () => {
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
 When('user clicks Instantiate Template button on side bar', () => {

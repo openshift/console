@@ -4,7 +4,7 @@ import { catalogPO } from '../../pageObjects';
 import { addPage, catalogPage } from '../../pages';
 
 When('user clicks on From Catalog card', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
 When('user clicks on Event Sources type', () => {
@@ -23,12 +23,12 @@ Then('user will see CICD, Databases, Languages, Middleware, Other categories', (
   catalogPage.verifyCategories();
 });
 
-Then(
-  'user will see Builder Images, Event Sources, Helm Charts, Operator Backed, Templates types',
-  () => {
-    catalogPage.verifyTypes();
-  },
-);
+Then('user will see {string}, {string}, {string}, {string} types', (el1, el2, el3, el4: string) => {
+  catalogPage.verifyTypes(el1);
+  catalogPage.verifyTypes(el2);
+  catalogPage.verifyTypes(el3);
+  catalogPage.verifyTypes(el4);
+});
 
 Then('user will see Filter by Keyword field', () => {
   cy.get(catalogPO.search).should('have.attr', 'placeholder', 'Filter by keyword...');

@@ -10,7 +10,7 @@ Feature: Knative Eventing Broker Support
         @regression
         Scenario: Create Broker form: KE-10-TC01
             Given user is at Add page
-             When user selects Broker from Developer Catalog card
+             When user selects Broker from Software Catalog card
              Then user will see Form view default selected
               And user will see YAML view radio button
               And user will see Application field for broker
@@ -20,7 +20,7 @@ Feature: Knative Eventing Broker Support
         @regression
         Scenario: Create Broker using YAML view: KE-10-TC02
             Given user is at Add page
-             When user selects Broker from Developer Catalog card
+             When user selects Broker from Software Catalog card
               And user selects YAML view
               And user clicks on Create button to create broker
              Then user will be redirected to Topology page
@@ -31,7 +31,7 @@ Feature: Knative Eventing Broker Support
         Scenario: Sink event source to Broker: KE-10-TC03
             Given user has created broker "default"
               And user is at Add page
-             When user selects Event Source from Developer Catalog card
+             When user selects Event Source from Software Catalog card
               And user selects "PingSource" event source
               And user clicks on Create Event Source button
               And user enters schedule as "* * * * *"
@@ -47,7 +47,7 @@ Feature: Knative Eventing Broker Support
         Scenario: Sink multiple event sources to Broker: KE-10-TC04
             Given user has "ping-source" event source sinked to "default" broker
               And user is at Add page
-             When user selects Event Source from Developer Catalog card
+             When user selects Event Source from Software Catalog card
               And user selects "ApiServerSource" event source
               And user clicks on Create Event Source button
               And user enters apiVersion

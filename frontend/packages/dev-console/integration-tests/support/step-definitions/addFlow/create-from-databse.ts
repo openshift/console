@@ -6,7 +6,7 @@ When('user clicks Database card', () => {
   addPage.selectCardFromOptions(addOptions.Database);
 });
 
-When('user selects {string} database on Developer Catalog', (database: string) => {
+When('user selects {string} database on Software Catalog', (database: string) => {
   catalogPage.search(database);
   catalogPage.selectCardInCatalog(database);
 });
