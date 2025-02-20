@@ -92,7 +92,7 @@ const ResponsePane: React.FC<FormikProps<FormikValues & ResponsePaneFormikValues
             minHeight="34vh"
             showSamples={false}
             showShortcuts={false}
-            showMiniMap={false}
+            isMinimapVisible={false}
             language="json"
           />
         ) : (

@@ -50,6 +50,7 @@ PKGS_TO_CHECK=(
   '@patternfly/quickstarts:6'
   '@patternfly/react-catalog-view-extension:6'
   '@patternfly/react-charts:8'
+  '@patternfly/react-code-editor:6'
   '@patternfly/react-component-groups:6'
   '@patternfly/react-console:6'
   '@patternfly/react-core:6'

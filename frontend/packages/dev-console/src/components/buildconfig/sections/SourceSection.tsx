@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Language } from '@patternfly/react-code-editor';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField } from '@console/shared';
@@ -33,8 +34,6 @@ const SourceSection: React.FC = () => {
   };
 
   const lineHeight = 18;
-  const showLines = 10; // Math.max(3, Math.min(15, dockerfile?.split('/n')?.length));
-  const height = lineHeight * showLines;
 
   return (
     <FormSection title={t('devconsole~Source')} dataTest="section source">
@@ -55,13 +54,9 @@ const SourceSection: React.FC = () => {
         <EditorField
           name="formData.source.dockerfile"
           label={t('devconsole~Dockerfile')}
-          height={height}
-          language="dockerfile"
-          theme="console"
+          language={Language.dockerfile as Language}
           options={{
             lineHeight,
-            readOnly: false,
-            minimap: { enabled: false },
             scrollBeyondLastLine: false,
           }}
         />
