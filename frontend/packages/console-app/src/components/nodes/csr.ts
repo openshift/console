@@ -18,7 +18,7 @@ const getNodeCSRs = (
   username: string,
   client: boolean,
 ): CertificateSigningRequestKind[] =>
-  csrs
+  (csrs || [])
     .filter(
       (csr) =>
         csr.spec.username === username &&
