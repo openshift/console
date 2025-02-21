@@ -6,11 +6,11 @@ import {
   useK8sWatchResource,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Loading } from '@console/internal/components/utils';
-import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin/src';
-import { NetworkAttachmentDefinitionKind } from '@console/network-attachment-definition-plugin/src/types';
 import { getName, getNamespace } from '@console/shared/src';
+import { NetworkAttachmentDefinitionModel } from '../../models';
 import { NetworkPolicy } from './network-policy-model';
 import SelectMultiTypeahead from './SelectMultiTypeahead/SelectMultiTypeahead';
+import { NetworkAttachmentDefinitionKind } from './types';
 
 type NADsSelectorProps = {
   namespace: string;
