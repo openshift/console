@@ -31,9 +31,9 @@ export const documentationURLs: documentationURLsType = {
   },
   configuringMonitoring: {
     downstream:
-      'html/monitoring/configuring-the-monitoring-stack#maintenance-and-support_configuring-the-monitoring-stack',
+      'html/monitoring/getting-started#maintenance-and-support-for-monitoring',
     upstream:
-      'observability/monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring',
+      'observability/monitoring/getting-started/maintenance-and-support-for-monitoring.html#maintenance-and-support-for-monitoring',
   },
   networkPolicy: {
     downstream: 'html/networking/network-policy#about-network-policy',
