@@ -7,20 +7,28 @@ import {
   isHrefNavItem,
   isResourceNSNavItem,
   isResourceNavItem,
+  useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { FavoriteNavItemResources } from './FavoriteNavItemResources';
 import { NavItemHref } from './NavItemHref';
 import { NavItemResource } from './NavItemResource';
 import { NavSection } from './NavSection';
 
 export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
+  const [activePerspective] = useActivePerspective();
   if (isNavSection(extension)) {
     return (
-      <NavSection
-        id={extension.properties.id}
-        name={extension.properties.name}
-        dataAttributes={extension.properties.dataAttributes}
-      />
+      <>
+        <NavSection
+          id={extension.properties.id}
+          name={extension.properties.name}
+          dataAttributes={extension.properties.dataAttributes}
+        />
+        {extension.properties.id === 'home' && activePerspective === 'admin' && (
+          <FavoriteNavItemResources />
+        )}
+      </>
     );
   }
   if (isSeparator(extension)) {
