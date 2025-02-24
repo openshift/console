@@ -789,7 +789,7 @@ export type Resources = {
 export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
-)((props) => {
+)((props: StateProps & DispatchProps) => {
   const extensions = useResolvedExtensions<StorageClassProvisioner>(isStorageClassProvisioner);
   return <StorageClassFormInner extensions={extensions} {...props} />;
 });

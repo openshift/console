@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -20,6 +18,7 @@ import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
 import { Firehose, FirehoseResult, removeQueryArgument } from './utils';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
+import { RootState } from '../redux';
 
 export type NamespaceBarDropdownsProps = {
   children: React.ReactNode;
@@ -104,7 +103,7 @@ export const NamespaceBar: React.FC<NamespaceBarProps & { hideProjects?: boolean
   children,
   hideProjects = false,
 }) => {
-  const useProjects = useSelector(({ k8s }) =>
+  const useProjects = useSelector<RootState, boolean>(({ k8s }) =>
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
   return (

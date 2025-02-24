@@ -22,7 +22,6 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { getBadgeFromType, usePinnedResources } from '@console/shared';
-import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -50,8 +49,11 @@ import {
   isResourceListPage as isDynamicResourceListPage,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
-const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
+const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
+  const { plural } = useParams();
+  const [kindObj] = useK8sModel(kind || plural);
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
     isDynamicResourceListPage,
@@ -82,7 +84,7 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       hideColumnManagement
     />
   );
-});
+};
 
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [perspective] = useActivePerspective();

@@ -1,19 +1,11 @@
 import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   watchPrometheusQuery,
   stopWatchPrometheusQuery,
 } from '@console/internal/actions/dashboards';
-import {
-  getInstantVectorStats,
-  GetRangeStats,
-  GetInstantStats,
-} from '@console/internal/components/graphs/utils';
+import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
 import { RootState } from '@console/internal/redux';
@@ -42,54 +34,4 @@ export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
   return results;
 };
 
-const customSelectorCreator = createSelectorCreator(defaultMemoize, shallowEqual);
-
-/** @deprecated use usePrometheusPoll() instead */
-export const usePrometheusQueries = <R extends any>(
-  queries: string[],
-  parser?: GetInstantStats | GetRangeStats,
-  namespace?: string,
-  timespan?: number,
-): UsePrometheusQueriesResult<R> => {
-  const dispatch = useDispatch();
-  React.useEffect(() => {
-    queries.forEach((query) => dispatch(watchPrometheusQuery(query, namespace, timespan)));
-    return () => {
-      queries.forEach((query) => dispatch(stopWatchPrometheusQuery(query, timespan)));
-    };
-  }, [dispatch, queries, namespace, timespan]);
-
-  const selectors = React.useMemo(
-    () =>
-      queries.map((q) => ({ dashboards }) =>
-        dashboards.getIn([RESULTS_TYPE.PROMETHEUS, timespan ? `${q}@${timespan}` : q]),
-      ),
-    [queries, timespan],
-  );
-
-  const querySelector = React.useMemo(() => customSelectorCreator(selectors, (...data) => data), [
-    selectors,
-  ]);
-
-  const queryResults = useSelector<RootState, ImmutableMap<string, any>>(querySelector);
-
-  const results = React.useMemo<UsePrometheusQueriesResult<R>>(() => {
-    if (_.isEmpty(queryResults?.[0])) {
-      return [queries.map(() => []), true, null];
-    }
-    const values = queryResults.reduce((acc: R[], curr) => {
-      const data = curr.get('data');
-      const value = parser ? parser(data) : data;
-      return [...acc, value];
-    }, []);
-    const loadError: boolean = queryResults.some((res) => !!res.get('loadError'));
-    const loading: boolean = values.some((res) => !res);
-    return [values, loading, loadError];
-  }, [queryResults, queries, parser]);
-
-  return results;
-};
-
 type UsePrometheusQuery = (query: string, humanize: Humanize) => [HumanizeResult, any, number];
-// [data, loading, loadError]
-type UsePrometheusQueriesResult<R> = [R[], boolean, boolean];
