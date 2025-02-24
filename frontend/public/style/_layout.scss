@@ -12,23 +12,11 @@ body,
   overflow: auto;
 }
 
-.co-m-app__content {
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: column;
-  height: 100%; // doesn't work on safari without height
-}
-
-.co-m-app__content > .pf-v6-c-page {
-  height: 0;
-  flex: 1;
-}
-
 .co-p-has-sidebar {
-  position: relative;
   display: flex;
   flex: 1;
   height: 100%;
+  position: relative;
 
   &__body {
     flex: 2;
