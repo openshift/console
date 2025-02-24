@@ -25,9 +25,7 @@ const SimpleTabNavWrapper: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
     <SimpleTabNav
       selectedTab={selectTabParam || selectedTab || t('topology~Details')}
       tabs={tabs}
-      tabProps={null}
       onClickTab={handleClickTab}
-      additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
     />
   );
 };

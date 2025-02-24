@@ -144,7 +144,6 @@ export const ResourceSidebar: React.FC<{
             samples,
             snippets,
           }}
-          additionalClassNames="co-m-horizontal-nav__menu--within-sidebar"
         />
       ) : (
         <ResourceSchema schema={schema} kindObj={kindObj} />
