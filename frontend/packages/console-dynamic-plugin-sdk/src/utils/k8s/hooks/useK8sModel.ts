@@ -1,7 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { K8sModel } from '../../../api/common-types';
+import { SDKStoreState } from '../../../app/redux-types';
 import {
   UseK8sModel,
   K8sResourceKindReference,
@@ -33,6 +32,6 @@ export const getK8sModel = (
  * ```
  */
 export const useK8sModel: UseK8sModel = (k8sGroupVersionKind) => [
-  useSelector(({ k8s }) => getK8sModel(k8s, k8sGroupVersionKind)),
-  useSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight']) ?? false),
+  useSelector<SDKStoreState, K8sModel>(({ k8s }) => getK8sModel(k8s, k8sGroupVersionKind)),
+  useSelector<SDKStoreState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight']) ?? false),
 ];

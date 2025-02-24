@@ -2,8 +2,6 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
