@@ -33,8 +33,6 @@ import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line
 import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 import {

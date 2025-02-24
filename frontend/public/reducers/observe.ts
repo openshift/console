@@ -280,7 +280,5 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 export type NotificationAlerts = {
   data: Alert[];
   loaded: boolean;
-  loadError?: {
-    message?: string;
-  };
+  loadError?: Error;
 };
