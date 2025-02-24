@@ -63,11 +63,12 @@ export const menuActions: KebabAction[] = [
 const kind = 'Job';
 
 const tableColumnClasses = [
-  'pf-v6-u-w-25-on-2xl',
-  'pf-v6-u-w-25-on-2xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-2xl',
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',
+  'pf-m-hidden pf-m-visible-on-2xl',
   Kebab.columnClass,
 ];
 
@@ -100,6 +101,9 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
       </TableData>
       <TableData className={tableColumnClasses[4]}>{type}</TableData>
       <TableData className={tableColumnClasses[5]}>
+        <Timestamp timestamp={job.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <LazyActionMenu context={context} />
       </TableData>
     </>
@@ -250,8 +254,14 @@ const JobsList: React.FC = (props) => {
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: t('public~Created'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 
