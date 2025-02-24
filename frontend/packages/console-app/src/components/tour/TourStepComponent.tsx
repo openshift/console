@@ -10,6 +10,7 @@ import StepHeader from './steps/StepHeader';
 import './TourStepComponent.scss';
 
 type TourStepComponentProps = {
+  expandableSelector?: string;
   selector?: string;
   placement?: string;
   heading: string;
@@ -29,6 +30,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   heading,
   content,
   selector,
+  expandableSelector,
   showStepBadge,
   step,
   totalSteps,
@@ -64,7 +66,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   };
   return selector ? (
     <>
-      <Spotlight selector={selector} />
+      <Spotlight selector={selector} expandableSelector={expandableSelector} />
       <Popover
         placement={placement as PopoverPlacement}
         headerContent={header}

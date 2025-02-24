@@ -11,6 +11,7 @@ export type Step = {
   selector?: string;
   showStepBadge?: boolean;
   showClose?: boolean;
+  expandableSelector?: string;
 };
 
 export type TourDataType = {
