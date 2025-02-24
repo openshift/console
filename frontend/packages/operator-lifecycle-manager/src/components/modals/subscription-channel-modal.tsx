@@ -22,7 +22,7 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
   subscription,
 }) => {
   const { t } = useTranslation();
-  const currentChannel = subscription?.spec?.channel ?? pkg?.status?.channels?.[0]?.name;
+  const currentChannel = subscription?.spec?.channel;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [selectedChannel, setSelectedChannel] = React.useState(currentChannel);
 
