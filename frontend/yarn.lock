@@ -1951,10 +1951,10 @@
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-6.2.0-prerelease.2.tgz#d1db6f455f581daa84d728c0a248802096cd797a"
   integrity sha512-3snWPqFBOcv0P0UZk5SfG3ZrhBaMb5P1griaMydA/cXdWe9XRX5oP4QuE3uGtQfBVuAaEqRDokQfo2xhWP2Gyw==
 
-"@patternfly/react-topology@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-6.1.0.tgz#3904fad1da226ccde341d0566ca588ff3c8840b1"
-  integrity sha512-C9Ed0UVjJ4Q/6sm8lphOsNdBm3a8/MdONk136C8t7+TyRr2VCqmuzEaOGrsuBjXmaGHdmoG5XwwAt/mknxQf2w==
+"@patternfly/react-topology@^6.2.0-prerelease.3":
+  version "6.2.0-prerelease.3"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-6.2.0-prerelease.3.tgz#d835a50f473b26f295c76e4bf9a0e7693159a2fd"
+  integrity sha512-zddau9cA/upkVyOMp5lliKGL6rCyyqZWCY1EuI6rpO6Ss/D1FkLstMXn1oesnFR/J9YGqcrIv53/XfEwKDwyFA==
   dependencies:
     "@dagrejs/dagre" "1.1.2"
     "@patternfly/react-core" "^6.0.0"
