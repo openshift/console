@@ -16,6 +16,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import {
   history,
+  LinkifyExternal,
   ResourceLink,
   resourceListPathFromModel,
   StatusBox,
@@ -391,7 +392,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             {uninstallMessage && (
               <>
                 <h2>{t('olm~Message from Operator developer')}</h2>
-                <p>{uninstallMessage}</p>
+                <p>
+                  <LinkifyExternal>{uninstallMessage}</LinkifyExternal>
+                </p>
               </>
             )}
             {!optedOut && <>{operandsSection}</>}
