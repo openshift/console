@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	configv1 "github.com/openshift/api/config/v1"
@@ -34,6 +35,10 @@ func Validate(fs *flag.FlagSet) error {
 	}
 
 	if _, err := validatePerspectives(fs.Lookup("perspectives").Value.String()); err != nil {
+		return err
+	}
+
+	if _, err := validateCustomLogoFiles(fs.Lookup("custom-logo-files").Value.String()); err != nil {
 		return err
 	}
 
@@ -182,4 +187,30 @@ func validatePerspectives(value string) ([]Perspective, error) {
 	}
 
 	return perspectives, nil
+}
+
+func validateCustomLogoFiles(value string) ([]CustomLogoFiles, error) {
+	if value == "" {
+		return nil, nil
+	}
+	var customLogoFiles []CustomLogoFiles
+
+	decoder := json.NewDecoder(strings.NewReader(value))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&customLogoFiles); err != nil {
+		return nil, err
+	}
+
+	// validate files
+	for _, customLogoFile := range customLogoFiles {
+		for _, logo := range customLogoFile.Logos {
+			if _, err := os.Stat(logo.Path); err != nil {
+				return nil, err
+			}
+		}
+
+	}
+	// validation of constraints TBD by final custom-logo-files API design
+
+	return customLogoFiles, nil
 }

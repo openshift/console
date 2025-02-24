@@ -2,6 +2,7 @@ package serverconfig
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -287,5 +288,114 @@ func TestMissingConfigurationForAccessReviewProperty(t *testing.T) {
 	expectedMsg := "Perspective accessReview for id perspective1 must be configured for state AccessReview."
 	if actualMsg != expectedMsg {
 		t.Errorf("Unexpected error: actual\n%s\n, expected\n%s", actualMsg, expectedMsg)
+	}
+}
+
+func TestValidEntriesForCustomLogoFiles(t *testing.T) {
+	jsonData := `[  
+			{  
+				"type": "masthead",  
+				"logos": [  
+					{ "theme": "light-theme", "path": "testdata/masthead/okd-logo-light.svg" },  
+					{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }  
+				]  
+			},  
+			{  
+				"type": "favicon",  
+				"logos": [  
+					{ "theme": "light-theme", "path": "testdata/favicon/okd-favicon.png" },  
+					{ "theme": "dark-theme", "path": "testdata/favicon/okd-favicon.png" }  
+				]  
+			}  
+		]`
+	actualCustomLogoFiles, err := validateCustomLogoFiles(jsonData)
+	exectedPerspectives := []CustomLogoFiles{
+		{
+			Type: MastheadType,
+			Logos: []CustomLogoFile{
+				{
+					Theme: LightTheme,
+					Path:  "testdata/masthead/okd-logo-light.svg",
+				},
+				{
+					Theme: DarkTheme,
+					Path:  "testdata/masthead/okd-logo-dark.svg",
+				},
+			},
+		},
+		{
+			Type: FaviconType,
+			Logos: []CustomLogoFile{
+				{
+					Theme: LightTheme,
+					Path:  "testdata/favicon/okd-favicon.png",
+				},
+				{
+					Theme: DarkTheme,
+					Path:  "testdata/favicon/okd-favicon.png",
+				},
+			},
+		},
+	}
+	if err != nil {
+		t.Error("Unexpected error when parsing data.", err)
+	}
+	if !reflect.DeepEqual(actualCustomLogoFiles, exectedPerspectives) {
+		t.Errorf("Unexpected value: actual %v, expected %v", actualCustomLogoFiles, exectedPerspectives)
+	}
+}
+
+func TestUnknownPropertiesForCustomLogoFiles(t *testing.T) {
+	jsonUnknownLogoType := fmt.Sprintf(`[  
+		{  
+			"type": "%s",  
+			"logos": [  
+				{ "theme": "light-theme", "path": "testdata/masthead/okd-logo-light.svg" },  
+				{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }  
+			]  
+		}  
+	]`, "unknownType")
+	jsonUnknownLogoTheme := fmt.Sprintf(`[  
+		{  
+			"type": "masthead",  
+			"logos": [  
+				{ "theme": "%s", "path": "testdata/masthead/okd-logo-light.svg" },  
+				{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }  
+			]  
+		}  
+	]`, "unknownTheme")
+	_, err := validateCustomLogoFiles(jsonUnknownLogoType)
+	actualMsg := err.Error()
+	expectedUnknownLogoTypeErr := "unknown custom logo type: \"unknownType\". Must be one of [masthead, favicon]"
+	if actualMsg != expectedUnknownLogoTypeErr {
+		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg, expectedUnknownLogoTypeErr)
+	}
+	_, err2 := validateCustomLogoFiles(jsonUnknownLogoTheme)
+	expectedUnknownLogoThemeErr := "unknown custom logo theme: \"unknownTheme\". Must be one of [dark-theme, light-theme]"
+	actualMsg2 := err2.Error()
+	t.Log(actualMsg2)
+	t.Log(expectedUnknownLogoThemeErr)
+	if actualMsg2 != expectedUnknownLogoThemeErr {
+		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg2, expectedUnknownLogoThemeErr)
+	}
+}
+
+func TestInvalidStructureForCustomLogoFiles(t *testing.T) {
+	jsonData := `[  
+		{  
+			"fruit": "apple",  
+			"logos": [  
+				{ "theme": "light-theme", "path": "testdata/masthead/okd-logo-light.svg" },  
+				{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }  
+			]  
+		}  
+	]`
+	_, err := validateCustomLogoFiles(jsonData)
+	actualMsg := err.Error()
+	expectedErrMessage := "json: unknown field \"fruit\""
+	t.Log(actualMsg)
+	t.Log(expectedErrMessage)
+	if actualMsg != expectedErrMessage {
+		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg, expectedErrMessage)
 	}
 }

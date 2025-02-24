@@ -157,6 +157,7 @@ type Server struct {
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
 	CustomLogoFile                      string
+	CustomLogoFiles                     string
 	CustomProductName                   string
 	DevCatalogCategories                string
 	DevCatalogTypes                     string
@@ -301,6 +302,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	if s.CustomLogoFile != "" {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Cache-Control", "public, no-cache, no-store, must-revalidate")
 			http.ServeFile(w, r, s.CustomLogoFile)
 		})
 	}
@@ -581,13 +583,25 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	config := &serverconfig.Config{
 		Plugins: s.EnabledConsolePlugins,
 		Customization: serverconfig.Customization{
-			Perspectives: []serverconfig.Perspective{},
+			Perspectives:    []serverconfig.Perspective{},
+			CustomLogoFiles: []serverconfig.CustomLogoFiles{},
 		},
 	}
 	if len(s.Perspectives) > 0 {
 		err := json.Unmarshal([]byte(s.Perspectives), &config.Customization.Perspectives)
 		if err != nil {
 			klog.Errorf("Unable to parse perspective JSON: %v", err)
+		}
+	}
+	if len(s.CustomLogoFiles) > 0 {
+		err := json.Unmarshal([]byte(s.CustomLogoFiles), &config.Customization.CustomLogoFiles)
+		fmt.Println(err)
+		if err != nil {
+			klog.Errorf("Unable to parse custom logos JSON: %v", err)
+		} else {
+			handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
+				serverconfig.CustomLogosHandler(w, r, config.Customization.CustomLogoFiles)
+			})
 		}
 	}
 	serverconfigMetrics := serverconfig.NewMetrics(config)
@@ -753,7 +767,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 
-	if s.CustomLogoFile != "" {
+	if s.CustomLogoFile != "" || s.CustomLogoFiles != "" {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
 	}
 

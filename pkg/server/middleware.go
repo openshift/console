@@ -16,7 +16,7 @@ import (
 
 type HandlerWithUser func(*auth.User, http.ResponseWriter, *http.Request)
 
-// Middleware generates a middleware wrapper for request hanlders.
+// Middleware generates a middleware wrapper for request handlers.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
 func authMiddleware(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h http.HandlerFunc) http.HandlerFunc {
 	return authMiddlewareWithUser(
