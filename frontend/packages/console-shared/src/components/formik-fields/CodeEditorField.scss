@@ -2,35 +2,36 @@
 @import '../../../../../public/style/vars';
 
 .osc-yaml-editor {
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: row;
   margin-right: -$pf-v6-global-gutter;
+  margin-top: -$pf-v6-global-gutter--md;
+
   @media (max-width: $pf-v6-global--breakpoint--md) {
     margin-left: -$pf-v6-global-gutter;
-    margin-top: -$pf-v6-global-gutter--md;
   }
   @media (min-width: $pf-v6-global--breakpoint--xl) {
     margin-right: -$pf-v6-global-gutter--md;
   }
 
-  &__editor {
-    display: flex;
-    flex: 1 0 auto;
+  .co-p-has-sidebar__body {
     flex-direction: column;
-    @media (min-width: $pf-v6-global--breakpoint--md) {
-      margin-right: $pf-v6-global-gutter;
-    }
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      margin-right: $pf-v6-global-gutter--md;
+    display: flex;
+  }
+
+  &__editor {
+    position: relative;
+    display: flex;
+    height: 100%;
+    flex-grow: 1;
+    flex-direction: column;
+    padding-top: $pf-v6-global-gutter;
+    width: 100%;
+    max-width: calc(100% - $pf-v6-global-gutter--md);
+
+    @media (max-width: $pf-v6-global--breakpoint--md) {
+      max-width: 100%;
     }
   }
   &__sidebar {
-    display: flex;
-    width: 34%;
     margin-top: -$pf-v6-global-gutter--md;
-    @media screen and (max-width: $pf-v6-global--breakpoint--lg) {
-      display: none;
-    }
   }
 }
