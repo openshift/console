@@ -45,8 +45,8 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
         id: 'helm-charts',
-        title: 'Discover certified Helm Charts',
-        href: '/catalog/ns/active-namespace?catalogType=HelmChart',
+        title: 'Try the sample AI Chatbot Helm chart',
+        href: '/catalog/ns/active-namespace?catalogType=HelmChart&keyword=chatbot+AI+sample',
       },
       {
         id: 'topology',
@@ -98,8 +98,8 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
         id: 'helm-charts',
-        title: 'Discover certified Helm Charts',
-        href: '/catalog/all-namespaces?catalogType=HelmChart',
+        title: 'Try the sample AI Chatbot Helm chart',
+        href: '/catalog/all-namespaces?catalogType=HelmChart&keyword=chatbot+AI+sample',
       },
       {
         id: 'topology',

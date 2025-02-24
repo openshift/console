@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  FLAGS,
-  GETTING_STARTED_USER_SETTINGS_KEY_ADD_PAGE,
-  useUserSettings,
-} from '@console/shared';
+import { FLAGS, useUserSettings } from '@console/shared';
 import {
   QuickStartGettingStartedCard,
   GettingStartedExpandableGrid,
@@ -11,21 +7,22 @@ import {
   GettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
-import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
 import { SampleGettingStartedCard } from './SampleGettingStartedCard';
+import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
 
-import './GettingStartedSection.scss';
+import '../../dashboards-page/cluster-dashboard/getting-started/getting-started-section.scss';
 
-export const GettingStartedSection: React.FC = () => {
+type GettingStartedSectionProps = {
+  userSettingKey: string;
+};
+
+export const GettingStartedSection: React.FC<GettingStartedSectionProps> = ({ userSettingKey }) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
-  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(
-    GETTING_STARTED_USER_SETTINGS_KEY,
-  );
+  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userSettingKey);
 
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserSettings<boolean>(
-    GETTING_STARTED_USER_SETTINGS_KEY_ADD_PAGE,
+    `${userSettingKey}.expanded`,
     true,
   );
 
@@ -34,7 +31,7 @@ export const GettingStartedSection: React.FC = () => {
   }
 
   return (
-    <div className="odc-add-page-getting-started-section">
+    <div className="co-dashboard-getting-started-section">
       <GettingStartedExpandableGrid
         isOpen={isGettingStartedSectionOpen}
         setIsOpen={setIsGettingStartedSectionOpen}

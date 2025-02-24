@@ -3,6 +3,7 @@ import { Skeleton, Switch, Tooltip } from '@patternfly/react-core';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
+import { GettingStartedSection } from '@console/internal/components/dashboard/project-dashboard/getting-started/GettingStartedSection';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
 import { PageLayout, useActiveNamespace } from '@console/shared';
@@ -12,7 +13,6 @@ import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
 import { useAddActionExtensions } from '../../utils/useAddActionExtensions';
 import { ResourceQuotaAlert } from '../resource-quota/ResourceQuotaAlert';
 import AddCardSection from './AddCardSection';
-import { GettingStartedSection } from './GettingStartedSection';
 import { useAccessFilterExtensions } from './hooks/useAccessFilterExtensions';
 import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
 import './AddPageLayout.scss';
@@ -118,7 +118,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
       ref={setViewContainer}
     >
       <PageLayout title={title} hint={getHint()}>
-        <GettingStartedSection />
+        <GettingStartedSection userSettingKey="devconsole.addPage.gettingStarted" />
         <AddCardSection
           addActionExtensions={filteredAddActionExtensions}
           addActionGroupExtensions={addActionGroupExtensions}
