@@ -29,7 +29,7 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, lang: string)
   return dateTime.dateTimeFormatter(lang).format(mdate);
 };
 
-const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
+const nowStateToProps = ({ UI }) => UI.get('lastTick');
 
 export const Timestamp = (props: TimestampProps) => {
   const now = useSelector(nowStateToProps);
