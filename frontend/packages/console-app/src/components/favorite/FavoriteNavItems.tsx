@@ -3,17 +3,17 @@ import { Nav, NavExpandable, NavList, Button, FlexItem, Flex } from '@patternfly
 import { StarIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { useUserSettingsCompatibility } from '@console/shared';
 import {
   FAVORITES_CONFIG_MAP_KEY,
   FAVORITES_LOCAL_STORAGE_KEY,
   FavoritesType,
-} from '@console/internal/components/utils';
-import { useUserSettingsCompatibility } from '@console/shared';
-import { FavoriteNavItemResource } from './FavoriteNavItemResource';
+} from './FavoriteButton';
+import { FavoriteNavItem } from './FavoriteNavItem';
 
-import './FavoriteNavItemResources.scss';
+import './FavoriteNavItems.scss';
 
-export const FavoriteNavItemResources: React.FC = () => {
+export const FavoriteNavItems: React.FC = () => {
   const { t } = useTranslation();
   const [activeGroup, setActiveGroup] = React.useState('');
   const [activeItem, setActiveItem] = React.useState('');
@@ -54,11 +54,11 @@ export const FavoriteNavItemResources: React.FC = () => {
     };
     if (!loaded) return null;
     if (!favorites || favorites.length === 0) {
-      return <li className="co-no-favorites-message">{t('public~No favorites added')}</li>;
+      return <li className="co-no-favorites-message">{t('console-app~No favorites added')}</li>;
     }
 
     return favorites.map((favorite) => (
-      <FavoriteNavItemResource
+      <FavoriteNavItem
         key={favorite.url}
         dataAttributes={{
           'data-test': 'favorite-resource-item',
@@ -87,7 +87,7 @@ export const FavoriteNavItemResources: React.FC = () => {
             />
           </FlexItem>
         </Flex>
-      </FavoriteNavItemResource>
+      </FavoriteNavItem>
     ));
   }, [favorites, activeItem, loaded, t, setFavorites]);
 
@@ -95,7 +95,7 @@ export const FavoriteNavItemResources: React.FC = () => {
     <Nav onSelect={onSelect} aria-label="favorite-resources" className="pf-v6-u-py-0">
       <NavList>
         <NavExpandable
-          title={t('public~Favorites')}
+          title={t('console-app~Favorites')}
           groupId="favorites-group"
           isActive={activeGroup === 'favorites-group'}
           isExpanded={activeGroup === 'favorites-group'}

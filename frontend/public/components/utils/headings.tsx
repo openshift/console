@@ -28,6 +28,7 @@ import {
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
 
 import {
   ActionsMenu,
@@ -45,7 +46,6 @@ import {
   referenceForModel,
 } from '../../module/k8s';
 import { ManagedByOperatorLink } from './managed-by';
-import { FavoriteButton } from './favorite-button';
 
 export const ResourceItemDeleting = () => {
   const { t } = useTranslation();
@@ -142,6 +142,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
+  const isAdminPrespective = perspective === 'admin';
   return (
     <>
       {showBreadcrumbs && (
@@ -199,9 +200,9 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <span className="co-m-pane__heading-badge">{badge}</span>
             )}
             {link && <div className="co-m-pane__heading-link">{link}</div>}
-            {(perspective === 'admin' || showActions) && (
+            {(isAdminPrespective || showActions) && (
               <div className="co-actions" data-test-id="details-actions">
-                {perspective === 'admin' && <FavoriteButton />}
+                {isAdminPrespective && <FavoriteButton />}
                 {showActions && (
                   <>
                     {hasButtonActions && (

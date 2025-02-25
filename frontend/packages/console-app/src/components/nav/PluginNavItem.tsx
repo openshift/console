@@ -10,7 +10,7 @@ import {
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { FavoriteNavItemResources } from './FavoriteNavItemResources';
+import { FavoriteNavItems } from '../favorite/FavoriteNavItems';
 import { NavItemHref } from './NavItemHref';
 import { NavItemResource } from './NavItemResource';
 import { NavSection } from './NavSection';
@@ -26,7 +26,7 @@ export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
           dataAttributes={extension.properties.dataAttributes}
         />
         {extension.properties.id === 'home' && activePerspective === 'admin' && (
-          <FavoriteNavItemResources />
+          <FavoriteNavItems />
         )}
       </>
     );

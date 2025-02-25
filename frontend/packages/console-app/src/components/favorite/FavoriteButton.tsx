@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   Form,
@@ -10,16 +9,19 @@ import {
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
 import { ModalVariant } from '@patternfly/react-core/deprecated';
+import { StarIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { connectToModel } from '@console/internal/kinds';
 import { Modal, RedExclamationCircleIcon, useUserSettingsCompatibility } from '@console/shared';
 import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
-import { connectToModel } from '../../kinds';
 
-export type FavoritesType = Array<{
+import './FavoriteButton.scss';
+
+export type FavoritesType = {
   name: string;
   url: string;
-}>;
+}[];
 
 export const FAVORITES_CONFIG_MAP_KEY = 'console.favorites';
 export const FAVORITES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/favorites`;
@@ -69,14 +71,14 @@ export const FavoriteButton = connectToModel(() => {
 
   const handleConfirmStar = () => {
     if (!name.trim()) {
-      setError(t('public~Name is required.'));
+      setError(t('console-app~Name is required.'));
       return;
     }
     const nameExists = favorites?.some((favorite) => favorite.name === name.trim());
     if (nameExists) {
       setError(
         t(
-          'public~The name {{favoriteName}} already exists in your favorites. Choose a unique name to save to your favorites.',
+          'console-app~The name {{favoriteName}} already exists in your favorites. Choose a unique name to save to your favorites.',
           { favoriteName: name },
         ),
       );
@@ -95,7 +97,7 @@ export const FavoriteButton = connectToModel(() => {
   const handleNameChange = (value: string) => {
     const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
     if (!alphanumericRegex.test(value)) {
-      setError(t('public~Name can only contain letters, numbers, spaces, and hyphens.'));
+      setError(t('console-app~Name can only contain letters, numbers, spaces, and hyphens.'));
     } else {
       setError(null);
       setName(value);
@@ -103,30 +105,30 @@ export const FavoriteButton = connectToModel(() => {
   };
 
   const tooltipText = t(
-    'public~Maximum number of favorites ({{maxCount}}) reached. To add another favorite, remove an existing page from your favorites.',
+    'console-app~Maximum number of favorites ({{maxCount}}) reached. To add another favorite, remove an existing page from your favorites.',
     { maxCount: MAX_FAVORITE_COUNT },
   );
 
   return (
-    <>
+    <div className="co-fav-actions-icon">
       {favorites?.length >= MAX_FAVORITE_COUNT && !isStarred ? (
         <Tooltip content={tooltipText} triggerRef={ref} position="left">
           <div ref={ref}>
             <Button
               icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
-              className="co-actions-icon"
+              className="co-favorite-actions-icon"
               variant="link"
               aria-label="save-favorite"
               aria-pressed={isStarred}
               onClick={handleStarClick}
-              isDisabled={true}
+              isDisabled
             />
           </div>
         </Tooltip>
       ) : (
         <Button
           icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
-          className="co-actions-icon"
+          className="co-favorite-actions-icon"
           variant="link"
           aria-label="save-favorite"
           aria-pressed={isStarred}
@@ -136,21 +138,21 @@ export const FavoriteButton = connectToModel(() => {
 
       {isModalOpen && (
         <Modal
-          title={t('public~Add to favorites')}
+          title={t('console-app~Add to favorites')}
           isOpen={isModalOpen}
           onClose={handleModalClose}
           actions={[
             <Button key="confirm" variant="primary" onClick={handleConfirmStar}>
-              {t('public~Save')}
+              {t('console-app~Save')}
             </Button>,
             <Button key="cancel" variant="link" onClick={handleModalClose}>
-              {t('public~Cancel')}
+              {t('console-app~Cancel')}
             </Button>,
           ]}
           variant={ModalVariant.small}
         >
           <Form>
-            <FormGroup label={t('public~Name')} isRequired fieldId="input-name">
+            <FormGroup label={t('console-app~Name')} isRequired fieldId="input-name">
               <TextInput
                 id="input-name"
                 data-test="input-name"
@@ -175,6 +177,6 @@ export const FavoriteButton = connectToModel(() => {
           </Form>
         </Modal>
       )}
-    </>
+    </div>
   );
 });

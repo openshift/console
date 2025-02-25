@@ -3,7 +3,7 @@ import { NavItem } from '@patternfly/react-core';
 import { NavLink } from 'react-router-dom';
 import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
 
-export const FavoriteNavItemResource: React.FC<FavoriteNavItemResourceProps> = ({
+export const FavoriteNavItem: React.FC<FavoriteNavItemProps> = ({
   className,
   dataAttributes,
   isActive,
@@ -17,7 +17,7 @@ export const FavoriteNavItemResource: React.FC<FavoriteNavItemResourceProps> = (
   );
 };
 
-export type FavoriteNavItemResourceProps = {
+export type FavoriteNavItemProps = {
   to: string;
   dataAttributes?: ResourceNSNavItem['properties']['dataAttributes'];
   isActive: boolean;
