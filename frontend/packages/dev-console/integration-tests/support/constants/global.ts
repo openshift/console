@@ -54,6 +54,7 @@ export enum operators {
   RHOAS = 'RHOAS',
   Jaeger = 'Red Hat OpenShift distributed tracing platform',
   BuildsForOpenshiftOperator = 'builds for Red Hat OpenShift Operator',
+  DevWorkspaceOperator = 'DevWorkspace Operator',
 }
 
 export enum operatorNamespaces {
@@ -63,6 +64,7 @@ export enum operatorNamespaces {
   BuildsForOpenshiftOperator = 'openshift-operators',
   WebTerminalOperator = 'openshift-operators',
   RedHatIntegrationCamelK = 'openshift-operators',
+  DevWorkspaceOperator = 'openshift-operators',
 }
 
 export enum operatorSubscriptions {
@@ -72,6 +74,7 @@ export enum operatorSubscriptions {
   BuildsForOpenshiftOperator = 'openshift-builds-operator',
   WebTerminalOperator = 'web-terminal',
   RedHatIntegrationCamelK = 'red-hat-camel-k',
+  DevWorkspaceOperator = 'devworkspace-operator',
 }
 
 export enum operatorPackage {
@@ -81,6 +84,7 @@ export enum operatorPackage {
   BuildsForOpenshiftOperator = 'openshift-builds-operator',
   WebTerminalOperator = 'web-terminal',
   RedHatIntegrationCamelK = 'red-hat-camel-k',
+  DevWorkspaceOperator = 'devworkspace-operator',
 }
 
 export enum authenticationType {
