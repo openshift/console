@@ -5,7 +5,7 @@ const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
 
 export const getGuidedTour = (): TourDataType => ({
   intro: {
-    // t('console-app~Welcome to the Developer Perspective!')tour-home-nav
+    // t('console-app~Welcome to the new OpenShift experience!')
     heading: '%console-app~Welcome to the new OpenShift experience!%',
     // t('console-app~Our new update with OpenShift 4.19 gives a more modern look to help enhance your experience and streamline your workflow, such as improved navigation and infrastructure. Want us to show you around?')
     content:
