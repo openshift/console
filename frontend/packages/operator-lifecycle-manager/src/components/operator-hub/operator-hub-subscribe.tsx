@@ -51,7 +51,6 @@ import {
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
-import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import {
   OperatorGroupKind,
@@ -60,7 +59,7 @@ import {
   InstallPlanApproval,
   InstallModeType,
 } from '../../types';
-import { getClusterServiceVersionPlugins, isCatalogSourceTrusted } from '../../utils';
+import { isCatalogSourceTrusted } from '../../utils';
 import { ConsolePluginFormGroup } from '../../utils/console-plugin-form-group';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import { CRDCard } from '../clusterserviceversion';
@@ -77,6 +76,11 @@ import {
 } from '../index';
 import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '../operator-group';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
+import {
+  getSuggestedNamespaceTemplate,
+  getInitializationResource,
+  getClusterServiceVersionPlugins,
+} from './operator-hub-utils';
 
 export const CloudServiceTokenWarningAlert = ({
   title,
@@ -225,22 +229,18 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const suggestedNamespace =
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
-  const suggestedNamespaceTemplate = parseJSONAnnotation(
-    currentCSVDesc.annotations,
-    'operatorframework.io/suggested-namespace-template',
-    // eslint-disable-next-line no-console
-    () => console.error('Could not parse JSON annotation.'),
-    {},
-  );
+  const suggestedNamespaceTemplate =
+    getSuggestedNamespaceTemplate(currentCSVDesc.annotations, {
+      // eslint-disable-next-line no-console
+      onError: () => console.error('Could not parse JSON annotation.'),
+    }) ?? {};
   const suggestedNamespaceTemplateName = suggestedNamespaceTemplate?.metadata?.name;
   const operatorRequestsMonitoring =
     currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
-  const initializationResource = parseJSONAnnotation(
-    currentCSVDesc.annotations,
-    'operatorframework.io/initialization-resource',
+  const initializationResource = getInitializationResource(currentCSVDesc.annotations, {
     // eslint-disable-next-line no-console
-    () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
-  );
+    onError: () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
+  });
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,

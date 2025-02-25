@@ -37,8 +37,8 @@ import {
   OperatorHubItem,
   InstalledState,
   CapabilityLevel,
-  InfraFeatures,
   ValidSubscriptionValue,
+  InfrastructureFeature,
 } from './index';
 
 const osBaseLabel = 'operatorframework.io/os.';
@@ -212,15 +212,15 @@ const capabilityLevelSort = (provider) => {
 
 const infraFeaturesSort = (infrastructure) => {
   switch (infrastructure.value) {
-    case InfraFeatures.disconnected:
+    case InfrastructureFeature.Disconnected:
       return 0;
-    case InfraFeatures.proxyAware:
+    case InfrastructureFeature.ProxyAware:
       return 1;
-    case InfraFeatures.fipsMode:
+    case InfrastructureFeature.FIPSMode:
       return 2;
-    case InfraFeatures.tokenAuth:
+    case InfrastructureFeature.TokenAuth:
       return 3;
-    case InfraFeatures.tlsProfiles:
+    case InfrastructureFeature.TLSProfiles:
       return 4;
     default:
       return 5;
@@ -439,7 +439,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth)
     ) {
       setTokenizedAuth('AWS');
     }
@@ -450,7 +450,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuth)
+      currentItem.infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth)
     ) {
       setTokenizedAuth('Azure');
     }
@@ -461,7 +461,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         currentItem.infrastructure,
         currentItem.authentication,
       ) &&
-      currentItem.infraFeatures?.find((i) => i === InfraFeatures.tokenAuthGCP)
+      currentItem.infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth)
     ) {
       setTokenizedAuth('GCP');
     }

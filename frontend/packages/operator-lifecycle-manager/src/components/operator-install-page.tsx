@@ -28,7 +28,6 @@ import {
   referenceFor,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { parseJSONAnnotation } from '@console/shared';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
@@ -49,15 +48,9 @@ import {
 } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { InstallPlanPreview, NeedInstallPlanPermissions } from './install-plan';
+import { OLMAnnotation } from './operator-hub';
+import { getInitializationResource } from './operator-hub/operator-hub-utils';
 import { iconFor, InstallPlanReview } from './index';
-
-const INITIALIZATION_RESOURCE_ANNOTATION = 'operatorframework.io/initialization-resource';
-const getInitializationResource = (
-  obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind,
-) =>
-  parseJSONAnnotation(obj?.metadata?.annotations, INITIALIZATION_RESOURCE_ANNOTATION, (e) =>
-    errorModal({ error: e.message }),
-  );
 
 const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => {
   const { t } = useTranslation();
@@ -79,6 +72,8 @@ const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ names
 
 const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, csvName, obj }) => {
   const { t } = useTranslation();
+  const hasInitializationResource =
+    obj?.metadata?.annotations?.[OLMAnnotation.InitializationResource];
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
@@ -86,7 +81,7 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
       </h2>
       <p>
         {t('olm~The operator did not install successfully.')}
-        {obj?.metadata?.annotations?.[INITIALIZATION_RESOURCE_ANNOTATION] && (
+        {hasInitializationResource && (
           <>
             &nbsp;
             {t("olm~The required custom resource can be created in the Operator's details view.")}
@@ -214,7 +209,9 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   obj,
 }) => {
   const { t } = useTranslation();
-  const initializationResource = getInitializationResource(obj);
+  const initializationResource = getInitializationResource(obj?.metadata?.annotations, {
+    onError: (error) => errorModal({ error }),
+  });
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">
@@ -255,7 +252,9 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
   const { t } = useTranslation();
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
   const message = (obj as ClusterServiceVersionKind)?.status?.message || '';
-  const initializationResource = getInitializationResource(obj);
+  const initializationResource = getInitializationResource(obj?.metadata?.annotations, {
+    onError: (error) => errorModal({ error }),
+  });
   return (
     <>
       <h2 className="co-clusterserviceversion-install__heading">{t('olm~Installing Operator')}</h2>
