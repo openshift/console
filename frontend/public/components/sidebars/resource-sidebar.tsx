@@ -134,6 +134,7 @@ export const ResourceSidebar: React.FC<{
     <ResourceSidebarWrapper label={label} toggleSidebar={toggleSidebar}>
       {tabs.length > 0 ? (
         <SimpleTabNav
+          withinSidebar
           tabs={tabs}
           tabProps={{
             downloadSampleYaml,

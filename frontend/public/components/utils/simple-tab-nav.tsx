@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classnames from 'classnames';
 import { Tabs, Tab as PfTab, TabTitleText } from '@patternfly/react-core';
 
 export type Tab = {
@@ -13,6 +14,8 @@ type SimpleTabNavProps = {
   tabProps?: any;
   tabs: Tab[];
   additionalClassNames?: string;
+  /** Cancels out padding within a sidebar and adds extra margin to the bottom of the tab list */
+  withinSidebar?: boolean;
 };
 
 export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
@@ -21,6 +24,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
   tabProps = null,
   tabs,
   additionalClassNames,
+  withinSidebar,
 }) => {
   const handleTabClick = (_e, tabIndex: string) => {
     onClickTab && onClickTab(tabIndex);
@@ -31,7 +35,10 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
     <div>
       <Tabs
         onSelect={handleTabClick}
-        className={additionalClassNames}
+        className={classnames(
+          { 'pf-v6-u-mb-lg co-m-pane__body--offset-padding': withinSidebar },
+          additionalClassNames,
+        )}
         defaultActiveKey={selectedTab || tabs[0]?.name}
         inset={{ default: 'insetNone', xl: 'insetSm' }}
         unmountOnExit
