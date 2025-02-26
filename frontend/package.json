@@ -134,7 +134,7 @@
   "dependencies": {
     "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2",
     "@patternfly/patternfly": "^6.2.0-prerelease.3",
-    "@patternfly/quickstarts": "^6.2.0-prerelease.4",
+    "@patternfly/quickstarts": "^6.2.0-prerelease.6",
     "@patternfly/react-catalog-view-extension": "^6.1.0-prerelease.3",
     "@patternfly/react-charts": "^8.2.0-prerelease.13",
     "@patternfly/react-component-groups": "^6.2.0-prerelease.4",
@@ -213,7 +213,7 @@
     "sanitize-html": "^2.3.2",
     "screenfull": "4.x",
     "semver": "6.x",
-    "showdown": "1.8.6",
+    "marked": "^15.0.6",
     "subscriptions-transport-ws": "^0.9.16",
     "text-encoding": "0.x",
     "typesafe-actions": "^4.2.1",
