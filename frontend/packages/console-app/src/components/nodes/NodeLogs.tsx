@@ -30,6 +30,7 @@ import {
 } from '@console/internal/components/utils';
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
 import NodeLogsFilterUnit from './NodeLogsUnitFilter';
 import './node-logs.scss';
@@ -346,7 +347,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   );
 
   return (
-    <div className="co-m-pane__body co-m-pane__body--full-height">
+    <PaneBody fullHeight>
       <div className="log-window-wrapper">
         {(isLoadingLog || errorExists) && logControls}
         {trimmedContent?.length > 0 && !isLoadingLog && (
@@ -401,7 +402,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
           />
         )}
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

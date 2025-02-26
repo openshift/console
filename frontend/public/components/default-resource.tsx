@@ -8,6 +8,7 @@ import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
 import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
 import { referenceFor, K8sResourceKind, modelFor } from '../module/k8s';
@@ -50,7 +51,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading
           text={t('public~{{kind}} details', {
             kind: model?.labelKey ? t(model.labelKey) : model?.label,
@@ -66,12 +67,12 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
             <dl className="co-m-pane__details col-md-6">{rightDetailsItems}</dl>
           )}
         </div>
-      </div>
+      </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Conditions')} />
           <Conditions conditions={obj.status.conditions} />
-        </div>
+        </PaneBody>
       )}
     </>
   );

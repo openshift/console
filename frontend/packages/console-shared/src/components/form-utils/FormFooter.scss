@@ -1,14 +1,11 @@
 @import '../../../../../public/style/vars';
 
 .ocs-form-footer {
-  padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter;
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
   z-index: calc(
     var(--pf-t--global--z-index--xs) + 1
   ); // bump above --pf-v6-c-menu-toggle--border--ZIndex (100) to prevent menu borders from appearing in the footer
 
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter--md;
-  }
   &__sticky {
     position: sticky;
     background-color: var(--pf-t--global--background--color--primary--default);

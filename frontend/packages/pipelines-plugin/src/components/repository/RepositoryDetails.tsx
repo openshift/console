@@ -9,6 +9,7 @@ import {
   DetailsItem,
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { usePacInfo } from './hooks/pac-hook';
 import { getGitProviderIcon } from './repository-utils';
 import { RepositoryKind } from './types';
@@ -23,7 +24,7 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
   const [pac, loaded] = usePacInfo();
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('pipelines-plugin~Repository details')} />
       <div className="row">
         <div className="col-sm-6">
@@ -95,7 +96,7 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
           </dl>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 
