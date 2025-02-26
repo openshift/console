@@ -5,6 +5,7 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import CatalogPageHelpText from '../catalog/CatalogPageHelpText';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import MonitoringEvents from './events/MonitoringEvents';
@@ -45,10 +46,12 @@ export const PageContents: React.FC = () => {
   ) : (
     <CreateProjectListPage title={t('devconsole~Observe')}>
       {(openProjectModal) => (
-        <Trans t={t} ns="devconsole">
-          Select a Project to view monitoring metrics
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
+        <CatalogPageHelpText>
+          <Trans t={t} ns="devconsole">
+            Select a Project to view monitoring metrics
+            <CreateAProjectButton openProjectModal={openProjectModal} />.
+          </Trans>
+        </CatalogPageHelpText>
       )}
     </CreateProjectListPage>
   );

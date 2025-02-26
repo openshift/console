@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { TaskRunModel } from '../../models';
 import { TaskRunKind } from '../../types';
 import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
@@ -16,17 +17,17 @@ const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <TaskRunDetailsSection taskRun={taskRun} />
-      </div>
+      </PaneBody>
       {taskRun?.status?.taskResults || taskRun?.status?.results ? (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <ResultsList
             results={taskRun.status?.taskResults || taskRun.status?.results}
             resourceName={t(TaskRunModel.labelKey)}
             status={taskRunFilterReducer(taskRun)}
           />
-        </div>
+        </PaneBody>
       ) : null}
     </>
   );

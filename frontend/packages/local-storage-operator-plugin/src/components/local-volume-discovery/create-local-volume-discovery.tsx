@@ -85,7 +85,7 @@ export const CreateLocalVolumeDiscovery: React.FC = () => {
       </div>
       <Form
         noValidate={false}
-        className="co-m-pane__body lso-form-body__node-list"
+        className="pf-v6-c-page__main-section lso-form-body__node-list"
         onSubmit={onSubmit}
       >
         <FormGroup

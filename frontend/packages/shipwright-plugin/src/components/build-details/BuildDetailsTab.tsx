@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Build } from '../../types';
 import BuildSpecSection from './BuildSpecSection';
 import BuildStatusSection from './BuildStatusSection';
@@ -14,7 +15,7 @@ const BuildDetailsTab: React.FC<BuildDetailsTabProps> = ({ obj: build }) => {
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('shipwright-plugin~Build details')} />
 
         <div className="row">
@@ -25,13 +26,13 @@ const BuildDetailsTab: React.FC<BuildDetailsTabProps> = ({ obj: build }) => {
             <BuildSpecSection obj={build} buildSpec={build.spec} path="spec" />
           </div>
         </div>
-      </div>
+      </PaneBody>
 
       {build.status ? (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('shipwright-plugin~Status')} />
           <BuildStatusSection obj={build} buildStatus={build.status} />
-        </div>
+        </PaneBody>
       ) : null}
     </>
   );

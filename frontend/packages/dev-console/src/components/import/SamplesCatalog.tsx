@@ -4,6 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { CatalogController, CatalogServiceProvider } from '@console/shared';
+import CatalogPageHelpText from '../catalog/CatalogPageHelpText';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
@@ -53,10 +54,12 @@ const SampleCatalog: React.FC = () => {
         ) : (
           <CreateProjectListPage title={t('devconsole~Samples')}>
             {(openProjectModal) => (
-              <Trans t={t} ns="devconsole">
-                Select a Project to view the list of samples
-                <CreateAProjectButton openProjectModal={openProjectModal} />.
-              </Trans>
+              <CatalogPageHelpText>
+                <Trans t={t} ns="devconsole">
+                  Select a Project to view the list of samples
+                  <CreateAProjectButton openProjectModal={openProjectModal} />.
+                </Trans>
+              </CatalogPageHelpText>
             )}
           </CreateProjectListPage>
         )}

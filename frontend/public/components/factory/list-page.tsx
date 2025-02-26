@@ -16,6 +16,7 @@ import {
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404 } from '../error';
 import { K8sKind } from '../../module/k8s/types';
@@ -330,14 +331,14 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
         {!title && badge && <div>{badge}</div>}
       </PageHeading>
       {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+      <PaneBody>
         {inject(props.children, {
           resources,
           expand,
           reduxIDs,
           applyFilter,
         })}
-      </div>
+      </PaneBody>
     </>
   );
 };

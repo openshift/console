@@ -31,6 +31,7 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln } from '../types';
@@ -58,11 +59,11 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
   const queryURL = quayURLFor(props.obj);
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('container-security~Image Manifest Vulnerabilities details')} />
         <ImageVulnerabilityToggleGroup obj={props.obj} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={props.obj} />
@@ -87,7 +88,7 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
             </dl>
           </div>
         </div>
-      </div>
+      </PaneBody>
       <div className="cs-imagevulnerabilitieslist__wrapper">
         <ImageVulnerabilitiesList {...props} />
       </div>
@@ -326,7 +327,7 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
   ) => (vuln !== undefined ? exists(vuln) : absent());
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
           <div className="col-md-3">{t('container-security~Container')}</div>
@@ -385,7 +386,7 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
           ))}
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

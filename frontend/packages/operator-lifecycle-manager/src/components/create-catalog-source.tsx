@@ -20,6 +20,7 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { CatalogSourceModel } from '../models';
 
 enum AvailabilityValue {
@@ -96,7 +97,7 @@ export const CreateCatalogSource: React.FC = withHandlePromise(
             'olm~Create a CatalogSource in order to make operators available in OperatorHub.',
           )}
         />
-        <div className="co-m-pane__body">
+        <PaneBody>
           <Form onSubmit={onSave}>
             <FormGroup fieldId="catalog-source-name" isRequired label={t('olm~CatalogSource name')}>
               <TextInput
@@ -183,7 +184,7 @@ export const CreateCatalogSource: React.FC = withHandlePromise(
               </ActionGroup>
             </ButtonBar>
           </Form>
-        </div>
+        </PaneBody>
       </div>
     );
   },
