@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { RootState } from '../../redux';
 import {
   K8sKind,
@@ -179,7 +180,7 @@ export const GlobalConfigPage: React.FC = () => {
   const showAPIGroup = (item) => groupedItems?.[item]?.length > 1;
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       {!loading && (
         <>
           <p className="co-help-text co-cluster-paragraph">
@@ -219,6 +220,6 @@ export const GlobalConfigPage: React.FC = () => {
             </div>
           </div>
         ))}
-    </div>
+    </PaneBody>
   );
 };

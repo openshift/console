@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { TriggerTemplateModel } from '../../../../models';
 import WorkspaceDefinitionList from '../../../shared/workspaces/WorkspaceDefinitionList';
 import DynamicResourceLinkList from '../../resource-overview/DynamicResourceLinkList';
@@ -15,7 +16,7 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({ obj: pipeline, cus
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('pipelines-plugin~Pipeline details')} />
         <PipelineVisualization pipeline={pipeline} />
         <div className="row">
@@ -41,7 +42,7 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({ obj: pipeline, cus
             <WorkspaceDefinitionList workspaces={pipeline.spec.workspaces} />
           </div>
         </div>
-      </div>
+      </PaneBody>
     </>
   );
 };

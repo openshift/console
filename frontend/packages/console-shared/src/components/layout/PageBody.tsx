@@ -1,11 +1,17 @@
 import * as React from 'react';
 import { Flex } from '@patternfly/react-core';
+import * as classNames from 'classnames';
 
 const PageBody: React.FC<PageBodyProps> = ({ children, className, ...props }) => {
   return (
     <Flex
-      className={className}
+      className={classNames(
+        'co-m-page__body', // used in https://github.com/openshift/verification-tests
+        className,
+      )}
       direction={{ default: 'column' }}
+      rowGap={{ default: 'rowGapNone' }}
+      flexWrap={{ default: 'nowrap' }}
       style={{ flex: '1 0 auto' }}
       {...props}
     >

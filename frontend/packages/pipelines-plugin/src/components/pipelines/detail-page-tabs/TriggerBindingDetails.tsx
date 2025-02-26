@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { EventListenerModel } from '../../../models';
 import { getResourceModelFromBindingKind } from '../../../utils/pipeline-augment';
 import ResourceLinkList from '../resource-overview/ResourceLinkList';
@@ -15,7 +16,7 @@ const TriggerBindingDetails: React.FC<TriggerBindingDetailsProps> = ({ obj: trig
   const { t } = useTranslation();
   const eventListeners: string[] = useTriggerBindingEventListenerNames(triggerBinding);
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading
         text={t('pipelines-plugin~{{triggerBindingLabel}} details', {
           triggerBindingLabel: t(getResourceModelFromBindingKind(triggerBinding.kind).labelKey),
@@ -33,7 +34,7 @@ const TriggerBindingDetails: React.FC<TriggerBindingDetailsProps> = ({ obj: trig
           />
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 
