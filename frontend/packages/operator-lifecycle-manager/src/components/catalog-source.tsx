@@ -35,6 +35,7 @@ import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import { referenceForModel, K8sKind, k8sPatch } from '@console/internal/module/k8s';
 import { withFallback } from '@console/shared/src/components/error';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 import {
   SubscriptionModel,
@@ -144,7 +145,7 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
       : catalogSource.metadata.namespace;
 
   return !_.isEmpty(catalogSource) ? (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading
         text={t('olm~CatalogSource details', {
           resource: CatalogSourceModel.label,
@@ -155,7 +156,7 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
           <ResourceSummary resource={catalogSource} />
         </div>
         <div className="col-sm-6 col-xs-12">
-          <div className="co-m-pane__body">
+          <PaneBody>
             <DetailsItem
               editAsGroup
               label={t('public~Status')}
@@ -200,10 +201,10 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
             >
               {operatorCount}
             </DetailsItem>
-          </div>
+          </PaneBody>
         </div>
       </div>
-    </div>
+    </PaneBody>
   ) : (
     <div />
   );

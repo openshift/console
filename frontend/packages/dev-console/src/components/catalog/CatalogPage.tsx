@@ -12,6 +12,7 @@ import {
 } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
+import CatalogPageHelpText from './CatalogPageHelpText';
 
 const CatalogPage: React.FC = () => {
   const { t } = useTranslation();
@@ -45,10 +46,12 @@ const CatalogPage: React.FC = () => {
       ) : (
         <CreateProjectListPage title={t('devconsole~Software Catalog')}>
           {(openProjectModal) => (
-            <Trans t={t} ns="devconsole">
-              Select a Project to view the software catalog
-              <CreateAProjectButton openProjectModal={openProjectModal} />.
-            </Trans>
+            <CatalogPageHelpText>
+              <Trans t={t} ns="devconsole">
+                Select a Project to view the software catalog
+                <CreateAProjectButton openProjectModal={openProjectModal} />.
+              </Trans>
+            </CatalogPageHelpText>
           )}
         </CreateProjectListPage>
       )}

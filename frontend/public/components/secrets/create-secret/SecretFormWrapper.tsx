@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
 import { ButtonBar } from '../../utils/button-bar';
 import { PageHeading } from '../../utils/headings';
@@ -172,8 +173,8 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
         <title>{title}</title>
       </Helmet>
       <PageHeading title={title} helpText={helptext} />
-      <div className="co-m-pane__body">
-        <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
+      <PaneBody>
+        <form className="co-create-secret-form" onSubmit={save}>
           {renderBody()}
           <ButtonBar errorMessage={error} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
@@ -192,7 +193,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

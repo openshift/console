@@ -68,7 +68,7 @@ const CreateLocalVolumeSet: React.FC = () => {
       </div>
       <Form
         noValidate={false}
-        className="co-m-pane__body lso-form-body__node-list pf-v6-u-w-75"
+        className="pf-v6-c-page__main-section lso-form-body__node-list pf-v6-u-w-75"
         onSubmit={onSubmit}
       >
         <LocalVolumeSetBody dispatch={dispatch} state={state} />

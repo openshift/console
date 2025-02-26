@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { StatusBox } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';
 import { DroppableTopologyComponent } from './DroppableTopologyComponent';
@@ -19,12 +20,12 @@ const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(
       <StatusBox
         skeleton={
           viewType === TopologyViewType.list && (
-            <div className="co-m-pane__body skeleton-overview">
+            <PaneBody className="skeleton-overview">
               <div className="skeleton-overview--head" />
               <div className="skeleton-overview--tile" />
               <div className="skeleton-overview--tile" />
               <div className="skeleton-overview--tile" />
-            </div>
+            </PaneBody>
           )
         }
         data={model}
