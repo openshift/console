@@ -28,7 +28,7 @@ import {
 } from '../module/k8s';
 import { Tooltip } from '@patternfly/react-core';
 import useIsMultiNetworkPolicy from '@console/app/src/components/network-policies/useIsMultiNetworkPolicy';
-
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const { common } = Kebab.factory;
@@ -318,7 +318,7 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading
           text={t('public~{{kind}} details', {
             kind: isMulti ? MultiNetworkPolicyModel.kind : NetworkPolicyModel.kind,
@@ -329,9 +329,9 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
             <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />
           </div>
         </div>
-      </div>
+      </PaneBody>
       {affectsIngress && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Ingress rules')} />
           <p className="co-m-pane__explanation">
             {t(
@@ -371,10 +371,10 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
               </div>
             </div>
           )}
-        </div>
+        </PaneBody>
       )}
       {affectsEgress && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Egress rules')} />
           <p className="co-m-pane__explanation">
             {t(
@@ -414,7 +414,7 @@ const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => 
               </div>
             </div>
           )}
-        </div>
+        </PaneBody>
       )}
     </>
   );

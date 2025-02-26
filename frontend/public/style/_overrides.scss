@@ -51,6 +51,13 @@ form.pf-v6-c-form {
   }
 }
 
+// align pf-v6-c-tabs--inset with PageSection
+.co-horizontal-nav {
+  --pf-v6-c-tabs--inset: #{$pf-v6-global-gutter-x};
+  --pf-v6-c-tabs--m-vertical--inset: #{$pf-v6-global-gutter-x};
+  --pf-v6-c-tabs--m-vertical--m-box--inset: #{$pf-v6-global-gutter-x};
+}
+
 .odc-catalog-tile {
   // Get rid of weird stretching of catalog grid items
   .pf-v6-c-card__header-main {
@@ -83,6 +90,10 @@ form.pf-v6-c-form {
 .co-toolbar-empty-state .pf-v6-c-toolbar__content {
   --pf-v6-c-toolbar__content--PaddingLeft: 0;
   --pf-v6-c-toolbar__content--PaddingRight: 0;
+}
+
+.help-block {
+  margin-bottom: 0;
 }
 
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
@@ -208,15 +219,6 @@ form.pf-v6-c-form {
   .pf-v6-c-form-control.pf-m-success,
   .pf-v6-c-form-control[aria-invalid='true'] {
     --pf-t--global--font--size--md: #{$font-size-base};
-  }
-}
-
-.pf-v6-c-page__main-breadcrumb {
-  // so breadcrumb padding matches .co-m-nav-title
-  // TODO: remove when .co-m-nav-title is updated
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-inline-start: $pf-v6-global-gutter--md;
-    padding-inline-end: $pf-v6-global-gutter--md;
   }
 }
 

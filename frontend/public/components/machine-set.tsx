@@ -10,6 +10,7 @@ import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
 import {
   K8sKind,
@@ -238,7 +239,7 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineSet details')} />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
         <div className="row">
@@ -275,7 +276,7 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
             </ResourceSummary>
           </div>
         </div>
-      </div>
+      </PaneBody>
     </>
   );
 };

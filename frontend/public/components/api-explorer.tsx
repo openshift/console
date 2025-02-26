@@ -23,6 +23,7 @@ import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@conso
 import { useExactSearch } from '@console/app/src/components/user-preferences/search';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Page, PageHeading, useAccessReview } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -313,7 +314,7 @@ const APIResourcesList = compose(
 
   return (
     <>
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+      <PaneBody>
         <Toolbar className="pf-m-toggle-group-container">
           <ToolbarContent>
             <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
@@ -367,7 +368,7 @@ const APIResourcesList = compose(
           loaded={!!models.size}
           virtualize={false}
         />
-      </div>
+      </PaneBody>
     </>
   );
 });
@@ -393,7 +394,7 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
   const description = getResourceDescription(kindObj);
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <dl className="co-m-pane__details">
         <dt>{t('public~Kind')}</dt>
         <dd>{kind}</dd>
@@ -426,16 +427,16 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
           </>
         )}
       </dl>
-    </div>
+    </PaneBody>
   );
 };
 
 const scrollTop = () => (document.getElementById('content-scrollable').scrollTop = 0);
 const APIResourceSchema: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
-    </div>
+    </PaneBody>
   );
 };
 
@@ -624,7 +625,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           />
         </div>
       </div>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <CheckBoxControls
           allSelected={allSelected}
           itemCount={itemCount}
@@ -678,7 +679,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           loaded
           virtualize={false}
         />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -709,9 +710,9 @@ const APIResourcePage_ = (props) => {
     return kindsInFlight ? (
       <LoadingBox />
     ) : (
-      <div className="co-m-pane__body">
+      <PaneBody>
         <PageHeading title={t('public~404: Not found')} centerText />
-      </div>
+      </PaneBody>
     );
   }
 

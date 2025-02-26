@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ListPage, DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
@@ -24,7 +25,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
 
   return (
     <div>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Alertmanager details')} />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
@@ -63,7 +64,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
             </dl>
           </div>
         </div>
-      </div>
+      </PaneBody>
     </div>
   );
 };

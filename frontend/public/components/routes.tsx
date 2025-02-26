@@ -12,6 +12,7 @@ import i18next from 'i18next';
 import { Status } from '@console/shared';
 import { FLAGS } from '@console/shared/src/constants';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
   CopyToClipboard,
@@ -409,7 +410,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   );
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Route details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -459,13 +460,13 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~TLS settings')} />
         <TLSSettings route={route} />
-      </div>
+      </PaneBody>
       {!_.isEmpty(route.spec.alternateBackends) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Traffic')} />
           <p className="co-m-pane__explanation">
             {t('public~This route splits traffic across multiple services.')}
@@ -487,14 +488,14 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
               </tbody>
             </table>
           </div>
-        </div>
+        </PaneBody>
       )}
       {_.isEmpty(route.status.ingress) ? (
         <ConsoleEmptyState>{t('public~No route status')}</ConsoleEmptyState>
       ) : (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <RouteIngressStatus route={route} />
-        </div>
+        </PaneBody>
       )}
     </>
   );

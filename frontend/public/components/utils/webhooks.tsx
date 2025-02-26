@@ -5,6 +5,7 @@ import { PasteIcon } from '@patternfly/react-icons/dist/esm/icons/paste-icon';
 import { Button, AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, k8sGet } from '../../module/k8s';
 import { ExpandableAlert } from './alerts';
 import { SectionHeading } from './headings';
@@ -186,7 +187,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
   };
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       {!_.isEmpty(secretErrors) && (
         <ExpandableAlert
           variant={AlertVariant.warning}
@@ -225,7 +226,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

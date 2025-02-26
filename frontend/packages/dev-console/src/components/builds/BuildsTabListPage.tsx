@@ -13,6 +13,7 @@ import {
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
 import { LAST_BUILD_PAGE_TAB_STORAGE_KEY } from '../../const';
+import CatalogPageHelpText from '../catalog/CatalogPageHelpText';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
@@ -128,10 +129,12 @@ const BuildsTabListPage: React.FC = () => {
     return (
       <CreateProjectListPage title={title}>
         {(openProjectModal) => (
-          <Trans t={t} ns="devconsole">
-            Select a Project to view the list of builds
-            <CreateAProjectButton openProjectModal={openProjectModal} />.
-          </Trans>
+          <CatalogPageHelpText>
+            <Trans t={t} ns="devconsole">
+              Select a Project to view the list of builds
+              <CreateAProjectButton openProjectModal={openProjectModal} />.
+            </Trans>
+          </CatalogPageHelpText>
         )}
       </CreateProjectListPage>
     );
