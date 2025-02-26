@@ -43,6 +43,19 @@ func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrf
 	)
 }
 
+func withTokenReview(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := authenticator.ReviewToken(r)
+			if err != nil {
+				klog.Errorf("%s: '%s' unauthorized, failed to authenticate user token, %v", r.Method, r.URL.Path, err)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			h(w, r)
+		})
+}
+
 func allowMethods(methods []string, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		for _, method := range methods {
