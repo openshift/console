@@ -23,6 +23,7 @@ const SimpleTabNavWrapper: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
   );
   return (
     <SimpleTabNav
+      withinSidebar
       selectedTab={selectTabParam || selectedTab || t('topology~Details')}
       tabs={tabs}
       onClickTab={handleClickTab}

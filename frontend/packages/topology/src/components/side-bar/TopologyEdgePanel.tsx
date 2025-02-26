@@ -44,6 +44,7 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
         </PrimaryHeading>
       </div>
       <SimpleTabNav
+        withinSidebar
         tabs={[
           {
             name: t('topology~Resources'),
