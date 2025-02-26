@@ -58,7 +58,7 @@ describe('Import Submit Utils', () => {
             namespace: 'gijohn',
           },
           fieldPath: 'spec.template.spec.containers[?(@.name=="nodejs-ex-git")].image',
-          paused: 'false',
+          paused: false,
         },
       ]);
       done();
@@ -431,7 +431,7 @@ describe('Import Submit Utils', () => {
             'app.openshift.io/vcs-ref': 'master',
             'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/devfile-sample',
             'image.openshift.io/triggers':
-              '[{"from":{"kind":"ImageStreamTag","name":"devfile-sample:latest","namespace":"gijohn"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"devfile-sample\\")].image","paused":"false"}]',
+              '[{"from":{"kind":"ImageStreamTag","name":"devfile-sample:latest","namespace":"gijohn"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"devfile-sample\\")].image","paused":false}]',
             isFromDevfile: 'true',
             'openshift.io/generated-by': 'OpenShiftWebConsole',
             'app.openshift.io/route-disabled': 'false',
