@@ -1,5 +1,5 @@
 .co-dashboard-getting-started-section {
   // Similar padding to dashboard card grid gap (.co-dashboard-grid)
   // See also packages/console-shared/src/components/dashboard/dashboard.scss
-  padding-bottom: 1rem;
+  padding-bottom: var(--pf-t--global--spacer--lg);
 }

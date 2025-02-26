@@ -48,7 +48,9 @@ describe('GettingStartedSection', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
     mockUserSettings.mockReturnValue([true, jest.fn()]);
 
-    const wrapper = shallow(<GettingStartedSection />);
+    const wrapper = shallow(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
 
     expect(wrapper.find(GettingStartedExpandableGrid).props().children.length).toEqual(3);
   });
@@ -58,7 +60,9 @@ describe('GettingStartedSection', () => {
     mockUserSettings.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
-    const wrapper = shallow(<GettingStartedSection />);
+    const wrapper = shallow(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
 
     expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(0);
   });
@@ -67,7 +71,9 @@ describe('GettingStartedSection', () => {
     useFlagMock.mockReturnValue(true);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
-    const wrapper = shallow(<GettingStartedSection />);
+    const wrapper = shallow(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
 
     expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(0);
   });

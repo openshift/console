@@ -122,8 +122,6 @@ export enum CLUSTER_TELEMETRY_ANALYTICS {
 export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
 
-export const GETTING_STARTED_USER_SETTINGS_KEY_ADD_PAGE =
-  'devconsole.addPage.gettingStarted.expanded';
 export const GETTING_STARTED_USER_SETTINGS_KEY_CLUSTER_DASHBOARD =
   'console.clusterDashboard.gettingStarted.expanded';
 export const PREFERRED_TELEMETRY_USER_SETTING_KEY = 'telemetry.analytics';

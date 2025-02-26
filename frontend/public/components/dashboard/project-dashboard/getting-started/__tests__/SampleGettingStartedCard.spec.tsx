@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useActiveNamespace, CatalogServiceProvider } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
-import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
+import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 
 jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),

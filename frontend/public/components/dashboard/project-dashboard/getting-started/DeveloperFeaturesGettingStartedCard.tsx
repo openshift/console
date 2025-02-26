@@ -12,7 +12,7 @@ import {
   GettingStartedLink,
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
-import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
+import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 
 export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
@@ -29,17 +29,17 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   if (isHelmEnabled && isHelmVisible && !disabledAddActions?.includes('helm')) {
     links.push({
       id: 'helm-charts',
-      title: t('devconsole~Discover certified Helm Charts'),
+      title: t('public~Try the sample AI Chatbot Helm chart'),
       href:
         activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
-          ? `/catalog/ns/${activeNamespace}?catalogType=HelmChart`
-          : '/catalog/all-namespaces?catalogType=HelmChart',
+          ? `/catalog/ns/${activeNamespace}?catalogType=HelmChart&keyword=chatbot+AI+sample`
+          : '/catalog/all-namespaces?catalogType=HelmChart&keyword=chatbot+AI+sample',
     });
   }
 
   links.push({
     id: 'topology',
-    title: t('devconsole~Start building your application quickly in topology'),
+    title: t('public~Start building your application quickly in topology'),
     href:
       activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
         ? `/topology/ns/${activeNamespace}?catalogSearch=`
@@ -48,7 +48,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
 
   const moreLink: GettingStartedLink = {
     id: 'whats-new',
-    title: t("devconsole~What's new in OpenShift {{version}}", { version }),
+    title: t("public~What's new in OpenShift {{version}}", { version }),
     href: 'https://developers.redhat.com/products/openshift/whats-new',
     external: true,
   };
@@ -57,11 +57,9 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
     <GettingStartedCard
       id="developer-features"
       icon={<FlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
-      title={t('devconsole~Explore new developer features')}
+      title={t('public~Explore new developer features')}
       titleColor={'var(--co-global--palette--orange-400)'}
-      description={t(
-        'devconsole~Explore new features and resources within the developer perspective.',
-      )}
+      description={t('public~Explore new features and resources within the developer perspective.')}
       links={links}
       moreLink={moreLink}
     />
