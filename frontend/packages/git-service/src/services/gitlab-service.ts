@@ -3,7 +3,7 @@ import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { API_PROXY_URL, ProxyResponse } from '@console/shared/src/utils/proxy';
+import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -19,6 +19,23 @@ type GitlabRepo = {
   id: number;
   path_with_namespace: string;
 };
+
+type GLWebhookBody = {
+  url: string;
+  push_events: boolean;
+  merge_requests_events: boolean;
+  enable_ssl_verification: boolean;
+  token: string;
+};
+
+type GitlabWebhookRequest = {
+  headers: Headers;
+  hostName: string;
+  projectID: string;
+  body: GLWebhookBody;
+};
+
+export const GITLAB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/gitlab';
 
 const removeLeadingSlash = (str: string) => str?.replace(/^\//, '') || '';
 
@@ -171,25 +188,32 @@ export class GitlabService extends BaseService {
     webhookSecret: string,
   ): Promise<boolean> => {
     const projectID = await this.getProjectId();
-    const headers = {
-      'Content-Type': ['application/json'],
-      'PRIVATE-TOKEN': [token],
-    };
-    const body = {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      'PRIVATE-TOKEN': token,
+    });
+    const body: GLWebhookBody = {
       url: webhookURL,
       push_events: true,
       merge_requests_events: true,
       enable_ssl_verification: sslVerification,
       token: webhookSecret,
     };
-    /* Using DevConsole Proxy to create webhook as Gitlab is giving CORS error */
-    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
-      url: `${this.metadata.host}/api/v4/projects/${projectID}/hooks`,
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
 
+    const webhookRequestBody: GitlabWebhookRequest = {
+      headers,
+      hostName: this.metadata.host,
+      projectID: projectID.toString(),
+      body,
+    };
+
+    const webhookResponse: DevConsoleEndpointResponse = await consoleFetchJSON.post(
+      GITLAB_WEBHOOK_BACKEND_URL,
+      webhookRequestBody,
+    );
+    if (!webhookResponse.statusCode) {
+      throw new Error('Unexpected proxy response: Status code is missing!');
+    }
     return webhookResponse.statusCode === 201;
   };
 
