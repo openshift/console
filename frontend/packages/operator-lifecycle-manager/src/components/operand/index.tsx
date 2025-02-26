@@ -576,6 +576,7 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
   return resourceListPage ? (
     <AsyncComponent
       {...props}
+      name={null}
       model={{ group, version, kind }}
       kind={props.kind}
       namespace={namespace}
