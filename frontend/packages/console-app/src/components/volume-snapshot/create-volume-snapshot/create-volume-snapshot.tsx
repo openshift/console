@@ -45,6 +45,7 @@ import {
 } from '@console/internal/module/k8s';
 import { getName, getNamespace, getAnnotations } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -236,8 +237,8 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
             </Link>
           }
         />
-        <div className="co-m-pane__body co-m-pane__body--no-top-margin">
-          <form className="co-m-pane__body-group" onSubmit={create}>
+        <PaneBody>
+          <form onSubmit={create}>
             {pvcName ? (
               <p>
                 <Trans ns="console-app">
@@ -315,7 +316,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               </ActionGroup>
             </ButtonBar>
           </form>
-        </div>
+        </PaneBody>
       </div>
       <div className="co-volume-snapshot__info">
         <Grid hasGutter>

@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -164,7 +165,7 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~HorizontalPodAutoscaler details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -202,14 +203,14 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <MetricsTable obj={hpa} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={hpa.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

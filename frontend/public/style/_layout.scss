@@ -29,12 +29,6 @@ body,
     }
   }
 
-  &__close-button {
-    font-size: 21px !important;
-    line-height: 1 !important;
-    padding: 0 !important;
-  }
-
   &__sidebar {
     position: relative;
     @media (min-width: $screen-md-min) {
@@ -61,11 +55,5 @@ body,
     &:focus {
       outline: 0;
     }
-  }
-
-  &__sidebar-heading {
-    @include co-break-word;
-    margin-bottom: 20px;
-    margin-top: 0;
   }
 }

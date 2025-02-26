@@ -117,13 +117,8 @@ $skeleton-tile-desc-line-bone: linear-gradient(
   flex: 1;
   height: 100%;
   position: relative;
-  margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
-  padding: $pf-v6-global-gutter 0;
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    margin-bottom: $pf-v6-global-gutter--md;
-    margin-left: $pf-v6-global-gutter--md;
-    margin-right: $pf-v6-global-gutter--md;
-  }
+  margin: 0 $pf-v6-global-gutter-x $pf-v6-global-gutter-y;
+  padding: $pf-v6-global-gutter-y 0;
 }
 
 .skeleton-catalog--grid {
@@ -194,7 +189,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
 }
 
 .skeleton-detail-view {
-  padding: $pf-v6-global-gutter--md;
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
   height: 100%;
   width: 100%;
 }
@@ -325,7 +320,10 @@ $skeleton-tile-desc-line-bone: linear-gradient(
   }
   // table rows
   &::after {
-    background-image: linear-gradient(var(--pf-t--global--border--color--default) 1px, transparent 0px),
+    background-image: linear-gradient(
+        var(--pf-t--global--border--color--default) 1px,
+        transparent 0px
+      ),
       linear-gradient($skeleton-color 26px, transparent 26px);
     background-size: 100% 46px, 50% 46px;
     background-position: 50px 0%, 0px 10px;

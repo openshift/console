@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useCanClusterUpgrade } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { ClusterVersionModel } from '../../models';
 import { DetailsPage } from '../factory';
@@ -26,16 +27,16 @@ const ClusterVersionDetails: React.FC<ClusterVersionDetailsProps> = ({ obj }) =>
   const conditions = _.get(obj, 'status.conditions', []);
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~ClusterVersion details')} />
         <ResourceSummary resource={obj} canUpdateResource={canUpgrade}>
           <UpstreamConfigDetailsItem resource={obj} />
         </ResourceSummary>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} id="conditions" />
         <Conditions conditions={conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

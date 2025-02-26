@@ -15,6 +15,7 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { t_global_icon_color_status_danger_default as globalDangerColor100 } from '@patternfly/react-tokens';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from './utils';
 import { useLocation } from 'react-router';
 
@@ -23,10 +24,10 @@ const ErrorComponent: React.FC<ErrorComponentProps> = ({ title, message }) => {
   return (
     <>
       <PageHeading title={t('public~Error')} detail />
-      <div className="co-m-pane__body" data-test-id="error-page">
+      <PaneBody data-test-id="error-page">
         <PageHeading title={title} centerText />
         {message && <div className="pf-v6-u-text-align-center">{message}</div>}
-      </div>
+      </PaneBody>
     </>
   );
 };

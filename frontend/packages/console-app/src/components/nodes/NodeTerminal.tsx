@@ -8,6 +8,7 @@ import {
   LoadingBox,
 } from '@console/internal/components/utils';
 import { NodeKind, PodKind } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PodExecLoader } from '../../../../../public/components/pod';
 import { ImageStreamTagModel, NamespaceModel, PodModel } from '../../../../../public/models';
 import { k8sCreate, k8sGet, k8sKillByName } from '../../../../../public/module/k8s';
@@ -89,9 +90,9 @@ const getDebugPod = async (name: string, namespace: string, nodeName: string): P
 
 const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <Alert variant="danger" isInline title={error} data-test="node-terminal-error" />
-    </div>
+    </PaneBody>
   );
 };
 

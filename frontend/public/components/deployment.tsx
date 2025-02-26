@@ -17,6 +17,7 @@ import {
   EditHorizontalPodAutoScaler,
   hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
+
 import { DeploymentModel } from '../models';
 import {
   DeploymentKind,
@@ -47,6 +48,7 @@ import { ReplicaSetsPage } from './replicaset';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
@@ -153,47 +155,40 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingSet key={deployment.metadata.uid} obj={deployment} path="/spec/replicas" />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary
-                resource={deployment}
-                showPodSelector
-                showNodeSelector
-                showTolerations
-              >
-                <dt>{t('public~Status')}</dt>
-                <dd>
-                  {deployment.status.availableReplicas === deployment.status.updatedReplicas &&
-                  deployment.spec.replicas === deployment.status.availableReplicas ? (
-                    <Status status="Up to date" />
-                  ) : (
-                    <Status status="Updating" />
-                  )}
-                </dd>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <DeploymentDetailsList deployment={deployment} />
-            </div>
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
+              <dt>{t('public~Status')}</dt>
+              <dd>
+                {deployment.status.availableReplicas === deployment.status.updatedReplicas &&
+                deployment.spec.replicas === deployment.status.availableReplicas ? (
+                  <Status status="Up to date" />
+                ) : (
+                  <Status status="Updating" />
+                )}
+              </dd>
+            </ResourceSummary>
+          </div>
+          <div className="col-sm-6">
+            <DeploymentDetailsList deployment={deployment} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={deployment.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={deployment} heading={t('public~Volumes')} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={deployment.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

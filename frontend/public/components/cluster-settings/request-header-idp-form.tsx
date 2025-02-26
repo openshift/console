@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind, K8sResourceKind } from '../../module/k8s';
 import { ButtonBar, ListInput, PageHeading } from '../utils';
@@ -132,8 +133,8 @@ export const AddRequestHeaderPage = () => {
           'public~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
         )}
       />
-      <div className="co-m-pane__body">
-        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+      <PaneBody>
+        <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="co-form-section__separator" />
           <Title headingLevel="h3" className="pf-v6-u-mb-sm co-required">
@@ -224,7 +225,7 @@ export const AddRequestHeaderPage = () => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

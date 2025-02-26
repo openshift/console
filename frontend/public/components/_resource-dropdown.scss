@@ -14,6 +14,7 @@
 .co-search-group {
   display: flex;
   flex-direction: column;
+  margin: var(--pf-t--global--spacer--lg) 0 0;
   @media (min-width: $screen-xs-min) {
     flex-direction: row;
   }

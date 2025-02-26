@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PipelineParameters from '../PipelineParameters';
 
 type PipelineParametersFormProps = FormikProps<FormikValues> & {
@@ -30,7 +31,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
   const disableSubmit = !dirty || !_.isEmpty(_.compact(getIn(errors, 'parameters')));
   return (
     <Form onSubmit={handleSubmit}>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <PipelineParameters
           fieldName="parameters"
           isReadOnly={!pipelineParameterAccess}
@@ -44,7 +45,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
           emptyMessage={t('pipelines-plugin~No parameters are associated with this Pipeline.')}
           emptyValues={{ name: '', description: '', default: '' }}
         />
-      </div>
+      </PaneBody>
       {pipelineParameterAccess && (
         <FormFooter
           handleReset={handleReset}

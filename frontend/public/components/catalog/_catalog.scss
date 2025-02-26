@@ -118,20 +118,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   border-radius: var(--pf-t--global--border--radius--medium);
   display: flex;
   flex: 1;
-  margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
-  padding: $pf-v6-global-gutter 0;
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    margin-bottom: $pf-v6-global-gutter--md;
-    margin-left: $pf-v6-global-gutter--md;
-    margin-right: $pf-v6-global-gutter--md;
-  }
+  margin: 0 $pf-v6-global-gutter-x $pf-v6-global-gutter-y;
+  padding: $pf-v6-global-gutter-y 0;
 
   &__alert {
-    margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      margin-left: $pf-v6-global-gutter--md;
-      margin-right: $pf-v6-global-gutter--md;
-    }
+    margin: 0 $pf-v6-global-gutter-x $pf-v6-global-gutter-y;
   }
 
   &__content {
@@ -140,12 +131,9 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__description {
-    margin-top: -10px;
-    padding: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      padding-left: $pf-v6-global-gutter--md;
-      padding-right: $pf-v6-global-gutter--md;
-    }
+    color: var(--pf-t--global--text--color--subtle);
+    margin-top: calc(#{$pf-v6-global-gutter-y} * -0.5);
+    padding: 0 $pf-v6-global-gutter-x $pf-v6-global-gutter-y;
   }
 
   &__filter {
@@ -166,12 +154,12 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   &__header {
-    margin: 0 $pf-v6-global-gutter--md 0;
+    margin: 0 $pf-v6-global-gutter-x;
   }
 
   &__heading {
     font-size: 16px;
-    margin: 0 0 $pf-v6-global-gutter;
+    margin: 0 0 $pf-v6-global-gutter-y;
   }
 
   &__hint {
@@ -287,7 +275,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__tabs {
     flex: 0 0 220px;
-    margin: 0 $pf-v6-global-gutter 0 0;
+    margin: 0 $pf-v6-global-gutter-x 0 0;
   }
 }
 

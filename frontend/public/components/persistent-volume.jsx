@@ -3,6 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
@@ -91,7 +92,7 @@ const Details = ({ obj: pv }) => {
   const reclaimPolicy = _.get(pv, 'spec.persistentVolumeReclaimPolicy');
   const nfsExport = _.get(pv, 'spec.csi.volumeAttributes.share');
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~PersistentVolume details')} />
       <div className="row">
         <div className="col-sm-6">
@@ -145,7 +146,7 @@ const Details = ({ obj: pv }) => {
           </dl>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

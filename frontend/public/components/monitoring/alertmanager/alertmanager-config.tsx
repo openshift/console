@@ -22,6 +22,8 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { useTranslation } from 'react-i18next';
 
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import NavTitle from '@console/shared/src/components/layout/NavTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';
@@ -51,7 +53,7 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~Alert routing')}>
         <Button
           className="co-alert-manager-config__edit-alert-routing-btn"
@@ -86,7 +88,7 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
           </dl>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 
@@ -434,7 +436,7 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
   const { t } = useTranslation();
   const receiverString = t('public~receiver', { count: numOfIncompleteReceivers });
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~Receivers')} />
       <div className="co-m-pane__filter-row">
         <TextFilter
@@ -476,7 +478,7 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
           data={receivers}
         />
       )}
-    </div>
+    </PaneBody>
   );
 };
 
@@ -539,7 +541,7 @@ export const AlertmanagerConfig: React.FC = () => {
           <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
         </Breadcrumb>
       </PageBreadcrumb>
-      <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+      <NavTitle className="co-m-nav-title--detail co-m-nav-title--breadcrumbs">
         <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
@@ -547,7 +549,7 @@ export const AlertmanagerConfig: React.FC = () => {
             </span>
           </div>
         </PrimaryHeading>
-      </div>
+      </NavTitle>
       <NavBar
         pages={[
           {

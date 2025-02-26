@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
@@ -198,8 +197,8 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
     <div>
       <Tabs
         activeKey={defaultPage ? '' : lastElement}
-        inset={{ default: 'insetNone', xl: 'insetSm' }}
         component="nav"
+        className="co-horizontal-nav"
       >
         {pages.map(({ name, nameKey, href }) => {
           const to = `${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`;

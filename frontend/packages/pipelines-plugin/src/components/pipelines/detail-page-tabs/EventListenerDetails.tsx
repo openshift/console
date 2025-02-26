@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { EventListenerKind } from '../resource-types';
 import EventListenerTriggers from './EventListenerTriggers';
 import EventListenerURL from './EventListenerURL';
@@ -16,7 +17,7 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
       (trigger) => trigger.template?.ref || trigger.template?.name,
     ) || [];
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('pipelines-plugin~EventListener details')} />
       <div className="row">
         <div className="col-sm-6">
@@ -35,7 +36,7 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
           )}
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

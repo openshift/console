@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind } from '../../module/k8s';
 import { SectionHeading } from './headings';
 
@@ -12,7 +13,7 @@ export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
   const { t } = useTranslation();
 
   return !_.isEmpty(postCommitCommand) || !_.isEmpty(postCommitArgs) || postCommitScript ? (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~Post-commit hooks')} />
       <dl className="co-m-pane__details">
         {!_.isEmpty(postCommitCommand) && <dt>{t('public~Command')}</dt>}
@@ -34,7 +35,7 @@ export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
           </dd>
         )}
       </dl>
-    </div>
+    </PaneBody>
   ) : null;
 };
 

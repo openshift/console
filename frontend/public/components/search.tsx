@@ -10,7 +10,6 @@ import {
   AccordionToggle,
   Button,
   ButtonVariant,
-  Divider,
   PageSection,
   Content,
   Toolbar,
@@ -284,7 +283,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           </ToolbarContent>
         </Toolbar>
       </PageSection>
-      <Divider component="div" />
       <PageSection hasBodyWrapper={false}>
         <Accordion asDefinitionList={false}>
           {[...selectedItems].map((resource) => {

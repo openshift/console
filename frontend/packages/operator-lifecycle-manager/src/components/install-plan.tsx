@@ -41,6 +41,7 @@ import {
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { FLAGS, GreenCheckCircleIcon, Status, useFlag } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -310,7 +311,7 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
   return (
     <>
       {needsApproval && canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <InstallPlanHint
             title={t('olm~Review manual InstallPlan')}
             body={t(
@@ -326,64 +327,62 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
               </Link>
             }
           />
-        </div>
+        </PaneBody>
       )}
       {needsApproval && !canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <NeedInstallPlanPermissions installPlan={obj} />
-        </div>
+        </PaneBody>
       )}
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('olm~InstallPlan details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj} showAnnotations={false} />
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('olm~Status')}</dt>
-                <dd>
-                  <Status status={obj.status?.phase ?? t('olm~Unknown')} />
-                </dd>
-                <dt>{t('olm~Components')}</dt>
-                {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
-                  <dd key={csvName}>
-                    {obj.status.phase === 'Complete' ? (
-                      <ResourceLink
-                        kind={referenceForModel(ClusterServiceVersionModel)}
-                        name={csvName}
-                        namespace={obj.metadata.namespace}
-                        title={csvName}
-                      />
-                    ) : (
-                      <>
-                        <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
-                        {csvName}
-                      </>
-                    )}
-                  </dd>
-                ))}
-                <dt>{t('olm~CatalogSources')}</dt>
-                {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
-                  <dd key={`${sourceNamespace}-${sourceName}`}>
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={obj} showAnnotations={false} />
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <dt>{t('olm~Status')}</dt>
+              <dd>
+                <Status status={obj.status?.phase ?? t('olm~Unknown')} />
+              </dd>
+              <dt>{t('olm~Components')}</dt>
+              {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
+                <dd key={csvName}>
+                  {obj.status.phase === 'Complete' ? (
                     <ResourceLink
-                      kind={referenceForModel(CatalogSourceModel)}
-                      name={sourceName}
-                      namespace={sourceNamespace}
-                      title={sourceName}
+                      kind={referenceForModel(ClusterServiceVersionModel)}
+                      name={csvName}
+                      namespace={obj.metadata.namespace}
+                      title={csvName}
                     />
-                  </dd>
-                ))}
-              </dl>
-            </div>
+                  ) : (
+                    <>
+                      <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
+                      {csvName}
+                    </>
+                  )}
+                </dd>
+              ))}
+              <dt>{t('olm~CatalogSources')}</dt>
+              {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
+                <dd key={`${sourceNamespace}-${sourceName}`}>
+                  <ResourceLink
+                    kind={referenceForModel(CatalogSourceModel)}
+                    name={sourceName}
+                    namespace={sourceNamespace}
+                    title={sourceName}
+                  />
+                </dd>
+              ))}
+            </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />
         <Conditions conditions={obj.status?.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -431,12 +430,12 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   return plan.length > 0 ? (
     <>
       {needsApproval && !hideApprovalBlock && !canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <NeedInstallPlanPermissions installPlan={obj} />
-        </div>
+        </PaneBody>
       )}
       {needsApproval && !hideApprovalBlock && canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <InstallPlanHint
             title={t('olm~Review manual InstallPlan')}
             body={<InstallPlanReview installPlan={obj} />}
@@ -463,7 +462,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
               </div>
             }
           />
-        </div>
+        </PaneBody>
       )}
       {stepsByCSV.map((steps) => (
         <div key={steps[0].resolving} className="co-m-pane__body">
@@ -519,11 +518,11 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
       ))}
     </>
   ) : (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <ConsoleEmptyState title={t('olm~No components resolved')}>
         {t('olm~This InstallPlan has not been fully resolved yet.')}
       </ConsoleEmptyState>
-    </div>
+    </PaneBody>
   );
 };
 

@@ -7,6 +7,7 @@ import { k8sGetResource, k8sCreateResource } from '@console/dynamic-plugin-sdk/s
 import { SectionHeading } from '@console/internal/components/utils';
 import { LoadError } from '@console/internal/components/utils/status-box';
 import { NamespaceModel } from '@console/internal/models';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   newCloudShellWorkSpace,
   createCloudShellResourceName,
@@ -106,12 +107,12 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
+      <PaneBody style={{ paddingBottom: 0 }}>
         <SectionHeading
           text={t('webterminal-plugin~Initialize terminal')}
           style={{ marginBottom: 0 }}
         />
-      </div>
+      </PaneBody>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

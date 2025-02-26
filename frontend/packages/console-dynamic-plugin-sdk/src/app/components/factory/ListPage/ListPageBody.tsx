@@ -1,7 +1,8 @@
 import * as React from 'react';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const ListPageBody: React.FC = ({ children }) => {
-  return <div className="co-m-pane__body co-m-pane__body--no-top-margin">{children}</div>;
+  return <PaneBody>{children}</PaneBody>;
 };
 
 export default ListPageBody;

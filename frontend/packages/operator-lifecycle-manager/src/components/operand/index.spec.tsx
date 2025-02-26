@@ -604,7 +604,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   it('check if ListPageBody component renders the correct children', () => {
-    expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
+    expect(wrapper.find(ListPageBody).children().length).toBe(1);
   });
 });
 
@@ -649,7 +649,7 @@ describe(ProvidedAPIPage.displayName, () => {
   });
 
   it('check if ListPageBody component renders the correct children', () => {
-    expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
+    expect(wrapper.find(ListPageBody).children().length).toBe(1);
   });
 });
 

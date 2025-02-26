@@ -615,7 +615,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     );
 
     return (
-      <div className={classNames({ 'co-m-pane__body': !currentEnvVars.isCreate })}>
+      <div className={classNames({ 'pf-v6-c-page__main-section': !currentEnvVars.isCreate })}>
         {containerVars}
         {!currentEnvVars.isCreate && (
           <div className="co-m-pane__body-group">

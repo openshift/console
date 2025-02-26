@@ -28,6 +28,7 @@ import { MultiNetworkPolicyModel, NetworkPolicyModel } from '@console/internal/m
 import { k8sCreate, NetworkPolicyKind } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import NADsSelector from './NADsSelector';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
@@ -81,7 +82,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
     // Note, this case is not expected to happen. Validity of the network policy for form should have been checked prior to showing this form.
     // When used with the SyncedEditor, an error is thrown when the data is invalid, that should prevent the user from opening the form with invalid data, hence not running into this conditional block.
     return (
-      <div className="co-m-pane__body">
+      <PaneBody>
         <Alert
           variant={AlertVariant.danger}
           title={t(
@@ -90,7 +91,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
         >
           {networkPolicy.error}
         </Alert>
-      </div>
+      </PaneBody>
     );
   }
 
@@ -204,7 +205,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
   };
 
   return (
-    <div className="co-m-pane__body co-m-pane__form">
+    <PaneBody className="co-m-pane__form">
       <Form onSubmit={save} className="co-create-networkpolicy">
         {showSDNAlert &&
           networkFeaturesLoaded &&
@@ -417,6 +418,6 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
           </ActionGroup>
         </ButtonBar>
       </Form>
-    </div>
+    </PaneBody>
   );
 };

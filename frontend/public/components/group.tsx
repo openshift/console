@@ -4,6 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 import { NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind, K8sKind } from '../module/k8s';
@@ -193,18 +194,18 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
   const users: string[] = obj.users ? [...obj.users].sort() : [];
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Group details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={obj} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Users')} />
         <UsersTable group={obj} users={users} />
-      </div>
+      </PaneBody>
     </>
   );
 };

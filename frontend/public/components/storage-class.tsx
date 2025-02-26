@@ -9,6 +9,7 @@ import {
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
@@ -50,7 +51,7 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~StorageClass details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -71,7 +72,7 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
             </dl>
           </div>
         </div>
-      </div>
+      </PaneBody>
     </>
   );
 };

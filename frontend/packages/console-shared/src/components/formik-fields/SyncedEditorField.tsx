@@ -175,7 +175,9 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
           isInline
           title={t('console-shared~Invalid YAML cannot be persisted')}
         >
-          <p>{t('console-shared~Switching to form view will delete any invalid YAML.')}</p>
+          <p className="pf-v6-u-mb-sm">
+            {t('console-shared~Switching to form view will delete any invalid YAML.')}
+          </p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
             {t('console-shared~Switch and delete')}
           </Button>
