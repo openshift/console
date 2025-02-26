@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-
 import {
   K8sKind,
   K8sResourceKindReference,
@@ -21,23 +20,11 @@ export const connectToModel = connect(
   },
 );
 
-type WithPluralProps = {
-  kindObj?: K8sKind;
-  modelRef?: K8sResourceKindReference;
-  kindsInFlight?: boolean;
-};
-
-export type ConnectToPlural = <P extends WithPluralProps>(
-  C: React.ComponentType<P>,
-) => React.ComponentType<Omit<P, keyof WithPluralProps>> & {
-  WrappedComponent: React.ComponentType<P>;
-};
-
 /**
  * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
  * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
  */
-export const connectToPlural: ConnectToPlural = connect(
+export const connectToPlural = connect(
   (
     { k8s }: RootState,
     props: {

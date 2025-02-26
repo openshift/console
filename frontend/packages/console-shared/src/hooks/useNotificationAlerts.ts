@@ -1,10 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
-import { Alert } from '@console/dynamic-plugin-sdk';
 import { LabelSelector, ObjectMetadata } from '@console/internal/module/k8s';
 import { NotificationAlerts } from '@console/internal/reducers/observe';
 import { RootState } from '@console/internal/redux';
@@ -20,17 +17,17 @@ import { useUserSettings } from './useUserSettings';
 */
 export const useNotificationAlerts = (
   overrideMatchLabels?: ObjectMetadata['labels'],
-): [Alert[], boolean, Error] => {
+): [NotificationAlerts['data'], NotificationAlerts['loaded'], NotificationAlerts['loadError']] => {
   const [hideUserWorkloadNotifications] = useUserSettings(
     HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
     true,
     true,
   );
-  const { data: alerts, loaded, loadError } = useSelector<NotificationAlerts>(
-    ({ observe }: RootState) => observe.get('notificationAlerts') ?? {},
+  const { data: alerts, loaded, loadError } = useSelector<RootState, NotificationAlerts>(
+    ({ observe }) => observe.get('notificationAlerts') ?? {},
   );
 
-  const [filteredAlerts, setFilteredAlerts] = React.useState<Alert[]>([]);
+  const [filteredAlerts, setFilteredAlerts] = React.useState<NotificationAlerts['data']>([]);
 
   const next = React.useMemo(() => {
     const alertLabelSelector = new LabelSelector(overrideMatchLabels);
