@@ -1,0 +1,38 @@
+import * as React from 'react';
+import { PageSection } from '@patternfly/react-core';
+import * as classNames from 'classnames';
+
+const PaneBody: React.FC<PaneBodyProps> = ({
+  children,
+  className,
+  fullHeight,
+  sectionHeading,
+  style,
+  ...props
+}) => {
+  return (
+    <PageSection
+      className={classNames(
+        'co-m-pane__body',
+        { 'pf-v6-u-h-100': fullHeight },
+        { 'co-m-pane__body--section-heading': sectionHeading },
+        className,
+      )}
+      hasBodyWrapper={false}
+      style={style}
+      {...props}
+    >
+      {children}
+    </PageSection>
+  );
+};
+
+export type PaneBodyProps = {
+  children: React.ReactNode;
+  className?: string;
+  fullHeight?: boolean;
+  sectionHeading?: boolean;
+  style?: React.CSSProperties;
+};
+
+export default PaneBody;

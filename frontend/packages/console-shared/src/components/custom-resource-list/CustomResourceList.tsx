@@ -11,6 +11,7 @@ import {
 } from '@console/internal/components/factory/table';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { getQueryArgument } from '@console/internal/components/utils/router';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 
 interface CustomResourceListProps {
@@ -86,7 +87,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   }
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       {(rowFilters || textFilter) && (
         <FilterToolbar
           rowFilters={rowFilters}
@@ -108,7 +109,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
         customData={customData}
         getRowProps={getRowProps}
       />
-    </div>
+    </PaneBody>
   );
 };
 

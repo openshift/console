@@ -8,6 +8,7 @@ import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk'
 import { useDeepCompareMemoize } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, ResourceLink, LoadingBox } from '../utils';
 import { connectToPlural } from '../../kinds';
@@ -59,7 +60,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
   return !kindObj && kindsInFlight ? (
     <LoadingBox />
   ) : (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <DocumentTitle>{t('public~Add Storage')}</DocumentTitle>
       <div className="co-storage-heading__wrapper">
         <Trans t={t} ns="public">
@@ -97,7 +98,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
       <ErrorBoundaryPage>
         <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
       </ErrorBoundaryPage>
-    </div>
+    </PaneBody>
   );
 };
 

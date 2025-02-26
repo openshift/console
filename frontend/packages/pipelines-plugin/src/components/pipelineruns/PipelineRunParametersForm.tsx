@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PipelineRunParameters from './PipelineRunParameters';
 
 export interface PipelineRunParametersFormProps {
@@ -18,7 +19,7 @@ const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({ o
     <>
       <Formik initialValues={initialValues} onSubmit={null}>
         {() => (
-          <div className="co-m-pane__body">
+          <PaneBody>
             <PipelineRunParameters
               fieldName="parameters"
               isReadOnly
@@ -34,7 +35,7 @@ const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({ o
                 value: '',
               }}
             />
-          </div>
+          </PaneBody>
         )}
       </Formik>
     </>

@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import {
@@ -109,22 +110,22 @@ const ConfigMapsDetailsPage = (props) => {
   const ConfigMapDetails = ({ obj: configMap }) => {
     return (
       <>
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~ConfigMap details')} />
           <div className="row">
             <div className="col-md-6">
               <ResourceSummary resource={configMap} />
             </div>
           </div>
-        </div>
-        <div className="co-m-pane__body">
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Data')} />
           <ConfigMapData data={configMap.data} label={t('public~Data')} />
-        </div>
-        <div className="co-m-pane__body">
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Binary data')} />
           <ConfigMapBinaryData data={configMap.binaryData} />
-        </div>
+        </PaneBody>
       </>
     );
   };

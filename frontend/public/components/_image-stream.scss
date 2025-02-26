@@ -4,12 +4,9 @@
 
 .co-images-stream-tag-timeline {
   font-size: 15px;
-  margin: 20px $pf-v6-global-gutter--md;
+  margin: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
   padding-left: 0;
   width: auto;
-  @media (max-width: $screen-xs-max) {
-    margin: 20px 10px;
-  }
   li {
     height: auto;
     list-style: none;
@@ -43,7 +40,8 @@
 }
 
 .co-images-stream-tag-timeline__line {
-  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+  border: var(--pf-t--global--border--width--regular) solid
+    var(--pf-t--global--border--color--default);
   left: 14px;
   position: relative;
 }

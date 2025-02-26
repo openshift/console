@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageComponentProps, CopyToClipboard, EmptyBox } from '@console/internal/components/utils';
 import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -14,12 +15,12 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
   ]);
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       {pluginManifest ? (
         <CopyToClipboard value={JSON.stringify(pluginManifest, null, 2)} />
       ) : (
         <EmptyBox label={t('console-app~Plugin manifest')} />
       )}
-    </div>
+    </PaneBody>
   );
 };

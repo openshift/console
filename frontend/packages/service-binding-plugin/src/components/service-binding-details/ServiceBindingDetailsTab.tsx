@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ServiceBinding } from '../../types';
 import ServiceBindingSummary from './ServiceBindingSummary';
 
@@ -16,7 +17,7 @@ const ServiceBindingDetailsTab: React.FC<ServiceBindingDetailsTabProps> = ({
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('service-binding-plugin~ServiceBinding details')} />
 
         <div className="row">
@@ -27,13 +28,13 @@ const ServiceBindingDetailsTab: React.FC<ServiceBindingDetailsTabProps> = ({
             <ServiceBindingSummary serviceBinding={serviceBinding} />
           </div>
         </div>
-      </div>
+      </PaneBody>
 
       {serviceBinding.status?.conditions?.length ? (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('service-binding-plugin~Conditions')} />
           <Conditions conditions={serviceBinding.status.conditions} />
-        </div>
+        </PaneBody>
       ) : null}
     </>
   );

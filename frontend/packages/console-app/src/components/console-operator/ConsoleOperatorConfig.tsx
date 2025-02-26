@@ -54,6 +54,7 @@ import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   boolComparator,
   localeComparator,
@@ -226,7 +227,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
   return !loaded ? (
     <LoadingBox />
   ) : (
-    <div className="co-m-pane__body">
+    <PaneBody>
       {obj.spec?.managementState === 'Unmanaged' && (
         <Alert
           className="co-alert"
@@ -290,7 +291,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
       ) : (
         <EmptyBox label={t('console-app~Console plugins')} />
       )}
-    </div>
+    </PaneBody>
   );
 };
 

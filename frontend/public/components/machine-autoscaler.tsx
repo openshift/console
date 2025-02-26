@@ -4,6 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MachineAutoscalerModel } from '../models';
 import {
   groupVersionFor,
@@ -136,7 +137,7 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineAutoscaler details')} />
         <div className="row">
           <div className="col-md-6">
@@ -152,7 +153,7 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
             </ResourceSummary>
           </div>
         </div>
-      </div>
+      </PaneBody>
     </>
   );
 };

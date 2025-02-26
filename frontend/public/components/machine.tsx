@@ -18,6 +18,7 @@ import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage } from './factory';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
@@ -115,70 +116,68 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Machine details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj} />
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
-                  <Status status={getMachinePhase(obj)} />
-                </DetailsItem>
-                <DetailsItem
-                  label={t('public~Provider state')}
-                  obj={obj}
-                  path="status.providerStatus.instanceState"
-                >
-                  {providerState}
-                </DetailsItem>
-                {nodeName && (
-                  <>
-                    <dt>{t('public~Node')}</dt>
-                    <dd>
-                      <NodeLink name={nodeName} />
-                    </dd>
-                  </>
-                )}
-                {machineRole && (
-                  <>
-                    <dt>{t('public~Machine role')}</dt>
-                    <dd>{machineRole}</dd>
-                  </>
-                )}
-                {instanceType && (
-                  <>
-                    <dt>{t('public~Instance type')}</dt>
-                    <dd>{instanceType}</dd>
-                  </>
-                )}
-                {region && (
-                  <>
-                    <dt>{t('public~Region')}</dt>
-                    <dd>{region}</dd>
-                  </>
-                )}
-                {zone && (
-                  <>
-                    <dt>{t('public~Availability zone')}</dt>
-                    <dd>{zone}</dd>
-                  </>
-                )}
-                <dt>{t('public~Machine addresses')}</dt>
-                <dd>
-                  <NodeIPList ips={getMachineAddresses(obj)} expand />
-                </dd>
-              </dl>
-            </div>
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={obj} />
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
+                <Status status={getMachinePhase(obj)} />
+              </DetailsItem>
+              <DetailsItem
+                label={t('public~Provider state')}
+                obj={obj}
+                path="status.providerStatus.instanceState"
+              >
+                {providerState}
+              </DetailsItem>
+              {nodeName && (
+                <>
+                  <dt>{t('public~Node')}</dt>
+                  <dd>
+                    <NodeLink name={nodeName} />
+                  </dd>
+                </>
+              )}
+              {machineRole && (
+                <>
+                  <dt>{t('public~Machine role')}</dt>
+                  <dd>{machineRole}</dd>
+                </>
+              )}
+              {instanceType && (
+                <>
+                  <dt>{t('public~Instance type')}</dt>
+                  <dd>{instanceType}</dd>
+                </>
+              )}
+              {region && (
+                <>
+                  <dt>{t('public~Region')}</dt>
+                  <dd>{region}</dd>
+                </>
+              )}
+              {zone && (
+                <>
+                  <dt>{t('public~Availability zone')}</dt>
+                  <dd>{zone}</dd>
+                </>
+              )}
+              <dt>{t('public~Machine addresses')}</dt>
+              <dd>
+                <NodeIPList ips={getMachineAddresses(obj)} expand />
+              </dd>
+            </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={obj.status?.providerStatus?.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

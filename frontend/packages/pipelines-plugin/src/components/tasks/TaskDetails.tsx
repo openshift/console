@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { TaskModel } from '../../models';
 import { TaskKind } from '../../types';
 import WorkspaceDefinitionList from '../shared/workspaces/WorkspaceDefinitionList';
@@ -14,7 +15,7 @@ export interface TaskDetailsProps {
 const TaskDetails: React.FC<TaskDetailsProps> = ({ obj: task }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading
         text={t('pipelines-plugin~{{taskLabel}} details', {
           taskLabel: t(TaskModel.labelKey),
@@ -28,7 +29,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ obj: task }) => {
           <WorkspaceDefinitionList workspaces={task.spec.workspaces} />
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

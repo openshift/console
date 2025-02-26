@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Table, TableData, RowFunctionArgs } from '../factory';
 import {
   referenceForModel,
@@ -91,7 +92,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
     [findModel],
   );
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <Table
         {...props}
         Header={Header}
@@ -100,7 +101,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
         aria-label={t('public~Related objects')}
         NoDataEmptyMsg={EmptyMessage}
       />
-    </div>
+    </PaneBody>
   );
 };
 

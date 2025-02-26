@@ -134,11 +134,7 @@ $co-affinity-row-margin: 15px;
 .co-create-operand__header {
   border-bottom: var(--pf-t--global--border--width--divider--default) solid
     var(--pf-t--global--border--color--default);
-  padding: 0 $pf-v6-global-gutter var(--pf-t--global--spacer--lg);
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-left: $pf-v6-global-gutter--md;
-    padding-right: $pf-v6-global-gutter--md;
-  }
+  padding: 0 $pf-v6-global-gutter-x var(--pf-t--global--spacer--lg);
 }
 
 // only used in packages and will be orphaned when packages move out
@@ -247,9 +243,9 @@ $co-affinity-row-margin: 15px;
 }
 
 #operator-install-page {
-  margin: 0 $pf-v6-global-gutter;
+  margin: 0 $pf-v6-global-gutter-x;
   @media (min-width: $screen-sm-min) {
-    margin: $pf-v6-global-gutter--md;
+    margin: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
     max-width: 600px;
     min-width: 375px;
     width: 100%;

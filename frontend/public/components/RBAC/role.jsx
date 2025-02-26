@@ -7,6 +7,7 @@ import * as classNames from 'classnames';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { BindingName, BindingsList, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
 import { DetailsPage, MultiListPage, TextFilter, Table, TableData } from '../factory';
@@ -102,7 +103,7 @@ class Details extends React.Component {
 
     return (
       <div>
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Role details')} />
           <div className="row">
             <div className="col-xs-6">
@@ -128,8 +129,8 @@ class Details extends React.Component {
               </dl>
             </div>
           </div>
-        </div>
-        <div className="co-m-pane__body">
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Rules')} />
           <div className="co-m-pane__filter-row">
             {/* This page is temporarily disabled until we update the safe resources list.
@@ -145,7 +146,7 @@ class Details extends React.Component {
             />
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />
-        </div>
+        </PaneBody>
       </div>
     );
   }

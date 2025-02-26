@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import NavTitle from '@console/shared/src/components/layout/NavTitle';
 import { K8sResourceKind } from '../../../module/k8s';
 import { AsyncComponent, Firehose, StatusBox } from '../../utils';
 import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alertmanager-utils';
@@ -71,13 +72,13 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
 
   return (
     <>
-      <div className="co-m-nav-title">
-        <p className="help-block">
+      <NavTitle>
+        <p>
           {t(
             'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
           )}
         </p>
-      </div>
+      </NavTitle>
       <EditAlertmanagerYAML onSave={save} obj={alertmanagerYAML}>
         {errorMsg && (
           <Alert
@@ -137,7 +138,7 @@ const AlertmanagerYAML: React.FC<{}> = () => {
           <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
         </Breadcrumb>
       </PageBreadcrumb>
-      <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+      <NavTitle className="co-m-nav-title--detail co-m-nav-title--breadcrumbs">
         <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
@@ -145,7 +146,7 @@ const AlertmanagerYAML: React.FC<{}> = () => {
             </span>
           </div>
         </PrimaryHeading>
-      </div>
+      </NavTitle>
       <NavBar
         pages={[
           {

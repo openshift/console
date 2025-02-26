@@ -10,6 +10,7 @@ import {
   LazyActionMenu,
   ActionMenuVariant,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getJobTypeAndCompletions,
   K8sKind,
@@ -114,7 +115,7 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <div className="row">
           <div className="col-md-6">
             <SectionHeading text={t('public~Job details')} />
@@ -177,15 +178,15 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={job.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
