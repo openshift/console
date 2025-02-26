@@ -40,6 +40,8 @@ export const FavoriteNavItems: React.FC = () => {
       if (currentFavorite) {
         setActiveGroup('favorites-group');
         setActiveItem(`favorites-item-${currentFavorite.url}`);
+      } else {
+        setActiveItem(null);
       }
     }
   }, [loaded, favorites, currentUrlPath]);

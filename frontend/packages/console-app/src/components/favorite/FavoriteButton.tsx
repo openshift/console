@@ -59,6 +59,11 @@ export const FavoriteButton = connectToModel(() => {
       setFavorites(updatedFavorites);
       setIsStarred(false);
     } else {
+      const currentUrlSplit = currentUrlPath.includes('~')
+        ? currentUrlPath.split('~')
+        : currentUrlPath.split('/');
+      const [defaultName] = currentUrlSplit.slice(-1);
+      setName(defaultName.split('?')[0]);
       setIsModalOpen(true);
     }
   };
