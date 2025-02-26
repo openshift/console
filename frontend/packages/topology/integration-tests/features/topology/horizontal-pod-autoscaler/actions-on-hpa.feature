@@ -13,7 +13,7 @@ Feature: Perform actions on HPA in Topology page
         Scenario Outline: Add HorizontalPodAutoscaler to deployment workload: TH-02-TC01
             Given user has created a deployment workload "nodejs-ex-git" with CPU resource limit "100" and Memory resource limit "100"
               And user is at Topology page
-             When user clicks on workload "nodejs-ex-git"
+             When user clicks on workload "nodejs-ex-git" to open sidebar
               And user selects "Add HorizontalPodAutoscaler" option from Actions menu
               And user enters Name as "<hpa_name>" in Horizontal Pod Autoscaler page
               And user sets Minimum Pods value to "<hpa_min_pod>"
@@ -35,7 +35,7 @@ Feature: Perform actions on HPA in Topology page
         Scenario Outline: Edit HorizontalPodAutoscaler: TH-02-TC02
             Given user has a deployment workload "<workload_name>" with HPA assigned to it
               And user is at Topology page
-             When user clicks on workload "<workload_name>"
+             When user clicks on workload "<workload_name>" to open sidebar
               And user selects "Edit HorizontalPodAutoscaler" option from Actions menu
               And user sees values are prefilled
               And user checks the name value but cannot edit it
@@ -68,7 +68,7 @@ Feature: Perform actions on HPA in Topology page
 
         @regression @manual
         Scenario: Add HPA from YAML view: TH-02-TC04
-             When user clicks on workload "nodejs-ex-git"
+             When user clicks on workload "nodejs-ex-git" to open sidebar
               And user selects "Add HorizontalPodAutoscaler" option from Actions menu
               And user navigates to YAML view in Horizontal Pod Autoscaler page
               And user sees schema on the right sidebar
