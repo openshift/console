@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ExternalLink } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ConsoleLinkModel } from '@console/internal/models';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
 
 const DevPerspectiveTourText: React.FC = () => {
@@ -95,43 +92,3 @@ export const SearchTourText: React.FC = () => {
 };
 
 export const searchTourText = <SearchTourText />;
-
-export const FinishTourText: React.FC = () => {
-  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
-    isList: true,
-    kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
-  });
-  const { t } = useTranslation();
-  const openshiftBlogLink =
-    consoleLinks.filter((link: K8sResourceKind) => link.metadata.name === 'openshift-blog')[0]?.spec
-      ?.href || 'https://developers.redhat.com/products/openshift/whats-new';
-  // declaring openshiftHelpBase instead of importing because it throws error while using it as tour extension
-  const openshiftHelpBase =
-    window.SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
-  return (
-    <Trans t={t} ns="devconsole">
-      Stay up-to-date with everything OpenShift on our{' '}
-      <a
-        href={openshiftBlogLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-test="openshift-blog-link"
-      >
-        blog
-      </a>{' '}
-      or continue to learn more in our{' '}
-      <a
-        href={openshiftHelpBase}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-test="openshift-docs-link"
-      >
-        documentation
-      </a>
-      .
-    </Trans>
-  );
-};
-
-export const finishTourText = <FinishTourText />;

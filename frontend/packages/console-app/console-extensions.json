@@ -655,7 +655,7 @@
       "perspective": "admin",
       "id": "home",
       "name": "%console-app~Home%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-home" }
+      "dataAttributes": { "data-quickstart-id": "qs-nav-home", "data-tour-id": "tour-home-nav" }
     }
   },
   {
@@ -674,7 +674,10 @@
       "perspective": "admin",
       "id": "workloads",
       "name": "%console-app~Workloads%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-workloads" },
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-workloads",
+        "data-tour-id": "tour-workloads-nav"
+      },
       "insertAfter": "operators"
     }
   },
