@@ -110,6 +110,8 @@ func main() {
 
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
+
+	fCustomLogoFiles := fs.String("custom-logo-files", "", "List of custom product images for console branding. Each entry consist of logo type as a key and a list of themed logo objects as value. (JSON as string)")
 	fCustomLogoFile := fs.String("custom-logo-file", "", "Custom product image for console branding.")
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
@@ -260,12 +262,18 @@ func main() {
 		}
 	}
 
+	if *fCustomLogoFile != "" && *fCustomLogoFiles != "" {
+		klog.Fatalf("Error: --custom-logo-file and --custom-logo-files cannot be used together")
+		os.Exit(1)
+	}
+
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
 		Branding:                     branding,
 		CustomProductName:            *fCustomProductName,
 		CustomLogoFile:               *fCustomLogoFile,
+		CustomLogoFiles:              *fCustomLogoFiles,
 		ControlPlaneTopology:         *fControlPlaneTopology,
 		StatuspageID:                 *fStatuspageID,
 		DocumentationBaseURL:         documentationBaseURL,
