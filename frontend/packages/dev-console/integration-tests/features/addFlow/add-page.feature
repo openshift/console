@@ -27,7 +27,7 @@ Feature: Add page on Developer Console
 
 
         @regression
-        Scenario: Developer Catalog option to create an Application, Component or Service: A-11-TC03
+        Scenario: Software Catalog option to create an Application, Component or Service: A-11-TC03
              Then user will see "All services" option
               And user will see "Database" option
               And user will see "Operator Backed" option
