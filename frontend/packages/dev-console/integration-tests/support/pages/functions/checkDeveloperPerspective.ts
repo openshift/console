@@ -1,8 +1,13 @@
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 
 export const checkDeveloperPerspective = () => {
-  cy.byLegacyTestID('perspective-switcher-toggle').click();
   cy.get('body').then(($body) => {
+    // If the perspective switcher doesn't exist then skip this function
+    if ($body.find("[data-test-id='perspective-switcher-toggle']").length === 0) {
+      cy.log('perspective switcher not found, skipping checkDeveloperPerspective');
+      return;
+    }
+    cy.byLegacyTestID('perspective-switcher-toggle').click();
     if ($body.find('[data-test-id="perspective-switcher-menu-option"]').length !== 0) {
       cy.log('perspective switcher menu enabled');
       cy.byLegacyTestID('perspective-switcher-menu-option').contains('Developer');

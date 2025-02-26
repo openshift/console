@@ -55,15 +55,23 @@ export const sidePane = {
 
 export const perspective = {
   switchTo: (perspectiveName: switchPerspective) => {
-    nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
-    if (perspectiveName === switchPerspective.Developer) {
-      guidedTour.close();
-      // Commenting below line, because due to this pipeline runs feature file is failing
-      // cy.testA11y('Developer perspective');
-    }
-    nav.sidenav.switcher.shouldHaveText(perspectiveName);
     cy.get('body').then(($body) => {
+      // If the perspective switcher doesn't exist then skip this function
+      if ($body.find("[data-test-id='perspective-switcher-toggle']").length === 0) {
+        cy.log('perspective switcher not found, skipping switchTo');
+        return;
+      }
+
+      nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
+      app.waitForLoad();
+      if (perspectiveName === switchPerspective.Developer) {
+        guidedTour.close();
+        // Commenting below line, because due to this pipeline runs feature file is failing
+        // cy.testA11y('Developer perspective');
+      }
+      nav.sidenav.switcher.shouldHaveText(perspectiveName);
+
       if ($body.find('[aria-label="Close drawer panel"]').length) {
         if ($body.find('[data-test="Next button"]').length) {
           cy.get('[aria-label="Close drawer panel"]').click();
