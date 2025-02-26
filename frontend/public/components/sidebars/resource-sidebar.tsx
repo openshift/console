@@ -135,6 +135,7 @@ export const ResourceSidebar: React.FC<{
       {tabs.length > 0 ? (
         <SimpleTabNav
           withinSidebar
+          noInset
           tabs={tabs}
           tabProps={{
             downloadSampleYaml,

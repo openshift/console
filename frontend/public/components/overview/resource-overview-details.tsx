@@ -88,6 +88,7 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
         <ResourceOverviewHeading actions={menuActions} kindObj={kindObj} resources={item} />
         <SimpleTabNav
           withinSidebar
+          noInset
           onClickTab={onClickTab}
           selectedTab={selectedDetailsTab}
           tabProps={{ item }}

@@ -16,6 +16,7 @@ type SimpleTabNavProps = {
   additionalClassNames?: string;
   /** Removes inset and adds extra margin to the bottom of the tab list */
   withinSidebar?: boolean;
+  noInset?: boolean;
 };
 
 export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
@@ -25,6 +26,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
   tabs,
   additionalClassNames,
   withinSidebar,
+  noInset,
 }) => {
   const handleTabClick = (_e, tabIndex: string) => {
     onClickTab && onClickTab(tabIndex);
@@ -35,9 +37,9 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
     <div>
       <Tabs
         onSelect={handleTabClick}
-        className={classnames({ 'pf-v6-u-mb-lg': withinSidebar }, additionalClassNames)}
+        className={classnames({ 'pf-v6-u-mb-md': withinSidebar }, additionalClassNames)}
         defaultActiveKey={selectedTab || tabs[0]?.name}
-        inset={!withinSidebar && { default: 'insetNone', xl: 'insetSm' }}
+        inset={!noInset && { default: 'insetSm' }}
         unmountOnExit
       >
         {tabs.map((tab) => {
