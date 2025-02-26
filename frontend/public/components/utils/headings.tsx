@@ -16,7 +16,7 @@ import {
   ContentVariants,
   Title,
 } from '@patternfly/react-core';
-import { ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import {
   OverviewItem,
@@ -28,6 +28,7 @@ import {
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
 
 import {
   ActionsMenu,
@@ -123,6 +124,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     helpText,
     'data-test': dataTestId,
   } = props;
+  const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
     props.resourceKeys,
     (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
@@ -140,6 +142,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
+  const isAdminPrespective = perspective === 'admin';
   return (
     <>
       {showBreadcrumbs && (
@@ -170,6 +173,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             className={classNames({
               'co-m-pane__heading--logo': props.icon,
               'co-m-pane__heading--with-help-text': helpText,
+              'pf-v6-u-flex-grow-1': !showActions,
             })}
             alignItemsBaseline={!!link}
             centerText={centerText}
@@ -196,23 +200,28 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <span className="co-m-pane__heading-badge">{badge}</span>
             )}
             {link && <div className="co-m-pane__heading-link">{link}</div>}
-            {showActions && (
+            {(isAdminPrespective || showActions) && (
               <div className="co-actions" data-test-id="details-actions">
-                {hasButtonActions && (
-                  <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                {isAdminPrespective && <FavoriteButton />}
+                {showActions && (
+                  <>
+                    {hasButtonActions && (
+                      <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                    )}
+                    {hasMenuActions && (
+                      <ActionsMenu
+                        actions={
+                          _.isFunction(menuActions)
+                            ? menuActions(kindObj, data, extraResources, customData)
+                            : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                        }
+                      />
+                    )}
+                    {_.isFunction(customActionMenu)
+                      ? customActionMenu(kindObj, data)
+                      : customActionMenu}
+                  </>
                 )}
-                {hasMenuActions && (
-                  <ActionsMenu
-                    actions={
-                      _.isFunction(menuActions)
-                        ? menuActions(kindObj, data, extraResources, customData)
-                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                    }
-                  />
-                )}
-                {_.isFunction(customActionMenu)
-                  ? customActionMenu(kindObj, data)
-                  : customActionMenu}
               </div>
             )}
           </PrimaryHeading>
