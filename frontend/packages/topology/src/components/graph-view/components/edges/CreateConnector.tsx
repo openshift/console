@@ -1,14 +1,7 @@
 import * as React from 'react';
-import { DefaultCreateConnector, Point } from '@patternfly/react-topology';
+import { DefaultCreateConnector } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-
-type CreateConnectorProps = {
-  startPoint: Point;
-  endPoint: Point;
-  hints: string[];
-  dragging?: boolean;
-  hover?: boolean;
-};
+import { CreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 
 const CreateConnector: React.FC<CreateConnectorProps> = ({
   startPoint,
