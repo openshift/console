@@ -13,6 +13,9 @@ import {
   ToolbarContent,
   ToolbarItem,
   ToolbarToggleGroup,
+  Switch,
+  FlexItem,
+  Flex,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { sortable } from '@patternfly/react-table';
@@ -38,7 +41,7 @@ import {
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { RootState } from '../redux';
-import { CheckBox, CheckBoxControls } from './row-filter';
+import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
@@ -586,17 +589,14 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     ]);
 
   // event handlers
-  const toggleShowUsers = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setShowUsers(!showUsers);
+  const toggleShowUsers = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    setShowUsers(checked);
   };
-  const toggleShowGroups = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setShowGroups(!showGroups);
+  const toggleShowGroups = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    setShowGroups(checked);
   };
-  const toggleShowServiceAccounts = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setShowServiceAccounts(!showServiceAccounts);
+  const toggleShowServiceAccounts = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    setShowServiceAccounts(checked);
   };
   const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -625,31 +625,42 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
         </div>
       </div>
       <div className="co-m-pane__body">
-        <CheckBoxControls
+        <RowFilter
           allSelected={allSelected}
           itemCount={itemCount}
           selectedCount={selectedCount}
           onSelectAll={onSelectAll}
         >
-          <CheckBox
-            title={t('public~User')}
-            active={showUsers}
-            number={users.length}
-            toggle={toggleShowUsers}
-          />
-          <CheckBox
-            title={t('public~Group')}
-            active={showGroups}
-            number={groups.length}
-            toggle={toggleShowGroups}
-          />
-          <CheckBox
-            title={t('public~ServiceAccount')}
-            active={showServiceAccounts}
-            number={serviceAccounts.length}
-            toggle={toggleShowServiceAccounts}
-          />
-        </CheckBoxControls>
+          <Flex>
+            <FlexItem>
+              <Switch
+                id="user-switch"
+                label={t('public~{{count}} User', { count: users.length })}
+                isChecked={showUsers}
+                onChange={toggleShowUsers}
+                ouiaId="UserSwitch"
+              />
+            </FlexItem>
+            <FlexItem>
+              <Switch
+                id="group-switch"
+                label={t('public~{{count}} Group', { count: groups.length })}
+                isChecked={showGroups}
+                onChange={toggleShowGroups}
+                ouiaId="GroupSwitch"
+              />
+            </FlexItem>
+            <FlexItem>
+              <Switch
+                id="service-account-switch"
+                label={t('public~{{count}} ServiceAccount', { count: serviceAccounts.length })}
+                isChecked={showServiceAccounts}
+                onChange={toggleShowServiceAccounts}
+                ouiaId="ServiceAccountSwitch"
+              />
+            </FlexItem>
+          </Flex>
+        </RowFilter>
         <p className="co-m-pane__explanation">
           {namespaced &&
             namespace &&
