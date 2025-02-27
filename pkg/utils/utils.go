@@ -20,6 +20,7 @@ const (
 	scriptSrc     = "script-src"
 	styleSrc      = "style-src"
 	consoleDot    = "console.redhat.com"
+	cdnSegment    = "cdn.segment.com"
 	httpLocalHost = "http://localhost:8080"
 	wsLocalHost   = "ws://localhost:8080"
 	self          = "'self'"
@@ -58,29 +59,34 @@ func RandomString(length int) (string, error) {
 func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
 
-	// The default sources are the sources that are allowed for all directives.
-	// When running on-cluster, the default sources are just 'self' and 'console.redhat.com'.
-	// When running off-cluster, 'http://localhost:8080' and 'ws://localhost:8080' are appended to the
-	// default sources. Image source, font source, and style source only use 'self' and
-	// 'http://localhost:8080'.
+	// default-src acts as a fallback for other CSP fetch directives, refer to CSP docs for details:
+	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/default-src
+
+	// When running on-cluster, default-src includes 'self' (Console page origin) and the following
+	// domains: console.redhat.com, cdn.segment.com
+
+	// When running off-cluster, http://localhost:8080 and ws://localhost:8080 are also included in
+	// the default-src list.
+
+	// Console plugins may extend individual CSP directives using spec.contentSecurityPolicy field
+	// of the corresponding ConsolePlugin resource. Refer to the following docs for details:
+	// https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md#content-security-policy
+
 	baseUriDirective := []string{baseURI, self}
-	defaultSrcDirective := []string{defaultSrc, self, consoleDot}
+	defaultSrcDirective := []string{defaultSrc, self, consoleDot, cdnSegment}
 	imgSrcDirective := []string{imgSrc, self}
 	fontSrcDirective := []string{fontSrc, self}
-	scriptSrcDirective := []string{scriptSrc, self, consoleDot}
+	scriptSrcDirective := []string{scriptSrc, self}
 	styleSrcDirective := []string{styleSrc, self}
+
 	if k8sMode == "off-cluster" {
 		baseUriDirective = append(baseUriDirective, []string{httpLocalHost, wsLocalHost}...)
 		defaultSrcDirective = append(defaultSrcDirective, []string{httpLocalHost, wsLocalHost}...)
-		imgSrcDirective = append(imgSrcDirective, httpLocalHost)
-		fontSrcDirective = append(fontSrcDirective, httpLocalHost)
-		scriptSrcDirective = append(scriptSrcDirective, []string{httpLocalHost, wsLocalHost}...)
-		styleSrcDirective = append(styleSrcDirective, httpLocalHost)
 	}
 
-	// If the plugins are providing a content security policy configuration, parse it and add it to
-	// the appropriate directive. The configuration is a string that is parsed into a map of directive types to sources.
-	// The sources are added to the existing sources for each type.
+	// If the plugins are providing a Content Security Policy configuration, parse it and add it to
+	// the appropriate directive. The configuration is a string that is parsed into a map of directive
+	// types to sources. The sources are added to the existing sources for each type.
 	if pluginsCSP != "" {
 		parsedCSP, err := ParseContentSecurityPolicyConfig(pluginsCSP)
 		if err != nil {
