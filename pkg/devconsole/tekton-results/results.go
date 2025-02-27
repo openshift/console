@@ -3,11 +3,13 @@ package tektonresults
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/common"
@@ -79,7 +81,7 @@ func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, er
 	return cachedTektonResultsHost, nil
 }
 
-func makeHTTPRequest(url, userToken string, allowAuthHeader, allowInsecure bool) (common.DevConsoleCommonResponse, error) {
+func makeHTTPRequest(url, userToken string, allowAuthHeader bool) (common.DevConsoleCommonResponse, error) {
 	serviceRequest, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
@@ -90,19 +92,25 @@ func makeHTTPRequest(url, userToken string, allowAuthHeader, allowInsecure bool)
 		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", userToken))
 	}
 
-	var serviceTransport *http.Transport
-	if allowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
+	// Load the CA certificate
+	caCert, err := os.ReadFile("/var/service-ca/service-ca.crt")
+	if err != nil {
+		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read CA certificate: %v", err)
 	}
+
+	// Create a CertPool and add the CA certificate
+	caCertPool := x509.NewCertPool()
+	if !caCertPool.AppendCertsFromPEM(caCert) {
+		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to append CA certificate")
+	}
+
+	serviceTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		TLSClientConfig: &tls.Config{
+			RootCAs: caCertPool,
+		},
+	}
+
 	serviceClient := &http.Client{
 		Transport: serviceTransport,
 	}
@@ -146,7 +154,7 @@ func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.D
 		parsedParams.Encode(),
 	)
 
-	return makeHTTPRequest(TEKTON_RESULTS_URL, user.Token, request.AllowAuthHeader, request.AllowInsecure)
+	return makeHTTPRequest(TEKTON_RESULTS_URL, user.Token, request.AllowAuthHeader)
 }
 
 func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -171,7 +179,7 @@ func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.
 		parsedParams.Encode(),
 	)
 
-	return makeHTTPRequest(SUMMARY_URL, user.Token, request.AllowAuthHeader, request.AllowInsecure)
+	return makeHTTPRequest(SUMMARY_URL, user.Token, request.AllowAuthHeader)
 }
 
 func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -190,5 +198,5 @@ func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.Dyna
 		request.TaskRunPath,
 	)
 
-	return makeHTTPRequest(TASKRUN_LOG_URL, user.Token, request.AllowAuthHeader, request.AllowInsecure)
+	return makeHTTPRequest(TASKRUN_LOG_URL, user.Token, request.AllowAuthHeader)
 }

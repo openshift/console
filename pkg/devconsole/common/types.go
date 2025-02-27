@@ -3,7 +3,6 @@ package common
 import "net/http"
 
 type DevConsoleCommonRequest struct {
-	AllowInsecure   bool `json:"allowInsecure,omitempty"`
 	AllowAuthHeader bool `json:"allowAuthHeader,omitempty"`
 }
 type DevConsoleCommonResponse struct {
