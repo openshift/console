@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { createHash } from 'crypto-browserify';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

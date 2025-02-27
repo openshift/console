@@ -1,6 +1,4 @@
 import { act } from 'react-dom/test-utils';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapKind } from '@console/internal/module/k8s';
