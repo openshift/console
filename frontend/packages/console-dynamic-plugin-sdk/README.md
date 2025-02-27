@@ -64,12 +64,12 @@ as a reference point for writing an OLM operator that ships with its own Console
 
 ## Distributable SDK package overview
 
-| Package Name                                           | Description                                                                      |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| `@openshift-console/dynamic-plugin-sdk` ★              | Provides core APIs, types and utilities used by dynamic plugins at runtime.      |
-| `@openshift-console/dynamic-plugin-sdk-webpack` ★      | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.  |
-| `@openshift-console/dynamic-plugin-sdk-internal`       | Internal package exposing additional Console code.                               |
-| `@openshift-console/plugin-shared`                     | Provides reusable components and utility functions to build OCP dynamic plugins. |
+| Package Name                                      | Description                                                                      |
+| ------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `@openshift-console/dynamic-plugin-sdk` ★         | Provides core APIs, types and utilities used by dynamic plugins at runtime.      |
+| `@openshift-console/dynamic-plugin-sdk-webpack` ★ | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.  |
+| `@openshift-console/dynamic-plugin-sdk-internal`  | Internal package exposing additional Console code.                               |
+| `@openshift-console/plugin-shared`                | Provides reusable components and utility functions to build OCP dynamic plugins. |
 
 Packages marked with ★ provide essential plugin APIs with backwards compatibility. Other packages may be
 used with multiple versions of OpenShift Console but don't provide any backwards compatibility guarantees.
@@ -175,6 +175,11 @@ This section documents notable changes in the Console provided shared modules ac
   correct styling.
 - Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
   instead.
+- Removed `co-m-page__body` styling. Use [PatternFly Flex](https://www.patternfly.org/layouts/flex) instead.
+- Removed `co-m-pane__body` spacing styling. Use
+  [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
+- Removed `co-m-nav-title` spacing styling. Use
+  [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
 
 ### PatternFly 5+ dynamic modules
 
@@ -227,10 +232,10 @@ metadata:
 spec:
   displayName: 'Cron Tab'
   contentSecurityPolicy:
-  - directive: 'ScriptSrc'
-    values:
-    - 'https://example1.com/'
-    - 'https://example2.com/'
+    - directive: 'ScriptSrc'
+      values:
+        - 'https://example1.com/'
+        - 'https://example2.com/'
 ```
 
 When enabled, Console CSP operates in report-only mode; CSP violations will be logged in
