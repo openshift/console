@@ -5,10 +5,7 @@ import * as classNames from 'classnames';
 const PageBody: React.FC<PageBodyProps> = ({ children, className, ...props }) => {
   return (
     <Flex
-      className={classNames(
-        'co-m-page__body', // used in https://github.com/openshift/verification-tests
-        className,
-      )}
+      className={classNames('co-m-page__body', className)}
       direction={{ default: 'column' }}
       rowGap={{ default: 'rowGapNone' }}
       flexWrap={{ default: 'nowrap' }}
