@@ -133,6 +133,7 @@ export const FavoriteButton = connectToModel(() => {
               aria-pressed={isStarred}
               onClick={handleStarClick}
               isDisabled
+              data-test="favorite-button"
             />
           </div>
         </Tooltip>
@@ -144,6 +145,7 @@ export const FavoriteButton = connectToModel(() => {
           aria-label="save-favorite"
           aria-pressed={isStarred}
           onClick={handleStarClick}
+          data-test="favorite-button"
         />
       )}
 
