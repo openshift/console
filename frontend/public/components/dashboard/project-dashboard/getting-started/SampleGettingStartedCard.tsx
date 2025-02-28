@@ -8,8 +8,8 @@ import {
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { SAMPLE_CATALOG_TYPE_ID } from '../../const';
-import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
+import { SAMPLE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
+import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 
 interface SampleGettingStartedCardProps {
   featured?: string[];
@@ -53,7 +53,7 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
 
   const moreLink: GettingStartedLink = {
     id: 'all-samples',
-    title: t('devconsole~View all samples'),
+    title: t('public~View all samples'),
     href:
       activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
         ? `/samples/ns/${activeNamespace}`
@@ -90,10 +90,10 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
           <GettingStartedCard
             id="samples"
             icon={<CatalogIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />}
-            title={t('devconsole~Create applications using samples')}
+            title={t('public~Create applications using samples')}
             titleColor={'var(--co-global--palette--blue-400)'}
             description={t(
-              'devconsole~Choose a code sample to get started creating an application with.',
+              'public~Choose a code sample to get started creating an application with.',
             )}
             links={links}
             moreLink={moreLink}
