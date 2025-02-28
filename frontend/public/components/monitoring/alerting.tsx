@@ -147,7 +147,7 @@ const SelectedSilencesContext = React.createContext({
 
 const ruleURL = (rule: Rule, namespace: string) =>
   namespace
-    ? `/dev-monitoring/ns/${namespace}/alertrules/${rule?.id}`
+    ? `/dev-monitoring/ns/${namespace}/rules/${rule?.id}`
     : `/monitoring/alertrules/${rule?.id}`;
 
 const alertingRuleSource = (rule: Rule): AlertSource | string => {
