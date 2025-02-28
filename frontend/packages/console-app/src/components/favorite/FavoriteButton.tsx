@@ -40,6 +40,7 @@ export const FavoriteButton = connectToModel(() => {
     null,
     true,
   );
+  const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
 
   const currentUrlPath = window.location.pathname;
 
@@ -63,7 +64,8 @@ export const FavoriteButton = connectToModel(() => {
         ? currentUrlPath.split('~')
         : currentUrlPath.split('/');
       const [defaultName] = currentUrlSplit.slice(-1);
-      setName(defaultName.split('?')[0]);
+      const sanitizedDefaultName = defaultName.split('?')[0].replace(/[^a-zA-Z0-9- ]/g, '-');
+      setName(sanitizedDefaultName);
       setIsModalOpen(true);
     }
   };
@@ -75,8 +77,13 @@ export const FavoriteButton = connectToModel(() => {
   };
 
   const handleConfirmStar = () => {
-    if (!name.trim()) {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
       setError(t('console-app~Name is required.'));
+      return;
+    }
+    if (!alphanumericRegex.test(trimmedName)) {
+      setError(t('console-app~Name can only contain letters, numbers, spaces, and hyphens.'));
       return;
     }
     const nameExists = favorites?.some((favorite) => favorite.name === name.trim());
@@ -100,12 +107,11 @@ export const FavoriteButton = connectToModel(() => {
   };
 
   const handleNameChange = (value: string) => {
-    const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
+    setName(value);
     if (!alphanumericRegex.test(value)) {
       setError(t('console-app~Name can only contain letters, numbers, spaces, and hyphens.'));
     } else {
       setError(null);
-      setName(value);
     }
   };
 
@@ -168,6 +174,11 @@ export const FavoriteButton = connectToModel(() => {
                 autoFocus
                 required
                 maxLength={20}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
               />
               {error && (
                 <FormHelperText>
