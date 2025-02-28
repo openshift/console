@@ -86,6 +86,11 @@ const (
 	updatesEndpoint                       = "/api/check-updates"
 )
 
+type CustomFaviconPath struct {
+	CustomFaviconDarkThemePath  string `json:"darkThemePath"`
+	CustomFaviconLightThemePath string `json:"lightThemePath"`
+}
+
 type jsGlobals struct {
 	AddPage                         string                     `json:"addPage"`
 	AlertManagerBaseURL             string                     `json:"alertManagerBaseURL"`
@@ -99,6 +104,7 @@ type jsGlobals struct {
 	ContentSecurityPolicy           string                     `json:"contentSecurityPolicy"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
 	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
+	CustomFavicons                  serverconfig.LogosKeyValue `json:"customFavicons"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
 	CustomProductName               string                     `json:"customProductName"`
 	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
@@ -156,8 +162,8 @@ type Server struct {
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
-	CustomLogoFile                      string
-	CustomLogoFiles                     string
+	CustomLogoFiles                     serverconfig.LogosKeyValue
+	CustomFaviconFiles                  serverconfig.LogosKeyValue
 	CustomProductName                   string
 	DevCatalogCategories                string
 	DevCatalogTypes                     string
@@ -300,10 +306,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
 
-	if s.CustomLogoFile != "" {
+	if s.CustomLogoFiles != nil {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Cache-Control", "public, no-cache, no-store, must-revalidate")
-			http.ServeFile(w, r, s.CustomLogoFile)
+			serverconfig.CustomLogosHandler(operatorv1.LogoTypeMasthead, w, r, s.CustomLogoFiles)
 		})
 	}
 
@@ -583,8 +589,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	config := &serverconfig.Config{
 		Plugins: s.EnabledConsolePlugins,
 		Customization: serverconfig.Customization{
-			Perspectives:    []serverconfig.Perspective{},
-			CustomLogoFiles: []serverconfig.CustomLogoFiles{},
+			Perspectives: []serverconfig.Perspective{},
 		},
 	}
 	if len(s.Perspectives) > 0 {
@@ -593,17 +598,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			klog.Errorf("Unable to parse perspective JSON: %v", err)
 		}
 	}
-	if len(s.CustomLogoFiles) > 0 {
-		err := json.Unmarshal([]byte(s.CustomLogoFiles), &config.Customization.CustomLogoFiles)
-		fmt.Println(err)
-		if err != nil {
-			klog.Errorf("Unable to parse custom logos JSON: %v", err)
-		} else {
-			handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
-				serverconfig.CustomLogosHandler(w, r, config.Customization.CustomLogoFiles)
-			})
-		}
-	}
+
 	serverconfigMetrics := serverconfig.NewMetrics(config)
 	serverconfigMetrics.MonitorPlugins(internalProxiedDynamic)
 	usageMetrics := usage.NewMetrics()
@@ -725,6 +720,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		Branding:                  s.Branding,
 		CustomProductName:         s.CustomProductName,
+		CustomFavicons:            s.CustomFaviconFiles,
 		ControlPlaneTopology:      s.ControlPlaneTopology,
 		StatuspageID:              s.StatuspageID,
 		InactivityTimeout:         s.InactivityTimeout,
@@ -767,7 +763,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 
-	if s.CustomLogoFile != "" || s.CustomLogoFiles != "" {
+	if s.CustomLogoFiles != nil {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
 	}
 

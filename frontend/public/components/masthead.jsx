@@ -20,7 +20,7 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
   const { productName, staticLogo } = getBrandingDetails();
   const navigate = useNavigate();
   const defaultRoute = '/';
-  const logoUrl = useCustomLogoURL(MASTHEAD_TYPE);
+  const customLogoUrl = useCustomLogoURL(MASTHEAD_TYPE);
   const logoProps = {
     href: defaultRoute,
     // use onClick to prevent browser reload
@@ -41,12 +41,12 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
         <MastheadBrand>
           <MastheadLogo
             component="a"
-            aria-label={window.SERVER_FLAGS.customLogoURL ? undefined : productName}
+            aria-label={productName}
             data-test="masthead-logo"
             {...logoProps}
           >
-            {window.SERVER_FLAGS.customLogoURL ? (
-              <Brand src={logoUrl} alt={productName} />
+            {customLogoUrl ? (
+              <Brand src={customLogoUrl} alt={productName} />
             ) : (
               <ReactSVG src={staticLogo} aria-hidden className="pf-v6-c-brand" />
             )}

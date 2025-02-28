@@ -12,8 +12,8 @@ import dedicatedLogoImg from '../../imgs/openshift-dedicated-logo.svg';
 import rosaLogoImg from '../../imgs/openshift-service-on-aws-logo.svg';
 
 type CUSTOM_LOGO = typeof FAVICON_TYPE | typeof MASTHEAD_TYPE;
-export const FAVICON_TYPE = 'favicon';
-export const MASTHEAD_TYPE = 'masthead';
+export const FAVICON_TYPE = 'Favicon';
+export const MASTHEAD_TYPE = 'Masthead';
 
 export const getBrandingDetails = () => {
   let staticLogo, productName;
@@ -60,20 +60,35 @@ export const useCustomLogoURL = (type: CUSTOM_LOGO): string => {
   const theme = React.useContext(ThemeContext);
 
   React.useEffect(() => {
+    // return when customLogos have not been configured
     if (!window.SERVER_FLAGS.customLogoURL) {
       return;
     }
-    const reqTheme = applyThemeBehaviour(
-      theme,
-      () => {
-        return THEME_DARK;
-      },
-      () => {
-        return THEME_LIGHT;
-      },
-    );
-    const fetchURL = `${window.SERVER_FLAGS.customLogoURL}?type=${type}&theme=${reqTheme}-theme`;
-    setLogoUrl(fetchURL);
+    const fetchData = async () => {
+      const reqTheme = applyThemeBehaviour(
+        theme,
+        () => {
+          return THEME_DARK;
+        },
+        () => {
+          return THEME_LIGHT;
+        },
+      );
+      const fetchURL = `${window.SERVER_FLAGS.basePath}custom-logo?type=${type}&theme=${reqTheme}`;
+      const response = await fetch(fetchURL);
+      if (response.ok) {
+        const blob = await response.blob();
+        setLogoUrl(URL.createObjectURL(blob));
+      } else if (response.status === 404) {
+        return;
+      } else {
+        throw new Error(`Failed to fetch ${fetchURL}: ${response.statusText}`);
+      }
+    };
+    fetchData().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.warn(`Error while fetching ${type} logo: ${err}`);
+    });
   }, [theme, type]);
 
   return logoUrl;

@@ -38,7 +38,11 @@ func Validate(fs *flag.FlagSet) error {
 		return err
 	}
 
-	if _, err := validateCustomLogoFiles(fs.Lookup("custom-logo-files").Value.String()); err != nil {
+	if _, err := validateLogoFiles(fs.Lookup("custom-logo-files").Value.String()); err != nil {
+		return err
+	}
+
+	if _, err := validateLogoFiles(fs.Lookup("custom-favicon-files").Value.String()); err != nil {
 		return err
 	}
 
@@ -189,28 +193,20 @@ func validatePerspectives(value string) ([]Perspective, error) {
 	return perspectives, nil
 }
 
-func validateCustomLogoFiles(value string) ([]CustomLogoFiles, error) {
+func validateLogoFiles(value string) (LogosKeyValue, error) {
 	if value == "" {
 		return nil, nil
 	}
-	var customLogoFiles []CustomLogoFiles
-
-	decoder := json.NewDecoder(strings.NewReader(value))
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&customLogoFiles); err != nil {
-		return nil, err
-	}
+	var customLogoFiles LogosKeyValue
+	customLogoFiles.Set(value)
 
 	// validate files
-	for _, customLogoFile := range customLogoFiles {
-		for _, logo := range customLogoFile.Logos {
-			if _, err := os.Stat(logo.Path); err != nil {
-				return nil, err
-			}
+	for _, file := range customLogoFiles {
+		if _, err := os.Stat(file); err != nil {
+			return nil, err
 		}
 
 	}
-	// validation of constraints TBD by final custom-logo-files API design
 
 	return customLogoFiles, nil
 }
