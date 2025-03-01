@@ -93,7 +93,7 @@ Feature: Create Pipeline from Add Options
 
         @regression
         Scenario Outline: Create a pipeline with s2i builder images: P-01-TC07
-            Given user is at Developer Catalog form with builder images
+            Given user is at Software Catalog form with builder images
              When user searches builder image "node" in developer catalog
               And user creates the application with the selected builder image
               And user enters Git Repo url in builder image as "<git_url>"

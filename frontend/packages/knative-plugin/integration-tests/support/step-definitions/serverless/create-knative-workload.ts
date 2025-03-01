@@ -34,7 +34,7 @@ When('user clicks on Container Image card', () => {
 });
 
 When('user clicks on From Catalog card', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
 When('create the application with s2i builder image', () => {

@@ -13,9 +13,9 @@ Feature: Customization of catalogs and Add page through form view
              When user clicks on cluster
               And user opens customization
               And user clicks on Developer tab
-              And user disables all the items in Developer Catalog
+              And user disables all the items in Software Catalog
              Then user will see Save message
-              And user will not see "Developer Catalog" and all the sub-catalogs in Add page and Topology page
+              And user will not see "Software Catalog" and all the sub-catalogs in Add page and Topology page
               And user will not get any entry point to catalog page in add page, topology actions, empty states, quick search, and the catalog itself
 
 
@@ -23,9 +23,9 @@ Feature: Customization of catalogs and Add page through form view
         Scenario: When specific sub-catalog is disabled: DC-01-TC02
             Given user is at customization
               And user clicks on Developer tab
-              And user disables "Helm Charts" the item in Developer Catalog
+              And user disables "Helm Charts" the item in Software Catalog
              Then user will see Save message
-              And user will see "Developer Catalog" and all the sub-catalogs in Add page and Topology page except "HelmChart"
+              And user will see "Software Catalog" and all the sub-catalogs in Add page and Topology page except "HelmChart"
 
 
         @regression
@@ -34,7 +34,7 @@ Feature: Customization of catalogs and Add page through form view
               And user clicks on Developer tab
               And user enabled "Helm Charts" and disables everything
              Then user will see Save message
-              And user will only see "Developer Catalog" and "HelmChart" type in Add page and Topology page
+              And user will only see "Software Catalog" and "HelmChart" type in Add page and Topology page
 
 
         @regression
