@@ -146,7 +146,7 @@
     "@patternfly/react-table": "^6.2.0-prerelease.16",
     "@patternfly/react-templates": "^6.2.0-prerelease.16",
     "@patternfly/react-tokens": "^6.2.0-prerelease.2",
-    "@patternfly/react-topology": "^6.1.0",
+    "@patternfly/react-topology": "^6.2.0-prerelease.3",
     "@patternfly/react-user-feedback": "^6.1.0-prerelease.1",
     "@patternfly/react-virtualized-extension": "^6.0.0",
     "@rjsf/core": "^2.5.1",
