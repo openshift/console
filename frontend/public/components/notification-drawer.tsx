@@ -240,7 +240,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const [pluginInfoEntries] = useDynamicPluginInfo();
-  const toggleNotificationDrawer = dispatch(UIActions.notificationDrawerToggleExpanded);
+  const toggleNotificationDrawer = () => dispatch(UIActions.notificationDrawerToggleExpanded());
 
   React.useEffect(() => {
     const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
