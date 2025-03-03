@@ -335,9 +335,8 @@ func (a *OAuth2Authenticator) ReviewToken(r *http.Request) error {
 		if completedTokenReview.Status.Error != "" {
 			return errors.New(completedTokenReview.Status.Error)
 		}
-		return errors.New("unknown error")
+		return errors.New("failed to authenticate the token, unknownd error")
 	}
-
 	return nil
 }
 
