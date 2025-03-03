@@ -144,7 +144,7 @@ const RequestPane: React.FC<FormikProps<FormikValues>> = ({ setFieldValue, value
           minHeight="34vh"
           showSamples={false}
           showShortcuts={false}
-          showMiniMap={false}
+          isMinimapVisible={false}
           language={getcurrentLanguage(contentType)}
         />
       </div>

@@ -213,18 +213,14 @@ When(
 );
 
 Then('user is able to see value of {string} as {string}', (util: string, utilValue: string) => {
-  cy.get('.ocs-yaml-editor__wrapper').contains(`${util}: '${utilValue}'`).should('be.visible');
+  cy.get('.ocs-yaml-editor').contains(`${util}: '${utilValue}'`).should('be.visible');
 });
 
 Then(
   'user is able to see the value of {string} and {string} as {string} and {string} percent respectively',
   (maxScale: string, minScale: string, minScaleValue: string, maxScaleValue: string) => {
-    cy.get('.ocs-yaml-editor__wrapper')
-      .contains(`${maxScale}: '${maxScaleValue}'`)
-      .should('be.visible');
+    cy.get('.ocs-yaml-editor').contains(`${maxScale}: '${maxScaleValue}'`).should('be.visible');
 
-    cy.get('.ocs-yaml-editor__wrapper')
-      .contains(`${minScale}: '${minScaleValue}'`)
-      .should('be.visible');
+    cy.get('.ocs-yaml-editor').contains(`${minScale}: '${minScaleValue}'`).should('be.visible');
   },
 );

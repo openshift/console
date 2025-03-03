@@ -1,36 +1,34 @@
 import * as React from 'react';
-import Measure from 'react-measure';
-import MonacoEditor from 'react-monaco-editor';
-import { CodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import CodeEditorToolbar from './CodeEditorToolbar';
-import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
-import './theme';
+import { EditorDidMount, Language } from '@patternfly/react-code-editor';
+import { getResizeObserver } from '@patternfly/react-core';
+import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
+import { BasicCodeEditor } from './BasicCodeEditor';
+import { CodeEditorToolbar } from './CodeEditorToolbar';
+import { useShortcutPopover } from './ShortcutsPopover';
+import { registerYAMLinMonaco, registerAutoFold, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
 
-const CodeEditor = React.forwardRef<MonacoEditor, CodeEditorProps>((props, ref) => {
-  const {
-    value,
-    options = defaultEditorOptions,
-    showShortcuts,
-    showMiniMap,
-    toolbarLinks,
-    minHeight,
-    onChange,
-    onSave,
-    language,
-  } = props;
+const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
+  const { value, minHeight, showShortcuts, toolbarLinks, onSave, onEditorDidMount } = props;
 
-  const theme = React.useContext(ThemeContext);
+  const [editorRef, setEditorRef] = React.useState<CodeEditorRef['editor'] | null>(null);
+  const [monacoRef, setMonacoRef] = React.useState<CodeEditorRef['monaco'] | null>(null);
   const [usesValue] = React.useState<boolean>(value !== undefined);
-  const editorDidMount = React.useCallback(
+
+  const shortcutPopover = useShortcutPopover();
+
+  const editorDidMount: EditorDidMount = React.useCallback(
     (editor, monaco) => {
-      const currentLanguage = editor.getModel()?.getModeId();
+      setEditorRef(editor);
+      setMonacoRef(monaco);
+      editor.getModel()?.updateOptions({ tabSize: 2 });
+      const currentLanguage = editor.getModel()?.getLanguageId();
       editor.layout();
       editor.focus();
       switch (currentLanguage) {
         case 'yaml':
-          registerYAMLinMonaco(editor, monaco, usesValue);
+          registerYAMLinMonaco(monaco);
+          registerAutoFold(editor, usesValue);
           break;
         case 'json':
           editor.getAction('editor.action.formatDocument').run();
@@ -38,44 +36,59 @@ const CodeEditor = React.forwardRef<MonacoEditor, CodeEditorProps>((props, ref) 
         default:
           break;
       }
-      monaco.editor.getModels()[0]?.updateOptions({ tabSize: 2 });
-      onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, onSave); // eslint-disable-line no-bitwise
+      onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, onSave); // eslint-disable-line no-bitwise
+      onEditorDidMount && onEditorDidMount(editor, monaco);
     },
-    [onSave, usesValue],
+    [onSave, usesValue, onEditorDidMount],
   );
 
-  const editorOptions = React.useMemo(() => {
-    return {
-      ...options,
-      minimap: {
-        enabled: showMiniMap,
-      },
-    };
-  }, [options, showMiniMap]);
+  // expose the editor instance to the parent component via ref
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      editor: editorRef,
+      monaco: monacoRef,
+    }),
+    [editorRef, monacoRef],
+  );
+
+  // do not render toolbar if the component is null
+  const ToolbarLinks = React.useMemo(() => {
+    return showShortcuts || toolbarLinks?.length ? (
+      <CodeEditorToolbar toolbarLinks={toolbarLinks} showShortcuts={showShortcuts} />
+    ) : undefined;
+  }, [toolbarLinks, showShortcuts]);
+
+  // recalculate bounds when viewport is changed
+  const handleResize = React.useCallback(() => {
+    monacoRef?.editor?.getEditors()?.forEach((editor) => {
+      editor.layout({ width: 0, height: 0 });
+      editor.layout();
+    });
+  }, [monacoRef]);
+
+  React.useEffect(() => {
+    const observer = getResizeObserver(undefined, handleResize, true);
+    return () => observer();
+  }, [handleResize]);
+
+  React.useEffect(() => {
+    handleResize();
+  }, [handleResize, minHeight, ToolbarLinks]);
 
   return (
-    <>
-      <CodeEditorToolbar showShortcuts={showShortcuts} toolbarLinks={toolbarLinks} />
-      <Measure bounds>
-        {({ measureRef, contentRect }) => (
-          <div ref={measureRef} className="ocs-yaml-editor__root" style={{ minHeight }}>
-            <div className="ocs-yaml-editor__wrapper">
-              <MonacoEditor
-                ref={ref}
-                language={language ?? 'yaml'}
-                theme={theme === 'light' ? 'console-light' : 'console-dark'}
-                height={contentRect.bounds.height}
-                width={contentRect.bounds.width}
-                value={value}
-                options={editorOptions}
-                editorDidMount={editorDidMount}
-                onChange={onChange}
-              />
-            </div>
-          </div>
-        )}
-      </Measure>
-    </>
+    <div style={{ minHeight }} className="ocs-yaml-editor">
+      <BasicCodeEditor
+        {...props}
+        language={props?.language ?? Language.yaml}
+        code={value}
+        options={{ ...defaultEditorOptions, ...props?.options }}
+        onEditorDidMount={editorDidMount}
+        isFullHeight={props?.isFullHeight ?? true}
+        customControls={ToolbarLinks ?? undefined}
+        shortcutsPopoverProps={showShortcuts ? shortcutPopover : undefined}
+      />
+    </div>
   );
 });
 

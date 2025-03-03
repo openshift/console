@@ -115,7 +115,7 @@ export interface CodeEditorFieldProps extends FieldProps {
   schema?: JSONSchema7;
   showSamples: boolean;
   showShortcuts?: boolean;
-  showMiniMap?: boolean;
+  isMinimapVisible?: boolean;
   onSave?: () => void;
 }
 
