@@ -93,7 +93,7 @@ func makeHTTPRequest(url, userToken string, allowAuthHeader bool) (common.DevCon
 	}
 
 	// Load the CA certificate
-	caCert, err := os.ReadFile("/var/service-ca/service-ca.crt")
+	caCert, err := os.ReadFile("/var/serving-cert/tls.crt")
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read CA certificate: %v", err)
 	}
