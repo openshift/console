@@ -61,7 +61,12 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 
 const config: Configuration = {
   entry: {
-    main: ['./public/components/app.jsx', '/node_modules/@patternfly-5/patternfly/patternfly.scss'],
+    main: [
+      './public/components/app.jsx',
+      '/node_modules/@patternfly-5/patternfly/patternfly.scss',
+      '/node_modules/@patternfly-5/patternfly/patternfly-addons.scss',
+      '/node_modules/@patternfly-5/patternfly/patternfly-charts.scss',
+    ],
   },
   cache: {
     type: 'filesystem',
