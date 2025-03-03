@@ -48,11 +48,11 @@ func withTokenReview(authenticator auth.Authenticator, h http.HandlerFunc) http.
 		func(w http.ResponseWriter, r *http.Request) {
 			err := authenticator.ReviewToken(r)
 			if err != nil {
-				klog.Errorf("TOKENREVIEW '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
+				klog.Errorf("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
-			klog.V(4).Infof("TOKENREVIEW: '%s %s' user token successfully validated", r.Method, r.URL.Path)
+			klog.V(4).Infof("TOKEN_REVIEW: '%s %s' user token successfully validated", r.Method, r.URL.Path)
 			h(w, r)
 		})
 }
