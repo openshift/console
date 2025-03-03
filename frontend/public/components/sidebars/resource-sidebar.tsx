@@ -134,6 +134,8 @@ export const ResourceSidebar: React.FC<{
     <ResourceSidebarWrapper label={label} toggleSidebar={toggleSidebar}>
       {tabs.length > 0 ? (
         <SimpleTabNav
+          withinSidebar
+          noInset
           tabs={tabs}
           tabProps={{
             downloadSampleYaml,
@@ -144,7 +146,6 @@ export const ResourceSidebar: React.FC<{
             samples,
             snippets,
           }}
-          additionalClassNames="co-m-horizontal-nav__menu--within-sidebar"
         />
       ) : (
         <ResourceSchema schema={schema} kindObj={kindObj} />

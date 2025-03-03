@@ -53,7 +53,7 @@ const DynamicPlugins: React.FC = () => {
   }, [pluginInfoEntries]);
 
   return items.length > 0 ? (
-    <Content component="ul" className="co-text-list-plain">
+    <Content component="ul" isPlainList>
       {items}
     </Content>
   ) : (

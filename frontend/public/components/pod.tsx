@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
@@ -119,6 +117,7 @@ import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { PodTraffic } from './pod-traffic';
+import { RootState } from '../redux';
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
 const showMetrics =
@@ -359,11 +358,11 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
 }) => {
   const { t } = useTranslation();
   const { name, namespace, creationTimestamp, labels } = pod.metadata;
-  const bytes: number = useSelector(({ UI }) => {
+  const bytes = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.memory?.[namespace]?.[name];
   });
-  const cores: number = useSelector(({ UI }) => {
+  const cores = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.cpu?.[namespace]?.[name];
   });

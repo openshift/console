@@ -126,37 +126,6 @@
       ]
     }
   },
-  /*
-  {
-    "type": "console.cluster-configuration/item",
-    "properties": {
-      "id": "dev-console.CatalogCategoriesConfiguration",
-      "groupId": "developer",
-      "label": "%devconsole~Developer Catalog Types%",
-      "description": "%devconsole~Categories which are shown in the developer catalog.%",
-      "field": {
-        "type": "custom",
-        "component": { "$codeRef": "catalog.CatalogCategoriesConfiguration" }
-      },
-      "readAccessReview": [
-        {
-          "group": "operator.openshift.io/v1",
-          "resource": "consoles",
-          "verb": "get",
-          "name": "cluster"
-        }
-      ],
-      "writeAccessReview": [
-        {
-          "group": "operator.openshift.io/v1",
-          "resource": "consoles",
-          "verb": "patch",
-          "name": "cluster"
-        }
-      ]
-    }
-  },
-  */
   {
     "type": "console.cluster-configuration/item",
     "properties": {
@@ -662,8 +631,9 @@
       "href": "/topology",
       "namespaced": true,
       "dataAttributes": {
-        "data-quickstart-id": "qs-nav-topology",
-        "data-test-id": "topology-header"
+        "data-quickstart-id": "qs-admin-nav-topology",
+        "data-test-id": "topology-header",
+        "data-tour-id": "tour-admin-topology-nav"
       }
     }
   },
@@ -750,7 +720,8 @@
       "namespaced": true,
       "insertAfter": "search",
       "dataAttributes": {
-        "data-test-id": "developer-catalog-header"
+        "data-test-id": "developer-catalog-header",
+        "data-tour-id": "tour-software-catalog-nav"
       }
     },
     "flags": {

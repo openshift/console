@@ -2,12 +2,9 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
-import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import {
-  NotificationDrawer,
+  NotificationDrawer as PFNotificationDrawer,
   NotificationEntry,
   NotificationCategory,
   NotificationTypes,
@@ -80,6 +77,7 @@ import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import { useModal, PrometheusRulesResponse } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useDispatch, useSelector } from 'react-redux';
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -229,18 +227,20 @@ export const refreshNotificationPollers = () => {
   _.invoke(pollers, 'notificationAlerts');
 };
 
-export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
+export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   isDesktop,
-  toggleNotificationDrawer,
-  isDrawerExpanded,
   onDrawerChange,
   children,
 }) => {
   const { t } = useTranslation();
+  const isDrawerExpanded = useSelector<RootState, boolean>(
+    ({ UI }) => !!UI.getIn(['notifications', 'isExpanded']),
+  );
   const dispatch = useDispatch();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const [pluginInfoEntries] = useDynamicPluginInfo();
+  const toggleNotificationDrawer = () => dispatch(UIActions.notificationDrawerToggleExpanded());
 
   React.useEffect(() => {
     const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
@@ -472,7 +472,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   ) : null;
 
   return (
-    <NotificationDrawer
+    <PFNotificationDrawer
       className="co-notification-drawer"
       isInline={isDesktop}
       isExpanded={isDrawerExpanded}
@@ -484,7 +484,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       onClose={toggleNotificationDrawer}
     >
       {children}
-    </NotificationDrawer>
+    </PFNotificationDrawer>
   );
 };
 
@@ -500,17 +500,11 @@ export type WithNotificationsProps = {
   silences?: any;
 };
 
-export type ConnectedNotificationDrawerProps = {
+export type NotificationDrawerProps = {
   isDesktop: boolean;
-  toggleNotificationDrawer: () => any;
-  isDrawerExpanded: boolean;
   onDrawerChange: () => void;
   alerts: NotificationAlerts;
 };
-
-const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => ({
-  isDrawerExpanded: !!UI.getIn(['notifications', 'isExpanded']),
-});
 
 type AlertErrorProps = {
   errorText: string;
@@ -521,9 +515,3 @@ type AlertEmptyProps = {
 };
 
 type AlertAccumulator = [Alert[], Alert[]];
-
-const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
-  toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,
-});
-
-export const ConnectedNotificationDrawer = connectToNotifications(ConnectedNotificationDrawer_);

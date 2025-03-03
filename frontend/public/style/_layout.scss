@@ -5,17 +5,8 @@ body,
   height: 100%;
 }
 
-#app,
-#content {
-  display: flex;
-  flex-basis: 100%;
-  flex-direction: column;
-  height: 100%;
-}
-
 #content-scrollable {
   overflow: auto;
-  height: 100%;
 }
 .co-m-page__body {
   display: flex;

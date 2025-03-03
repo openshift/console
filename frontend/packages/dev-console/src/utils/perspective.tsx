@@ -1,6 +1,4 @@
 import { CodeIcon } from '@patternfly/react-icons/dist/esm/icons/code-icon';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { getFlagsObject, flagPending } from '@console/internal/reducers/features';

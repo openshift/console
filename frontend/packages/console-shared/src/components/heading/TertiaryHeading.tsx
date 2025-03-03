@@ -3,14 +3,14 @@ import { Title } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 
 const TertiaryHeading: React.FC<TertiaryHeadingProps> = ({
+  altSpacing,
   children,
   className,
-  increasedMargins,
   ...props
 }) => (
   <Title
     headingLevel="h3"
-    className={classNames(increasedMargins ? 'pf-v6-u-my-xl' : 'pf-v6-u-my-md', className)}
+    className={classNames({ 'pf-v6-u-my-md': !altSpacing }, altSpacing, className)}
     {...props}
   >
     {children}
@@ -20,7 +20,7 @@ const TertiaryHeading: React.FC<TertiaryHeadingProps> = ({
 export type TertiaryHeadingProps = {
   children: React.ReactNode;
   className?: string;
-  increasedMargins?: boolean;
+  altSpacing?: string;
 };
 
 export default TertiaryHeading;

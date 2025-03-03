@@ -4,47 +4,40 @@ import { getResizeObserver } from '@patternfly/react-core';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { BasicCodeEditor } from './BasicCodeEditor';
 import { CodeEditorToolbar } from './CodeEditorToolbar';
-import { useShortcutLink } from './ShortcutsLink';
+import { useShortcutPopover } from './ShortcutsPopover';
 import { registerYAMLinMonaco, registerAutoFold, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
 
 const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
-  const {
-    value,
-    minHeight,
-    showShortcuts,
-    toolbarLinks,
-    onSave,
-    language,
-    onEditorDidMount,
-  } = props;
-  const shortcutPopover = useShortcutLink();
+  const { value, minHeight, showShortcuts, toolbarLinks, onSave, onEditorDidMount } = props;
+
   const [editorRef, setEditorRef] = React.useState<CodeEditorRef['editor'] | null>(null);
   const [monacoRef, setMonacoRef] = React.useState<CodeEditorRef['monaco'] | null>(null);
   const [usesValue] = React.useState<boolean>(value !== undefined);
 
+  const shortcutPopover = useShortcutPopover();
+
   const editorDidMount: EditorDidMount = React.useCallback(
-    (mountedEditor, mountedMonaco) => {
-      setEditorRef(mountedEditor);
-      setMonacoRef(mountedMonaco);
-      mountedEditor.getModel()?.updateOptions({ tabSize: 2 });
-      const currentLanguage = mountedEditor.getModel()?.getLanguageId();
-      mountedEditor.layout();
-      mountedEditor.focus();
+    (editor, monaco) => {
+      setEditorRef(editor);
+      setMonacoRef(monaco);
+      editor.getModel()?.updateOptions({ tabSize: 2 });
+      const currentLanguage = editor.getModel()?.getLanguageId();
+      editor.layout();
+      editor.focus();
       switch (currentLanguage) {
         case 'yaml':
-          registerYAMLinMonaco(mountedMonaco);
-          registerAutoFold(mountedEditor, usesValue);
+          registerYAMLinMonaco(monaco);
+          registerAutoFold(editor, usesValue);
           break;
         case 'json':
-          mountedEditor.getAction('editor.action.formatDocument').run();
+          editor.getAction('editor.action.formatDocument').run();
           break;
         default:
           break;
       }
-      onSave &&
-        mountedEditor.addCommand(mountedMonaco.KeyMod.CtrlCmd | mountedMonaco.KeyCode.KeyS, onSave); // eslint-disable-line no-bitwise
-      onEditorDidMount && onEditorDidMount(mountedEditor, mountedMonaco);
+      onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, onSave); // eslint-disable-line no-bitwise
+      onEditorDidMount && onEditorDidMount(editor, monaco);
     },
     [onSave, usesValue, onEditorDidMount],
   );
@@ -61,8 +54,9 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
 
   // do not render toolbar if the component is null
   const ToolbarLinks = React.useMemo(() => {
-    if (!showShortcuts && !toolbarLinks?.length) return undefined;
-    return <CodeEditorToolbar toolbarLinks={toolbarLinks} showShortcuts={showShortcuts} />;
+    return showShortcuts || toolbarLinks?.length ? (
+      <CodeEditorToolbar toolbarLinks={toolbarLinks} showShortcuts={showShortcuts} />
+    ) : undefined;
   }, [toolbarLinks, showShortcuts]);
 
   // recalculate bounds when viewport is changed
@@ -86,12 +80,11 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     <div style={{ minHeight }} className="ocs-yaml-editor">
       <BasicCodeEditor
         {...props}
-        language={language ?? Language.yaml}
+        language={props?.language ?? Language.yaml}
         code={value}
         options={{ ...defaultEditorOptions, ...props?.options }}
         onEditorDidMount={editorDidMount}
         isFullHeight={props?.isFullHeight ?? true}
-        style={{ ...props?.style, minHeight }}
         customControls={ToolbarLinks ?? undefined}
         shortcutsPopoverProps={showShortcuts ? shortcutPopover : undefined}
       />

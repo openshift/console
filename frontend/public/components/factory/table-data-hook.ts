@@ -1,7 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';

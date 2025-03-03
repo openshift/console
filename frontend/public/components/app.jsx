@@ -18,7 +18,7 @@ import AppContents from './app-contents';
 import { Masthead } from './masthead';
 import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
-import { ConnectedNotificationDrawer } from './notification-drawer';
+import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
 import { history, AsyncComponent, LoadingBox, useSafeFetch, usePoll } from './utils';
 import * as UIActions from '../actions/ui';
@@ -224,6 +224,8 @@ const App = (props) => {
       <QuickStartDrawer>
         <div id="app-content" className="co-m-app__content">
           <Page
+            isContentFilled
+            id="content"
             // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
             mainTabIndex={null}
             masthead={
@@ -246,12 +248,12 @@ const App = (props) => {
               </SkipToContent>
             }
           >
-            <ConnectedNotificationDrawer
+            <NotificationDrawer
               isDesktop={isDrawerInline}
               onDrawerChange={onNotificationDrawerToggle}
             >
               <AppContents />
-            </ConnectedNotificationDrawer>
+            </NotificationDrawer>
           </Page>
           {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
             <Lightspeed />

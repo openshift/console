@@ -23,6 +23,7 @@ import {
   ResourceDetailsPage,
   ResourceListPage,
   ResourceTabPage,
+  GuidedTour,
 } from '@console/plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants';
 import '@console/internal/i18n.js';
@@ -36,6 +37,7 @@ import {
   getControlPlaneHealth,
   getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
+import { getGuidedTour } from './components/guided-tour';
 import { USER_PREFERENCES_BASE_URL } from './components/user-preferences/const';
 import * as models from './models';
 import {
@@ -53,6 +55,7 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewHealthOperator<ClusterOperator>
+  | GuidedTour
   | ResourceListPage
   | ResourceDetailsPage
   | ResourceTabPage;
@@ -266,6 +269,13 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/console-operator/ConsolePluginManifestPage' /* webpackChunkName: "console-operator-config" */
         ).then((m) => m.ConsolePluginManifestPage),
+    },
+  },
+  {
+    type: 'GuidedTour',
+    properties: {
+      perspective: 'admin',
+      tour: getGuidedTour(),
     },
   },
 ];

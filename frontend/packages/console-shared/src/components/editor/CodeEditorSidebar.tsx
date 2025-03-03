@@ -67,7 +67,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
       editor?.executeEdits(id, [op], [newContentSelection]);
       editor?.focus();
     },
-    [sanitizeYamlContent, editor],
+    [editor, sanitizeYamlContent],
   );
 
   const replaceYamlContent = React.useCallback(
@@ -75,7 +75,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
       editor?.setValue(yaml);
     },
-    [sanitizeYamlContent, editor],
+    [editor, sanitizeYamlContent],
   );
 
   const downloadYamlContent = React.useCallback(

@@ -87,7 +87,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
           'co-p-has-sidebar__body--sidebar-open': sidebarOpen && hasSidebarContent,
         })}
       >
-        <div className="yaml-editor osc-yaml-editor__editor">
+        <div className="osc-yaml-editor__editor">
           <AsyncComponent
             loader={() => import('../editor/CodeEditor').then((c) => c.default)}
             forwardRef={editorRef}

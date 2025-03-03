@@ -815,7 +815,7 @@ const AppContents: React.FC<{}> = () => {
   const matches = matchRoutes(namespacedRoutes, location);
 
   return (
-    <div id="content">
+    <>
       <PageSection
         hasBodyWrapper={false}
         padding={{ default: 'noPadding' }}
@@ -824,25 +824,19 @@ const AppContents: React.FC<{}> = () => {
         <GlobalNotifications />
         {matches && <NamespaceBar />}
       </PageSection>
-      <div id="content-scrollable">
-        <PageSection
-          hasBodyWrapper={false}
-          className="pf-v6-c-page__main-section--expanded pf-v6-c-page__main-section--no-gap"
-          padding={{ default: 'noPadding' }}
-        >
-          <ErrorBoundaryPage>
-            <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
-          </ErrorBoundaryPage>
-        </PageSection>
-      </div>
       <PageSection
+        isFilled={true}
         hasBodyWrapper={false}
         padding={{ default: 'noPadding' }}
-        className="pf-v6-c-page__main-section--no-gap"
+        className="pf-v6-c-page__main-section--no-gap pf-v6-u-flex-shrink-1"
+        id="content-scrollable"
       >
-        <TelemetryNotifier />
+        <ErrorBoundaryPage>
+          <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
+        </ErrorBoundaryPage>
       </PageSection>
-    </div>
+      <TelemetryNotifier />
+    </>
   );
 };
 

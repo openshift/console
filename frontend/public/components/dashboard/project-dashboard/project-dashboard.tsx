@@ -16,6 +16,7 @@ import { ActivityCard } from './activity-card';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
 import { ResourceQuotaCard } from './resource-quota-card';
+import { GettingStartedSection } from './getting-started/GettingStartedSection';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
@@ -77,6 +78,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
       )}
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>
+          <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />
           <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
         </Dashboard>
       </ProjectDashboardContext.Provider>

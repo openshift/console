@@ -4,25 +4,20 @@
   height: 100%;
   flex: 1;
   flex-direction: column;
-  padding-top: $pf-v6-global-gutter;
+  align-items: center;
 
-  @media (min-width: $pf-v6-global--breakpoint--md) {
-    margin-left: $pf-v6-global-gutter;
-    margin-right: $pf-v6-global-gutter;
+  .ocs-yaml-editor, .yaml-editor__buttons {
+    width: calc(100% - $pf-v6-global-gutter * 2);
     padding-top: $pf-v6-global-gutter--md;
-  }
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    margin-left: $pf-v6-global-gutter--md;
-    margin-right: $pf-v6-global-gutter--md;
+
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      width: calc(100% - $pf-v6-global-gutter--md * 2);
+    }
   }
 }
 
 .yaml-editor__buttons {
-  padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter;
-  @media (min-width: $pf-v6-global--breakpoint--md) {
-    padding-left: 0;
-    padding-right: 0;
-  }
+  padding-bottom: $pf-v6-global-gutter;
 }
 
 .yaml-editor__link {
