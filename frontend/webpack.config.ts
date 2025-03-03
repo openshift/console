@@ -65,6 +65,8 @@ const config: Configuration = {
       './public/components/app.jsx',
       'monaco-editor/esm/vs/editor/editor.worker.js',
       '/node_modules/@patternfly-5/patternfly/patternfly.scss',
+      '/node_modules/@patternfly-5/patternfly/patternfly-addons.scss',
+      '/node_modules/@patternfly-5/patternfly/patternfly-charts.scss',
     ],
   },
   cache: {
