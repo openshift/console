@@ -1,3 +1,6 @@
 ca.crt
 console-client-secret
 config.local.yaml
+service-ca.crt
+namespace
+token
