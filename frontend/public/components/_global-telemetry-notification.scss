@@ -3,7 +3,7 @@ $global-notification-text: var(--pf-t--color--white);
 .co-global-telemetry-notification {
   background-color: var(--pf-t--color--blue--50);
   color: $global-notification-text;
-  padding: 4px $pf-v6-global-gutter;
+  padding: 4px $pf-v6-global-gutter-x;
   text-align: center;
   &__content {
     display: inline-flex;

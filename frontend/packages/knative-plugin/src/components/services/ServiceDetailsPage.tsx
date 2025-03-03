@@ -22,6 +22,7 @@ import {
   ActionServiceProvider,
   useTabbedTableBreadcrumbsFor,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { RevisionModel, RouteModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { RevisionKind, ServiceKind, ServiceTypeValue } from '../../types';
@@ -46,7 +47,7 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('knative-plugin~Details')} />
         <div className="row">
           <div className="col-md-6">
@@ -80,16 +81,16 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('knative-plugin~Containers')} />
         <ContainerTable containers={obj.spec.template.spec.containers} />
-      </div>
+      </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('knative-plugin~Conditions')} />
           <Conditions conditions={obj.status.conditions} />
-        </div>
+        </PaneBody>
       )}
     </>
   );

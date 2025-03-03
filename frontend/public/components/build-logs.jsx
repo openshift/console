@@ -8,6 +8,7 @@ import {
   LOG_SOURCE_WAITING,
 } from './utils/resource-log';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
 import { BuildStrategyType } from './build';
 import { BuildPhase } from '../module/k8s/builds';
@@ -65,13 +66,13 @@ export class BuildLogs extends React.Component {
     const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
 
     return (
-      <div className="co-m-pane__body co-m-pane__body--full-height">
+      <PaneBody fullHeight>
         {isPipeline ? (
           <PipelineLogMessage build={build} />
         ) : (
           <ResourceLog resource={build} resourceStatus={this.state.status} />
         )}
-      </div>
+      </PaneBody>
     );
   }
 }

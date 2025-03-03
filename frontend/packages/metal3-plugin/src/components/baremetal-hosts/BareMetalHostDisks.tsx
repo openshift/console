@@ -4,6 +4,7 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getHostStorage } from '../../selectors';
 import { BareMetalHostDisk, BareMetalHostKind } from '../../types';
 
@@ -52,7 +53,7 @@ const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({
   const disks = getHostStorage(host);
   return (
     <div className="co-m-list">
-      <div className="co-m-pane__body">
+      <PaneBody>
         <Table
           data={disks}
           aria-label="Bare Metal Host Disks"
@@ -67,7 +68,7 @@ const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({
           }
           getRowProps={getRowProps}
         />
-      </div>
+      </PaneBody>
     </div>
   );
 };

@@ -13,6 +13,7 @@ import {
   Content,
   ContentVariants,
   Title,
+  PageBreadcrumb,
 } from '@patternfly/react-core';
 import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
@@ -26,6 +27,7 @@ import {
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import NavTitle from '@console/shared/src/components/layout/NavTitle';
 
 import {
   ActionsMenu,
@@ -120,6 +122,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     centerText,
     helpText,
     'data-test': dataTestId,
+    children,
   } = props;
   const extraResources = _.reduce(
     props.resourceKeys,
@@ -141,7 +144,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   return (
     <>
       {showBreadcrumbs && (
-        <div className="pf-v6-c-page__main-breadcrumb">
+        <PageBreadcrumb>
           <Split style={{ alignItems: 'baseline' }}>
             <SplitItem isFilled>
               <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
@@ -150,12 +153,11 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
             )}
           </Split>
-        </div>
+        </PageBreadcrumb>
       )}
-      <div
+      <NavTitle
         data-test-id={dataTestId}
         className={classNames(
-          'co-m-nav-title',
           { 'co-m-nav-title--detail': detail },
           { 'co-m-nav-title--logo': props.icon },
           { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
@@ -167,7 +169,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           <PrimaryHeading
             className={classNames({
               'co-m-pane__heading--logo': props.icon,
-              'co-m-pane__heading--with-help-text': helpText,
             })}
             alignItemsBaseline={!!link}
             centerText={centerText}
@@ -217,16 +218,13 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         )}
         {helpText && (
           <Content>
-            <Content
-              component={ContentVariants.p}
-              className="help-block co-m-pane__heading-help-text"
-            >
+            <Content component={ContentVariants.p} className="pf-v6-u-mt-sm co-help-text">
               {helpText}
             </Content>
           </Content>
         )}
-        {props.children}
-      </div>
+        {children}
+      </NavTitle>
     </>
   );
 });
