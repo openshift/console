@@ -7,7 +7,6 @@ import {
   Alert,
   AlertActionLink,
   Button,
-  Checkbox,
   Divider,
   Dropdown,
   DropdownGroup,
@@ -18,6 +17,7 @@ import {
   Select,
   SelectList,
   SelectOption,
+  Switch,
   Tooltip,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
@@ -313,7 +313,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
       <Tooltip
         content={t('public~Select to view the entire log. Default view is the last 1,000 lines.')}
       >
-        <Checkbox
+        <Switch
           label={t('public~Show full log')}
           id="showFullLog"
           data-test="show-full-log"
@@ -328,7 +328,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
   );
 
   const wrapLines = (
-    <Checkbox
+    <Switch
       label={t('public~Wrap lines')}
       id="wrapLogLines"
       isChecked={isWrapLines}
@@ -481,7 +481,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 default: 'vertical',
               }}
             />
-            {wrapLines}
+            <div>{wrapLines}</div>
             <Divider
               orientation={{
                 default: 'vertical',
