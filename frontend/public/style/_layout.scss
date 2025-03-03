@@ -2,6 +2,9 @@ html,
 body,
 #app,
 .pf-v6-c-drawer {
+  display: flex;
+  flex-basis: 100%;
+  flex-direction: column;
   height: 100%;
 }
 

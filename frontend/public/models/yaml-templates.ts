@@ -1078,7 +1078,7 @@ spec:
     href: 'https://www.example.com'
     text: Optional link text
   color: '#fff'
-  backgroundColor: '#0088ce'
+  backgroundColor: '#0066cc'
 `,
   )
   .setIn(
