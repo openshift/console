@@ -13,18 +13,26 @@ export const nav = {
           case 'administrator':
           case 'Admin':
           case 'admin':
-            cy.byLegacyTestID('perspective-switcher-toggle').then(($body) => {
-              if ($body.text().includes('Administrator')) {
-                cy.log('Already on admin perspective');
-                cy.byLegacyTestID('perspective-switcher-toggle')
-                  .scrollIntoView()
-                  .contains(newPerspective);
+            // if there is no perspective switcher, then we are already on admin perspective
+            cy.get('body').then(($body) => {
+              // check if developer perspective is already enabled
+              if ($body.find("[data-test-id='perspective-switcher-toggle']").length !== 0) {
+                cy.byLegacyTestID('perspective-switcher-toggle').then(($toggle) => {
+                  if ($toggle.text().includes('Administrator')) {
+                    cy.log('Already on admin perspective');
+                    cy.byLegacyTestID('perspective-switcher-toggle')
+                      .scrollIntoView()
+                      .contains(newPerspective);
+                  } else {
+                    cy.byLegacyTestID('perspective-switcher-toggle')
+                      .click()
+                      .byLegacyTestID('perspective-switcher-menu-option')
+                      .contains(newPerspective)
+                      .click({ force: true });
+                  }
+                });
               } else {
-                cy.byLegacyTestID('perspective-switcher-toggle')
-                  .click()
-                  .byLegacyTestID('perspective-switcher-menu-option')
-                  .contains(newPerspective)
-                  .click({ force: true });
+                cy.log('There is no perspective switcher, already on admin perspective');
               }
             });
             break;
@@ -32,6 +40,7 @@ export const nav = {
           case 'developer':
           case 'Dev':
           case 'dev':
+            checkDeveloperPerspective();
             cy.byLegacyTestID('perspective-switcher-toggle')
               .should('be.visible')
               .then(($body) => {

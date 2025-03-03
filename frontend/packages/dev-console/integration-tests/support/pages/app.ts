@@ -62,8 +62,11 @@ export const perspective = {
       // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');
     }
-    nav.sidenav.switcher.shouldHaveText(perspectiveName);
     cy.get('body').then(($body) => {
+      if ($body.find("[data-test-id='perspective-switcher-toggle']").length) {
+        nav.sidenav.switcher.shouldHaveText(perspectiveName);
+      }
+
       if ($body.find('[aria-label="Close drawer panel"]').length) {
         if ($body.find('[data-test="Next button"]').length) {
           cy.get('[aria-label="Close drawer panel"]').click();
