@@ -53,7 +53,7 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
       <div className="form-group">
         <DroppableFileInput
           onChange={handleValueChange}
-          inputFileData={Base64.decode(entry.value)}
+          inputFileData={entry.value}
           id={`${index}-value`}
           label={t('public~Value')}
           inputFieldHelpText={t(
