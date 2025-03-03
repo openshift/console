@@ -44,14 +44,12 @@ export type Log = {
 };
 
 type TRRequest = {
-  allowInsecure?: boolean;
   allowAuthHeader?: boolean;
   searchNamespace: string;
   searchParams: string;
 };
 
 type TaskRunLogRequest = {
-  allowInsecure?: boolean;
   allowAuthHeader?: boolean;
   taskRunPath: string;
 };
@@ -299,7 +297,6 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
       );
 
       let list: RecordsList = await fetchTektonResults({
-        allowInsecure: true,
         searchNamespace,
         searchParams,
       });
@@ -442,7 +439,6 @@ export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
     throw404();
   }
   return fetchTaskRunLogs({
-    allowInsecure: true,
     taskRunPath: taskRunPath.replace('/records/', '/logs/'),
   });
 };
