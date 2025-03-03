@@ -628,7 +628,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                     icon={<PencilAltIcon />}
                     iconPosition="end"
                   >
-                    {obj.spec.channel || 'default'}
+                    {obj.spec.channel || t('olm~No channel')}
                   </Button>
                   {deprecatedChannel.deprecation && (
                     <DeprecatedOperatorWarningIcon
