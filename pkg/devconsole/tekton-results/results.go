@@ -32,6 +32,7 @@ var (
 		Resource: "routes",
 	}
 	cachedTektonResultsHost string = ""
+	tlsCertPath             string = "/var/serving-cert/tls.crt"
 )
 
 func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, error) {
@@ -93,7 +94,7 @@ func makeHTTPRequest(url, userToken string, allowAuthHeader bool) (common.DevCon
 	}
 
 	// Load the CA certificate
-	caCert, err := os.ReadFile("/var/serving-cert/tls.crt")
+	caCert, err := os.ReadFile(tlsCertPath)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read CA certificate: %v", err)
 	}
