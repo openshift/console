@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import AddBareMetalHost from './AddBareMetalHost';
 
 const AddBareMetalHostPage: React.FunctionComponent = () => {
@@ -20,7 +21,7 @@ const AddBareMetalHostPage: React.FunctionComponent = () => {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <div className="co-m-pane__body co-m-pane__form">
+      <PaneBody className="co-m-pane__form">
         {/* TODO(jtomasek): Turn this to PageHeading alternative for create forms (e.g.
         CreateResourceFormPageHeading) */}
         <PrimaryHeading alignItemsBaseline>
@@ -32,7 +33,7 @@ const AddBareMetalHostPage: React.FunctionComponent = () => {
           </p>
         )}
         <AddBareMetalHost namespace={namespace} name={name} enablePowerMgmt={enablePowerMgmt} />
-      </div>
+      </PaneBody>
     </>
   );
 };

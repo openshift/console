@@ -22,6 +22,7 @@ import {
   useTelemetry,
   useUserSettingsCompatibility,
 } from '@console/shared';
+import PageBody from '@console/shared/src/components/layout/PageBody';
 
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
@@ -789,7 +790,7 @@ const EditYAMLInner = (props) => {
         />
       )}
 
-      <div className="pf-v6-c-form co-m-page__body">
+      <PageBody className="pf-v6-c-form">
         <div className="co-p-has-sidebar">
           <div className="co-p-has-sidebar__body">
             <div className={classNames('yaml-editor', customClass)} ref={editor}>
@@ -903,7 +904,7 @@ const EditYAMLInner = (props) => {
             />
           )}
         </div>
-      </div>
+      </PageBody>
     </div>
   );
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { EventingBrokerModel } from '../../../models';
 import { getTriggerFilters } from '../../../topology/knative-topology-utils';
 import FilterTable from '../../overview/FilterTable';
@@ -20,7 +21,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
   const { filters: filterData } = getTriggerFilters(trigger);
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('knative-plugin~Trigger details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -55,12 +56,12 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
             )}
           </div>
         </div>
-      </div>
+      </PaneBody>
       {_.isArray(trigger?.status?.conditions) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('knative-plugin~Conditions')} />
           <Conditions conditions={trigger.status.conditions} />
-        </div>
+        </PaneBody>
       )}
     </>
   );
