@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
+import { Banner, Flex } from '@patternfly/react-core';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -16,16 +17,16 @@ export const KubeAdminNotifier = connect(userStateToProps)(({ user }) => {
   const canUpgrade = useCanClusterUpgrade();
   const username = _.get(user, 'username');
   return KUBE_ADMIN_USERNAMES.includes(username) && canUpgrade ? (
-    <div className="co-global-notification">
-      <div className="co-global-notification__content">
-        <p className="co-global-notification__text">
+    <Banner color="blue">
+      <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+        <p className="pf-v6-u-text-align-center">
           <Trans t={t} ns="public">
             You are logged in as a temporary administrative user. Update the{' '}
             <Link to={oAuthResourcePath}>cluster OAuth configuration</Link> to allow others to log
             in.
           </Trans>
         </p>
-      </div>
-    </div>
+      </Flex>
+    </Banner>
   ) : null;
 });
