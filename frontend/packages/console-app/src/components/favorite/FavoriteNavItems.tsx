@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Nav, NavExpandable, NavList, Button, FlexItem, Flex } from '@patternfly/react-core';
+import { NavExpandable, Button, FlexItem, Flex } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -18,14 +18,6 @@ export const FavoriteNavItems: React.FC = () => {
   const [activeGroup, setActiveGroup] = React.useState('');
   const [activeItem, setActiveItem] = React.useState('');
   const currentUrlPath = window.location.pathname;
-
-  const onSelect = (
-    _event: React.FormEvent<HTMLInputElement>,
-    result: { itemId: number | string; groupId: number | string | null },
-  ) => {
-    setActiveGroup(result.groupId as string);
-    setActiveItem(result.itemId as string);
-  };
 
   const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
     FAVORITES_CONFIG_MAP_KEY,
@@ -94,17 +86,13 @@ export const FavoriteNavItems: React.FC = () => {
   }, [favorites, activeItem, loaded, t, setFavorites]);
 
   return (
-    <Nav onSelect={onSelect} aria-label="favorite-resources" className="pf-v6-u-py-0">
-      <NavList>
-        <NavExpandable
-          title={t('console-app~Favorites')}
-          groupId="favorites-group"
-          isActive={activeGroup === 'favorites-group'}
-          isExpanded={activeGroup === 'favorites-group'}
-        >
-          {navList}
-        </NavExpandable>
-      </NavList>
-    </Nav>
+    <NavExpandable
+      title={t('console-app~Favorites')}
+      groupId="favorites-group"
+      isActive={activeGroup === 'favorites-group'}
+      isExpanded={activeGroup === 'favorites-group'}
+    >
+      {navList}
+    </NavExpandable>
   );
 };
