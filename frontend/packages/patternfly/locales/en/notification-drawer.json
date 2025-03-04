@@ -1,8 +1,4 @@
 {
-  "Notifications": "Notifications",
-  "{{count}} unread_one": "{{count}} unread",
-  "{{count}} unread_other": "{{count}} unreads",
-  "Close": "Close",
   "Warning notification:": "Warning notification:",
   "Critical notification:": "Critical notification:",
   "Success notification:": "Success notification:",
