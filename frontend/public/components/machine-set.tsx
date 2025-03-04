@@ -238,46 +238,44 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
   const instanceType = getMachineSetInstanceType(obj);
   const { t } = useTranslation();
   return (
-    <>
-      <PaneBody>
-        <SectionHeading text={t('public~MachineSet details')} />
-        <MachineCounts resourceKind={MachineSetModel} resource={obj} />
-        <div className="row">
-          <div className="col-md-6">
-            <ResourceSummary resource={obj}>
-              <dt>{t('public~Selector')}</dt>
-              <dd>
-                <Selector
-                  kind={machineReference}
-                  selector={obj.spec?.selector}
-                  namespace={obj.metadata.namespace}
-                />
-              </dd>
-              <dt>{t('public~Instance type')}</dt>
-              <dd>{instanceType || '-'}</dd>
-              {machineRole && (
-                <>
-                  <dt>{t('public~Machine role')}</dt>
-                  <dd>{machineRole}</dd>
-                </>
-              )}
-              {region && (
-                <>
-                  <dt>{t('public~Region')}</dt>
-                  <dd>{region}</dd>
-                </>
-              )}
-              {availabilityZone && (
-                <>
-                  <dt>{t('public~Availability zone')}</dt>
-                  <dd>{availabilityZone}</dd>
-                </>
-              )}
-            </ResourceSummary>
-          </div>
+    <PaneBody>
+      <SectionHeading text={t('public~MachineSet details')} />
+      <MachineCounts resourceKind={MachineSetModel} resource={obj} />
+      <div className="row">
+        <div className="col-md-6">
+          <ResourceSummary resource={obj}>
+            <dt>{t('public~Selector')}</dt>
+            <dd>
+              <Selector
+                kind={machineReference}
+                selector={obj.spec?.selector}
+                namespace={obj.metadata.namespace}
+              />
+            </dd>
+            <dt>{t('public~Instance type')}</dt>
+            <dd>{instanceType || '-'}</dd>
+            {machineRole && (
+              <>
+                <dt>{t('public~Machine role')}</dt>
+                <dd>{machineRole}</dd>
+              </>
+            )}
+            {region && (
+              <>
+                <dt>{t('public~Region')}</dt>
+                <dd>{region}</dd>
+              </>
+            )}
+            {availabilityZone && (
+              <>
+                <dt>{t('public~Availability zone')}</dt>
+                <dd>{availabilityZone}</dd>
+              </>
+            )}
+          </ResourceSummary>
         </div>
-      </PaneBody>
-    </>
+      </div>
+    </PaneBody>
   );
 };
 

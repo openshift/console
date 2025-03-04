@@ -50,30 +50,28 @@ const tableColumnClasses = [
 const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <>
-      <PaneBody>
-        <SectionHeading text={t('public~StorageClass details')} />
-        <div className="row">
-          <div className="col-sm-6">
-            <ResourceSummary resource={obj}>
-              <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
-            </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
-              <dt>{t('public~Default class')}</dt>
-              <dd>{isDefaultClass(obj) ? t('public~True') : t('public~False')}</dd>
-              <DetailsItem
-                label={t('public~Volume binding mode')}
-                obj={obj}
-                path="volumeBindingMode"
-              />
-            </dl>
-          </div>
+    <PaneBody>
+      <SectionHeading text={t('public~StorageClass details')} />
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={obj}>
+            <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
+          </ResourceSummary>
         </div>
-      </PaneBody>
-    </>
+        <div className="col-sm-6">
+          <dl className="co-m-pane__details">
+            <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
+            <dt>{t('public~Default class')}</dt>
+            <dd>{isDefaultClass(obj) ? t('public~True') : t('public~False')}</dd>
+            <DetailsItem
+              label={t('public~Volume binding mode')}
+              obj={obj}
+              path="volumeBindingMode"
+            />
+          </dl>
+        </div>
+      </div>
+    </PaneBody>
   );
 };
 
