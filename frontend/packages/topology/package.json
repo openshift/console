@@ -19,11 +19,27 @@
     "entry": "src/plugin.tsx",
     "exposedModules": {
       "reduxReducer": "src/utils/reducer.ts",
-      "workload": "src/components/workload",
+      "CronJobSideBarDetails": "src/components/workload/CronJobSideBarDetails.tsx",
+      "DaemonSetSideBarDetails": "src/components/workload/DaemonSetSideBarDetails.tsx",
+      "DeploymentConfigSideBarDetails": "src/components/workload/DeploymentConfigSideBarDetails.tsx",
+      "DeploymentSideBarDetails": "src/components/workload/DeploymentSideBarDetails.tsx",
+      "JobSideBarDetails": "src/components/workload/JobSideBarDetails.tsx",
+      "PodsTabSection": "src/components/workload/pods-tab-section.tsx",
+      "StatefulSetSideBarDetails": "src/components/workload/StatefulSetSideBarDetails.tsx",
+      "WorkloadResourceLink": "src/components/workload/workload-resource-link.tsx",
+      "workloadUtils": "src/components/workload/utils.ts",
+      "BuildTabSection": "src/components/workload/build-tab-section.tsx",
+      "NetworkTabSection": "src/components/workload/network-tab-section.tsx",
+      "JobsTabSection": "src/components/workload/jobs-tab-section.tsx",
+      "PodSideBarDetails": "src/components/workload/PodSideBarDetails.tsx",
+      "ResourceAlert": "src/components/workload/resource-alert.tsx",
+      "VpaTabSection": "src/components/workload/vpa-tab-section.tsx",
       "actions": "src/actions/provider.ts",
       "exportAppContext": "src/components/export-app/export-app-context.ts",
-      "applicationSidebar": "src/components/application-panel",
-      "vcSidebar": "src/components/visual-connector"
+      "applicationResourceLink": "src/components/application-panel/application-resource-link.tsx",
+      "applicationResourceTabSection": "src/components/application-panel/application-resource-tab-section.tsx",
+      "edgeResourceLink": "src/components/visual-connector/edge-resource-link.tsx",
+      "resourceTabSection": "src/components/visual-connector/resource-tab-section.tsx"
     }
   }
 }

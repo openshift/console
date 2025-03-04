@@ -10,10 +10,12 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "exposedModules": {
-      "utils": "src/utils/index.ts",
-      "topology": "src/components/topology",
-      "topologySidebar": "src/components/topology/sidebar",
-      "actions": "src/actions",
+      "useClusterServiceVersions": "src/utils/useClusterServiceVersions.tsx",
+      "operatorLinkTabSection": "src/components/topology/operator-link-tab-section.tsx",
+      "topologySidebarResourceLink": "src/components/topology/sidebar/resource-link.tsx",
+      "topologySidebarDetailsSections": "src/components/topology/sidebar/details-sections.tsx",
+      "topologySidebarResourceSections": "src/components/topology/sidebar/resource-sections.tsx",
+      "csvActionsProvider": "src/actions/csv-actions-provider.ts",
       "install": "src/components/operator-install-page.tsx"
     }
   }
