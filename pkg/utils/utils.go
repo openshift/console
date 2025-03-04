@@ -5,20 +5,27 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"k8s.io/klog/v2"
 
 	consolev1 "github.com/openshift/api/console/v1"
+
+	"github.com/openshift/console/pkg/csp"
 )
 
 const (
-	baseURI       = "base-uri"
-	defaultSrc    = "default-src"
-	imgSrc        = "img-src"
-	fontSrc       = "font-src"
-	scriptSrc     = "script-src"
-	styleSrc      = "style-src"
+	// well-known csp directive names
+	baseURI        = "base-uri"
+	defaultSrc     = "default-src"
+	imgSrc         = "img-src"
+	fontSrc        = "font-src"
+	scriptSrc      = "script-src"
+	styleSrc       = "style-src"
+	frameSrc       = "frame-src"
+	frameAncestors = "frame-ancestors"
+	objectSrc      = "object-src"
+
+	// well-known csp directive values
 	consoleDot    = "console.redhat.com"
 	httpLocalHost = "http://localhost:8080"
 	wsLocalHost   = "ws://localhost:8080"
@@ -26,6 +33,7 @@ const (
 	data          = "data:"
 	unsafeEval    = "'unsafe-eval'"
 	unsafeInline  = "'unsafe-inline'"
+	none          = "'none'"
 )
 
 // Generate a cryptographically secure random array of bytes.
@@ -54,28 +62,73 @@ func RandomString(length int) (string, error) {
 // buildCSPDirectives takes the content security policy configuration from the server and constructs
 // a complete set of directives for the Content-Security-Policy-Report-Only header.
 // The constructed directives will include the default sources and the supplied configuration.
-
 func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]string, error) {
-	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
+
+	baseUriDirective, err := csp.NewDirective(baseURI, self)
+	if err != nil {
+		return []string{}, err
+	}
 
 	// The default sources are the sources that are allowed for all directives.
 	// When running on-cluster, the default sources are just 'self' and 'console.redhat.com'.
 	// When running off-cluster, 'http://localhost:8080' and 'ws://localhost:8080' are appended to the
 	// default sources. Image source, font source, and style source only use 'self' and
 	// 'http://localhost:8080'.
-	baseUriDirective := []string{baseURI, self}
-	defaultSrcDirective := []string{defaultSrc, self, consoleDot}
-	imgSrcDirective := []string{imgSrc, self}
-	fontSrcDirective := []string{fontSrc, self}
-	scriptSrcDirective := []string{scriptSrc, self, consoleDot}
-	styleSrcDirective := []string{styleSrc, self}
+	defaultSrcDirective, err := csp.NewDirective(defaultSrc, self, consoleDot)
+	if err != nil {
+		return []string{}, err
+	}
+
+	imgSrcDirective, err := csp.NewDirective(imgSrc, self)
+	if err != nil {
+		return []string{}, err
+	}
+
+	fontSrcDirective, err := csp.NewDirective(fontSrc, self)
+	if err != nil {
+		return []string{}, err
+	}
+
+	scriptSrcDirective, err := csp.NewDirective(scriptSrc, self, consoleDot)
+	if err != nil {
+		return []string{}, err
+	}
+
+	styleSrcDirective, err := csp.NewDirective(styleSrc, self)
+	if err != nil {
+		return []string{}, err
+	}
+
 	if k8sMode == "off-cluster" {
-		baseUriDirective = append(baseUriDirective, []string{httpLocalHost, wsLocalHost}...)
-		defaultSrcDirective = append(defaultSrcDirective, []string{httpLocalHost, wsLocalHost}...)
-		imgSrcDirective = append(imgSrcDirective, httpLocalHost)
-		fontSrcDirective = append(fontSrcDirective, httpLocalHost)
-		scriptSrcDirective = append(scriptSrcDirective, []string{httpLocalHost, wsLocalHost}...)
-		styleSrcDirective = append(styleSrcDirective, httpLocalHost)
+		err = baseUriDirective.AddValues(httpLocalHost, wsLocalHost)
+		if err != nil {
+			return []string{}, err
+		}
+
+		err = defaultSrcDirective.AddValues(httpLocalHost, wsLocalHost)
+		if err != nil {
+			return []string{}, err
+		}
+
+		err = imgSrcDirective.AddValues(httpLocalHost)
+		if err != nil {
+			return []string{}, err
+		}
+
+		err = fontSrcDirective.AddValues(httpLocalHost)
+		if err != nil {
+			return []string{}, err
+		}
+
+		err = scriptSrcDirective.AddValues(httpLocalHost, wsLocalHost)
+		if err != nil {
+			return []string{}, err
+		}
+
+		err = styleSrcDirective.AddValues(httpLocalHost)
+		if err != nil {
+			return []string{}, err
+		}
 	}
 
 	// If the plugins are providing a content security policy configuration, parse it and add it to
@@ -89,25 +142,70 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 		for directive, sources := range *parsedCSP {
 			switch directive {
 			case consolev1.DefaultSrc:
-				defaultSrcDirective = append(defaultSrcDirective, sources...)
+				err = defaultSrcDirective.AddValues(sources...)
+				if err != nil {
+					return []string{}, err
+				}
 			case consolev1.ImgSrc:
-				imgSrcDirective = append(imgSrcDirective, sources...)
+				err = imgSrcDirective.AddValues(sources...)
+				if err != nil {
+					return []string{}, err
+				}
 			case consolev1.FontSrc:
-				fontSrcDirective = append(fontSrcDirective, sources...)
+				err = fontSrcDirective.AddValues(sources...)
+				if err != nil {
+					return []string{}, err
+				}
 			case consolev1.ScriptSrc:
-				scriptSrcDirective = append(scriptSrcDirective, sources...)
+				err = scriptSrcDirective.AddValues(sources...)
+				if err != nil {
+					return []string{}, err
+				}
 			case consolev1.StyleSrc:
-				styleSrcDirective = append(styleSrcDirective, sources...)
+				err = styleSrcDirective.AddValues(sources...)
+				if err != nil {
+					return []string{}, err
+				}
 			default:
 				klog.Warningf("ignored invalid CSP directive: %v", directive)
 			}
 		}
 	}
 
-	imgSrcDirective = append(imgSrcDirective, data)
-	fontSrcDirective = append(fontSrcDirective, data)
-	scriptSrcDirective = append(scriptSrcDirective, []string{unsafeEval, nonce}...)
-	styleSrcDirective = append(styleSrcDirective, unsafeInline)
+	err = imgSrcDirective.AddValues(data)
+	if err != nil {
+		return []string{}, err
+	}
+
+	err = fontSrcDirective.AddValues(data)
+	if err != nil {
+		return []string{}, err
+	}
+
+	err = scriptSrcDirective.AddValues(unsafeEval, fmt.Sprintf("'nonce-%s'", indexPageScriptNonce))
+	if err != nil {
+		return []string{}, err
+	}
+
+	err = styleSrcDirective.AddValues(unsafeInline)
+	if err != nil {
+		return []string{}, err
+	}
+
+	frameSrcDirective, err := csp.NewDirective(frameSrc, none)
+	if err != nil {
+		return []string{}, err
+	}
+
+	frameAncestorsDirective, err := csp.NewDirective(frameAncestors, none)
+	if err != nil {
+		return []string{}, err
+	}
+
+	objectSrcDirective, err := csp.NewDirective(objectSrc, none)
+	if err != nil {
+		return []string{}, err
+	}
 
 	// Construct the full list of directives from the aggregated sources.
 	// This array is a list of directives, where each directive is a string
@@ -115,15 +213,15 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	// The sources are concatenated together with a space separator.
 	// The CSP directives string is returned as a slice of strings, where each string is a directive.
 	return []string{
-		strings.Join(baseUriDirective, " "),
-		strings.Join(defaultSrcDirective, " "),
-		strings.Join(imgSrcDirective, " "),
-		strings.Join(fontSrcDirective, " "),
-		strings.Join(scriptSrcDirective, " "),
-		strings.Join(styleSrcDirective, " "),
-		"frame-src 'none'",
-		"frame-ancestors 'none'",
-		"object-src 'none'",
+		baseUriDirective.ToString(),
+		defaultSrcDirective.ToString(),
+		imgSrcDirective.ToString(),
+		fontSrcDirective.ToString(),
+		scriptSrcDirective.ToString(),
+		styleSrcDirective.ToString(),
+		frameSrcDirective.ToString(),
+		frameAncestorsDirective.ToString(),
+		objectSrcDirective.ToString(),
 	}, nil
 }
 
