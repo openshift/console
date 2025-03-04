@@ -28,22 +28,23 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   const additionalCommandLineTools = _.map(cliData.concat(data), (tool) => {
     const displayName = tool.spec.displayName;
     const defaultLinkText = t('Download {{displayName}}', { displayName });
+    const sortedLinks = _.sortBy(tool.spec.links, 'text');
     return (
       <React.Fragment key={tool.metadata.uid}>
         <Divider className="co-divider" />
         <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
         <SyncMarkdownView content={tool.spec.description} exactHeight />
-        {tool.spec.links.length === 1 && (
+        {sortedLinks.length === 1 && (
           <p>
             <ExternalLink
-              href={tool.spec.links[0].href}
-              text={tool.spec.links[0].text || defaultLinkText}
+              href={sortedLinks[0].href}
+              text={sortedLinks[0].text || defaultLinkText}
             />
           </p>
         )}
-        {tool.spec.links.length > 1 && (
+        {sortedLinks.length > 1 && (
           <ul>
-            {_.map(tool.spec.links, (link, i) => (
+            {_.map(sortedLinks, (link, i) => (
               <li key={i}>
                 <ExternalLink href={link.href} text={link.text || defaultLinkText} />
               </li>
