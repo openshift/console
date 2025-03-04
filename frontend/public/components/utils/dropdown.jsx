@@ -464,7 +464,7 @@ class Dropdown_ extends DropdownMixin {
           ref={this.dropdownToggleRef}
         >
           <div className="pf-v6-c-dropdown__content-wrap">
-            <span className="pf-v6-c-dropdown__toggle-text">
+            <span className="pf-v6-c-dropdown__toggle-text co-nowrap">
               {titlePrefix && `${titlePrefix}: `}
               {title}
             </span>
@@ -556,7 +556,7 @@ class Dropdown_ extends DropdownMixin {
         disabled={disabled}
         ref={this.dropdownToggleRef}
       >
-        <span className="pf-v6-c-dropdown__toggle-text">
+        <span className="pf-v6-c-dropdown__toggle-text co-nowrap">
           {titlePrefix && `${titlePrefix}: `}
           {title}
         </span>
