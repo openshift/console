@@ -30,10 +30,9 @@ export const documentationURLs: documentationURLsType = {
     upstream: 'applications/application-health.html',
   },
   configuringMonitoring: {
-    downstream:
-      'html/monitoring/configuring-the-monitoring-stack#maintenance-and-support_configuring-the-monitoring-stack',
+    downstream: 'html/monitoring/getting-started#maintenance-and-support-for-monitoring',
     upstream:
-      'observability/monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring',
+      'observability/monitoring/getting-started/maintenance-and-support-for-monitoring.html#maintenance-and-support-for-monitoring',
   },
   networkPolicy: {
     downstream: 'html/networking/network-policy#about-network-policy',
