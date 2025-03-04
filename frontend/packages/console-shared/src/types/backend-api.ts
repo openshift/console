@@ -1,6 +1,5 @@
 export type DevConsoleEndpointRequest = {
   allowAuthHeader?: boolean;
-  allowInsecure?: boolean;
 };
 
 export type DevConsoleEndpointResponse = {
