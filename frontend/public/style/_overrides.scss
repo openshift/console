@@ -51,7 +51,8 @@ form.pf-v6-c-form {
   }
 }
 
-// align pf-v6-c-tabs--inset with PageSection
+// Workaround for https://github.com/patternfly/patternfly/issues/7376
+// to align pf-v6-c-tabs--inset with PageSection
 .co-horizontal-nav {
   --pf-v6-c-tabs--inset: #{$pf-v6-global-gutter-x};
   --pf-v6-c-tabs--m-vertical--inset: #{$pf-v6-global-gutter-x};
