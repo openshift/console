@@ -1,14 +1,49 @@
+@import '../../../../../public/style/vars';
+
 .ocs-yaml-editor {
-  &__root {
-    flex: 1;
-    position: relative;
+  // ensure editor stays fills the parent container while remaining in bounds
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  .co-code-editor {
+    flex-grow: 1;
   }
 
-  &__wrapper {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
+  .monaco-editor {
+    position: absolute; // part of the fix for ResizeObserver issue
+
+    // revert custom overrides
+    .label-name { text-decoration: none; }
+    label { font-weight: unset; }
+
+    .monaco-hover-content .markdown-hover {
+      // matches tooltip styling seen back in OpenShift 4.18
+      max-width: 500px;
+      word-wrap: break-word;
+
+      // hide "Source: yaml" in hover tooltip
+      p:last-of-type {
+        display: none;
+      }
+    }
+  }
+
+  /* Hide CodeEditor toolbar on mobile */
+  @media (max-width: $screen-sm-max) {
+    .pf-v6-c-code-editor__header {
+      display: none;
+
+      + .pf-v6-c-code-editor__main {
+        border-block-start-width: var(--pf-t--global--border--width--box--default);
+      }
+    }
+  }
+
+  /* Needed to get the CodeEditorToolbar to place buttons on the right side */
+  .pf-v6-c-code-editor__controls, .ocs-yaml-editor-toolbar {
+    width: 100%;
+    height: 100% !important;
+    align-items: center;
   }
 }
