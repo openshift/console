@@ -316,63 +316,61 @@ const APIResourcesList = compose(
   ];
 
   return (
-    <>
-      <PaneBody>
-        <Toolbar className="pf-m-toggle-group-container">
-          <ToolbarContent>
-            <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-              <ToolbarItem>
-                <Dropdown
-                  autocompleteFilter={autocompleteGroups}
-                  items={groupOptions}
-                  onChange={onGroupSelected}
-                  selectedKey={groupFilter}
-                  spacerBefore={groupSpacer}
-                  title={groupOptions[groupFilter]}
-                  dropDownClassName="dropdown--full-width"
-                />
-              </ToolbarItem>
-              <ToolbarItem>
-                <Dropdown
-                  items={versionOptions}
-                  onChange={onVersionSelected}
-                  selectedKey={versionFilter}
-                  spacerBefore={versionSpacer}
-                  title={versionOptions[versionFilter]}
-                  dropDownClassName="dropdown--full-width"
-                />
-              </ToolbarItem>
-              <ToolbarItem>
-                <Dropdown
-                  items={scopeOptions}
-                  onChange={onScopeSelected}
-                  selectedKey={scopeFilter}
-                  spacerBefore={scopeSpacer}
-                  title={scopeOptions[scopeFilter]}
-                  dropDownClassName="dropdown--full-width"
-                />
-              </ToolbarItem>
-            </ToolbarToggleGroup>
+    <PaneBody>
+      <Toolbar className="pf-m-toggle-group-container">
+        <ToolbarContent>
+          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             <ToolbarItem>
-              <TextFilter
-                value={textFilter}
-                label={t('public~by kind')}
-                onChange={(_event, value) => setTextFilter(value)}
+              <Dropdown
+                autocompleteFilter={autocompleteGroups}
+                items={groupOptions}
+                onChange={onGroupSelected}
+                selectedKey={groupFilter}
+                spacerBefore={groupSpacer}
+                title={groupOptions[groupFilter]}
+                dropDownClassName="dropdown--full-width"
               />
             </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
-        <Table
-          EmptyMsg={EmptyAPIResourcesMsg}
-          Header={APIResourceHeader}
-          Rows={APIResourceRows}
-          aria-label={t('public~API resources')}
-          data={sortedResources}
-          loaded={!!models.size}
-          virtualize={false}
-        />
-      </PaneBody>
-    </>
+            <ToolbarItem>
+              <Dropdown
+                items={versionOptions}
+                onChange={onVersionSelected}
+                selectedKey={versionFilter}
+                spacerBefore={versionSpacer}
+                title={versionOptions[versionFilter]}
+                dropDownClassName="dropdown--full-width"
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <Dropdown
+                items={scopeOptions}
+                onChange={onScopeSelected}
+                selectedKey={scopeFilter}
+                spacerBefore={scopeSpacer}
+                title={scopeOptions[scopeFilter]}
+                dropDownClassName="dropdown--full-width"
+              />
+            </ToolbarItem>
+          </ToolbarToggleGroup>
+          <ToolbarItem>
+            <TextFilter
+              value={textFilter}
+              label={t('public~by kind')}
+              onChange={(_event, value) => setTextFilter(value)}
+            />
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
+      <Table
+        EmptyMsg={EmptyAPIResourcesMsg}
+        Header={APIResourceHeader}
+        Rows={APIResourceRows}
+        aria-label={t('public~API resources')}
+        data={sortedResources}
+        loaded={!!models.size}
+        virtualize={false}
+      />
+    </PaneBody>
   );
 });
 APIResourcesList.displayName = 'APIResourcesList';

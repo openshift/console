@@ -24,48 +24,46 @@ const Details: React.SFC<DetailsProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <div>
-      <PaneBody>
-        <SectionHeading text={t('public~Alertmanager details')} />
-        <div className="row">
-          <div className="col-sm-6 col-xs-12">
-            <dl className="co-m-pane__details">
-              <dt>Name</dt>
-              <dd>{metadata.name}</dd>
-              <dt>Labels</dt>
+    <PaneBody>
+      <SectionHeading text={t('public~Alertmanager details')} />
+      <div className="row">
+        <div className="col-sm-6 col-xs-12">
+          <dl className="co-m-pane__details">
+            <dt>Name</dt>
+            <dd>{metadata.name}</dd>
+            <dt>Labels</dt>
+            <dd>
+              <LabelList kind="Alertmanager" labels={metadata.labels} />
+            </dd>
+            {spec.nodeSelector && <dt>{t('public~Alertmanager node selector')}</dt>}
+            {spec.nodeSelector && (
               <dd>
-                <LabelList kind="Alertmanager" labels={metadata.labels} />
+                <Selector selector={spec.nodeSelector} kind="Node" />
               </dd>
-              {spec.nodeSelector && <dt>{t('public~Alertmanager node selector')}</dt>}
-              {spec.nodeSelector && (
-                <dd>
-                  <Selector selector={spec.nodeSelector} kind="Node" />
-                </dd>
-              )}
-            </dl>
-          </div>
-          <div className="col-sm-6 col-xs-12">
-            <dl className="co-m-pane__details">
-              <dt>Version</dt>
-              <dd>{spec.version}</dd>
-              <dt>Replicas</dt>
-              <dd>
-                <Button
-                  icon={<PencilAltIcon />}
-                  iconPosition="end"
-                  variant="link"
-                  type="button"
-                  isInline
-                  onClick={openReplicaCountModal}
-                >
-                  {pluralize(spec.replicas, 'pod')}
-                </Button>
-              </dd>
-            </dl>
-          </div>
+            )}
+          </dl>
         </div>
-      </PaneBody>
-    </div>
+        <div className="col-sm-6 col-xs-12">
+          <dl className="co-m-pane__details">
+            <dt>Version</dt>
+            <dd>{spec.version}</dd>
+            <dt>Replicas</dt>
+            <dd>
+              <Button
+                icon={<PencilAltIcon />}
+                iconPosition="end"
+                variant="link"
+                type="button"
+                isInline
+                onClick={openReplicaCountModal}
+              >
+                {pluralize(spec.replicas, 'pod')}
+              </Button>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </PaneBody>
   );
 };
 
