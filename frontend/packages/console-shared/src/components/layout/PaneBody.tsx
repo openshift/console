@@ -14,10 +14,10 @@ const PaneBody: React.FC<PaneBodyProps> = ({
     <PageSection
       className={classNames(
         'co-m-pane__body',
-        { 'pf-v6-u-h-100': fullHeight },
         { 'co-m-pane__body--section-heading': sectionHeading },
         className,
       )}
+      isFilled={fullHeight}
       hasBodyWrapper={false}
       style={style}
       {...props}
