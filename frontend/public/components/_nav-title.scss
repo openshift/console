@@ -32,7 +32,6 @@
     flex-shrink: 0; // do not allow to shrink
   }
   &--row {
-    align-items: baseline;
     gap: var(--pf-t--global--spacer--md);
     @media (min-width: $screen-sm) {
       display: flex;
