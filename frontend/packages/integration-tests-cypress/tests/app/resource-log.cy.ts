@@ -22,7 +22,7 @@ describe('Pod log viewer tab', () => {
     // Verify the default log buffer size
     cy.byTestID('no-log-lines').contains('1000 lines');
     // Verify the log exceeds the default log buffer size
-    cy.byTestID('show-full-log').check();
+    cy.byTestID('show-full-log').check({ force: true }); // force as checkbox is hidden (from Switch)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000);
     cy.byTestID('no-log-lines').should('not.contain', '1000 lines');
