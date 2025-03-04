@@ -8,6 +8,7 @@ cypress-a11y-report.json
 /gopath
 /Godeps/_workspace/src/github.com/openshift/console
 /frontend/.cache-loader
+/frontend/.puppeteer
 /frontend/.webpack-cycles
 /frontend/__coverage__
 /frontend/__chrome_browser__
