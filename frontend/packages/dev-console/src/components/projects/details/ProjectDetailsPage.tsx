@@ -72,7 +72,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
       {...props}
       breadcrumbsFor={() => [
         { name: t('devconsole~Projects'), path: '/project-details/all-namespaces' },
-        { name: t('devconsole~Project details'), path: `/project-details/ns/${activeNamespace}` },
+        { name: t('devconsole~Project Details'), path: `/project-details/ns/${activeNamespace}` },
       ]}
       name={activeNamespace}
       kind={ProjectModel.kind}
