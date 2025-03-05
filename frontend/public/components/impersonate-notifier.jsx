@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { Button } from '@patternfly/react-core';
+import { Banner, Flex, Button } from '@patternfly/react-core';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import * as UIActions from '../actions/ui';
@@ -21,23 +21,27 @@ export const ImpersonateNotifier = connect((state) => ({ impersonate: getImperso
     : impersonate.kind;
   const impersonateName = impersonate.name;
   return (
-    <div className="co-global-notification">
-      <div className="co-global-notification__content">
-        <p className="co-global-notification__text">
-          <span className="text-uppercase co-global-notification__impersonate-kind">
-            {t('public~Impersonating {{kind}}', {
-              kind: kindTranslated,
-            })}
-          </span>{' '}
+    <Banner color="blue">
+      <Flex
+        justifyContent={{ default: 'justifyContentCenter' }}
+        flexWrap={{ default: 'nowrap' }}
+        gap={{ default: 'sm' }}
+      >
+        <strong>
+          {t('public~Impersonating {{kind}}', {
+            kind: kindTranslated,
+          })}
+        </strong>{' '}
+        <p>
           <Trans t={t} ns="public">
-            You are impersonating{' '}
-            <span className="co-global-notification__impersonate-name">{{ impersonateName }}</span>.
-            You are viewing all resources and roles this {{ kindTranslated }} can access.
+            You are impersonating <strong>{{ impersonateName }}</strong>. You are viewing all
+            resources and roles this {{ kindTranslated }} can access.
           </Trans>{' '}
           <Button
             isInline
             type="button"
             variant="link"
+            style={{ color: 'inherit' }}
             onClick={() => {
               stopImpersonate();
               navigate(window.SERVER_FLAGS.basePath);
@@ -46,7 +50,7 @@ export const ImpersonateNotifier = connect((state) => ({ impersonate: getImperso
             {t('public~Stop impersonation')}
           </Button>
         </p>
-      </div>
-    </div>
+      </Flex>
+    </Banner>
   );
 });

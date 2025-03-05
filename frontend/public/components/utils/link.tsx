@@ -74,8 +74,10 @@ export const ExternalLink: React.FC<ExternalLinkProps> = ({
   additionalClassName = '',
   dataTestID,
   stopPropagation,
+  ...props
 }) => (
   <a
+    {...props}
     className={classNames('co-external-link', additionalClassName)}
     href={href}
     target="_blank"
@@ -158,7 +160,7 @@ export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ child
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
-type ExternalLinkProps = {
+type ExternalLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
   text?: React.ReactNode;
   additionalClassName?: string;
