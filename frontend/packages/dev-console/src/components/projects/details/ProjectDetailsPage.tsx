@@ -70,7 +70,10 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
   return !noProjectsAvailable && activeNamespace ? (
     <DetailsPage
       {...props}
-      breadcrumbsFor={() => []}
+      breadcrumbsFor={() => [
+        { name: t('devconsole~Projects'), path: '/project-details/all-namespaces' },
+        { name: t('devconsole~Project Details'), path: `/project-details/ns/${activeNamespace}` },
+      ]}
       name={activeNamespace}
       kind={ProjectModel.kind}
       kindObj={ProjectModel}
