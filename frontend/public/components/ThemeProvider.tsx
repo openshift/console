@@ -11,7 +11,7 @@ const THEME_LIGHT = 'light';
 
 type PROCESSED_THEME = typeof THEME_DARK | typeof THEME_LIGHT;
 
-export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => {
+export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
   let systemTheme: string;
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
     systemTheme = THEME_DARK;
@@ -19,10 +19,12 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => 
   if (theme === THEME_DARK || (theme === THEME_SYSTEM_DEFAULT && systemTheme === THEME_DARK)) {
     htmlTagElement.classList.add(THEME_DARK_CLASS);
     htmlTagElement.classList.add(THEME_DARK_CLASS_LEGACY);
-  } else {
-    htmlTagElement.classList.remove(THEME_DARK_CLASS);
-    htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
+    return THEME_DARK;
   }
+
+  htmlTagElement.classList.remove(THEME_DARK_CLASS);
+  htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
+  return THEME_LIGHT;
 };
 
 export const ThemeContext = React.createContext<string>('');
@@ -60,14 +62,13 @@ export const ThemeProvider: React.FC<{}> = ({ children }) => {
       darkThemeMq.addEventListener('change', mqListener);
     }
     if (themeLoaded) {
-      updateThemeClass(htmlTagElement, theme);
+      setProcessedTheme(updateThemeClass(htmlTagElement, theme));
     }
     return () => darkThemeMq.removeEventListener('change', mqListener);
   }, [htmlTagElement, mqListener, theme, themeLoaded]);
 
   React.useEffect(() => {
     themeLoaded && localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
-    themeLoaded && setProcessedTheme(theme as PROCESSED_THEME);
   }, [theme, themeLoaded]);
 
   return <ThemeContext.Provider value={processedTheme}>{children}</ThemeContext.Provider>;
