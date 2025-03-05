@@ -12,16 +12,28 @@ import {
 import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
 import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils';
+import { TourActions, TourContext } from '@console/app/src/components/tour';
 
 export const ClusterSetupGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
 
   const canUpgrade = useCanClusterUpgrade();
 
+  const { tourDispatch, tour } = React.useContext(TourContext);
+
   const identityProviderLink = useIdentityProviderLink();
   const alertReceiverLink = useAlertReceiverLink();
+  const takeConsoleTourAction: GettingStartedLink = {
+    id: 'console-tour',
+    title: t('public~Take console tour'),
+    onClick: () => tourDispatch({ type: TourActions.start }),
+  };
 
-  const links = [canUpgrade && identityProviderLink, alertReceiverLink].filter(Boolean);
+  const links = [
+    tour && takeConsoleTourAction,
+    canUpgrade && identityProviderLink,
+    alertReceiverLink,
+  ].filter(Boolean);
 
   if (links.length === 0) {
     return null;
