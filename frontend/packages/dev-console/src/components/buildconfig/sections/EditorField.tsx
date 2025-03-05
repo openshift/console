@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
-import MonacoEditor, { ChangeHandler, MonacoEditorProps } from 'react-monaco-editor';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
-import '@console/shared/src/components/editor/theme';
+import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 
-type EditorFieldProps = {
+type EditorFieldProps = Partial<BasicCodeEditorProps> & {
   name: string;
   label?: React.ReactNode;
   helpText?: React.ReactNode;
   required?: boolean;
   isDisabled?: boolean;
-} & MonacoEditorProps;
+};
 
 const EditorField: React.FC<EditorFieldProps> = ({
   name,
@@ -23,11 +22,10 @@ const EditorField: React.FC<EditorFieldProps> = ({
   onChange,
   ...otherProps
 }) => {
-  const theme = React.useContext(ThemeContext);
   const { getFieldMeta, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { error, value } = getFieldMeta<string>(name);
 
-  const debouncedOnChange = useDebounceCallback<ChangeHandler>((newValue, event) => {
+  const debouncedOnChange = useDebounceCallback((newValue, event) => {
     if (onChange) {
       onChange(newValue, event);
     }
@@ -37,11 +35,13 @@ const EditorField: React.FC<EditorFieldProps> = ({
 
   return (
     <FormGroup fieldId="" label={label} isRequired={required}>
-      <MonacoEditor
+      <BasicCodeEditor
+        isMinimapVisible={false}
+        height="sizeToFit"
+        isFullHeight={false}
         {...otherProps}
-        value={value}
+        code={value}
         onChange={debouncedOnChange}
-        theme={theme === 'light' ? 'console-light' : 'console-dark'}
       />
 
       <FormHelperText>

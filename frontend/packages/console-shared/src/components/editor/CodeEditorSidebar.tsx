@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import { Range, Selection } from 'monaco-editor';
-import MonacoEditor from 'react-monaco-editor';
+import { CodeEditorRef } from '@console/dynamic-plugin-sdk';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
 import { K8sKind } from '@console/internal/module/k8s';
 import { Sample } from '../../utils';
 import { downloadYaml } from './yaml-download-utils';
 
 type CodeEditorSidebarProps = {
-  editorRef: React.MutableRefObject<MonacoEditor>;
+  editorRef: React.MutableRefObject<CodeEditorRef>;
   model?: K8sKind;
   samples?: Sample[];
   schema?: JSONSchema7;
@@ -34,7 +34,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
     (id: string = 'default', yamlContent: string = '', kind) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
 
-      const selection = editor.getSelection();
+      const selection = editor?.getSelection();
       const range = new Range(
         selection.startLineNumber,
         selection.startColumn,
@@ -64,8 +64,8 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
       );
 
       const op = { range, text: indentedText, forceMoveMarkers: true };
-      editor.executeEdits(id, [op], [newContentSelection]);
-      editor.focus();
+      editor?.executeEdits(id, [op], [newContentSelection]);
+      editor?.focus();
     },
     [editor, sanitizeYamlContent],
   );
@@ -73,7 +73,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   const replaceYamlContent = React.useCallback(
     (id: string = 'default', yamlContent: string = '', kind: string) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
-      editor.setValue(yaml);
+      editor?.setValue(yaml);
     },
     [editor, sanitizeYamlContent],
   );

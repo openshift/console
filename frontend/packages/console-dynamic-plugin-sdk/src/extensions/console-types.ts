@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { QuickStartContextValues } from '@patternfly/quickstarts';
+import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
-import MonacoEditor from 'react-monaco-editor/lib/editor';
+import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -635,20 +636,29 @@ export type UserInfo = {
   extra?: object;
 };
 
-export type CodeEditorProps = {
-  value?: string;
-  language?: string;
-  options?: object;
-  minHeight?: string | number;
+export type CodeEditorToolbarProps = {
+  /** Whether to show a toolbar with shortcuts on top of the editor. */
   showShortcuts?: boolean;
-  showMiniMap?: boolean;
+  /** Toolbar links section on the left side of the editor */
   toolbarLinks?: React.ReactNodeArray;
-  onChange?: (newValue, event) => void;
-  onSave?: () => void;
 };
 
+// Omit the ref as we have our own ref type, which is completely different
+export type BasicCodeEditorProps = Partial<Omit<PfCodeEditorProps, 'ref'>>;
+
+export type CodeEditorProps = Omit<BasicCodeEditorProps, 'code'> &
+  CodeEditorToolbarProps & {
+    /** Code displayed in code editor. */
+    value?: string;
+    /** Minimum editor height in valid CSS height values. */
+    minHeight?: CSSStyleDeclaration['minHeight'];
+    /** Callback that is run when CTRL / CMD + S is pressed */
+    onSave?: () => void;
+  };
+
 export type CodeEditorRef = {
-  editor?: MonacoEditor['editor'];
+  editor: monaco.editor.IStandaloneCodeEditor;
+  monaco: typeof monaco;
 };
 
 export type ResourceYAMLEditorProps = {

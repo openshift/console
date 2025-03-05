@@ -394,6 +394,7 @@ export const yamlEditor = {
   isLoaded: () => {
     app.waitForLoad();
     cy.get(yamlPO.yamlEditor).should('be.visible');
+    cy.window().its('monaco.editor.getModels').should('exist');
   },
 
   clearYAMLEditor: () => {
