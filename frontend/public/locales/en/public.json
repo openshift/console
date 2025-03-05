@@ -398,6 +398,7 @@
   "Control plane high availability": "Control plane high availability",
   "No (single control plane node)": "No (single control plane node)",
   "Configure alert receivers": "Configure alert receivers",
+  "Take console tour": "Take console tour",
   "View all steps in documentation": "View all steps in documentation",
   "Set up your cluster": "Set up your cluster",
   "Finish setting up your cluster with recommended configurations.": "Finish setting up your cluster with recommended configurations.",
