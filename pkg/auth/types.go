@@ -8,6 +8,7 @@ import (
 
 type Authenticator interface {
 	Authenticate(w http.ResponseWriter, req *http.Request) (*User, error)
+	ReviewToken(r *http.Request) error
 
 	LoginFunc(w http.ResponseWriter, req *http.Request)
 	LogoutFunc(w http.ResponseWriter, req *http.Request)
