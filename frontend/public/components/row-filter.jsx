@@ -1,45 +1,19 @@
 /* eslint-disable tsdoc/syntax */
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { Button, Divider, Flex, FlexItem, ToggleGroup } from '@patternfly/react-core';
+import { Button, Divider, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export const CheckBox = ({ title, active, number, toggle }) => {
-  const klass = classNames('pf-v6-c-toggle-group__button', {
-    'pf-m-selected co-row-filter__box--active': active,
-    'pf-m-disabled': !number,
-  });
-
-  return (
-    <div className="pf-v6-c-toggle-group__item">
-      <a href="#" onClick={toggle} className={klass}>
-        <span
-          className={classNames('co-row-filter__number-bubble', {
-            'co-row-filter__number-bubble--active': active,
-          })}
-        >
-          {number}
-        </span>
-        {title}
-      </a>
-    </div>
-  );
-};
-
-export const CheckBoxControls = ({
-  allSelected,
-  itemCount,
-  selectedCount,
-  onSelectAll,
-  children,
-}) => {
+export const RowFilter = ({ allSelected, itemCount, selectedCount, onSelectAll, children }) => {
   const { t } = useTranslation();
   return (
-    <Flex className="co-row-filter" direction={{ default: 'column', md: 'row' }}>
-      <ToggleGroup>{children}</ToggleGroup>
+    <Flex
+      className="co-row-filter pf-v6-u-mb-lg pf-v6-u-px-sm-on-md pf-v6-u-py-sm-on-md"
+      direction={{ default: 'column', md: 'row' }}
+    >
+      {children}
       <Divider className="pf-v6-u-hidden-on-md" />
       <Flex flex={{ default: 'flex_1' }}>
-        <FlexItem>
+        <FlexItem className="pf-v6-u-ml-md-on-md">
           <Button
             disabled={allSelected}
             type="button"
