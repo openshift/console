@@ -1848,15 +1848,15 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.4.2.tgz#4a87d6a5fb2ffd526b4b9597b651f13ecf8ddd4f"
   integrity sha512-+BaokNR8/AmTYMESxby9UtQXPGACg449BXQd0KejAvW/uGxlgO6mY1X1205DeBEHoK3e/vXkYXjvZPpv/tcxSA==
 
-"@patternfly/patternfly@^6.2.0-prerelease.3":
-  version "6.2.0-prerelease.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-6.2.0-prerelease.5.tgz#beb568a269b2f30ab591e9cee671a2409349d5f2"
-  integrity sha512-El+oVuK8IA7EtoFDoKNsMHARW2Z1P1XhbcTCuBCKODurIVuBXv1+UkEbA0GN4768qg18Hl6FwCLLiReYGsCwfw==
+"@patternfly/patternfly@^6.2.0-prerelease.14":
+  version "6.2.0-prerelease.14"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-6.2.0-prerelease.14.tgz#98d435ef612fdcedc5857200a07a1c065619b42d"
+  integrity sha512-reewxDkbw081ukdaZYs6Yw6s3rv5rUQUEuGx9Ooouq83+0ZgNiquzUkkzrQvzvci72o0/ggcH2CbkUoGjKU+mw==
 
-"@patternfly/quickstarts@^6.2.0-prerelease.4":
-  version "6.2.0-prerelease.4"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-6.2.0-prerelease.4.tgz#61fa953e7f97c94c8686c94f4c3cc468710b9062"
-  integrity sha512-FSLPkhn5R6iViRowj45oXv10tONMCYO7FF2kuYRDAl+owuN6pO/HEcR1Hx/4xCZXt3KmE2pcrfAfOTpuqdxHHw==
+"@patternfly/quickstarts@^6.2.0-prerelease.6":
+  version "6.2.0-prerelease.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-6.2.0-prerelease.6.tgz#c1d904a07be3fc4ebade049e75f29eff598b2170"
+  integrity sha512-YTFW3MLt5la0erulTvpeQro5k7GeNxLEO+NsEWCba5Ixb3Po2dKzwsbz8dfBW8y6+GQoNNbq0Tl8rSAKqgMaaA==
   dependencies:
     dompurify "^3.1.3"
     history "^5.0.0"
@@ -1869,33 +1869,33 @@
     "@patternfly/react-core" "^6.0.0"
     "@patternfly/react-styles" "^6.0.0"
 
-"@patternfly/react-charts@^8.2.0-prerelease.13":
-  version "8.2.0-prerelease.13"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-8.2.0-prerelease.13.tgz#5f5c205f3a4ab87cf37747121294aede42d39098"
-  integrity sha512-ooSi7ywssVmg219/F+Ra5nunIbQPD/O3Pt90HhRtt9DU3OmDFpURLU3Ey+7c5svleLgQsschP82+j75EcfKUAw==
+"@patternfly/react-charts@^8.2.0-prerelease.20":
+  version "8.2.0-prerelease.20"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-8.2.0-prerelease.20.tgz#737ce989ac5ab6a04c3d8c4317475edfa3455228"
+  integrity sha512-3TFWV07Pk/DnTPNS6b/1YobVZgnpwBbGcBCdLfF25Ov+BLcZUxJlYUCCo4Qns6HuAO59D+vbtu6TNmOEM2MB+A==
   dependencies:
-    "@patternfly/react-styles" "^6.2.0-prerelease.2"
-    "@patternfly/react-tokens" "^6.2.0-prerelease.2"
+    "@patternfly/react-styles" "^6.2.0-prerelease.6"
+    "@patternfly/react-tokens" "^6.2.0-prerelease.6"
     hoist-non-react-statics "^3.3.2"
     lodash "^4.17.21"
     tslib "^2.8.1"
 
-"@patternfly/react-code-editor@^6.2.0-prerelease.21":
-  version "6.2.0-prerelease.21"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-code-editor/-/react-code-editor-6.2.0-prerelease.21.tgz#384905b036309480e216608f4ebdf4bbcb40652b"
-  integrity sha512-fWY7i7AMD8UnzOrOToUDR6cpxKmPR26LLhNFoHmOraSw/KvsF5f3NxAeta4ymJADEppPQwyBK126IR07OXk1+w==
+"@patternfly/react-code-editor@^6.2.0-prerelease.28":
+  version "6.2.0-prerelease.28"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-code-editor/-/react-code-editor-6.2.0-prerelease.28.tgz#96f3d31738ed9b562514e695b7f9cc7ddc3cfd22"
+  integrity sha512-LpNTP1WZczkMKTqLtgiSmfcHzj3HkbWe8yEL/9h5dB81Ig3dvp1utgQrwkX92TxagIe4Kqg35/GyC5VrdgF+ew==
   dependencies:
     "@monaco-editor/react" "^4.6.0"
-    "@patternfly/react-core" "^6.2.0-prerelease.19"
-    "@patternfly/react-icons" "^6.2.0-prerelease.3"
-    "@patternfly/react-styles" "^6.2.0-prerelease.3"
+    "@patternfly/react-core" "^6.2.0-prerelease.26"
+    "@patternfly/react-icons" "^6.2.0-prerelease.7"
+    "@patternfly/react-styles" "^6.2.0-prerelease.6"
     react-dropzone "14.3.5"
     tslib "^2.8.1"
 
-"@patternfly/react-component-groups@^6.2.0-prerelease.4":
-  version "6.2.0-prerelease.4"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-component-groups/-/react-component-groups-6.2.0-prerelease.4.tgz#235fc34a40a05aba9b13007e18e523de5f0847ca"
-  integrity sha512-km+1axsmMS6UNYlMjvKmTQoRZhs9SYETebASUzrUEK3YXeM6IMJD6sLfrAC32PMQizOKZZgjNKr52D4QRtDM8A==
+"@patternfly/react-component-groups@^6.2.0-prerelease.6":
+  version "6.2.0-prerelease.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-component-groups/-/react-component-groups-6.2.0-prerelease.6.tgz#d09cf86854ce2c5b6294c8ffdebb6e1f3b71692f"
+  integrity sha512-JFnJsPHB3TciQ3YjXrVt7C+qVcl0SAgtr5Z35ozFKj4cbRkQKYPuCaR4kUosu4pTqOZjC1cihOG2KV6hrmgS6Q==
   dependencies:
     "@patternfly/react-core" "^6.0.0"
     "@patternfly/react-icons" "^6.0.0"
@@ -1917,22 +1917,22 @@
     xterm "^5.1.0"
     xterm-addon-fit "^0.8.0"
 
-"@patternfly/react-core@^6.0.0", "@patternfly/react-core@^6.0.0-prerelease.21", "@patternfly/react-core@^6.2.0-prerelease.15", "@patternfly/react-core@^6.2.0-prerelease.19":
-  version "6.2.0-prerelease.15"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-6.2.0-prerelease.15.tgz#8f576605763e3410a411ca2681ddb7d66c47970d"
-  integrity sha512-h8TdGxcX5Bkxb6c5cdP8Z0FEAeVcu4PO+dPncq2SXdMmFPvwUJfeklVGC8v81fclPPVtlijStFSM5aC5n1XjHQ==
+"@patternfly/react-core@^6.0.0", "@patternfly/react-core@^6.0.0-prerelease.21", "@patternfly/react-core@^6.2.0-prerelease.26":
+  version "6.2.0-prerelease.26"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-6.2.0-prerelease.26.tgz#63f78412d29730367cfb2b82ed27568481c67bd4"
+  integrity sha512-y9koPsRyZTvGIBmGBFWeGCivLE9rjyLwZMK00PigAytZBQ+QuftIYs2hf78EHz0mJix+PNBtC7IOOz47i0VehA==
   dependencies:
-    "@patternfly/react-icons" "^6.2.0-prerelease.2"
-    "@patternfly/react-styles" "^6.2.0-prerelease.2"
-    "@patternfly/react-tokens" "^6.2.0-prerelease.2"
+    "@patternfly/react-icons" "^6.2.0-prerelease.7"
+    "@patternfly/react-styles" "^6.2.0-prerelease.6"
+    "@patternfly/react-tokens" "^6.2.0-prerelease.6"
     focus-trap "7.6.4"
     react-dropzone "^14.3.5"
     tslib "^2.8.1"
 
-"@patternfly/react-icons@^6.0.0", "@patternfly/react-icons@^6.0.0-prerelease.7", "@patternfly/react-icons@^6.2.0-prerelease.2", "@patternfly/react-icons@^6.2.0-prerelease.3":
-  version "6.2.0-prerelease.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-6.2.0-prerelease.2.tgz#b695a12733d90004d243b37458bfe52947317d8e"
-  integrity sha512-3ymG24ICMAvMqrDPzU8ycPcsHht4RfHjQil3ox43wwHI+nLrpywAgE9z6GtAzwtdm+DVZHBT1CWLWuAgdofX8w==
+"@patternfly/react-icons@^6.0.0", "@patternfly/react-icons@^6.0.0-prerelease.7", "@patternfly/react-icons@^6.2.0-prerelease.7":
+  version "6.2.0-prerelease.7"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-6.2.0-prerelease.7.tgz#909b97f812ad2a83fdd5f1008d4e940f25793368"
+  integrity sha512-Kg9bhS+C9d4b1YkX6y9LhkQIK8zthC8bc6wNyCvJMkvlhssHEowvN1xA6I0yF7zvvf8ZZXOOEHXWGxzCxOHSrw==
 
 "@patternfly/react-log-viewer@^6.1.0":
   version "6.1.0"
@@ -1944,43 +1944,43 @@
     "@patternfly/react-styles" "^6.0.0"
     memoize-one "^5.1.0"
 
-"@patternfly/react-styles@^6.0.0", "@patternfly/react-styles@^6.0.0-prerelease.6", "@patternfly/react-styles@^6.2.0-prerelease.2", "@patternfly/react-styles@^6.2.0-prerelease.3":
-  version "6.2.0-prerelease.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-6.2.0-prerelease.2.tgz#32935b2e8d3bfb8aa4287e06a9aa3d4fbd550eea"
-  integrity sha512-1YJH8Ozu05AHCBNGRZyNA5X1HxNGXuYTQvcR8FbVaNGuuWtvZxzb2EovN9xYVBu2joh+/LCLhiTAXI4eNKw3Ag==
+"@patternfly/react-styles@^6.0.0", "@patternfly/react-styles@^6.0.0-prerelease.6", "@patternfly/react-styles@^6.2.0-prerelease.6":
+  version "6.2.0-prerelease.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-6.2.0-prerelease.6.tgz#0750eff2eb5c60eefb0d317f0d8d6b56543afb4c"
+  integrity sha512-+FSjMO4mff5FsvoZz+lNFLjiglAV5fER8tBUfR19sYyXJxCABNuNJ4+4P5TchuWXFOukq2rHcCHca4dyn5HLGg==
 
-"@patternfly/react-table@^6.0.0", "@patternfly/react-table@^6.2.0-prerelease.16":
-  version "6.2.0-prerelease.16"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-6.2.0-prerelease.16.tgz#421a97b4700d7055e4c098b604bd8b2f7571d37d"
-  integrity sha512-IQyYhb+YYGkcjLl8/R72qw8yyhKIiG83YhjxfNBbaQvzxaQBqp6JZgw4SJcSvsyXzIi0y5SZG0op1vGAilZvzQ==
+"@patternfly/react-table@^6.0.0", "@patternfly/react-table@^6.2.0-prerelease.27":
+  version "6.2.0-prerelease.27"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-6.2.0-prerelease.27.tgz#4c9d6412458fb56ba1fd2d5afda1c2411cbd4b8a"
+  integrity sha512-gkUAIYBwLIPBj/A0FecP6gwRHCl6gTnAEYkx2s2iYZ1wAEx5ZpdZNx++ww1WBYb2ywlJ/01ZAtwZEMzM4A/NYQ==
   dependencies:
-    "@patternfly/react-core" "^6.2.0-prerelease.15"
-    "@patternfly/react-icons" "^6.2.0-prerelease.2"
-    "@patternfly/react-styles" "^6.2.0-prerelease.2"
-    "@patternfly/react-tokens" "^6.2.0-prerelease.2"
+    "@patternfly/react-core" "^6.2.0-prerelease.26"
+    "@patternfly/react-icons" "^6.2.0-prerelease.7"
+    "@patternfly/react-styles" "^6.2.0-prerelease.6"
+    "@patternfly/react-tokens" "^6.2.0-prerelease.6"
     lodash "^4.17.21"
     tslib "^2.8.1"
 
-"@patternfly/react-templates@^6.2.0-prerelease.16":
-  version "6.2.0-prerelease.16"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-templates/-/react-templates-6.2.0-prerelease.16.tgz#c14599a500d773ca9c818a6b10a2fe3d7584add0"
-  integrity sha512-URTjKt/EmYwPgCYN8Zn1WkFShOF/7LP0EEcwQLKjpOLdJJH9FGM3ZphwiMBdd5NhiOrmR8JAUZjkubkrM8zT4Q==
+"@patternfly/react-templates@^6.2.0-prerelease.27":
+  version "6.2.0-prerelease.27"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-templates/-/react-templates-6.2.0-prerelease.27.tgz#bac5d5143e16c80c5f9e8c26a534461536831243"
+  integrity sha512-NsD/Dp4eKOJkMplMu1929AxWXNwsgAn23azxOtYEl3x2GkSxHJF2UqNtX86MNJpZvZunjFMzPR9eByUyUa0/uw==
   dependencies:
-    "@patternfly/react-core" "^6.2.0-prerelease.15"
-    "@patternfly/react-icons" "^6.2.0-prerelease.2"
-    "@patternfly/react-styles" "^6.2.0-prerelease.2"
-    "@patternfly/react-tokens" "^6.2.0-prerelease.2"
+    "@patternfly/react-core" "^6.2.0-prerelease.26"
+    "@patternfly/react-icons" "^6.2.0-prerelease.7"
+    "@patternfly/react-styles" "^6.2.0-prerelease.6"
+    "@patternfly/react-tokens" "^6.2.0-prerelease.6"
     tslib "^2.8.1"
 
-"@patternfly/react-tokens@^6.2.0-prerelease.2":
-  version "6.2.0-prerelease.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-6.2.0-prerelease.2.tgz#d1db6f455f581daa84d728c0a248802096cd797a"
-  integrity sha512-3snWPqFBOcv0P0UZk5SfG3ZrhBaMb5P1griaMydA/cXdWe9XRX5oP4QuE3uGtQfBVuAaEqRDokQfo2xhWP2Gyw==
+"@patternfly/react-tokens@^6.2.0-prerelease.6":
+  version "6.2.0-prerelease.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-6.2.0-prerelease.6.tgz#6852bc7a1f5e005c43e5fbe8cbf83d09dc096559"
+  integrity sha512-Aq+PA1+obYBgQzdMzp4vGD+nDje07LOKZzUP3XvthwEenlj+gWUYyuXQU+57EJrRVXoHBGHBxylqTK/Fy/bmzw==
 
-"@patternfly/react-topology@^6.2.0-prerelease.3":
-  version "6.2.0-prerelease.3"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-6.2.0-prerelease.3.tgz#d835a50f473b26f295c76e4bf9a0e7693159a2fd"
-  integrity sha512-zddau9cA/upkVyOMp5lliKGL6rCyyqZWCY1EuI6rpO6Ss/D1FkLstMXn1oesnFR/J9YGqcrIv53/XfEwKDwyFA==
+"@patternfly/react-topology@^6.2.0-prerelease.4":
+  version "6.2.0-prerelease.4"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-6.2.0-prerelease.4.tgz#df42861cf3431a0a13565f6a2a268ab2f5d29ec0"
+  integrity sha512-om2hUD9fR+2hfJtbIXD6mcxLDUVzl/VNwCbffA6hODZqJpE9EbShTxEnmM6mLOpP6kUINTs3hLUb9Rn5Nr4qnA==
   dependencies:
     "@dagrejs/dagre" "1.1.2"
     "@patternfly/react-core" "^6.0.0"
@@ -12012,6 +12012,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+marked@^15.0.6:
+  version "15.0.7"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-15.0.7.tgz#f67d7e34d202ce087e6b879107b5efb04e743314"
+  integrity sha512-dgLIeKGLx5FwziAnsk4ONoGwHwGPJzselimvlVskE9XLN4Orv9u2VA3GWw/lYUqjfA0rUT/6fqKwfZJapP9BEg==
 
 matcher-collection@^2.0.0:
   version "2.0.1"
