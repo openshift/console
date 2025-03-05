@@ -8,7 +8,6 @@ import {
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { DevConsoleEndpointRequest } from '@console/shared/src/types/backend-api';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
@@ -47,11 +46,11 @@ export type Log = {
 type TRRequest = {
   searchNamespace: string;
   searchParams: string;
-} & DevConsoleEndpointRequest;
+};
 
 type TaskRunLogRequest = {
   taskRunPath: string;
-} & DevConsoleEndpointRequest;
+};
 
 export type RecordsList = {
   nextPageToken?: string;
@@ -296,7 +295,6 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
       );
 
       let list: RecordsList = await fetchTektonResults({
-        allowAuthHeader: true,
         searchNamespace,
         searchParams,
       });
@@ -439,7 +437,6 @@ export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
     throw404();
   }
   return fetchTaskRunLogs({
-    allowAuthHeader: true,
     taskRunPath: taskRunPath.replace('/records/', '/logs/'),
   });
 };

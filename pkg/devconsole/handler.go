@@ -12,10 +12,10 @@ import (
 	"k8s.io/client-go/dynamic"
 )
 
-type handlerFunc func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (interface{}, error)
+type handlerFunc func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, disallowedHeaderNames []string) (interface{}, error)
 
-func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, handler handlerFunc) {
-	response, err := handler(r, user, dynamicClient, k8sMode)
+func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, disallowedHeaderNames []string, handler handlerFunc) {
+	response, err := handler(r, user, dynamicClient, k8sMode, disallowedHeaderNames)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 		return
@@ -23,7 +23,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dyna
 	serverutils.SendResponse(w, http.StatusOK, response)
 }
 
-func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicClient *dynamic.DynamicClient, k8sMode string) {
+func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicClient *dynamic.DynamicClient, k8sMode string, disallowedHeaderNames []string) {
 	path := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	if len(path) != 2 {
 		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "Invalid URL"})
@@ -34,44 +34,46 @@ func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicCli
 	routes := map[string]map[string]handlerFunc{
 		"artifacthub": {
 			// POST /api/dev-console/artifacthub/search
-			"search": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string) (interface{}, error) {
+			"search": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, _ []string) (interface{}, error) {
 				return artifacthub.SearchTasks(r, user)
 			},
 			// POST /api/dev-console/artifacthub/get
-			"get": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string) (interface{}, error) {
+			"get": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, _ []string) (interface{}, error) {
 				return artifacthub.GetTaskDetails(r, user)
 			},
 			// POST /api/dev-console/artifacthub/yaml
-			"yaml": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string) (interface{}, error) {
+			"yaml": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, _ []string) (interface{}, error) {
 				return artifacthub.GetTaskYAMLFromGithub(r, user)
 			},
 		},
 		"tekton-results": {
 			// POST /api/dev-console/tekton-results/get
-			"get": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (interface{}, error) {
+			"get": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, _ []string) (interface{}, error) {
 				return tektonresults.GetTektonResults(r, user, dynamicClient, k8sMode)
 			},
 			// POST /api/dev-console/tekton-results/logs
-			"logs": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (interface{}, error) {
+			"logs": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, _ []string) (interface{}, error) {
 				return tektonresults.GetTaskRunLog(r, user, dynamicClient, k8sMode)
 			},
 			// POST /api/dev-console/tekton-results/summary
-			"summary": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (interface{}, error) {
+			"summary": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, _ []string) (interface{}, error) {
 				return tektonresults.GetResultsSummary(r, user, dynamicClient, k8sMode)
 			},
 		},
 		"webhooks": {
 			// POST /api/dev-console/webhooks/github
-			"github": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string) (interface{}, error) {
-				return webhooks.CreateGithubWebhook(r, user)
+			"github": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string,
+				disallowedHeaderNames []string) (interface{}, error) {
+
+				return webhooks.CreateGithubWebhook(r, user, disallowedHeaderNames)
 			},
 			// POST /api/dev-console/webhooks/gitlab
-			"gitlab": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string) (interface{}, error) {
-				return webhooks.CreateGitlabWebhook(r, user)
+			"gitlab": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, disallowedHeaderNames []string) (interface{}, error) {
+				return webhooks.CreateGitlabWebhook(r, user, disallowedHeaderNames)
 			},
 			// POST /api/dev-console/webhooks/bitbucket
-			"bitbucket": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string) (interface{}, error) {
-				return webhooks.CreateBitbucketWebhook(r, user)
+			"bitbucket": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, disallowedHeaderNames []string) (interface{}, error) {
+				return webhooks.CreateBitbucketWebhook(r, user, disallowedHeaderNames)
 			},
 		},
 	}
@@ -83,7 +85,7 @@ func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicCli
 				serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only POST is allowed"})
 				return
 			}
-			handleRequest(w, r, user, dynamicClient, k8sMode, handler)
+			handleRequest(w, r, user, dynamicClient, k8sMode, disallowedHeaderNames, handler)
 			return
 		}
 	}

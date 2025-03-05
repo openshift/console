@@ -82,16 +82,15 @@ func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, er
 	return cachedTektonResultsHost, nil
 }
 
-func makeHTTPRequest(url, userToken string, allowAuthHeader bool) (common.DevConsoleCommonResponse, error) {
+func makeHTTPRequest(url, userToken string) (common.DevConsoleCommonResponse, error) {
 	serviceRequest, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	if allowAuthHeader {
-		serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", userToken))
-	}
+	// Needed for TektonResults API
+	serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", userToken))
 
 	// Load the CA certificate
 	caCert, err := os.ReadFile(tlsCertPath)
@@ -155,7 +154,7 @@ func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.D
 		parsedParams.Encode(),
 	)
 
-	return makeHTTPRequest(TEKTON_RESULTS_URL, user.Token, request.AllowAuthHeader)
+	return makeHTTPRequest(TEKTON_RESULTS_URL, user.Token)
 }
 
 func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -180,7 +179,7 @@ func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.
 		parsedParams.Encode(),
 	)
 
-	return makeHTTPRequest(SUMMARY_URL, user.Token, request.AllowAuthHeader)
+	return makeHTTPRequest(SUMMARY_URL, user.Token)
 }
 
 func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -199,5 +198,5 @@ func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.Dyna
 		request.TaskRunPath,
 	)
 
-	return makeHTTPRequest(TASKRUN_LOG_URL, user.Token, request.AllowAuthHeader)
+	return makeHTTPRequest(TASKRUN_LOG_URL, user.Token)
 }
