@@ -14,6 +14,7 @@ module.exports = defineConfig({
   requestTimeout: 15000,
   responseTimeout: 15000,
   fixturesFolder: 'testData',
+  video: true,
   reporter: '../../../node_modules/cypress-multi-reporters',
   reporterOptions: {
     configFile: 'reporter-config.json',
