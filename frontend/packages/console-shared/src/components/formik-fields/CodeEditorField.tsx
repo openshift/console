@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
+import { Switch } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
@@ -98,20 +97,18 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
             showShortcuts={showShortcuts}
             isMinimapVisible={isMinimapVisible}
             language={language}
-            toolbarLinks={
-              !sidebarOpen &&
-              hasSidebarContent && [
-                <Button
-                  icon={
-                    <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                  }
-                  variant="link"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  {t('console-shared~View sidebar')}
-                </Button>,
-              ]
-            }
+            toolbarLinks={[
+              hasSidebarContent && (
+                <Switch
+                  label={t('public~Sidebar')}
+                  id="showSidebar"
+                  isChecked={sidebarOpen}
+                  data-checked-state={sidebarOpen}
+                  onChange={() => setSidebarOpen(!sidebarOpen)}
+                  hasCheckIcon
+                />
+              ),
+            ]}
           />
         </div>
       </div>

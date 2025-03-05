@@ -40,10 +40,14 @@
     }
   }
 
-  /* Needed to get the CodeEditorToolbar to place buttons on the right side */
-  .pf-v6-c-code-editor__controls, .ocs-yaml-editor-toolbar {
+  .pf-v6-c-code-editor__controls {
     width: 100%;
-    height: 100% !important;
     align-items: center;
+    // the height+padding of a PatternFly standard button.
+    // makes sure all toolbars are of the same height regardless of content
+    min-height: calc(
+      1em * var(--pf-t--global--font--line-height--body) +
+      2 * var(--pf-t--global--spacer--control--vertical--default)
+    );
   }
 }
