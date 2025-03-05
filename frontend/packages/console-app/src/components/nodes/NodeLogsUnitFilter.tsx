@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Label, LabelGroup, TextInput, ToolbarItem } from '@patternfly/react-core';
+import { FlexItem, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getQueryArgument } from '@console/internal/components/utils';
@@ -59,7 +59,7 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
 
   return (
     <>
-      <ToolbarItem>
+      <FlexItem>
         <TextInput
           type="text"
           id="log-unit"
@@ -68,9 +68,9 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
           ref={inputRef}
           placeholder={label}
         />
-      </ToolbarItem>
+      </FlexItem>
       {values.length > 0 && (
-        <ToolbarItem>
+        <FlexItem>
           <LabelGroup categoryName={t('public~Unit')} isClosable onClick={deleteCategory}>
             {values?.map((v) => (
               <Label variant="outline" key={v} onClose={() => deleteValue(v)}>
@@ -78,7 +78,7 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
               </Label>
             ))}
           </LabelGroup>
-        </ToolbarItem>
+        </FlexItem>
       )}
     </>
   );
