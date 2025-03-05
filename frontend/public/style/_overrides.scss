@@ -32,7 +32,8 @@ form.pf-v6-c-form {
     max-width: 100%;
     min-width: 50px; // prevent collapsed state before img loads
     width: fit-content;
-    :where(.pf-v6-theme-dark) & { // custom styling needed to provide extra padding on dark mode due to white background imgs
+    :where(.pf-v6-theme-dark) & {
+      // custom styling needed to provide extra padding on dark mode due to white background imgs
       margin-left: 0;
       margin-top: 0;
     }
@@ -77,11 +78,6 @@ form.pf-v6-c-form {
 
 .co-installed-operators .pf-v6-c-table tbody > tr > * {
   vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
-}
-
-.co-toolbar-empty-state .pf-v6-c-toolbar__content {
-  --pf-v6-c-toolbar__content--PaddingLeft: 0;
-  --pf-v6-c-toolbar__content--PaddingRight: 0;
 }
 
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be

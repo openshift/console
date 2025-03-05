@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   Alert,
-  Checkbox,
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
@@ -15,6 +14,7 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
+  Switch,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import classnames from 'classnames';
@@ -94,7 +94,7 @@ const LogControls: React.FC<LogControlsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Toolbar className="co-toolbar-empty-state">
+    <Toolbar>
       <ToolbarContent>
         <ToolbarGroup>
           <ToolbarItem>
@@ -151,7 +151,7 @@ const LogControls: React.FC<LogControlsProps> = ({
           )}
         </ToolbarGroup>
         <ToolbarItem className="pf-v6-u-flex-fill pf-v6-u-align-self-center pf-v6-u-justify-content-flex-end">
-          <Checkbox
+          <Switch
             label={t('public~Wrap lines')}
             id="wrapLogLines"
             isChecked={isWrapLines}
