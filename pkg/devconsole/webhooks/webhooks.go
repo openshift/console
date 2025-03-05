@@ -13,19 +13,14 @@ import (
 	"github.com/openshift/console/pkg/devconsole/common"
 )
 
-var headerDenyList = []string{
-	"Cookie",
-	"X-CSRF-Token",
-}
-
-func makeHTTPRequest(url string, headers http.Header, body []byte) (common.DevConsoleCommonResponse, error) {
+func makeHTTPRequest(url string, headers http.Header, body []byte, disallowedHeaderNames []string) (common.DevConsoleCommonResponse, error) {
 	serviceRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
 	for key, values := range headers {
-		if slices.Contains(headerDenyList, key) {
+		if slices.Contains(disallowedHeaderNames, key) {
 			continue
 		}
 		for _, value := range values {
@@ -58,7 +53,7 @@ func makeHTTPRequest(url string, headers http.Header, body []byte) (common.DevCo
 	}, nil
 }
 
-func CreateGithubWebhook(r *http.Request, user *auth.User) (common.DevConsoleCommonResponse, error) {
+func CreateGithubWebhook(r *http.Request, user *auth.User, disallowedHeaderNames []string) (common.DevConsoleCommonResponse, error) {
 	// POST /api/dev-console/webhooks/github
 	var request GithubWebhookRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -77,11 +72,11 @@ func CreateGithubWebhook(r *http.Request, user *auth.User) (common.DevConsoleCom
 		url.PathEscape(request.RepoName),
 	)
 
-	return makeHTTPRequest(GH_WEBHOOK_URL, request.Headers, bodyBytes)
+	return makeHTTPRequest(GH_WEBHOOK_URL, request.Headers, bodyBytes, disallowedHeaderNames)
 
 }
 
-func CreateGitlabWebhook(r *http.Request, user *auth.User) (common.DevConsoleCommonResponse, error) {
+func CreateGitlabWebhook(r *http.Request, user *auth.User, disallowedHeaderNames []string) (common.DevConsoleCommonResponse, error) {
 	// POST /api/dev-console/webhooks/gitlab
 
 	var request GitlabWebhookRequest
@@ -100,10 +95,10 @@ func CreateGitlabWebhook(r *http.Request, user *auth.User) (common.DevConsoleCom
 		url.PathEscape(request.ProjectID),
 	)
 
-	return makeHTTPRequest(GL_WEBHOOK_URL, request.Headers, bodyBytes)
+	return makeHTTPRequest(GL_WEBHOOK_URL, request.Headers, bodyBytes, disallowedHeaderNames)
 }
 
-func CreateBitbucketWebhook(r *http.Request, user *auth.User) (common.DevConsoleCommonResponse, error) {
+func CreateBitbucketWebhook(r *http.Request, user *auth.User, disallowedHeaderNames []string) (common.DevConsoleCommonResponse, error) {
 	// POST /api/dev-console/webhooks/bitbucket
 
 	var request BitbucketWebhookRequest
@@ -132,5 +127,5 @@ func CreateBitbucketWebhook(r *http.Request, user *auth.User) (common.DevConsole
 		)
 	}
 
-	return makeHTTPRequest(BB_WEBHOOK_URL, request.Headers, bodyBytes)
+	return makeHTTPRequest(BB_WEBHOOK_URL, request.Headers, bodyBytes, disallowedHeaderNames)
 }

@@ -172,6 +172,7 @@ type Server struct {
 	AnonymousInternalProxiedK8SRT       http.RoundTripper
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
+	DisallowedHeaderNames               []string
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
@@ -480,7 +481,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle(devConsoleEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsole.Handler(user, w, r, internalProxiedDynamic, s.K8sMode)
+			devconsole.Handler(user, w, r, internalProxiedDynamic, s.K8sMode, s.DisallowedHeaderNames)
 		})),
 	)
 
