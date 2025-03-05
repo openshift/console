@@ -12,8 +12,8 @@ import {
   k8sPatch,
   K8sResourceCondition,
   K8sResourceConditionStatus,
-  Release,
   UpdateHistory,
+  VersionUpdate,
 } from '.';
 import { MachineConfigPoolKind } from './types';
 
@@ -30,11 +30,10 @@ export enum ClusterUpdateStatus {
 
 export const clusterVersionReference = referenceForModel(ClusterVersionModel);
 
-const getAvailableClusterUpdates = (cv: ClusterVersionKind): Release[] => {
-  return cv?.status?.availableUpdates || [];
-};
+const getAvailableClusterUpdates = (cv: ClusterVersionKind): VersionUpdate[] =>
+  cv?.status?.availableUpdates?.map((update) => _.pick(update, ['version', 'image'])) || [];
 
-export const getSortedAvailableUpdates = (cv: ClusterVersionKind): Release[] => {
+export const getSortedAvailableUpdates = (cv: ClusterVersionKind): VersionUpdate[] => {
   const available = getAvailableClusterUpdates(cv);
   try {
     return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));
