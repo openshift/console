@@ -3,12 +3,8 @@ $global-notification-text: var(--pf-t--color--white);
 .co-global-notification {
   background-color: var(--pf-t--color--blue--50);
   color: $global-notification-text;
-  padding: 4px $pf-v6-global-gutter;
+  padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--md);
   text-align: center;
-
-  @media (min-width: $pf-v6-global--breakpoint--md) {
-    padding: 6px $pf-v6-global-gutter--md;
-  }
 
   + .co-global-notification {
     margin-top: 1px;
@@ -16,8 +12,6 @@ $global-notification-text: var(--pf-t--color--white);
 
   a {
     color: $global-notification-text;
-    cursor: pointer;
-    text-decoration: underline;
   }
 
   button {

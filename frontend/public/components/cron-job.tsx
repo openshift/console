@@ -11,6 +11,7 @@ import {
   ActionMenuVariant,
   LazyActionMenu,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   DetailsPage,
   ListPage,
@@ -99,7 +100,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <div className="row">
           <div className="col-md-6">
             <SectionHeading text={t('public~CronJob details')} />
@@ -157,11 +158,11 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -197,7 +198,7 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
   const { t } = useTranslation();
   const podFilters = React.useMemo(() => getPodFilters(t), [t]);
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
         <ListPageWrapper
           flatten={(
@@ -225,7 +226,7 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
           rowFilters={podFilters}
         />
       </Firehose>
-    </div>
+    </PaneBody>
   );
 };
 
@@ -234,7 +235,7 @@ export type CronJobJobsComponentProps = {
 };
 
 export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj }) => (
-  <div className="co-m-pane__body">
+  <PaneBody>
     <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
       <ListPageWrapper
         flatten={(_resources: FirehoseResourcesResult<{ jobs: K8sResourceCommon[] }>) => {
@@ -249,7 +250,7 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
         ListComponent={JobsList}
       />
     </Firehose>
-  </div>
+  </PaneBody>
 );
 
 export const CronJobsList: React.FC = (props) => {

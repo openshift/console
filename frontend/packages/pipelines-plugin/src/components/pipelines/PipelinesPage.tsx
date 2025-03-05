@@ -2,6 +2,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
+import CatalogPageHelpText from '@console/dev-console/src/components/catalog/CatalogPageHelpText';
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -31,10 +32,12 @@ export const PipelinesPage: React.FC = (props) => {
       ) : (
         <CreateProjectListPage title={t('pipelines-plugin~Pipelines')} badge={badge}>
           {(openProjectModal) => (
-            <Trans t={t} ns="pipelines-plugin">
-              Select a Project to view the list of Pipelines
-              <CreateAProjectButton openProjectModal={openProjectModal} />.
-            </Trans>
+            <CatalogPageHelpText>
+              <Trans t={t} ns="pipelines-plugin">
+                Select a Project to view the list of Pipelines
+                <CreateAProjectButton openProjectModal={openProjectModal} />.
+              </Trans>
+            </CatalogPageHelpText>
           )}
         </CreateProjectListPage>
       )}

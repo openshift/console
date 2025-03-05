@@ -16,6 +16,7 @@ import {
   Content,
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
@@ -51,16 +52,16 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineConfig details')} />
         <div className="row">
           <div className="col-md-6">
             <MachineConfigSummary obj={obj} t={t} />
           </div>
         </div>
-      </div>
+      </PaneBody>
       {files && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Configuration files')} />
           {files.map((file, i) => (
             <div className="pf-v6-u-mb-xl" key={file.path}>
@@ -110,7 +111,7 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
               )}
             </div>
           ))}
-        </div>
+        </PaneBody>
       )}
     </>
   );

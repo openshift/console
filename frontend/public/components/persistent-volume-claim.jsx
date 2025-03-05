@@ -20,6 +20,7 @@ import {
   getName,
   getRequestedPVCSize,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
@@ -205,7 +206,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         {alertComponents}
         <SectionHeading text={t('public~PersistentVolumeClaim details')} />
         {totalCapacityMetric && !loading && (
@@ -292,11 +293,11 @@ const Details_ = ({ flags, obj: pvc }) => {
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

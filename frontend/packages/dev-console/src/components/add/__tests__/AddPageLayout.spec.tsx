@@ -52,7 +52,14 @@ describe('AddPageLayout', () => {
 
       expect(wrapper.find(PageLayout).dive().find(Tooltip).exists()).toBe(true);
 
-      expect(wrapper.find(PageLayout).shallow().text().includes('hintBlock')).toBe(true);
+      expect(
+        wrapper
+          .find(PageLayout)
+          .dive()
+          .find('.odc-add-page-layout__additional-hint-block')
+          .text()
+          .includes('hintBlock'),
+      ).toBe(true);
     });
   });
 
