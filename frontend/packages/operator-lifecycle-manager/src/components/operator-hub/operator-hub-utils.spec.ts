@@ -390,8 +390,14 @@ describe('getValidSubscription', () => {
     const [subscriptions, filters] = getValidSubscription({
       [OLMAnnotation.ValidSubscription]: `["${ValidSubscriptionValue.OpenShiftKubernetesEngine}"]`,
     });
-    expect(subscriptions).toEqual([ValidSubscriptionValue.OpenShiftKubernetesEngine]);
-    expect(filters).toEqual([ValidSubscriptionValue.OpenShiftKubernetesEngine]);
+    expect(subscriptions).toEqual([
+      ValidSubscriptionValue.OpenShiftKubernetesEngine,
+      ValidSubscriptionValue.OpenShiftVirtualizationEngine,
+    ]);
+    expect(filters).toEqual([
+      ValidSubscriptionValue.OpenShiftKubernetesEngine,
+      ValidSubscriptionValue.OpenShiftVirtualizationEngine,
+    ]);
   });
   it(`parses ${ValidSubscriptionValue.OpenShiftPlatformPlus}`, () => {
     const [subscriptions, filters] = getValidSubscription({
@@ -407,6 +413,7 @@ describe('getValidSubscription', () => {
     expect(subscriptions).toEqual([
       ValidSubscriptionValue.OpenShiftContainerPlatform,
       ValidSubscriptionValue.OpenShiftKubernetesEngine,
+      ValidSubscriptionValue.OpenShiftVirtualizationEngine,
       ValidSubscriptionValue.OpenShiftPlatformPlus,
       'foo',
       'bar',
@@ -414,6 +421,7 @@ describe('getValidSubscription', () => {
     expect(filters).toEqual([
       ValidSubscriptionValue.OpenShiftContainerPlatform,
       ValidSubscriptionValue.OpenShiftKubernetesEngine,
+      ValidSubscriptionValue.OpenShiftVirtualizationEngine,
       ValidSubscriptionValue.OpenShiftPlatformPlus,
       ValidSubscriptionValue.RequiresSeparateSubscription,
     ]);
