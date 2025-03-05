@@ -4,7 +4,6 @@ import {
   DropdownList,
   MenuToggle,
   MenuToggleElement,
-  Tooltip,
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
 import { PlusCircleIcon } from '@patternfly/react-icons';
@@ -98,9 +97,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
           isExpanded={isOpen}
           data-test="quick-create-dropdown"
         >
-          <Tooltip content={t('public~Quick create')}>
-            <PlusCircleIcon alt="" />
-          </Tooltip>
+          <PlusCircleIcon alt="" />
         </MenuToggle>
       )}
       popperProps={{
