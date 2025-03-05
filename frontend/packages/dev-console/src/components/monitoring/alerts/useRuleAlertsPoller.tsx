@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Dispatch } from 'redux';
-import { PrometheusRulesResponse } from '@console/dynamic-plugin-sdk';
+import { PrometheusRulesResponse, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   alertingErrored,
   alertingLoaded,
@@ -26,6 +26,8 @@ export const useRulesAlertsPoller = (
     getAlertingRules: (namespace?: string) => Promise<PrometheusRulesResponse>;
   }[],
 ) => {
+  const [perspective] = useActivePerspective();
+
   React.useEffect(() => {
     const url = getPrometheusURL({
       endpoint: PrometheusEndpoint.RULES,
@@ -36,7 +38,10 @@ export const useRulesAlertsPoller = (
     const poller = (): void => {
       fetchAlerts(url, alertsSource, namespace)
         .then(({ data }) => {
-          const { alerts: fetchedAlerts, rules: fetchedRules } = getAlertsAndRules(data);
+          const { alerts: fetchedAlerts, rules: fetchedRules } = getAlertsAndRules(
+            data,
+            perspective,
+          );
           const sortThanosRules = _.sortBy(fetchedRules, alertingRuleStateOrder);
           dispatch(alertingSetRules('devRules', sortThanosRules, 'dev'));
           dispatch(alertingLoaded('devAlerts', fetchedAlerts, 'dev'));
@@ -57,5 +62,5 @@ export const useRulesAlertsPoller = (
         clearTimeout(pollerTimeout);
       }
     };
-  }, [namespace, alertsSource, dispatch]);
+  }, [namespace, alertsSource, dispatch, perspective]);
 };
