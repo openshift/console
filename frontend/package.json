@@ -348,7 +348,8 @@
     "ua-parser-js": "^0.7.24",
     "jest": "21.x",
     "glob-parent": "^5.1.2",
-    "postcss": "^8.2.13"
+    "postcss": "^8.2.13",
+    "async": "^3.2.5"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
