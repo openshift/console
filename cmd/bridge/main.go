@@ -317,7 +317,7 @@ func main() {
 	}
 
 	// Blacklisted headers
-	srv.DisallowedHeaderNames = []string{"Cookie", "X-CSRFToken", "X-CSRF-Token"}
+	srv.ProxyHeaderDenyList = []string{"Cookie", "X-CSRFToken", "X-CSRF-Token"}
 
 	if *fLogLevel != "" {
 		klog.Warningf("DEPRECATED: --log-level is now deprecated, use verbosity flag --v=Level instead")
@@ -355,7 +355,7 @@ func main() {
 
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
-			HeaderBlacklist: srv.DisallowedHeaderNames,
+			HeaderBlacklist: srv.ProxyHeaderDenyList,
 			Endpoint:        k8sEndpoint,
 		}
 
@@ -386,33 +386,33 @@ func main() {
 
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
 			}
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
 			}
 			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
 			}
 
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
 			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerUserWorkloadHost, Path: "/api"},
 			}
 			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerTenancyHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
@@ -420,7 +420,7 @@ func main() {
 
 			srv.GitOpsProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftGitOpsHost},
 			}
 		}
@@ -446,7 +446,7 @@ func main() {
 
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig:         serviceProxyTLSConfig,
-			HeaderBlacklist:         srv.DisallowedHeaderNames,
+			HeaderBlacklist:         srv.ProxyHeaderDenyList,
 			Endpoint:                k8sEndpoint,
 			UseProxyFromEnvironment: true,
 		}
@@ -467,17 +467,17 @@ func main() {
 			offClusterThanosURL.Path += "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterThanosURL,
 			}
 			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterThanosURL,
 			}
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterThanosURL,
 			}
 		}
@@ -489,17 +489,17 @@ func main() {
 			offClusterAlertManagerURL.Path += "/api"
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterAlertManagerURL,
 			}
 			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterAlertManagerURL,
 			}
 			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterAlertManagerURL,
 			}
 		}
@@ -513,7 +513,7 @@ func main() {
 
 			srv.GitOpsProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: srv.DisallowedHeaderNames,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterGitOpsURL,
 			}
 		}
@@ -533,7 +533,7 @@ func main() {
 	}
 	srv.ClusterManagementProxyConfig = &proxy.Config{
 		TLSClientConfig: oscrypto.SecureTLSConfig(&tls.Config{}),
-		HeaderBlacklist: srv.DisallowedHeaderNames,
+		HeaderBlacklist: srv.ProxyHeaderDenyList,
 		Endpoint:        clusterManagementURL,
 	}
 

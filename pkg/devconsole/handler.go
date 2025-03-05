@@ -12,10 +12,10 @@ import (
 	"k8s.io/client-go/dynamic"
 )
 
-type handlerFunc func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, disallowedHeaderNames []string) (interface{}, error)
+type handlerFunc func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, proxyHeaderDenyList []string) (interface{}, error)
 
-func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, disallowedHeaderNames []string, handler handlerFunc) {
-	response, err := handler(r, user, dynamicClient, k8sMode, disallowedHeaderNames)
+func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, proxyHeaderDenyList []string, handler handlerFunc) {
+	response, err := handler(r, user, dynamicClient, k8sMode, proxyHeaderDenyList)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 		return
@@ -23,7 +23,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dyna
 	serverutils.SendResponse(w, http.StatusOK, response)
 }
 
-func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicClient *dynamic.DynamicClient, k8sMode string, disallowedHeaderNames []string) {
+func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicClient *dynamic.DynamicClient, k8sMode string, proxyHeaderDenyList []string) {
 	path := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	if len(path) != 2 {
 		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "Invalid URL"})
@@ -63,17 +63,17 @@ func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicCli
 		"webhooks": {
 			// POST /api/dev-console/webhooks/github
 			"github": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string,
-				disallowedHeaderNames []string) (interface{}, error) {
+				proxyHeaderDenyList []string) (interface{}, error) {
 
-				return webhooks.CreateGithubWebhook(r, user, disallowedHeaderNames)
+				return webhooks.CreateGithubWebhook(r, user, proxyHeaderDenyList)
 			},
 			// POST /api/dev-console/webhooks/gitlab
-			"gitlab": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, disallowedHeaderNames []string) (interface{}, error) {
-				return webhooks.CreateGitlabWebhook(r, user, disallowedHeaderNames)
+			"gitlab": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, proxyHeaderDenyList []string) (interface{}, error) {
+				return webhooks.CreateGitlabWebhook(r, user, proxyHeaderDenyList)
 			},
 			// POST /api/dev-console/webhooks/bitbucket
-			"bitbucket": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, disallowedHeaderNames []string) (interface{}, error) {
-				return webhooks.CreateBitbucketWebhook(r, user, disallowedHeaderNames)
+			"bitbucket": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, proxyHeaderDenyList []string) (interface{}, error) {
+				return webhooks.CreateBitbucketWebhook(r, user, proxyHeaderDenyList)
 			},
 		},
 	}
@@ -85,7 +85,7 @@ func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicCli
 				serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only POST is allowed"})
 				return
 			}
-			handleRequest(w, r, user, dynamicClient, k8sMode, disallowedHeaderNames, handler)
+			handleRequest(w, r, user, dynamicClient, k8sMode, proxyHeaderDenyList, handler)
 			return
 		}
 	}
