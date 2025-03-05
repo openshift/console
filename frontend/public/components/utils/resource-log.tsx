@@ -36,6 +36,7 @@ import {
   SHOW_FULL_LOG_USERSETTINGS_KEY,
 } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { LoadingInline, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
@@ -526,6 +527,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   resourceStatus,
 }) => {
   const { t } = useTranslation();
+  const theme = React.useContext(ThemeContext);
   const [showFullLog, setShowFullLog] = useUserSettings<boolean>(
     SHOW_FULL_LOG_USERSETTINGS_KEY,
     false,
@@ -840,7 +842,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
                 <HeaderBanner lines={lines} />
               </div>
             }
-            theme="dark"
+            theme={theme}
             data={content}
             ref={logViewerRef}
             height="100%"
