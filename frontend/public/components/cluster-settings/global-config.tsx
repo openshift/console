@@ -2,7 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
-import { AlertVariant } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  Content,
+  ContentVariants,
+  Toolbar,
+  ToolbarContent,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -183,16 +189,18 @@ export const GlobalConfigPage: React.FC = () => {
     <PaneBody>
       {!loading && (
         <>
-          <p className="co-help-text co-cluster-paragraph">
+          <Content component={ContentVariants.p} className="co-help-text">
             {t('public~Edit the following resources to manage the configuration of your cluster.')}
-          </p>
-          <div className="co-m-pane__filter-row">
-            <TextFilter
-              value={textFilter}
-              label={t('public~by name or description')}
-              onChange={(_event, val) => setTextFilter(val)}
-            />
-          </div>
+          </Content>
+          <Toolbar>
+            <ToolbarContent>
+              <TextFilter
+                value={textFilter}
+                label={t('public~by name or description')}
+                onChange={(_event, val) => setTextFilter(val)}
+              />
+            </ToolbarContent>
+          </Toolbar>
         </>
       )}
       {!_.isEmpty(errors) && (
