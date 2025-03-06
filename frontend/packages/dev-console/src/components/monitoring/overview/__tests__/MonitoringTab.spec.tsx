@@ -4,7 +4,7 @@ import MonitoringOverview from '../MonitoringOverview';
 import MonitoringTab from '../MonitoringTab';
 
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = (jest as any).requireActual('@console/shared');
   return {
     ...ActualShared,
     usePodsWatcher: () => {

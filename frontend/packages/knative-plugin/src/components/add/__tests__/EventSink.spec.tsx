@@ -12,7 +12,7 @@ import EventSink from '../EventSink';
 const useSelectorMock = useSelector as jest.Mock;
 
 jest.mock('react-redux', () => {
-  const originalModule = require.requireActual('react-redux');
+  const originalModule = (jest as any).requireActual('react-redux');
   return {
     ...originalModule,
     useSelector: jest.fn(),
