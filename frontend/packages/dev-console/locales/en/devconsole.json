@@ -650,6 +650,7 @@
   " or <1>create a Namespace</1>": " or <1>create a Namespace</1>",
   "Overview": "Overview",
   "Details": "Details",
+  "Projects": "Projects",
   "Project Details": "Project Details",
   "Select a Project to view its details<1></1>.": "Select a Project to view its details<1></1>.",
   "{{kindForRefPlural}} in {{apiVersionForRefPlural}}": "{{kindForRefPlural}} in {{apiVersionForRefPlural}}",
