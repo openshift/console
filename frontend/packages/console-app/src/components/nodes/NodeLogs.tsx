@@ -20,6 +20,7 @@ import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   ExternalLink,
   getQueryArgument,
@@ -205,6 +206,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     true,
   );
   const { t } = useTranslation();
+  const theme = React.useContext(ThemeContext);
 
   const isJournal = path === 'journal';
 
@@ -404,7 +406,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
             isTextWrapped={isWrapLines}
             data={trimmedContent || content}
             toolbar={logControls}
-            theme="dark"
+            theme={theme}
             initialIndexWidth={7}
           />
         )}
