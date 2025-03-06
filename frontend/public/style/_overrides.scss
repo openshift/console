@@ -97,6 +97,11 @@ form.pf-v6-c-form {
   font-family: var(--pf-t--global--font--family--body);
 }
 
+// Allow text wrapping in banner for mobile
+.pf-v6-c-banner {
+  text-wrap: auto !important;
+}
+
 .pf-v6-c-button--align-right {
   margin-left: auto !important;
 }
