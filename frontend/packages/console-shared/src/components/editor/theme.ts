@@ -1,4 +1,3 @@
-import { useContext, useEffect, useState } from 'react';
 import {
   t_color_green_70,
   t_color_yellow_70,
@@ -15,12 +14,11 @@ import {
   t_color_black,
 } from '@patternfly/react-tokens';
 import type { editor as monacoEditor } from 'monaco-editor/esm/vs/editor/editor.api';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
 
 /**
  * Define the themes `console-light` and `console-dark` for an instance of Monaco editor.
  */
-const defineThemes = (editor: typeof monacoEditor) => {
+export const defineThemes = (editor: typeof monacoEditor) => {
   editor.defineTheme('console-light', {
     base: 'vs',
     inherit: true,
@@ -52,46 +50,4 @@ const defineThemes = (editor: typeof monacoEditor) => {
       { token: 'keyword', foreground: t_color_purple_30.value },
     ],
   });
-};
-
-const useSystemTheme = () => {
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-color-scheme: dark)');
-    const updateTheme = () => setTheme(query.matches ? 'dark' : 'light');
-
-    query.addEventListener('change', updateTheme);
-    updateTheme();
-
-    return () => query.removeEventListener('change', updateTheme);
-  }, []);
-
-  return theme;
-};
-
-/**
- * Sets the theme of a provided Monaco editor instance based on the current theme.
- */
-export const useConsoleMonacoTheme = (editor: typeof monacoEditor | null) => {
-  const systemTheme = useSystemTheme();
-  const theme = useContext(ThemeContext);
-  const [themeLoaded, setThemeLoaded] = useState(false);
-
-  useEffect(() => {
-    if (editor) {
-      if (!themeLoaded) {
-        defineThemes(editor);
-        setThemeLoaded(true);
-      }
-
-      if (theme === 'light') {
-        editor.setTheme('console-light');
-      } else if (theme === 'dark') {
-        editor.setTheme('console-dark');
-      } else if (theme === 'systemDefault') {
-        editor.setTheme(`console-${systemTheme}`);
-      }
-    }
-  }, [theme, editor, themeLoaded, systemTheme]);
 };

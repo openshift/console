@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { loader, Monaco } from '@monaco-editor/react';
+import { loader } from '@monaco-editor/react';
 import { CodeEditor } from '@patternfly/react-code-editor';
 import classNames from 'classnames';
 import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
 import { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
-import { useConsoleMonacoTheme } from './theme';
+import { defineThemes } from './theme';
 import './BasicCodeEditor.scss';
 
 // Avoid using monaco from CDN
@@ -21,8 +22,7 @@ loader.config({ monaco });
  */
 export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
   const { t } = useTranslation('console-shared');
-  const [monacoRef, setMonacoRef] = React.useState<Monaco | null>(null);
-  useConsoleMonacoTheme(monacoRef?.editor);
+  const theme = React.useContext(ThemeContext);
 
   return (
     <ErrorBoundaryInline>
@@ -44,10 +44,14 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
         editorProps={{
           ...props?.editorProps,
           beforeMount: (monacoInstance) => {
-            setMonacoRef(monacoInstance);
+            defineThemes(monacoInstance?.editor);
             window.monaco = monacoInstance; // for e2e tests
             props?.editorProps?.beforeMount?.(monacoInstance);
           },
+        }}
+        options={{
+          ...props?.options,
+          theme: `console-${theme}`,
         }}
       />
     </ErrorBoundaryInline>
