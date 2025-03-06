@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Popover, Button, Alert } from '@patternfly/react-core';
+import { Button, Alert, ContentVariants, Content } from '@patternfly/react-core';
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
-import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -12,6 +11,7 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
 import { setFlag } from '@console/internal/actions/flags';
+import { FieldLevelHelp } from '@console/internal/components/utils';
 import {
   documentationURLs,
   getDocumentationURL,
@@ -98,21 +98,6 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
       });
   };
 
-  const popoverText = () => {
-    const nameFormat = t(
-      "console-shared~A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
-    );
-    const createNamespaceText = t(
-      "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
-    );
-    return (
-      <>
-        <p>{nameFormat}</p>
-        <p>{createNamespaceText}</p>
-      </>
-    );
-  };
-
   const projectsURL = getDocumentationURL(documentationURLs.workingWithProjects);
 
   return (
@@ -145,30 +130,34 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
       ]}
     >
       <form onSubmit={submit} name="form" className="modal-content">
-        <p>
+        <Content component={ContentVariants.p}>
           {t(
             'console-shared~An OpenShift project is an alternative representation of a Kubernetes namespace.',
           )}
-        </p>
+        </Content>
         {!isManaged() && (
-          <p>
+          <Content component={ContentVariants.p}>
             <ExternalLink href={projectsURL}>
               {t('console-shared~Learn more about working with projects')}
             </ExternalLink>
-          </p>
+          </Content>
         )}
         <div className="form-group">
           <label htmlFor="input-name" className="control-label co-required">
             {t('console-shared~Name')}
           </label>{' '}
-          <Popover aria-label={t('console-shared~Naming information')} bodyContent={popoverText}>
-            <Button
-              icon={<OutlinedQuestionCircleIcon />}
-              className="co-button-help-icon"
-              variant="plain"
-              aria-label={t('console-shared~View naming information')}
-            />
-          </Popover>
+          <FieldLevelHelp>
+            <Content component={ContentVariants.p}>
+              {t(
+                "console-shared~A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
+              )}
+            </Content>
+            <Content component={ContentVariants.p}>
+              {t(
+                "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
+              )}
+            </Content>
+          </FieldLevelHelp>
           <div className="modal-body__field">
             <span className="pf-v6-c-form-control">
               <input

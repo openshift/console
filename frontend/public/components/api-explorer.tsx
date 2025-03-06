@@ -609,24 +609,24 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
 
   return (
     <>
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <Dropdown
-            items={verbOptions}
-            onChange={(v: K8sVerb) => setVerb(v)}
-            selectedKey={verb}
-            titlePrefix={t('public~Verb')}
-          />
-        </div>
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter
-            defaultValue={filter}
-            label={t('public~by subject')}
-            onChange={(_event, val) => setFilter(val)}
-          />
-        </div>
-      </div>
       <PaneBody>
+        <Flex className="pf-v6-u-mb-lg">
+          <FlexItem>
+            <Dropdown
+              items={verbOptions}
+              onChange={(v: K8sVerb) => setVerb(v)}
+              selectedKey={verb}
+              titlePrefix={t('public~Verb')}
+            />
+          </FlexItem>
+          <FlexItem align={{ default: 'alignRight' }}>
+            <TextFilter
+              defaultValue={filter}
+              label={t('public~by subject')}
+              onChange={(_event, val) => setFilter(val)}
+            />
+          </FlexItem>
+        </Flex>
         <RowFilter
           allSelected={allSelected}
           itemCount={itemCount}

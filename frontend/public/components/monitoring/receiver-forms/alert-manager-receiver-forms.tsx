@@ -412,7 +412,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
               </span>
             )}
           </div>
-          <div className="form-group co-m-pane__dropdown">
+          <div className="form-group">
             <label className="control-label co-required">{t('public~Receiver type')}</label>
             <Dropdown
               title="Select receiver type..."
