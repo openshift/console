@@ -219,7 +219,6 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
                 </FieldLevelHelp>
               </>
             }
-            switchLabelClassName="co-switch-label"
             switchLabelIsReversed
             switchOnChange={(val) => setIncludeNotRecommended(val)}
             toggleLabel={desiredVersion}
