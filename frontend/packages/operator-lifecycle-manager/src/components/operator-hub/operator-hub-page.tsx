@@ -22,14 +22,13 @@ import {
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
-import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
   AuthenticationModel,
   InfrastructureModel,
 } from '../../../../../public/models';
-import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
+import { NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
 import {
   ClusterServiceVersionModel,
   PackageManifestModel,
@@ -45,56 +44,59 @@ import {
 import { subscriptionFor } from '../operator-group';
 import { OperatorHubTileView } from './operator-hub-items';
 import {
+  getInfrastructureFeatures,
   getPackageSource,
+  getValidSubscription,
   isAWSSTSCluster,
   isAzureWIFCluster,
   isGCPWIFCluster,
-  normalizedInfrastructureFeatures,
 } from './operator-hub-utils';
-import {
-  OperatorHubItem,
-  OperatorHubCSVAnnotations,
-  InstalledState,
-  OperatorHubCSVAnnotationKey,
-  InfraFeatures,
-  ValidSubscriptionValue,
-} from './index';
-
-const ANNOTATIONS_WITH_JSON = [
-  OperatorHubCSVAnnotationKey.infrastructureFeatures,
-  OperatorHubCSVAnnotationKey.validSubscription,
-];
+import { OperatorHubItem, InstalledState, OLMAnnotation, CSVAnnotations } from './index';
 
 const clusterServiceVersionFor = (
   clusterServiceVersions: ClusterServiceVersionKind[],
   csvName: string,
-): ClusterServiceVersionKind => {
-  return clusterServiceVersions?.find((csv) => csv.metadata.name === csvName);
-};
+): ClusterServiceVersionKind =>
+  clusterServiceVersions?.find((csv) => csv.metadata.name === csvName);
 
-const isOpenShiftValidSubscriptionValue = (validSubscriptionValue) =>
-  [
-    ValidSubscriptionValue.OpenShiftKubernetesEngine,
-    ValidSubscriptionValue.OpenShiftContainerPlatform,
-    ValidSubscriptionValue.OpenShiftPlatformPlus,
-  ].includes(validSubscriptionValue);
+const onInfrastructureFeaturesAnnotationError = (error: Error, pkg: PackageManifestKind) =>
+  // eslint-disable-next-line no-console
+  console.warn(
+    `Error parsing infrastructure features from PackageManifest "${pkg.metadata.name}":`,
+    error,
+  );
+
+const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKind) =>
+  // eslint-disable-next-line no-console
+  console.warn(
+    `Error parsing valid subscription from PackageManifest "${pkg.metadata.name}":`,
+    error,
+  );
 
 export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   loaded,
   loadError,
-  marketplacePackageManifests,
   namespace,
-  operatorGroups,
-  packageManifests,
-  subscriptions,
-  clusterServiceVersions,
-  cloudCredentials,
-  authentication,
-  infrastructure,
+  ...props
 }) => {
   const { t } = useTranslation();
   const items: OperatorHubItem[] = React.useMemo(() => {
-    return [...(marketplacePackageManifests?.data ?? []), ...(packageManifests?.data ?? [])]
+    if (!loaded || loadError) {
+      return [];
+    }
+    const operatorGroups = props.operatorGroups?.data ?? [];
+    const subscriptions = props.subscriptions?.data ?? [];
+    const clusterServiceVersions = props.clusterServiceVersions?.data ?? [];
+    const cloudCredentials = props.cloudCredentials?.data ?? null;
+    const authentication = props.authentication?.data ?? null;
+    const infrastructure = props.infrastructure?.data ?? null;
+    const packageManifests = props.packageManifests?.data ?? [];
+    const marketplacePackageManifests = props.marketplacePackageManifests?.data ?? [];
+    const allPackageManifests = [...marketplacePackageManifests, ...packageManifests];
+    const clusterIsAWSSTS = isAWSSTSCluster(cloudCredentials, infrastructure, authentication);
+    const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
+    const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
+    return allPackageManifests
       .filter((pkg) => {
         const { channels, defaultChannel } = pkg.status ?? {};
         // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
@@ -109,49 +111,32 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
         const { currentCSVDesc } = channels.find((ch) => ch.name === defaultChannel);
         // if CSV contains annotation for a non-standalone operator, filter it out
         return !(
-          currentCSVDesc.annotations?.[OPERATOR_TYPE_ANNOTATION] === NON_STANDALONE_ANNOTATION_VALUE
+          currentCSVDesc.annotations?.[OLMAnnotation.OperatorType] ===
+          NON_STANDALONE_ANNOTATION_VALUE
         );
       })
       .map(
         (pkg): OperatorHubItem => {
+          const subscription =
+            loaded && subscriptionFor(subscriptions)(operatorGroups)(pkg)(namespace);
+          const clusterServiceVersion =
+            loaded &&
+            clusterServiceVersionFor(clusterServiceVersions, subscription?.status?.installedCSV);
           const { channels, defaultChannel } = pkg.status ?? {};
           const { currentCSVDesc } = (channels || []).find(({ name }) => name === defaultChannel);
-          const currentCSVAnnotations: OperatorHubCSVAnnotations =
-            currentCSVDesc?.annotations ?? {};
-          const [parsedInfraFeatures, validSubscription] = ANNOTATIONS_WITH_JSON.map(
-            (annotationKey) =>
-              parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
-                // eslint-disable-next-line no-console
-                console.warn(`Error parsing annotation in PackageManifest ${pkg.metadata.name}`),
-              ) ?? [],
-          );
-
-          const validSubscriptionFilters = validSubscription.reduce(
-            (previousValidSubscriptionValues, currentValidSubscriptionValue) => {
-              // The three openshift valid subscriptions values should be appended as-is so that
-              // they show up as filter options on operator hub
-              if (isOpenShiftValidSubscriptionValue(currentValidSubscriptionValue)) {
-                return [...previousValidSubscriptionValues, currentValidSubscriptionValue];
-              }
-
-              // Any value other than the openshift valid subscription values above should be
-              // aggregated into a single "Requires separate subscription" filter option
-              if (
-                !previousValidSubscriptionValues.includes(
-                  ValidSubscriptionValue.RequiresSeparateSubscription,
-                )
-              ) {
-                return [
-                  ...previousValidSubscriptionValues,
-                  ValidSubscriptionValue.RequiresSeparateSubscription,
-                ];
-              }
-
-              return previousValidSubscriptionValues;
+          const currentCSVAnnotations: CSVAnnotations = currentCSVDesc?.annotations ?? {};
+          const infraFeatures = getInfrastructureFeatures(currentCSVAnnotations, {
+            clusterIsAWSSTS,
+            clusterIsAzureWIF,
+            clusterIsGCPWIF,
+            onError: (error) => onInfrastructureFeaturesAnnotationError(error, pkg),
+          });
+          const [validSubscription, validSubscriptionFilters] = getValidSubscription(
+            currentCSVAnnotations,
+            {
+              onError: (error) => onValidSubscriptionAnnotationError(error, pkg),
             },
-            [],
           );
-
           const {
             certifiedLevel,
             healthIndex,
@@ -160,72 +145,10 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             createdAt,
             support,
             capabilities: capabilityLevel,
-            [OperatorHubCSVAnnotationKey.disconnected]: disconnected,
-            [OperatorHubCSVAnnotationKey.fipsCompliant]: fipsCompliant,
-            [OperatorHubCSVAnnotationKey.proxyAware]: proxyAware,
-            [OperatorHubCSVAnnotationKey.cnf]: cnf,
-            [OperatorHubCSVAnnotationKey.cni]: cni,
-            [OperatorHubCSVAnnotationKey.csi]: csi,
-            [OperatorHubCSVAnnotationKey.tlsProfiles]: tlsProfiles,
-            [OperatorHubCSVAnnotationKey.tokenAuthAWS]: tokenAuthAWS,
-            [OperatorHubCSVAnnotationKey.tokenAuthAzure]: tokenAuthAzure,
-            [OperatorHubCSVAnnotationKey.tokenAuthGCP]: tokenAuthGCP,
-            [OperatorHubCSVAnnotationKey.actionText]: marketplaceActionText,
-            [OperatorHubCSVAnnotationKey.remoteWorkflow]: marketplaceRemoteWorkflow,
-            [OperatorHubCSVAnnotationKey.supportWorkflow]: marketplaceSupportWorkflow,
+            [OLMAnnotation.ActionText]: marketplaceActionText,
+            [OLMAnnotation.RemoteWorkflow]: marketplaceRemoteWorkflow,
+            [OLMAnnotation.SupportWorkflow]: marketplaceSupportWorkflow,
           } = currentCSVAnnotations;
-
-          const subscription =
-            loaded && subscriptionFor(subscriptions?.data)(operatorGroups?.data)(pkg)(namespace);
-
-          const cloudCredential = loaded && cloudCredentials?.data;
-
-          const infra = loaded && infrastructure?.data;
-
-          const auth = loaded && authentication?.data;
-
-          // old infra feature annotation
-          let infrastructureFeatures: InfraFeatures[] = parsedInfraFeatures.map(
-            (key) => normalizedInfrastructureFeatures[key],
-          );
-
-          // new infra feature annotation
-          const featuresAnnotationsObjects = [
-            { key: InfraFeatures.disconnected, value: disconnected },
-            { key: InfraFeatures.fipsMode, value: fipsCompliant },
-            { key: InfraFeatures.proxyAware, value: proxyAware },
-            { key: InfraFeatures.cnf, value: cnf },
-            { key: InfraFeatures.cni, value: cni },
-            { key: InfraFeatures.csi, value: csi },
-            { key: InfraFeatures.tlsProfiles, value: tlsProfiles },
-          ];
-
-          // override old with new
-          featuresAnnotationsObjects.forEach(({ key, value }) => {
-            if (value === 'false') {
-              // override existing operators.openshift.io/infrastructure-features annotation value
-              infrastructureFeatures = infrastructureFeatures.filter((feature) => feature !== key);
-            } else if (value === 'true') {
-              infrastructureFeatures.push(key);
-            }
-          });
-
-          if (tokenAuthAWS === 'true' && isAWSSTSCluster(cloudCredential, infra, auth)) {
-            infrastructureFeatures.push(InfraFeatures.tokenAuth);
-          } else if (tokenAuthGCP === 'true' && isGCPWIFCluster(cloudCredential, infra, auth)) {
-            infrastructureFeatures.push(InfraFeatures.tokenAuthGCP);
-          } else if (tokenAuthAzure === 'true' && isAzureWIFCluster(cloudCredential, infra, auth)) {
-            infrastructureFeatures.push(InfraFeatures.tokenAuth);
-          }
-
-          const infraFeatures = _.uniq(_.compact(infrastructureFeatures));
-
-          const clusterServiceVersion =
-            loaded &&
-            clusterServiceVersionFor(
-              clusterServiceVersions?.data,
-              subscription?.status?.installedCSV,
-            );
 
           const installed = loaded && clusterServiceVersion?.status?.phase === 'Succeeded';
 
@@ -268,23 +191,24 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             validSubscriptionFilters,
             infraFeatures,
             keywords: currentCSVDesc?.keywords ?? [],
-            cloudCredentials: cloudCredential,
-            infrastructure: infra,
-            authentication: auth,
+            cloudCredentials,
+            infrastructure,
+            authentication,
           };
         },
       );
   }, [
-    clusterServiceVersions,
+    loadError,
     loaded,
-    marketplacePackageManifests,
     namespace,
-    operatorGroups,
-    packageManifests,
-    subscriptions,
-    cloudCredentials,
-    infrastructure,
-    authentication,
+    props.authentication?.data,
+    props.cloudCredentials?.data,
+    props.clusterServiceVersions?.data,
+    props.infrastructure?.data,
+    props.marketplacePackageManifests?.data,
+    props.operatorGroups?.data,
+    props.packageManifests?.data,
+    props.subscriptions?.data,
   ]);
 
   const uniqueItems = _.uniqBy(items, 'uid');

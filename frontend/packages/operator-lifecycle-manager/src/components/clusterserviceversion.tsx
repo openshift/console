@@ -98,11 +98,7 @@ import {
   CSVConditionReason,
   SubscriptionKind,
 } from '../types';
-import {
-  getClusterServiceVersionPlugins,
-  isCatalogSourceTrusted,
-  upgradeRequiresApproval,
-} from '../utils';
+import { isCatalogSourceTrusted, upgradeRequiresApproval } from '../utils';
 import { isCopiedCSV, isStandaloneCSV } from '../utils/clusterserviceversions';
 import { useClusterServiceVersion } from '../utils/useClusterServiceVersion';
 import { useClusterServiceVersionPath } from '../utils/useClusterServiceVersionPath';
@@ -115,6 +111,7 @@ import {
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
 import { operatorGroupFor, operatorNamespaceFor, targetNamespacesFor } from './operator-group';
+import { getClusterServiceVersionPlugins } from './operator-hub/operator-hub-utils';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   SourceMissingStatus,
@@ -785,7 +782,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
           _.isNil(_.get(sub, 'status.installedCSV')),
       ),
     ].filter(
-      (obj, i, all) =>
+      (obj, _i, all) =>
         isCSV(obj) ||
         _.isUndefined(
           all.find(({ metadata }) =>
