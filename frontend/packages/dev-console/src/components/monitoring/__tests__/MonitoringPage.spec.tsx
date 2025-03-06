@@ -6,7 +6,7 @@ import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { PageContents } from '../MonitoringPage';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...(jest as any).requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 
