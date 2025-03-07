@@ -177,7 +177,7 @@ export const Firehose = connect(
       shallowMapEquals(next.k8sModels, prev.k8sModels),
   },
 )(
-  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>, doNotConnectToState?: boolean}>} */
+  /** @augments {React.Component<React.PropsWithChildren<{k8sModels?: Map<string, K8sKind>, doNotConnectToState?: boolean}>> */
   class Firehose extends React.Component {
     state = {
       firehoses: [],
