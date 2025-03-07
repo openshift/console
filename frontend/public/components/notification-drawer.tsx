@@ -70,8 +70,8 @@ import {
   getSimilarClusterVersionChannels,
   getSortedAvailableUpdates,
   referenceForModel,
-  Release,
   splitClusterVersionChannel,
+  VersionUpdate,
 } from '../module/k8s';
 import { pluginStore } from '../plugins';
 import { LinkifyExternal } from './utils';
@@ -147,7 +147,7 @@ const getUpdateNotificationEntries = (
   if (!cv || !canUpgrade) {
     return [];
   }
-  const updateData: Release[] = getSortedAvailableUpdates(cv);
+  const updateData: VersionUpdate[] = getSortedAvailableUpdates(cv);
   const currentChannel = cv?.spec?.channel;
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
