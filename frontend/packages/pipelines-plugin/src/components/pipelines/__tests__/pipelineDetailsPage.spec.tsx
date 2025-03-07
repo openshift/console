@@ -85,16 +85,15 @@ describe('PipelineDetailsPage:', () => {
   });
   const renderPipelineDetailsPage = async () => {
     let wrapper: ReactWrapper;
-    await act(
-      async () =>
-        (wrapper = mount(
-          <BrowserRouter>
-            <Provider store={store}>
-              <PipelineDetailsPage {...PipelineDetailsPageProps} />
-            </Provider>
-          </BrowserRouter>,
-        )),
-    );
+    await act(async () => {
+      wrapper = mount(
+        <BrowserRouter>
+          <Provider store={store}>
+            <PipelineDetailsPage {...PipelineDetailsPageProps} />
+          </Provider>
+        </BrowserRouter>,
+      );
+    });
     return wrapper;
   };
 

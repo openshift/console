@@ -21,7 +21,7 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
 
   let added = false;
   let allRendered = true;
-  React.Children.forEach(children, (item, itemIndex) => {
+  React.Children.forEach(children, (item: React.ReactElement, itemIndex) => {
     // Fill first row directly
     if (itemIndex < columns) {
       groupedColumns[itemIndex].height += heights[item.key as string] || 0;

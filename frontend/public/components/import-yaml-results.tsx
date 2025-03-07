@@ -20,7 +20,7 @@ import { referenceFor } from '../module/k8s';
  * https://github.com/DefinitelyTyped/DefinitelyTyped/blob/3423b4fc3e3da09f8acc386bc2fee6fb8f5e0880/types/react/index.d.ts#L1763
  */
 const reactPropFix = {
-  translate: 'no',
+  translate: 'no' as 'no',
 };
 
 export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ errors, inFlight }) => {

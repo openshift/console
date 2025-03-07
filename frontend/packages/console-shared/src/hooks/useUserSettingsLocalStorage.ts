@@ -10,7 +10,11 @@ export const useUserSettingsLocalStorage = <T>(
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
   // Mount status for safty state updates
   const mounted = React.useRef(true);
-  React.useEffect(() => () => (mounted.current = false), []);
+  React.useEffect(() => {
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   const storage = session ? sessionStorage : localStorage;
   const keyRef = React.useRef(userSettingsKey);
