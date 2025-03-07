@@ -80,6 +80,28 @@ form.pf-v6-c-form {
   vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
 }
 
+// custom PatternFly button variant for larger icons in an icon button with no text
+.co-xl-icon-button.pf-v6-c-button {
+  --co-button-icon-size: var(--pf-t--global--icon--size--xl);
+
+  // the height+padding of a PatternFly standard button.
+  --co-desired-button-size: calc(
+    var(--pf-t--global--font--size--body--default) * var(--pf-t--global--font--line-height--body) +
+    var(--pf-t--global--spacer--control--vertical--default) * 2
+  );
+
+  padding: calc((var(--co-desired-button-size) - var(--co-button-icon-size)) / 2);
+
+  .pf-v6-c-button__icon {
+    line-height: 0;
+  }
+
+  .pf-v6-svg {
+    height: var(--co-button-icon-size);
+    width: var(--co-button-icon-size);
+  }
+}
+
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
 // bug occurs only if the suggestions overlay has been enabled
 .monaco-aria-container {
