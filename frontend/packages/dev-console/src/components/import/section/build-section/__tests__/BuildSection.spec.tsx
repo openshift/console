@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import { FormikValues } from 'formik';

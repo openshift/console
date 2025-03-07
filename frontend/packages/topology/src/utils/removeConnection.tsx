@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Edge } from '@patternfly/react-topology';
 import { Trans } from 'react-i18next';
 import { confirmModal, errorModal } from '@console/internal/components/modals';

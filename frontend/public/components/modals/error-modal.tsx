@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 

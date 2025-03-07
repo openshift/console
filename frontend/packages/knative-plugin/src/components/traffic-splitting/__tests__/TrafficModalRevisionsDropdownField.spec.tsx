@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { DropdownField } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';

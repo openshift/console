@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
