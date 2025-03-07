@@ -145,7 +145,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
     k8sListMock.mockClear();
 
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -213,7 +213,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'my-namespace', {}, {}]);
     k8sGetMock.mockClear();
 
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -267,7 +267,7 @@ describe('useK8sWatchResource', () => {
       },
     ]);
 
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -439,7 +439,7 @@ describe('useK8sWatchResource', () => {
     ]);
     resourceUpdate.mockClear();
 
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -448,7 +448,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
     k8sListMock.mockClear();
 
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -545,7 +545,7 @@ describe('useK8sWatchResource', () => {
     ]);
     resourceUpdate.mockClear();
 
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -554,7 +554,7 @@ describe('useK8sWatchResource', () => {
     expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'my-namespace', {}, {}]);
     k8sGetMock.mockClear();
 
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 

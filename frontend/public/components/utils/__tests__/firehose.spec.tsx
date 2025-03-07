@@ -215,7 +215,7 @@ describe('Firehose', () => {
 
   afterEach(async () => {
     // Ensure that there is no timer left which triggers a rerendering
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -303,7 +303,7 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -393,7 +393,7 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -489,7 +489,7 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -573,7 +573,7 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -683,7 +683,7 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(notLoadedYetProps);
 
     // Finish API call
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -832,7 +832,7 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -961,7 +961,7 @@ describe('Firehose together with useK8sWatchResources', () => {
 
   afterEach(async () => {
     // Ensure that there is no timer left which triggers a rerendering
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -1016,7 +1016,7 @@ describe('Firehose together with useK8sWatchResources', () => {
     );
 
     // Finish API calls
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
@@ -1106,7 +1106,7 @@ describe('Firehose together with useK8sWatchResources', () => {
     );
 
     // Finish API calls
-    await act(async () => {
+    act(() => {
       jest.runAllTimers();
     });
 
