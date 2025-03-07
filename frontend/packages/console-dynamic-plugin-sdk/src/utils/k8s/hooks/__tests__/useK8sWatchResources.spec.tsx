@@ -68,7 +68,9 @@ beforeEach(() => {
 
 afterEach(async () => {
   // Ensure that there is no timer left which triggers a rerendering
-  await act(async () => jest.runAllTimers());
+  await act(async () => {
+    jest.runAllTimers();
+  });
 
   cleanup();
 
@@ -143,7 +145,9 @@ describe('useK8sWatchResource', () => {
     expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
     k8sListMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
@@ -209,7 +213,9 @@ describe('useK8sWatchResource', () => {
     expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'my-namespace', {}, {}]);
     k8sGetMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
@@ -261,7 +267,9 @@ describe('useK8sWatchResource', () => {
       },
     ]);
 
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -317,7 +325,9 @@ describe('useK8sWatchResource', () => {
       },
     ]);
 
-    await act(async () => jest.runAllTimers());
+    act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -429,14 +439,18 @@ describe('useK8sWatchResource', () => {
     ]);
     resourceUpdate.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sListMock).toHaveBeenCalledTimes(1);
     expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
     k8sListMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
@@ -531,14 +545,18 @@ describe('useK8sWatchResource', () => {
     ]);
     resourceUpdate.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
     expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'my-namespace', {}, {}]);
     k8sGetMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert API calls
     expect(k8sWatchMock).toHaveBeenCalledTimes(1);
