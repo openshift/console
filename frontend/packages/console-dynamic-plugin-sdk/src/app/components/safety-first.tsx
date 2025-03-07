@@ -12,7 +12,9 @@ export const useSafetyFirst = <S extends any>(
 ): [S, React.Dispatch<React.SetStateAction<S>>] => {
   const mounted = React.useRef(true);
   React.useEffect(() => {
-    mounted.current = false;
+    return () => {
+      mounted.current = false;
+    };
   }, []);
 
   const [value, setValue] = React.useState(initialState);
