@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { SidebarSectionHeading } from '@console/internal/components/utils';

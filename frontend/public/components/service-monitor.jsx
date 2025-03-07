@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { ListPage, Table, TableData } from './factory';
 import { Kebab, ResourceKebab, ResourceLink, Selector } from './utils';

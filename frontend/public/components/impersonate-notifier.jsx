@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';

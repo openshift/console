@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Popover, Modal, Spotlight } from '@console/shared';
 import TourStepComponent from '../TourStepComponent';

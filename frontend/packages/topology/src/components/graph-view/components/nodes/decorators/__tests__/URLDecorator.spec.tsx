@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useRoutesWatcher } from '@console/shared';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';

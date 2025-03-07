@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Dropdown } from '@console/internal/components/utils';
 import DropdownField from '../DropdownField';

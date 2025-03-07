@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import MultiColumnFieldFooter from '../MultiColumnFieldFooter';

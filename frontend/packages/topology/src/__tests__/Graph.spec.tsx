@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { ConnectedTopologyView } from '../components/page/TopologyView';
 import { baseDataModelGetter } from '../data-transforms/data-transformer';

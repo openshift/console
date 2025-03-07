@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import CatalogDetailsPanel from '../details/CatalogDetailsPanel';
 import { eventSourceCatalogItems } from './catalog-item-data';

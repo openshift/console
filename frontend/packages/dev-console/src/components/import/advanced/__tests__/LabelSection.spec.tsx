@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import SelectorInputField from '@console/shared/src/components/formik-fields/SelectorInputField';
 import FormSection from '../../section/FormSection';
