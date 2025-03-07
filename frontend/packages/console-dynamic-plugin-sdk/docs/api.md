@@ -2548,7 +2548,7 @@ The isAllowed boolean value.
 
 ### Returns
 
-An array with a pair of state value and it's set function.
+An array with a pair of state value and its set function.
 
 
 ---
