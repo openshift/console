@@ -17,8 +17,15 @@ ADD . .
 
 USER 0
 
+ARG YARN_VERSION=v1.22.19
+
 # bootstrap yarn so we can install and run the other tools.
-RUN container-entrypoint npm install ./artifacts/yarn-v1.22.19.tar.gz
+RUN CACHED_YARN=./artifacts/yarn-${YARN_VERSION}.tar.gz; \
+    if [ -f ${CACHED_YARN} ]; then \
+      npm install ${CACHED_YARN}; \
+    else \
+      npm install https://github.com/yarnpkg/yarn/releases/download/${YARN_VERSION}/yarn-${YARN_VERSION}.tar.gz; \
+    fi
 
 COPY $REMOTE_SOURCES $REMOTE_SOURCES_DIR
 
