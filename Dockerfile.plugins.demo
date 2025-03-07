@@ -16,7 +16,7 @@ RUN yarn install && \
     yarn build
 
 # Stage 1: build the target image
-FROM node:10
+FROM node:20
 
 COPY --from=build /src/console/dynamic-demo-plugin/dist /opt/console-plugin-demo/static
 COPY --from=build /src/console/dynamic-demo-plugin/node_modules /opt/console-plugin-demo/node_modules
