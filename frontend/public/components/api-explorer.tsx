@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
-import { useLocation, useParams, Link } from 'react-router-dom-v5-compat';
+import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';
@@ -487,6 +487,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
   const { apiGroup, apiVersion, namespaced, plural, verbs } = kindObj;
+  const [searchParams] = useSearchParams();
 
   // state
   const [verb, setVerb] = React.useState(_.first(verbs));
@@ -535,7 +536,6 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     }
   });
   const groups = _.map(accessResponse.groups, (name: string) => ({ name, type: 'Group' }));
-
   // filter and sort
   const verbOptions = _.zipObject(verbs, verbs);
   const data = [
@@ -547,7 +547,11 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const itemCount = accessResponse.users.length + accessResponse.groups.length;
   const selectedCount = data.length;
   const filteredData = data.filter(({ name }: { name: string }) => fuzzy(filter, name));
-  const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
+  const orderBy = searchParams.get('orderBy');
+  const sortByParam = searchParams.get('sortBy');
+  const sortBy = sortByParam === 'Type' ? 'type' : 'name';
+  const sortedData = _.orderBy(filteredData, [sortBy], [orderBy]);
+
   const AccessTableHeader = () => [
     {
       title: t('public~Subject'),
@@ -575,7 +579,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   };
 
   const AccessTableRows = () =>
-    _.map(data, (subject) => [
+    sortedData.map((subject) => [
       {
         title: (
           <span className="co-break-word co-select-to-copy">
