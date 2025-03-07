@@ -61,6 +61,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 		k8sMode               string
 		contentSecurityPolicy string
 		indexPageScriptNonce  string
+		cspReportingEndpoint  string
 		want                  []string
 	}{
 		{
@@ -68,6 +69,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 			k8sMode:               "on-cluster",
 			contentSecurityPolicy: "",
 			indexPageScriptNonce:  "foobar",
+			cspReportingEndpoint:  "",
 			want: []string{
 				onClusterBaseUri,
 				onClusterDefaultSrc,
@@ -85,6 +87,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 			k8sMode:               "off-cluster",
 			contentSecurityPolicy: "",
 			indexPageScriptNonce:  "foobar",
+			cspReportingEndpoint:  "",
 			want: []string{
 				offClusterBaseUri,
 				offClusterDefaultSrc,
@@ -101,6 +104,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 			name:                 "on-cluster with config",
 			k8sMode:              "on-cluster",
 			indexPageScriptNonce: "foobar",
+			cspReportingEndpoint: "",
 			contentSecurityPolicy: `
 				{
 					"DefaultSrc": ["foo.bar"],
@@ -123,9 +127,29 @@ func TestBuildCSPDirectives(t *testing.T) {
 			},
 		},
 		{
+			name:                  "on-cluster with CSP reporting enabled",
+			k8sMode:               "on-cluster",
+			contentSecurityPolicy: "",
+			indexPageScriptNonce:  "foobar",
+			cspReportingEndpoint:  "http://localhost:7777/csp-test-endpoint",
+			want: []string{
+				onClusterBaseUri,
+				onClusterDefaultSrc,
+				onClusterImgSrc + " data:",
+				onClusterFontSrc + " data:",
+				onClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
+				onClusterStyleSrc + " 'unsafe-inline'",
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
+				"report-uri http://localhost:7777/csp-test-endpoint",
+			},
+		},
+		{
 			name:                 "off-cluster with config",
 			k8sMode:              "off-cluster",
 			indexPageScriptNonce: "foobar",
+			cspReportingEndpoint: "",
 			contentSecurityPolicy: `
 				{
 					"DefaultSrc": ["foo.bar"],
@@ -147,12 +171,31 @@ func TestBuildCSPDirectives(t *testing.T) {
 				objectSrcDirective,
 			},
 		},
+		{
+			name:                  "off-cluster with CSP reporting enabled",
+			k8sMode:               "off-cluster",
+			contentSecurityPolicy: "",
+			indexPageScriptNonce:  "foobar",
+			cspReportingEndpoint:  "http://localhost:7777/csp-test-endpoint",
+			want: []string{
+				offClusterBaseUri,
+				offClusterDefaultSrc,
+				offClusterImgSrc + " data:",
+				offClusterFontSrc + " data:",
+				offClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
+				offClusterStyleSrc + " 'unsafe-inline'",
+				frameSrcDirective,
+				frameAncestorsDirective,
+				objectSrcDirective,
+				"report-uri http://localhost:7777/csp-test-endpoint",
+			},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := BuildCSPDirectives(tt.k8sMode, tt.contentSecurityPolicy, tt.indexPageScriptNonce)
+			got, err := BuildCSPDirectives(tt.k8sMode, tt.contentSecurityPolicy, tt.indexPageScriptNonce, tt.cspReportingEndpoint)
 			if err != nil {
 				t.Fatalf("buildCSPDirectives() error = %v", err)
 			}

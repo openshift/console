@@ -54,8 +54,7 @@ func RandomString(length int) (string, error) {
 // buildCSPDirectives takes the content security policy configuration from the server and constructs
 // a complete set of directives for the Content-Security-Policy-Report-Only header.
 // The constructed directives will include the default sources and the supplied configuration.
-
-func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]string, error) {
+func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce, cspReportingEndpoint string) ([]string, error) {
 	nonce := fmt.Sprintf("'nonce-%s'", indexPageScriptNonce)
 
 	// The default sources are the sources that are allowed for all directives.
@@ -114,7 +113,7 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 	// of the form "<directive-type> <sources>".
 	// The sources are concatenated together with a space separator.
 	// The CSP directives string is returned as a slice of strings, where each string is a directive.
-	return []string{
+	resultDirectives := []string{
 		strings.Join(baseUriDirective, " "),
 		strings.Join(defaultSrcDirective, " "),
 		strings.Join(imgSrcDirective, " "),
@@ -124,7 +123,14 @@ func BuildCSPDirectives(k8sMode, pluginsCSP, indexPageScriptNonce string) ([]str
 		"frame-src 'none'",
 		"frame-ancestors 'none'",
 		"object-src 'none'",
-	}, nil
+	}
+
+	// Support using client provided CSP reporting endpoint for testing purposes.
+	if cspReportingEndpoint != "" {
+		resultDirectives = append(resultDirectives, fmt.Sprintf("report-uri %s", cspReportingEndpoint))
+	}
+
+	return resultDirectives, nil
 }
 
 func ParseContentSecurityPolicyConfig(csp string) (*map[consolev1.DirectiveType][]string, error) {
