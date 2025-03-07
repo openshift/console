@@ -12,6 +12,8 @@ import {
   DropdownGroup,
   DropdownItem,
   DropdownList,
+  Flex,
+  FlexItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -367,16 +369,17 @@ export const LogControls: React.FC<LogControlsProps> = ({
   );
 
   return (
-    <div className="co-toolbar">
-      <div
-        className={classNames('co-toolbar__group co-toolbar__group--left', {
-          'co-toolbar__group--alongside-kebab': isMobile,
-        })}
-      >
-        <div className="co-toolbar__item">{showStatus()}</div>
-        {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
-        <div className="co-toolbar__item">{logTypeSelect()}</div>
-        <div className="co-toolbar__item">
+    <Flex
+      className="resource-log__toolbar"
+      flexWrap={{ default: 'nowrap', md: 'wrap' }}
+      justifyContent={{ default: 'justifyContentFlexStart', md: 'justifyContentSpaceBetween' }}
+    >
+      <Flex>
+        {/* orphaned `co-toolbar__item used in https://github.com/openshift/verification-tests */}
+        <FlexItem className="co-toolbar__item">{showStatus()}</FlexItem>
+        {dropdown && <FlexItem>{dropdown}</FlexItem>}
+        <FlexItem>{logTypeSelect()}</FlexItem>
+        <FlexItem>
           <LogViewerSearch
             onFocus={() => {
               if (status === STREAM_ACTIVE) {
@@ -386,7 +389,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             placeholder="Search"
             minSearchChars={0}
           />
-        </div>
+        </FlexItem>
         {showDebugAction(resource, containerName) && !isWindowsPod(resource) && (
           <Link
             to={`${resourcePath(
@@ -408,14 +411,8 @@ export const LogControls: React.FC<LogControlsProps> = ({
             <span className="text-muted">{label}</span>
           </Tooltip>
         )}
-      </div>
-      <div
-        className={classNames(
-          'co-toolbar__group',
-          isMobile ? 'co-toolbar__group--kebab' : 'co-toolbar__group--right',
-        )}
-        data-test="log-links"
-      >
+      </Flex>
+      <Flex data-test="log-links">
         {isMobile ? (
           <Dropdown
             isOpen={isDropdownOpen}
@@ -474,7 +471,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             </DropdownGroup>
           </Dropdown>
         ) : (
-          <div className="pf-v6-l-flex">
+          <Flex>
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
             <div>{fullLog}</div>
             <Divider
@@ -511,10 +508,10 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 </Button>
               </>
             )}
-          </div>
+          </Flex>
         )}
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 };
 
