@@ -9,7 +9,7 @@ import { getNamespace } from '@console/internal/components/utils/link';
 import { flagPending } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { usePreferredNamespace } from '../user-preferences/namespace';
+import { usePreferredNamespace } from '../user-preferences/namespace/usePreferredNamespace';
 import { getValueForNamespace } from './getValueForNamespace';
 import { useLastNamespace } from './useLastNamespace';
 
