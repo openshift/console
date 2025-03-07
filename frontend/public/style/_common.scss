@@ -235,67 +235,7 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 }
 
 .co-sidebar-dismiss {
-  padding: 0 5px;
-}
-
-.co-toolbar {
-  align-items: stretch;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.co-toolbar__item {
-  max-width: 100%;
-  padding: 5px 0;
-  .co-toolbar__item-dropdown {
-    max-width: 100%;
-  }
-}
-
-.co-toolbar__group {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-width: 0;
-
-  @media (max-width: $screen-xs-max) {
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-}
-
-.co-toolbar__group--left {
-  justify-content: flex-start;
-  .co-toolbar__item {
-    padding-right: 15px;
-  }
-  @media (max-width: $screen-xs-max) {
-    align-items: flex-start;
-  }
-}
-
-.co-toolbar__group--alongside-kebab {
-  flex: 1 1 0;
-  flex-direction: row;
-}
-
-.co-toolbar__group--kebab {
-  justify-content: flex-start;
-}
-
-.co-toolbar__group--right {
-  justify-content: flex-end;
-  @media (min-width: $screen-xs-min) {
-    .co-toolbar__item {
-      padding-left: 15px;
-    }
-  }
-  @media (max-width: $screen-xs-max) {
-    align-items: flex-end;
-  }
+  padding: 0 $pf-v6-global-gutter-x;
 }
 
 .co-legend {

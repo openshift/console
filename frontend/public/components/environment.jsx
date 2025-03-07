@@ -2,8 +2,15 @@
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
 import classNames from 'classnames';
+import {
+  Alert,
+  Button,
+  ActionGroup,
+  AlertActionCloseButton,
+  Flex,
+  FlexItem,
+} from '@patternfly/react-core';
 import { Trans, withTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
@@ -531,27 +538,20 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     const containerVars = (
       <>
         {readOnly && !_.isEmpty(owners) && (
-          <div className="co-toolbar__group co-toolbar__group--left">
-            <Alert
-              isInline
-              className="co-alert col-md-11 col-xs-10"
-              variant="info"
-              title={t('public~Environment variables set from parent')}
-            >
-              {t('public~View environment for resource')}{' '}
-              {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
-            </Alert>
-          </div>
+          <Alert isInline variant="info" title={t('public~Environment variables set from parent')}>
+            {t('public~View environment for resource')}{' '}
+            {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
+          </Alert>
         )}
         {currentEnvVars.isContainerArray && (
-          <div className="co-toolbar__group co-toolbar__group--left">
-            <div className="co-toolbar__item">
+          <Flex>
+            <FlexItem>
               {containerType === 'containers'
                 ? t('public~Container:')
                 : t('public~Init container:')}
-            </div>
-            <div className="co-toolbar__item">{containerDropdown}</div>
-          </div>
+            </FlexItem>
+            <FlexItem>{containerDropdown}</FlexItem>
+          </Flex>
         )}
         <div className={classNames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
           {!currentEnvVars.isCreate && (
