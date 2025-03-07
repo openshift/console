@@ -65,8 +65,11 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
   // Unique username
-  const [uniqueUsername, setUniqueUsername] = React.useState<string>('');
-
+  const [uniqueUsername, setUniqueUsernameUnsafe] = React.useState<string>('');
+  const setUniqueUsername: typeof setUniqueUsernameUnsafe = React.useCallback(
+    (...args) => mounted.current && setUniqueUsernameUnsafe(...args),
+    [setUniqueUsernameUnsafe],
+  );
   // User id and impersonate name
   const userImpersonateNameOrUID = useSelector((state: RootState) => {
     const impersonateName = getImpersonate(state)?.name;
@@ -81,23 +84,28 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
 
   // construct unique username
   React.useEffect(() => {
+    let activeGenerate = true;
+
     if (!username) {
       setUniqueUsername('');
-      return;
-    }
-
-    if (username === 'kube:admin') {
+    } else if (username === 'kube:admin') {
       setUniqueUsername('kubeadmin');
-      return;
+    } else {
+      generateHash('SHA-256', username)
+        .then((hash) => {
+          if (activeGenerate) {
+            setUniqueUsername(hash);
+          }
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Could not generate unique username hash:', err);
+        });
     }
-
-    generateHash('SHA-256', username)
-      .then((hash) => setUniqueUsername(hash))
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error('Could not generate unique username hash:', err);
-      });
-  }, [username]);
+    return () => {
+      activeGenerate = false;
+    };
+  }, [username, setUniqueUsername]);
 
   const userUid = userImpersonateNameOrUID || uniqueUsername || '';
 
