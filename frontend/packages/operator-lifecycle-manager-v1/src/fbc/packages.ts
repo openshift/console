@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import { defaultPackageSourceMap } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
+import { defaultClusterCatalogSourceMap } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
 import { PackageSource } from '@console/operator-lifecycle-manager/src/const';
+import { putItem } from '../database/indexeddb';
+import { ExtensionCatalogItem, FileBasedCatalogPackage } from '../database/types';
 import { getBundleMetadataForPackage } from './bundles';
 import { getChannelsForPackage } from './channels';
-import { putItem } from './indexeddb';
-import { ExtensionCatalogItem, FileBasedCatalogPackage } from './types';
 
 const addPackageToExtensionCatalog = async (
   db: IDBDatabase,
@@ -17,7 +17,7 @@ const addPackageToExtensionCatalog = async (
     id,
     icon,
     name,
-    source: defaultPackageSourceMap[catalog] || PackageSource.Custom,
+    source: defaultClusterCatalogSourceMap[catalog] || PackageSource.Custom,
     channels: {
       ...channels,
     },
