@@ -29,7 +29,7 @@
     }
   }
 
-  /* Hide CodeEditor toolbar on mobile */
+  // hide CodeEditor toolbar on mobile
   @media (max-width: $screen-sm-max) {
     .pf-v6-c-code-editor__header {
       display: none;
@@ -41,13 +41,13 @@
   }
 
   .pf-v6-c-code-editor__controls {
-    width: 100%;
     align-items: center;
     // the height+padding of a PatternFly standard button.
-    // makes sure all toolbars are of the same height regardless of content
+    // ensures that all toolbars are of the same height regardless of content
     min-height: calc(
-      1em * var(--pf-t--global--font--line-height--body) +
-      2 * var(--pf-t--global--spacer--control--vertical--default)
+      var(--pf-t--global--font--size--body--default) * var(--pf-t--global--font--line-height--body) +
+      var(--pf-t--global--spacer--control--vertical--default) * 2
     );
+    width: 100%;
   }
 }

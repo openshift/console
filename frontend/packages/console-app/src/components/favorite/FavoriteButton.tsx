@@ -16,8 +16,6 @@ import { connectToModel } from '@console/internal/kinds';
 import { Modal, RedExclamationCircleIcon, useUserSettingsCompatibility } from '@console/shared';
 import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
 
-import './FavoriteButton.scss';
-
 export type FavoritesType = {
   name: string;
   url: string;
@@ -127,9 +125,9 @@ export const FavoriteButton = connectToModel(() => {
           <div ref={ref}>
             <Button
               icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
-              className="co-favorite-actions-icon"
-              variant="link"
-              aria-label="save-favorite"
+              className="co-xl-icon-button"
+              variant="plain"
+              aria-label={t('console-app~Add to favorites')}
               aria-pressed={isStarred}
               onClick={handleStarClick}
               isDisabled
@@ -139,9 +137,9 @@ export const FavoriteButton = connectToModel(() => {
       ) : (
         <Button
           icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
-          className="co-favorite-actions-icon"
-          variant="link"
-          aria-label="save-favorite"
+          className="co-xl-icon-button"
+          variant="plain"
+          aria-label={t('console-app~Add to favorites')}
           aria-pressed={isStarred}
           onClick={handleStarClick}
         />

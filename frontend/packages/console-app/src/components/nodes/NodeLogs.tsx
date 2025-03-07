@@ -20,6 +20,7 @@ import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   ExternalLink,
   getQueryArgument,
@@ -44,6 +45,7 @@ type LogControlsProps = {
   onChangePath: (event: React.ChangeEvent<HTMLInputElement>, newAPI: string) => void;
   path: string;
   isPathOpen: boolean;
+  setPathOpen: (value: boolean) => void;
   pathItems: string[];
   isJournal: boolean;
   onChangeUnit: (value: string) => void;
@@ -52,6 +54,7 @@ type LogControlsProps = {
   logFilenamesExist: boolean;
   onToggleFilename: () => void;
   onChangeFilename: (event: React.ChangeEvent<HTMLInputElement>, newFilename: string) => void;
+  setFilenameOpen: (value: boolean) => void;
   logFilename: string;
   isFilenameOpen: boolean;
   logFilenames: string[];
@@ -65,6 +68,7 @@ const LogControls: React.FC<LogControlsProps> = ({
   onChangePath,
   path,
   isPathOpen,
+  setPathOpen,
   pathItems,
   isJournal,
   onChangeUnit,
@@ -75,6 +79,7 @@ const LogControls: React.FC<LogControlsProps> = ({
   onChangeFilename,
   logFilename,
   isFilenameOpen,
+  setFilenameOpen,
   logFilenames,
   isWrapLines,
   setWrapLines,
@@ -113,6 +118,7 @@ const LogControls: React.FC<LogControlsProps> = ({
                   {path}
                 </MenuToggle>
               )}
+              onOpenChange={(open) => setPathOpen(open)}
             >
               <SelectList>{options(pathItems)}</SelectList>
             </Select>
@@ -138,6 +144,7 @@ const LogControls: React.FC<LogControlsProps> = ({
                         {logFilename || t('public~Select a log file')}
                       </MenuToggle>
                     )}
+                    onOpenChange={(open) => setFilenameOpen(open)}
                   >
                     <SelectList>{options(logFilenames)}</SelectList>
                   </Select>
@@ -200,6 +207,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     true,
   );
   const { t } = useTranslation();
+  const theme = React.useContext(ThemeContext);
 
   const isJournal = path === 'journal';
 
@@ -330,6 +338,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       path={path}
       isPathOpen={isPathOpen}
       pathItems={pathItems}
+      setPathOpen={setPathOpen}
       isJournal={isJournal}
       onChangeUnit={onChangeUnit}
       unit={unit}
@@ -339,6 +348,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       onChangeFilename={onChangeFilename}
       logFilename={logFilename}
       isFilenameOpen={isFilenameOpen}
+      setFilenameOpen={setFilenameOpen}
       logFilenames={logFilenames}
       isWrapLines={isWrapLines}
       setWrapLines={setWrapLines}
@@ -397,7 +407,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
             isTextWrapped={isWrapLines}
             data={trimmedContent || content}
             toolbar={logControls}
-            theme="dark"
+            theme={theme}
             initialIndexWidth={7}
           />
         )}
