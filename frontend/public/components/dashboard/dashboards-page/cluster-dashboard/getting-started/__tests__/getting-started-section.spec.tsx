@@ -10,6 +10,7 @@ import {
 } from '@console/shared/src/components/getting-started';
 
 import { GettingStartedSection } from '../getting-started-section';
+import { CLUSTER_DASHBOARD_USER_SETTINGS_KEY } from '../constants';
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
   ...require.requireActual('@console/shared/src/hooks/flag'),
@@ -50,7 +51,9 @@ describe('GettingStartedSection', () => {
     mockUserSettings.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
-    const wrapper = shallow(<GettingStartedSection />);
+    const wrapper = shallow(
+      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+    );
 
     expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(1);
     expect(wrapper.find(GettingStartedExpandableGrid).props().children.length).toEqual(3);
@@ -61,7 +64,9 @@ describe('GettingStartedSection', () => {
     mockUserSettings.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
-    const wrapper = shallow(<GettingStartedSection />);
+    const wrapper = shallow(
+      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+    );
 
     expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(0);
   });
@@ -70,7 +75,9 @@ describe('GettingStartedSection', () => {
     useFlagMock.mockReturnValue(true);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
-    const wrapper = shallow(<GettingStartedSection />);
+    const wrapper = shallow(
+      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+    );
 
     expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(0);
   });
