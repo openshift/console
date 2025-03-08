@@ -6,6 +6,7 @@ import { projectDropdown } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
 import { listPage, ListPageSelector } from '../../views/list-page';
 import { modal } from '../../views/modal';
+import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
 
 type TestDefinition = {
@@ -20,6 +21,7 @@ describe('Kubernetes resource CRUD operations', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
   });
 
   afterEach(() => {
