@@ -5,15 +5,13 @@ import {
   EmptyStateBody,
   EmptyStateVariant,
   EmptyStateFooter,
+  Flex,
+  FlexItem,
   MenuToggle,
   MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
-  Toolbar,
-  ToolbarContent,
-  ToolbarGroup,
-  ToolbarItem,
   Switch,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
@@ -32,7 +30,7 @@ import {
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared';
 import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
-import NodeLogsFilterUnit from './NodeLogsUnitFilter';
+import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
 
 type NodeLogsProps = {
@@ -99,77 +97,71 @@ const LogControls: React.FC<LogControlsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Toolbar>
-      <ToolbarContent>
-        <ToolbarGroup>
-          <ToolbarItem>
-            <Select
-              onSelect={onChangePath}
-              selected={path}
-              isOpen={isPathOpen}
-              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                <MenuToggle
-                  ref={toggleRef}
-                  onClick={onTogglePath}
-                  aria-label={t('public~Select a path')}
-                  data-test="select-path"
+    <Flex>
+      <Flex>
+        <FlexItem>
+          <Select
+            onSelect={onChangePath}
+            selected={path}
+            isOpen={isPathOpen}
+            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+              <MenuToggle
+                ref={toggleRef}
+                onClick={onTogglePath}
+                aria-label={t('public~Select a path')}
+                data-test="select-path"
+              >
+                {path}
+              </MenuToggle>
+            )}
+            onOpenChange={(open) => setPathOpen(open)}
+          >
+            <SelectList>{options(pathItems)}</SelectList>
+          </Select>
+        </FlexItem>
+        {isJournal && <NodeLogsUnitFilter onChangeUnit={onChangeUnit} unit={unit} />}
+        {!isJournal && (
+          <FlexItem>
+            {isLoadingFilenames ? (
+              <LoadingInline />
+            ) : (
+              logFilenamesExist && (
+                <Select
+                  onSelect={onChangeFilename}
+                  selected={logFilename}
+                  isOpen={isFilenameOpen}
+                  className="co-node-logs__log-select"
+                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle ref={toggleRef} onClick={onToggleFilename} data-test="select-file">
+                      {logFilename || t('public~Select a log file')}
+                    </MenuToggle>
+                  )}
+                  onOpenChange={(open) => setFilenameOpen(open)}
                 >
-                  {path}
-                </MenuToggle>
-              )}
-              onOpenChange={(open) => setPathOpen(open)}
-            >
-              <SelectList>{options(pathItems)}</SelectList>
-            </Select>
-          </ToolbarItem>
-          {isJournal && <NodeLogsFilterUnit onChangeUnit={onChangeUnit} unit={unit} />}
-          {!isJournal && (
-            <ToolbarItem>
-              {isLoadingFilenames ? (
-                <LoadingInline />
-              ) : (
-                logFilenamesExist && (
-                  <Select
-                    onSelect={onChangeFilename}
-                    selected={logFilename}
-                    isOpen={isFilenameOpen}
-                    className="co-node-logs__log-select"
-                    toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                      <MenuToggle
-                        ref={toggleRef}
-                        onClick={onToggleFilename}
-                        data-test="select-file"
-                      >
-                        {logFilename || t('public~Select a log file')}
-                      </MenuToggle>
-                    )}
-                    onOpenChange={(open) => setFilenameOpen(open)}
-                  >
-                    <SelectList>{options(logFilenames)}</SelectList>
-                  </Select>
-                )
-              )}
-            </ToolbarItem>
-          )}
-          {showSearch && (
-            <ToolbarItem>
-              <LogViewerSearch placeholder={t('public~Search')} minSearchChars={0} />
-            </ToolbarItem>
-          )}
-        </ToolbarGroup>
-        <ToolbarItem className="pf-v6-u-flex-fill pf-v6-u-align-self-center pf-v6-u-justify-content-flex-end">
-          <Switch
-            label={t('public~Wrap lines')}
-            id="wrapLogLines"
-            isChecked={isWrapLines}
-            data-checked-state={isWrapLines}
-            onChange={(_event, checked: boolean) => {
-              setWrapLines(checked);
-            }}
-          />
-        </ToolbarItem>
-      </ToolbarContent>
-    </Toolbar>
+                  <SelectList>{options(logFilenames)}</SelectList>
+                </Select>
+              )
+            )}
+          </FlexItem>
+        )}
+        {showSearch && (
+          <FlexItem>
+            <LogViewerSearch placeholder={t('public~Search')} minSearchChars={0} />
+          </FlexItem>
+        )}
+      </Flex>
+      <FlexItem align={{ default: 'alignLeft', md: 'alignRight' }}>
+        <Switch
+          label={t('public~Wrap lines')}
+          id="wrapLogLines"
+          isChecked={isWrapLines}
+          data-checked-state={isWrapLines}
+          onChange={(_event, checked: boolean) => {
+            setWrapLines(checked);
+          }}
+        />
+      </FlexItem>
+    </Flex>
   );
 };
 
