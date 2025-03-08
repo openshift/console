@@ -6,6 +6,7 @@ import { Button, Content } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
@@ -196,7 +197,7 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
 const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~User details')} />
       <ResourceSummary resource={obj}>
         <dt>{t('public~Full name')}</dt>
@@ -208,7 +209,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
           ))}
         </dd>
       </ResourceSummary>
-    </div>
+    </PaneBody>
   );
 };
 

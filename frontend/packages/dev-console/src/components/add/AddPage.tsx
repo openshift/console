@@ -4,6 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { FLAGS, useFlag } from '@console/shared';
 import { withStartGuide } from '../../../../../public/components/start-guide';
+import CatalogPageHelpText from '../catalog/CatalogPageHelpText';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import AddPageLayout from './AddPageLayout';
@@ -19,15 +20,19 @@ export const PageContents: React.FC = () => {
       <CreateProjectListPage title={t('devconsole~Add')}>
         {(openProjectModal) =>
           isOpenShift ? (
-            <Trans t={t} ns="devconsole">
-              Select a Project to start adding to it
-              <CreateAProjectButton openProjectModal={openProjectModal} />.
-            </Trans>
+            <CatalogPageHelpText>
+              <Trans t={t} ns="devconsole">
+                Select a Project to start adding to it
+                <CreateAProjectButton openProjectModal={openProjectModal} />.
+              </Trans>
+            </CatalogPageHelpText>
           ) : (
-            <Trans t={t} ns="devconsole">
-              Select a Namespace to start adding to it
-              <CreateAProjectButton openProjectModal={openProjectModal} />.
-            </Trans>
+            <CatalogPageHelpText>
+              <Trans t={t} ns="devconsole">
+                Select a Namespace to start adding to it
+                <CreateAProjectButton openProjectModal={openProjectModal} />.
+              </Trans>
+            </CatalogPageHelpText>
           )
         }
       </CreateProjectListPage>

@@ -10,6 +10,7 @@ import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
 import {
   K8sKind,
@@ -237,46 +238,44 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
   const instanceType = getMachineSetInstanceType(obj);
   const { t } = useTranslation();
   return (
-    <>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('public~MachineSet details')} />
-        <MachineCounts resourceKind={MachineSetModel} resource={obj} />
-        <div className="row">
-          <div className="col-md-6">
-            <ResourceSummary resource={obj}>
-              <dt>{t('public~Selector')}</dt>
-              <dd>
-                <Selector
-                  kind={machineReference}
-                  selector={obj.spec?.selector}
-                  namespace={obj.metadata.namespace}
-                />
-              </dd>
-              <dt>{t('public~Instance type')}</dt>
-              <dd>{instanceType || '-'}</dd>
-              {machineRole && (
-                <>
-                  <dt>{t('public~Machine role')}</dt>
-                  <dd>{machineRole}</dd>
-                </>
-              )}
-              {region && (
-                <>
-                  <dt>{t('public~Region')}</dt>
-                  <dd>{region}</dd>
-                </>
-              )}
-              {availabilityZone && (
-                <>
-                  <dt>{t('public~Availability zone')}</dt>
-                  <dd>{availabilityZone}</dd>
-                </>
-              )}
-            </ResourceSummary>
-          </div>
+    <PaneBody>
+      <SectionHeading text={t('public~MachineSet details')} />
+      <MachineCounts resourceKind={MachineSetModel} resource={obj} />
+      <div className="row">
+        <div className="col-md-6">
+          <ResourceSummary resource={obj}>
+            <dt>{t('public~Selector')}</dt>
+            <dd>
+              <Selector
+                kind={machineReference}
+                selector={obj.spec?.selector}
+                namespace={obj.metadata.namespace}
+              />
+            </dd>
+            <dt>{t('public~Instance type')}</dt>
+            <dd>{instanceType || '-'}</dd>
+            {machineRole && (
+              <>
+                <dt>{t('public~Machine role')}</dt>
+                <dd>{machineRole}</dd>
+              </>
+            )}
+            {region && (
+              <>
+                <dt>{t('public~Region')}</dt>
+                <dd>{region}</dd>
+              </>
+            )}
+            {availabilityZone && (
+              <>
+                <dt>{t('public~Availability zone')}</dt>
+                <dd>{availabilityZone}</dd>
+              </>
+            )}
+          </ResourceSummary>
         </div>
       </div>
-    </>
+    </PaneBody>
   );
 };
 

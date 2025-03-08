@@ -120,7 +120,9 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
           title={t('console-shared~Invalid YAML cannot be persisted')}
         >
           {displayConversionError && <p>{switchError}</p>}
-          <p>{t('console-shared~Switching to form view will delete any invalid YAML.')}</p>
+          <p className="pf-v6-u-mb-sm">
+            {t('console-shared~Switching to form view will delete any invalid YAML.')}
+          </p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
             {t('console-shared~Switch and delete')}
           </Button>

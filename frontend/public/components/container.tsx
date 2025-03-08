@@ -5,6 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { CodeBlock, CodeBlockCode, Divider } from '@patternfly/react-core';
 import { Status } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   ContainerLifecycle,
   ContainerLifecycleStage,
@@ -271,7 +272,7 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
   const { imageName, imageTag } = getImageNameAndTag(container.image);
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <ScrollToTopOnMount />
 
       <div className="row">
@@ -398,7 +399,7 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
           </div>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 ContainerDetailsList.displayName = 'ContainerDetailsList';

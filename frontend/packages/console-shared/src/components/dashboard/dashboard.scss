@@ -1,13 +1,3 @@
-@import '../../../../../public/style/vars';
-
-.co-dashboard-body {
-  flex: 1 0 auto;
-  padding: $pf-v6-global-gutter;
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding: $pf-v6-global-gutter--md;
-  }
-}
-
 .co-dashboard-grid {
   grid-gap: 1rem;
 }

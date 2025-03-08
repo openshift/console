@@ -4,6 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
 import {
@@ -99,7 +100,7 @@ const SecretDetails = ({ obj: secret }) => {
   const { data, type } = secret;
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Secret details')} />
         <div className="row">
           <div className="col-md-6">
@@ -113,10 +114,10 @@ const SecretDetails = ({ obj: secret }) => {
             </div>
           )}
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SecretData data={data} type={type} />
-      </div>
+      </PaneBody>
     </>
   );
 };
