@@ -12,7 +12,7 @@ jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
 }));
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = (jest as any).requireActual('@console/shared');
   return {
     ...ActualShared,
     useQueryParams: () => new Map(),

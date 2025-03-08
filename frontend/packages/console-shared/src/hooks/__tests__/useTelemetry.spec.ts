@@ -16,7 +16,7 @@ import {
 } from '../useTelemetry';
 
 jest.mock('@console/dynamic-plugin-sdk', () => ({
-  ...require.requireActual('@console/dynamic-plugin-sdk'),
+  ...(jest as any).requireActual('@console/dynamic-plugin-sdk'),
   useResolvedExtensions: jest.fn(),
 }));
 

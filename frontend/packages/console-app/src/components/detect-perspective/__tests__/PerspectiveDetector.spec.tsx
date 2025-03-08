@@ -16,7 +16,7 @@ jest.mock('@console/shared/src', () => ({
 
 jest.mock('react-router', () => {
   return {
-    ...require.requireActual('react-router'),
+    ...(jest as any).requireActual('react-router'),
     useLocation: jest.fn(() => ({ pathname: '' })),
   };
 });

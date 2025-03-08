@@ -17,7 +17,7 @@ jest.mock('../../k8s-resource', () => ({
   k8sGet: jest.fn(),
 }));
 jest.mock('../../k8s-utils', () => ({
-  ...require.requireActual('../../k8s-utils'),
+  ...(jest as any).requireActual('../../k8s-utils'),
   k8sWatch: jest.fn(),
 }));
 const k8sListMock = k8sList as jest.Mock;

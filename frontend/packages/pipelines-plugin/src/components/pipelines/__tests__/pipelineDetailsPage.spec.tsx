@@ -45,12 +45,12 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
 }));
 
 jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...require.requireActual('@console/internal/components/utils/firehose'),
+  ...(jest as any).requireActual('@console/internal/components/utils/firehose'),
   Firehose: ({ children }) => children,
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...(jest as any).requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
 }));

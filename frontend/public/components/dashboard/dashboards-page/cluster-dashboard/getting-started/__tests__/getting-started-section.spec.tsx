@@ -12,12 +12,12 @@ import {
 import { GettingStartedSection } from '../getting-started-section';
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...require.requireActual('@console/shared/src/hooks/flag'),
+  ...(jest as any).requireActual('@console/shared/src/hooks/flag'),
   useFlag: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/getting-started', () => ({
-  ...require.requireActual('@console/shared/src/components/getting-started'),
+  ...(jest as any).requireActual('@console/shared/src/components/getting-started'),
   useGettingStartedShowState: jest.fn(),
 }));
 

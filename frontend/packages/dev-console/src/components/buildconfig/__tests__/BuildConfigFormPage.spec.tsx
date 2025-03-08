@@ -23,7 +23,7 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
 }));
 
 jest.mock('../sections/EditorField', () =>
-  require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
+  (jest as any).requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
@@ -38,7 +38,7 @@ jest.mock(
 );
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...(jest as any).requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 
