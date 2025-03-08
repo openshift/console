@@ -1,4 +1,3 @@
-import * as React from 'react';
 import i18next from 'i18next';
 import { Trans } from 'react-i18next';
 import { confirmModal } from '@console/internal/components/modals';

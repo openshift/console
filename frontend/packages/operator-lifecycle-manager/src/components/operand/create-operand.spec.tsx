@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeDump } from 'js-yaml';

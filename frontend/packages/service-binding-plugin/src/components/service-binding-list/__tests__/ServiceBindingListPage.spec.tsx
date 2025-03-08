@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render } from '@testing-library/react';
 import { FilterValue } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ListPage, ListPageProps } from '@console/internal/components/factory';

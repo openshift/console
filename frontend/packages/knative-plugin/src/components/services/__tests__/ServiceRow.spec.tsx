@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';

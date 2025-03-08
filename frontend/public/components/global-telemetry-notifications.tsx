@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { Banner, Button, Flex, PageSection } from '@patternfly/react-core';
 

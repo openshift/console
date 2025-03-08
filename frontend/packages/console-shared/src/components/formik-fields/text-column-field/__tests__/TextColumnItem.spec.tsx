@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import TextColumnItem from '../TextColumnItem';
 import TextColumnItemContent from '../TextColumnItemContent';

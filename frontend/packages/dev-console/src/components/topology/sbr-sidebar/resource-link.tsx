@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { ResourceIcon, ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';

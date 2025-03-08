@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, screen, fireEvent, cleanup, waitFor, configure } from '@testing-library/react';
 import i18n from 'i18next';
 import { setI18n } from 'react-i18next';

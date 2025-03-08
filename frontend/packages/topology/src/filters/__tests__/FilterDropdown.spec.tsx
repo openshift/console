@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Switch, SelectOption } from '@patternfly/react-core';
 import { mount, shallow } from 'enzyme';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../../topology-types';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 import { SingleTypeaheadDropdown } from '../single-typeahead-dropdown';
 import { act } from 'react-dom/test-utils';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';

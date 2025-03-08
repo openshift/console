@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { useFlag } from '@console/shared';

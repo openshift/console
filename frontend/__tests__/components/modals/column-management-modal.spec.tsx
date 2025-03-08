@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { Alert, DataList, DataListCheck } from '@patternfly/react-core';

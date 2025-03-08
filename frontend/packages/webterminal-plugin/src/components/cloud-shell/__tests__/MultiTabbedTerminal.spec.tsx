@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { PlusIcon } from '@patternfly/react-icons/dist/esm/icons/plus-icon';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';

@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';

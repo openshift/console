@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import { ComputedServiceBindingStatus, ServiceBinding } from '../../types';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Node } from '@patternfly/react-topology/src/types';
 import { TYPE_KNATIVE_REVISION } from '../../const';
 import RevisionRouteDecorator from './RevisionRouteDecorator';

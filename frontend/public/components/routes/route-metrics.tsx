@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { FLAGS } from '@console/shared/src/constants';
 import { Area } from '@console/internal/components/graphs/area';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ManagedByOperatorLink } from '@console/internal/components/utils/managed-by';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

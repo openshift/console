@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, FormFieldGroupExpandable } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { ButtonBar } from '@console/internal/components/utils';

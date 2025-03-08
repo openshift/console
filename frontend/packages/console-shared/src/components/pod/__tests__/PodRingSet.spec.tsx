@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
 import { shallow } from 'enzyme';
 import { DeploymentConfigModel } from '@console/internal/models';

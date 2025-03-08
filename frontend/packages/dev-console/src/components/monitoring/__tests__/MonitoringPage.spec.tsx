@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as Router from 'react-router-dom-v5-compat';
 import { PageHeading, HorizontalNav } from '@console/internal/components/utils';

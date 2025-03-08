@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, fireEvent, screen, waitFor, configure } from '@testing-library/react';
 import { Resources } from '../../import/import-types';
 import MockForm from '../__mocks__/MockForm';

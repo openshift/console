@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';

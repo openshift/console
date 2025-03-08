@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import * as utils from '@console/internal/components/utils/url-poll-hook';

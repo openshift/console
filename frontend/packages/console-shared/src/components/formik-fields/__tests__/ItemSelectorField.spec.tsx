@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { EmptyState } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import ItemSelectorField from '../item-selector-field/ItemSelectorField';

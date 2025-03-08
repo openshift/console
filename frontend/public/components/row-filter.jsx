@@ -1,5 +1,4 @@
 /* eslint-disable tsdoc/syntax */
-import * as React from 'react';
 import { Button, Divider, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 

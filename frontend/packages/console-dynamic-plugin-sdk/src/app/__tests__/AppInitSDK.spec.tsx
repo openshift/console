@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';

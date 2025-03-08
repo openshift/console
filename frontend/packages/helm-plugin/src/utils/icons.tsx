@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { createIcon } from '@patternfly/react-icons/dist/esm/createIcon';
 import { RepositoryIcon } from '@patternfly/react-icons/dist/esm/icons/repository-icon';
 

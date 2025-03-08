@@ -3,7 +3,7 @@
     "target": "es2021",
     "module": "esnext",
     "moduleResolution": "node",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "allowJs": true,
     "noEmitOnError": true,
     "declaration": true,

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, screen, configure } from '@testing-library/react';
 import { useExtensions } from '@console/plugin-sdk/src';
 import PreferredPerspectiveSelect from '../PreferredPerspectiveSelect';

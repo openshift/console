@@ -310,7 +310,9 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
       dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
     }
 
-    return () => _.each(pollerTimeouts, clearTimeout);
+    return () => {
+      _.each(pollerTimeouts, clearTimeout);
+    };
   }, [dispatch, t]);
 
   const clusterVersion: ClusterVersionKind = useClusterVersion();

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { BoltIcon } from '@patternfly/react-icons/dist/esm/icons/bolt-icon';
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { DatabaseIcon } from '@patternfly/react-icons/dist/esm/icons/database-icon';

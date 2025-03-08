@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as Router from 'react-router-dom-v5-compat';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';

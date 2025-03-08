@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Provider } from 'react-redux';
 import * as Router from 'react-router-dom-v5-compat';
 import { mount, ReactWrapper } from 'enzyme';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import useCloudShellAvailable from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import MarkdownExecuteSnippet, { ExecuteSnippet } from '../MarkdownExecuteSnippet';

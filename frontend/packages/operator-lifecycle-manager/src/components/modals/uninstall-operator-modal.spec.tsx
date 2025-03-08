@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import * as _ from 'lodash';
 import { act } from 'react-dom/test-utils';

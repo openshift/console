@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { configure, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import SecureRouteFields from '../SecureRouteFields';
 import { usePreferredRoutingOptions } from '../usePreferredRoutingOptions';

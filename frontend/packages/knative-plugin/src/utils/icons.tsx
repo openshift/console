@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { LaptopCodeIcon, GitAltIcon } from '@patternfly/react-icons';
 import { createIcon } from '@patternfly/react-icons/dist/esm/createIcon';
 

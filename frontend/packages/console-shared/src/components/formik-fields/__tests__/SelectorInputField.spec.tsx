@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import { useFormikContext, useField } from 'formik';

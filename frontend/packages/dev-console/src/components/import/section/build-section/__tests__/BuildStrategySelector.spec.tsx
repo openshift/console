@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as shipwrightHooks from '@console/dev-console/src/utils/shipwright-build-hook';
 import { SingleDropdownField, SingleDropdownFieldProps } from '@console/shared';

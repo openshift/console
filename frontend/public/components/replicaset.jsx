@@ -1,6 +1,5 @@
 // TODO file should be renamed replica-set.jsx to match convention
 
-import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { Link } from 'react-router-dom-v5-compat';

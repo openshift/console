@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Tab, Tabs, TabTitleIcon, TabTitleText } from '@patternfly/react-core';
 import { render } from 'enzyme';
 

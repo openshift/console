@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { FLAGS } from '@console/shared';
 import { WorkspaceModel } from '../../../../models';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';

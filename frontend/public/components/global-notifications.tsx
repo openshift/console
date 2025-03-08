@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { ImpersonateNotifier } from './impersonate-notifier';
 import { KubeAdminNotifier } from './kube-admin-notifier';
 

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { act, cleanup, render } from '@testing-library/react';
+import { cleanup, render, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -68,7 +68,7 @@ beforeEach(() => {
 
 afterEach(async () => {
   // Ensure that there is no timer left which triggers a rerendering
-  await act(async () => jest.runAllTimers());
+  jest.runAllTimers();
 
   cleanup();
 
@@ -91,12 +91,14 @@ describe('useK8sWatchResource', () => {
       </Wrapper>,
     );
 
-    expect(resourceUpdate).toHaveBeenCalledTimes(1);
-    expect(resourceUpdate.mock.calls[0]).toEqual([undefined, true, undefined]);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(1);
+      expect(resourceUpdate.mock.calls[0]).toEqual([undefined, true, undefined]);
+    });
     resourceUpdate.mockClear();
   });
 
-  it('should not fetch any data if watch parameter is null also when rerender and unmount', () => {
+  it('should not fetch any data if watch parameter is null also when rerender and unmount', async () => {
     const initResource: WatchK8sResource = null;
     const { rerender, unmount } = render(
       <Wrapper>
@@ -110,9 +112,12 @@ describe('useK8sWatchResource', () => {
     );
     unmount();
 
-    expect(resourceUpdate).toHaveBeenCalledTimes(2);
-    expect(resourceUpdate.mock.calls[0]).toEqual([undefined, true, undefined]);
-    expect(resourceUpdate.mock.calls[1]).toEqual([undefined, true, undefined]);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(2);
+      expect(resourceUpdate.mock.calls[0]).toEqual([undefined, true, undefined]);
+      expect(resourceUpdate.mock.calls[1]).toEqual([undefined, true, undefined]);
+    });
+
     resourceUpdate.mockClear();
   });
 
@@ -128,28 +133,39 @@ describe('useK8sWatchResource', () => {
     );
 
     // Get updated after the list call is fetched?
-    expect(resourceUpdate).toHaveBeenCalledTimes(2);
-    expect(resourceUpdate.mock.calls[0]).toEqual([[], false, undefined]);
-    expect(resourceUpdate.mock.calls[1]).toEqual([[], false, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(2);
+      expect(resourceUpdate.mock.calls[0]).toEqual([[], false, undefined]);
+      expect(resourceUpdate.mock.calls[1]).toEqual([[], false, '']);
+    });
 
     // Assert API calls
-    expect(k8sListMock).toHaveBeenCalledTimes(1);
-    expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
+    await waitFor(() => {
+      expect(k8sListMock).toHaveBeenCalledTimes(1);
+      expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
+    });
+
     k8sListMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    jest.runAllTimers();
 
     // Assert API calls
-    expect(k8sWatchMock).toHaveBeenCalledTimes(1);
-    expect(k8sWatchMock.mock.calls[0]).toEqual([
-      PodModel,
-      { resourceVersion: '123' },
-      { timeout: 60000 },
-    ]);
+    await waitFor(() => {
+      expect(k8sWatchMock).toHaveBeenCalledTimes(1);
+      expect(k8sWatchMock.mock.calls[0]).toEqual([
+        PodModel,
+        { resourceVersion: '123' },
+        { timeout: 60000 },
+      ]);
+    });
+
     k8sWatchMock.mockClear();
 
-    expect(resourceUpdate).toHaveBeenCalledTimes(3);
-    expect(resourceUpdate.mock.calls[2]).toEqual([podList.items, true, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(3);
+      expect(resourceUpdate.mock.calls[2]).toEqual([podList.items, true, '']);
+    });
+
     resourceUpdate.mockClear();
   });
 
@@ -166,26 +182,35 @@ describe('useK8sWatchResource', () => {
     );
 
     // Get updated after the list call is fetched?
-    expect(resourceUpdate).toHaveBeenCalledTimes(2);
-    expect(resourceUpdate.mock.calls[0]).toEqual([{}, false, undefined]);
-    // TODO: should this really switch from {} to null!?
-    expect(resourceUpdate.mock.calls[1]).toEqual([null, false, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(2);
+      expect(resourceUpdate.mock.calls[0]).toEqual([{}, false, undefined]);
+      // TODO: should this really switch from {} to null!?
+      expect(resourceUpdate.mock.calls[1]).toEqual([null, false, '']);
+    });
+
     resourceUpdate.mockClear();
 
     // Assert API calls
-    expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
+    await waitFor(() => {
+      expect(k8sGetMock).toHaveBeenCalledTimes(1);
+      expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
+    });
+
     k8sGetMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    jest.runAllTimers();
 
     // Assert API calls
-    expect(k8sWatchMock).toHaveBeenCalledTimes(1);
-    expect(k8sWatchMock.mock.calls[0]).toEqual([
-      PodModel,
-      { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
-      { subprotocols: undefined },
-    ]);
+    await waitFor(() => {
+      expect(k8sWatchMock).toHaveBeenCalledTimes(1);
+      expect(k8sWatchMock.mock.calls[0]).toEqual([
+        PodModel,
+        { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
+        { subprotocols: undefined },
+      ]);
+    });
+
     k8sWatchMock.mockClear();
 
     // expect(resourceUpdate).toHaveBeenCalledTimes(3);
@@ -207,18 +232,26 @@ describe('useK8sWatchResource', () => {
     );
 
     // Get updated after the list call failed
-    expect(resourceUpdate).toHaveBeenCalledTimes(2);
-    expect(resourceUpdate.mock.calls[0]).toEqual([[], false, undefined]);
-    expect(resourceUpdate.mock.calls[1]).toEqual([[], false, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(2);
+      expect(resourceUpdate.mock.calls[0]).toEqual([[], false, undefined]);
+      expect(resourceUpdate.mock.calls[1]).toEqual([[], false, '']);
+    });
 
-    await act(async () => jest.runAllTimers());
+    jest.runAllTimers();
 
     // Assert API calls
-    expect(k8sListMock).toHaveBeenCalledTimes(1);
-    expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
+    await waitFor(() => {
+      expect(k8sListMock).toHaveBeenCalledTimes(1);
+      expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
+    });
+
     k8sListMock.mockClear();
 
-    expect(resourceUpdate.mock.calls[2]).toEqual([[], false, new Error('Network issue')]);
+    await waitFor(() => {
+      expect(resourceUpdate.mock.calls[2]).toEqual([[], false, new Error('Network issue')]);
+    });
+
     resourceUpdate.mockClear();
   });
 
@@ -237,27 +270,38 @@ describe('useK8sWatchResource', () => {
     );
 
     // Get updated after the list call failed
-    expect(resourceUpdate).toHaveBeenCalledTimes(2);
-    expect(resourceUpdate.mock.calls[0]).toEqual([{}, false, undefined]);
-    expect(resourceUpdate.mock.calls[1]).toEqual([null, false, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(2);
+      expect(resourceUpdate.mock.calls[0]).toEqual([{}, false, undefined]);
+      expect(resourceUpdate.mock.calls[1]).toEqual([null, false, '']);
+    });
 
-    await act(async () => jest.runAllTimers());
+    jest.runAllTimers();
 
     // Assert API calls
-    expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
+    await waitFor(() => {
+      expect(k8sGetMock).toHaveBeenCalledTimes(1);
+      expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
+    });
+
     k8sGetMock.mockClear();
 
     // TODO: Unexpected watch call! The watch call was not triggered when watching a list
-    expect(k8sWatchMock).toHaveBeenCalledTimes(1);
-    expect(k8sWatchMock.mock.calls[0]).toEqual([
-      PodModel,
-      { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
-      { subprotocols: undefined },
-    ]);
+    await waitFor(() => {
+      expect(k8sWatchMock).toHaveBeenCalledTimes(1);
+      expect(k8sWatchMock.mock.calls[0]).toEqual([
+        PodModel,
+        { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
+        { subprotocols: undefined },
+      ]);
+    });
+
     k8sWatchMock.mockClear();
 
-    expect(resourceUpdate.mock.calls[2]).toEqual([null, false, new Error('Network issue')]);
+    await waitFor(() => {
+      expect(resourceUpdate.mock.calls[2]).toEqual([null, false, new Error('Network issue')]);
+    });
+
     resourceUpdate.mockClear();
   });
 
@@ -273,8 +317,11 @@ describe('useK8sWatchResource', () => {
     );
 
     // Get updated after the list call is fetched?
-    expect(resourceUpdate).toHaveBeenCalledTimes(1);
-    expect(resourceUpdate.mock.calls[0]).toEqual([[], true, new Error('Model does not exist')]);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(1);
+      expect(resourceUpdate.mock.calls[0]).toEqual([[], true, new Error('Model does not exist')]);
+    });
+
     resourceUpdate.mockClear();
   });
 
@@ -290,8 +337,11 @@ describe('useK8sWatchResource', () => {
     );
 
     // Get updated after the list call is fetched?
-    expect(resourceUpdate).toHaveBeenCalledTimes(1);
-    expect(resourceUpdate.mock.calls[0]).toEqual([{}, true, new Error('Model does not exist')]);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(1);
+      expect(resourceUpdate.mock.calls[0]).toEqual([{}, true, new Error('Model does not exist')]);
+    });
+
     resourceUpdate.mockClear();
   });
 
@@ -308,39 +358,51 @@ describe('useK8sWatchResource', () => {
     );
 
     // Get updated after the list call is fetched?
-    expect(resourceUpdate).toHaveBeenCalledTimes(4);
-    expect(resourceUpdate.mock.calls[0]).toEqual([[], false, undefined]);
-    expect(resourceUpdate.mock.calls[1]).toEqual([[], false, undefined]);
-    expect(resourceUpdate.mock.calls[2]).toEqual([[], false, '']);
-    expect(resourceUpdate.mock.calls[3]).toEqual([[], false, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(4);
+      expect(resourceUpdate.mock.calls[0]).toEqual([[], false, undefined]);
+      expect(resourceUpdate.mock.calls[1]).toEqual([[], false, undefined]);
+      expect(resourceUpdate.mock.calls[2]).toEqual([[], false, '']);
+      expect(resourceUpdate.mock.calls[3]).toEqual([[], false, '']);
+    });
+
     resourceUpdate.mockClear();
 
-    await act(async () => jest.runAllTimers());
-
+    jest.runAllTimers();
     // Assert API calls
-    expect(k8sListMock).toHaveBeenCalledTimes(1);
-    expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
+    await waitFor(() => {
+      expect(k8sListMock).toHaveBeenCalledTimes(1);
+      expect(k8sListMock.mock.calls[0]).toEqual([PodModel, { limit: 250 }, true, {}]);
+    });
+
     k8sListMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    jest.runAllTimers();
 
     // Assert API calls
-    expect(k8sWatchMock).toHaveBeenCalledTimes(1);
-    expect(k8sWatchMock.mock.calls[0]).toEqual([
-      PodModel,
-      { resourceVersion: '123' },
-      { timeout: 60000 },
-    ]);
+    await waitFor(() => {
+      expect(k8sWatchMock).toHaveBeenCalledTimes(1);
+      expect(k8sWatchMock.mock.calls[0]).toEqual([
+        PodModel,
+        { resourceVersion: '123' },
+        { timeout: 60000 },
+      ]);
+    });
+
     k8sWatchMock.mockClear();
 
-    expect(resourceUpdate).toHaveBeenCalledTimes(2);
-    expect(resourceUpdate.mock.calls[0]).toEqual([podList.items, true, '']);
-    expect(resourceUpdate.mock.calls[1]).toEqual([podList.items, true, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(2);
+      expect(resourceUpdate.mock.calls[0]).toEqual([podList.items, true, '']);
+      expect(resourceUpdate.mock.calls[1]).toEqual([podList.items, true, '']);
+    });
 
     const itemsWatcher1 = resourceUpdate.mock.calls[0][0];
     const itemsWatcher2 = resourceUpdate.mock.calls[1][0];
-    expect(itemsWatcher1).toEqual(itemsWatcher2);
-    expect(itemsWatcher1).toBe(itemsWatcher2);
+    await waitFor(() => {
+      expect(itemsWatcher1).toEqual(itemsWatcher2);
+      expect(itemsWatcher1).toBe(itemsWatcher2);
+    });
 
     resourceUpdate.mockClear();
   });
@@ -357,42 +419,54 @@ describe('useK8sWatchResource', () => {
         <WatchResource initResource={initResource} />
       </Wrapper>,
     );
+    await waitFor(() => {
+      // Get updated after the list call is fetched?
+      expect(resourceUpdate).toHaveBeenCalledTimes(4);
+      expect(resourceUpdate.mock.calls[0]).toEqual([{}, false, undefined]);
+      expect(resourceUpdate.mock.calls[1]).toEqual([{}, false, undefined]);
+      // TODO: should this really switch from {} to null!?
+      expect(resourceUpdate.mock.calls[2]).toEqual([null, false, '']);
+      expect(resourceUpdate.mock.calls[3]).toEqual([null, false, '']);
+    });
 
-    // Get updated after the list call is fetched?
-    expect(resourceUpdate).toHaveBeenCalledTimes(4);
-    expect(resourceUpdate.mock.calls[0]).toEqual([{}, false, undefined]);
-    expect(resourceUpdate.mock.calls[1]).toEqual([{}, false, undefined]);
-    // TODO: should this really switch from {} to null!?
-    expect(resourceUpdate.mock.calls[2]).toEqual([null, false, '']);
-    expect(resourceUpdate.mock.calls[3]).toEqual([null, false, '']);
     resourceUpdate.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    jest.runAllTimers();
 
     // Assert API calls
-    expect(k8sGetMock).toHaveBeenCalledTimes(1);
-    expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
+    await waitFor(() => {
+      expect(k8sGetMock).toHaveBeenCalledTimes(1);
+      expect(k8sGetMock.mock.calls[0]).toEqual([PodModel, 'my-pod', 'foo', {}, {}]);
+    });
+
     k8sGetMock.mockClear();
 
-    await act(async () => jest.runAllTimers());
+    jest.runAllTimers();
 
     // Assert API calls
-    expect(k8sWatchMock).toHaveBeenCalledTimes(1);
-    expect(k8sWatchMock.mock.calls[0]).toEqual([
-      PodModel,
-      { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
-      { subprotocols: undefined },
-    ]);
+    await waitFor(() => {
+      expect(k8sWatchMock).toHaveBeenCalledTimes(1);
+      expect(k8sWatchMock.mock.calls[0]).toEqual([
+        PodModel,
+        { fieldSelector: 'metadata.name=my-pod', ns: 'foo' },
+        { subprotocols: undefined },
+      ]);
+    });
+
     k8sWatchMock.mockClear();
 
-    expect(resourceUpdate).toHaveBeenCalledTimes(2);
-    expect(resourceUpdate.mock.calls[0]).toEqual([podData, true, '']);
-    expect(resourceUpdate.mock.calls[1]).toEqual([podData, true, '']);
+    await waitFor(() => {
+      expect(resourceUpdate).toHaveBeenCalledTimes(2);
+      expect(resourceUpdate.mock.calls[0]).toEqual([podData, true, '']);
+      expect(resourceUpdate.mock.calls[1]).toEqual([podData, true, '']);
+    });
 
     const itemWatcher1 = resourceUpdate.mock.calls[0][0];
     const itemWatcher2 = resourceUpdate.mock.calls[1][0];
-    expect(itemWatcher1).toEqual(itemWatcher2);
-    expect(itemWatcher1).toBe(itemWatcher2);
+    await waitFor(() => {
+      expect(itemWatcher1).toEqual(itemWatcher2);
+      expect(itemWatcher1).toBe(itemWatcher2);
+    });
 
     resourceUpdate.mockClear();
   });

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Translation } from 'react-i18next';
 import * as PropTypes from 'prop-types';
 

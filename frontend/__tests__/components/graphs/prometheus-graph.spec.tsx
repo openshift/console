@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Provider } from 'react-redux';
 import { Link, BrowserRouter } from 'react-router-dom-v5-compat';
 import { mount, shallow } from 'enzyme';

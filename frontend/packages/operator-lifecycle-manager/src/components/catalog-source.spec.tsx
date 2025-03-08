@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';

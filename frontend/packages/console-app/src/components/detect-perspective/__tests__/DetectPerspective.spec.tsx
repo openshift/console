@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { usePerspectives } from '@console/shared/src';

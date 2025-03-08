@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom-v5-compat';
 import Decorator from '../Decorator';

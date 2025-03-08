@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { ManagedByOperatorResourceLink } from '@console/internal/components/utils/managed-by';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '@console/topology/src/operators/components/const';

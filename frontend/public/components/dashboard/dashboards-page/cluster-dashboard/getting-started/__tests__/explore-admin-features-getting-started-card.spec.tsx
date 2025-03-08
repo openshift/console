@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 

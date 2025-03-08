@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { AlertActionLink } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';

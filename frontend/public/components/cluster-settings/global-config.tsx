@@ -163,7 +163,9 @@ export const GlobalConfigPage: React.FC = () => {
         setLoading(false);
       }
     });
-    return () => (isSubscribed = false);
+    return () => {
+      isSubscribed = false;
+    };
   }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
 
   const visibleItems = items.filter(({ label, description = '' }) => {

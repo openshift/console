@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import * as _ from 'lodash';
 import {

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { KebabItem, KebabItemAccessReview_ } from '../kebab';
 import { useAccessReview } from '../rbac';

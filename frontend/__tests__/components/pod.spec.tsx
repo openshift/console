@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Provider } from 'react-redux';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import store from '@console/internal/redux';

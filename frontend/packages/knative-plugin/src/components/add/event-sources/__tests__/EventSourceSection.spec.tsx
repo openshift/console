@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { FormikValues } from 'formik';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
