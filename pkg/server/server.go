@@ -689,12 +689,17 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s.ContentSecurityPolicyEnabled {
-		contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
+		cspDirectives, err := utils.BuildCSPDirectives(
+			s.K8sMode,
+			s.ContentSecurityPolicy,
+			indexPageScriptNonce,
+			r.Header.Get("Test-CSP-Reporting-Endpoint"),
+		)
 		if err != nil {
 			klog.Fatalf("Error building Content Security Policy directives: %s", err)
 			os.Exit(1)
 		}
-		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(contentSecurityPolicy, "; "))
+		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
 	}
 
 	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
