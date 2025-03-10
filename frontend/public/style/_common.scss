@@ -274,7 +274,7 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 }
 
 .co-m-form-row {
-  margin-bottom: 20px;
+  margin-bottom: var(--pf-t--global--spacer--md);
 }
 
 .co-m-form-row:last-child {

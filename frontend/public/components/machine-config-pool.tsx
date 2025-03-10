@@ -8,6 +8,7 @@ import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-ci
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
 import { MachineConfigPoolModel } from '../models';
@@ -136,7 +137,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
   const { t } = useTranslation();
 
   return (
-    <div className="co-m-pane__body-group">
+    <PaneBodyGroup>
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
@@ -203,7 +204,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
           </div>
         </div>
       </div>
-    </div>
+    </PaneBodyGroup>
   );
 };
 
