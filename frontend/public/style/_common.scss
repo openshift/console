@@ -292,17 +292,13 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
   min-width: 18px;
 }
 
-.no-margin {
-  margin: 0 !important;
-}
-
 .co-overview-card__actions {
   align-self: center !important;
 }
 
 .co-m-timeout-error {
-  margin-bottom: 30px;
-  margin-top: 20px;
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  margin-top: var(--pf-t--global--spacer--md);
   text-align: center;
 }
 
