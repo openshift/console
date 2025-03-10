@@ -115,7 +115,7 @@ In order to update the `tectonic-console-builder` to a new version (e.g., v29), 
    - .ci-operator.yaml
    - Dockerfile.dev
    - Dockerfile.plugins.demo
-   For example, `tectonic-console-builder:29`
+   For example, `tectonic-console-builder:30`
 2. Update the dependencies in Dockerfile.builder file by setting the `NODE_VERSION`
    and `YARN_VERSION` environment variables to the desired versions.
 3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
