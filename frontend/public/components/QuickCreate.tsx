@@ -97,6 +97,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
           onClick={onToggleClick}
           isExpanded={isOpen}
           data-test="quick-create-dropdown"
+          data-tour-id="tour-quick-create-button"
         >
           <Tooltip content={t('public~Quick create')}>
             <PlusCircleIcon alt="" />
