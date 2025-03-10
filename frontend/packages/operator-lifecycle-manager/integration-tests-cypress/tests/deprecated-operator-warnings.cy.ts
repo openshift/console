@@ -1,3 +1,4 @@
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { checkErrors, create } from '../../../integration-tests-cypress/support';
 import { testDeprecatedCatalogSource, testDeprecatedSubscription } from '../mocks';
 import { operator } from '../views/operator.view';
@@ -23,6 +24,7 @@ const DEPRECATED_OPERATOR_WARNING_VERSION_ID = 'deprecated-operator-warning-vers
 describe('Deprecated operator warnings', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     create(testDeprecatedCatalogSource);
   });
 
