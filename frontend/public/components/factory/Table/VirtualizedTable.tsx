@@ -180,7 +180,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
   };
 
   return (
-    <div className="co-m-table-grid co-m-table-grid--bordered">
+    <div>
       {mock ? (
         <EmptyBox label={label} />
       ) : (
