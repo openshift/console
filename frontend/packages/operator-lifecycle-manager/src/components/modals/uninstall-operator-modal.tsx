@@ -37,14 +37,12 @@ import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { getPatchForRemovingPlugins, isPluginEnabled } from '@console/shared/src/utils';
-import {
-  DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE,
-  OPERATOR_UNINSTALL_MESSAGE_ANNOTATION,
-} from '../../const';
+import { DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE } from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
-import { getClusterServiceVersionPlugins } from '../../utils';
 import { OperandLink } from '../operand/operand-link';
+import { OLMAnnotation } from '../operator-hub';
+import { getClusterServiceVersionPlugins } from '../operator-hub/operator-hub-utils';
 import Timeout = NodeJS.Timeout;
 
 const deleteOptions = {
@@ -292,7 +290,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     subscription.metadata.namespace === DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE
       ? 'all-namespaces'
       : subscription.metadata.namespace;
-  const uninstallMessage = csv?.metadata?.annotations?.[OPERATOR_UNINSTALL_MESSAGE_ANNOTATION];
+  const uninstallMessage = csv?.metadata?.annotations?.[OLMAnnotation.UninstallMessage];
   const showOperandsContent = !operandsLoaded || operands.length > 0;
 
   const instructions = (

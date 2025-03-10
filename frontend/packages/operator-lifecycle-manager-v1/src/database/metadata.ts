@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { OperatorHubCSVAnnotationKey } from '@console/operator-lifecycle-manager/src/components/operator-hub';
-import { normalizedInfrastructureFeatures } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
+import { OLMAnnotation } from '@console/operator-lifecycle-manager/src/components/operator-hub';
+import { normalizeInfrastructureFeature } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
 import {
   CommaSeparatedList,
   ExtensionCatalogItemMetadata,
@@ -69,7 +69,7 @@ const aggregateLegacyInfrastructureFeatures = (acc, key, value) => {
   if (!infrastructureFeatures) return acc;
   return {
     ...acc,
-    infrastructureFeatures: infrastructureFeatures.map((i) => normalizedInfrastructureFeatures[i]),
+    infrastructureFeatures: infrastructureFeatures.map((i) => normalizeInfrastructureFeature[i]),
   };
 };
 
@@ -97,19 +97,19 @@ const aggregateAnnotations = (
         );
       case CSVMetadataKey.categories:
         return aggregateCommaSeparatedList(acc, key, value);
-      case OperatorHubCSVAnnotationKey.disconnected:
-      case OperatorHubCSVAnnotationKey.fipsCompliant:
-      case OperatorHubCSVAnnotationKey.proxyAware:
-      case OperatorHubCSVAnnotationKey.cnf:
-      case OperatorHubCSVAnnotationKey.cni:
-      case OperatorHubCSVAnnotationKey.csi:
-      case OperatorHubCSVAnnotationKey.tlsProfiles:
-      case OperatorHubCSVAnnotationKey.tokenAuthAWS:
-      case OperatorHubCSVAnnotationKey.tokenAuthAzure:
-      case OperatorHubCSVAnnotationKey.tokenAuthGCP:
+      case OLMAnnotation.Disconnected:
+      case OLMAnnotation.FIPSCompliant:
+      case OLMAnnotation.ProxyAware:
+      case OLMAnnotation.CNF:
+      case OLMAnnotation.CNI:
+      case OLMAnnotation.CSI:
+      case OLMAnnotation.TLSProfiles:
+      case OLMAnnotation.TokenAuthAWS:
+      case OLMAnnotation.TokenAuthAzure:
+      case OLMAnnotation.TokenAuthGCP:
         return value === 'true'
           ? aggregateArray(acc, NormalizedCSVMetadataKey.infrastructureFeatures, [
-              normalizedInfrastructureFeatures[key],
+              normalizeInfrastructureFeature[key],
             ])
           : acc;
       default:
