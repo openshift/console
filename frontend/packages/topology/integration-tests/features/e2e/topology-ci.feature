@@ -1,4 +1,4 @@
-@manual @topology @smoke
+@topology @smoke
 Feature: Perform actions on topology
     User will be able to create workloads and perform actions on topology page
 
@@ -53,7 +53,7 @@ Feature: Perform actions on topology
 
         Scenario: Deleting a workload through Action menu: T-15-TC01
             Given user is at Topology Graph view
-             When user clicks on workload "dotnet"
+             When user opens the sidebar for "dotnet"
               And user clicks on Action menu
               And user clicks "Delete Deployment" from action menu
               And user clicks on Delete button from modal
