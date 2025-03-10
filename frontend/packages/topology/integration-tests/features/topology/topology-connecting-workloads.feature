@@ -13,7 +13,7 @@ Feature: Connecting nodes
         @smoke
         Scenario: Create visual connection between two nodes using Annotations: T-07-TC01
             Given user has created workload "dancer-ex-git" with resource type "Deployment Config"
-             When user clicks on workload "nodejs-ex-git"
+             When user clicks on workload "nodejs-ex-git" to open sidebar
               And user clicks on Action menu
               And user clicks "Edit annotations" from action menu
               And user enters key as "app.openshift.io/connects-to"
