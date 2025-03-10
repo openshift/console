@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EmptyState, EmptyStateVariant, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import classNames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
@@ -328,26 +328,28 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
 
   return (
     <PaneBody>
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-md-3">{t('container-security~Container')}</div>
-          <div className="col-md-4">{t('container-security~Image')}</div>
-          <div className="col-md-2">
-            <Tooltip content="Results provided by Quay security scanner">
-              <span>{t('container-security~Security scan')}</span>
-            </Tooltip>
-          </div>
-        </div>
-        <div className="co-m-table-grid__body">
+      <PfTable gridBreakPoint="">
+        <Thead>
+          <Tr>
+            <Th width={30}>{t('container-security~Container')}</Th>
+            <Th width={50}>{t('container-security~Image')}</Th>
+            <Th width={20}>
+              <Tooltip content="Results provided by Quay security scanner">
+                <span>{t('container-security~Security scan')}</span>
+              </Tooltip>
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {props.pod.status.containerStatuses.map((status) => (
-            <div className="row" key={status.containerID}>
-              <div className="col-md-3">
+            <Tr key={status.containerID}>
+              <Td>
                 <ContainerLink pod={props.pod} name={status.name} />
-              </div>
-              <div className="col-md-4 co-truncate co-nowrap co-select-to-copy">
+              </Td>
+              <Td className="co-select-to-copy" modifier="breakWord">
                 {props.pod.spec.containers.find((c) => c.name === status.name).image}
-              </div>
-              <div className="col-md-3">
+              </Td>
+              <Td>
                 {props.loaded ? (
                   withVuln(
                     vulnFor(status),
@@ -381,11 +383,11 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
                     <Loading />
                   </div>
                 )}
-              </div>
-            </div>
+              </Td>
+            </Tr>
           ))}
-        </div>
-      </div>
+        </Tbody>
+      </PfTable>
     </PaneBody>
   );
 };

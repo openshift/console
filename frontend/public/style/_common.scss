@@ -191,7 +191,6 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
     padding-right: $co-external-link-padding-right * 2; // extra padding for external link icon
   }
 }
-// Enable break word within co-m-table-grid
 .co-external-link--block {
   display: block;
 }
@@ -287,40 +286,6 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 
 .co-m-pane__body-group {
   padding: 0 0 $pf-v6-global-gutter-y 0;
-}
-
-.co-m-table-grid {
-  &__body {
-    min-height: 50px;
-    position: relative;
-    width: 100%;
-    .row {
-      padding: 10px 20px 10px 0; // right padding creates space for .co-resource-kebab
-    }
-  }
-  &__head {
-    font-weight: var(--pf-t--global--font--weight--body--bold);
-    padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
-    a {
-      cursor: pointer;
-    }
-  }
-  &--bordered {
-    .co-m-table-grid__body .row,
-    .co-m-table-grid__head {
-      border-bottom: var(--pf-t--global--border--width--divider--default) solid
-        var(--pf-t--global--border--color--default);
-    }
-  }
-  .co-m-table-grid {
-    padding-left: 20px;
-  }
-  .row {
-    line-height: normal;
-    margin: 0;
-    position: relative;
-    vertical-align: middle;
-  }
 }
 
 .co-m-loader {

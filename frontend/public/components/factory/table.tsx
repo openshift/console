@@ -38,7 +38,6 @@ import {
 import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
 import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
-import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
   CustomResourceDefinitionKind,
@@ -63,7 +62,6 @@ const sorts = {
   daemonsetNumScheduled: (daemonset) =>
     _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
-  ingressValidHosts,
   instanceType: (obj): string => getMachineSetInstanceType(obj),
   jobCompletionsSucceeded: (job) => job?.status?.succeeded || 0,
   jobType: (job) => getJobTypeAndCompletions(job).type,
@@ -596,7 +594,7 @@ export const Table: React.FC<TableProps> = ({
   }, []);
 
   return (
-    <div data-test={dataTest} className="co-m-table-grid co-m-table-grid--bordered">
+    <div data-test={dataTest}>
       {mock ? (
         <EmptyBox label={label} />
       ) : (
