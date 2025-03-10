@@ -289,6 +289,8 @@
   "Here is where you can view all of your OpenShift environments, including your projects and inventory. You can also access APIs and software catalogs.": "Here is where you can view all of your OpenShift environments, including your projects and inventory. You can also access APIs and software catalogs.",
   "Software Catalog": "Software Catalog",
   "Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.": "Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.",
+  "Quick create": "Quick create",
+  "Create resources in just a few steps via Git, YAML,  or container images.": "Create resources in just a few steps via Git, YAML,  or container images.",
   "Help": "Help",
   "User Preferences": "User Preferences",
   "You’re ready to go!": "You’re ready to go!",
