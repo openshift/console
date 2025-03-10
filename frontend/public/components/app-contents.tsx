@@ -360,7 +360,6 @@ const AppContents: React.FC<{}> = () => {
         path="/k8s/ns/:ns/secrets/:name/edit"
         element={
           <AsyncComponent
-            kind="Secret"
             loader={() =>
               import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(
                 (m) => m.EditSecret,
