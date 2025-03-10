@@ -736,9 +736,6 @@
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-monitoring"
       }
-    },
-    "flags": {
-      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
     }
   },
   {
