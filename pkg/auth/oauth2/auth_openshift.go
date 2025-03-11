@@ -14,6 +14,7 @@ import (
 	"golang.org/x/oauth2"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	authenticationv1 "k8s.io/client-go/kubernetes/typed/authentication/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
@@ -220,6 +221,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 func (o *openShiftAuth) LogoutRedirectURL() string {
 	return o.logoutRedirectOverride
 }
+
 func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*auth.User, error) {
 	token, err := sessions.GetSessionTokenFromCookie(r)
 	if err != nil {
@@ -260,4 +262,15 @@ func tokenToObjectName(token string) string {
 	name := strings.TrimPrefix(token, sha256Prefix)
 	h := sha256.Sum256([]byte(name))
 	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
+}
+
+func (o *openShiftAuth) ReviewToken(r *http.Request, tokenReviewClient authenticationv1.TokenReviewInterface) error {
+	// This is only sufficient because this token handler stores the actual
+	// access token in the session token cookie
+	token, err := sessions.GetSessionTokenFromCookie(r)
+	if err != nil {
+		return fmt.Errorf("failed to get session token: %v", err)
+	}
+
+	return reviewToken(r.Context(), tokenReviewClient, token)
 }

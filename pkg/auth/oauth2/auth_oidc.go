@@ -2,6 +2,7 @@ package oauth2
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"sync"
@@ -9,11 +10,14 @@ import (
 
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/serverutils/asynccache"
+	authv1 "k8s.io/api/authentication/v1"
+	authenticationv1 "k8s.io/client-go/kubernetes/typed/authentication/v1"
 )
 
 type oauth2ConfigConstructor func(oauth2.Endpoint) *oauth2.Config
@@ -180,4 +184,44 @@ func (o *oidcAuth) LogoutRedirectURL() string {
 
 func (o *oidcAuth) oauth2Config() *oauth2.Config {
 	return o.oidcConfig.constructOAuth2Config(o.providerCache.GetItem().Endpoint())
+}
+
+func (o *oidcAuth) ReviewToken(r *http.Request, tokenReviewClient authenticationv1.TokenReviewInterface) error {
+	loginState, err := o.sessions.GetSession(nil, r)
+	if err != nil {
+		return fmt.Errorf("getting session state: %w", err)
+	}
+	if loginState == nil {
+		return errors.New("no login state found for session")
+	}
+
+	return reviewToken(r.Context(), tokenReviewClient, loginState.AccessToken())
+}
+
+// reviewToken creates a TokenReview for the provided token, returning an error if it fails to create
+// the TokenReview or if the token is unauthenticated.
+func reviewToken(ctx context.Context, tokenReviewClient authenticationv1.TokenReviewInterface, token string) error {
+	tokenReview := &authv1.TokenReview{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "authentication.k8s.io/v1",
+			Kind:       "TokenReview",
+		},
+		Spec: authv1.TokenReviewSpec{
+			Token: token,
+		},
+	}
+
+	completedTokenReview, err := tokenReviewClient.Create(ctx, tokenReview, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create TokenReview, %v", err)
+	}
+
+	// Check if the token is authenticated
+	if !completedTokenReview.Status.Authenticated {
+		if completedTokenReview.Status.Error != "" {
+			return errors.New(completedTokenReview.Status.Error)
+		}
+		return errors.New("failed to authenticate the token, unknown error")
+	}
+	return nil
 }
