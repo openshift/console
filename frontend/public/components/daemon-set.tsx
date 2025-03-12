@@ -13,6 +13,7 @@ import {
   ActionMenuVariant,
   usePrometheusGate,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, referenceFor, referenceForModel, DaemonSetKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
@@ -79,7 +80,7 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
   const { podData, loaded } = usePodsWatcher(daemonset);
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~DaemonSet details')} />
         {loaded ? (
           <PodRing
@@ -105,14 +106,14 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
             <DaemonSetDetailsList ds={daemonset} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={daemonset.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={daemonset} heading={t('public~Volumes')} />
-      </div>
+      </PaneBody>
     </>
   );
 };

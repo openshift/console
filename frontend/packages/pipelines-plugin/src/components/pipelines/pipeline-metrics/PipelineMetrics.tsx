@@ -89,7 +89,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj }) => {
           </FlexItem>
         </Flex>
       </StackItem>
-      <StackItem isFilled className="co-m-pane__body pipeline-metrics-dashboard__body">
+      <StackItem isFilled className="pf-v6-c-page__main-section pipeline-metrics-dashboard__body">
         <Grid
           sm={1}
           md={1}

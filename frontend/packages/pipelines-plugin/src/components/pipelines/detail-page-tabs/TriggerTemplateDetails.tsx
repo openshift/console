@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { EventListenerModel, PipelineModel } from '../../../models';
 import ResourceLinkList from '../resource-overview/ResourceLinkList';
 import { TriggerTemplateKind } from '../resource-types';
@@ -20,7 +21,7 @@ const TriggerTemplateDetails: React.FC<TriggerTemplateDetailsProps> = ({
   const eventListeners: string[] = useTriggerTemplateEventListenerNames(triggerTemplate);
   const pipelineName: string = getTriggerTemplatePipelineName(triggerTemplate);
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('pipelines-plugin~TriggerTemplate details')} />
       <div className="row">
         <div className="col-sm-6">
@@ -39,7 +40,7 @@ const TriggerTemplateDetails: React.FC<TriggerTemplateDetailsProps> = ({
           />
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

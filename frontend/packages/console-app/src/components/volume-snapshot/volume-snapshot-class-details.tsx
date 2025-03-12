@@ -9,13 +9,14 @@ import {
   Kebab,
 } from '@console/internal/components/utils';
 import { VolumeSnapshotClassKind } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const { editYaml, events } = navFactory;
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('console-app~VolumeSnapshotClass details')} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
@@ -27,7 +28,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
           </ResourceSummary>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

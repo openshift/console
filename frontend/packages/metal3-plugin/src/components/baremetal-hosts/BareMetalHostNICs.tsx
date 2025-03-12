@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getHostNICs } from '../../selectors';
 import { BareMetalHostNIC, BareMetalHostKind } from '../../types';
 
@@ -48,7 +49,7 @@ const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadEr
   const nics = getHostNICs(host);
   return (
     <div className="co-m-list">
-      <div className="co-m-pane__body">
+      <PaneBody>
         <Table
           data={nics}
           aria-label={t('metal3-plugin~Bare Metal Host NICs')}
@@ -63,7 +64,7 @@ const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadEr
           }
           getRowProps={getRowProps}
         />
-      </div>
+      </PaneBody>
     </div>
   );
 };

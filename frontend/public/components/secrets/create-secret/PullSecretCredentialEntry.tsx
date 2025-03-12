@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 
 export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps> = ({
   id,
@@ -40,7 +41,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
     updateEntry(e.currentTarget.name, e.currentTarget.value);
 
   return (
-    <div className="co-m-pane__body-group" data-test-id="create-image-secret-form">
+    <PaneBodyGroup data-test-id="create-image-secret-form">
       <div className="form-group">
         <label className="control-label co-required" htmlFor={`${id}-address`}>
           {t('public~Registry server address')}
@@ -120,7 +121,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
           </span>
         </div>
       </div>
-    </div>
+    </PaneBodyGroup>
   );
 };
 

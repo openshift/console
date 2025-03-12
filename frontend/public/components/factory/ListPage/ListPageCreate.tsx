@@ -42,7 +42,7 @@ export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = ({
   children,
 }) => (
   <CreateWithPermissions createAccessReview={createAccessReview}>
-    <Link className="co-m-primary-action" to={to}>
+    <Link to={to}>
       <Button variant="primary" id="yaml-create" data-test="item-create">
         {children}
       </Button>

@@ -13,6 +13,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLink, ResourceLink, PageHeading } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
+import PageBody from '@console/shared/src/components/layout/PageBody';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 type PacOverviewProps = {
   namespace: string;
@@ -56,13 +58,13 @@ const PacOverview: React.FC<PacOverviewProps> = ({
       <>
         {pageTitle}
         {pageHeading}
-        <div className="co-m-page__body">
-          <div className="co-m-pane__body no-margin">
+        <PageBody>
+          <PaneBody>
             <Alert variant="danger" title={t('pipelines-plugin~Something unexpected happened!!')}>
               {loadError?.message && <p>{loadError.message}</p>}
             </Alert>
-          </div>
-        </div>
+          </PaneBody>
+        </PageBody>
       </>
     );
   }
@@ -75,8 +77,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
     <>
       {pageTitle}
       {pageHeading}
-      <div className="co-m-page__body">
-        <div className="co-m-pane__body no-margin">
+      <PageBody>
+        <PaneBody>
           {alertVisible && (
             <Alert
               variant="success"
@@ -130,8 +132,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
             </FormGroup>
             <br />
           </FormGroup>
-        </div>
-      </div>
+        </PaneBody>
+      </PageBody>
     </>
   );
 };
