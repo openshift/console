@@ -15,7 +15,7 @@ import {
   GRAPH_POSITION_CHANGE_EVENT,
   ComponentFactory,
 } from '@patternfly/react-topology';
-import Measure from 'react-measure';
+import MeasureBounds from '@console/pipelines-plugin/src/utils/measure';
 import {
   DROP_SHADOW_SPACING,
   NODE_HEIGHT,
@@ -144,8 +144,7 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
   );
 
   return (
-    <Measure
-      bounds
+    <MeasureBounds
       onResize={(contentRect) => {
         setWidth(contentRect.bounds?.width);
       }}
@@ -172,7 +171,7 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
           </div>
         </div>
       )}
-    </Measure>
+    </MeasureBounds>
   );
 };
 

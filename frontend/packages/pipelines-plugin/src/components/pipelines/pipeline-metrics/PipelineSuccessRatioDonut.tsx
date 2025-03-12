@@ -7,9 +7,9 @@ import {
 } from '@patternfly/react-tokens';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import Measure from 'react-measure';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingInline } from '@console/internal/components/utils';
+import MeasureBounds from '@console/pipelines-plugin/src/utils/measure';
 import { DEFAULT_CHART_HEIGHT } from '../const';
 import { usePipelineSuccessRatioPoll } from '../hooks';
 import SuccessRatioDonut from './charts/successRatioDonut';
@@ -141,7 +141,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
         </div>
       </GridItem>
       <GridItem xl2={9} xl={9} lg={9} md={9} sm={9}>
-        <Measure bounds>
+        <MeasureBounds>
           {({ measureRef, contentRect }) => (
             <div ref={measureRef} style={{ height: DEFAULT_CHART_HEIGHT }}>
               <TimeSeriesChart
@@ -165,7 +165,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
               />
             </div>
           )}
-        </Measure>
+        </MeasureBounds>
       </GridItem>
     </Grid>
   );
