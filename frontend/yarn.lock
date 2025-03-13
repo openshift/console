@@ -14504,10 +14504,10 @@ react-svg@^16.2.0:
     "@types/prop-types" "^15.7.13"
     prop-types "^15.8.1"
 
-react-tagsinput@3.19.x:
-  version "3.19.0"
-  resolved "https://registry.yarnpkg.com/react-tagsinput/-/react-tagsinput-3.19.0.tgz#6e3b45595f2d295d4657bf194491988f948caabf"
-  integrity sha512-ni+/qnZrYrvLg83LtTFHErKy1KQHL0fi0Y6C5jgC1dNUePE9cS/OlQ4XH6JRSjv9GGoeVE0R/ujSBaS1uzCRYQ==
+react-tagsinput@3.20.x:
+  version "3.20.3"
+  resolved "https://registry.yarnpkg.com/react-tagsinput/-/react-tagsinput-3.20.3.tgz#d5790ccf8a387bdaa8c2c8306e62a7276ac581c1"
+  integrity sha512-a+7nZ9gg0SwuoPPmh2AAB98OXYduwi6WgYWgWlPts3mq1ookXGphq9Fe/XLhQcdunkiqJO4WXjWXtHE9UlFyiw==
 
 react-test-renderer@^17.0.0:
   version "17.0.1"
