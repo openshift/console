@@ -104,7 +104,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {
     kind,
     kindObj,
-    detail,
     title,
     menuActions,
     buttonActions,
@@ -162,7 +161,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       <NavTitle
         data-test-id={dataTestId}
         className={classNames(
-          { 'co-m-nav-title--detail': detail },
           { 'co-m-nav-title--logo': props.icon },
           { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
           className,
@@ -333,7 +331,6 @@ export type PageHeadingProps = {
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
   buttonActions?: any[];
   children?: React.ReactChildren;
-  detail?: boolean;
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.

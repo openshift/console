@@ -195,7 +195,6 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
     <div>
       <DocumentTitle>{t('public~Debug {{name}}', { name })}</DocumentTitle>
       <PageHeading
-        detail
         title={t('public~Debug {{name}}', { name })}
         kind="Pod"
         obj={{ data: podData }}

@@ -783,7 +783,6 @@ const APIResourcePage_ = (props) => {
         <PageHeading
           title={<div data-test-id="api-explorer-resource-title">{kindObj.label}</div>}
           breadcrumbs={breadcrumbs}
-          detail
         />
         <HorizontalNav pages={pages} customData={{ kindObj, namespace }} noStatusBox />
       </PageTitleContext.Provider>
