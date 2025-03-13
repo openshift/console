@@ -62,6 +62,7 @@ const RolesTableRow = ({ obj: role }) => {
           kind={roleKind(role)}
           name={role.metadata.name}
           namespace={role.metadata.namespace}
+          metadata={role.metadata}
         />
       </TableData>
       <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>

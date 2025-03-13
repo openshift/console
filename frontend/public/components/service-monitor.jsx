@@ -52,6 +52,7 @@ const ServiceMonitorTableRow = ({ obj: sm }) => {
           kind={referenceForModel(ServiceMonitorModel)}
           name={metadata.name}
           namespace={metadata.namespace}
+          metadata={metadata}
           title={metadata.uid}
         />
       </TableData>

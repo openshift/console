@@ -80,7 +80,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} />
+        <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} metadata={job.metadata}/>
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}

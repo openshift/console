@@ -69,6 +69,7 @@ export const ServiceBindingRow: React.FC<RowFunctionArgs<ServiceBinding>> = ({
           kind={kindReference}
           name={serviceBinding.metadata.name}
           namespace={serviceBinding.metadata.namespace}
+          metadata={serviceBinding.metadata}
         />
       </TableData>
       <TableData className={columnClassNames[1]} columnID="namespace">

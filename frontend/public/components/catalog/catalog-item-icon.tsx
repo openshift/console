@@ -8,6 +8,7 @@ import aerogearImg from '../../imgs/logos/aerogear.svg';
 import amqImg from '../../imgs/logos/amq.svg';
 import angularjsImg from '../../imgs/logos/angularjs.svg';
 import ansibleImg from '../../imgs/logos/ansible.svg';
+import argoImg from '../../imgs/logos/argo.svg';
 import apacheImg from '../../imgs/logos/apache.svg';
 import beakerImg from '../../imgs/logos/beaker.svg';
 import buildIconImg from '../../imgs/logos/build-icon.svg';
@@ -113,6 +114,7 @@ const logos = new Map<string, any>()
   .set('icon-angularjs', angularjsImg)
   .set('icon-ansible', ansibleImg)
   .set('icon-apache', apacheImg)
+  .set('icon-argo', argoImg)
   .set('icon-beaker', beakerImg)
   .set('icon-build', buildIconImg)
   .set('icon-camel', camelImg)

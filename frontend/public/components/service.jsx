@@ -97,7 +97,7 @@ const ServiceTableRow = ({ obj: s }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} />
+        <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} metadata={s.metadata}/>
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}

@@ -14,6 +14,9 @@ import { referenceForModel } from '../../module/k8s/k8s-ref';
 import { connectToFlags } from '../../reducers/connectToFlags';
 import { FlagsObject } from '../../reducers/features';
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { Tooltip } from '@patternfly/react-core';
+import { getImageForIconClass } from '../catalog/catalog-item-icon';
+import { isArgoCDResource } from './managed-by-argo-cd';
 
 const unknownKinds = new Set();
 
@@ -84,6 +87,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   dataTest,
   onClick,
   truncate,
+  metadata,
 }) => {
   if (!kind && !groupVersionKind) {
     return null;
@@ -95,6 +99,8 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
     'co-resource-item--inline': inline,
     'co-resource-item--truncate': truncate,
   });
+  const klass = classNames(`co-resource-managed-by-icon`, className);
+  const argoIconUrl = getImageForIconClass('icon-argo');
 
   return (
     <span className={classes}>
@@ -119,6 +125,13 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
         >
           {value}
           {nameSuffix}
+        </span>
+      )}
+      {isArgoCDResource(metadata) && (
+        <span className={klass}>
+          	<Tooltip content={'This resource is managed by Argo CD'}>
+            <img src={argoIconUrl} style={{width: '22px', height: '22px'}} alt="Argo CD logo" />
+          </Tooltip>
         </span>
       )}
       {children}
