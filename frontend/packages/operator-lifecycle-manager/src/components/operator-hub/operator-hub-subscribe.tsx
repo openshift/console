@@ -9,7 +9,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation, Link } from 'react-router-dom-v5-compat';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
