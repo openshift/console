@@ -3,7 +3,10 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
-import { sharedPluginModules, getSharedModuleMetadata } from '../src/shared-modules';
+import {
+  sharedPluginModules,
+  getSharedModuleMetadata,
+} from '../src/shared-modules/shared-modules-meta';
 import { resolvePath } from './utils/path';
 
 type GeneratedPackage = {

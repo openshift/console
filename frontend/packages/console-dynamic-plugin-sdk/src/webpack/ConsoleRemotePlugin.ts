@@ -13,7 +13,10 @@ import * as semver from 'semver';
 import * as webpack from 'webpack';
 import { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
 import { extensionsFile } from '../constants';
-import { sharedPluginModules, getSharedModuleMetadata } from '../shared-modules';
+import {
+  sharedPluginModules,
+  getSharedModuleMetadata,
+} from '../shared-modules/shared-modules-meta';
 import { DynamicModuleMap, getDynamicModuleMap } from '../utils/dynamic-module-parser';
 import { parseJSONC } from '../utils/jsonc';
 import { loadSchema } from '../utils/schema';
