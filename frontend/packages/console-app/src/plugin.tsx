@@ -37,7 +37,7 @@ import {
   getControlPlaneHealth,
   getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
-import { getGuidedTour } from './components/guided-tour';
+// import { getGuidedTour } from './components/guided-tour';
 import { USER_PREFERENCES_BASE_URL } from './components/user-preferences/const';
 import * as models from './models';
 import {
@@ -271,13 +271,14 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ConsolePluginManifestPage),
     },
   },
-  {
-    type: 'GuidedTour',
-    properties: {
-      perspective: 'admin',
-      tour: getGuidedTour(),
-    },
-  },
+  // @vikram-raj Disable it for now as e2e are failing because of it. Will re-enable it once we fix the e2e.
+  // {
+  //   type: 'GuidedTour',
+  //   properties: {
+  //     perspective: 'admin',
+  //     tour: getGuidedTour(),
+  //   },
+  // },
 ];
 
 export default plugin;
