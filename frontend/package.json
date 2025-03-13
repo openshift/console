@@ -110,10 +110,11 @@
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testURL": "http://localhost",
     "setupFiles": [
+      "./__mocks__/helmet.ts",
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
-      "./__mocks__/serverFlags.js",
       "./__mocks__/mutationObserver.js",
+      "./__mocks__/serverFlags.js",
       "./__mocks__/websocket.js",
       "./before-tests.js"
     ],

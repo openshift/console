@@ -9,6 +9,10 @@ import { useUserSettings } from '@console/shared/src';
 import BuildConfigFormPage from '../BuildConfigFormPage';
 import { BuildConfig } from '../types';
 
+jest.mock('react-helmet-async', () => ({
+  Helmet: () => null,
+}));
+
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
