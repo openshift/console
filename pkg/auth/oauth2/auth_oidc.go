@@ -9,6 +9,7 @@ import (
 
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
+	"k8s.io/client-go/rest"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -38,6 +39,7 @@ type oidcConfig struct {
 	cookiePath             string
 	secureCookies          bool
 	constructOAuth2Config  oauth2ConfigConstructor
+	internalK8sConfig      *rest.Config
 }
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig, metrics *auth.Metrics) (*oidcAuth, error) {
