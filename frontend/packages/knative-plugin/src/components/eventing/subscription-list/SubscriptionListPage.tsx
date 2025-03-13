@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { t } from 'i18next';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventingSubscriptionModel } from '../../../models';

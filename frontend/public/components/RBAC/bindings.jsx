@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { connect } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';

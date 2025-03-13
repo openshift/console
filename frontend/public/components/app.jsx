@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { render } from 'react-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { Router } from 'react-router-dom';
@@ -218,7 +218,7 @@ const App = (props) => {
   const { productName } = getBrandingDetails();
 
   const content = (
-    <>
+    <HelmetProvider>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
@@ -265,7 +265,7 @@ const App = (props) => {
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
-    </>
+    </HelmetProvider>
   );
 
   return (

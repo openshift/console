@@ -4,7 +4,7 @@ import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
 import {

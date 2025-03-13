@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
