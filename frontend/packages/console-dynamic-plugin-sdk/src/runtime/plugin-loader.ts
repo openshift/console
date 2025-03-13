@@ -10,7 +10,7 @@ import {
   isStandardPluginManifest,
 } from '../build-types';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
-import { initSharedPluginModules } from '../shared-modules-init';
+import { initSharedPluginModules } from '../shared-modules/shared-modules-init';
 import { RemoteEntryModule } from '../types';
 import { ErrorWithCause } from '../utils/error/custom-error';
 import { settleAllPromises } from '../utils/promise';
