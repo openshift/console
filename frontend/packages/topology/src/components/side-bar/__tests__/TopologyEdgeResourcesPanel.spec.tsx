@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../../../const';

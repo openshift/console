@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 

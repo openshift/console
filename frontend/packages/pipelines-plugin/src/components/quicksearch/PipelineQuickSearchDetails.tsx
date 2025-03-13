@@ -130,7 +130,9 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       debouncedLoadDetails();
     }
 
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, [resetVersions, selectedItem]);
 
   React.useEffect(() => {

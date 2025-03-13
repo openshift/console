@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { configure, render, screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import { EventSinkSourceSection } from '../knative-resource-tab-sections';

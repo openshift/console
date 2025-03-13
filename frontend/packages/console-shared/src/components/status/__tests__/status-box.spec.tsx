@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { configure, render } from '@testing-library/react';
 import {
   IncompleteDataError,

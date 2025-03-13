@@ -168,7 +168,9 @@ export const useSelectedDevfileSample = () => {
         if (mounted) setDevfileSamples(null);
       });
 
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return React.useMemo(() => devfileSamples?.find((sample) => sample.name === devfileName), [

@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
 import { Alert, CodeBlock, CodeBlockCode } from '@patternfly/react-core';

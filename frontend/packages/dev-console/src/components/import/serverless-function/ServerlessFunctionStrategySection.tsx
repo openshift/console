@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Alert, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';

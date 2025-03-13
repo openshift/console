@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, Hint } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';

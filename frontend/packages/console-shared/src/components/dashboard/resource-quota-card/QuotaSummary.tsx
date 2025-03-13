@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
 import { YellowExclamationTriangleIcon } from '../../status';

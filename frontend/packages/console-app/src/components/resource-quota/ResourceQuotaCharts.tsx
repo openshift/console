@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { GaugeChart } from '@console/internal/components/graphs/gauge';
 import { ResourceQuotaKind } from '@console/internal/module/k8s';

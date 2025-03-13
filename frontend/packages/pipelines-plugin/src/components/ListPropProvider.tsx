@@ -1,4 +1,3 @@
-import * as React from 'react';
 import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
 import { K8sState } from '@console/dynamic-plugin-sdk/src/app/redux-types';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DonutChart } from '@console/internal/components/graphs/donut';
 import { ClusterResourceQuotaKind } from '@console/internal/module/k8s';

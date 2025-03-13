@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { AsyncComponent } from './utils';
 import { useTranslation } from 'react-i18next';

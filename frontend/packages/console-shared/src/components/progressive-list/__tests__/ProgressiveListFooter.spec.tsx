@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import i18n from 'i18next';

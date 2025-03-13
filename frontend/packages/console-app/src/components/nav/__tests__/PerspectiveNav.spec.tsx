@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Nav } from '@patternfly/react-core';
 import { shallow, mount } from 'enzyme';
 import { Provider } from 'react-redux';
