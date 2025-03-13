@@ -157,7 +157,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
       >
         <PageHeading
           obj={props.obj}
-          detail={true}
           title={props.title || props.name}
           titleFunc={props.titleFunc}
           menuActions={props.menuActions}

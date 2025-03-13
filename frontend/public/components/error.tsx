@@ -23,7 +23,7 @@ const ErrorComponent: React.FC<ErrorComponentProps> = ({ title, message }) => {
   const { t } = useTranslation();
   return (
     <>
-      <PageHeading title={t('public~Error')} detail />
+      <PageHeading title={t('public~Error')} />
       <PaneBody data-test-id="error-page">
         <PageHeading title={title} centerText />
         {message && <div className="pf-v6-u-text-align-center">{message}</div>}

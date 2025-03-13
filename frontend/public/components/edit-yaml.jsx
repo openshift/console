@@ -787,7 +787,6 @@ const EditYAMLInner = (props) => {
               )
             )
           }
-          detail
         />
       )}
 

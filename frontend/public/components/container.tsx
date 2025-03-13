@@ -452,7 +452,6 @@ export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
   return (
     <>
       <PageHeading
-        detail={true}
         title={params.name}
         kind="Container"
         getResourceStatus={() => containerStateValue}

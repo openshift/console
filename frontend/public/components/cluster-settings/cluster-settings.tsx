@@ -1206,7 +1206,7 @@ export const ClusterSettingsPage: React.FC = () => {
   };
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
-      <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} detail />
+      <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
       <Firehose resources={resources}>
         <HorizontalNav pages={pages} resourceKeys={resourceKeys} />
       </Firehose>
