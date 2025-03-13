@@ -63,7 +63,9 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       getCurrentData(queries[index].desc, datum, dataUnits && dataUnits[index]),
     );
     const maxDate = getMaxDate(data);
-    React.useEffect(() => updateEndDate(maxDate), [maxDate, updateEndDate]);
+    React.useEffect(() => {
+      updateEndDate(maxDate);
+    }, [maxDate, updateEndDate]);
 
     const mapTranslatedData = (originalData: DataPoint[][]) => {
       if (!originalData || originalData.length === 0 || originalData[0].length === 0)
@@ -171,7 +173,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     );
     const [utilizationData, limitData, requestedData] = data;
     const maxDate = getMaxDate([utilizationData]);
-    React.useEffect(() => updateEndDate(maxDate), [updateEndDate, maxDate]);
+    React.useEffect(() => {
+      updateEndDate(maxDate);
+    }, [updateEndDate, maxDate]);
     const current = utilizationData?.length ? utilizationData[utilizationData.length - 1].y : null;
 
     let humanMax: string;
