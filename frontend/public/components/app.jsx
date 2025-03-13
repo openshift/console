@@ -335,14 +335,12 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   const user = useSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
 
-  React.useEffect(
-    () =>
-      setTimeout(() => {
-        setTitleOnLoad(telemetryTitle);
-        setDebounceTime(500);
-      }, 5000),
-    [telemetryTitle],
-  );
+  React.useEffect(() => {
+    setTimeout(() => {
+      setTitleOnLoad(telemetryTitle);
+      setDebounceTime(500);
+    }, 5000);
+  }, [telemetryTitle]);
 
   React.useEffect(() => {
     if (user?.uid || user?.username) {
@@ -376,7 +374,9 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
         fireUrlChangeEvent(location);
       }
     });
-    return () => unlisten();
+    return () => {
+      unlisten();
+    };
   }, [perspective, fireUrlChangeEvent, titleOnLoad]);
 
   return null;
