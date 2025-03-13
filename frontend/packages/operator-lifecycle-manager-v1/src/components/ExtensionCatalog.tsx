@@ -1,5 +1,5 @@
 import { Page, PageSection } from '@patternfly/react-core';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   ConsoleEmptyState,

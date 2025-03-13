@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';

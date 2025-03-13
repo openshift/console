@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { NavBar } from '@console/internal/components/utils';
 import { Alert, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';

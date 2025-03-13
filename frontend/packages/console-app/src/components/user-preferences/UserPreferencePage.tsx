@@ -7,7 +7,7 @@ import {
   TabContent,
   TabContentProps,
 } from '@patternfly/react-core';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import {

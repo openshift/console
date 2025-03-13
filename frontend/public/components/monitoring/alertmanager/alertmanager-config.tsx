@@ -17,7 +17,7 @@ import {
   BreadcrumbItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';

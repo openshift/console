@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import * as classNames from 'classnames';
 import {
   ActionGroup,

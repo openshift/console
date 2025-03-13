@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {

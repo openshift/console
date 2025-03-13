@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert, Button, Tooltip } from '@patternfly/react-core';

@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { AsyncComponent } from './utils';
 import { useTranslation } from 'react-i18next';
 import { useQueryParams } from '@console/shared';

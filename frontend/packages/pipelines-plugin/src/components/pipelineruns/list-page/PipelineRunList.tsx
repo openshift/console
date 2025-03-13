@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Table } from '@console/internal/components/factory';
