@@ -2,6 +2,10 @@ import { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import * as GitUrlParse from 'git-url-parse';
 import i18next from 'i18next';
 import * as _ from 'lodash';
+import {
+  GetTopologyResourceObject,
+  GetResource,
+} from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import {
   K8sResourceKind,
@@ -14,7 +18,6 @@ import { RootState } from '@console/internal/redux';
 import { ALLOW_SERVICE_BINDING_FLAG } from '@console/service-binding-plugin/src/const';
 import OdcBaseNode from '../elements/OdcBaseNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';
-import { TopologyDataObject } from '../topology-types';
 import { updateResourceApplication } from './application-utils';
 import { createResourceConnection, removeResourceConnection } from './connector-utils';
 
@@ -115,14 +118,14 @@ export const getRoutesURL = (resource: K8sResourceKind, routes: RouteKind[]): st
   return null;
 };
 
-export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K8sResourceKind => {
+export const getTopologyResourceObject: GetTopologyResourceObject = (topologyObject) => {
   if (!topologyObject) {
     return null;
   }
   return topologyObject.resource || topologyObject.resources?.obj;
 };
 
-export const getResource = <T = K8sResourceKind>(node: GraphElement): T => {
+export const getResource: GetResource = <T = K8sResourceKind>(node: GraphElement) => {
   const resource = (node as OdcBaseNode)?.getResource();
   return (resource as T) || (getTopologyResourceObject(node?.getData()) as T);
 };
