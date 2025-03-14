@@ -3,16 +3,6 @@
   flex-direction: column;
   min-height: 100%;
 
-  // Fix missing white background color above the header.
-  .ocs-page-layout__title {
-    margin-top: 0;
-    padding-top: var(--pf-t--global--spacer--lg);
-  }
-
-  .ocs-page-layout__content {
-    display: inline;
-  }
-
   .pf-v6-c-empty-state {
     background-color: var(--pf-t--global--background--color--primary--default);
     flex: 1;

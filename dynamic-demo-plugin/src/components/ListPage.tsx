@@ -122,7 +122,7 @@ const ListPage = () => {
       </ListPageBody>
       <ListPageBody>
         <p>{t('plugin__console-demo-plugin~Sample ResourceIcon')}</p>
-        <ResourceIcon kind="Pod" />
+        <p><ResourceIcon kind="Pod" /></p>
       </ListPageBody>
     </>
   );

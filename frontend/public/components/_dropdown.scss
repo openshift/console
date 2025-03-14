@@ -64,13 +64,8 @@
 .co-namespace-bar {
   border-bottom: var(--pf-t--global--border--width--divider--default) solid
     var(--pf-t--global--border--color--default);
-  padding: 0 $pf-v6-global-gutter;
+  padding: 0 $pf-v6-global-gutter-x;
   white-space: nowrap;
-
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-left: $pf-v6-global-gutter--md;
-    padding-right: $pf-v6-global-gutter--md;
-  }
 
   &__items {
     align-items: center;

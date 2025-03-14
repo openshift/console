@@ -4,6 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MachineHealthCheckModel, MachineModel } from '../models';
 import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
 import { referenceForModel } from '../module/k8s/k8s';
@@ -124,43 +125,41 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineHealthCheck details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj}>
-                <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
-                  <Selector
-                    kind={referenceForModel(MachineModel)}
-                    selector={_.get(obj, 'spec.selector')}
-                    namespace={obj.metadata.namespace}
-                  />
-                </DetailsItem>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
-                <DetailsItem
-                  label={t('public~Expected machines')}
-                  obj={obj}
-                  path="status.expectedMachines"
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={obj}>
+              <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
+                <Selector
+                  kind={referenceForModel(MachineModel)}
+                  selector={_.get(obj, 'spec.selector')}
+                  namespace={obj.metadata.namespace}
                 />
-                <DetailsItem
-                  label={t('public~Current healthy')}
-                  obj={obj}
-                  path="status.currentHealthy"
-                />
-              </dl>
-            </div>
+              </DetailsItem>
+            </ResourceSummary>
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
+              <DetailsItem
+                label={t('public~Expected machines')}
+                obj={obj}
+                path="status.expectedMachines"
+              />
+              <DetailsItem
+                label={t('public~Current healthy')}
+                obj={obj}
+                path="status.currentHealthy"
+              />
+            </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Unhealthy conditions')} />
         <UnhealthyConditionsTable obj={obj} />
-      </div>
+      </PaneBody>
     </>
   );
 };

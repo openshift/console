@@ -2,42 +2,36 @@
   align-items: flex-end;
   display: flex;
   font-family: var(--pf-t--global--font--family--body);
+  flex-shrink: 0;
   @media (max-width: $screen-xs) {
+    align-self: flex-start;
     flex-direction: column;
-  }
-}
-
-@media (max-width: $screen-xs) {
-  .co-action-buttons__btn {
-    margin-bottom: 10px;
   }
 }
 
 .co-action-buttons__btn {
   margin-left: 10px;
+  @media (max-width: $screen-xs) {
+    margin-bottom: 10px;
+  }
 }
 
 .co-m-nav-title {
-  margin-top: $pf-v6-global-gutter--md;
-  padding: 0 $pf-v6-global-gutter 0;
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-left: $pf-v6-global-gutter--md;
-    padding-right: $pf-v6-global-gutter--md;
+  gap: 0;
+  // PageHeading has a use case where it outputs an empty node
+  // but that empty node should not take up space
+  &:empty {
+    padding: 0 !important;
+  }
+  &--breadcrumbs {
+    padding-top: 0;
   }
   &--row {
+    gap: var(--pf-t--global--spacer--md);
     @media (min-width: $screen-sm) {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
     }
-  }
-  &--detail {
-    border-bottom: var(--pf-t--global--border--width--divider--default) solid
-      var(--pf-t--global--border--color--default);
-    flex-shrink: 0; // do not allow to shrink
-  }
-  // Positioned after --detail to take precedence, since they will be a siblings
-  &--breadcrumbs {
-    margin-top: 0;
   }
 }

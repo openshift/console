@@ -42,6 +42,7 @@ import {
   NodeAffinity as NodeAffinityType,
 } from '@console/internal/module/k8s';
 import { usePostFormSubmitAction } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ProvidedAPI } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import {
@@ -1077,7 +1078,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   useScrollToTopOnMount();
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <div className="row">
         <div className="col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
           {csv && providedAPI && (
@@ -1168,7 +1169,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           </form>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 
