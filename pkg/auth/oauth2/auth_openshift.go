@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -13,7 +14,9 @@ import (
 
 	"golang.org/x/oauth2"
 
+	authv1 "k8s.io/api/authentication/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	authenticationv1 "k8s.io/client-go/kubernetes/typed/authentication/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
@@ -220,6 +223,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 func (o *openShiftAuth) LogoutRedirectURL() string {
 	return o.logoutRedirectOverride
 }
+
 func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*auth.User, error) {
 	token, err := sessions.GetSessionTokenFromCookie(r)
 	if err != nil {
@@ -260,4 +264,37 @@ func tokenToObjectName(token string) string {
 	name := strings.TrimPrefix(token, sha256Prefix)
 	h := sha256.Sum256([]byte(name))
 	return sha256Prefix + base64.RawURLEncoding.EncodeToString(h[0:])
+}
+
+func (o *openShiftAuth) ReviewToken(r *http.Request, tokenReviewClient authenticationv1.TokenReviewInterface) error {
+	// This is only sufficient because this token handler stores the actual
+	// access token in the session token cookie
+	token, err := sessions.GetSessionTokenFromCookie(r)
+	if err != nil {
+		return fmt.Errorf("failed to get session token: %v", err)
+	}
+
+	tokenReview := &authv1.TokenReview{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "authentication.k8s.io/v1",
+			Kind:       "TokenReview",
+		},
+		Spec: authv1.TokenReviewSpec{
+			Token: token,
+		},
+	}
+
+	completedTokenReview, err := tokenReviewClient.Create(r.Context(), tokenReview, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create TokenReview, %v", err)
+	}
+
+	// Check if the token is authenticated
+	if !completedTokenReview.Status.Authenticated {
+		if completedTokenReview.Status.Error != "" {
+			return errors.New(completedTokenReview.Status.Error)
+		}
+		return errors.New("failed to authenticate the token, unknown error")
+	}
+	return nil
 }
