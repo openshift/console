@@ -2,13 +2,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import {
-  SectionHeading,
-  ResourceSummary,
-  navFactory,
-  Kebab,
-} from '@console/internal/components/utils';
-import { VolumeSnapshotClassKind } from '@console/internal/module/k8s';
+import { SectionHeading, ResourceSummary, navFactory } from '@console/internal/components/utils';
+import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 
 const { editYaml, events } = navFactory;
 
@@ -42,7 +38,20 @@ const VolumeSnapshotClassDetailsPage: React.FC<DetailsPageProps> = (props) => {
     editYaml(),
     events(ResourceEventStream),
   ];
-  return <DetailsPage {...props} menuActions={Kebab.factory.common} pages={pages} />;
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+  return <DetailsPage {...props} customActionMenu={customActionMenu} pages={pages} />;
 };
 
 type DetailsProps = {
