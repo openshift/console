@@ -5,6 +5,7 @@ import { DynamicModuleMap } from '../../utils/dynamic-module-parser';
 export type DynamicModuleImportLoaderOptions = {
   dynamicModuleMaps: Record<string, DynamicModuleMap>;
   resourceMetadata: { jsx: boolean };
+  skipTypeOnlyImports?: boolean;
 };
 
 export type DynamicModuleImportLoader = webpack.LoaderDefinitionFunction<
@@ -46,7 +47,7 @@ const getImportInfo = (importDeclaration: ts.ImportDeclaration) => {
  * @see https://webpack.js.org/contribute/writing-a-loader/
  */
 const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
-  const { dynamicModuleMaps, resourceMetadata } = this.getOptions();
+  const { dynamicModuleMaps, resourceMetadata, skipTypeOnlyImports = true } = this.getOptions();
 
   const sourceContainsDynamicModuleReference = Object.keys(dynamicModuleMaps).some(
     (m) => source.indexOf(m) !== -1,
@@ -83,6 +84,12 @@ const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
 
   ts.forEachChild(sourceFile, (node) => {
     if (ts.isImportDeclaration(node)) {
+      const isTypeOnlyImport = node.importClause?.isTypeOnly ?? false;
+
+      if (isTypeOnlyImport && skipTypeOnlyImports) {
+        return;
+      }
+
       const { moduleSpecifier, importNameToAlias } = getImportInfo(node);
 
       const dynamicModuleName = Object.keys(dynamicModuleMaps).find((m) =>
@@ -97,10 +104,11 @@ const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
 
       if (isIndexImport && Object.keys(importNameToAlias).length > 0) {
         const dynamicImportStatements: string[] = [];
+        const importPrefix = isTypeOnlyImport ? 'import type' : 'import';
 
         Object.entries(importNameToAlias).forEach(([name, alias]) => {
           const createImportStatement = (modulePath?: string) =>
-            `import { ${name !== alias ? `${name} as ${alias}` : `${name}`} } from '${
+            `${importPrefix} { ${name !== alias ? `${name} as ${alias}` : `${name}`} } from '${
               modulePath ? `${dynamicModuleName}/${modulePath}` : dynamicModuleName
             }';`;
 

@@ -347,4 +347,82 @@ export const TestComponent: React.FC = () => {
 
     expect(loggerWarn).not.toHaveBeenCalled();
   });
+
+  it('can skip transformation of type-only index imports', () => {
+    const loggerWarn = jest.fn<void>();
+
+    const source = `
+import * as React from 'react';
+import { PlayIcon, StopIcon } from '@patternfly/react-icons';
+import type { FooProps } from '@patternfly/react-icons';
+
+export const TestComponent: React.FC<FooProps> = () => {
+  return (<><PlayIcon /><StopIcon /></>);
+};
+`;
+
+    expect(
+      callLoaderFunction(
+        {
+          resourcePath: '/test/resource.tsx',
+          getOptions: createGetOptionsMock({
+            dynamicModuleMaps: {
+              '@patternfly/react-icons': {
+                PlayIcon: 'dist/dynamic/icons/play-icon',
+                StopIcon: 'dist/dynamic/icons/stop-icon',
+                FooProps: 'dist/dynamic/icons/types/foo',
+              },
+            },
+            resourceMetadata: { jsx: true },
+            skipTypeOnlyImports: true,
+          }),
+          getLogger: () => ({ warn: loggerWarn } as any),
+        },
+        source,
+      ),
+    ).toBe(`
+import * as React from 'react';
+import { PlayIcon } from '@patternfly/react-icons/dist/dynamic/icons/play-icon';
+import { StopIcon } from '@patternfly/react-icons/dist/dynamic/icons/stop-icon';
+import type { FooProps } from '@patternfly/react-icons';
+
+export const TestComponent: React.FC<FooProps> = () => {
+  return (<><PlayIcon /><StopIcon /></>);
+};
+`);
+
+    expect(loggerWarn).not.toHaveBeenCalled();
+
+    expect(
+      callLoaderFunction(
+        {
+          resourcePath: '/test/resource.tsx',
+          getOptions: createGetOptionsMock({
+            dynamicModuleMaps: {
+              '@patternfly/react-icons': {
+                PlayIcon: 'dist/dynamic/icons/play-icon',
+                StopIcon: 'dist/dynamic/icons/stop-icon',
+                FooProps: 'dist/dynamic/icons/types/foo',
+              },
+            },
+            resourceMetadata: { jsx: true },
+            skipTypeOnlyImports: false,
+          }),
+          getLogger: () => ({ warn: loggerWarn } as any),
+        },
+        source,
+      ),
+    ).toBe(`
+import * as React from 'react';
+import { PlayIcon } from '@patternfly/react-icons/dist/dynamic/icons/play-icon';
+import { StopIcon } from '@patternfly/react-icons/dist/dynamic/icons/stop-icon';
+import type { FooProps } from '@patternfly/react-icons/dist/dynamic/icons/types/foo';
+
+export const TestComponent: React.FC<FooProps> = () => {
+  return (<><PlayIcon /><StopIcon /></>);
+};
+`);
+
+    expect(loggerWarn).not.toHaveBeenCalled();
+  });
 });
