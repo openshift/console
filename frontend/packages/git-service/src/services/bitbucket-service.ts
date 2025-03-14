@@ -1,4 +1,3 @@
-import { Base64 } from 'js-base64';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DevConsoleEndpointResponse } from '@console/shared/src';
@@ -51,7 +50,7 @@ export class BitbucketService extends BaseService {
     switch (this.gitsource.secretType) {
       case SecretType.BASIC_AUTH: {
         const { username, password } = this.gitsource.secretContent;
-        const encodedAuth = Base64.encode(`${Base64.decode(username)}:${Base64.decode(password)}`);
+        const encodedAuth = window.btoa(`${window.atob(username)}:${window.atob(password)}`);
         return { Authorization: `Basic ${encodedAuth}` };
       }
       default:

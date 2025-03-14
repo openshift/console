@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
@@ -37,7 +36,7 @@ const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({
       }
 
       const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
-      const readmeData = readmeFile?.data && Base64.decode(readmeFile?.data);
+      const readmeData = readmeFile?.data && window.atob(readmeFile?.data);
 
       if (!unmounted) {
         setLoaded(true);

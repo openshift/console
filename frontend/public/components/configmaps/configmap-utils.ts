@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { Base64 } from 'js-base64';
 import * as yup from 'yup';
 import { FormikValues } from 'formik';
 import i18next from 'i18next';
@@ -90,7 +89,7 @@ export const getConfigmapFormData = (
 
       return {
         ...bData,
-        value: isBase64(bData.value) ? Base64.decode(bData.value) : bData.value,
+        value: isBase64(bData.value) ? window.atob(bData.value) : bData.value,
       };
     });
   } else {
@@ -122,7 +121,7 @@ export const getConfigmapData = (values: FormikValues, existingConfigMap: Config
       return acc;
     }
     const isEncoded = isBase64(value);
-    acc[key] = isEncoded ? value : Base64.encode(value);
+    acc[key] = isEncoded ? value : window.btoa(value);
     return acc;
   }, {});
 

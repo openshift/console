@@ -1,5 +1,3 @@
-import { Base64 } from 'js-base64';
-
 import { SecretKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -158,7 +156,7 @@ describe('useAlertReceiverLink', () => {
   it('should return link if there are incomplete alert receivers', () => {
     const oauthSecret: SecretKind = {
       data: {
-        'alertmanager.yaml': Base64.encode(defaultClusterAlertManagerConfigYAML),
+        'alertmanager.yaml': window.btoa(defaultClusterAlertManagerConfigYAML),
       },
     };
     useAccessReviewMock.mockReturnValue(true);
@@ -176,7 +174,7 @@ describe('useAlertReceiverLink', () => {
   it('should return no link if all alert receivers are completed', () => {
     const oauthSecret: SecretKind = {
       data: {
-        'alertmanager.yaml': Base64.encode(configuredClusterAlertManagerConfigYAML),
+        'alertmanager.yaml': window.btoa(configuredClusterAlertManagerConfigYAML),
       },
     };
     useAccessReviewMock.mockReturnValue(true);

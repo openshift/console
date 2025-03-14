@@ -17,7 +17,6 @@ import {
 import { HelpIcon } from '@patternfly/react-icons/dist/esm/icons/help-icon';
 import { FormikValues, useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
-import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { generateSecret } from '@console/dev-console/src/components/import/import-submit-utils';
@@ -211,7 +210,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
                     setFieldValue(`${fieldPrefix}webhook.secretObj`, res);
                     const secret = res?.data['webhook.secret'];
                     if (secret) {
-                      setWebhookSecret(Base64.decode(secret));
+                      setWebhookSecret(window.atob(secret));
                     }
                   }
                 }}
