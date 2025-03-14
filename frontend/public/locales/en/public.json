@@ -1222,6 +1222,7 @@
   "Create Pod": "Create Pod",
   "Service monitor selector": "Service monitor selector",
   "Promethesuses": "Promethesuses",
+  "Quick create": "Quick create",
   "Create resources from their YAML or JSON definitions": "Create resources from their YAML or JSON definitions",
   "Import code from your Git repository to be built and deployed": "Import code from your Git repository to be built and deployed",
   "Import from Git": "Import from Git",
