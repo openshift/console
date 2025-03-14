@@ -1,6 +1,5 @@
 import { Base64 } from 'js-base64';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
-import 'whatwg-fetch';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {

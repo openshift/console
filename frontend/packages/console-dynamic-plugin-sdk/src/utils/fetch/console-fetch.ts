@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import 'whatwg-fetch';
 import { getUtilsConfig } from '../../app/configSetup';
 import { setAdmissionWebhookWarning } from '../../app/core/actions';
 import storeHandler from '../../app/storeHandler';
