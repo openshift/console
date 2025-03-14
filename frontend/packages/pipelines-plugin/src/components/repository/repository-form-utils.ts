@@ -1,6 +1,5 @@
 import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
-import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { gitUrlRegex } from '@console/dev-console/src/components/import/validation-schema';
@@ -161,7 +160,7 @@ const createTokenSecret = async (
       'provider.token': token,
       ...(webhookSecret && { 'webhook.secret': webhookSecret }),
       ...(detectedGitType === GitProvider.BITBUCKET && {
-        'webhook.auth': Base64.encode(`${user}:${token}`),
+        'webhook.auth': window.btoa(`${user}:${token}`),
       }),
     },
   };
@@ -185,7 +184,7 @@ export const createRepositoryResources = async (
     gitUrl,
     webhook: { secretObj, method, token, secret: webhookSecret, user },
   } = values;
-  const encodedSecret = Base64.encode(webhookSecret);
+  const encodedSecret = window.btoa(webhookSecret);
   const detectedGitType = detectGitType(gitUrl);
   let secret: SecretKind;
   if (token && method === 'token') {
@@ -206,7 +205,7 @@ export const createRepositoryResources = async (
     await k8sPatchResource({
       model: SecretModel,
       resource: secretObj,
-      data: [{ op: 'replace', path: `/data/webhook.secret`, value: Base64.encode(webhookSecret) }],
+      data: [{ op: 'replace', path: `/data/webhook.secret`, value: window.btoa(webhookSecret) }],
     });
   }
   const gitHost = GitUrlParse(gitUrl).source;
@@ -281,10 +280,10 @@ export const createRemoteWebhook = async (
   if (detectedGitType === GitProvider.BITBUCKET) {
     authToken =
       method === 'token'
-        ? Base64.encode(`${user}:${token}`)
-        : Base64.decode(secretObj?.data?.['webhook.auth']);
+        ? window.btoa(`${user}:${token}`)
+        : window.atob(secretObj?.data?.['webhook.auth']);
   } else {
-    authToken = method === 'token' ? token : Base64.decode(secretObj?.data?.['provider.token']);
+    authToken = method === 'token' ? token : window.atob(secretObj?.data?.['provider.token']);
   }
 
   const webhookCreationStatus = await gitService.createRepoWebhook(

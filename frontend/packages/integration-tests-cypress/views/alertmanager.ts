@@ -1,4 +1,3 @@
-import { Base64 } from 'js-base64';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import {
@@ -9,7 +8,7 @@ import { detailsPage } from './details-page';
 import { listPage } from './list-page';
 import * as yamlEditor from './yaml-editor';
 
-const defaultAlertmanagerYaml = Base64.encode(`"global":
+const defaultAlertmanagerYaml = window.btoa(`"global":
   "resolve_timeout": "5m"
 "inhibit_rules":
 - "equal":

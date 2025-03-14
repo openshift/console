@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
-import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { coFetchText } from '@console/internal/co-fetch';
@@ -102,7 +101,7 @@ const Logs: React.FC<LogsProps> = ({
       ws = new WSFactory(watchURL, wsOpts);
       ws.onmessage((msg) => {
         if (loaded) return;
-        const message = Base64.decode(msg);
+        const message = window.atob(msg);
         appendMessage.current(message);
       })
         .onclose(() => {

@@ -1,4 +1,3 @@
-import { Base64 } from 'js-base64';
 import { action, ActionType as Action } from 'typesafe-actions';
 import * as _ from 'lodash-es';
 
@@ -215,13 +214,7 @@ export const setActiveNamespace = (namespace: string = '') => {
 };
 
 export const startImpersonate = (kind: string, name: string) => async (dispatch, getState) => {
-  let textEncoder;
-  try {
-    textEncoder = new TextEncoder();
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('Your browser does not support TextEncoder. Please upgrade your browser.', e);
-  }
+  const textEncoder = new TextEncoder();
 
   const imp = getImpersonate(getState());
   if ((imp?.name && imp.name !== name) || (imp?.kind && imp.kind !== kind)) {
@@ -234,9 +227,10 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
    * Subprotocols are comma-separated, so commas aren't allowed. Also "="
    * and "/" aren't allowed, so base64 but replace illegal chars.
    */
-  let encodedName = textEncoder.encode(name);
-  encodedName = Base64.encode(String.fromCharCode.apply(String, encodedName));
-  encodedName = encodedName.replace(/=/g, '_').replace(/\//g, '-');
+  const encodedName = window
+    .btoa(String.fromCharCode.apply(String, textEncoder.encode(name)))
+    .replace(/=/g, '_')
+    .replace(/\//g, '-');
 
   let subprotocols;
   if (kind === 'User') {

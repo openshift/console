@@ -1,5 +1,4 @@
 import * as GitUrlParse from 'git-url-parse';
-import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
@@ -26,10 +25,10 @@ export class GiteaService extends BaseService {
     if (this.gitsource.secretType === SecretType.BASIC_AUTH) {
       const { username, password } = this.gitsource.secretContent;
       if (!_.isEmpty(username)) {
-        const encodedAuth = Base64.encode(`${Base64.decode(username)}:${Base64.decode(password)}`);
+        const encodedAuth = window.btoa(`${window.atob(username)}:${window.atob(password)}`);
         return { authorization: `Basic ${encodedAuth}` };
       }
-      return { Authorization: `token ${Base64.decode(password)}` };
+      return { Authorization: `token ${window.atob(password)}` };
     }
     return null;
   };

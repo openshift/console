@@ -1,4 +1,3 @@
-import { Base64 } from 'js-base64';
 import { detailsPage } from './details-page';
 import { listPage } from './list-page';
 import { modal } from './modal';
@@ -57,7 +56,7 @@ export const secrets = {
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(secretName);
   },
-  encode: (username, password) => Base64.encode(`${username}:${password}`),
+  encode: (username, password) => window.btoa(`${username}:${password}`),
   enterSecretName: (secretName: string) => cy.byTestID('secret-name').type(secretName),
   getResourceJSON: (name: string, namespace: string, kind: string) => {
     return cy.exec(`kubectl get -o json -n ${namespace} ${kind} ${name}`);
