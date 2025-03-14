@@ -351,6 +351,28 @@
       "provider": { "$codeRef": "actions.useReplicationControllerActionsProvider" }
     }
   },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "StorageClass",
+        "group": "storage.k8s.io"
+      },
+      "provider": { "$codeRef": "actions.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "VolumeSnapshotClass",
+        "group": "snapshot.storage.k8s.io"
+      },
+      "provider": { "$codeRef": "actions.useDefaultActionsProvider" }
+    }
+  },
 
   {
     "type": "console.page/route",

@@ -9,3 +9,4 @@ export * from './replicaset-provider';
 export * from './replication-controllers-provider';
 export * from './pod-provider';
 export * from './perspective-state-provider';
+export * from './default-provider';
