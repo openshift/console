@@ -2,10 +2,10 @@ import * as React from 'react';
 import { ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ExternalLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { TaskRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import {

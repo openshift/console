@@ -3,9 +3,10 @@ import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import { ResourceLink, Kebab, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 
 const helmChartRepositoryReference = referenceForModel(HelmChartRepositoryModel);

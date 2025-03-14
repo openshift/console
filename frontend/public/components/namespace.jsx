@@ -47,7 +47,6 @@ import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   DetailsItem,
-  ExternalLink,
   Kebab,
   LabelList,
   LoadingInline,
@@ -64,6 +63,7 @@ import {
   navFactory,
   useAccessReview,
 } from './utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';

@@ -9,7 +9,8 @@ import { getDuration, dateFormatter } from '@console/shared/src/utils/datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
-import { ExternalLink, FieldLevelHelp } from './index';
+import { FieldLevelHelp } from './index';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RootState } from '../../redux';
 
 const useServiceLevelText = (level: string): string => {

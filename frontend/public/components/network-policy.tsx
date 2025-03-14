@@ -16,8 +16,8 @@ import {
   ResourceLink,
   ResourceSummary,
   Selector,
-  ExternalLink,
 } from './utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { MultiNetworkPolicyModel, NetworkPolicyModel } from '../models';
 import { getNetworkPolicyDocURL, isManaged } from './utils/documentation';
 import {

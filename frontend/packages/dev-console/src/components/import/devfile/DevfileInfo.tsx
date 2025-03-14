@@ -3,8 +3,8 @@ import { Icon } from '@patternfly/react-core';
 import { LayerGroupIcon } from '@patternfly/react-icons/dist/esm/icons/layer-group-icon';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { ExternalLink } from '@console/internal/components/utils';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DevfileSample } from './devfile-types';
 
 export type DevfileInfoProps = {

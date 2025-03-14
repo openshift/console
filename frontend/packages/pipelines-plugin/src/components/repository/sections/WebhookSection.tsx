@@ -23,7 +23,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { generateSecret } from '@console/dev-console/src/components/import/import-submit-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { GitProvider } from '@console/git-service/src';
-import { ExternalLink, FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResource } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { ConfigMapKind } from '@console/internal/module/k8s/types';
 import {
@@ -32,6 +32,7 @@ import {
   ResourceDropdownField,
   useActiveNamespace,
 } from '@console/shared/src';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { AccessTokenDocLinks, WebhookDocLinks } from '../consts';
 import PermissionsSection from './PermissionsSection';
 

@@ -1,7 +1,8 @@
 import { GraphElement } from '@patternfly/react-topology';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import { ExternalLink, ResourceIcon } from '@console/internal/components/utils';
+import { ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import {

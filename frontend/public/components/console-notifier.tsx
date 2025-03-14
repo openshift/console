@@ -4,7 +4,8 @@ import * as _ from 'lodash-es';
 import { Banner, Flex } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { ExternalLink, Firehose, FirehoseResult } from './utils';
+import { Firehose, FirehoseResult } from './utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
 

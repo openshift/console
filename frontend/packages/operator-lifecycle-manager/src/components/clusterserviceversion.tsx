@@ -38,7 +38,6 @@ import {
   AsyncComponent,
   DOC_URL_OPERATORFRAMEWORK_SDK,
   documentationURLs,
-  ExternalLink,
   FirehoseResult,
   getDocumentationURL,
   isManaged,
@@ -72,6 +71,7 @@ import {
 } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';

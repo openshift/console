@@ -67,30 +67,7 @@ export const getURLSearchParams = () => {
   return all;
 };
 
-export const ExternalLink: React.FC<ExternalLinkProps> = ({
-  children,
-  href,
-  text,
-  additionalClassName = '',
-  dataTestID,
-  stopPropagation,
-  ...props
-}) => (
-  <a
-    {...props}
-    className={classNames('co-external-link', additionalClassName)}
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    data-test-id={dataTestID}
-    {...(stopPropagation ? { onClick: (e) => e.stopPropagation() } : {})}
-  >
-    {children || text}
-  </a>
-);
-
 // Opens link with copy-to-clipboard
-
 export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   link,
   text,
@@ -159,14 +136,6 @@ export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ child
   <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
-
-type ExternalLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  href: string;
-  text?: React.ReactNode;
-  additionalClassName?: string;
-  dataTestID?: string;
-  stopPropagation?: boolean;
-};
 
 type ExternalLinkWithCopyProps = {
   link: string;

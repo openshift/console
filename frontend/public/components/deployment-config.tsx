@@ -44,11 +44,11 @@ import {
   navFactory,
   togglePaused,
   RuntimeClass,
-  ExternalLink,
   getDocumentationURL,
   documentationURLs,
   isManaged,
 } from './utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';

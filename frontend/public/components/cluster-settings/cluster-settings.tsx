@@ -83,10 +83,10 @@ import {
   splitClusterVersionChannel,
   UpdateHistory,
 } from '../../module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   documentationURLs,
   EmptyBox,
-  ExternalLink,
   FieldLevelHelp,
   Firehose,
   FirehoseResource,

@@ -7,7 +7,7 @@ import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-typ
 import { useModal, Timestamp } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import {
   getAlertSeverity,

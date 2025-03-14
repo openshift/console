@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as GitUrlParse from 'git-url-parse';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const isSHARevision = (revision: string) => {
   return revision.match(/^[a-f0-9]{5,40}$/) !== null;

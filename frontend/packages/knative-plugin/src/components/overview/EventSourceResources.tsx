@@ -1,16 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ResourceLink,
-  ExternalLink,
-  SidebarSectionHeading,
-} from '@console/internal/components/utils';
+import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
   referenceForGroupVersionKind,
   groupVersionFor,
 } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import EventSourceOwnedList from './EventSourceOwnedList';
 
 type EventSourceTargetProps = {

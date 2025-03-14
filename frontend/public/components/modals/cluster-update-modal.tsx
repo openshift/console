@@ -3,11 +3,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Radio, Content, ContentVariants } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  documentationURLs,
-  ExternalLink,
-  getDocumentationURL,
-} from '@console/internal/components/utils';
+import { documentationURLs, getDocumentationURL } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
