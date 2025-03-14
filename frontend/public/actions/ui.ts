@@ -220,11 +220,7 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
     textEncoder = new TextEncoder();
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.info('Browser lacks TextEncoder. Falling back to polyfill.', e);
-  }
-
-  if (!textEncoder) {
-    textEncoder = await import('text-encoding').then((module) => new module.TextEncoder('utf-8'));
+    console.error('Your browser does not support TextEncoder. Please upgrade your browser.', e);
   }
 
   const imp = getImpersonate(getState());

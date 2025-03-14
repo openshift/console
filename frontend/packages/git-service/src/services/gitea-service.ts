@@ -1,7 +1,6 @@
 import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
-import 'whatwg-fetch';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   BranchList,

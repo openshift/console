@@ -7,8 +7,6 @@ import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
-// AbortController is not supported in some older browser versions
-import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON, appInternalFetch } from '../co-fetch';
@@ -58,7 +56,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
-import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core'; // PF4 Imports
+import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core';
 import { AuthenticationErrorPage } from './error';
 import '../vendor.scss';
 import '../style.scss';
@@ -67,8 +65,6 @@ import '@patternfly/quickstarts/dist/quickstarts.min.css';
 const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
-// Edge lacks URLSearchParams
-import 'url-search-params-polyfill';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
