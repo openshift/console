@@ -32,6 +32,51 @@ const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => vo
   return [counterRef.current !== initialValue, increment, decrement];
 };
 
+const useUserUid = () => {
+  // Unique username
+  const uniqueUsernameRef = React.useRef<string>('');
+  const [userUidLoading, setUserUidLoading] = React.useState<boolean>(true);
+
+  // User id and impersonate name
+  const userImpersonateNameOrUID = useSelector((state: RootState) => {
+    const impersonateName = getImpersonate(state)?.name;
+    const uid = getUser(state)?.uid;
+    return impersonateName || uid || '';
+  });
+
+  // Username
+  const username = useSelector((state: RootState) => {
+    return getUser(state)?.username;
+  });
+
+  // construct unique username
+  React.useEffect(() => {
+    let activeGenerate = true;
+
+    if (username === 'kube:admin') {
+      uniqueUsernameRef.current = 'kubeadmin';
+    } else if (username) {
+      setUserUidLoading(true);
+      generateHash('SHA-256', username)
+        .then((hash) => {
+          if (activeGenerate) {
+            uniqueUsernameRef.current = hash;
+          }
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Could not generate unique username hash:', err);
+        });
+    }
+    return () => {
+      activeGenerate = false;
+      setUserUidLoading(false);
+    };
+  }, [username]);
+
+  return { userUidLoading, userUid: userImpersonateNameOrUID || uniqueUsernameRef.current || '' };
+};
+
 export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = false) => {
   // Mount status for safety state updates
   const mounted = React.useRef(true);
@@ -60,50 +105,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   // Request counter
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
-  // Unique username
-  const [uniqueUsername, setUniqueUsernameUnsafe] = React.useState<string>('');
-  const setUniqueUsername: typeof setUniqueUsernameUnsafe = React.useCallback(
-    (...args) => mounted.current && setUniqueUsernameUnsafe(...args),
-    [setUniqueUsernameUnsafe],
-  );
-  // User id and impersonate name
-  const userImpersonateNameOrUID = useSelector((state: RootState) => {
-    const impersonateName = getImpersonate(state)?.name;
-    const uid = getUser(state)?.uid;
-    return impersonateName || uid || '';
-  });
-
-  // Username
-  const username = useSelector((state: RootState) => {
-    return getUser(state)?.username;
-  });
-
-  // construct unique username
-  React.useEffect(() => {
-    let activeGenerate = true;
-
-    if (!username) {
-      setUniqueUsername('');
-    } else if (username === 'kube:admin') {
-      setUniqueUsername('kubeadmin');
-    } else {
-      generateHash('SHA-256', username)
-        .then((hash) => {
-          if (activeGenerate) {
-            setUniqueUsername(hash);
-          }
-        })
-        .catch((err) => {
-          // eslint-disable-next-line no-console
-          console.error('Could not generate unique username hash:', err);
-        });
-    }
-    return () => {
-      activeGenerate = false;
-    };
-  }, [username, setUniqueUsername]);
-
-  const userUid = userImpersonateNameOrUID || uniqueUsername || '';
+  const { userUidLoading, userUid } = useUserUid();
 
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
 
@@ -118,7 +120,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
 
   const isLocalStorage = fallbackLocalStorage || impersonate;
   const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
-    alwaysUseFallbackLocalStorage && !impersonate
+    alwaysUseFallbackLocalStorage && !impersonate && !userUidLoading
       ? 'console-user-settings'
       : `console-user-settings-${userUid}`,
     keyRef.current,
