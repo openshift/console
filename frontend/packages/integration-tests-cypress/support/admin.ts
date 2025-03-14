@@ -32,6 +32,6 @@ Cypress.Commands.add('initDeveloper', () => {
   nav.sidenav.switcher.changePerspectiveTo('Developer');
   cy.log('switched perspective to Developer');
   nav.sidenav.switcher.shouldHaveText('Developer');
-  cy.log('Developer perspective confirmed ');
+  cy.log('Developer perspective confirmed');
   guidedTour.close();
 });
