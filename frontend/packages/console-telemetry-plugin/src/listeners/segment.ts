@@ -156,7 +156,7 @@ export const eventListener: TelemetryEventListener = async (
           }
 
           // Use SHA1 hash algorithm to anonymize the user
-          const anonymousIdBuffer = await crypto.subtle.digest(
+          const anonymousIdBuffer = await window.crypto.subtle.digest(
             'SHA-1',
             new TextEncoder().encode(anonymousIdInput),
           );
