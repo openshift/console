@@ -253,8 +253,6 @@
     "@types/semver": "^6.0.0",
     "@types/showdown": "1.9.4",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.4.1",
-    "acorn": "^7.0.0",
-    "acorn-jsx": "5.2.0",
     "axe-core": "^4.10.2",
     "babel-loader": "^8.2.1",
     "browser-env": "3.x",
