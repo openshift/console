@@ -22,6 +22,7 @@ import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import PageBody from '@console/shared/src/components/layout/PageBody';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
@@ -258,7 +259,7 @@ export const OperatorHubPage = withFallback((props) => {
       <Helmet>
         <title>OperatorHub</title>
       </Helmet>
-      <div className="co-m-page__body">
+      <PageBody>
         <div className="co-catalog">
           <PageHeading title="OperatorHub" />
           <p className="co-catalog-page__description">
@@ -342,7 +343,7 @@ export const OperatorHubPage = withFallback((props) => {
             </Firehose>
           </div>
         </div>
-      </div>
+      </PageBody>
     </>
   );
 }, ErrorBoundaryFallbackPage);

@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   ContainerSelect,
   getQueryArgument,
@@ -100,14 +101,14 @@ export class PodLogs extends React.Component {
     );
 
     return (
-      <div className="co-m-pane__body co-m-pane__body--full-height">
+      <PaneBody fullHeight>
         <ResourceLog
           containerName={currentContainer ? currentContainer.name : ''}
           dropdown={containerDropdown}
           resource={this.props.obj}
           resourceStatus={currentContainerStatus}
         />
-      </div>
+      </PaneBody>
     );
   }
 }

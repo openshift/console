@@ -47,6 +47,7 @@ import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const { common } = Kebab.factory;
 
@@ -165,36 +166,34 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~CustomResourceDefinition details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Established')}</dt>
-                <dd>
-                  <Established crd={crd} />
-                </dd>
-                <DetailsItem label={t('public~Group')} obj={crd} path="spec.group" />
-                <dt>{t('public~Latest version')}</dt>
-                <dd>{getLatestVersionForCRD(crd)}</dd>
-                <DetailsItem label={t('public~Scope')} obj={crd} path="spec.scope" />
-              </dl>
-            </div>
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <dt>{t('public~Established')}</dt>
+              <dd>
+                <Established crd={crd} />
+              </dd>
+              <DetailsItem label={t('public~Group')} obj={crd} path="spec.group" />
+              <dt>{t('public~Latest version')}</dt>
+              <dd>{getLatestVersionForCRD(crd)}</dd>
+              <DetailsItem label={t('public~Scope')} obj={crd} path="spec.scope" />
+            </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={crd.status.conditions} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Versions')} />
         <CRDVersionTable versions={crd.spec.versions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
