@@ -4,11 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useModal, Timestamp } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { ExternalLink } from '@console/internal/components/utils';
-import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import {
   getAlertSeverity,

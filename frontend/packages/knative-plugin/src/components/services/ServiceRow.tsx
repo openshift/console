@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu, ClampedText } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ServiceModel } from '../../models';
 import { ServiceKind, ConditionTypes } from '../../types';
 import { getCondition } from '../../utils/condition-utils';

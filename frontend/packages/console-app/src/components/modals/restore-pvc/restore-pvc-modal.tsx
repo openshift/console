@@ -29,7 +29,6 @@ import {
   withHandlePromise,
   history,
   RequestSizeInput,
-  Timestamp,
   resourcePathFromModel,
   convertToBaseValue,
   humanizeBinaryBytesWithoutB,
@@ -58,6 +57,7 @@ import {
   RedExclamationCircleIcon,
   onlyPvcSCs,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';

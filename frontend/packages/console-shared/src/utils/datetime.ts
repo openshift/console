@@ -1,5 +1,5 @@
-import * as _ from 'lodash-es';
 import i18n from 'i18next';
+import * as _ from 'lodash';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 // The maximum allowed clock skew in milliseconds where we show a date as "Just now" even if it is from the future.
@@ -61,16 +61,14 @@ export const relativeTimeFormatter = (langArg?: string) =>
   Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat(langArg ?? lang) : null;
 
 export const getDuration = (ms: number) => {
-  if (!ms || ms < 0) {
-    ms = 0;
-  }
-  let seconds = Math.floor(ms / 1000);
+  const milliseconds = Math.max(ms ?? 0, 0);
+  let seconds = Math.floor(milliseconds / 1000);
   let minutes = Math.floor(seconds / 60);
-  seconds = seconds % 60;
+  seconds %= 60;
   let hours = Math.floor(minutes / 60);
-  minutes = minutes % 60;
+  minutes %= 60;
   const days = Math.floor(hours / 24);
-  hours = hours % 24;
+  hours %= 24;
   return { days, hours, minutes, seconds };
 };
 
@@ -80,12 +78,8 @@ export const fromNow = (dateTime: string | Date, now?: Date, options?, langArg?:
     return '-';
   }
 
-  if (!now) {
-    now = new Date();
-  }
-
   const d = new Date(dateTime);
-  const ms = now.getTime() - d.getTime();
+  const ms = (now ?? new Date()).getTime() - d.getTime();
   const justNow = i18n.t('public~Just now');
 
   // If the event occurred less than one minute in the future, assume it's clock drift and show "Just now."
@@ -141,4 +135,23 @@ export const twentyFourHourTime = (date: Date, showSeconds?: boolean): string =>
   const minutes = `:${zeroPad(date.getMinutes() ?? 0)}`;
   const seconds = showSeconds ? `:${zeroPad(date.getSeconds() ?? 0)}` : '';
   return `${hours}${minutes}${seconds}`;
+};
+
+export const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, language: string) => {
+  if (!isValid(mdate)) {
+    return '-';
+  }
+
+  const timeDifference = now.getTime() - mdate.getTime();
+  if (omitSuffix) {
+    return fromNow(mdate, undefined, { omitSuffix: true }, language);
+  }
+
+  // Show a relative time if within 10.5 minutes in the past from the current time.
+  if (timeDifference > maxClockSkewMS && timeDifference < 630000) {
+    return fromNow(mdate, undefined, undefined, language);
+  }
+
+  // Apr 23, 2021, 4:33 PM
+  return dateTimeFormatter(language).format(mdate);
 };

@@ -11,11 +11,11 @@ import {
   ResourceLink,
   cloudProviderNames,
   cloudProviderID,
-  Timestamp,
 } from '@console/internal/components/utils';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
 import {
   getNodeMachineNameAndNamespace,

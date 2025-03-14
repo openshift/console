@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
-import { getDuration, dateFormatter } from './datetime';
+import { getDuration, dateFormatter } from '@console/shared/src/utils/datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';

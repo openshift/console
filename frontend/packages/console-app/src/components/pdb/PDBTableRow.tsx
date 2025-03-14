@@ -4,14 +4,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RowProps, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { TableData } from '@console/internal/components/factory/Table/VirtualizedTable';
-import {
-  Kebab,
-  ResourceLink,
-  Timestamp,
-  ResourceKebab,
-  Selector,
-} from '@console/internal/components/utils';
+import { Kebab, ResourceLink, ResourceKebab, Selector } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PodDisruptionBudgetModel } from '../../models';
 import { tableColumnInfo } from './pdb-table-columns';
 import { PodDisruptionBudgetKind } from './types';

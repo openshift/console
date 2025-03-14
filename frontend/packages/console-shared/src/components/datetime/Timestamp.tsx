@@ -1,31 +1,13 @@
-import { useSelector } from 'react-redux';
 import { Tooltip } from '@patternfly/react-core';
-import * as classNames from 'classnames';
 import { GlobeAmericasIcon } from '@patternfly/react-icons/dist/esm/icons/globe-americas-icon';
-import { TimestampProps } from '@console/dynamic-plugin-sdk';
-
-import * as dateTime from './datetime';
+import * as classNames from 'classnames';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useSelector } from 'react-redux';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
-import { RootState } from '../../redux';
-
-const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, lang: string) => {
-  if (!dateTime.isValid(mdate)) {
-    return '-';
-  }
-
-  const timeDifference = now.getTime() - mdate.getTime();
-  if (omitSuffix) {
-    return dateTime.fromNow(mdate, undefined, { omitSuffix: true }, lang);
-  }
-
-  // Show a relative time if within 10.5 minutes in the past from the current time.
-  if (timeDifference > dateTime.maxClockSkewMS && timeDifference < 630000) {
-    return dateTime.fromNow(mdate, undefined, undefined, lang);
-  }
-
-  // Apr 23, 2021, 4:33 PM
-  return dateTime.dateTimeFormatter(lang).format(mdate);
-};
+import { TimestampProps } from '@console/dynamic-plugin-sdk';
+import { RootState } from '@console/internal/redux';
+import * as dateTime from '../../utils/datetime';
 
 export const Timestamp = (props: TimestampProps) => {
   const now = useSelector<RootState, string>(({ UI }) => UI.get('lastTick'));
@@ -40,7 +22,7 @@ export const Timestamp = (props: TimestampProps) => {
 
   const mdate = new Date(props.timestamp);
 
-  const timestamp = timestampFor(mdate, new Date(now), props.omitSuffix, lang);
+  const timestamp = dateTime.timestampFor(mdate, new Date(now), props.omitSuffix, lang);
 
   if (!dateTime.isValid(mdate)) {
     return <div className="co-timestamp">-</div>;

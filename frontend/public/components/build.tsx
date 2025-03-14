@@ -49,14 +49,14 @@ import {
   resourcePath,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 import { Area } from './graphs';
 import { BuildConfigModel, BuildModel } from '../models';
-import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
+import { timeFormatter, timeFormatterWithSeconds } from '@console/shared/src/utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { displayDurationInWords } from './utils/build-utils';
 

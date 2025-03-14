@@ -32,9 +32,9 @@ import {
   ResourceIcon,
   ResourceLink,
   resourcePathFromModel,
-  Timestamp,
   TogglePlay,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventStreamList } from './utils/event-stream';
 import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';

@@ -23,10 +23,10 @@ import {
   ResourceLink,
   resourcePath,
   OwnerReferences,
-  Timestamp,
   PodsComponent,
   RuntimeClass,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { referenceFor, referenceForModel } from '../module/k8s';
 import { VolumesTable } from './volumes-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';

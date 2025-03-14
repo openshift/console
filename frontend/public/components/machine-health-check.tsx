@@ -17,9 +17,9 @@ import {
   ResourceSummary,
   SectionHeading,
   Selector,
-  Timestamp,
   navFactory,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];

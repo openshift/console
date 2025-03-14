@@ -23,7 +23,7 @@ import {
   useAccessReviewAllowed,
   useAccessReview,
 } from '@console/dynamic-plugin-sdk';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { getGroupVersionKindForModel, Timestamp } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -57,7 +57,6 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   StatusBox,
-  Timestamp,
 } from '@console/internal/components/utils';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

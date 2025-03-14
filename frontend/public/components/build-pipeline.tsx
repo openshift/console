@@ -8,7 +8,7 @@ import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-ico
 
 import { ExternalLink } from './utils/link';
 import { resourcePath } from './utils/resource-link';
-import { fromNow } from './utils/datetime';
+import { fromNow } from '@console/shared/src/utils/datetime';
 import { K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';

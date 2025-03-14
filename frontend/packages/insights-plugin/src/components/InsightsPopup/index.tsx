@@ -8,11 +8,11 @@ import {
   documentationURLs,
   ExternalLink,
   getDocumentationURL,
-  Timestamp,
   isManaged,
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
   riskIcons,
   colorScale,

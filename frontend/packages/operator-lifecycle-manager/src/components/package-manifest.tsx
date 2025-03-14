@@ -14,13 +14,13 @@ import {
 } from '@console/internal/components/factory';
 import {
   ConsoleEmptyState,
-  Timestamp,
   ResourceLink,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
 import { MatchExpression, referenceForModel } from '@console/internal/module/k8s';
 import { OPERATOR_HUB_LABEL } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';

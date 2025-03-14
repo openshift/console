@@ -32,7 +32,6 @@ import {
   ConsoleEmptyState,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   navFactory,
   ResourceLink,
   AsyncComponent,
@@ -67,6 +66,7 @@ import {
   useActiveNamespace,
 } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { useResourceDetailsPage } from '@console/shared/src/hooks/useResourceDetailsPage';
