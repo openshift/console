@@ -350,6 +350,7 @@ export type ListPageHeaderProps = {
   title: string;
   helpText?: React.ReactNode;
   badge?: React.ReactNode;
+  hideFavoriteButton?: boolean;
 };
 
 export type CreateWithPermissionsProps = {
