@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { TFunction } from 'i18next';
 import { Trans } from 'react-i18next';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';

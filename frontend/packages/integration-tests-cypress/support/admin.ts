@@ -19,6 +19,7 @@ Cypress.Commands.add('initAdmin', () => {
   cy.log('ensure perspective switcher is set to Administrator');
   nav.sidenav.switcher.changePerspectiveTo('Administrator');
   nav.sidenav.switcher.shouldHaveText('Administrator');
+  guidedTour.close();
 });
 
 Cypress.Commands.add('initDeveloper', () => {

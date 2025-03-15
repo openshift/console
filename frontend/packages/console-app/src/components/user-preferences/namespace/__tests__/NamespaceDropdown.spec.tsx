@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils';

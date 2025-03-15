@@ -163,7 +163,7 @@
         "version": "v1",
         "kind": "OAuth"
       },
-      "component": { "$codeRef": "oauthConfigDetailsPage.default" }
+      "component": { "$codeRef": "oauthConfigDetailsPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_OAUTH_API"]
@@ -215,7 +215,7 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "actions.useCreateServiceBindingProvider" }
+      "provider": { "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider" }
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
@@ -229,7 +229,7 @@
         "version": "v1",
         "kind": "DeploymentConfig"
       },
-      "provider": { "$codeRef": "actions.useCreateServiceBindingProvider" }
+      "provider": { "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider" }
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
@@ -244,7 +244,7 @@
         "kind": "Service"
       },
       "provider": {
-        "$codeRef": "actions.useCreateServiceBindingProvider"
+        "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider"
       }
     },
     "flags": {
@@ -259,7 +259,7 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "actions.useDeploymentActionsProvider" }
+      "provider": { "$codeRef": "deploymentProvider.useDeploymentActionsProvider" }
     }
   },
   {
@@ -270,7 +270,7 @@
         "version": "v1",
         "kind": "DeploymentConfig"
       },
-      "provider": { "$codeRef": "actions.useDeploymentConfigActionsProvider" }
+      "provider": { "$codeRef": "deploymentConfigProvider.useDeploymentConfigActionsProvider" }
     },
     "flags": {
       "required": ["OPENSHIFT_DEPLOYMENTCONFIG"]
@@ -284,7 +284,7 @@
         "version": "v1",
         "kind": "StatefulSet"
       },
-      "provider": { "$codeRef": "actions.useStatefulSetActionsProvider" }
+      "provider": { "$codeRef": "statefulSetProvider.useStatefulSetActionsProvider" }
     }
   },
   {
@@ -295,7 +295,7 @@
         "version": "v1",
         "kind": "DaemonSet"
       },
-      "provider": { "$codeRef": "actions.useDaemonSetActionsProvider" }
+      "provider": { "$codeRef": "daemonSetActionsProvider.useDaemonSetActionsProvider" }
     }
   },
   {
@@ -306,7 +306,7 @@
         "version": "v1",
         "kind": "Job"
       },
-      "provider": { "$codeRef": "actions.useJobActionsProvider" }
+      "provider": { "$codeRef": "jobProvider.useJobActionsProvider" }
     }
   },
   {
@@ -317,7 +317,7 @@
         "version": "v1",
         "kind": "CronJob"
       },
-      "provider": { "$codeRef": "actions.useCronJobActionsProvider" }
+      "provider": { "$codeRef": "cronJobProvider.useCronJobActionsProvider" }
     }
   },
   {
@@ -327,7 +327,7 @@
         "version": "v1",
         "kind": "Pod"
       },
-      "provider": { "$codeRef": "actions.usePodActionsProvider" }
+      "provider": { "$codeRef": "podProvider.usePodActionsProvider" }
     }
   },
   {
@@ -338,7 +338,7 @@
         "version": "v1",
         "kind": "ReplicaSet"
       },
-      "provider": { "$codeRef": "actions.useReplicaSetActionsProvider" }
+      "provider": { "$codeRef": "replicaSetProvider.useReplicaSetActionsProvider" }
     }
   },
   {
@@ -348,7 +348,7 @@
         "version": "v1",
         "kind": "ReplicationController"
       },
-      "provider": { "$codeRef": "actions.useReplicationControllerActionsProvider" }
+      "provider": { "$codeRef": "replicationControllersProvider.useReplicationControllerActionsProvider" }
     }
   },
 
@@ -357,7 +357,7 @@
     "properties": {
       "exact": true,
       "path": ["/cluster-configuration", "/cluster-configuration/:group"],
-      "component": { "$codeRef": "clusterConfiguration.ClusterConfigurationPage" }
+      "component": { "$codeRef": "ClusterConfigurationPage" }
     }
   },
 
@@ -366,14 +366,14 @@
     "properties": {
       "exact": true,
       "path": ["/cluster-configuration", "/cluster-configuration/:group"],
-      "component": { "$codeRef": "clusterConfiguration.ClusterConfigurationPage" }
+      "component": { "$codeRef": "ClusterConfigurationPage" }
     }
   },
 
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "actions.useDeveloperPerspectiveStateProvider" }
+      "handler": { "$codeRef": "perspectiveStateProvider.useDeveloperPerspectiveStateProvider" }
     }
   },
   {
@@ -466,6 +466,12 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "usePerspectivesAvailable.usePerspectivesAvailable" }
+    }
+  },
+  {
     "type": "console.user-preference/group",
     "properties": {
       "id": "general",
@@ -524,9 +530,12 @@
       "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "userPreferences.PreferredPerspectiveSelect" }
+        "component": { "$codeRef": "PreferredPerspectiveSelect" }
       },
       "insertAfter": "console.theme"
+    },
+    "flags": {
+      "required": ["FLAG_PERSPECTIVES_AVAILABLE"]
     }
   },
   {
@@ -538,7 +547,7 @@
       "description": "%console-app~If a project is not selected, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "userPreferences.NamespaceDropdown" }
+        "component": { "$codeRef": "NamespaceDropdown" }
       },
       "insertBefore": "topology.preferredView"
     }
@@ -616,7 +625,7 @@
       "description": "%console-app~Select the language you want to use for the console.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "userPreferences.LanguageDropdown" }
+        "component": { "$codeRef": "LanguageDropdown" }
       }
     }
   },
@@ -646,7 +655,7 @@
       "perspective": "admin",
       "id": "home",
       "name": "%console-app~Home%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-home" }
+      "dataAttributes": { "data-quickstart-id": "qs-nav-home", "data-tour-id": "tour-home-nav" }
     }
   },
   {
@@ -665,7 +674,10 @@
       "perspective": "admin",
       "id": "workloads",
       "name": "%console-app~Workloads%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-workloads" },
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-workloads",
+        "data-tour-id": "tour-workloads-nav"
+      },
       "insertAfter": "operators"
     }
   },
@@ -1387,9 +1399,9 @@
     "type": "console.dashboards/overview/health/resource",
     "properties": {
       "title": "%console-app~Dynamic Plugins%",
-      "resources": { "$codeRef": "dynamicPluginsHealthResource.dynamicPluginsResources" },
-      "healthHandler": { "$codeRef": "dynamicPluginsHealthResource.getDynamicPluginHealthState" },
-      "popupComponent": { "$codeRef": "dynamicPluginsHealthResource.DynamicPluginsPopover" },
+      "resources": { "$codeRef": "DynamicPluginsPopover.dynamicPluginsResources" },
+      "healthHandler": { "$codeRef": "getDynamicPluginHealthState.getDynamicPluginHealthState" },
+      "popupComponent": { "$codeRef": "DynamicPluginsPopover" },
       "popupTitle": "%console-app~Dynamic Plugin status%"
     }
   },
@@ -1856,16 +1868,16 @@
     "type": "console.node/status",
     "properties": {
       "title": "%console-app~Scheduling disabled%",
-      "PopoverContent": { "$codeRef": "nodeStatus.MarkAsSchedulablePopover" },
-      "isActive": { "$codeRef": "nodeStatus.isUnschedulableActive" }
+      "PopoverContent": { "$codeRef": "SchedulableStatus.MarkAsSchedulablePopover" },
+      "isActive": { "$codeRef": "SchedulableStatus.isUnschedulableActive" }
     }
   },
   {
     "type": "console.node/status",
     "properties": {
       "title": "%console-app~Approval required%",
-      "PopoverContent": { "$codeRef": "nodeStatus.ServerCSRPopoverContent" },
-      "isActive": { "$codeRef": "nodeStatus.isCSRActive" },
+      "PopoverContent": { "$codeRef": "CSRStatus.ServerCSRPopoverContent" },
+      "isActive": { "$codeRef": "CSRStatus.isCSRActive" },
       "resources": {
         "csrs": {
           "groupVersionKind": {

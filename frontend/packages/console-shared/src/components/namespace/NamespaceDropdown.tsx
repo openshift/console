@@ -23,14 +23,14 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ProjectModel, NamespaceModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  useUserSettingsCompatibility,
   ALL_NAMESPACES_KEY,
   NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
-  alphanumericCompare,
-} from '@console/shared';
-import { FLAGS } from '@console/shared/src/constants';
+  FLAGS,
+} from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { alphanumericCompare } from '@console/shared/src/utils';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';

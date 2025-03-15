@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
-import { useLocation, useParams, Link } from 'react-router-dom-v5-compat';
+import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';
@@ -13,6 +13,9 @@ import {
   ToolbarContent,
   ToolbarItem,
   ToolbarToggleGroup,
+  Switch,
+  FlexItem,
+  Flex,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { sortable } from '@patternfly/react-table';
@@ -20,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
-import { useExactSearch } from '@console/app/src/components/user-preferences/search';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Page, PageHeading, useAccessReview } from '@console/internal/components/utils';
 
@@ -38,7 +41,7 @@ import {
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { RootState } from '../redux';
-import { CheckBox, CheckBoxControls } from './row-filter';
+import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
@@ -484,6 +487,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
   const { apiGroup, apiVersion, namespaced, plural, verbs } = kindObj;
+  const [searchParams] = useSearchParams();
 
   // state
   const [verb, setVerb] = React.useState(_.first(verbs));
@@ -532,7 +536,6 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     }
   });
   const groups = _.map(accessResponse.groups, (name: string) => ({ name, type: 'Group' }));
-
   // filter and sort
   const verbOptions = _.zipObject(verbs, verbs);
   const data = [
@@ -544,7 +547,11 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const itemCount = accessResponse.users.length + accessResponse.groups.length;
   const selectedCount = data.length;
   const filteredData = data.filter(({ name }: { name: string }) => fuzzy(filter, name));
-  const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
+  const orderBy = searchParams.get('orderBy');
+  const sortByParam = searchParams.get('sortBy');
+  const sortBy = sortByParam === 'Type' ? 'type' : 'name';
+  const sortedData = _.orderBy(filteredData, [sortBy], [orderBy]);
+
   const AccessTableHeader = () => [
     {
       title: t('public~Subject'),
@@ -572,7 +579,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   };
 
   const AccessTableRows = () =>
-    _.map(data, (subject) => [
+    sortedData.map((subject) => [
       {
         title: (
           <span className="co-break-word co-select-to-copy">
@@ -586,17 +593,14 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     ]);
 
   // event handlers
-  const toggleShowUsers = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setShowUsers(!showUsers);
+  const toggleShowUsers = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    setShowUsers(checked);
   };
-  const toggleShowGroups = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setShowGroups(!showGroups);
+  const toggleShowGroups = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    setShowGroups(checked);
   };
-  const toggleShowServiceAccounts = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setShowServiceAccounts(!showServiceAccounts);
+  const toggleShowServiceAccounts = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    setShowServiceAccounts(checked);
   };
   const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -625,31 +629,42 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
         </div>
       </div>
       <div className="co-m-pane__body">
-        <CheckBoxControls
+        <RowFilter
           allSelected={allSelected}
           itemCount={itemCount}
           selectedCount={selectedCount}
           onSelectAll={onSelectAll}
         >
-          <CheckBox
-            title={t('public~User')}
-            active={showUsers}
-            number={users.length}
-            toggle={toggleShowUsers}
-          />
-          <CheckBox
-            title={t('public~Group')}
-            active={showGroups}
-            number={groups.length}
-            toggle={toggleShowGroups}
-          />
-          <CheckBox
-            title={t('public~ServiceAccount')}
-            active={showServiceAccounts}
-            number={serviceAccounts.length}
-            toggle={toggleShowServiceAccounts}
-          />
-        </CheckBoxControls>
+          <Flex>
+            <FlexItem>
+              <Switch
+                id="user-switch"
+                label={t('public~{{count}} User', { count: users.length })}
+                isChecked={showUsers}
+                onChange={toggleShowUsers}
+                ouiaId="UserSwitch"
+              />
+            </FlexItem>
+            <FlexItem>
+              <Switch
+                id="group-switch"
+                label={t('public~{{count}} Group', { count: groups.length })}
+                isChecked={showGroups}
+                onChange={toggleShowGroups}
+                ouiaId="GroupSwitch"
+              />
+            </FlexItem>
+            <FlexItem>
+              <Switch
+                id="service-account-switch"
+                label={t('public~{{count}} ServiceAccount', { count: serviceAccounts.length })}
+                isChecked={showServiceAccounts}
+                onChange={toggleShowServiceAccounts}
+                ouiaId="ServiceAccountSwitch"
+              />
+            </FlexItem>
+          </Flex>
+        </RowFilter>
         <p className="co-m-pane__explanation">
           {namespaced &&
             namespace &&

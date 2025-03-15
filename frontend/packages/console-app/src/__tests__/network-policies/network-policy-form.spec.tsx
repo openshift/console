@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Alert, FormFieldGroupExpandable } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';

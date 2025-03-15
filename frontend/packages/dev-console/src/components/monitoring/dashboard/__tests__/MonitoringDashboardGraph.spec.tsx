@@ -10,8 +10,6 @@ import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
 
 describe('Monitoring Dashboard graph', () => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
   const spyDispatch = jest.spyOn(redux, 'useDispatch');
   spyDispatch.mockReturnValue(() => {});
   let monitoringDashboardGraphProps: React.ComponentProps<typeof MonitoringDashboardGraph>;

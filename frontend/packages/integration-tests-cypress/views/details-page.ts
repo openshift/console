@@ -22,5 +22,5 @@ export namespace DetailsPageSelector {
   export const namespace = 'dd[data-test-selector="details-item-value__Namespace"] a';
   export const sectionHeadings = '[data-test-section-heading]';
   export const itemLabels = 'dt';
-  export const horizontalNavTabs = '.co-m-horizontal-nav__menu-item';
+  export const horizontalNavTabs = '.pf-v6-c-tabs__item';
 }

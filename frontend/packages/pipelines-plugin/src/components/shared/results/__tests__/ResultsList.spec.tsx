@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { EmptyState } from '@patternfly/react-core';
 import { Table } from '@patternfly/react-table';
 import { ShallowWrapper, shallow } from 'enzyme';

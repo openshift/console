@@ -90,6 +90,7 @@ func main() {
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 	fK8sModeOffClusterCatalogd := fs.String("k8s-mode-off-cluster-catalogd", "", "DEV ONLY. URL of the cluster's catalogd server.")
+	fK8sModeOffClusterServiceAccountBearerTokenFile := fs.String("k8s-mode-off-cluster-service-account-bearer-token-file", "", "DEV ONLY. bearer token file for the service account used for internal K8s API server calls.")
 
 	fK8sAuth := fs.String("k8s-auth", "", "this option is deprecated, setting it has no effect")
 
@@ -316,6 +317,9 @@ func main() {
 		srv.GOOS = runtime.GOOS
 	}
 
+	// Blacklisted headers
+	srv.ProxyHeaderDenyList = []string{"Cookie", "X-CSRFToken", "X-CSRF-Token"}
+
 	if *fLogLevel != "" {
 		klog.Warningf("DEPRECATED: --log-level is now deprecated, use verbosity flag --v=Level instead")
 	}
@@ -352,7 +356,7 @@ func main() {
 
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
-			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			HeaderBlacklist: srv.ProxyHeaderDenyList,
 			Endpoint:        k8sEndpoint,
 		}
 
@@ -383,33 +387,33 @@ func main() {
 
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
 			}
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
 			}
 			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
 			}
 
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
 			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerUserWorkloadHost, Path: "/api"},
 			}
 			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerTenancyHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
@@ -417,7 +421,7 @@ func main() {
 
 			srv.GitOpsProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftGitOpsHost},
 			}
 		}
@@ -441,9 +445,13 @@ func main() {
 			Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
 		}
 
+		if *fK8sModeOffClusterServiceAccountBearerTokenFile != "" {
+			srv.InternalProxiedK8SClientConfig.BearerTokenFile = *fK8sModeOffClusterServiceAccountBearerTokenFile
+		}
+
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig:         serviceProxyTLSConfig,
-			HeaderBlacklist:         []string{"Cookie", "X-CSRFToken"},
+			HeaderBlacklist:         srv.ProxyHeaderDenyList,
 			Endpoint:                k8sEndpoint,
 			UseProxyFromEnvironment: true,
 		}
@@ -464,17 +472,17 @@ func main() {
 			offClusterThanosURL.Path += "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterThanosURL,
 			}
 			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterThanosURL,
 			}
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterThanosURL,
 			}
 		}
@@ -486,17 +494,17 @@ func main() {
 			offClusterAlertManagerURL.Path += "/api"
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterAlertManagerURL,
 			}
 			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterAlertManagerURL,
 			}
 			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterAlertManagerURL,
 			}
 		}
@@ -510,7 +518,7 @@ func main() {
 
 			srv.GitOpsProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterGitOpsURL,
 			}
 		}
@@ -530,7 +538,7 @@ func main() {
 	}
 	srv.ClusterManagementProxyConfig = &proxy.Config{
 		TLSClientConfig: oscrypto.SecureTLSConfig(&tls.Config{}),
-		HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+		HeaderBlacklist: srv.ProxyHeaderDenyList,
 		Endpoint:        clusterManagementURL,
 	}
 

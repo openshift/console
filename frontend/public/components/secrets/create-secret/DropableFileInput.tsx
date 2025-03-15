@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { AsyncComponent } from '../../utils/async';
 
 //TODO :Create a shared LazyDroppableFileInput component.

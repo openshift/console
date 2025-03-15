@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import { Perspective } from '@console/dynamic-plugin-sdk';
@@ -13,6 +12,13 @@ import PerspectiveDetector from '../PerspectiveDetector';
 jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
 }));
+
+jest.mock('react-router', () => {
+  return {
+    ...require.requireActual('react-router'),
+    useLocation: jest.fn(() => ({ pathname: '' })),
+  };
+});
 
 const mockPerspectives = [
   {
@@ -41,7 +47,7 @@ describe('PerspectiveDetector', () => {
 
     const wrapper = mount(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
     expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('admin');
+    expect(setActivePerspective).toHaveBeenCalledWith('admin', '');
   });
 
   it('should set detected perspective if detection is successful', async () => {
@@ -60,7 +66,7 @@ describe('PerspectiveDetector', () => {
       promiseResolver(() => [true, false]);
     });
     expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('dev');
+    expect(setActivePerspective).toHaveBeenCalledWith('dev', '');
   });
 
   it('should set default perspective if detection fails', async () => {
@@ -79,7 +85,7 @@ describe('PerspectiveDetector', () => {
       promiseResolver(() => [false, false]);
     });
     expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('admin');
+    expect(setActivePerspective).toHaveBeenCalledWith('admin', '');
   });
 
   it('should set admin as default perspective if all perspectives are disabled', async () => {
@@ -127,6 +133,6 @@ describe('PerspectiveDetector', () => {
       promiseResolver(() => [false, false]);
     });
     expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('admin');
+    expect(setActivePerspective).toHaveBeenCalledWith('admin', '');
   });
 });

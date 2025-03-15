@@ -17,11 +17,7 @@ export type WithFlagsProps = {
 
 export type ConnectToFlags = <P extends WithFlagsProps>(
   ...flags: (FLAGS | string)[]
-) => (
-  C: React.ComponentType<P>,
-) => React.ComponentType<Omit<P, keyof WithFlagsProps>> & {
-  WrappedComponent: React.ComponentType<P>;
-};
+) => (component: React.ComponentType<P>) => React.ComponentType<Omit<P, keyof WithFlagsProps>>;
 
 export const connectToFlags: ConnectToFlags = (...flags) =>
   connect((state: RootState) => stateToProps(state.FLAGS, flags), null, null, {

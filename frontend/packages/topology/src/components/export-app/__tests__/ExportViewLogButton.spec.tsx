@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';

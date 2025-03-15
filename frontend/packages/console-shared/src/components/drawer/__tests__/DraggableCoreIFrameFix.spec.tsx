@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { DraggableCore, DraggableEvent, DraggableData } from 'react-draggable';
 import DraggableCoreIFrameFix from '../DraggableCoreIFrameFix';

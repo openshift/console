@@ -1,8 +1,5 @@
-import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';

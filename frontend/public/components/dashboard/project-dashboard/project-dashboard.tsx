@@ -3,6 +3,7 @@ import Helmet from 'react-helmet';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { FLAGS, useFlag } from '@console/shared';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -16,6 +17,9 @@ import { ActivityCard } from './activity-card';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
 import { ResourceQuotaCard } from './resource-quota-card';
+import { GettingStartedSection as DevGettingStartedSection } from './getting-started/GettingStartedSection';
+import { GettingStartedSection } from '../dashboards-page/cluster-dashboard/getting-started/getting-started-section';
+import { PROJECT_OVERVIEW_USER_SETTINGS_KEY } from '../dashboards-page/cluster-dashboard/getting-started/constants';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
@@ -50,6 +54,9 @@ export const getNamespaceDashboardConsoleLinks = (
 export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
+  const consoleCapabilityGettingStartedBannerIsEnabled = useFlag(
+    FLAGS.CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED,
+  );
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -77,6 +84,13 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
       )}
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>
+          {perspective === 'dev' ? (
+            <DevGettingStartedSection userSettingKey="devconsole.projectOverview.gettingStarted" />
+          ) : (
+            consoleCapabilityGettingStartedBannerIsEnabled && (
+              <GettingStartedSection userSettingKey={PROJECT_OVERVIEW_USER_SETTINGS_KEY} />
+            )
+          )}
           <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
         </Dashboard>
       </ProjectDashboardContext.Provider>

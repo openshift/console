@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as Router from 'react-router-dom-v5-compat';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';

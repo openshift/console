@@ -10,6 +10,12 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
+## 4.19.0-prerelease.2 - TBD
+
+- The base `tsconfig` file now sets the `jsx` option to `react-jsx` to use the new JSX transform introduced
+  in React 17+. Plugins should update their `tsconfig` files accordingly and run the `update-react-imports`
+  [react-codemod](https://github.com/reactjs/react-codemod) if needed. ([OCPBUGS-52589], [#14864])
+
 ## 4.19.0-prerelease.1 - 2025-02-17
 
 - Remove Console provided PatternFly 4 shared modules ([CONSOLE-4379], [#14615])
@@ -61,6 +67,7 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-35928]: https://issues.redhat.com/browse/OCPBUGS-35928
 [OCPBUGS-38734]: https://issues.redhat.com/browse/OCPBUGS-38734
 [OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
+[OCPBUGS-52589]: https://issues.redhat.com/browse/OCPBUGS-52589
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -74,3 +81,4 @@ in [Console dynamic plugins README](./README.md).
 [#14300]: https://github.com/openshift/console/pull/14300
 [#14615]: https://github.com/openshift/console/pull/14615
 [#14620]: https://github.com/openshift/console/pull/14620
+[#14864]: https://github.com/openshift/console/pull/14864

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import InputField from '../../formik-fields/InputField';

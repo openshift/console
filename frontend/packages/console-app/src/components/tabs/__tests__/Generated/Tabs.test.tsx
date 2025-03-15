@@ -1,7 +1,6 @@
 /**
  * This test was generated
  */
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Tabs } from '../../Tabs';
 // any missing imports can usually be resolved by adding them here

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import i18next from 'i18next';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { Action } from '@console/dynamic-plugin-sdk';

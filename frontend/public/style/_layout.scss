@@ -2,11 +2,6 @@ html,
 body,
 #app,
 .pf-v6-c-drawer {
-  height: 100%;
-}
-
-#app,
-#content {
   display: flex;
   flex-basis: 100%;
   flex-direction: column;
@@ -15,7 +10,6 @@ body,
 
 #content-scrollable {
   overflow: auto;
-  height: 100%;
 }
 .co-m-page__body {
   display: flex;
@@ -43,6 +37,13 @@ body,
 
   &__body {
     flex: 2;
+    max-width: 100%;
+
+    @media (min-width: $screen-md-min) {
+      &--sidebar-open {
+        max-width: 66%;
+      }
+    }
   }
 
   &__close-button {
@@ -56,6 +57,7 @@ body,
     @media (min-width: $screen-md-min) {
       flex: 1 0 auto;
       overflow-y: auto;
+      max-width: 34%;
     }
 
     &--bordered {

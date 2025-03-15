@@ -55,12 +55,8 @@ const HooksSection: React.FC<{}> = () => {
         <EditorField
           name="formData.hooks.shell"
           label={t('devconsole~Script')}
-          height={15 * lineHeight}
-          theme="console"
           options={{
             lineHeight,
-            readOnly: false,
-            minimap: { enabled: false },
             scrollBeyondLastLine: false,
           }}
         />

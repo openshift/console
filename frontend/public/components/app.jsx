@@ -18,7 +18,7 @@ import AppContents from './app-contents';
 import { Masthead } from './masthead';
 import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
-import { ConnectedNotificationDrawer } from './notification-drawer';
+import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
 import { history, AsyncComponent, LoadingBox, useSafeFetch, usePoll } from './utils';
 import * as UIActions from '../actions/ui';
@@ -74,6 +74,7 @@ import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPVioliationDetector';
+import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 
 initI18n();
 
@@ -110,16 +111,13 @@ const App = (props) => {
 
   const [isMastheadStacked, setIsMastheadStacked] = React.useState(isMobile());
   const [isNavOpen, setIsNavOpen] = React.useState(isDesktop());
-  const [isDrawerInline, setIsDrawerInline] = React.useState(isLargeLayout());
 
   const previousDesktopState = React.useRef(isDesktop());
   const previousMobileState = React.useRef(isMobile());
-  const previousDrawerInlineState = React.useRef(isLargeLayout());
 
   const onResize = React.useCallback(() => {
     const desktop = isDesktop();
     const mobile = isMobile();
-    const drawerInline = isLargeLayout();
     if (previousDesktopState.current !== desktop) {
       setIsNavOpen(desktop);
       previousDesktopState.current = desktop;
@@ -128,13 +126,10 @@ const App = (props) => {
       setIsMastheadStacked(mobile);
       previousMobileState.current = mobile;
     }
-    if (previousDrawerInlineState.current !== drawerInline) {
-      setIsDrawerInline(drawerInline);
-      previousDrawerInlineState.current = drawerInline;
-    }
   }, []);
 
   useCSPViolationDetector();
+  useNotificationPoller();
 
   React.useEffect(() => {
     window.addEventListener('resize', onResize);
@@ -217,6 +212,10 @@ const App = (props) => {
 
   const { productName } = getBrandingDetails();
 
+  const isNotificationDrawerExpanded = useSelector(
+    (state) => !!state.UI.getIn(['notifications', 'isExpanded']),
+  );
+
   const content = (
     <>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
@@ -224,6 +223,8 @@ const App = (props) => {
       <QuickStartDrawer>
         <div id="app-content" className="co-m-app__content">
           <Page
+            isContentFilled
+            id="content"
             // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
             mainTabIndex={null}
             masthead={
@@ -245,13 +246,15 @@ const App = (props) => {
                 Skip to Content
               </SkipToContent>
             }
+            notificationDrawer={
+              <NotificationDrawer
+                onDrawerChange={onNotificationDrawerToggle}
+                isDrawerExpanded={isNotificationDrawerExpanded}
+              />
+            }
+            isNotificationDrawerExpanded={isNotificationDrawerExpanded}
           >
-            <ConnectedNotificationDrawer
-              isDesktop={isDrawerInline}
-              onDrawerChange={onNotificationDrawerToggle}
-            >
-              <AppContents />
-            </ConnectedNotificationDrawer>
+            <AppContents />
           </Page>
           {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
             <Lightspeed />
@@ -333,14 +336,12 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   const user = useSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
 
-  React.useEffect(
-    () =>
-      setTimeout(() => {
-        setTitleOnLoad(telemetryTitle);
-        setDebounceTime(500);
-      }, 5000),
-    [telemetryTitle],
-  );
+  React.useEffect(() => {
+    setTimeout(() => {
+      setTitleOnLoad(telemetryTitle);
+      setDebounceTime(500);
+    }, 5000);
+  }, [telemetryTitle]);
 
   React.useEffect(() => {
     if (user?.uid || user?.username) {
@@ -374,7 +375,9 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
         fireUrlChangeEvent(location);
       }
     });
-    return () => unlisten();
+    return () => {
+      unlisten();
+    };
   }, [perspective, fireUrlChangeEvent, titleOnLoad]);
 
   return null;

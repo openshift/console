@@ -63,8 +63,9 @@ const config: Configuration = {
   entry: {
     main: [
       './public/components/app.jsx',
-      'monaco-editor/esm/vs/editor/editor.worker.js',
       '/node_modules/@patternfly-5/patternfly/patternfly.scss',
+      '/node_modules/@patternfly-5/patternfly/patternfly-addons.scss',
+      '/node_modules/@patternfly-5/patternfly/patternfly-charts.scss',
     ],
   },
   cache: {
@@ -94,9 +95,6 @@ const config: Configuration = {
     alias: {
       prettier: false,
       'prettier/parser-yaml': false,
-    },
-    fallback: {
-      net: false, // for YAML language server
     },
   },
   node: {
@@ -144,14 +142,6 @@ const config: Configuration = {
             },
           },
         ],
-      },
-      {
-        test: /node_modules[\\\\|/](yaml-language-server)/,
-        loader: 'umd-compat-loader',
-      },
-      {
-        test: /node_modules[\\\\|/](vscode-json-languageservice)/,
-        loader: 'umd-compat-loader',
       },
       {
         test: /\.s?css$/,
@@ -264,6 +254,16 @@ const config: Configuration = {
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
       globalAPI: true,
+      customLanguages: [
+        {
+          label: 'yaml',
+          entry: 'monaco-yaml',
+          worker: {
+            id: 'monaco-yaml/yamlWorker',
+            entry: 'monaco-yaml/yaml.worker',
+          },
+        },
+      ],
     }),
     new NodePolyfillPlugin({
       additionalAliases: ['process'],

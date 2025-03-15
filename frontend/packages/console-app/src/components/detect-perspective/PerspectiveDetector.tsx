@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { useLocation } from 'react-router';
 import { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
 
 type DetectorProps = {
-  setActivePerspective: (perspective: string) => void;
+  setActivePerspective: (perspective: string, next: string) => void;
   perspectiveExtensions: Perspective[];
   detectors: (
     | undefined
@@ -12,7 +13,7 @@ type DetectorProps = {
 };
 
 type PerspectiveDetectorProps = {
-  setActivePerspective: (perspective: string) => void;
+  setActivePerspective: (perspective: string, next: string) => void;
 };
 
 const Detector: React.FC<DetectorProps> = ({
@@ -20,6 +21,7 @@ const Detector: React.FC<DetectorProps> = ({
   perspectiveExtensions,
   detectors,
 }) => {
+  const { pathname } = useLocation() ?? {};
   let detectedPerspective: string;
   const defaultPerspective =
     perspectiveExtensions.find((p) => p.properties.default) || perspectiveExtensions[0];
@@ -38,16 +40,17 @@ const Detector: React.FC<DetectorProps> = ({
 
   React.useEffect(() => {
     if (detectedPerspective) {
-      setActivePerspective(detectedPerspective);
+      setActivePerspective(detectedPerspective, pathname);
     } else if (defaultPerspective && (detectors.length < 1 || detectionComplete)) {
       // set default perspective if there are no detectors or none of the detections were successfull
-      setActivePerspective(defaultPerspective.properties.id);
+      setActivePerspective(defaultPerspective.properties.id, pathname);
     }
   }, [
     defaultPerspective,
     detectedPerspective,
     detectionComplete,
     detectors.length,
+    pathname,
     setActivePerspective,
   ]);
 

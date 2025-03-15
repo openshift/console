@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
+import { NavBar } from '@console/internal/components/utils';
 import { Alert, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { useLocation, Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom-v5-compat';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
@@ -121,10 +121,9 @@ const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps
 
 const AlertmanagerYAML: React.FC<{}> = () => {
   const { t } = useTranslation();
-  const { pathname: url } = useLocation();
 
-  const configPath = '/monitoring/alertmanagerconfig';
-  const YAMLPath = '/monitoring/alertmanageryaml';
+  const configPath = 'alertmanagerconfig';
+  const YAMLPath = 'alertmanageryaml';
 
   const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath);
 
@@ -149,26 +148,18 @@ const AlertmanagerYAML: React.FC<{}> = () => {
           </div>
         </PrimaryHeading>
       </div>
-      <ul className="co-m-horizontal-nav__menu">
-        <li
-          className={classNames('co-m-horizontal-nav__menu-item', {
-            'co-m-horizontal-nav-item--active': url === configPath,
-          })}
-        >
-          <Link to={configPath} data-test-id="horizontal-link-details">
-            {t('public~Details')}
-          </Link>
-        </li>
-        <li
-          className={classNames('co-m-horizontal-nav__menu-item', {
-            'co-m-horizontal-nav-item--active': url === YAMLPath,
-          })}
-        >
-          <Link to={YAMLPath} data-test-id="horizontal-link-yaml">
-            {t('public~YAML')}
-          </Link>
-        </li>
-      </ul>
+      <NavBar
+        pages={[
+          {
+            name: t('public~Details'),
+            href: configPath,
+          },
+          {
+            name: t('public~YAML'),
+            href: YAMLPath,
+          },
+        ]}
+      />
       <Firehose
         resources={[
           {

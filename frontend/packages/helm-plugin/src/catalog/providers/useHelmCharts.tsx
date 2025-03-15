@@ -61,7 +61,9 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
           setLoadedError(err);
         }
       });
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, [activeNamespace]);
 
   const normalizedHelmCharts: CatalogItem[] = React.useMemo(

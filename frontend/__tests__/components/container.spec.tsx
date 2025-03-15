@@ -4,7 +4,6 @@ import {
   ContainerDetailsList,
 } from '../../public/components/container';
 import { mount, ReactWrapper, shallow } from 'enzyme';
-import * as React from 'react';
 import store from '@console/internal/redux';
 import { Provider } from 'react-redux';
 import * as ReactRouter from 'react-router-dom-v5-compat';

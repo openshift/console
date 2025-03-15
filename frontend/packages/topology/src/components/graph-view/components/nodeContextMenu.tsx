@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Node, Graph, isGraph } from '@patternfly/react-topology';
 import { ActionServiceProvider } from '@console/shared';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';

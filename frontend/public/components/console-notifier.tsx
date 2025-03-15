@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
+import { Banner, Flex } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { Firehose, FirehoseResult } from './utils';
+import { ExternalLink, Firehose, FirehoseResult } from './utils';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
 
@@ -20,32 +21,28 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
         // notification.spec.location is optional
         // render the notification BannerTop if location is not specified
         (!notification.spec.location && location === 'BannerTop') ? (
-          <div
-            key={notification.metadata.uid}
-            className="co-global-notification"
+          <Banner
             style={{
               backgroundColor: notification.spec.backgroundColor,
               color: notification.spec.color,
             }}
+            key={notification.metadata.uid}
             data-test={`${notification.metadata.name}-${notification.spec.location}`}
           >
-            <div className="co-global-notification__content">
-              <p className="co-global-notification__text">
+            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+              <p className="pf-v6-u-text-align-center">
                 {notification.spec.text}{' '}
                 {_.get(notification.spec, ['link', 'href']) && (
-                  <a
+                  <ExternalLink
                     href={notification.spec.link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="co-external-link"
                     style={{ color: notification.spec.color }}
                   >
                     {notification.spec.link.text || 'More info'}
-                  </a>
+                  </ExternalLink>
                 )}
               </p>
-            </div>
-          </div>
+            </Flex>
+          </Banner>
         ) : null,
       )}
     </>

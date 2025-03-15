@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { NameValueEditor } from '../../../public/components/utils/name-value-editor';
 
