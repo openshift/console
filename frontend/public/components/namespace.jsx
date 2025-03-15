@@ -311,7 +311,7 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
   return (
     <>
       <TableData className={namespaceColumnInfo.name.classes}>
-        <ResourceLink kind="Namespace" name={ns.metadata.name} />
+        <ResourceLink kind="Namespace" name={ns.metadata.name} metadata={ns.metadata}/>
       </TableData>
       <TableData
         className={namespaceColumnInfo.displayName.classes}
@@ -640,7 +640,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
           <ProjectLinkComponent project={project} />
         ) : (
           <span className="co-resource-item">
-            <ResourceLink kind="Project" name={project.metadata.name} />
+            <ResourceLink kind="Project" name={project.metadata.name} metadata={project.metadata} />
           </span>
         )}
       </TableData>

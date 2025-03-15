@@ -468,6 +468,7 @@ export type ResourceLinkProps = {
   truncate?: boolean;
   nameSuffix?: React.ReactNode;
   children?: React.ReactNode;
+  metadata?: any;
 };
 
 export type ResourceIconProps = {

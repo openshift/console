@@ -88,6 +88,7 @@ const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, cust
           kind={customData.kind}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
+          metadata={obj.metadata}
         />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>

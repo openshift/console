@@ -69,6 +69,7 @@ const CronJobTableRow: React.FC<RowFunctionArgs<CronJobKind>> = ({ obj: cronjob 
           kind={kind}
           name={cronjob.metadata.name}
           namespace={cronjob.metadata.namespace}
+          metadata={cronjob.metadata}
         />
       </TableData>
       <TableData

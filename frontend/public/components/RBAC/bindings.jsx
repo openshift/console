@@ -217,6 +217,7 @@ export const BindingName = ({ binding }) => (
     kind={bindingKind(binding)}
     name={binding.metadata.name}
     namespace={binding.metadata.namespace}
+    metadata={binding.metadata}
   />
 );
 
@@ -238,7 +239,7 @@ export const RoleLink = ({ binding }) => {
 
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
   const ns = kind === 'ClusterRole' ? undefined : binding.metadata.namespace;
-  return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
+  return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} metadata={binding.metadata} />;
 };
 
 const RoleBindingsTableRow = ({ obj: binding }) => {
