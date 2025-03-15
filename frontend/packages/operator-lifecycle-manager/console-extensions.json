@@ -23,7 +23,7 @@
       "catalogId": "dev-catalog",
       "type": "OperatorBackedService",
       "title": "%olm~Operator Backed Services%",
-      "provider": { "$codeRef": "utils.catalogCSVProvider" }
+      "provider": { "$codeRef": "useClusterServiceVersions" }
     },
     "flags": {
       "required": ["OPERATOR_LIFECYCLE_MANAGER"]
@@ -62,7 +62,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertBefore": "topology-tab-section-pods-overview",
       "provider": {
-        "$codeRef": "topology.useManagedByOperatorLinkSideBarTabSection"
+        "$codeRef": "operatorLinkTabSection.useManagedByOperatorLinkSideBarTabSection"
       }
     }
   },
@@ -70,7 +70,7 @@
     "type": "console.topology/details/resource-link",
     "properties": {
       "priority": 100,
-      "link": { "$codeRef": "topologySidebar.getOperatorBackedPanelResourceLink" }
+      "link": { "$codeRef": "topologySidebarResourceLink.getOperatorBackedPanelResourceLink" }
     }
   },
   {
@@ -78,7 +78,7 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-details",
       "tab": "topology-side-bar-tab-details",
-      "provider": { "$codeRef": "topologySidebar.useOperatorBackedPanelDetailsSection" }
+      "provider": { "$codeRef": "topologySidebarDetailsSections.useOperatorBackedPanelDetailsSection" }
     }
   },
   {
@@ -86,14 +86,14 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-resource",
       "tab": "topology-side-bar-tab-resource",
-      "provider": { "$codeRef": "topologySidebar.useOperatorBackedPanelResourceSection" }
+      "provider": { "$codeRef": "topologySidebarResourceSections.useOperatorBackedPanelResourceSection" }
     }
   },
   {
     "type": "console.action/provider",
     "properties": {
       "contextId": "csv-actions",
-      "provider": { "$codeRef": "actions.useDefaultCSVActions" }
+      "provider": { "$codeRef": "csvActionsProvider.useDefaultCSVActions" }
     }
   },
   {
