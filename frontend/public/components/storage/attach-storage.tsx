@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom-v5-compat';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';

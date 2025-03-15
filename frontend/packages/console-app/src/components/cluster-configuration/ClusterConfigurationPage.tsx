@@ -10,7 +10,7 @@ import {
   TabTitleText,
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { LoadingBox, history } from '@console/internal/components/utils';

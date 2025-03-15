@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {

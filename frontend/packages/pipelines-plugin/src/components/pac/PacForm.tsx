@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { history, LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { PAC_GH_APP_NAME } from './const';
