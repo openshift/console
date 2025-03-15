@@ -61,10 +61,16 @@ Given('user has opened application {string} in topology page', (componentName: s
   topologyPage.verifyWorkloadInTopologyPage(componentName);
 });
 
-Given('user is at Developer Catalog page', () => {
+Given('user is at Software Catalog page', () => {
   perspective.switchTo(switchPerspective.Developer);
   navigateTo(devNavigationMenu.Add);
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
+});
+
+Given('user is at Software Catalog page in admin page', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  cy.get('[data-quickstart-id="qs-nav-home"]').should('be.visible').click();
+  cy.byLegacyTestID('developer-catalog-header').should('exist').click({ force: true });
 });
 
 When('user clicks Instantiate Template button on side bar', () => {
