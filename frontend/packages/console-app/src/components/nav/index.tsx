@@ -19,7 +19,7 @@ export const Navigation: React.FC<NavigationProps> = React.memo(function Navigat
   return (
     <PageSidebar isSidebarOpen={isNavOpen}>
       <PageSidebarBody>
-        <Nav aria-label={t('console-app~Nav')} onSelect={onNavSelect}>
+        <Nav aria-label={t('console-app~Nav')} data-test="console-nav" onSelect={onNavSelect}>
           <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
           <PerspectiveNav />
         </Nav>
