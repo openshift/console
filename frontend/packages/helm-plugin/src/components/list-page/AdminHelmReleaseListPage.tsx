@@ -5,7 +5,9 @@ import { Link, useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { PageHeading } from '@console/internal/components/utils';
+import { withStartGuide } from '@console/internal/components/start-guide';
+import { EmptyBox, PageHeading } from '@console/internal/components/utils';
+import { FLAGS, useFlag } from '@console/shared';
 import HelmReleaseList from './HelmReleaseList';
 
 type PageContentsProps = {
@@ -14,7 +16,8 @@ type PageContentsProps = {
 
 const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
   const { t } = useTranslation();
-  return (
+  const canListNS = useFlag(FLAGS.CAN_LIST_NS);
+  return namespace || canListNS ? (
     <>
       <PageHeading title={t('helm-plugin~Helm Releases')} className="co-m-nav-title--row">
         <div>
@@ -30,14 +33,21 @@ const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
       </PageHeading>
       <HelmReleaseList />
     </>
+  ) : (
+    <>
+      <PageHeading title={t('helm-plugin~Helm Releases')} className="co-m-nav-title--row" />
+      <EmptyBox label={t('helm-plugin~Helm Releases')} />
+    </>
   );
 };
+
+const PageContentsWithStartGuide = withStartGuide(PageContents);
 
 const AdminHelmReleaseListPage: React.FC = () => {
   const { ns } = useParams();
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContents namespace={ns} />
+      <PageContentsWithStartGuide namespace={ns} />
     </NamespacedPage>
   );
 };
