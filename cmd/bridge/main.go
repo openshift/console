@@ -46,10 +46,10 @@ const (
 	openshiftThanosHost = "thanos-querier.openshift-monitoring.svc:9091"
 
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
-	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
+	openshiftAlertManagerHost = "alertmanager-main.spcld-cluster-monitoring.svc:9094"
 
 	// Default location of the tenant aware Alert Manager service for OpenShift. This is only accessible in-cluster.
-	openshiftAlertManagerTenancyHost = "alertmanager-main.openshift-monitoring.svc:9092"
+	openshiftAlertManagerTenancyHost = "alertmanager-main.spcld-cluster-monitoring.svc:9092"
 
 	// Well-known location of the GitOps service. This is only accessible in-cluster
 	openshiftGitOpsHost = "cluster.openshift-gitops.svc:8080"
