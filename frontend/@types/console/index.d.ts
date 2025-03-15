@@ -64,7 +64,6 @@ declare interface Window {
   pluginStore?: {}; // Console plugin store
   loadPluginEntry?: Function; // Console plugin entry callback, used to load dynamic plugins
   webpackSharedScope?: {}; // webpack shared scope object, contains modules shared across plugins
-  ResizeObserver: ResizeObserver.prototype; // polyfill used by react-measure
   Cypress?: {};
   monaco?: {};
 }
