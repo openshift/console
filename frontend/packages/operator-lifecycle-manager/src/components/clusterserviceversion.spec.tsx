@@ -11,7 +11,6 @@ import {
   ComponentProps,
 } from '@console/internal/components/factory';
 import {
-  Timestamp,
   ResourceKebab,
   ScrollToTopOnMount,
   SectionHeading,
@@ -21,6 +20,7 @@ import {
 import operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ErrorBoundary } from '@console/shared/src/components/error';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import {

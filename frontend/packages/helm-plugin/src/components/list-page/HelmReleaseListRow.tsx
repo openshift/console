@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Timestamp, ResourceIcon, ResourceLink } from '@console/internal/components/utils';
+import { ResourceIcon, ResourceLink } from '@console/internal/components/utils';
 import { LazyActionMenu, Status } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';
 import { tableColumnClasses } from './HelmReleaseListHeader';

@@ -8,7 +8,9 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { history, Timestamp, ExternalLink } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Button, ButtonVariant, Title } from '@patternfly/react-core';
 
 // eslint-disable-next-line no-shadow

@@ -32,15 +32,8 @@ import {
   getTemplateIcon,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
-import {
-  ButtonBar,
-  ExternalLink,
-  Firehose,
-  LoadError,
-  LoadingBox,
-  NsDropdown,
-  PageHeading,
-} from './utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ButtonBar, Firehose, LoadError, LoadingBox, NsDropdown, PageHeading } from './utils';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
   K8sResourceKind,

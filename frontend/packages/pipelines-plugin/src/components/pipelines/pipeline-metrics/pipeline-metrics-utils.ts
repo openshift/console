@@ -7,7 +7,7 @@ import {
   PrometheusResult,
 } from '@console/internal/components/graphs';
 import { humanizeNumberSI } from '@console/internal/components/utils';
-import { dateFormatterNoYear } from '@console/internal/components/utils/datetime';
+import { dateFormatterNoYear } from '@console/shared/src/utils/datetime';
 import { PipelineKind } from '../../../types';
 import { PipelineMetricsLevel } from '../const';
 

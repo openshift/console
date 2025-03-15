@@ -12,8 +12,8 @@ import {
   SectionHeading,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PersistentVolumeModel } from '../models';
 
 const { common } = Kebab.factory;

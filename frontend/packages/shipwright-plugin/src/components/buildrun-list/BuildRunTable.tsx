@@ -8,9 +8,10 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildRun } from '../../types';
 import BuildRunDuration, {
   getBuildRunDurationInSeconds,

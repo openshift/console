@@ -20,7 +20,6 @@ import {
 import { ContainerLink } from '@console/internal/components/pod';
 import {
   ResourceLink,
-  ExternalLink,
   navFactory,
   SectionHeading,
   ResourceSummary,
@@ -31,6 +30,7 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln } from '../types';

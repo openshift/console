@@ -12,7 +12,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { GitProvider } from '@console/git-service/src';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RepositoryFormValues } from '../types';
 
 const RepositoryOverview = () => {

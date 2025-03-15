@@ -15,7 +15,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { ExternalLink, Timestamp, getQueryArgument } from '@console/internal/components/utils';
+import { getQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   CloudCredentialKind,
@@ -24,6 +24,8 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
@@ -63,9 +65,9 @@ const OperatorHubItemCustomizedHint: React.FC<OperatorHubItemCustomizedHintProps
   );
 };
 
-const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabilityLevel }) => {
+export const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capability }) => {
   const { t } = useTranslation();
-  const capabilityLevelIndex = levels.indexOf(selectedChannelCapabilityLevel);
+  const capabilityLevelIndex = levels.indexOf(capability);
 
   return (
     <ul className="properties-side-panel-pf-property-value__capability-levels">
@@ -94,7 +96,7 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabi
 };
 
 type CapabilityLevelProps = {
-  selectedChannelCapabilityLevel: string;
+  capability: string;
 };
 
 const InstalledHint: React.FC<OperatorHubItemDetailsHintProps> = ({
@@ -345,7 +347,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             label={t('olm~Capability level')}
             value={
               selectedChannelCapabilityLevel ? (
-                <CapabilityLevel selectedChannelCapabilityLevel={selectedChannelCapabilityLevel} />
+                <CapabilityLevel capability={selectedChannelCapabilityLevel} />
               ) : (
                 notAvailable
               )

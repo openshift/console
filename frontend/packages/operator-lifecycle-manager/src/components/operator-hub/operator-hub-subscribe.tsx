@@ -15,7 +15,6 @@ import { useLocation, Link } from 'react-router-dom-v5-compat';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   documentationURLs,
-  ExternalLink,
   FieldLevelHelp,
   Firehose,
   getDocumentationURL,
@@ -51,6 +50,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import {

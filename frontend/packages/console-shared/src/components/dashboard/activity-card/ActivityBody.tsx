@@ -12,8 +12,8 @@ import {
 } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { EventKind } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import EventItem from './EventItem';
 

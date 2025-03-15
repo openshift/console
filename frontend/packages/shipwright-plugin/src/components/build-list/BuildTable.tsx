@@ -2,7 +2,7 @@ import * as React from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useFlag, Timestamp } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import {
   Table,
@@ -10,7 +10,7 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';

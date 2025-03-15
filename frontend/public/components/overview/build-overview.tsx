@@ -10,7 +10,7 @@ import { LogSnippet, Status, BuildConfigOverviewItem } from '@console/shared';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { BuildNumberLink, BuildLogLink } from '../build';
 import { errorModal } from '../modals/error-modal';
-import { fromNow } from '../utils/datetime';
+import { fromNow } from '@console/shared/src/utils/datetime';
 import { K8sResourceKind } from '../../module/k8s';
 import { BuildConfigModel } from '../../models';
 import { BuildPhase, startBuild } from '../../module/k8s/builds';

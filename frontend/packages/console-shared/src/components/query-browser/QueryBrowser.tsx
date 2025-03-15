@@ -61,13 +61,13 @@ import {
   useRefWidth,
   useSafeFetch,
 } from '@console/internal/components/utils';
+import { RootState } from '@console/internal/redux';
 import {
   dateFormatterNoYear,
   dateTimeFormatterWithSeconds,
   timeFormatter,
   timeFormatterWithSeconds,
-} from '@console/internal/components/utils/datetime';
-import { RootState } from '@console/internal/redux';
+} from '@console/shared/src/utils/datetime';
 import withFallback from '../error/fallbacks/withFallback';
 import { queryBrowserTheme } from './theme';
 

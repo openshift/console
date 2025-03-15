@@ -10,9 +10,10 @@ import {
 } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { ExternalLink, ResourceLink, PageHeading } from '@console/internal/components/utils';
+import { ResourceLink, PageHeading } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 type PacOverviewProps = {
   namespace: string;

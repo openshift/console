@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   SectionHeading,
-  Timestamp,
   humanizeDecimalBytes,
   ResourceLink,
 } from '@console/internal/components/utils';
@@ -27,6 +26,7 @@ import {
   SecondaryStatus,
   DASH,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {
   getHostNICs,

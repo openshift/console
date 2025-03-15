@@ -4,8 +4,8 @@ import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
 import { Alert as AlertType, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
-import { fromNow } from '@console/internal/components/utils/datetime';
 import { sortMonitoringAlerts } from '@console/shared';
+import { fromNow } from '@console/shared/src/utils/datetime';
 import { getAlertType } from './monitoring-overview-alerts-utils';
 import './MonitoringOverviewAlerts.scss';
 

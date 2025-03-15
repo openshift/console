@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import { BreadCrumbs, ExternalLink } from '@console/internal/components/utils';
-import './GitOpsDetailsPageHeading.scss';
+import { BreadCrumbs } from '@console/internal/components/utils';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import './GitOpsDetailsPageHeading.scss';
 
 interface GitOpsDetailsPageHeadingProps {
   url: string;

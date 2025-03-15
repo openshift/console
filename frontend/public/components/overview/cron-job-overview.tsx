@@ -13,7 +13,8 @@ import {
 import { CronJobModel } from '../../models';
 import { CronJobKind } from '../../module/k8s';
 import { menuActions } from '../cron-job';
-import { DetailsItem, KebabAction, ResourceSummary, Timestamp } from '../utils';
+import { DetailsItem, KebabAction, ResourceSummary } from '../utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceOverviewDetails } from './resource-overview-details';
 import { PodsOverviewMultiple } from './pods-overview';
 import { BuildOverview } from './build-overview';

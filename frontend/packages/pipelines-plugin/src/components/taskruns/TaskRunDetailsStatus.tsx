@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PipelineRunModel } from '../../models';
 import { TaskRunKind } from '../../types';
 import {

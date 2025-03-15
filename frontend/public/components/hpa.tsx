@@ -19,9 +19,9 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   navFactory,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';

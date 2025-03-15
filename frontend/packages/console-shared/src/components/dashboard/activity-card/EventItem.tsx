@@ -3,10 +3,10 @@ import { AccordionContent, AccordionItem, AccordionToggle, Icon } from '@pattern
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { typeFilter, getLastTime } from '@console/internal/components/events';
-import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { EventKind, referenceFor } from '@console/internal/module/k8s';
+import { timeFormatter } from '@console/shared/src/utils/datetime';
 import { YellowExclamationTriangleIcon } from '../../status';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>

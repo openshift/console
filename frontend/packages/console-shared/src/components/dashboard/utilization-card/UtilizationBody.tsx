@@ -3,8 +3,8 @@ import { ChartAxis, ChartContainer } from '@patternfly/react-charts/victory';
 import { Flex, FlexItem, Grid } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UtilizationBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
+import { timeFormatter } from '@console/shared/src/utils/datetime';
 import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';
 
 import './utilization-card.scss';

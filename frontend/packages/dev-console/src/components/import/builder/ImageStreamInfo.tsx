@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ImageStreamIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { getAnnotationTags } from '@console/internal/components/image-stream';
-import { ExternalLink } from '@console/internal/components/utils';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { getSampleRepo } from '../../../utils/imagestream-utils';
 
 export type ImageStreamInfoProps = {

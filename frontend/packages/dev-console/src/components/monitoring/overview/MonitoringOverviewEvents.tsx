@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getLastTime } from '@console/internal/components/events';
 import { ResourceLink } from '@console/internal/components/utils';
-import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { referenceFor, EventKind } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { timeFormatter } from '@console/shared/src/utils/datetime';
 import './MonitoringOverviewEvents.scss';
 
 interface MonitoringOverviewEventsProps {

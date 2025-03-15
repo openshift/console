@@ -7,7 +7,7 @@ import { transformNamespace } from 'i18next-v4-format-converter';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 import { pluginStore } from './plugins';
-import { dateTimeFormatter, fromNow } from './components/utils/datetime';
+import { dateTimeFormatter, fromNow } from '@console/shared/src/utils/datetime';
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';

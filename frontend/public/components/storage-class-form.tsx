@@ -17,11 +17,11 @@ import {
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   AsyncComponent,
   ButtonBar,
   Dropdown,
-  ExternalLink,
   Firehose,
   FirehoseResult,
   NameValueEditorPair,

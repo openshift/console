@@ -9,8 +9,8 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ServiceAccountModel } from '../models';
 
 const { common } = Kebab.factory;

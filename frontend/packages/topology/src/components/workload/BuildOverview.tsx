@@ -12,11 +12,11 @@ import {
   SidebarSectionHeading,
   useAccessReview,
 } from '@console/internal/components/utils';
-import { fromNow } from '@console/internal/components/utils/datetime';
 import { BuildConfigModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { BuildPhase, startBuild } from '@console/internal/module/k8s/builds';
 import { LogSnippet, Status, BuildConfigOverviewItem } from '@console/shared';
+import { fromNow } from '@console/shared/src/utils/datetime';
 
 const MAX_VISIBLE = 3;
 

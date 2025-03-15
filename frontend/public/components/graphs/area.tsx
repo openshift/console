@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-tokens';
 
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { timeFormatter } from '../utils/datetime';
+import { timeFormatter } from '@console/shared/src/utils/datetime';
 import { humanizeNumber, useRefWidth, Humanize } from '../utils';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';

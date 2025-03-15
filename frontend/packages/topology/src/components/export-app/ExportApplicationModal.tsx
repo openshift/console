@@ -10,7 +10,6 @@ import {
   ModalFooter,
   createModalLauncher,
 } from '@console/internal/components/factory/modal';
-import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   USERSETTINGS_PREFIX,
@@ -20,6 +19,7 @@ import {
 } from '@console/shared/src';
 import { ToastContextType } from '@console/shared/src/components/toast/ToastContext';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { dateTimeFormatter } from '@console/shared/src/utils/datetime';
 import {
   createExportResource,
   getExportAppData,

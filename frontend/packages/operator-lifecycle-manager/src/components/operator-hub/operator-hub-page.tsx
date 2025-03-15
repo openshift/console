@@ -6,7 +6,6 @@ import { useParams, Link } from 'react-router-dom-v5-compat';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import {
   DOC_URL_RED_HAT_MARKETPLACE,
-  ExternalLink,
   Firehose,
   PageHeading,
   skeletonCatalog,
@@ -22,6 +21,7 @@ import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
@@ -169,47 +169,47 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const installed = loaded && clusterServiceVersion?.status?.phase === 'Succeeded';
 
           return {
-            obj: pkg,
-            kind: PackageManifestModel.kind,
-            name: currentCSVDesc?.displayName ?? pkg.metadata.name,
-            uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
+            authentication,
+            capabilityLevel,
+            catalogSource: pkg.status.catalogSource,
+            catalogSourceNamespace: pkg.status.catalogSourceNamespace,
+            categories: (currentCSVAnnotations?.categories ?? '')
+              .split(',')
+              .map((category) => category.trim()),
+            certifiedLevel,
+            cloudCredentials,
+            containerImage,
+            createdAt,
+            description: currentCSVAnnotations.description || currentCSVDesc.description,
+            healthIndex,
+            imgUrl: iconFor(pkg),
+            infraFeatures,
+            infrastructure,
             installed,
+            installState: installed ? InstalledState.Installed : InstalledState.NotInstalled,
             isInstalling:
               loaded &&
               !_.isNil(subscription) &&
               !_.isNil(clusterServiceVersion?.status?.phase) &&
               clusterServiceVersion?.status?.phase !== 'Succeeded',
-            subscription,
-            installState: installed ? InstalledState.Installed : InstalledState.NotInstalled,
-            imgUrl: iconFor(pkg),
-            description: currentCSVAnnotations.description || currentCSVDesc.description,
+            keywords: currentCSVDesc?.keywords ?? [],
+            kind: PackageManifestModel.kind,
             longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-            provider: pkg.status.provider?.name ?? pkg.metadata.labels?.provider,
-            tags: [],
-            version: currentCSVDesc?.version,
-            categories: (currentCSVAnnotations?.categories ?? '')
-              .split(',')
-              .map((category) => category.trim()),
-            catalogSource: pkg.status.catalogSource,
-            source: getPackageSource(pkg),
-            catalogSourceNamespace: pkg.status.catalogSourceNamespace,
-            certifiedLevel,
-            healthIndex,
-            repository,
-            containerImage,
-            createdAt,
-            support,
-            capabilityLevel,
             marketplaceActionText,
             marketplaceRemoteWorkflow,
             marketplaceSupportWorkflow,
+            name: currentCSVDesc?.displayName ?? pkg.metadata.name,
+            obj: pkg,
+            provider: pkg.status.provider?.name ?? pkg.metadata.labels?.provider,
+            repository,
+            source: getPackageSource(pkg),
+            subscription,
+            support,
+            tags: [],
+            uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
             validSubscription,
             validSubscriptionFilters,
-            infraFeatures,
-            keywords: currentCSVDesc?.keywords ?? [],
-            cloudCredentials,
-            infrastructure,
-            authentication,
+            version: currentCSVDesc?.version,
           };
         },
       );

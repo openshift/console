@@ -13,13 +13,13 @@ import {
   VirtualizedTable,
   TableColumn,
   RowProps,
+  Timestamp,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import {
   ResourceLink,
   ResourceKebab,
-  Timestamp,
   Kebab,
   convertToBaseValue,
   humanizeBinaryBytes,

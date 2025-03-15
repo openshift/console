@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { Content, Title, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  DOC_URL_PODDISRUPTIONBUDGET_POLICY,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { DOC_URL_PODDISRUPTIONBUDGET_POLICY } from '@console/internal/components/utils';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const AvailabilityRequirementPopover: React.FC = () => {
   const { t } = useTranslation();
