@@ -8,7 +8,7 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLink, ResourceLink, PageHeading } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
