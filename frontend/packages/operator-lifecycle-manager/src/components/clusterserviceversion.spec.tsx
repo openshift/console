@@ -65,7 +65,7 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => {
 });
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...(jest as any).requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
