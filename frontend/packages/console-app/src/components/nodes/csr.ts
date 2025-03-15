@@ -1,5 +1,4 @@
 import { fromBER } from 'asn1js';
-import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { CertificationRequest } from 'pkijs';
 import { stringToArrayBuffer, fromBase64 } from 'pvutils';
@@ -42,7 +41,7 @@ export const getNodeClientCSRs = (
     true,
   )
     .map<NodeCertificateSigningRequestKind>((csr) => {
-      const request = Base64.decode(csr.spec.request);
+      const request = window.atob(csr.spec.request);
       const req = request.replace(/(-----(BEGIN|END) CERTIFICATE REQUEST-----|\n)/g, '');
       const asn1 = fromBER(stringToArrayBuffer(fromBase64(req)));
       const pkcs10 = new CertificationRequest({ schema: asn1.result });

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Base64 } from 'js-base64';
 import { PasteIcon } from '@patternfly/react-icons/dist/esm/icons/paste-icon';
 import { Button, AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -160,7 +159,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
       });
       return;
     }
-    const webhookSecretValue = Base64.decode(webhookSecret.data.WebHookSecretKey);
+    const webhookSecretValue = window.atob(webhookSecret.data.WebHookSecretKey);
     const url = getWebhookURL(trigger, webhookSecretValue);
     navigator.clipboard.writeText(url);
   };
