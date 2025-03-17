@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -13,6 +12,7 @@ import { ListPage } from '@console/internal/components/factory';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { PageHeading } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { Title } from '@console/shared/src/components/title/Title';
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
 import { CreateActionDropdown } from './CreateActionDropdown';
@@ -26,9 +26,7 @@ const FunctionList: React.FC<{ namespace: string }> = (props) => {
   const { t } = useTranslation();
   return (
     <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
-      <Helmet>
-        <title>{t('knative-plugin~Functions')}</title>
-      </Helmet>
+      <Title>{t('knative-plugin~Functions')}</Title>
       <div className="odc-functions-list-page__heading">
         <PageHeading title={t('knative-plugin~Functions')} />
         <div className="co-m-nav-title">

@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { Title } from '@console/shared/src/components/title/Title';
 import Topology from '@console/topology/src/components/page/TopologyPage';
 
 const TopologyPage: React.FC = () => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title>{t('devconsole~Topology')}</title>
-      </Helmet>
+      <Title>{t('devconsole~Topology')}</Title>
       <Topology />
     </>
   );

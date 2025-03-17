@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -15,6 +14,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
+import { Title } from '@console/shared/src/components/title/Title';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
   getNewRoles,
@@ -158,9 +158,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
 
   return fullFormView ? (
     <NamespacedPage hideApplications variant={NamespacedPageVariants.light} disabled>
-      <Helmet>
-        <title>{t('devconsole~Project access')}</title>
-      </Helmet>
+      <Title>{t('devconsole~Project access')}</Title>
       {projectAccessForm}
     </NamespacedPage>
   ) : (

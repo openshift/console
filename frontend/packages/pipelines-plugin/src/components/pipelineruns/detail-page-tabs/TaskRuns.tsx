@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { Title } from '@console/shared/src/components/title/Title';
 import { TaskRunKind } from '../../../types';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 
@@ -12,9 +12,7 @@ const TaskRuns: React.FC<TaskRunsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~TaskRuns')}</title>
-      </Helmet>
+      <Title>{t('pipelines-plugin~TaskRuns')}</Title>
       <TaskRunsListPage
         showTitle={false}
         selector={{ matchLabels: { 'tekton.dev/pipelineRun': obj.metadata.name } }}

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
+import { Title } from '@console/shared/src/components/title/Title';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelinesResourceList from './PipelinesResourceList';
 
@@ -16,9 +16,7 @@ export const PipelinesPage: React.FC = (props) => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~Pipelines')}</title>
-      </Helmet>
+      <Title>{t('pipelines-plugin~Pipelines')}</Title>
       {namespace ? (
         <div>
           <PipelinesResourceList

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { Title } from '@console/shared/src/components/title/Title';
 import { PipelineModel } from '../../../models';
 import { filters } from './PipelineAugmentRuns';
 import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
@@ -22,9 +22,7 @@ const PipelinesList: React.FC = () => {
   ];
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~Pipelines')}</title>
-      </Helmet>
+      <Title>{t('pipelines-plugin~Pipelines')}</Title>
       <div className="co-m-pane__body">
         <Firehose resources={resources}>
           <PipelineAugmentRunsWrapper namespace={namespace} />

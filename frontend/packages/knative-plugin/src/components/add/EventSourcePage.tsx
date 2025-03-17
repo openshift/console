@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -7,6 +6,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useEventSourceStatus } from '../../hooks';
 import { CamelKameletBindingModel } from '../../models';
 import ConnectedEventSource from './EventSource';
@@ -31,9 +31,7 @@ const EventSourcePage: React.FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{t('knative-plugin~Event Source')}</title>
-      </Helmet>
+      <Title>{t('knative-plugin~Event Source')}</Title>
       <PageHeading title={t('knative-plugin~Create Event Source')}>
         {t(
           'knative-plugin~Create an Event source to register interest in a class of events from a particular system. Configure using YAML and form views.',

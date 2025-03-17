@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -13,6 +12,7 @@ import {
   kindForReference,
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src';
+import { Title } from '@console/shared/src/components/title/Title';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
@@ -49,9 +49,7 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
   const { labelPlural: projectLabelPlural } = kindObj;
   return (
     <>
-      <Helmet>
-        <title>{projectLabelPlural}</title>
-      </Helmet>
+      <Title>{projectLabelPlural}</Title>
       <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
         {(openProjectModal) => (
           <Trans t={t} ns="devconsole" values={{ projectLabelPlural }}>

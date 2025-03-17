@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { Title } from '@console/shared/src/components/title/Title';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import RepositoriesList from './RepositoriesList';
 
@@ -107,9 +107,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
 
   return (
     <>
-      <Helmet>
-        <title>{t('helm-plugin~Helm Repositories')}</title>
-      </Helmet>
+      <Title>{t('helm-plugin~Helm Repositories')}</Title>
       <MultiListPage
         namespace={namespace}
         flatten={flatten}

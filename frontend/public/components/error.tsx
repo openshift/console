@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title as DocumentTitle } from '@console/shared/src/components/title/Title';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   CodeBlock,
@@ -35,9 +35,7 @@ export const ErrorPage404: React.FC<ErrorPage404Props> = (props) => {
   const { t } = useTranslation();
   return (
     <div>
-      <Helmet>
-        <title>{t('public~Page Not Found (404)')}</title>
-      </Helmet>
+      <DocumentTitle>{t('public~Page Not Found (404)')}</DocumentTitle>
       <ErrorComponent title={t('public~404: Page Not Found')} message={props.message} />
     </div>
   );
@@ -126,9 +124,7 @@ export const AuthenticationErrorPage: React.FC = () => {
   const title = t('public~Authentication error');
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <EmptyState titleText={<Title headingLevel="h1">{title}</Title>} icon={ExclamationCircleIcon}>
         <EmptyStateBody>
           <Stack>

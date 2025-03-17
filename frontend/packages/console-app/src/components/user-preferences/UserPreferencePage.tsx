@@ -7,7 +7,6 @@ import {
   TabContent,
   TabContentProps,
 } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import {
@@ -26,6 +25,7 @@ import {
   useQueryParams,
   Spotlight,
 } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import { USER_PREFERENCES_BASE_URL } from './const';
 import {
   UserPreferenceTabGroup,
@@ -122,13 +122,11 @@ const UserPreferencePage: React.FC = () => {
   const activeTab = sortedUserPreferenceGroups.find((group) => group.id === activeTabId)?.label;
   return (
     <div className="co-user-preference-page">
-      <Helmet>
-        <title>
-          {activeTab
-            ? t('console-app~User Preferences {{activeTab}}', { activeTab })
-            : t('console-app~User Preferences')}
-        </title>
-      </Helmet>
+      <Title>
+        {activeTab
+          ? t('console-app~User Preferences {{activeTab}}', { activeTab })
+          : t('console-app~User Preferences')}
+      </Title>
       <PageLayout
         title={t('console-app~User Preferences')}
         hint={t(

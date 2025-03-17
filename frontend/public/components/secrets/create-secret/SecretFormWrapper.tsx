@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -168,9 +168,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     </form>
   ) : (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <Title>{title}</Title>
       <PageHeading title={title} helpText={helptext} />
       <div className="co-m-pane__body">
         <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>

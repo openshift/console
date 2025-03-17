@@ -3,7 +3,6 @@ import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -13,6 +12,7 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { Title } from '@console/shared/src/components/title/Title';
 import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../../../catalog/utils/const';
 import {
   HelmActionType,
@@ -216,9 +216,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <Helmet>
-        <title>{config.title}</title>
-      </Helmet>
+      <Title>{config.title}</Title>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

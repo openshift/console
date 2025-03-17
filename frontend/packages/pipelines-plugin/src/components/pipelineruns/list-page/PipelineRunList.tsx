@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Table } from '@console/internal/components/factory';
 import { useUserSettings } from '@console/shared/src';
+import { Title } from '@console/shared/src/components/title/Title';
 import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
@@ -45,9 +45,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~PipelineRuns')}</title>
-      </Helmet>
+      <Title>{t('pipelines-plugin~PipelineRuns')}</Title>
       <Table
         {...props}
         aria-label={t(PipelineRunModel.labelPluralKey)}

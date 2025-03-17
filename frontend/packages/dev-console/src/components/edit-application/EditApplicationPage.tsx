@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
@@ -12,6 +11,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { Title } from '@console/shared/src/components/title/Title';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
@@ -117,9 +117,7 @@ const EditApplicationPage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{t('devconsole~Edit')}</title>
-      </Helmet>
+      <Title>{t('devconsole~Edit')}</Title>
       <StatusBox loaded={isResourcesLoaded} data={editResData}>
         <EditApplicationComponent
           namespace={namespace}

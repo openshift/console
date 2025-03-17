@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { NavBar } from '@console/internal/components/utils';
 import { Alert, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
@@ -108,9 +108,7 @@ const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps
     const { t } = useTranslation();
     return (
       <>
-        <Helmet>
-          <title>{t('public~Alerting')}</title>
-        </Helmet>
+        <Title>{t('public~Alerting')}</Title>
         <StatusBox {...obj}>
           <AlertmanagerYAMLEditor {...props} obj={obj.data} />
         </StatusBox>

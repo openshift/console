@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { FLAGS, useFlag } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import { withStartGuide } from '../../../../../public/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
@@ -46,9 +46,7 @@ const AddPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title data-test-id="page-title">{`+${t('devconsole~Add')}`}</title>
-      </Helmet>
+      <Title data-test-id="page-title">{`+${t('devconsole~Add')}`}</Title>
       <NamespacedPage variant={nsVariant} hideApplications>
         <PageContentsWithStartGuide />
       </NamespacedPage>

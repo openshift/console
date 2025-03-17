@@ -10,7 +10,6 @@ import {
   Spinner,
   Title,
 } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
@@ -36,6 +35,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { Title as DocumentTitle } from '@console/shared/src/components/title/Title';
 import { RouteParams } from '@console/shared/src/types';
 import {
   ClusterServiceVersionModel,
@@ -436,9 +436,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
   return (
     <>
       <div className="co-operator-install-page__main">
-        <Helmet>
-          <title>{t('olm~Installing Operator')}</title>
-        </Helmet>
+        <DocumentTitle>{t('olm~Installing Operator')}</DocumentTitle>
         <Bullseye>
           <div id="operator-install-page">
             {loading && (

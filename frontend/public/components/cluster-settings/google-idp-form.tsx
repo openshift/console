@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -104,9 +104,7 @@ export const AddGooglePage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <Title>{title}</Title>
       <PageHeading
         title={title}
         helpText={t(

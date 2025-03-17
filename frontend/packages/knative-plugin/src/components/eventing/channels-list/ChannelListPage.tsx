@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
 import { K8sResourceCommon, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { Title } from '@console/shared/src/components/title/Title';
 import {
   getDynamicChannelModel,
   useChannelModels,
@@ -56,9 +56,7 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
   );
   return (
     <>
-      <Helmet>
-        <title>{t('knative-plugin~Channels')}</title>
-      </Helmet>
+      <Title>{t('knative-plugin~Channels')}</Title>
       <MultiListPage
         {...props}
         label={t('knative-plugin~Channels')}

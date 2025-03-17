@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
@@ -64,9 +64,7 @@ const ResourceListPage_ = connectToPlural(
 
     return (
       <div className="co-m-list">
-        <Helmet>
-          <title>{kindObj.labelPlural}</title>
-        </Helmet>
+        <Title>{kindObj.labelPlural}</Title>
         <AsyncComponent
           autoFocus={!noProjectsAvailable}
           kind={modelRef}

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
@@ -22,6 +21,7 @@ import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { Title } from '@console/shared/src/components/title/Title';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
@@ -255,9 +255,7 @@ export const OperatorHubPage = withFallback((props) => {
   );
   return (
     <>
-      <Helmet>
-        <title>OperatorHub</title>
-      </Helmet>
+      <Title>OperatorHub</Title>
       <div className="co-m-page__body">
         <div className="co-catalog">
           <PageHeading title="OperatorHub" />

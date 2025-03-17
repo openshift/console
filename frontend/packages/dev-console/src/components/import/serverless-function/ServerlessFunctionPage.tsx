@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { PageHeading } from '@console/internal/components/utils';
+import { Title } from '@console/shared/src/components/title/Title';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import QueryFocusApplication from '../../QueryFocusApplication';
 import AddServerlessFunction from './AddServerlessFunction';
@@ -14,9 +14,7 @@ const ServerlessFunctionPage: React.FC = () => {
     <QueryFocusApplication>
       {(application) => (
         <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-          <Helmet>
-            <title>{t('devconsole~Create Serverless function')}</title>
-          </Helmet>
+          <Title>{t('devconsole~Create Serverless function')}</Title>
           <PageHeading title={t('devconsole~Create Serverless function')} />
           <AddServerlessFunction namespace={namespace} forApplication={application} />
         </NamespacedPage>

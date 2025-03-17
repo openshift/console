@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { HorizontalNav, LoadingBox, Page } from '@console/internal/components/utils';
 import { DevPreviewBadge } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
 import GitOpsDetailsPage from './GitOpsDetailsPage';
 import GitOpsDeploymentHistory from './history/GitOpsDeploymentHistory';
@@ -39,9 +39,7 @@ export const GitOpsDetailsPageTabs: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('gitops-plugin~{{appName}} · Details', { appName })}</title>
-      </Helmet>
+      <Title>{t('gitops-plugin~{{appName}} · Details', { appName })}</Title>
       <GitOpsDetailsPageHeading
         url={location.pathname}
         appName={appName}

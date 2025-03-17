@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -192,9 +192,7 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
 
   return (
     <div>
-      <Helmet>
-        <title>{t('public~Debug {{name}}', { name })}</title>
-      </Helmet>
+      <Title>{t('public~Debug {{name}}', { name })}</Title>
       <PageHeading
         detail
         title={t('public~Debug {{name}}', { name })}
