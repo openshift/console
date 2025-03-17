@@ -2,6 +2,23 @@
 
 import { configure } from 'enzyme';
 import * as Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import { URLSearchParams } from 'url';
+import fetch, { Headers } from 'node-fetch';
+
+// FIXME: Remove when jest is updated to at least 25
+Object.defineProperty(window, 'Headers', {
+  value: Headers,
+  writable: true,
+});
+// FIXME: Remove when jest is updated to at least 22
+Object.defineProperty(window, 'URLSearchParams', {
+  value: URLSearchParams,
+  writable: true,
+});
+Object.defineProperty(window, 'fetch', {
+  value: fetch,
+  writable: true,
+});
 
 // http://airbnb.io/enzyme/docs/installation/index.html#working-with-react-16
 configure({ adapter: new Adapter() });
