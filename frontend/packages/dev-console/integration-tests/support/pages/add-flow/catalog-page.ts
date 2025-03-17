@@ -219,21 +219,8 @@ export const catalogPage = {
       expect(categories).toContain($el.text());
     });
   },
-  verifyTypes: () => {
-    const categories = [
-      'Builder Images',
-      'Devfiles',
-      'Event Sources',
-      'Helm Charts',
-      'Operator Backed',
-      'Templates',
-    ];
-    cy.get('ul.vertical-tabs-pf.restrict-tabs')
-      .eq(6)
-      .find('li a')
-      .each(($el) => {
-        expect(categories).toContain($el.text());
-      });
+  verifyTypes: (category: string) => {
+    cy.get(`[data-test="tab ${category}"]`);
   },
   verifyCardTypeOfAllCards: (cardType: string) => {
     cy.get(catalogPO.card).each(($card) => {

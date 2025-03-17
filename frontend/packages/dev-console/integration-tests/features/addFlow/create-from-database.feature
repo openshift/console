@@ -11,7 +11,7 @@ Feature: Create Application from Database
         Scenario: Create the Database from Add page: A-03-TC01
             Given user is at Add page
              When user clicks Database card
-              And user selects "MariaDB" database on Developer Catalog
+              And user selects "MariaDB" database on Software Catalog
               And user clicks Instantiate Template button on side bar
               And user clicks create button on Instantiate Template page
              Then user will be redirected to Topology page

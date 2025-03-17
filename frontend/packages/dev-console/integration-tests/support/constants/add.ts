@@ -6,7 +6,7 @@ export enum addOptions {
   ContainerImage = 'Container Image',
   CreateServerlessFunction = 'Create Serverless function',
   Database = 'Database',
-  DeveloperCatalog = 'From Catalog',
+  SoftwareCatalog = 'From Catalog',
   Events = 'Events',
   EventSink = 'Event Sink',
   EventSource = 'Event Source',
