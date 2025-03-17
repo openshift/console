@@ -13,19 +13,6 @@ import PipelineQuickSearchVersionDropdown from '../PipelineQuickSearchVersionDro
 
 configure({ testIdAttribute: 'data-test' });
 
-// FIXME Remove this code when jest is updated to at least 25.1.0 -- see https://github.com/jsdom/jsdom/issues/1555
-if (!Element.prototype.closest) {
-  Element.prototype.closest = function (this: Element, selector: string) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias, consistent-this
-    let el: Element | null = this;
-    while (el) {
-      if (el.matches(selector)) return el;
-      el = el.parentElement;
-    }
-    return null;
-  };
-}
-
 describe('pipelineQuickSearchVersionDropdown', () => {
   const onChange = jest.fn();
   const versionDropdownProps = {
