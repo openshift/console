@@ -4,7 +4,7 @@ import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
 import {
@@ -381,9 +381,7 @@ export const APIExplorerPage: React.FC<{}> = () => {
   const title = t('public~API Explorer');
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <Title>{title}</Title>
       <PageHeading title={title} />
       <APIResourcesList />
     </>

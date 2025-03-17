@@ -1,14 +1,12 @@
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { DefaultPage } from '@console/internal/components/default-resource';
+import { Title } from '@console/shared/src/components/title/Title';
 
 const ClusterTasksPage = (props) => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~ClusterTasks')}</title>
-      </Helmet>
+      <Title>{t('pipelines-plugin~ClusterTasks')}</Title>
       <DefaultPage {...props} />
     </>
   );

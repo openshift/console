@@ -175,6 +175,8 @@ This section documents notable changes in the Console provided shared modules ac
   correct styling.
 - Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
   instead.
+- `react-helmet` will no longer work correctly in Console. Use the `Title` component provided in the dynamic
+  plugin SDK instead.
 
 ### PatternFly 5+ dynamic modules
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title as DocumentTitle } from '@console/shared/src/components/title/Title';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
@@ -151,9 +151,7 @@ export const AddGitHubPage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         helpText={t(

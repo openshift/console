@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { QuickStartCatalogPage as PfQuickStartCatalogPage } from '@patternfly/quickstarts';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils';
+import { Title } from '@console/shared/src/components/title/Title';
 import QuickStartsLoader from './loader/QuickStartsLoader';
 
 const QuickStartCatalogPage: React.FC = () => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title>{t('console-app~Quick Starts')}</title>
-      </Helmet>
+      <Title>{t('console-app~Quick Starts')}</Title>
       <QuickStartsLoader>
         {(quickStarts, loaded) =>
           loaded ? (

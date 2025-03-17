@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ConfigMapModel } from '@console/internal/models';
@@ -37,9 +37,7 @@ const ConfigMapPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <Title>{title}</Title>
       {isCreateFlow ? (
         configMapForm
       ) : (

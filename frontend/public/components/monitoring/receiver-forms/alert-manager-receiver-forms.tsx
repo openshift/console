@@ -1,7 +1,7 @@
 /* eslint-disable camelcase, tsdoc/syntax */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
@@ -364,9 +364,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
-      <Helmet>
-        <title>{t('public~{{titleVerb}} Receiver', { titleVerb })}</title>
-      </Helmet>
+      <Title>{t('public~{{titleVerb}} Receiver', { titleVerb })}</Title>
       <form className="co-m-pane__body-group" onSubmit={save}>
         <PrimaryHeading>
           {t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {

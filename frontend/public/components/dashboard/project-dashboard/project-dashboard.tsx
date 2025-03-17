@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -77,11 +77,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
 
   return (
     <>
-      {perspective === 'dev' && (
-        <Helmet>
-          <title>{t('public~Project overview')}</title>
-        </Helmet>
-      )}
+      {perspective === 'dev' && <Title>{t('public~Project overview')}</Title>}
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>
           {perspective === 'dev' ? (

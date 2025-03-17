@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -8,6 +7,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { useRelatedHPA } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
@@ -43,9 +43,7 @@ const HPAPage: React.FC<PageComponentProps> = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
-      <Helmet>
-        <title>{fullyLoaded ? title : HorizontalPodAutoscalerModel.label}</title>
-      </Helmet>
+      <Title>{fullyLoaded ? title : HorizontalPodAutoscalerModel.label}</Title>
       {fullyLoaded || error ? (
         <>
           <HPAPageHeader

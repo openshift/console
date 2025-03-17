@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import {
@@ -225,9 +225,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('public~Search')}</title>
-      </Helmet>
+      <Title>{t('public~Search')}</Title>
       <PageSection hasBodyWrapper={false}>
         <Content component="h1">{t('public~Search')}</Content>
         <Toolbar

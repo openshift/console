@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { SearchPage } from '@console/internal/components/search';
 import { withStartGuide } from '@console/internal/components/start-guide';
+import { Title } from '@console/shared/src/components/title/Title';
 import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
@@ -41,9 +41,7 @@ const Search: React.FC<SearchPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title data-test="page-title">{t('devconsole~Search')}</title>
-      </Helmet>
+      <Title data-test="page-title">{t('devconsole~Search')}</Title>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
         <PageContents {...props} />
       </NamespacedPage>

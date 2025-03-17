@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import * as classNames from 'classnames';
 import {
   ActionGroup,
@@ -417,9 +417,7 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <Title>{title}</Title>
       <PageHeading title={title} />
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
         <Firehose resources={resources}>

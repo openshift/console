@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { PageHeading, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DevPreviewBadge } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
@@ -43,9 +43,7 @@ const GitOpsListPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('gitops-plugin~Environments')}</title>
-      </Helmet>
+      <Title>{t('gitops-plugin~Environments')}</Title>
       <PageHeading title={t('gitops-plugin~Environments')} badge={<DevPreviewBadge />} />
       {!appGroups && !emptyStateMsg ? (
         <LoadingBox />

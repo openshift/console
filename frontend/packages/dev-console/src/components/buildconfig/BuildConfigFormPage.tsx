@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { Title } from '@console/shared/src/components/title/Title';
 import EditBuildConfig from './EditBuildConfig';
 import { BuildConfig, BuildConfigModel } from './types';
 
@@ -35,9 +35,7 @@ const BuildConfigFormPage: React.FC = () => {
   const title = isNew ? t('devconsole~Create BuildConfig') : t('devconsole~Edit BuildConfig');
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <Title>{title}</Title>
       <StatusBox loaded={loaded} loadError={loadError} label={title} data={buildConfig}>
         <EditBuildConfig
           heading={title}

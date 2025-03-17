@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import { Helmet } from 'react-helmet-async';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk/src';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -110,9 +110,7 @@ export const RoutePage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{heading}</title>
-      </Helmet>
+      <Title>{heading}</Title>
       <StatusBox
         loaded={loaded}
         loadError={routeLoadError || serviceLoadError}

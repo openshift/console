@@ -56,23 +56,24 @@
 54.  [CodeEditor](#codeeditor)
 55.  [ResourceYAMLEditor](#resourceyamleditor)
 56.  [ResourceEventStream](#resourceeventstream)
-57.  [usePrometheusPoll](#useprometheuspoll)
-58.  [Timestamp](#timestamp)
-59.  [useModal](#usemodal)
-60.  [ActionServiceProvider](#actionserviceprovider)
-61.  [NamespaceBar](#namespacebar)
-62.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
-63.  [QueryBrowser](#querybrowser)
-64.  [useAnnotationsModal](#useannotationsmodal)
-65.  [useDeleteModal](#usedeletemodal)
-66.  [useLabelsModal](#uselabelsmodal)
-67.  [useActiveNamespace](#useactivenamespace)
-68.  [useUserSettings](#useusersettings)
-69.  [useQuickStartContext](#usequickstartcontext)
-70. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-71. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-72. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-73. [DEPRECATED] [YAMLEditor](#yamleditor)
+57.  [Title](#title)
+58.  [usePrometheusPoll](#useprometheuspoll)
+59.  [Timestamp](#timestamp)
+60.  [useModal](#usemodal)
+61.  [ActionServiceProvider](#actionserviceprovider)
+62.  [NamespaceBar](#namespacebar)
+63.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
+64.  [QueryBrowser](#querybrowser)
+65.  [useAnnotationsModal](#useannotationsmodal)
+66.  [useDeleteModal](#usedeletemodal)
+67.  [useLabelsModal](#uselabelsmodal)
+68.  [useActiveNamespace](#useactivenamespace)
+69.  [useUserSettings](#useusersettings)
+70.  [useQuickStartContext](#usequickstartcontext)
+71. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+72. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+73. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+74. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -1991,6 +1992,38 @@ return <ResourceEventStream resource={resource} />
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `resource` | An object whose related events should be shown. |
+
+
+
+---
+
+## `Title`
+
+### Summary 
+
+A component to change the document title of the page.
+
+
+
+### Example
+
+
+```tsx
+<Title>My Page Title</Title>
+```
+This will change the title to "My Page Title · [Product Name]"
+
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `props` | The props for the Title component |
+| `children` | The title to display |
 
 
 

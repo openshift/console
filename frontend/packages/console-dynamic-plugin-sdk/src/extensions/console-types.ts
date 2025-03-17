@@ -901,3 +901,8 @@ export interface PodRCData {
   isRollingOut: boolean;
   pods: ExtPodKind[];
 }
+
+export type TitleProps = React.HTMLProps<HTMLTitleElement> & {
+  /** The title to display */
+  children: string;
+};

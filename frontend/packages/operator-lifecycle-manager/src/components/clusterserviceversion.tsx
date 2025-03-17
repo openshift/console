@@ -13,7 +13,6 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import { sortable, wrappable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
 import {
@@ -75,6 +74,7 @@ import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
+import { Title } from '@console/shared/src/components/title/Title';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -791,9 +791,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <Title>{title}</Title>
       <MultiListPage
         {...props}
         resources={[

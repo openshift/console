@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { CatalogController, CatalogServiceProvider } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
@@ -18,9 +18,7 @@ const SampleCatalog: React.FC = () => {
   };
   return (
     <>
-      <Helmet>
-        <title>{t('devconsole~Samples')}</title>
-      </Helmet>
+      <Title>{t('devconsole~Samples')}</Title>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
         {namespace ? (
           <CatalogServiceProvider namespace={namespace} catalogId="samples-catalog">

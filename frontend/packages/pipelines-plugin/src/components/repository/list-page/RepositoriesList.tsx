@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared/src';
+import { Title } from '@console/shared/src/components/title/Title';
 import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const';
 import { RepositoryModel } from '../../../models';
 import RepositoryList from './ReppositoryList';
@@ -24,9 +24,7 @@ const RepositoriesList: React.FC<React.ComponentProps<typeof ListPage>> = (props
   }, [activePerspective, preferredTabLoaded, setPreferredTab]);
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~Pipeline Repositories')}</title>
-      </Helmet>
+      <Title>{t('pipelines-plugin~Pipeline Repositories')}</Title>
       <ListPage
         {...props}
         createProps={{

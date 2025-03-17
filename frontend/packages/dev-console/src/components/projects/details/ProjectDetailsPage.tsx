@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
@@ -9,6 +8,7 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import ProjectAccessPage from '../../project-access/ProjectAccessPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../CreateProjectListPage';
@@ -99,9 +99,7 @@ export const ProjectDetailsPage: React.FC<MonitoringPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title>{t('devconsole~Project Details')}</title>
-      </Helmet>
+      <Title>{t('devconsole~Project Details')}</Title>
       <NamespacedPage
         hideApplications
         variant={NamespacedPageVariants.light}

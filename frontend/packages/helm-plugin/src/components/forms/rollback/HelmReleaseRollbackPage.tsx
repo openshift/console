@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { history, getQueryArgument } from '@console/internal/components/utils';
+import { Title } from '@console/shared/src/components/title/Title';
 import { HelmRelease, HelmActionType, HelmActionOrigins } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';
 import HelmReleaseRollbackForm from './HelmReleaseRollbackForm';
@@ -69,9 +69,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <Helmet>
-        <title>{config.title}</title>
-      </Helmet>
+      <Title>{config.title}</Title>
       <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
         {(props) => (
           <HelmReleaseRollbackForm

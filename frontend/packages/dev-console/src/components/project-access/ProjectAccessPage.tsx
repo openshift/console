@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useProjectAccessRoles } from './hooks';
 import ProjectAccess from './ProjectAccess';
 
@@ -15,9 +15,7 @@ const ProjectAccessPage: React.FC = (props) => {
   const showFullForm = location.pathname.includes('project-access');
   return (
     <>
-      <Helmet>
-        <title>{t('devconsole~Project access')}</title>
-      </Helmet>
+      <Title>{t('devconsole~Project access')}</Title>
       <Firehose
         resources={[
           {

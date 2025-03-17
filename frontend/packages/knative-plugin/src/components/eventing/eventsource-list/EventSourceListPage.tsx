@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -10,6 +9,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared';
+import { Title } from '@console/shared/src/components/title/Title';
 import { FLAG_CAMEL_KAMELETS } from '../../../const';
 import { CamelKameletBindingModel } from '../../../models';
 import {
@@ -68,9 +68,7 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
   );
   return (
     <>
-      <Helmet>
-        <title>{t('knative-plugin~Event Sources')}</title>
-      </Helmet>
+      <Title>{t('knative-plugin~Event Sources')}</Title>
       <MultiListPage
         {...props}
         label={t('knative-plugin~Event Sources')}

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -29,6 +28,7 @@ import {
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { Title } from '@console/shared/src/components/title/Title';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { RouteParams } from '@console/shared/src/types';
@@ -159,9 +159,7 @@ const CreateOperandPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('olm~Create {{item}}', { item: kindForReference(params.plural) })}</title>
-      </Helmet>
+      <Title>{t('olm~Create {{item}}', { item: kindForReference(params.plural) })}</Title>
       <ModelStatusBox groupVersionKind={params.plural}>
         {createResourceExtension ? (
           <ErrorBoundaryPage>
