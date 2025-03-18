@@ -19,7 +19,7 @@ import (
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
-// ... --plugins plugin-name=plugin-endpoint plugin-name2=plugin-endpoint2
+// ... --plugins plugin-name=plugin-endpoint, plugin-name2=plugin-endpoint2
 type MultiKeyValue map[string]string
 
 func parseKeyValuePairs[T comparable](value string, parseKey func(string) (T, error)) (map[T]string, error) {
@@ -32,11 +32,11 @@ func parseKeyValuePairs[T comparable](value string, parseKey func(string) (T, er
 		}
 		splitted := strings.SplitN(keyValuePair, "=", 2)
 		if len(splitted) != 2 {
-			return nil, fmt.Errorf("invalid key value pair %s", keyValuePair)
+			return nil, fmt.Errorf("invalid key-value pair syntax: %q, expected format: key=value", keyValuePair)
 		}
 		parsedKey, err := parseKey(splitted[0])
 		if err != nil {
-			return nil, fmt.Errorf("invalid key pair %s", keyValuePair)
+			return nil, err
 		}
 		result[parsedKey] = splitted[1]
 	}
@@ -64,8 +64,8 @@ func (mkv *MultiKeyValue) Set(value string) error {
 }
 
 // LogosKeyValue is used for configuring entries of custom logos, where keys are
-// themes (Light | Dark ) and values are paths to the image files eg.:
-// ... --custom-logo-files Dark=/path/to/dark-logo.svg Light=/path/to/light-logo.svg
+// themes (Light | Dark) and values are paths to the image files eg.:
+// ... --custom-logo-files Dark=/path/to/dark-logo.svg, Light=/path/to/light-logo.svg
 type LogosKeyValue map[operatorv1.ThemeMode]string
 
 func (mkv *LogosKeyValue) String() string {

@@ -13,8 +13,8 @@ type PROCESSED_THEME = typeof THEME_DARK | typeof THEME_LIGHT;
 
 export const applyThemeBehaviour = (
   theme: string,
-  onDarkBehaviour?: () => any,
-  onLightBehaviour?: () => any,
+  onDarkBehaviour?: () => string,
+  onLightBehaviour?: () => string,
 ) => {
   let systemTheme: string;
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -26,8 +26,8 @@ export const applyThemeBehaviour = (
   return onLightBehaviour();
 };
 
-export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => {
-  applyThemeBehaviour(
+export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
+  return applyThemeBehaviour(
     theme,
     () => {
       htmlTagElement.classList.add(THEME_DARK_CLASS);
@@ -39,7 +39,7 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string) => 
       htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
       return THEME_LIGHT;
     },
-  );
+  ) as PROCESSED_THEME;
 };
 
 export const ThemeContext = React.createContext<string>('');
