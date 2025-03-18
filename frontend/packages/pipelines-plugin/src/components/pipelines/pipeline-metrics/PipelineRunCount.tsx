@@ -2,10 +2,10 @@ import * as React from 'react';
 import { ChartVoronoiContainer } from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import Measure from 'react-measure';
 import { DataPoint } from '@console/internal/components/graphs';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingInline } from '@console/internal/components/utils';
+import MeasureBounds from '@console/pipelines-plugin/src/utils/measure';
 import { DEFAULT_CHART_HEIGHT, DEFAULT_SAMPLES } from '../const';
 import { usePipelineRunPoll } from '../hooks';
 import { TimeSeriesChart } from './charts/TimeSeriesChart';
@@ -65,7 +65,7 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
   );
 
   return (
-    <Measure bounds>
+    <MeasureBounds>
       {({ measureRef, contentRect }) => (
         <div ref={measureRef} style={{ height: DEFAULT_CHART_HEIGHT }}>
           <TimeSeriesChart
@@ -87,7 +87,7 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
           />
         </div>
       )}
-    </Measure>
+    </MeasureBounds>
   );
 };
 
