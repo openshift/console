@@ -4,7 +4,6 @@ metadata:
   name: catalogd-route
   namespace: openshift-catalogd
 spec:
-  host: catalogd-route-openshift-catalogd.apps.rhamilto.devcluster.openshift.com
   to:
     kind: Service
     name: catalogd-service
@@ -14,4 +13,3 @@ spec:
   tls:
     termination: passthrough
     insecureEdgeTerminationPolicy: Redirect
-  wildcardPolicy: None
