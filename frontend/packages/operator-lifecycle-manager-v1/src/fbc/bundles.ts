@@ -1,20 +1,20 @@
 import * as SemVer from 'semver';
-import { getIndexedItems } from './indexeddb';
+import { getIndexedItems } from '../database/indexeddb';
 import { getBundleMetadata } from './metadata';
-import {
-  ExtensionCatalogItemMetadata,
-  FileBasedCatalogSchema,
-  FileBasedCatalogBundle,
-} from './types';
+import { FileBasedCatalogBundle, FileBasedCatalogPropertyType, PackageMetadata } from './types';
 
 export const bundleHasProperty = (bundle: FileBasedCatalogBundle, propertyType: string) =>
   (bundle.properties ?? []).some(({ type }) => type === propertyType);
 
-export const getBundleProperty = (bundle: FileBasedCatalogBundle, propertyType: string) =>
-  (bundle.properties ?? []).find(({ type }) => type === propertyType)?.value;
+export const getBundleProperty = <V = any>(
+  bundle: FileBasedCatalogBundle,
+  propertyType: string,
+): V => (bundle.properties ?? []).find(({ type }) => type === propertyType)?.value;
 
-const getBundleVersion = (bundle: FileBasedCatalogBundle) => {
-  const versionString = getBundleProperty(bundle, FileBasedCatalogSchema.package)?.version || '';
+const getBundleVersion = (bundle: FileBasedCatalogBundle): SemVer.SemVer => {
+  const versionString =
+    getBundleProperty<PackagePropertyValue>(bundle, FileBasedCatalogPropertyType.Package)
+      ?.version || '';
   return SemVer.parse(versionString);
 };
 
@@ -30,7 +30,7 @@ export const compareBundleVersions = (
 export const getBundleMetadataForPackage = async (
   db: IDBDatabase,
   packageName: string,
-): Promise<ExtensionCatalogItemMetadata> => {
+): Promise<PackageMetadata> => {
   const bundles = await getIndexedItems<FileBasedCatalogBundle>(
     db,
     'olm.bundle',
@@ -44,3 +44,5 @@ export const getBundleMetadataForPackage = async (
   const [latestBundle] = bundles?.sort?.(compareBundleVersions) ?? [];
   return latestBundle ? getBundleMetadata(latestBundle) : {};
 };
+
+type PackagePropertyValue = { version: string };

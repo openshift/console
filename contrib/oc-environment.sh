@@ -39,7 +39,7 @@ fi
 
 # This route will not exist by default. If we want olmv1 to work off cluster, we will need to
 # manually create a route for the catalogd service.
-CATALOGD_HOSTNAME=$(oc -n openshift-catalogd get route catalogd-catalogserver -o jsonpath='{.spec.host}' 2>/dev/null)
+CATALOGD_HOSTNAME=$(oc -n openshift-catalogd get route catalogd-route -o jsonpath='{.spec.host}' 2>/dev/null)
 if [ -n "$CATALOGD_HOSTNAME" ]; then
     BRIDGE_K8S_MODE_OFF_CLUSTER_CATALOGD="https://$CATALOGD_HOSTNAME"
     export BRIDGE_K8S_MODE_OFF_CLUSTER_CATALOGD
