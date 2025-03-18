@@ -112,8 +112,6 @@ func main() {
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
 
-	// TODO figure out how to pass the ConfigMapFileReference to the required attribute of Theme type ( create configMaps like createUserSettings ? )
-	// we could improve the way we accept CLI args for custom logos
 	customLogoFlags := serverconfig.LogosKeyValue{}
 	fs.Var(&customLogoFlags, "custom-logo-files", "List of custom product images used for console branding. Each entry consist of theme type (Dark | Light | Default) as a key and path to image file as value.")
 	customFaviconFlags := serverconfig.LogosKeyValue{}

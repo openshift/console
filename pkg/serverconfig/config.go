@@ -64,9 +64,9 @@ func (mkv *MultiKeyValue) Set(value string) error {
 }
 
 // LogosKeyValue is used for configuring entries of custom logos, where keys are
-// themes (Light | Dark | Default) and values are paths to the image files eg.:
+// themes (Light | Dark ) and values are paths to the image files eg.:
 // ... --custom-logo-files Dark=/path/to/dark-logo.svg Light=/path/to/light-logo.svg
-type LogosKeyValue map[operatorv1.ThemeType]string
+type LogosKeyValue map[operatorv1.ThemeMode]string
 
 func (mkv *LogosKeyValue) String() string {
 	keyValuePairs := []string{}
@@ -78,7 +78,7 @@ func (mkv *LogosKeyValue) String() string {
 }
 
 func (mkv *LogosKeyValue) Set(value string) error {
-	parsedMap, err := parseKeyValuePairs(value, func(key string) (operatorv1.ThemeType, error) {
+	parsedMap, err := parseKeyValuePairs(value, func(key string) (operatorv1.ThemeMode, error) {
 		return ParseCustomLogoTheme(key)
 	})
 	if err != nil {
@@ -361,21 +361,21 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		}
 	}
 
-	if customization.CustomLogoFiles != nil {
-		customLogos, err := json.Marshal(customization.CustomLogoFiles)
-		if err != nil {
-			klog.Fatalf("Could not marshal ConsoleConfig customization.customLogoFiles field: %v", err)
-		} else {
-			fs.Set("custom-logo-files", string(customLogos))
-		}
-	}
+	if len(customization.Logos) > 0 {
+		faviconFlag := fs.Lookup("custom-favicon-files")
+		logoFlag := fs.Lookup("custom-logo-files")
 
-	if customization.CustomFaviconFiles != nil {
-		customLogos, err := json.Marshal(customization.CustomFaviconFiles)
-		if err != nil {
-			klog.Fatalf("Could not marshal ConsoleConfig customization.customFaviconFiles field: %v", err)
-		} else {
-			fs.Set("custom-favicon-files", string(customLogos))
+		faviconFlags, _ := faviconFlag.Value.(*LogosKeyValue)
+		logoFlags, _ := logoFlag.Value.(*LogosKeyValue)
+		for _, logo := range customization.Logos {
+			for _, theme := range logo.Themes {
+				if logo.Type == operatorv1.LogoTypeFavicon {
+					(*faviconFlags)[theme.Mode] = fmt.Sprintf("/var/logo/%s/%s", theme.Source.ConfigMap.Name, theme.Source.ConfigMap.Key)
+				}
+				if logo.Type == operatorv1.LogoTypeMasthead {
+					(*logoFlags)[theme.Mode] = fmt.Sprintf("/var/logo/%s/%s", theme.Source.ConfigMap.Name, theme.Source.ConfigMap.Key)
+				}
+			}
 		}
 	}
 

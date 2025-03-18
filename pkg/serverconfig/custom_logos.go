@@ -10,13 +10,13 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 )
 
-func ParseCustomLogoTheme(s string) (c operatorv1.ThemeType, err error) {
-	themes := map[operatorv1.ThemeType]struct{}{
-		operatorv1.ThemeTypeLight: {},
-		operatorv1.ThemeTypeDark:  {},
+func ParseCustomLogoTheme(s string) (c operatorv1.ThemeMode, err error) {
+	themes := map[operatorv1.ThemeMode]struct{}{
+		operatorv1.ThemeModeLight: {},
+		operatorv1.ThemeModeDark:  {},
 	}
 
-	clt := operatorv1.ThemeType(s)
+	clt := operatorv1.ThemeMode(s)
 	_, ok := themes[clt]
 	if !ok {
 		return c, fmt.Errorf("unknown custom logo theme: \"%s\". Must be one of [dark-theme, light-theme]", s)
@@ -117,7 +117,7 @@ func CustomLogosHandler(logoType operatorv1.LogoType, w http.ResponseWriter, r *
 	}
 
 	// logo is a public content, revalidate each new request before releasing cached files
-	w.Header().Set("Cache-Control", "public, no-cache, no-store, must-revalidate")
+	w.Header().Set("Cache-Control", "no-cache, must-revalidate")
 
 	// Filter the logos based on the specific type and theme
 	for theme, file := range logoFiles {

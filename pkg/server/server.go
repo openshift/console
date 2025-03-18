@@ -99,6 +99,7 @@ type jsGlobals struct {
 	AuthDisabled                    bool                       `json:"authDisabled"`
 	BasePath                        string                     `json:"basePath"`
 	Branding                        string                     `json:"branding"`
+	Capabilities                    []operatorv1.Capability    `json:"capabilities"`
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
 	ContentSecurityPolicy           string                     `json:"contentSecurityPolicy"`
@@ -118,6 +119,7 @@ type jsGlobals struct {
 	InactivityTimeout               int                        `json:"inactivityTimeout"`
 	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
 	KubeAPIServerURL                string                     `json:"kubeAPIServerURL"`
+	K8sMode                         string                     `json:"k8sMode"`
 	LoadTestFactor                  int                        `json:"loadTestFactor"`
 	LoginErrorURL                   string                     `json:"loginErrorURL"`
 	LoginSuccessURL                 string                     `json:"loginSuccessURL"`
@@ -137,8 +139,6 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
-	K8sMode                         string                     `json:"k8sMode"`
-	Capabilities                    []operatorv1.Capability    `json:"capabilities"`
 }
 
 type Server struct {
@@ -149,10 +149,13 @@ type Server struct {
 	AlertManagerTenancyProxyConfig      *proxy.Config
 	AlertManagerUserWorkloadHost        string
 	AlertManagerUserWorkloadProxyConfig *proxy.Config
+	AnonymousInternalProxiedK8SRT       http.RoundTripper
 	AuthDisabled                        bool
 	Authenticator                       auth.Authenticator
+	AuthMetrics                         *auth.Metrics
 	BaseURL                             *url.URL
 	Branding                            string
+	Capabilities                        []operatorv1.Capability
 	CatalogdProxyConfig                 *proxy.Config
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
@@ -176,7 +179,6 @@ type Server struct {
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
 	InternalProxiedK8SClientConfig      *rest.Config
-	AnonymousInternalProxiedK8SRT       http.RoundTripper
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
 	ProxyHeaderDenyList                 []string
@@ -189,7 +191,6 @@ type Server struct {
 	NodeArchitectures                   []string
 	NodeOperatingSystems                []string
 	Perspectives                        string
-	Capabilities                        []operatorv1.Capability
 	PluginProxy                         string
 	PluginsProxyTLSConfig               *tls.Config
 	ProjectAccessClusterRoles           string
@@ -207,7 +208,6 @@ type Server struct {
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
 	UserSettingsLocation                string
-	AuthMetrics                         *auth.Metrics
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -313,7 +313,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	if s.CustomLogoFiles != nil {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Cache-Control", "public, no-cache, no-store, must-revalidate")
 			serverconfig.CustomLogosHandler(operatorv1.LogoTypeMasthead, w, r, s.CustomLogoFiles)
 		})
 	}
@@ -718,47 +717,47 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsg := &jsGlobals{
-		AuthDisabled:              s.Authenticator.IsStatic(),
-		ConsoleVersion:            version.Version,
-		BasePath:                  s.BaseURL.Path,
-		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:                 authLogoutEndpoint,
-		LogoutRedirect:            s.Authenticator.LogoutRedirectURL(),
-		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
-		KubeAPIServerURL:          s.KubeAPIServerURL,
-		Branding:                  s.Branding,
-		CustomProductName:         s.CustomProductName,
-		CustomFavicons:            s.CustomFaviconFiles,
-		ControlPlaneTopology:      s.ControlPlaneTopology,
-		StatuspageID:              s.StatuspageID,
-		InactivityTimeout:         s.InactivityTimeout,
-		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
+		AddPage:                   s.AddPage,
 		AlertManagerPublicURL:     s.AlertManagerPublicURL.String(),
-		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
-		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
-		ThanosPublicURL:           s.ThanosPublicURL.String(),
-		GOARCH:                    s.GOARCH,
-		GOOS:                      s.GOOS,
-		LoadTestFactor:            s.LoadTestFactor,
-		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
+		AuthDisabled:              s.Authenticator.IsStatic(),
+		BasePath:                  s.BaseURL.Path,
+		Branding:                  s.Branding,
+		Capabilities:              s.Capabilities,
+		ConsolePlugins:            plugins,
+		ConsoleVersion:            version.Version,
+		ControlPlaneTopology:      s.ControlPlaneTopology,
+		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
+		CustomFavicons:            s.CustomFaviconFiles,
+		CustomProductName:         s.CustomProductName,
 		DevCatalogCategories:      s.DevCatalogCategories,
 		DevCatalogTypes:           s.DevCatalogTypes,
-		UserSettingsLocation:      s.UserSettingsLocation,
-		ConsolePlugins:            plugins,
+		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
+		GOARCH:                    s.GOARCH,
+		GOOS:                      s.GOOS,
+		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
+		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
 		I18nNamespaces:            s.I18nNamespaces,
-		QuickStarts:               s.QuickStarts,
-		AddPage:                   s.AddPage,
-		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
-		Perspectives:              s.Perspectives,
-		Telemetry:                 s.Telemetry,
-		ReleaseVersion:            s.ReleaseVersion,
+		InactivityTimeout:         s.InactivityTimeout,
+		K8sMode:                   s.K8sMode,
+		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
+		KubeAPIServerURL:          s.KubeAPIServerURL,
+		LoadTestFactor:            s.LoadTestFactor,
+		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LogoutRedirect:            s.Authenticator.LogoutRedirectURL(),
+		LogoutURL:                 authLogoutEndpoint,
 		NodeArchitectures:         s.NodeArchitectures,
 		NodeOperatingSystems:      s.NodeOperatingSystems,
-		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
-		K8sMode:                   s.K8sMode,
-		Capabilities:              s.Capabilities,
+		Perspectives:              s.Perspectives,
+		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
+		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
+		QuickStarts:               s.QuickStarts,
+		ReleaseVersion:            s.ReleaseVersion,
+		StatuspageID:              s.StatuspageID,
+		Telemetry:                 s.Telemetry,
+		ThanosPublicURL:           s.ThanosPublicURL.String(),
+		UserSettingsLocation:      s.UserSettingsLocation,
 	}
 
 	if s.prometheusProxyEnabled() {
