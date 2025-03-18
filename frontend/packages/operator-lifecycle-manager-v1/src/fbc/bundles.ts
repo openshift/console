@@ -24,7 +24,7 @@ export const compareBundleVersions = (
 ): number => {
   const aVersion = getBundleVersion(a);
   const bVersion = getBundleVersion(b);
-  return SemVer.compare(aVersion, bVersion);
+  return SemVer.compare(bVersion, aVersion);
 };
 
 export const getBundleMetadataForPackage = async (
