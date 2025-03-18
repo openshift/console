@@ -19,7 +19,7 @@ func ParseCustomLogoTheme(s string) (c operatorv1.ThemeMode, err error) {
 	clt := operatorv1.ThemeMode(s)
 	_, ok := themes[clt]
 	if !ok {
-		return c, fmt.Errorf("unknown custom logo theme: \"%s\". Must be one of [dark-theme, light-theme]", s)
+		return c, fmt.Errorf("unknown custom logo theme: \"%s\". Must be one of [%s, %s]", s, operatorv1.ThemeModeDark, operatorv1.ThemeModeLight)
 	}
 	return clt, nil
 }
@@ -38,54 +38,6 @@ func ParseCustomLogoType(s string) (c operatorv1.LogoType, err error) {
 	return clt, nil
 }
 
-// func (t *CustomLogoType) UnmarshalJSON(data []byte) error {
-// 	var s string
-// 	if err := json.Unmarshal(data, &s); err != nil {
-// 		return err
-// 	}
-
-// 	switch s {
-// 	case "masthead":
-// 		*t = MastheadType
-// 	case "favicon":
-// 		*t = FaviconType
-// 	default:
-// 		return fmt.Errorf("unknown custom logo type: \"%s\". Must be one of [masthead, favicon]", s)
-// 	}
-// 	return nil
-// }
-
-// func (a *CustomLogoType) Set(value string) error {
-// 	switch value {
-// 	case "masthead":
-// 		*a = MastheadType
-// 	case "favicon":
-// 		*a = FaviconType
-// 	case "":
-// 	default:
-// 		return fmt.Errorf("unknown custom logo type: \"%s\". Must be one of [masthead, favicon]", value)
-// 	}
-// 	return nil
-// }
-
-// func (t *CustomLogoTheme) UnmarshalJSON(data []byte) error {
-// 	var s string
-// 	if err := json.Unmarshal(data, &s); err != nil {
-// 		return err
-// 	}
-
-// 	switch s {
-// 	case "light-theme":
-// 		*t = LightTheme
-// 	case "dark-theme":
-// 		*t = DarkTheme
-// 	default:
-// 		return fmt.Errorf("unknown custom logo theme: \"%s\". Must be one of [dark-theme, light-theme]", s)
-// 	}
-// 	return nil
-// }
-
-// TODO this might be needed to be broken into endpoint handling favicons and endpoint handling custom logos
 func CustomLogosHandler(logoType operatorv1.LogoType, w http.ResponseWriter, r *http.Request, logoFiles LogosKeyValue) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")

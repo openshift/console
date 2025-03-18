@@ -2,9 +2,11 @@ package serverconfig
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
+	operatorv1 "github.com/openshift/api/operator/v1"
 	v1 "k8s.io/api/authorization/v1"
 )
 
@@ -290,113 +292,39 @@ func TestMissingConfigurationForAccessReviewProperty(t *testing.T) {
 	}
 }
 
-//
-//func TestValidEntriesForCustomLogoFiles(t *testing.T) {
-//	jsonData := `[
-//			{
-//				"type": "masthead",
-//				"logos": [
-//					{ "theme": "light-theme", "path": "testdata/masthead/okd-logo-light.svg" },
-//					{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }
-//				]
-//			},
-//			{
-//				"type": "favicon",
-//				"logos": [
-//					{ "theme": "light-theme", "path": "testdata/favicon/okd-favicon.png" },
-//					{ "theme": "dark-theme", "path": "testdata/favicon/okd-favicon.png" }
-//				]
-//			}
-//		]`
-//	actualCustomLogoFiles, err := validateCustomLogoFiles(jsonData)
-//	exectedPerspectives := []CustomLogoFiles{
-//		{
-//			Type: MastheadType,
-//			Logos: []CustomLogoFile{
-//				{
-//					Theme: LightTheme,
-//					Path:  "testdata/masthead/okd-logo-light.svg",
-//				},
-//				{
-//					Theme: DarkTheme,
-//					Path:  "testdata/masthead/okd-logo-dark.svg",
-//				},
-//			},
-//		},
-//		{
-//			Type: FaviconType,
-//			Logos: []CustomLogoFile{
-//				{
-//					Theme: LightTheme,
-//					Path:  "testdata/favicon/okd-favicon.png",
-//				},
-//				{
-//					Theme: DarkTheme,
-//					Path:  "testdata/favicon/okd-favicon.png",
-//				},
-//			},
-//		},
-//	}
-//	if err != nil {
-//		t.Error("Unexpected error when parsing data.", err)
-//	}
-//	if !reflect.DeepEqual(actualCustomLogoFiles, exectedPerspectives) {
-//		t.Errorf("Unexpected value: actual %v, expected %v", actualCustomLogoFiles, exectedPerspectives)
-//	}
-//}
-//
-//func TestUnknownPropertiesForCustomLogoFiles(t *testing.T) {
-//	jsonUnknownLogoType := fmt.Sprintf(`[
-//		{
-//			"type": "%s",
-//			"logos": [
-//				{ "theme": "light-theme", "path": "testdata/masthead/okd-logo-light.svg" },
-//				{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }
-//			]
-//		}
-//	]`, "unknownType")
-//	jsonUnknownLogoTheme := fmt.Sprintf(`[
-//		{
-//			"type": "masthead",
-//			"logos": [
-//				{ "theme": "%s", "path": "testdata/masthead/okd-logo-light.svg" },
-//				{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }
-//			]
-//		}
-//	]`, "unknownTheme")
-//	_, err := validateCustomLogoFiles(jsonUnknownLogoType)
-//	actualMsg := err.Error()
-//	expectedUnknownLogoTypeErr := "unknown custom logo type: \"unknownType\". Must be one of [masthead, favicon]"
-//	if actualMsg != expectedUnknownLogoTypeErr {
-//		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg, expectedUnknownLogoTypeErr)
-//	}
-//	_, err2 := validateCustomLogoFiles(jsonUnknownLogoTheme)
-//	expectedUnknownLogoThemeErr := "unknown custom logo theme: \"unknownTheme\". Must be one of [dark-theme, light-theme]"
-//	actualMsg2 := err2.Error()
-//	t.Log(actualMsg2)
-//	t.Log(expectedUnknownLogoThemeErr)
-//	if actualMsg2 != expectedUnknownLogoThemeErr {
-//		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg2, expectedUnknownLogoThemeErr)
-//	}
-//}
-//
-//func TestInvalidStructureForCustomLogoFiles(t *testing.T) {
-//	jsonData := `[
-//		{
-//			"fruit": "apple",
-//			"logos": [
-//				{ "theme": "light-theme", "path": "testdata/masthead/okd-logo-light.svg" },
-//				{ "theme": "dark-theme", "path": "testdata/masthead/okd-logo-dark.svg" }
-//			]
-//		}
-//	]`
-//	_, err := validateCustomLogoFiles(jsonData)
-//	actualMsg := err.Error()
-//	expectedErrMessage := "json: unknown field \"fruit\""
-//	t.Log(actualMsg)
-//	t.Log(expectedErrMessage)
-//	if actualMsg != expectedErrMessage {
-//		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg, expectedErrMessage)
-//	}
-//}
-//
+func TestValidEntriesForCustomLogos(t *testing.T) {
+	cliData := `Dark=testdata/masthead/okd-logo-dark.svg, Light=testdata/masthead/okd-logo-light.svg`
+
+	actualLogoFiles, err := validateLogoFiles(cliData)
+	if err != nil {
+		t.Error("Unexpected error when parsing data.", err)
+	}
+	expectedLogos := LogosKeyValue{
+		operatorv1.ThemeModeLight: "testdata/masthead/okd-logo-light.svg",
+		operatorv1.ThemeModeDark:  "testdata/masthead/okd-logo-dark.svg",
+	}
+
+	if !reflect.DeepEqual(actualLogoFiles, expectedLogos) {
+		t.Errorf("Unexpected value: actual \n%v\n, expected \n%v\n", actualLogoFiles, expectedLogos)
+	}
+}
+
+func TestUnknownPropertiesForCustomLogos(t *testing.T) {
+	unknownTheme := "unknownTheme"
+	unknownFile := "unknownFile"
+
+	jsonUnknownLogoType := fmt.Sprintf(`%s=testdata/masthead/okd-logo-dark.svg, %s=testdata/masthead/okd-logo-light.svg`, unknownTheme, operatorv1.ThemeModeLight)
+	jsonUnknownLogoFile := fmt.Sprintf(`%s=%s, %s=testdata/masthead/okd-logo-light.svg`, operatorv1.ThemeModeDark, unknownFile, operatorv1.ThemeModeLight)
+	_, err := validateLogoFiles(jsonUnknownLogoType)
+	actualMsg := err.Error()
+	expectedUnknownLogoTypeErr := fmt.Sprintf("unknown custom logo theme: \"%s\". Must be one of [%s, %s]", unknownTheme, operatorv1.ThemeModeDark, operatorv1.ThemeModeLight)
+	if actualMsg != expectedUnknownLogoTypeErr {
+		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg, expectedUnknownLogoTypeErr)
+	}
+	_, err2 := validateLogoFiles(jsonUnknownLogoFile)
+	expectedUnknownLogoThemeErr := fmt.Sprintf("stat %s: no such file or directory", unknownFile)
+	actualMsg2 := err2.Error()
+	if actualMsg2 != expectedUnknownLogoThemeErr {
+		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg2, expectedUnknownLogoThemeErr)
+	}
+}

@@ -199,8 +199,10 @@ func validateLogoFiles(value string) (LogosKeyValue, error) {
 		return nil, nil
 	}
 	var customLogoFiles LogosKeyValue
-	customLogoFiles.Set(value)
-
+	err := customLogoFiles.Set(value)
+	if err != nil {
+		return nil, err
+	}
 	// validate files
 	for _, file := range customLogoFiles {
 		if _, err := os.Stat(file); err != nil {
