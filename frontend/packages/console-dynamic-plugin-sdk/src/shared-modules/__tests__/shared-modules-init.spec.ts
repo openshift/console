@@ -1,6 +1,6 @@
-import { sharedPluginModules } from '../shared-modules';
+import { getEntryModuleMocks } from '../../utils/test-utils';
 import { initSharedPluginModules } from '../shared-modules-init';
-import { getEntryModuleMocks } from '../utils/test-utils';
+import { sharedPluginModules } from '../shared-modules-meta';
 
 describe('initSharedPluginModules', () => {
   it('is consistent with sharedPluginModules definition', () => {

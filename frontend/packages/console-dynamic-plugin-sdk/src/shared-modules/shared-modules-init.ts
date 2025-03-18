@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 /* eslint-disable @typescript-eslint/no-require-imports */
 
-import { SharedModuleNames } from './shared-modules';
-import { RemoteEntryModule } from './types';
+import { RemoteEntryModule } from '../types';
+import { SharedModuleNames } from './shared-modules-meta';
 
 type SharedScopeObject = {
   [moduleName: string]: {

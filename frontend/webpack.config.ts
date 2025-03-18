@@ -6,7 +6,7 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 
-import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules/shared-modules-meta';
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
