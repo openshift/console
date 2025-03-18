@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 
-export const ExternalLink: React.FC<ExternalLinkProps> = ({
+const ExternalLink: React.FC<ExternalLinkProps> = ({
   children,
   href,
   text,
@@ -30,3 +30,5 @@ type ExternalLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   dataTestID?: string;
   stopPropagation?: boolean;
 };
+
+export default ExternalLink;

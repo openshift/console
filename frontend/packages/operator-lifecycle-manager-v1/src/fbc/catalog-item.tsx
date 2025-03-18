@@ -3,8 +3,8 @@ import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { Timestamp } from '@console/internal/components/utils';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
 import { validSubscriptionReducer } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { PlainList } from '@console/shared/src/components/lists/PlainList';
+import ExternalLink from '@console/shared/src/components/links/ExternalLink';
+import PlainList from '@console/shared/src/components/lists/PlainList';
 import { ExtensionCatalogItem } from './types';
 
 type NormalizeExtensionCatalogItem = (item: ExtensionCatalogItem) => CatalogItem;
