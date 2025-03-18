@@ -3,8 +3,8 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
-        "group": "catalogd.operatorframework.io",
-        "version": "v1alpha1",
+        "group": "olm.operatorframework.io",
+        "version": "v1",
         "kind": "ClusterCatalog"
       },
       "flag": "CLUSTER_CATALOG_API"
@@ -15,7 +15,7 @@
     "properties": {
       "model": {
         "group": "olm.operatorframework.io",
-        "version": "v1alpha1",
+        "version": "v1",
         "kind": "ClusterExtension"
       },
       "flag": "CLUSTER_EXTENSION_API"
@@ -30,7 +30,7 @@
       "insertAfter": "usermanagement"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // Disable per https://issues.redhat.com/browse/OCPBUGS-41637
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -43,7 +43,7 @@
       "href": "/ecosystem/catalog"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // Disable per https://issues.redhat.com/browse/OCPBUGS-41637
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -55,7 +55,7 @@
       }
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -66,13 +66,13 @@
       "name": "%olm-v1~Installed Extensions%",
       "model": {
         "kind": "ClusterExtension",
-        "version": "v1alpha1",
+        "version": "v1",
         "group": "olm.operatorframework.io"
       },
       "startsWith": ["olm.operatorframework.io"]
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API"]
+      "required": ["CLUSTER_EXTENSION_API", "FALSE"] // TODO re-enable
     }
   },
   {
@@ -82,7 +82,65 @@
       "useValueHook": { "$codeRef": "useExtensionCatalogDatabaseContextValues" }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "olm-extension-catalog",
+      "type": "ExtensionCatalogItem",
+      "provider": { "$codeRef": "useExtensionCatalogItems" }
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "ExtensionCatalogItem",
+      "title": "%olm-v1~Extension Catalog Items%",
+      "filters": [
+        {
+          "label": "%olm-v1~Source%",
+          "attribute": "source",
+          "comparator": {
+            "$codeRef": "filters.sourceComparator"
+          }
+        },
+        {
+          "label": "%olm-v1~Provider%",
+          "attribute": "provider",
+          "comparator": {
+            "$codeRef": "filters.providerComparator"
+          }
+        },
+        {
+          "label": "%olm-v1~Capability level%",
+          "attribute": "capabilities",
+          "comparator": {
+            "$codeRef": "filters.capabilityLevelComparator"
+          }
+        },
+        {
+          "label": "%olm-v1~Infrastructure features%",
+          "attribute": "infrastructureFeatures",
+          "comparator": {
+            "$codeRef": "filters.infrastructureFeatureComparator"
+          }
+        },
+        {
+          "label": "%olm-v1~Valid subscription%",
+          "attribute": "validSubscription",
+          "comparator": {
+            "$codeRef": "filters.validSubscriptionComparator"
+          }
+        }
+      ]
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
   }
 ]

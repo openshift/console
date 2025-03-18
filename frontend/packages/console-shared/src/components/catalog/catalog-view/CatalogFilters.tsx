@@ -6,7 +6,9 @@ import {
 } from '@patternfly/react-catalog-view-extension';
 import * as _ from 'lodash';
 import { CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
+import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import { FieldLevelHelp } from '@console/internal/components/utils';
+import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import {
   CatalogFilter,
   CatalogFilterCounts,
@@ -17,7 +19,7 @@ import {
 type CatalogFiltersProps = {
   activeFilters: CatalogFilters;
   filterGroupCounts: CatalogFilterCounts;
-  filterGroupMap: { [key: string]: CatalogItemAttribute };
+  filterGroupMap: { [key: string]: ResolvedCodeRefProperties<CatalogItemAttribute> };
   filterGroupsShowAll: { [key: string]: boolean };
   onFilterChange: (filterType: string, id: string, value: boolean) => void;
   onShowAllToggle: (groupName: string) => void;
@@ -58,11 +60,14 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
 
   const renderFilterGroup = (filterGroup: CatalogFilter, groupName: string) => {
     const filterGroupKeys = Object.keys(filterGroup);
+    const filterGroupComparator = filterGroupMap[groupName]?.comparator ?? alphanumericCompare;
     if (filterGroupKeys.length > 0) {
-      const sortedFilterGroup = filterGroupKeys.sort().reduce<CatalogFilter>((acc, filterName) => {
-        acc[filterName] = filterGroup[filterName];
-        return acc;
-      }, {});
+      const sortedFilterGroup = filterGroupKeys
+        .sort(filterGroupComparator || alphanumericCompare)
+        .reduce<CatalogFilter>((acc, filterName) => {
+          acc[filterName] = filterGroup[filterName];
+          return acc;
+        }, {});
       return (
         <FilterSidePanelCategory
           key={groupName}
