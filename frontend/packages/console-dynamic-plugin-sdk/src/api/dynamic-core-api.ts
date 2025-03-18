@@ -711,7 +711,7 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
  * @param {TimestampProps['omitSuffix']} omitSuffix - formats the date ommiting the suffix.
  * @param {TimestampProps['className']} className - additional class name for the component.
  */
-export const Timestamp: React.FC<TimestampProps> = require('@console/internal/components/utils/timestamp')
+export const Timestamp: React.FC<TimestampProps> = require('@console/shared/src/components/datetime/Timestamp')
   .Timestamp;
 
 export { useModal } from '../app/modal-support/useModal';

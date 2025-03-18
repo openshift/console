@@ -2,7 +2,11 @@
   "Ecosystem": "Ecosystem",
   "Extension Catalog": "Extension Catalog",
   "Installed Extensions": "Installed Extensions",
-  "Extension Catalog items": "Extension Catalog items",
-  "No Extension Catalog items found": "No Extension Catalog items found",
-  "Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.": "Check that OLM v1 is configured and at least one valid ClusterCatalog has been created."
+  "Extension Catalog Items": "Extension Catalog Items",
+  "Source": "Source",
+  "Provider": "Provider",
+  "Capability level": "Capability level",
+  "Infrastructure features": "Infrastructure features",
+  "Valid subscription": "Valid subscription",
+  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can purchase commercial software through <2>Red Hat Marketplace</2>. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can purchase commercial software through <2>Red Hat Marketplace</2>. You can install Operators on your clusters to provide optional add-ons and shared services to your developers."
 }

@@ -1,0 +1,17 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: catalogd-route
+  namespace: openshift-catalogd
+spec:
+  host: catalogd-route-openshift-catalogd.apps.rhamilto.devcluster.openshift.com
+  to:
+    kind: Service
+    name: catalogd-service
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
