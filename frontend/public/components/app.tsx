@@ -157,6 +157,9 @@ const App = (props) => {
     const lightspeedButtonCapability = window.SERVER_FLAGS?.capabilities?.find(
       (capability) => capability.name === 'LightspeedButton',
     );
+    const HideLightspeedButtonCapability = window.SERVER_FLAGS?.capabilities?.find(
+      (capability) => capability.name === 'HideLightspeedButton',
+    );
     const gettingStartedBannerCapability = window.SERVER_FLAGS?.capabilities?.find(
       (capability) => capability.name === 'GettingStartedBanner',
     );
@@ -164,6 +167,10 @@ const App = (props) => {
       setFlag(
         FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
         lightspeedButtonCapability?.visibility?.state === 'Enabled',
+      ),
+      setFlag(
+        FLAGS.CONSOLE_CAPABILITY_USEHIDELIGHTSPEEDBUTTON_IS_ENABLED,
+        HideLightspeedButtonCapability?.visibility?.state === 'Enabled',
       ),
     );
     dispatch(
@@ -177,6 +184,9 @@ const App = (props) => {
 
   const consoleCapabilityLightspeedButtonIsEnabled = useFlag(
     FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
+  );
+  const consoleCapabilityHideLightspeedButtonIsEnabled = useFlag(
+    FLAGS.CONSOLE_CAPABILITY_USEHIDELIGHTSPEEDBUTTON_IS_ENABLED,
   );
   const lightspeedIsAvailableToInstall = useFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL);
 
@@ -269,6 +279,9 @@ const App = (props) => {
           >
             <AppContents />
           </Page>
+          {consoleCapabilityLightspeedButtonIsEnabled &&
+            lightspeedIsAvailableToInstall &&
+            consoleCapabilityHideLightspeedButtonIsEnabled && <Lightspeed />}
           <CloudShell />
           <GuidedTour />
         </Flex>
