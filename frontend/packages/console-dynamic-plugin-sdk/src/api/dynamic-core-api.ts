@@ -712,7 +712,7 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
  * @param {TimestampProps['className']} className - additional class name for the component.
  */
 export const Timestamp: React.FC<TimestampProps> = require('@console/shared/src/components/datetime/Timestamp')
-  .Timestamp;
+  .default;
 
 export { useModal } from '../app/modal-support/useModal';
 
