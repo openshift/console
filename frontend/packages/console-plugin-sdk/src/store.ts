@@ -171,7 +171,13 @@ export class PluginStore {
   }
 
   private updateExtensions() {
-    const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values());
+    const allowedDynamicPluginNames = Array.from(this.allowedDynamicPluginNames.values());
+    console.dir(allowedDynamicPluginNames);
+    const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values()).sort((a, b) => {
+      const indexA = allowedDynamicPluginNames.indexOf(a.manifest.name);
+      const indexB = allowedDynamicPluginNames.indexOf(b.manifest.name);
+      return indexA - indexB;
+    });
 
     this.staticPluginExtensions = this.staticPlugins
       .filter((plugin) => !this.disabledStaticPluginNames.has(plugin.name))
@@ -181,6 +187,7 @@ export class PluginStore {
       (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.processedExtensions] : acc),
       [] as LoadedExtension[],
     );
+    console.dir(this.dynamicPluginExtensions);
   }
 
   setDynamicPluginEnabled(pluginID: string, enabled: boolean) {
