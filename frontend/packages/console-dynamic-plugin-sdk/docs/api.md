@@ -669,6 +669,7 @@ const exampleList: React.FC = () => {
 | `title` | heading title |
 | `helpText` | (optional) help section as react node |
 | `badge` | (optional) badge icon as react node |
+| `hideFavoriteButton` | (Optional) If true, hides the Favorite button. By default, the Favorite button is displayed, allowing users to add a page as a favorite. Generally, you should use `hideFavoriteButton` when `ListPageHeader` is not the primary page header to avoid duplicate favorite buttons on the page. |
 
 
 

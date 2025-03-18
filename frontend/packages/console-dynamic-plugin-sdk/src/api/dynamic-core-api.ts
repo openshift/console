@@ -171,6 +171,7 @@ export const useActiveColumns: UseActiveColumns = require('@console/internal/com
  * @param {string} title - heading title
  * @param {ReactNode} [helpText] -  (optional) help section as react node
  * @param {ReactNode} [badge] -  (optional) badge icon as react node
+ * @param {boolean} [hideFavoriteButton] - (Optional) If true, hides the Favorite button. By default, the Favorite button is displayed, allowing users to add a page as a favorite. Generally, you should use `hideFavoriteButton` when `ListPageHeader` is not the primary page header to avoid duplicate favorite buttons on the page.
  * @example
  * ```ts
  * const exampleList: React.FC = () => {
