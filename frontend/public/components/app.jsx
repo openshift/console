@@ -216,6 +216,16 @@ const App = (props) => {
     (state) => !!state.UI.getIn(['notifications', 'isExpanded']),
   );
 
+  const drawerRef = React.useRef();
+
+  const focusDrawer = () => {
+    if (drawerRef.current === null) {
+      return;
+    }
+    const firstTabbableItem = drawerRef.current.querySelector('a, button');
+    firstTabbableItem?.focus();
+  };
+
   const content = (
     <>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
@@ -250,8 +260,10 @@ const App = (props) => {
               <NotificationDrawer
                 onDrawerChange={onNotificationDrawerToggle}
                 isDrawerExpanded={isNotificationDrawerExpanded}
+                drawerRef={drawerRef}
               />
             }
+            onNotificationDrawerExpand={() => focusDrawer()}
             isNotificationDrawerExpanded={isNotificationDrawerExpanded}
           >
             <AppContents />
