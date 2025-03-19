@@ -1,5 +1,5 @@
 import * as React from "react";
-import { consoleFetchJSON } from "@openshift-console/dynamic-plugin-sdk";
+import { consoleFetchJSON, DocumentTitle } from "@openshift-console/dynamic-plugin-sdk";
 import { useTranslation } from "react-i18next";
 import {
   Card,
@@ -13,6 +13,7 @@ const UtilityConsumer: React.FC = () => {
   const { t } = useTranslation("plugin__console-demo-plugin");
   return (
     <>
+      <DocumentTitle>{t("Test Utilities")}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1" data-test="test-utilities-title">
           {t("Utilities from Dynamic Plugin SDK")}

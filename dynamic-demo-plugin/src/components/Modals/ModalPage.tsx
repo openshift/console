@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Flex, List, ListItem, Modal, ModalBody, ModalHeader, Spinner} from '@patternfly/react-core';
 import {
+  DocumentTitle,
   K8sResourceCommon,
   useK8sWatchResource,
   useModal,
@@ -16,15 +17,15 @@ export const scResource = {
 
 export const TestModal: React.FC<{ closeModal: () => void }> = (props) => {
   const [res] = useK8sWatchResource<K8sResourceCommon[]>(scResource);
-  const { t } = useTranslation();
+  const { t } = useTranslation("plugin__console-demo-plugin");
   return (
     <Modal
       isOpen
       onClose={props?.closeModal}
     >
-      <ModalHeader title={t('plugin__console-demo-plugin~Storage Classes')} />
+      <ModalHeader title={t('Storage Classes')} />
       <ModalBody>
-        {t('plugin__console-demo-plugin~StorageClasses present in this cluster:')}
+        {t('StorageClasses present in this cluster:')}
         <List>
           {!!res &&
             res.map((item) => <ListItem key={item.metadata.uid}>{item.metadata.name}</ListItem>)}
@@ -35,7 +36,7 @@ export const TestModal: React.FC<{ closeModal: () => void }> = (props) => {
 };
 
 const LoadingComponent: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("plugin__console-demo-plugin");
 
   return (
     <Flex
@@ -44,14 +45,14 @@ const LoadingComponent: React.FC = () => {
       justifyContent={{ default: 'justifyContentCenter' }}
       grow={{ default: 'grow' }}
     >
-      <Spinner size="xl" aria-label={t('plugin__console-demo-plugin~Component is resolving')} />
+      <Spinner size="xl" aria-label={t('Component is resolving')} />
     </Flex>
   );
 };
 
 export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   const launchModal = useModal();
-  const { t } = useTranslation();
+  const { t } = useTranslation("plugin__console-demo-plugin");
 
   const TestComponent = ({ closeModal, ...rest }) => (
     <TestModal closeModal={closeModal} {...rest} />
@@ -82,9 +83,10 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       direction={{ default: 'column' }}
       className="demo-modal__page"
     >
-      <Button onClick={onClick}>{t('plugin__console-demo-plugin~Launch Modal')}</Button>
+      <DocumentTitle>{t('Modal Launchers')}</DocumentTitle>
+      <Button onClick={onClick}>{t('Launch Modal')}</Button>
       <Button onClick={onAsyncClick}>
-        {t('plugin__console-demo-plugin~Launch Modal Asynchronously')}
+        {t('Launch Modal Asynchronously')}
       </Button>
     </Flex>
   );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardTitle, PageSection, Title } from "@patternfly/react-core";
-import { ErrorBoundaryFallbackPage } from '@openshift-console/dynamic-plugin-sdk';
+import { DocumentTitle, ErrorBoundaryFallbackPage } from '@openshift-console/dynamic-plugin-sdk';
 import { DemoErrorBoundary }  from './DemoErrorBoundary';
 
 const BuggyComponent: React.FC = () => {
@@ -15,6 +15,7 @@ const SampleErrorBoundaryPage: React.FC = () => {
 
   return (
     <DemoErrorBoundary FallbackComponent={ErrorBoundaryFallbackPage}>
+      <DocumentTitle>{t('Sample Error Boundary Page')}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1">{t('Sample Error Boundary Page')}</Title>
       </PageSection>

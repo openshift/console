@@ -16,7 +16,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { usePrometheusPoll, PrometheusEndpoint } from '@openshift-console/dynamic-plugin-sdk';
+import { DocumentTitle, usePrometheusPoll, PrometheusEndpoint } from '@openshift-console/dynamic-plugin-sdk';
 
 export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
@@ -28,6 +28,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
 
   return (
     <>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1" data-test="title">{title}</Title>
       </PageSection>
