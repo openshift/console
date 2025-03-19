@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   K8sResourceCommon,
   useK8sWatchResource,

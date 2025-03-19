@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
+import * as semver from 'semver';
 import {
   sharedPluginModules,
   getSharedModuleMetadata,
@@ -98,6 +99,15 @@ const parseSharedModuleDeps = (
     missingDepCallback,
   );
 
+const getMinDepVersion = (
+  pkg: readPkg.PackageJson,
+  depName: string,
+  missingDepCallback: MissingDependencyCallback,
+) => {
+  const versionOrRange = parseDeps(pkg, [depName], missingDepCallback)[depName];
+  return semver.minVersion(versionOrRange).version;
+};
+
 export const getCorePackage: GetPackageDefinition = (
   sdkPackage,
   rootPackage,
@@ -172,7 +182,7 @@ export const getWebpackPackage: GetPackageDefinition = (
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
-      typescript: '>=4.5.5',
+      typescript: `>=${getMinDepVersion(rootPackage, 'typescript', missingDepCallback)}`,
     },
   },
   filesToCopy: {
