@@ -185,28 +185,30 @@ export const AddKeystonePage = () => {
             <label className="control-label co-required" htmlFor="domain-name">
               {t('public~Domain name')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setDomainName(e.currentTarget.value)}
-              value={domainName}
-              id="domain-name"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setDomainName(e.currentTarget.value)}
+                value={domainName}
+                id="domain-name"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
               {t('public~URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setUrl(e.currentTarget.value)}
-              value={url}
-              id="url"
-              aria-describedby="idp-url-help"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setUrl(e.currentTarget.value)}
+                value={url}
+                id="url"
+                aria-describedby="idp-url-help"
+                required
+              />
+            </span>
             <p className="help-block" id="idp-url-help">
               {t('public~The remote URL to connect to.')}
             </p>
@@ -237,7 +239,7 @@ export const AddKeystonePage = () => {
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

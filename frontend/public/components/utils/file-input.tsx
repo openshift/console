@@ -19,46 +19,15 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
     this.onDataChange = this.onDataChange.bind(this);
     this.onFileUpload = this.onFileUpload.bind(this);
   }
+
   onDataChange(event) {
-    this.props.onChange({
-      fileData: event.target.value,
-    });
+    this.props.onDataChange(event.target.value);
   }
-  readFile(file) {
-    const { t } = this.props;
-    if (!file) {
-      return;
-    }
-    if (file.size > maxFileUploadSize) {
-      this.props.onChange({
-        errorMessage: t('public~Maximum file size exceeded. File limit is 4MB.'),
-      });
-      return;
-    }
-    let fileIsBinary = false;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const input = fileIsBinary
-        ? (reader.result as string).split(',')[1]
-        : (reader.result as string);
-      // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-      // @ts-ignore Fix this in CONSOLE-4088
-      if (isBinary(null, input) && !fileIsBinary) {
-        fileIsBinary = true;
-        reader.readAsDataURL(file);
-      } else {
-        this.props.onChange({
-          fileData: input,
-          fileIsBinary,
-          fileName: file.name,
-        });
-      }
-    };
-    reader.readAsText(file, 'UTF-8');
-  }
+
   onFileUpload(event) {
-    this.readFile(event.target.files[0]);
+    this.props.onFileChange(event.target.files[0]);
   }
+
   render() {
     const {
       connectDropTarget,
@@ -90,17 +59,17 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
             {this.props.label}
           </label>
           <div className="modal-body__field">
-            <div className="pf-v5-c-input-group">
-              <input
-                type="text"
-                className="pf-v5-c-form-control"
-                aria-label={t('public~Filename')}
-                value={this.props.inputFileName}
-                aria-describedby={this.props.inputFieldHelpText ? `${id}-help` : undefined}
-                readOnly
-                disabled
-              />
-              <span className="pf-v5-c-button pf-m-tertiary co-btn-file">
+            <div className="pf-v6-c-input-group">
+              <span className="pf-v6-c-form-control pf-m-readonly">
+                <input
+                  type="text"
+                  aria-label={t('public~Filename')}
+                  value={this.props.inputFileName}
+                  aria-describedby={this.props.inputFieldHelpText ? `${id}-help` : undefined}
+                  readOnly
+                />
+              </span>
+              <span className="pf-v6-c-button pf-m-control co-btn-file">
                 <input id={id} type="file" onChange={this.onFileUpload} data-test="file-input" />
                 {t('public~Browse...')}
               </span>
@@ -111,19 +80,21 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
               </p>
             ) : null}
             {!hideContents && (
-              <textarea
-                data-test-id={
-                  this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
-                }
-                className="pf-v5-c-form-control pf-m-resize-both co-file-dropzone__textarea"
-                onChange={this.onDataChange}
-                value={this.props.inputFileData}
-                aria-label={this.props.label}
-                aria-describedby={
-                  this.props.textareaFieldHelpText ? `${id}-textarea-help` : undefined
-                }
-                required={isRequired}
-              />
+              <span className="pf-v6-c-form-control pf-m-resize-vertical pf-v6-u-mt-sm">
+                <textarea
+                  data-test-id={
+                    this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
+                  }
+                  className="co-file-dropzone__textarea"
+                  onChange={this.onDataChange}
+                  value={this.props.inputFileData}
+                  aria-label={this.props.label}
+                  aria-describedby={
+                    this.props.textareaFieldHelpText ? `${id}-textarea-help` : undefined
+                  }
+                  required={isRequired}
+                />
+              </span>
             )}
             {this.props.textareaFieldHelpText ? (
               <p className="help-block" id={`${id}-textarea-help`}>
@@ -177,64 +148,57 @@ const DroppableFileInputWithTranslation = withDragDropContext(
         inputFileIsBinary: this.props.inputFileIsBinary || isBinary(null, this.props.inputFileData),
       };
       this.handleFileDrop = this.handleFileDrop.bind(this);
+      this.onFileChange = this.onFileChange.bind(this);
       this.onDataChange = this.onDataChange.bind(this);
     }
-    handleFileDrop(item: any, monitor: DropTargetMonitor) {
+
+    onFileChange(file: File) {
       const { t } = this.props;
-      if (!monitor) {
-        return;
-      }
-      const file = monitor.getItem().files[0];
       if (file.size > maxFileUploadSize) {
-        this.setState({
+        this.onDataChange({
           errorMessage: t('public~Maximum file size exceeded. File limit is 4MB.'),
           inputFileName: '',
           inputFileData: '',
         });
         return;
       }
-      let inputFileIsBinary = false;
       const reader = new FileReader();
       reader.onload = () => {
-        const input = reader.result as string; // Note(Yaacov): we use reader.readAsText
-        // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-        // @ts-ignore Fix this in CONSOLE-4088
-        if (isBinary(null, input) && !inputFileIsBinary) {
-          inputFileIsBinary = true;
-          reader.readAsBinaryString(file);
-        } else {
-          this.setState(
-            {
-              inputFileName: file.name,
-              inputFileData: input,
-              inputFileIsBinary,
-              errorMessage: '',
-            },
-            () => this.props.onChange(input, inputFileIsBinary),
-          );
-        }
+        const buffer = Buffer.from(reader.result as ArrayBuffer);
+        const inputFileIsBinary = isBinary(file.name, buffer);
+        const inputFileData = buffer.toString(inputFileIsBinary ? 'base64' : 'utf-8');
+        this.onDataChange({
+          inputFileName: file.name,
+          inputFileData,
+          inputFileIsBinary,
+          errorMessage: '',
+        });
       };
-      reader.readAsText(file, 'UTF-8');
+      reader.readAsArrayBuffer(file);
     }
+
     onDataChange(data) {
-      const { fileData, fileIsBinary, fileName, errorMessage } = data;
-      this.setState(
-        {
-          inputFileData: fileData || '',
-          inputFileIsBinary: fileIsBinary,
-          inputFileName: fileName || '',
-          errorMessage: errorMessage || '',
-        },
-        () => this.props.onChange(this.state.inputFileData, fileIsBinary),
+      this.setState(data, () =>
+        this.props.onChange(data.inputFileData, data.inputFileIsBinary || false),
       );
     }
+
+    handleFileDrop(item: any, monitor: DropTargetMonitor) {
+      if (!monitor) {
+        return;
+      }
+      const file = monitor.getItem().files[0];
+      this.onFileChange(file);
+    }
+
     render() {
       return (
         <FileInputComponent
           {...this.props}
           errorMessage={this.state.errorMessage}
           onDrop={this.handleFileDrop}
-          onChange={this.onDataChange}
+          onFileChange={this.onFileChange}
+          onDataChange={(inputFileData) => this.onDataChange({ ...this.state, inputFileData })}
           inputFileData={this.state.inputFileData}
           inputFileName={this.state.inputFileName}
           fileIsBinary={this.state.inputFileIsBinary}
@@ -279,7 +243,8 @@ export type FileInputProps = WithTranslation & {
   onDrop: (props: FileInputProps, monitor: DropTargetMonitor) => void;
   inputFileData: string;
   inputFileName: string;
-  onChange: Function;
+  onFileChange: (file: File) => void;
+  onDataChange: (data: string) => void;
   label: string;
   id: string;
   inputFieldHelpText: string;

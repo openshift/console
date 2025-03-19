@@ -1,26 +1,24 @@
 import * as React from 'react';
 import {
   Alert,
-  Checkbox,
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  EmptyStateHeader,
   EmptyStateFooter,
+  Flex,
+  FlexItem,
   MenuToggle,
   MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
-  Toolbar,
-  ToolbarContent,
-  ToolbarGroup,
-  ToolbarItem,
+  Switch,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import classnames from 'classnames';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   ExternalLink,
   getQueryArgument,
@@ -32,7 +30,7 @@ import {
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared';
 import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
-import NodeLogsFilterUnit from './NodeLogsUnitFilter';
+import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
 
 type NodeLogsProps = {
@@ -44,6 +42,7 @@ type LogControlsProps = {
   onChangePath: (event: React.ChangeEvent<HTMLInputElement>, newAPI: string) => void;
   path: string;
   isPathOpen: boolean;
+  setPathOpen: (value: boolean) => void;
   pathItems: string[];
   isJournal: boolean;
   onChangeUnit: (value: string) => void;
@@ -52,6 +51,7 @@ type LogControlsProps = {
   logFilenamesExist: boolean;
   onToggleFilename: () => void;
   onChangeFilename: (event: React.ChangeEvent<HTMLInputElement>, newFilename: string) => void;
+  setFilenameOpen: (value: boolean) => void;
   logFilename: string;
   isFilenameOpen: boolean;
   logFilenames: string[];
@@ -65,6 +65,7 @@ const LogControls: React.FC<LogControlsProps> = ({
   onChangePath,
   path,
   isPathOpen,
+  setPathOpen,
   pathItems,
   isJournal,
   onChangeUnit,
@@ -75,6 +76,7 @@ const LogControls: React.FC<LogControlsProps> = ({
   onChangeFilename,
   logFilename,
   isFilenameOpen,
+  setFilenameOpen,
   logFilenames,
   isWrapLines,
   setWrapLines,
@@ -95,75 +97,71 @@ const LogControls: React.FC<LogControlsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Toolbar className="co-toolbar-empty-state">
-      <ToolbarContent>
-        <ToolbarGroup>
-          <ToolbarItem>
-            <Select
-              onSelect={onChangePath}
-              selected={path}
-              isOpen={isPathOpen}
-              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                <MenuToggle
-                  ref={toggleRef}
-                  onClick={onTogglePath}
-                  aria-label={t('public~Select a path')}
-                  data-test="select-path"
+    <Flex>
+      <Flex>
+        <FlexItem>
+          <Select
+            onSelect={onChangePath}
+            selected={path}
+            isOpen={isPathOpen}
+            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+              <MenuToggle
+                ref={toggleRef}
+                onClick={onTogglePath}
+                aria-label={t('public~Select a path')}
+                data-test="select-path"
+              >
+                {path}
+              </MenuToggle>
+            )}
+            onOpenChange={(open) => setPathOpen(open)}
+          >
+            <SelectList>{options(pathItems)}</SelectList>
+          </Select>
+        </FlexItem>
+        {isJournal && <NodeLogsUnitFilter onChangeUnit={onChangeUnit} unit={unit} />}
+        {!isJournal && (
+          <FlexItem>
+            {isLoadingFilenames ? (
+              <LoadingInline />
+            ) : (
+              logFilenamesExist && (
+                <Select
+                  onSelect={onChangeFilename}
+                  selected={logFilename}
+                  isOpen={isFilenameOpen}
+                  className="co-node-logs__log-select"
+                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle ref={toggleRef} onClick={onToggleFilename} data-test="select-file">
+                      {logFilename || t('public~Select a log file')}
+                    </MenuToggle>
+                  )}
+                  onOpenChange={(open) => setFilenameOpen(open)}
                 >
-                  {path}
-                </MenuToggle>
-              )}
-            >
-              <SelectList>{options(pathItems)}</SelectList>
-            </Select>
-          </ToolbarItem>
-          {isJournal && <NodeLogsFilterUnit onChangeUnit={onChangeUnit} unit={unit} />}
-          {!isJournal && (
-            <ToolbarItem>
-              {isLoadingFilenames ? (
-                <LoadingInline />
-              ) : (
-                logFilenamesExist && (
-                  <Select
-                    onSelect={onChangeFilename}
-                    selected={logFilename}
-                    isOpen={isFilenameOpen}
-                    className="co-node-logs__log-select"
-                    toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                      <MenuToggle
-                        ref={toggleRef}
-                        onClick={onToggleFilename}
-                        data-test="select-file"
-                      >
-                        {logFilename || t('public~Select a log file')}
-                      </MenuToggle>
-                    )}
-                  >
-                    <SelectList>{options(logFilenames)}</SelectList>
-                  </Select>
-                )
-              )}
-            </ToolbarItem>
-          )}
-          {showSearch && (
-            <ToolbarItem>
-              <LogViewerSearch placeholder={t('public~Search')} minSearchChars={0} />
-            </ToolbarItem>
-          )}
-        </ToolbarGroup>
-        <ToolbarItem className="pf-v5-u-flex-fill pf-v5-u-align-self-center pf-v5-u-justify-content-flex-end">
-          <Checkbox
-            label={t('public~Wrap lines')}
-            id="wrapLogLines"
-            isChecked={isWrapLines}
-            data-checked-state={isWrapLines}
-            onChange={(_event, checked: boolean) => {
-              setWrapLines(checked);
-            }}
-          />
-        </ToolbarItem>
-      </ToolbarContent>
-    </Toolbar>
+                  <SelectList>{options(logFilenames)}</SelectList>
+                </Select>
+              )
+            )}
+          </FlexItem>
+        )}
+        {showSearch && (
+          <FlexItem>
+            <LogViewerSearch placeholder={t('public~Search')} minSearchChars={0} />
+          </FlexItem>
+        )}
+      </Flex>
+      <FlexItem align={{ default: 'alignLeft', md: 'alignRight' }}>
+        <Switch
+          label={t('public~Wrap lines')}
+          id="wrapLogLines"
+          isChecked={isWrapLines}
+          data-checked-state={isWrapLines}
+          onChange={(_event, checked: boolean) => {
+            setWrapLines(checked);
+          }}
+        />
+      </FlexItem>
+    </Flex>
   );
 };
 
@@ -200,6 +198,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     true,
   );
   const { t } = useTranslation();
+  const theme = React.useContext(ThemeContext);
 
   const isJournal = path === 'journal';
 
@@ -330,6 +329,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       path={path}
       isPathOpen={isPathOpen}
       pathItems={pathItems}
+      setPathOpen={setPathOpen}
       isJournal={isJournal}
       onChangeUnit={onChangeUnit}
       unit={unit}
@@ -339,6 +339,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       onChangeFilename={onChangeFilename}
       logFilename={logFilename}
       isFilenameOpen={isFilenameOpen}
+      setFilenameOpen={setFilenameOpen}
       logFilenames={logFilenames}
       isWrapLines={isWrapLines}
       setWrapLines={setWrapLines}
@@ -365,21 +366,22 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         )}
         {isLoadingLog ? (
           !isJournal && !logFilename ? (
-            <EmptyState variant={EmptyStateVariant.full} isFullHeight>
-              <EmptyStateHeader
-                titleText={
-                  <>
-                    {isLoadingFilenames ? (
-                      <LoadingInline />
-                    ) : logFilenamesExist ? (
-                      t('public~No log file selected')
-                    ) : (
-                      t('public~No log files exist')
-                    )}
-                  </>
-                }
-                headingLevel="h2"
-              />
+            <EmptyState
+              headingLevel="h2"
+              titleText={
+                <>
+                  {isLoadingFilenames ? (
+                    <LoadingInline />
+                  ) : logFilenamesExist ? (
+                    t('public~No log file selected')
+                  ) : (
+                    t('public~No log files exist')
+                  )}
+                </>
+              }
+              variant={EmptyStateVariant.full}
+              isFullHeight
+            >
               <EmptyStateFooter>
                 {logFilenamesExist && (
                   <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>
@@ -396,7 +398,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
             isTextWrapped={isWrapLines}
             data={trimmedContent || content}
             toolbar={logControls}
-            theme="dark"
+            theme={theme}
             initialIndexWidth={7}
           />
         )}

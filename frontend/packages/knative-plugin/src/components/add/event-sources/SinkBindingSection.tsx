@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { DropdownField, InputField, getFieldId } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { EventSources } from '../import-types';
 
 interface SinkBindingSectionProps {
@@ -62,7 +63,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
 
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
-      <h3 className="co-section-heading-tertiary">{t('knative-plugin~Subject')}</h3>
+      <TertiaryHeading>{t('knative-plugin~Subject')}</TertiaryHeading>
       <InputField
         data-test-id="sinkbinding-apiversion-field"
         type={TextInputTypes.text}
@@ -78,7 +79,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
         required
       />
       <FormGroup fieldId={fieldId} label={t('knative-plugin~Match subject')}>
-        <div className="pf-v5-c-form__helper-text">
+        <div className="pf-v6-c-form__helper-text">
           {t('knative-plugin~Match subject using name or labels.')}
         </div>
         <div className="form-group">

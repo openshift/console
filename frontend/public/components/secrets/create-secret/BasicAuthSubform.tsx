@@ -17,16 +17,17 @@ export const BasicAuthSubform: React.FC<BasicAuthSubformProps> = ({ onChange, st
           {t('public~Username')}
         </label>
         <div>
-          <input
-            className="pf-v5-c-form-control"
-            id="username"
-            data-test="secret-username"
-            aria-describedby="username-help"
-            type="text"
-            name="username"
-            onChange={changeData}
-            value={stringData.username}
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id="username"
+              data-test="secret-username"
+              aria-describedby="username-help"
+              type="text"
+              name="username"
+              onChange={changeData}
+              value={stringData.username}
+            />
+          </span>
           <p className="help-block" id="username-help">
             {t('public~Optional username for Git authentication.')}
           </p>
@@ -37,17 +38,18 @@ export const BasicAuthSubform: React.FC<BasicAuthSubformProps> = ({ onChange, st
           {t('public~Password or token')}
         </label>
         <div>
-          <input
-            className="pf-v5-c-form-control"
-            id="password"
-            data-test="secret-password"
-            aria-describedby="password-help"
-            type="password"
-            name="password"
-            onChange={changeData}
-            value={stringData.password}
-            required
-          />
+          <span className="pf-v6-c-form-control">
+            <input
+              id="password"
+              data-test="secret-password"
+              aria-describedby="password-help"
+              type="password"
+              name="password"
+              onChange={changeData}
+              value={stringData.password}
+              required
+            />
+          </span>
           <p className="help-block" id="password-help">
             {t(
               'public~Password or token for Git authentication. Required if a ca.crt or .gitconfig file is not specified.',

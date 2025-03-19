@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Popover, Button, Modal, ModalVariant, Alert } from '@patternfly/react-core';
+import { Popover, Button, Alert } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import {
@@ -164,24 +163,24 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           </label>{' '}
           <Popover aria-label={t('console-shared~Naming information')} bodyContent={popoverText}>
             <Button
+              icon={<OutlinedQuestionCircleIcon />}
               className="co-button-help-icon"
               variant="plain"
               aria-label={t('console-shared~View naming information')}
-            >
-              <OutlinedQuestionCircleIcon />
-            </Button>
+            />
           </Popover>
           <div className="modal-body__field">
-            <input
-              id="input-name"
-              data-test="input-name"
-              name="name"
-              type="text"
-              className="pf-v5-c-form-control"
-              onChange={(e) => setName(e.target.value)}
-              value={name || ''}
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                id="input-name"
+                data-test="input-name"
+                name="name"
+                type="text"
+                onChange={(e) => setName(e.target.value)}
+                value={name || ''}
+                required
+              />
+            </span>
           </div>
         </div>
         <div className="form-group">
@@ -189,14 +188,15 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
             {t('console-shared~Display name')}
           </label>
           <div className="modal-body__field">
-            <input
-              id="input-display-name"
-              name="displayName"
-              type="text"
-              className="pf-v5-c-form-control"
-              onChange={(e) => setDisplayName(e.target.value)}
-              value={displayName || ''}
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                id="input-display-name"
+                name="displayName"
+                type="text"
+                onChange={(e) => setDisplayName(e.target.value)}
+                value={displayName || ''}
+              />
+            </span>
           </div>
         </div>
         <div className="form-group">
@@ -204,13 +204,14 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
             {t('console-shared~Description')}
           </label>
           <div className="modal-body__field">
-            <textarea
-              id="input-description"
-              name="description"
-              className="pf-v5-c-form-control pf-m-resize-both"
-              onChange={(e) => setDescription(e.target.value)}
-              value={description || ''}
-            />
+            <span className="pf-v6-c-form-control pf-m-resize-vertical">
+              <textarea
+                id="input-description"
+                name="description"
+                onChange={(e) => setDescription(e.target.value)}
+                value={description || ''}
+              />
+            </span>
           </div>
         </div>
         {errorMessage && (

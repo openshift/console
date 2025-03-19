@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -23,7 +22,7 @@ export const ModalErrorContent = withHandlePromise<ErrorModalProps>((props) => {
       </ModalTitle>
       <ModalBody>{error}</ModalBody>
       <ModalFooter inProgress={false} errorMessage="">
-        <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
+        <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right pf-v6-c-form__group--no-top-margin">
           <Button type="button" variant="primary" onClick={cancel}>
             {t('public~OK')}
           </Button>

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { TechPreviewBadge } from '@console/shared';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 
 import './PipelineBuilderHeader.scss';
@@ -15,9 +16,9 @@ const PipelineBuilderHeader: React.FC<{ namespace: string }> = ({ namespace }) =
       <Flex className="odc-pipeline-builder-header__content">
         <FlexItem grow={{ default: 'grow' }}>
           <div className="co-m-nav-title">
-            <h1 className="co-m-pane__heading odc-pipeline-builder-header__title">
+            <PrimaryHeading className="odc-pipeline-builder-header__title">
               {t('pipelines-plugin~Pipeline builder')}
-            </h1>
+            </PrimaryHeading>
           </div>
         </FlexItem>
         {badge && (

@@ -1,21 +1,20 @@
 import * as React from 'react';
 import { AlertVariant } from '@patternfly/react-core';
+import { Map } from 'immutable';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import {
   AdmissionWebhookWarning,
-  CoreState,
   getAdmissionWebhookWarnings,
   removeAdmissionWebhookWarning,
+  SDKStoreState,
 } from '@console/dynamic-plugin-sdk/src';
 import { documentationURLs, getDocumentationURL } from '@console/internal/components/utils';
 import { useToast } from '@console/shared/src';
 
 type UseAdmissionWebhookWarnings = () => Map<string, AdmissionWebhookWarning>;
 const useAdmissionWebhookWarnings: UseAdmissionWebhookWarnings = () =>
-  useSelector<CoreState, Map<string, AdmissionWebhookWarning>>(getAdmissionWebhookWarnings);
+  useSelector<SDKStoreState, Map<string, AdmissionWebhookWarning>>(getAdmissionWebhookWarnings);
 
 export const AdmissionWebhookWarningNotifications = () => {
   const { t } = useTranslation();

@@ -46,7 +46,7 @@ When('user clicks on Memory usage chart', () => {
 
 Then('page redirected to the Observe Metrics page for the chart', () => {
   detailsPage.titleShouldContain('Observe');
-  cy.get('.co-m-horizontal-nav-item--active').find(monitoringPO.tabs.metrics).should('be.visible');
+  cy.get('.pf-v6-c-tabs__item.pf-m-current').find(monitoringPO.tabs.metrics).should('be.visible');
 });
 
 When('user selects {string} from Context Menu', (menuOption: string) => {
@@ -84,9 +84,7 @@ Then('page redirected to the Observe page', () => {
 
 Then('page redirected to the Dashboard tab of Observe page', () => {
   detailsPage.titleShouldContain('Observe');
-  cy.get('.co-m-horizontal-nav-item--active')
-    .find(monitoringPO.tabs.dashboard)
-    .should('be.visible');
+  cy.get('.pf-v6-c-tabs__item.pf-m-current').find(monitoringPO.tabs.dashboard).should('be.visible');
 });
 
 Then('user will see the {string} selected in the Dashboard dropdown', (dashboardName: string) => {

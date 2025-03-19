@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts/victory';
+import { Stack, StackItem, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ErrorState } from '@console/internal/components/error';
@@ -36,12 +36,22 @@ const LabelComponent = ({ clusterID, ...props }) => (
       riskSorting[props.datum.id] + 1
     }`}
   >
-    <ChartLabel {...props} style={{ fill: 'var(--pf-v5-global--link--Color)' }} />
+    <ChartLabel
+      {...props}
+      style={{
+        fill: 'var(--pf-t--global--text--color--link--default)',
+      }}
+    />
   </ExternalLink>
 );
 
 const SubTitleComponent = (props) => (
-  <ChartLabel {...props} style={{ fill: 'var(--pf-v5-chart-color-black-500)' }} />
+  <ChartLabel
+    {...props}
+    x={220}
+    y={100}
+    style={{ fill: 'var(--pf-t--chart--color--black--500)' }}
+  />
 );
 
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
@@ -110,6 +120,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
                 y: v,
               }))}
               title={`${numberOfIssues}`}
+              titleComponent={<ChartLabel x={220} y={78} />}
               subTitle={t('insights-plugin~Total issue', { count: numberOfIssues })}
               legendOrientation="vertical"
               width={320}
@@ -146,7 +157,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
           </div>
           {clusterID ? (
             <>
-              <h6 className="pf-v5-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
+              <Title headingLevel="h6">{t('insights-plugin~Fixable issues')}</Title>
               <div>
                 <ExternalLink
                   href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}`}

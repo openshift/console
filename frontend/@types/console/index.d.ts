@@ -66,6 +66,7 @@ declare interface Window {
   webpackSharedScope?: {}; // webpack shared scope object, contains modules shared across plugins
   ResizeObserver: ResizeObserver.prototype; // polyfill used by react-measure
   Cypress?: {};
+  monaco?: {};
 }
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html

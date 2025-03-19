@@ -68,9 +68,9 @@ const OperatorStatusIconAndLabel: React.FC<OperatorStatusIconAndLabelProps> = ({
 
 const tableColumnClasses = [
   '',
-  'pf-v5-u-w-16-on-xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-33-on-2xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-33-on-2xl',
+  'pf-v6-u-w-16-on-xl',
+  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-33-on-2xl',
+  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-33-on-2xl',
   Kebab.columnClass,
 ];
 
@@ -205,18 +205,18 @@ const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
     <EmptyBox label={t('public~versions')} />
   ) : (
     <div className="co-table-container">
-      <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-        <thead className="pf-v5-c-table__thead">
-          <tr className="pf-v5-c-table__tr">
-            <th className="pf-v5-c-table__th">{t('public~Name')}</th>
-            <th className="pf-v5-c-table__th">{t('public~Version')}</th>
+      <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+        <thead className="pf-v6-c-table__thead">
+          <tr className="pf-v6-c-table__tr">
+            <th className="pf-v6-c-table__th">{t('public~Name')}</th>
+            <th className="pf-v6-c-table__th">{t('public~Version')}</th>
           </tr>
         </thead>
-        <tbody className="pf-v5-c-table__tbody">
+        <tbody className="pf-v6-c-table__tbody">
           {_.map(versions, ({ name, version }, i) => (
-            <tr className="pf-v5-c-table__tr" key={i}>
-              <td className="pf-v5-c-table__td">{name}</td>
-              <td className="pf-v5-c-table__td">{version}</td>
+            <tr className="pf-v6-c-table__tr" key={i}>
+              <td className="pf-v6-c-table__td">{name}</td>
+              <td className="pf-v6-c-table__td">{version}</td>
             </tr>
           ))}
         </tbody>

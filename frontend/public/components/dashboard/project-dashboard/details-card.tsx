@@ -21,7 +21,7 @@ export const DetailsCard: React.FC = () => {
   const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
   const { t } = useTranslation();
   return (
-    <Card data-test-id="details-card" isClickable isSelectable>
+    <Card data-test-id="details-card">
       <CardHeader
         actions={{
           actions: (

@@ -85,6 +85,9 @@ export const getSortedNotRecommendedUpdates = (cv: ClusterVersionKind): Conditio
 
 export const getNewerMinorVersionUpdate = (currentVersion, availableUpdates) => {
   const currentVersionParsed = semver.parse(currentVersion);
+  if (!currentVersionParsed) {
+    return;
+  }
   return availableUpdates?.find(
     // find the next minor version update, which there should never be more than one
     (update) => {
@@ -101,8 +104,8 @@ export const isMinorVersionNewer = (currentVersion, otherVersion) => {
   const currentVersionParsed = semver.parse(currentVersion);
   const otherVersionParsed = semver.parse(otherVersion);
   return semver.gt(
-    semver.coerce(`${otherVersionParsed.major}.${otherVersionParsed.minor}`),
-    semver.coerce(`${currentVersionParsed.major}.${currentVersionParsed.minor}`),
+    semver.coerce(`${otherVersionParsed?.major}.${otherVersionParsed?.minor}`),
+    semver.coerce(`${currentVersionParsed?.major}.${currentVersionParsed?.minor}`),
   );
 };
 

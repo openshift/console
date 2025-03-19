@@ -19,7 +19,7 @@ When('user enters git access token as {string}', (token: string) => {
 });
 
 Then('user will be redirected to the repositories page', () => {
-  cy.get('.co-m-horizontal-nav__menu-item.co-m-horizontal-nav-item--active > a').should(
+  cy.get('.pf-v6-c-tabs__item.pf-m-current .pf-v6-c-tabs__item-text').should(
     'have.text',
     'Repositories',
   );
@@ -54,7 +54,7 @@ Then('user clicks on close button', () => {
 });
 
 Then('user will be redirected to PipelineRuns tab', () => {
-  cy.get('.co-m-horizontal-nav__menu-item.co-m-horizontal-nav-item--active > a').should(
+  cy.get('.pf-v6-c-tabs__item.pf-m-current .pf-v6-c-tabs__item-text').should(
     'have.text',
     'PipelineRuns',
   );

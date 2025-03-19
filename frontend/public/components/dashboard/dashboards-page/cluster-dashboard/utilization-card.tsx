@@ -254,7 +254,7 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
     <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
       {t('public~Filter by Node type')}
       {selectedNodes.length > 0 && (
-        <Badge className="pf-v5-u-ml-sm" isRead>
+        <Badge className="pf-v6-u-ml-sm" isRead>
           {selectedNodes.length}
         </Badge>
       )}
@@ -311,19 +311,21 @@ export const UtilizationCard = () => {
   );
   return (
     machineConfigPoolsLoaded && (
-      <Card data-test-id="utilization-card" isClickable isSelectable>
+      <Card data-test-id="utilization-card">
         <CardHeader
           actions={{
             actions: (
               <>
                 <Split>
-                  <SplitItem>
-                    <UtilizationCardNodeFilter
-                      machineConfigPools={machineConfigPools}
-                      onNodeSelect={onNodeSelect}
-                      selectedNodes={selectedNodes}
-                    />
-                  </SplitItem>
+                  {machineConfigPools.length > 0 && (
+                    <SplitItem>
+                      <UtilizationCardNodeFilter
+                        machineConfigPools={machineConfigPools}
+                        onNodeSelect={onNodeSelect}
+                        selectedNodes={selectedNodes}
+                      />
+                    </SplitItem>
+                  )}
                   <SplitItem>
                     <UtilizationDurationDropdown />
                   </SplitItem>

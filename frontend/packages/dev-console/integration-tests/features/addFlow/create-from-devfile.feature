@@ -63,8 +63,8 @@ Feature: Create Application from Devfile
 
 
         @regression @to-do
-        Scenario: Create the Devfiles workload from Developer Catalog: A-04-TC05
-            Given user is at Developer Catalog page
+        Scenario: Create the Devfiles workload from Software Catalog: A-04-TC05
+            Given user is at Software Catalog page
              When user clicks on Devfiles type
               And user clicks on Basic Python card
               And user clicks on Create Application on the side drawer

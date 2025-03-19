@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
@@ -19,9 +17,8 @@ import {
   CardBody,
   CardHeader,
   CardTitle,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import {
   Status,
@@ -120,6 +117,7 @@ import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { PodTraffic } from './pod-traffic';
+import { RootState } from '../redux';
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
 const showMetrics =
@@ -191,12 +189,12 @@ const podColumnInfo = Object.freeze({
     title: 'public~Status',
   },
   ready: {
-    classes: classNames('pf-m-nowrap', 'pf-v5-u-w-10-on-lg', 'pf-v5-u-w-8-on-xl'),
+    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
     id: 'ready',
     title: 'public~Ready',
   },
   restarts: {
-    classes: classNames('pf-m-nowrap', 'pf-v5-u-w-8-on-2xl'),
+    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
     id: 'restarts',
     title: 'public~Restarts',
   },
@@ -211,17 +209,17 @@ const podColumnInfo = Object.freeze({
     title: 'public~Node',
   },
   memory: {
-    classes: classNames({ 'pf-v5-u-w-10-on-2xl': showMetrics }),
+    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
     title: 'public~Memory',
   },
   cpu: {
-    classes: classNames({ 'pf-v5-u-w-10-on-2xl': showMetrics }),
+    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
     title: 'public~CPU',
   },
   created: {
-    classes: classNames('pf-v5-u-w-10-on-2xl'),
+    classes: classNames('pf-v6-u-w-10-on-2xl'),
     id: 'created',
     title: 'public~Created',
   },
@@ -360,11 +358,11 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
 }) => {
   const { t } = useTranslation();
   const { name, namespace, creationTimestamp, labels } = pod.metadata;
-  const bytes: number = useSelector(({ UI }) => {
+  const bytes = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.memory?.[namespace]?.[name];
   });
-  const cores: number = useSelector(({ UI }) => {
+  const cores = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
     return metrics?.cpu?.[namespace]?.[name];
   });
@@ -754,16 +752,16 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
       headerTitle = t('public~Pod crash loop back-off');
       const containers: ContainerSpec[] = pod.spec.containers;
       footerLinks = (
-        <TextContent>
-          <Text component={TextVariants.p}>
+        <Content>
+          <Content component={ContentVariants.p}>
             {t(
               'public~CrashLoopBackOff indicates that the application within the container is failing to start properly.',
             )}
-          </Text>
-          <Text component={TextVariants.p}>
+          </Content>
+          <Content component={ContentVariants.p}>
             {t('public~To troubleshoot, view logs and events, then debug in terminal.')}
-          </Text>
-          <Text component={TextVariants.p}>
+          </Content>
+          <Content component={ContentVariants.p}>
             <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/logs`}>
               {t('public~View logs')}
             </Link>
@@ -771,7 +769,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
             <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/events`}>
               {t('public~View events')}
             </Link>
-          </Text>
+          </Content>
           <Divider />
           {containers.map((container) => {
             if (isContainerCrashLoopBackOff(pod, container.name) && !isWindowsPod(pod)) {
@@ -791,7 +789,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
               );
             }
           })}
-        </TextContent>
+        </Content>
       );
     }
 

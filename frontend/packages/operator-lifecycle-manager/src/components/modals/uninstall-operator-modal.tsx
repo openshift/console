@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import { Alert, Progress, ProgressSize } from '@patternfly/react-core';
+import { Alert, Progress, ProgressSize, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -16,6 +16,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import {
   history,
+  LinkifyExternal,
   ResourceLink,
   resourceListPathFromModel,
   StatusBox,
@@ -324,7 +325,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     showOperandsContent && (
       <>
         <span className="co-operator-uninstall__operands-section">
-          <h2>{t('olm~Operand instances')}</h2>
+          <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+            {t('olm~Operand instances')}
+          </Title>
           <OperandsTable
             operands={operands}
             loaded={operandsLoaded}
@@ -390,8 +393,12 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             {!optedOut && <>{instructions}</>}
             {uninstallMessage && (
               <>
-                <h2>{t('olm~Message from Operator developer')}</h2>
-                <p>{uninstallMessage}</p>
+                <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+                  {t('olm~Message from Operator developer')}
+                </Title>
+                <p>
+                  <LinkifyExternal>{uninstallMessage}</LinkifyExternal>
+                </p>
               </>
             )}
             {!optedOut && <>{operandsSection}</>}
@@ -567,29 +574,29 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
       data={operands}
       loaded={loaded}
     >
-      <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-        <thead className="pf-v5-c-table__thead">
-          <tr className="pf-v5-c-table__tr" key="operand-table-header-row">
-            <th className="pf-m-width-35 pf-v5-c-table__th">{t('olm~Name')}</th>
-            <th className="pf-v5-c-table__th">{t('olm~Kind')}</th>
-            <th className="pf-v5-c-table__th">{t('olm~Namespace')}</th>
+      <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+        <thead className="pf-v6-c-table__thead">
+          <tr className="pf-v6-c-table__tr" key="operand-table-header-row">
+            <th className="pf-m-width-35 pf-v6-c-table__th">{t('olm~Name')}</th>
+            <th className="pf-v6-c-table__th">{t('olm~Kind')}</th>
+            <th className="pf-v6-c-table__th">{t('olm~Namespace')}</th>
           </tr>
         </thead>
         <tbody>
           {operands
             .sort((a, b) => a.metadata.name.localeCompare(b.metadata.name))
             .map((operand) => (
-              <tr className="pf-v5-c-table__tr" key={operand.metadata.uid}>
-                <td className="pf-v5-c-table__td">
+              <tr className="pf-v6-c-table__tr" key={operand.metadata.uid}>
+                <td className="pf-v6-c-table__td">
                   <OperandLink obj={operand} csvName={csvName} onClick={cancel} />
                 </td>
                 <td
-                  className="pf-v5-c-table__td pf-m-break-word"
+                  className="pf-v6-c-table__td pf-m-break-word"
                   data-test-operand-kind={operand.kind}
                 >
                   {operand.kind}
                 </td>
-                <td className="pf-v5-c-table__td">
+                <td className="pf-v6-c-table__td">
                   {operand.metadata.namespace ? (
                     <ResourceLink
                       kind="Namespace"
@@ -615,7 +622,7 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
       {_.map(operandErrors, (operandError) => (
         <li
           key={operandError.operand.metadata.uid}
-          className="pf-v5-c-list pf-m-plain co-operator-uninstall-alert__list-item"
+          className="pf-v6-c-list pf-m-plain co-operator-uninstall-alert__list-item"
         >
           <OperandLink obj={operandError.operand} csvName={csvName} onClick={cancel} />{' '}
           {operandError.operand.kind}

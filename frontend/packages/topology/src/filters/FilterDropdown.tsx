@@ -89,7 +89,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
-            <span className="pf-v5-c-menu__group-title">{t('topology~Expand')}</span>
+            <span className="pf-v6-c-menu__group-title">{t('topology~Expand')}</span>
             <Switch
               aria-label={t('topology~Collapse groups')}
               isChecked={groupsExpanded}

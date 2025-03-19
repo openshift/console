@@ -1,6 +1,4 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
@@ -9,7 +7,6 @@ import {
   Alert,
   AlertActionLink,
   Button,
-  Checkbox,
   Divider,
   Dropdown,
   DropdownGroup,
@@ -20,6 +17,7 @@ import {
   Select,
   SelectList,
   SelectOption,
+  Switch,
   Tooltip,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
@@ -38,6 +36,7 @@ import {
   SHOW_FULL_LOG_USERSETTINGS_KEY,
 } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { LoadingInline, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
@@ -132,8 +131,7 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
     setStatus(STREAM_ACTIVE);
   };
   return (
-    <Button className={className} onClick={handleClick} isBlock>
-      <OutlinedPlayCircleIcon />
+    <Button icon={<OutlinedPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
       &nbsp;{resumeText}
     </Button>
   );
@@ -316,7 +314,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
       <Tooltip
         content={t('public~Select to view the entire log. Default view is the last 1,000 lines.')}
       >
-        <Checkbox
+        <Switch
           label={t('public~Show full log')}
           id="showFullLog"
           data-test="show-full-log"
@@ -331,7 +329,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
   );
 
   const wrapLines = (
-    <Checkbox
+    <Switch
       label={t('public~Wrap lines')}
       id="wrapLogLines"
       isChecked={isWrapLines}
@@ -429,7 +427,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 onClick={onDropdownToggleClick}
                 isExpanded={isDropdownOpen}
                 variant="plain"
-                className="pf-v5-u-mt-xs"
+                className="pf-v6-u-mt-xs"
                 aria-label={t('public~Dropdown toggle')}
               >
                 <EllipsisVIcon />
@@ -476,7 +474,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             </DropdownGroup>
           </Dropdown>
         ) : (
-          <div className="pf-v5-l-flex">
+          <div className="pf-v6-l-flex">
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
             <div>{fullLog}</div>
             <Divider
@@ -484,7 +482,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 default: 'vertical',
               }}
             />
-            {wrapLines}
+            <div>{wrapLines}</div>
             <Divider
               orientation={{
                 default: 'vertical',
@@ -529,6 +527,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   resourceStatus,
 }) => {
   const { t } = useTranslation();
+  const theme = React.useContext(ThemeContext);
   const [showFullLog, setShowFullLog] = useUserSettings<boolean>(
     SHOW_FULL_LOG_USERSETTINGS_KEY,
     false,
@@ -843,7 +842,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
                 <HeaderBanner lines={lines} />
               </div>
             }
-            theme="dark"
+            theme={theme}
             data={content}
             ref={logViewerRef}
             height="100%"

@@ -6,6 +6,7 @@ import { FormikValues, useField, useFormikContext } from 'formik';
 import { cloneDeep } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { getResourcesType } from '../../../edit-application/edit-application-utils';
 import { getStrategyData } from '../../utils/deployment-utils';
 import LifecycleHookForm from './LifecycleHookForm';
@@ -124,8 +125,8 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
 
   return (
     <div>
-      <div className="co-section-heading-tertiary odc-lifecycle-hook-field__title">{title}</div>
-      <div className="pf-v5-c-form__helper-text">{subTitle}</div>
+      <TertiaryHeading className="odc-lifecycle-hook-field__title">{title}</TertiaryHeading>
+      <div className="pf-v6-c-form__helper-text">{subTitle}</div>
       {!showForm && (
         <Button
           className="pf-m-link--align-left"
@@ -150,12 +151,11 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
       {!showForm && lifecycleHookExist && (
         <Tooltip content={t('devconsole~Remove')} position="right">
           <Button
+            icon={<MinusCircleIcon />}
             className="pf-m-plain--align-left"
             variant={ButtonVariant.plain}
             onClick={onRemove}
-          >
-            <MinusCircleIcon />
-          </Button>
+          />
         </Tooltip>
       )}
       {showForm && (

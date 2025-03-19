@@ -87,11 +87,12 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
       <div className="overview__sidebar-pane resource-overview">
         <ResourceOverviewHeading actions={menuActions} kindObj={kindObj} resources={item} />
         <SimpleTabNav
+          withinSidebar
+          noInset
           onClickTab={onClickTab}
           selectedTab={selectedDetailsTab}
           tabProps={{ item }}
           tabs={pluginTabsRef.current}
-          additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
         />
       </div>
     );

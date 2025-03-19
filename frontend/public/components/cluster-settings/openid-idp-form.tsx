@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
@@ -171,41 +171,44 @@ export const AddOpenIDIDPPage = () => {
             <label className="control-label co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setClientID(e.currentTarget.value)}
-              value={clientID}
-              id="client-id"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setClientID(e.currentTarget.value)}
+                value={clientID}
+                id="client-id"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="password"
-              onChange={(e) => setClientSecret(e.currentTarget.value)}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="password"
+                onChange={(e) => setClientSecret(e.currentTarget.value)}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="issuer">
               {t('public~Issuer URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setIssuer(e.currentTarget.value)}
-              value={issuer}
-              id="issuer"
-              required
-              aria-describedby="issuer-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setIssuer(e.currentTarget.value)}
+                value={issuer}
+                id="issuer"
+                required
+                aria-describedby="issuer-help"
+              />
+            </span>
             <div className="help-block" id="issuer-help">
               {t(
                 'public~The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.',
@@ -213,7 +216,9 @@ export const AddOpenIDIDPPage = () => {
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>{t('public~Claims')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Claims')}
+          </Title>
           <p className="co-help-text">
             {t(
               'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
@@ -242,7 +247,9 @@ export const AddOpenIDIDPPage = () => {
             )}
           />
           <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~More options')}
+          </Title>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ListInput
             label={t('public~Extra scopes')}
@@ -250,7 +257,7 @@ export const AddOpenIDIDPPage = () => {
             helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

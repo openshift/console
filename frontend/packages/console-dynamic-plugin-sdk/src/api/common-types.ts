@@ -93,7 +93,7 @@ export type Selector = {
   matchExpressions?: MatchExpression[];
 };
 
-type K8sVerb =
+export type K8sVerb =
   | 'create'
   | 'get'
   | 'list'
@@ -163,6 +163,12 @@ export type PrometheusAlert = {
 export type Alert = PrometheusAlert & {
   rule: Rule;
   silencedBy?: Silence[];
+};
+
+export type Alerts = {
+  data: Alert[];
+  loaded: boolean;
+  loadError?: string | Error;
 };
 
 export type PrometheusRule = {

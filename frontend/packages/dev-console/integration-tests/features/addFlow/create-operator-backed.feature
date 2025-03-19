@@ -1,6 +1,6 @@
 @add-flow @dev-console
 Feature: Create workload from Operator Backed file
-              As a user, I want to create the application, component or service from Developer Catalog Operator backed file
+              As a user, I want to create the application, component or service from Software Catalog Operator backed file
 
         Background:
             Given user is at developer perspective

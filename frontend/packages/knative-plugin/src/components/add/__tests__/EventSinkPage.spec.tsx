@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 // import { BrowserRouter } from 'react-router-dom';
 import * as Router from 'react-router-dom-v5-compat';

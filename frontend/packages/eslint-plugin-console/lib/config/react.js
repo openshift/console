@@ -38,6 +38,8 @@ module.exports = {
         // Prevent missing props validation in a React component definition
         // Off due to false positives in typescript
         'react/prop-types': 'off',
+        // React 17 doesn't require this anymore
+        'react/react-in-jsx-scope': 'off',
       },
     },
   ],

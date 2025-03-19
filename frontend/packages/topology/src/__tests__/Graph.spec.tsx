@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { ConnectedTopologyView } from '../components/page/TopologyView';
 import { baseDataModelGetter } from '../data-transforms/data-transformer';
@@ -13,7 +12,7 @@ describe('Graph', () => {
   beforeEach(() => {
     mockSelectFn = jest.fn();
     const model = { nodes: [], edges: [] };
-    topologyData = baseDataModelGetter(model, 'test-project', MockGraphResources, []);
+    topologyData = baseDataModelGetter(model, MockGraphResources, []);
     graphWrapper = mount(
       <ConnectedTopologyView
         model={topologyData}

@@ -6,7 +6,7 @@ export const quickStartsPO = {
   statusComplete: '[data-key="Complete"]',
   emptyState: '[class*="empty-state__content"]',
   clearFilter: '[data-test="clear-filter button"]',
-  cardStatus: '[data-test~="tile"] [data-test~="status"]',
+  cardStatus: '[data-test="status"]',
   duration: '[data-test="duration"]',
 };
 
@@ -59,5 +59,5 @@ export const quickStartDisplayNameToName = (displayName: string) => {
 
 export function quickStartCard(quickStartDisplayName: string) {
   const quickStartName = quickStartDisplayNameToName(quickStartDisplayName);
-  return `[data-test~="tile"][data-test~="${quickStartName}"]`;
+  return `[id~="${quickStartName}-catalog-tile"]`;
 }

@@ -3,10 +3,11 @@ import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector, useDispatch } from 'react-redux';
-import { ListPageBody } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+import {
+  ListPageBody,
+  useAccessReview,
+} from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
   NodeCertificateSigningRequestKind,
   RowFilter,
@@ -42,6 +43,7 @@ import {
   referenceFor,
   Selector,
 } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
 import {
   getName,
   getUID,
@@ -255,7 +257,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
   rowData,
 }) => {
   const { t } = useTranslation();
-  const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'node']));
+  const metrics = useSelector<RootState, NodeMetrics>(({ UI }) => UI.getIn(['metrics', 'node']));
   const nodeName = getName(node);
   const nodeUID = getUID(node);
   const usedMem = metrics?.usedMemory?.[nodeName];
@@ -678,6 +680,29 @@ const getFilters = (t: TFunction): RowFilter<NodeRowItem>[] => [
   },
 ];
 
+const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => {
+  const [isAllowed, checkIsLoading] = useAccessReview({
+    group: 'certificates.k8s.io',
+    resource: 'CertificateSigningRequest',
+    verb: 'list',
+  });
+
+  const [csrs, loaded, error] = useK8sWatchResource<CertificateSigningRequestKind[]>(
+    isAllowed
+      ? {
+          groupVersionKind: {
+            group: 'certificates.k8s.io',
+            kind: 'CertificateSigningRequest',
+            version: 'v1',
+          },
+          isList: true,
+        }
+      : undefined,
+  );
+
+  return [csrs, !checkIsLoading && loaded, error];
+};
+
 const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
 
@@ -697,14 +722,7 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
     selector,
   });
 
-  const [csrs, csrsLoaded, csrsLoadError] = useK8sWatchResource<CertificateSigningRequestKind[]>({
-    groupVersionKind: {
-      group: 'certificates.k8s.io',
-      kind: 'CertificateSigningRequest',
-      version: 'v1',
-    },
-    isList: true,
-  });
+  const [csrs, csrsLoaded, csrsLoadError] = useWatchCSRs();
 
   React.useEffect(() => {
     const updateMetrics = async () => {

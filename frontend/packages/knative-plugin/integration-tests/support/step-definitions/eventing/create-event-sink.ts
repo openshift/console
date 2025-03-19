@@ -51,7 +51,7 @@ Then('user will see {string} created in topology', (workloadName: string) => {
 
 Given('user is at catalog page', () => {
   navigateTo(devNavigationMenu.Add);
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
 When('user selects Types as Event Sinks', () => {

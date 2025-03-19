@@ -1,4 +1,3 @@
-import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Kebab, ResourceKebabProps } from '@console/internal/components/utils';

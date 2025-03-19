@@ -73,12 +73,8 @@ export const FieldSet: React.FC<FieldSetProps> = ({
   };
   return showLabel && label ? (
     <div id={`${idSchema.$id}_field-group`} className="form-group co-dynamic-form__field-group">
-      <AccordionItem>
-        <AccordionToggle
-          id={`${idSchema.$id}_accordion-toggle`}
-          onClick={onToggle}
-          isExpanded={expanded}
-        >
+      <AccordionItem isExpanded={expanded}>
+        <AccordionToggle id={`${idSchema.$id}_accordion-toggle`} onClick={onToggle}>
           <label
             className={classnames({ 'co-required': required })}
             htmlFor={`${idSchema.$id}_accordion-content`}
@@ -89,9 +85,7 @@ export const FieldSet: React.FC<FieldSetProps> = ({
         {description && (
           <Description id={`${idSchema.$id}_description`} description={description} />
         )}
-        <AccordionContent id={`${idSchema.$id}_accordion-content`} isHidden={!expanded}>
-          {children}
-        </AccordionContent>
+        <AccordionContent id={`${idSchema.$id}_accordion-content`}>{children}</AccordionContent>
       </AccordionItem>
     </div>
   ) : (

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
@@ -29,12 +30,15 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
         </span>
       </div>
       <div className="co-clusterserviceversion-logo__name">
-        <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">
+        <Title
+          headingLevel="h1"
+          className="co-clusterserviceversion-logo__name__clusterserviceversion"
+        >
           {displayName}{' '}
           {deprecation && (
-            <DeprecatedOperatorWarningBadge className="pf-v5-u-ml-sm" deprecation={deprecation} />
+            <DeprecatedOperatorWarningBadge className="pf-v6-u-ml-sm" deprecation={deprecation} />
           )}
-        </h1>
+        </Title>
         {provider && (
           <span className="co-clusterserviceversion-logo__name__provider text-muted">
             {t('olm~{{version}} provided by {{provider}}', {

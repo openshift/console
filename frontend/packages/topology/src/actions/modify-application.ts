@@ -1,13 +1,8 @@
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { GetModifyApplicationAction } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { editApplicationModal } from '@console/topology/src/components/modals';
 
-export const getModifyApplicationAction = (
-  kind: K8sKind,
-  obj: K8sResourceKind,
-  insertBefore?: string | string[],
-): Action => {
+export const getModifyApplicationAction: GetModifyApplicationAction = (kind, obj, insertBefore) => {
   return {
     id: 'modify-application',
     label: i18next.t('topology~Edit application grouping'),

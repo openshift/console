@@ -1,19 +1,19 @@
 .opp-pipeline-run-list {
   &__signed-indicator {
     display: inline-block;
-    --pf-c-table--cell--Color: var(--pf-v5-global--BackgroundColor--dark-transparent-100);
-    margin-left: var(--pf-v5-global--spacer--sm);
+    --pf-c-table--cell--Color: var(--pf-t--color--gray--50); // previous v5 token used transparency, so this may need adjustment still
+    margin-left: var(--pf-t-global--spacer--sm);
     > img {
-      height: var(--pf-v5-global--FontSize--lg);
+      height: var(--pf-t--global--font--size--lg);
       position: relative;
       top: 4px;
     }
   }
   &__results-indicator {
     display: inline-block;
-    margin-left: var(--pf-v5-global--spacer--xs);
+    margin-left: var(--pf-t-global--spacer--xs);
     > svg {
-      color: var(--pf-v5-global--Color--400);
+      color: var(--pf-t--global--text--color--200);
     }
   }
 }

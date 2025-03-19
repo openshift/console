@@ -5,6 +5,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { GreenCheckCircleIcon } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
 import { HealthCheckContext } from './health-checks-utils';
@@ -65,27 +66,27 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
       return (
         <>
           <Button
+            icon={
+              <span className="odc-heath-check-probe__successText">
+                <GreenCheckCircleIcon />{' '}
+                {t('devconsole~{{healthCheckProbeAdded}} added', {
+                  healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
+                })}
+              </span>
+            }
             className="odc-heath-check-probe__successButton"
             variant={ButtonVariant.plain}
             isInline
             onClick={showProbe}
-          >
-            <span className="odc-heath-check-probe__successText">
-              <GreenCheckCircleIcon />{' '}
-              {t('devconsole~{{healthCheckProbeAdded}} added', {
-                healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
-              })}
-            </span>
-          </Button>
+          />
           {!viewOnly && (
             <Tooltip content={t('devconsole~Remove')} position="right">
               <Button
+                icon={<MinusCircleIcon />}
                 className="pf-m-plain--align-left"
                 variant={ButtonVariant.plain}
                 onClick={handleDeleteProbe}
-              >
-                <MinusCircleIcon />
-              </Button>
+              />
             </Tooltip>
           )}
         </>
@@ -111,7 +112,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
 
   return (
     <>
-      <div className="co-section-heading-tertiary odc-heath-check-probe__formTitle">
+      <TertiaryHeading className="odc-heath-check-probe__formTitle">
         {getHealthChecksProbeConfig(probeType, t).formTitle}
         {healthChecks?.[probeType]?.enabled && (
           <Button
@@ -123,8 +124,8 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
             {`${viewOnly ? t('devconsole~View') : t('devconsole~Edit')} ${t('devconsole~Probe')}`}
           </Button>
         )}
-      </div>
-      <div className="pf-v5-c-form__helper-text">
+      </TertiaryHeading>
+      <div className="pf-v6-c-form__helper-text">
         {getHealthChecksProbeConfig(probeType, t).formSubtitle}
       </div>
       <div className="co-toolbar__group co-toolbar__group--left">{renderProbe()}</div>

@@ -237,7 +237,7 @@ describe('PluginStore', () => {
     store.addDynamicPlugin(`${manifest.name}@${manifest.version}`, manifest, resolvedExtensions);
   };
 
-  describe('constructor', () => {
+  describe('function Object() { [native code] }', () => {
     it('initializes static plugin information', () => {
       const store = new PluginStore([
         {

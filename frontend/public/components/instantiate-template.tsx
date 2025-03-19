@@ -25,6 +25,7 @@ import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
   getImageForIconClass,
@@ -105,7 +106,9 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
           </span>
         </div>
         <div>
-          <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
+          <SecondaryHeading className="co-catalog-item-details__name">
+            {displayName}
+          </SecondaryHeading>
           {!_.isEmpty(tags) && (
             <p className="co-catalog-item-details__tags">
               {_.map(tags, (tag, i) => (
@@ -338,7 +341,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
         <TemplateInfo template={template} />
       </div>
       <div className="col-md-5 col-md-pull-7">
-        <form className="pf-v5-c-form co-instantiate-template-form" onSubmit={save}>
+        <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="namespace">
               {t('public~Namespace')}
@@ -374,7 +377,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
             },
           )}
           <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={error}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" isLoading={inProgress}>
                 {t('public~Create')}
               </Button>

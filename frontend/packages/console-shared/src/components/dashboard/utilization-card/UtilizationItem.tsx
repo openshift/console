@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Humanize, TopConsumerPopoverProps, LIMIT_STATE } from '@console/dynamic-plugin-sdk';
@@ -63,7 +63,9 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       getCurrentData(queries[index].desc, datum, dataUnits && dataUnits[index]),
     );
     const maxDate = getMaxDate(data);
-    React.useEffect(() => updateEndDate(maxDate), [maxDate, updateEndDate]);
+    React.useEffect(() => {
+      updateEndDate(maxDate);
+    }, [maxDate, updateEndDate]);
 
     const mapTranslatedData = (originalData: DataPoint[][]) => {
       if (!originalData || originalData.length === 0 || originalData[0].length === 0)
@@ -120,9 +122,9 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       <div className="co-utilization-card__item" data-test-id="utilization-item">
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section-multiline">
-            <h4 className="pf-v5-c-title pf-m-md" data-test="utilization-item-title">
+            <Title headingLevel="h4" data-test="utilization-item-title">
               {title}
-            </h4>
+            </Title>
             {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
               <div className="text-secondary">{t('console-shared~Not available')}</div>
             ) : (
@@ -171,7 +173,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     );
     const [utilizationData, limitData, requestedData] = data;
     const maxDate = getMaxDate([utilizationData]);
-    React.useEffect(() => updateEndDate(maxDate), [updateEndDate, maxDate]);
+    React.useEffect(() => {
+      updateEndDate(maxDate);
+    }, [updateEndDate, maxDate]);
     const current = utilizationData?.length ? utilizationData[utilizationData.length - 1].y : null;
 
     let humanMax: string;
@@ -255,9 +259,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             className="co-utilization-card__item-section"
           >
             <FlexItem>
-              <h4 className="pf-v5-c-title pf-m-md" data-test="utilization-item-title">
+              <Title headingLevel="h4" data-test="utilization-item-title">
                 {title}
-              </h4>
+              </Title>
             </FlexItem>
             <FlexItem>
               {error || (!isLoading && !utilizationData?.length) ? (

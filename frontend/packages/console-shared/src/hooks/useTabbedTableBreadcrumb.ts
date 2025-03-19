@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { Location } from 'react-router-dom-v5-compat';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';

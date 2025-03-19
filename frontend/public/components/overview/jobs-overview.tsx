@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { PodStatus, usePodsWatcher } from '@console/shared';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
 import { K8sResourceKind, referenceFor, JobKind } from '../../module/k8s';
-import { ChartLabel } from '@patternfly/react-charts';
+import { ChartLabel } from '@patternfly/react-charts/victory';
 
 const kind: string = 'Job';
 const MAX_JOBS: number = 3;

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Switch, SelectOption } from '@patternfly/react-core';
 import { mount, shallow } from 'enzyme';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../../topology-types';
@@ -112,6 +111,6 @@ describe(FilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find('[disabled].pf-v5-c-menu-toggle')).toBeTruthy();
+    expect(wrapper.find('[disabled].pf-v6-c-menu-toggle')).toBeTruthy();
   });
 });

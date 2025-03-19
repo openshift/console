@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
+import { Title } from '@patternfly/react-core';
 
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared';
@@ -52,7 +53,11 @@ export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
   ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
     <div ref={ref} className={classNames('graph-wrapper graph-wrapper__horizontal-bar', className)}>
-      {title && <h5 className="graph-title">{title}</h5>}
+      {title && (
+        <Title headingLevel="h5" className="graph-title">
+          {title}
+        </Title>
+      )}
       {children}
     </div>
   ),

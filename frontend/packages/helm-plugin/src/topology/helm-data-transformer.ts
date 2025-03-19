@@ -225,3 +225,5 @@ export const getHelmTopologyDataModel = () => {
     return Promise.resolve(getHelmGraphModelFromMap(helmResourcesMap, resources));
   };
 };
+
+export const getTopologyDataModel = getHelmTopologyDataModel();

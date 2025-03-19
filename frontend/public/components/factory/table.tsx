@@ -1,7 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch } from 'react-redux';
 import {
   TableGridBreakpoint,
@@ -113,7 +111,7 @@ export const TableRow: React.FC<TableRowProps> = ({
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}
-      className={classNames('pf-v5-c-table__tr', className)}
+      className={classNames('pf-v6-c-table__tr', className)}
       role="row"
     />
   );
@@ -254,7 +252,7 @@ const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
   return (
     <VirtualTableBody
       autoHeight
-      className="pf-v5-c-table pf-m-compact pf-m-border-rows pf-v5-c-window-scroller"
+      className="pf-v6-c-table pf-m-compact pf-m-border-rows pf-v6-c-window-scroller"
       deferredMeasurementCache={cellMeasurementCache}
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}

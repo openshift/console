@@ -2,6 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Title } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
@@ -68,20 +69,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             ? t('public~Routing key')
             : t('public~Service key')}
         </label>
-        <input
-          className="pf-v5-c-form-control"
-          type="text"
-          aria-describedby="integration-key-help"
-          id="integration-key"
-          data-test-id="integration-key"
-          value={formValues.pagerdutyIntegrationKey}
-          onChange={(e) =>
-            dispatchFormChange({
-              type: 'setFormValues',
-              payload: { pagerdutyIntegrationKey: e.target.value },
-            })
-          }
-        />
+        <span className="pf-v6-c-form-control">
+          <input
+            type="text"
+            aria-describedby="integration-key-help"
+            id="integration-key"
+            data-test-id="integration-key"
+            value={formValues.pagerdutyIntegrationKey}
+            onChange={(e) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { pagerdutyIntegrationKey: e.target.value },
+              })
+            }
+          />
+        </span>
         <div className="help-block" id="integration-key-help">
           {t('public~PagerDuty integration key.')}
         </div>
@@ -96,20 +98,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         </label>
         <div className="row">
           <div className="col-sm-7">
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              id="pagerduty-url"
-              aria-describedby="pagerduty-url-help"
-              data-test-id="pagerduty-url"
-              value={formValues.pagerduty_url}
-              onChange={(e) =>
-                dispatchFormChange({
-                  type: 'setFormValues',
-                  payload: { pagerduty_url: e.target.value },
-                })
-              }
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                id="pagerduty-url"
+                aria-describedby="pagerduty-url-help"
+                data-test-id="pagerduty-url"
+                value={formValues.pagerduty_url}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { pagerduty_url: e.target.value },
+                  })
+                }
+              />
+            </span>
           </div>
           <div className="col-sm-5">
             <SaveAsDefaultCheckbox
@@ -140,25 +143,28 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
             />
-            <h3>{t('public~Client details')}</h3>
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~Client details')}
+            </Title>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-client">
                 {t('public~Client')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                aria-describedby="client-help"
-                id="pagerduty-client"
-                data-test-id="pagerduty-client"
-                value={formValues.pagerduty_client}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { pagerduty_client: e.target.value },
-                  })
-                }
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  aria-describedby="client-help"
+                  id="pagerduty-client"
+                  data-test-id="pagerduty-client"
+                  value={formValues.pagerduty_client}
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { pagerduty_client: e.target.value },
+                    })
+                  }
+                />
+              </span>
               <div className="help-block" id="client-help">
                 {t('public~The client identification of the Alertmanager.')}
               </div>
@@ -167,43 +173,47 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               <label className="control-label" htmlFor="pagerduty-client-url">
                 {t('public~Client URL')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                aria-describedby="client-url-help"
-                id="pagerduty-client-url"
-                data-test-id="pagerduty-client-url"
-                value={formValues.pagerduty_client_url}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { pagerduty_client_url: e.target.value },
-                  })
-                }
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  aria-describedby="client-url-help"
+                  id="pagerduty-client-url"
+                  data-test-id="pagerduty-client-url"
+                  value={formValues.pagerduty_client_url}
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { pagerduty_client_url: e.target.value },
+                    })
+                  }
+                />
+              </span>
               <div className="help-block" id="client-url-help">
                 {t('public~A backlink to the sender of the notification.')}
               </div>
             </div>
-            <h3>{t('public~Incident details')}</h3>
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~Incident details')}
+            </Title>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-description">
                 {t('public~Description')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                aria-describedby="description-help"
-                id="pagerduty-description"
-                data-test-id="pagerduty-description"
-                value={formValues.pagerduty_description}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { pagerduty_description: e.target.value },
-                  })
-                }
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  aria-describedby="description-help"
+                  id="pagerduty-description"
+                  data-test-id="pagerduty-description"
+                  value={formValues.pagerduty_description}
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { pagerduty_description: e.target.value },
+                    })
+                  }
+                />
+              </span>
               <div className="help-block" id="description-help">
                 {t('public~Description of the incident.')}
               </div>
@@ -212,20 +222,21 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               <label className="control-label" htmlFor="pagerduty-severity">
                 {t('public~Severity')}
               </label>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                aria-describedby="severity-help"
-                id="pagerduty-severity"
-                data-test-id="pagerduty-severity"
-                value={formValues.pagerduty_severity}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { pagerduty_severity: e.target.value },
-                  })
-                }
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  aria-describedby="severity-help"
+                  id="pagerduty-severity"
+                  data-test-id="pagerduty-severity"
+                  value={formValues.pagerduty_severity}
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { pagerduty_severity: e.target.value },
+                    })
+                  }
+                />
+              </span>
               <div className="help-block" id="severity-help">
                 {t('public~Severity of the incident.')}
               </div>

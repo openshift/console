@@ -1,10 +1,10 @@
 .co-cloudshell-exec {
   &__container-error {
-    background-color: var(--pf-v5-global--BackgroundColor--100);
+    background-color: var(--pf-t--global--background--color--primary--default);
     height: 100%;
   }
 
   &__error-msg {
-    color: var(--pf-v5-global--danger-color--100) !important;
+    color: var(--pf-t--global--text--color--status--danger--default) !important;
   }
 }

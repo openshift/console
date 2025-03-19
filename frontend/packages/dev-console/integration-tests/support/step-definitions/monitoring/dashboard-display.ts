@@ -208,7 +208,7 @@ When('user clicks on Dashboard dropdown', () => {
 
 When('user can see {string} and {string} option', (option1: string, option2: string) => {
   // Uncommented after story ODC-6340 is implemented
-  // cy.get('.pf-v5-c-select__menu')
+  // cy.get('.pf-v6-c-select__menu')
   //   .should('contain', option1)
   //   .and('contain', option2);
   cy.log(option1, option2); // to avoid lint issues
@@ -272,7 +272,7 @@ When('user clicks on Inspect on {string} chart', (chartTitle: string) => {
 });
 
 Then('user will see Metrics tab in Observe page', () => {
-  cy.get('.co-m-horizontal-nav-item--active').find(monitoringPO.tabs.metrics).should('be.visible');
+  cy.get('.pf-v6-c-tabs__item.pf-m-current').find(monitoringPO.tabs.metrics).should('be.visible');
 });
 
 Then('{string} option selected by default', (metric) => {

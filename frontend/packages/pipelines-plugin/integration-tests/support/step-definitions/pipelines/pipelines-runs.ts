@@ -218,6 +218,21 @@ Then('pipeline run is deleted from pipeline runs page', () => {
     });
 });
 
+Then('pipeline run is deleted from pipeline runs page in admin view', () => {
+  cy.get('[data-test="nav"][data-quickstart-id="qs-nav-pipelines"]')
+    .should('exist')
+    .click({ force: true });
+  cy.get(pipelinesPO.pipelinesTab).click();
+  cy.byLegacyTestID('flow').click();
+  cy.get(pipelineDetailsPO.pipelineRunsTab).click();
+  cy.get(pipelineRunsPO.pipelineRunsTable.table)
+    .find('tr')
+    .then(($ele) => {
+      numOfPipelineRunsAfterDeletion = $ele.length;
+      expect(numOfPipelineRunsAfterDeletion).toBeLessThan(numOfPipelineRunsBeforeDeletion);
+    });
+});
+
 When('user clicks Delete button present in Delete PipelineRun modal', () => {
   modal.modalTitleShouldContain('Delete PipelineRun?');
   modal.submit(true);

@@ -5,6 +5,7 @@ import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DockerFileParser, getGitService, ImportStrategy } from '@console/git-service/src';
 import { InputField } from '@console/shared';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { GitImportFormData } from '../import-types';
 import FormSection from '../section/FormSection';
 
@@ -112,9 +113,9 @@ const DockerSection: React.FC = () => {
           </Icon>
           &nbsp;
           <div>
-            <h2 className="co-section-heading co-catalog-item-details__name">
+            <SecondaryHeading className="co-catalog-item-details__name">
               {t('devconsole~Dockerfile')}
-            </h2>
+            </SecondaryHeading>
           </div>
         </div>
       )}

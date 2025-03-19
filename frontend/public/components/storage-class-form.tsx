@@ -503,14 +503,15 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
               >
                 {_.get(parameter, 'name', key)}
               </label>
-              <input
-                type="text"
-                className="pf-v5-c-form-control"
-                value={_.get(newStorageClass, selectedKey, '')}
-                onChange={(event) => setParameterHandler(key, event, isCheckbox)}
-                id={paramId}
-                data-test={paramId}
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  value={_.get(newStorageClass, selectedKey, '')}
+                  onChange={(event) => setParameterHandler(key, event, isCheckbox)}
+                  id={paramId}
+                  data-test={paramId}
+                />
+              </span>
             </>
           )}
           <span className="help-block">{validationMsg ? validationMsg : parameter.hintText}</span>
@@ -588,15 +589,16 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label className="control-label co-required" htmlFor="storage-class-name">
               {t('public~Name')}
             </label>
-            <input
-              type="text"
-              className="pf-v5-c-form-control"
-              placeholder={newStorageClass.name}
-              id="storage-class-name"
-              data-test="storage-class-name"
-              onChange={(event) => setStorageHandler('name', event.target.value.trim())}
-              value={_.get(newStorageClass, 'name', '')}
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                placeholder={newStorageClass.name}
+                id="storage-class-name"
+                data-test="storage-class-name"
+                onChange={(event) => setStorageHandler('name', event.target.value.trim())}
+                value={_.get(newStorageClass, 'name', '')}
+              />
+            </span>
             <span className="help-block">
               {fieldErrors.nameValidationMsg ? fieldErrors.nameValidationMsg : null}
             </span>
@@ -604,14 +606,15 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
 
           <div className="form-group">
             <label htmlFor="storage-class-description">{t('public~Description')}</label>
-            <input
-              type="text"
-              className="pf-v5-c-form-control"
-              id="storage-class-description"
-              data-test="storage-class-description"
-              onChange={(event) => setStorageHandler('description', event.target.value)}
-              value={_.get(newStorageClass, 'description', '')}
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                id="storage-class-description"
+                data-test="storage-class-description"
+                onChange={(event) => setStorageHandler('description', event.target.value)}
+                value={_.get(newStorageClass, 'description', '')}
+              />
+            </span>
           </div>
 
           <div className="form-group">
@@ -695,7 +698,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           )}
 
           <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button
                 id="save-changes"
                 isDisabled={!validationSuccessful}
@@ -786,7 +789,7 @@ export type Resources = {
 export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
-)((props) => {
+)((props: StateProps & DispatchProps) => {
   const extensions = useResolvedExtensions<StorageClassProvisioner>(isStorageClassProvisioner);
   return <StorageClassFormInner extensions={extensions} {...props} />;
 });

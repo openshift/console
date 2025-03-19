@@ -2,26 +2,28 @@
 
 .ocs-synced-editor-field {
   &__editor-toggle {
-    border-bottom: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
-    margin-left: -$pf-v5-global-gutter;
-    margin-right: -$pf-v5-global-gutter;
-    padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg);
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      margin-left: -$pf-v5-global-gutter--md;
-      margin-right: -$pf-v5-global-gutter--md;
+    border-bottom: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
+    border-top: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
+    margin-left: -$pf-v6-global-gutter;
+    margin-right: -$pf-v6-global-gutter;
+    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      margin-left: -$pf-v6-global-gutter--md;
+      margin-right: -$pf-v6-global-gutter--md;
     }
-    @media (min-width: $pf-v5-global--breakpoint--xl) {
-      padding-left: $pf-v5-global-gutter--md;
-      padding-right: $pf-v5-global-gutter--md;
+    @media (min-width: $pf-v6-global--breakpoint--xl) {
+      padding-left: $pf-v6-global-gutter--md;
+      padding-right: $pf-v6-global-gutter--md;
     }
 
     &.margin {
-      margin: var(--pf-v5-global--spacer--md) 0;
+      margin: var(--pf-t--global--spacer--md) 0;
     }
   }
 
   &__yaml-warning {
-    margin: $pf-v5-global-gutter--md $pf-v5-global-gutter--md 0;
+    margin: $pf-v6-global-gutter--md $pf-v6-global-gutter--md 0;
   }
 }

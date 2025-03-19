@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
@@ -177,15 +177,16 @@ export const AddLDAPPage = () => {
             <label className="control-label co-required" htmlFor="url">
               {t('public~URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setUrl(e.currentTarget.value)}
-              value={url}
-              id="url"
-              required
-              aria-describedby="url-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setUrl(e.currentTarget.value)}
+                value={url}
+                id="url"
+                required
+                aria-describedby="url-help"
+              />
+            </span>
             <div className="help-block" id="url-help">
               {t('public~An RFC 2255 URL which specifies the LDAP search parameters to use.')}
             </div>
@@ -194,14 +195,15 @@ export const AddLDAPPage = () => {
             <label className="control-label" htmlFor="bind-dn">
               {t('public~Bind DN')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setBindDN(e.currentTarget.value)}
-              value={bindDN}
-              id="bind-dn"
-              aria-describedby="bind-dn-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setBindDN(e.currentTarget.value)}
+                value={bindDN}
+                id="bind-dn"
+                aria-describedby="bind-dn-help"
+              />
+            </span>
             <div className="help-block" id="bind-dn-help">
               {t('public~DN to bind with during the search phase.')}
             </div>
@@ -210,20 +212,23 @@ export const AddLDAPPage = () => {
             <label className="control-label" htmlFor="bind-password">
               {t('public~Bind password')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="password"
-              onChange={(e) => setBindPassword(e.currentTarget.value)}
-              value={bindPassword}
-              id="bind-password"
-              aria-describedby="bind-password-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="password"
+                onChange={(e) => setBindPassword(e.currentTarget.value)}
+                value={bindPassword}
+                id="bind-password"
+                aria-describedby="bind-password-help"
+              />
+            </span>
             <div className="help-block" id="bind-password-help">
               {t('public~Password to bind with during the search phase.')}
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>{t('public~Attributes')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Attributes')}
+          </Title>
           <p className="co-help-text">
             {t('public~Attributes map LDAP attributes to identities.')}
           </p>
@@ -260,10 +265,12 @@ export const AddLDAPPage = () => {
             )}
           />
           <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~More options')}
+          </Title>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

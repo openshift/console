@@ -17,7 +17,7 @@ import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { useExactSearch } from '@console/app/src/components/user-preferences/search';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { DetailsPage } from './factory';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageHeader from './factory/ListPage/ListPageHeader';

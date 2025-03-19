@@ -64,22 +64,34 @@ as a reference point for writing an OLM operator that ships with its own Console
 
 ## Distributable SDK package overview
 
-| Package Name                                     | Description                                                                                                                              |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `@openshift-console/dynamic-plugin-sdk`          | Provides core APIs, types and utilities used by dynamic plugins at runtime.                                                              |
-| `@openshift-console/dynamic-plugin-sdk-webpack`  | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.                                                          |
-| `@openshift-console/dynamic-plugin-sdk-internal` | Internal package exposing additional code.                                                                                               |
-| `@openshift-console/plugin-shared`               | Provides reusable components and utility functions to build OCP dynamic plugins. Compatible with multiple versions of OpenShift Console. |
+| Package Name                                           | Description                                                                      |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `@openshift-console/dynamic-plugin-sdk` ★              | Provides core APIs, types and utilities used by dynamic plugins at runtime.      |
+| `@openshift-console/dynamic-plugin-sdk-webpack` ★      | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.  |
+| `@openshift-console/dynamic-plugin-sdk-internal`       | Internal package exposing additional Console code.                               |
+| `@openshift-console/plugin-shared`                     | Provides reusable components and utility functions to build OCP dynamic plugins. |
+
+Packages marked with ★ provide essential plugin APIs with backwards compatibility. Other packages may be
+used with multiple versions of OpenShift Console but don't provide any backwards compatibility guarantees.
 
 ## OpenShift Console Versions vs SDK Versions
 
-Not all NPM packages are fully compatible with all versions of the Console. This table will help align
-compatible versions of distributable SDK packages to versions of the OpenShift Console.
+Console plugin SDK packages follow a semver scheme where the major and minor version number indicates
+the earliest supported OCP Console version, and the patch version number indicates the release of that
+particular package.
+
+During development, we will publish prerelease versions of plugin SDK packages, e.g. `4.19.0-prerelease.1`.
+Once the given Console version is released (GA), we will publish corresponding plugin SDK packages without
+the prerelease tag, e.g. `4.19.0`.
+
+For older 1.x plugin SDK packages, refer to the following version compatibility table:
 
 | Console Version | SDK Package                                     | Last Package Version |
 | --------------- | ----------------------------------------------- | -------------------- |
-| 4.17.x          | `@openshift-console/dynamic-plugin-sdk`         | Latest               |
-|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | Latest               |
+| 4.18.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.8.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.3.0                |
+| 4.17.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.6.0                |
+|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.2.0                |
 | 4.16.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
 |                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.1.1                |
 | 4.15.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.0.0                |
@@ -102,7 +114,7 @@ Console.
 
 | Console Version | PatternFly Versions | Notes                                 |
 | --------------- | ------------------- | ------------------------------------- |
-| 4.19.x          | 5.x                 |                                       |
+| 4.19.x          | 6.x + 5.x           | New dynamic plugins should use PF 6.x |
 | 4.15.x - 4.18.x | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
 | 4.12.x - 4.14.x | 4.x                 |                                       |
 
@@ -124,12 +136,6 @@ The following shared modules are provided by Console, without plugins providing 
 - `react-router-dom-v5-compat`
 - `redux`
 - `redux-thunk`
-
-For backwards compatibility, Console also provides the following PatternFly **4.x** shared modules:
-
-- `@patternfly/react-core`
-- `@patternfly/react-table`
-- `@patternfly/quickstarts`
 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
@@ -159,18 +165,23 @@ This section documents notable changes in the Console provided shared modules ac
 
 #### Console 4.19.x
 
+- Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
+  styles for compatibility with existing plugins.
 - Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
-- Removed PatternFly 4.x shared modules.
+- Upgraded `monaco-editor` to version `0.51.0`.
+- Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve
+  correct styling.
+- Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
+  instead.
 
-### PatternFly dynamic modules
+### PatternFly 5+ dynamic modules
 
-Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package (1.0.0 and higher) include
-support for automatic detection and sharing of individual PatternFly 5.x dynamic modules.
+Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic
+detection and sharing of individual PatternFly 5+ dynamic modules.
 
-Plugins using PatternFly 5.x dependencies should generally avoid non-index imports for any PatternFly
-packages, for example:
+Plugins using PatternFly 5.x and newer should avoid non-index imports, for example:
 
 ```ts
 // Do _not_ do this:
@@ -187,20 +198,51 @@ Console application uses [Content Security Policy](https://developer.mozilla.org
 includes the document origin `'self'` and Console webpack dev server when running off-cluster.
 
 All dynamic plugin assets _should_ be loaded using `/api/plugins/<plugin-name>` Bridge endpoint which
-matches the `'self'` CSP source of Console application.
+matches the `'self'` CSP source for all Console assets served via Bridge.
 
-See `cspSources` and `cspDirectives` in
-[`pkg/server/server.go`](https://github.com/openshift/console/blob/master/pkg/server/server.go)
+Refer to `BuildCSPDirectives` function in
+[`pkg/utils/utils.go`](https://github.com/openshift/console/blob/main/pkg/utils/utils.go)
 for details on the current Console CSP implementation.
+
+Refer to [Dynamic Plugins feature page][console-doc-feature-page] section on Content Security Policy
+for more details.
 
 ### Changes in Console CSP
 
-This section documents notable changes in the Console Content Security Policy.
+This section documents notable changes in the Console Content Security Policy implementation.
 
 #### Console 4.18.x
 
-Console CSP is deployed in report-only mode. CSP violations will be logged in the browser console
-but the associated CSP directives will not be enforced.
+Console CSP feature is disabled by default. To test your plugins with CSP, enable the
+`ConsolePluginContentSecurityPolicy` feature gate on a test cluster. This feature gate
+should **not** be enabled on production clusters. Enabling this feature gate allows you
+to set `spec.contentSecurityPolicy` in your `ConsolePlugin` resource to extend existing
+CSP directives, for example:
+
+```yaml
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: cron-tab
+spec:
+  displayName: 'Cron Tab'
+  contentSecurityPolicy:
+  - directive: 'ScriptSrc'
+    values:
+    - 'https://example1.com/'
+    - 'https://example2.com/'
+```
+
+When enabled, Console CSP operates in report-only mode; CSP violations will be logged in
+the browser and CSP violation data will be reported through telemetry service in production
+deployments.
+
+In a future release, Console will begin enforcing CSP. Consider testing and preparing your
+plugins now to avoid CSP related issues in future.
+
+#### Console 4.19.x
+
+The CSP feature is enabled by default. CSP implementation remains in report-only mode.
 
 ## Plugin metadata
 
@@ -555,7 +597,7 @@ ii. Create a Project Template to include the supported language in the Phrase TM
 
 ### Step 3: Create utility scripts to automate i18n-related tasks
 
-Create scripts for uploading and downloading the i18n JSON files to/from the Phrase portal. See the [console](https://github.com/openshift/console/tree/master/frontend/i18n-scripts) repository or [Advanced Cluster Management (ACM) console plugin](https://github.com/stolostron/console/tree/main/frontend/i18n-scripts) repository for similar scripts.
+Create scripts for uploading and downloading the i18n JSON files to/from the Phrase portal. See the [console](https://github.com/openshift/console/tree/main/frontend/i18n-scripts) repository or [Advanced Cluster Management (ACM) console plugin](https://github.com/stolostron/console/tree/main/frontend/i18n-scripts) repository for similar scripts.
 
 ### Step 4: Upload to Phrase portal
 
@@ -587,7 +629,7 @@ iii. Commit, review and merge the changes accordingly.
 
 iv. Reach out to the localization team if you have any questions or concerns regarding the translated strings.
 
-For more information on OpenShift Internationalization, see the console [Internationalization README page](https://github.com/openshift/console/blob/master/INTERNATIONALIZATION.md).
+For more information on OpenShift Internationalization, see the console [Internationalization README page](https://github.com/openshift/console/blob/main/INTERNATIONALIZATION.md).
 
 [console-doc-extensions]: ./docs/console-extensions.md
 [console-doc-api]: ./docs/api.md

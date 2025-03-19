@@ -1,10 +1,6 @@
 .ocs-getting-started-card {
   &__title-icon {
-    margin-right: var(--pf-v5-global--spacer--sm);
-  }
-
-  small {
-    color: var(--pf-v5-global--Color--200);
+    margin-right: var(--pf-t--global--spacer--sm);
   }
 
   &__list {
@@ -17,18 +13,31 @@
 
       > li {
         // Add spacing to the skeleton similar to the SimpleListItem
-        .pf-v5-c-skeleton {
-          margin: var(--pf-v5-c-simple-list__item-link--PaddingTop)
-            var(--pf-v5-c-simple-list__item-link--PaddingRight)
-            var(--pf-v5-c-simple-list__item-link--PaddingBottom)
-            var(--pf-v5-c-simple-list__item-link--PaddingLeft);
+        .pf-v6-c-skeleton {
+          margin: var(--pf-v6-c-simple-list__item-link--PaddingTop)
+            var(--pf-v6-c-simple-list__item-link--PaddingRight)
+            var(--pf-v6-c-simple-list__item-link--PaddingBottom)
+            var(--pf-v6-c-simple-list__item-link--PaddingLeft);
         }
       }
+    }
+
+    .pf-v6-c-simple-list__item-link {
+      color: var(--pf-t--global--text--color--regular);
+    }
+
+    p {
+      margin-bottom: 0 !important;
+    }
+
+    small {
+      color: var(--pf-t--global--text--color--subtle);
+      font-size: var(--pf-v6-c-content--small--FontSize) !important;
     }
   }
 
   a > svg,
   button > svg {
-    margin-left: var(--pf-v5-global--spacer--sm);
+    margin-left: var(--pf-t--global--spacer--sm);
   }
 }

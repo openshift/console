@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classnames from 'classnames';
 import { Link } from 'react-router-dom-v5-compat';
+import { Title } from '@patternfly/react-core';
 
 import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './consts';
@@ -110,9 +111,15 @@ export class Status extends React.Component {
 
     const statusElem = (
       <div className="graph-wrapper graph-wrapper--title-center graph-wrapper--status">
-        {title && <h5 className="graph-title">{title}</h5>}
+        {title && (
+          <Title headingLevel="h5" className="graph-title">
+            {title}
+          </Title>
+        )}
         <div className="graph-status">
-          <h1 className={shortStatusClassName}>{short}</h1>
+          <Title headingLevel="h1" className={shortStatusClassName}>
+            {short}
+          </Title>
           <div className="graph-status--long">{long}</div>
         </div>
       </div>

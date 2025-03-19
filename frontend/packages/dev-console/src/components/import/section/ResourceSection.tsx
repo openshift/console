@@ -108,7 +108,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
           onChange={onChange}
           getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
           helpText={
-            <p className="pf-v5-c-form__helper-text">
+            <p className="pf-v6-c-form__helper-text">
               <Trans t={t} ns="devconsole">
                 Resource type to generate. The default can be set in{' '}
                 <Link to="/user-preferences/applications">User Preferences</Link>.

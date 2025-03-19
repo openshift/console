@@ -11,9 +11,12 @@ import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as semver from 'semver';
 import * as webpack from 'webpack';
-import { ConsolePluginBuildMetadata } from '../build-types';
+import { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
 import { extensionsFile } from '../constants';
-import { sharedPluginModules, getSharedModuleMetadata } from '../shared-modules';
+import {
+  sharedPluginModules,
+  getSharedModuleMetadata,
+} from '../shared-modules/shared-modules-meta';
 import { DynamicModuleMap, getDynamicModuleMap } from '../utils/dynamic-module-parser';
 import { parseJSONC } from '../utils/jsonc';
 import { loadSchema } from '../utils/schema';
@@ -21,10 +24,6 @@ import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { ValidationResult } from '../validation/ValidationResult';
 import { DynamicModuleImportLoaderOptions } from './loaders/dynamic-module-import-loader';
-
-type ConsolePluginPackageJSON = readPkg.PackageJson & {
-  consolePlugin?: ConsolePluginBuildMetadata;
-};
 
 const dynamicModuleImportLoader =
   '@openshift-console/dynamic-plugin-sdk-webpack/lib/webpack/loaders/dynamic-module-import-loader';
@@ -418,6 +417,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
           compilation,
           extensions,
           exposedModules ?? {},
+          path.dirname(path.resolve(this.baseDir, extensionsFile)),
         );
 
         if (result.hasErrors()) {

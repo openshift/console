@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';

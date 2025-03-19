@@ -13,8 +13,7 @@ import {
   DescriptionListTerm,
   Flex,
   Popover,
-  Text,
-  TextContent,
+  Content,
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
 
@@ -64,11 +63,13 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
         <div className="co-m-pane__body">
           <SectionHeading text={t('public~Configuration files')} />
           {files.map((file, i) => (
-            <div className="pf-v5-u-mb-xl" key={file.path}>
-              <Flex columnGap={{ default: 'columnGapNone' }} className="pf-v5-u-mb-md">
-                <TextContent>
-                  <Text data-test={`config-file-path-${i}`}>{file.path}</Text>
-                </TextContent>
+            <div className="pf-v6-u-mb-xl" key={file.path}>
+              <Flex columnGap={{ default: 'columnGapNone' }} className="pf-v6-u-mb-md">
+                <Content>
+                  <Content component="p" data-test={`config-file-path-${i}`}>
+                    {file.path}
+                  </Content>
+                </Content>
                 {(file.mode || file.overwrite) && (
                   <Popover
                     headerContent={t('public~Properties')}
@@ -94,12 +95,11 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
                     }
                   >
                     <Button
+                      icon={<BlueInfoCircleIcon />}
                       variant={ButtonVariant.plain}
                       aria-label={'public~Info'}
-                      className="pf-v5-u-ml-sm pf-v5-u-p-0"
-                    >
-                      <BlueInfoCircleIcon />
-                    </Button>
+                      className="pf-v6-u-ml-sm pf-v6-u-p-0"
+                    />
                   </Popover>
                 )}
               </Flex>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind, K8sResourceKind } from '../../module/k8s';
@@ -138,20 +138,23 @@ export const AddRequestHeaderPage = () => {
         <form onSubmit={submit} name="form" className="co-m-pane__body-group">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="co-form-section__separator" />
-          <h3 className="co-required">{t('public~URLs')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm co-required">
+            {t('public~URLs')}
+          </Title>
           <p className="co-m-pane__explanation">{t('public~At least one URL must be provided.')}</p>
           <div className="form-group">
             <label className="control-label" htmlFor="challenge-url">
               {t('public~Challenge URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setChallengeURL(e.currentTarget.value)}
-              value={challengeURL}
-              id="challenge-url"
-              aria-describedby="challenge-url-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setChallengeURL(e.currentTarget.value)}
+                value={challengeURL}
+                id="challenge-url"
+                aria-describedby="challenge-url-help"
+              />
+            </span>
             <div className="help-block" id="challenge-url-help">
               {t(
                 'public~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
@@ -162,14 +165,15 @@ export const AddRequestHeaderPage = () => {
             <label className="control-label" htmlFor="login-url">
               {t('public~Login URL')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="url"
-              onChange={(e) => setLoginURL(e.currentTarget.value)}
-              value={loginURL}
-              id="login-url"
-              aria-describedby="login-url-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="url"
+                onChange={(e) => setLoginURL(e.currentTarget.value)}
+                value={loginURL}
+                id="login-url"
+                aria-describedby="login-url-help"
+              />
+            </span>
             <div className="help-block" id="login-url-help">
               {t(
                 'public~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
@@ -177,7 +181,9 @@ export const AddRequestHeaderPage = () => {
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>{t('public~More options')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~More options')}
+          </Title>
           <IDPCAFileInput
             value={caFileContent}
             onChange={(c: string) => setCaFileContent(c)}
@@ -210,7 +216,7 @@ export const AddRequestHeaderPage = () => {
             helpText={t('public~The set of headers to check for the email address.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary">
                 {t('public~Add')}
               </Button>

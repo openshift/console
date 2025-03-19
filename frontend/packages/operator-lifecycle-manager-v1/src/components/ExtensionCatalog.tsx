@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Page, PageSection } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -66,7 +65,7 @@ const ExtensionCatalog = () => {
 
   return (
     <Page>
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         <Helmet>
           <title>{t('Extension Catalog')}</title>
         </Helmet>

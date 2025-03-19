@@ -15,7 +15,7 @@ import {
   OverviewItemAlerts,
 } from '@console/shared';
 import { getResource } from '../../../utils';
-import { useResourceQuotaAlert } from '../../workload';
+import { useResourceQuotaAlert } from '../../workload/resource-alert';
 
 import './AlertsCell.scss';
 

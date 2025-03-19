@@ -10,14 +10,14 @@ Feature: Create the different workloads from Add page
 
         Scenario: Getting started resources on Developer perspective
              Then user will see Create Application using Samples, Build with guided documentation and Explore new developer features under Getting started resources section
-              And user will see All services, Database, Operator Backed and Helm Chart options under Developer Catalog section
+              And user will see All services, Database, Operator Backed and Helm Chart options under Software Catalog section
               And user will see Import from Git card under Git Repository section
               And user will see "Container images" option
               And user will see "Samples" option
               And user will see Import YAML, Upload JAR file under From Local Machine section
 
         Scenario Outline: Deploy Application using Catalog Template "<template_category>": A-01-TC02
-            Given user is at Developer Catalog page
+            Given user is at Software Catalog page
               And user is at Templates page
              When user selects Template category "<template_category>"
               And user searches and selects Template card "<card_name>" from catalog page
@@ -80,7 +80,7 @@ Feature: Create the different workloads from Add page
 
         Scenario: Create the Database from Add page: A-03-TC01
              When user clicks Database card
-              And user selects "MariaDB" database on Developer Catalog
+              And user selects "MariaDB" database on Software Catalog
               And user clicks Instantiate Template button on side bar
               And user clicks create button on Instantiate Template page
              Then user will be redirected to Topology page
@@ -148,7 +148,7 @@ Feature: Create the different workloads from Add page
 
         @regression
         Scenario: Quick Starts page when Quick Start has completed: QS-03-TC03
-            Given user is at Quick Starts catalog page
+            When user selects QuickStarts from the help menu icon on the masthead
               And user has completed "Get started with a sample application" Quick Start
              Then user can see time taken to complete the "Get started with a sample application" tour on the card
               And user can see Complete label on "Get started with a sample application" card

@@ -10,10 +10,11 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
-import { Node, observer } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { TopologyListViewNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { modelFor } from '@console/internal/module/k8s';
 import {
@@ -35,21 +36,6 @@ import {
 
 type DispatchProps = {
   onSelectTab?: (name: string) => void;
-};
-
-type TopologyListViewNodeProps = {
-  item: Node;
-  selectedIds: string[];
-  onSelect: (ids: string[]) => void;
-  badgeCell?: React.ReactNode;
-  labelCell?: React.ReactNode;
-  alertsCell?: React.ReactNode;
-  memoryCell?: React.ReactNode;
-  cpuCell?: React.ReactNode;
-  statusCell?: React.ReactNode;
-  groupResourcesCell?: React.ReactNode;
-  hideAlerts?: boolean;
-  noPods?: boolean;
 };
 
 const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> = ({
@@ -90,12 +76,11 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
         position={TooltipPosition.right}
       >
         <Button
+          icon={<AlertSeverityIcon severityAlertType={severityAlertType} />}
           variant="plain"
           className="odc-topology-list-view__alert-button"
           onClick={onAlertClick}
-        >
-          <AlertSeverityIcon severityAlertType={severityAlertType} />
-        </Button>
+        />
       </Tooltip>
     );
   }

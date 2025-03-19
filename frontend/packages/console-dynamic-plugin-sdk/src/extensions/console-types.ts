@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { QuickStartContextValues } from '@patternfly/quickstarts';
+import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
-import MonacoEditor from 'react-monaco-editor/lib/editor';
+import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
+  K8sVerb,
   MatchLabels,
   PrometheusEndpoint,
   PrometheusLabels,
@@ -69,17 +71,6 @@ export type K8sResourceKind = K8sResourceCommon & {
   status?: { [key: string]: any };
   data?: { [key: string]: any };
 };
-
-export type K8sVerb =
-  | 'create'
-  | 'get'
-  | 'list'
-  | 'update'
-  | 'patch'
-  | 'delete'
-  | 'deletecollection'
-  | 'watch'
-  | 'impersonate';
 
 export type AccessReviewResourceAttributes = {
   group?: string;
@@ -291,6 +282,7 @@ export type HorizontalNavProps = {
   resource?: K8sResourceCommon;
   pages: NavPage[];
   customData?: object;
+  contextId?: string;
 };
 
 export type TableColumn<D> = ICell & {
@@ -644,20 +636,29 @@ export type UserInfo = {
   extra?: object;
 };
 
-export type CodeEditorProps = {
-  value?: string;
-  language?: string;
-  options?: object;
-  minHeight?: string | number;
+export type CodeEditorToolbarProps = {
+  /** Whether to show a toolbar with shortcuts on top of the editor. */
   showShortcuts?: boolean;
-  showMiniMap?: boolean;
+  /** Toolbar links section on the left side of the editor */
   toolbarLinks?: React.ReactNodeArray;
-  onChange?: (newValue, event) => void;
-  onSave?: () => void;
 };
 
+// Omit the ref as we have our own ref type, which is completely different
+export type BasicCodeEditorProps = Partial<Omit<PfCodeEditorProps, 'ref'>>;
+
+export type CodeEditorProps = Omit<BasicCodeEditorProps, 'code'> &
+  CodeEditorToolbarProps & {
+    /** Code displayed in code editor. */
+    value?: string;
+    /** Minimum editor height in valid CSS height values. */
+    minHeight?: CSSStyleDeclaration['minHeight'];
+    /** Callback that is run when CTRL / CMD + S is pressed */
+    onSave?: () => void;
+  };
+
 export type CodeEditorRef = {
-  editor?: MonacoEditor['editor'];
+  editor: monaco.editor.IStandaloneCodeEditor;
+  monaco: typeof monaco;
 };
 
 export type ResourceYAMLEditorProps = {
@@ -830,3 +831,73 @@ export type CertificateSigningRequestKind = {
 export type NodeCertificateSigningRequestKind = CertificateSigningRequestKind & {
   metadata: K8sResourceCommon['metadata'] & { originalName: string };
 };
+
+export type MetricValuesByName = {
+  [name: string]: number;
+};
+
+export type NamespaceMetrics = {
+  cpu: MetricValuesByName;
+  memory: MetricValuesByName;
+};
+
+export type OverviewItemAlerts = {
+  [key: string]: {
+    message: string;
+    severity: string;
+  };
+};
+
+export type PodReadiness = string;
+export type PodPhase = string;
+
+export enum AllPodStatus {
+  Running = 'Running',
+  NotReady = 'Not Ready',
+  Warning = 'Warning',
+  Empty = 'Empty',
+  Failed = 'Failed',
+  Pending = 'Pending',
+  Succeeded = 'Succeeded',
+  Terminating = 'Terminating',
+  Unknown = 'Unknown',
+  ScaledTo0 = 'Scaled to 0',
+  Idle = 'Idle',
+  AutoScaledTo0 = 'Autoscaled to 0',
+  ScalingUp = 'Scaling Up',
+  CrashLoopBackOff = 'CrashLoopBackOff',
+}
+
+export type ExtPodPhase =
+  | AllPodStatus.Empty
+  | AllPodStatus.Warning
+  | AllPodStatus.Idle
+  | AllPodStatus.NotReady
+  | AllPodStatus.ScaledTo0
+  | AllPodStatus.AutoScaledTo0
+  | AllPodStatus.Terminating
+  | AllPodStatus.ScalingUp;
+
+export type ExtPodStatus = {
+  phase: ExtPodPhase | PodPhase;
+};
+
+export type ExtPodKind = {
+  status?: ExtPodStatus;
+} & K8sResourceKind;
+
+export type PodControllerOverviewItem = {
+  alerts: OverviewItemAlerts;
+  revision: number;
+  obj: K8sResourceKind;
+  phase?: string;
+  pods: ExtPodKind[];
+};
+
+export interface PodRCData {
+  current: PodControllerOverviewItem;
+  previous: PodControllerOverviewItem;
+  obj?: K8sResourceKind;
+  isRollingOut: boolean;
+  pods: ExtPodKind[];
+}

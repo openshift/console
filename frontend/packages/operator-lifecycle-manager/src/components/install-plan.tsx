@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Alert, Button } from '@patternfly/react-core';
+import { Alert, Button, Hint, HintTitle, HintBody, HintFooter } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { getUser } from '@console/dynamic-plugin-sdk';
@@ -29,7 +27,6 @@ import {
   navFactory,
   ResourceSummary,
   history,
-  HintBlock,
   useAccessReview,
 } from '@console/internal/components/utils';
 import { authSvc } from '@console/internal/module/auth';
@@ -57,20 +54,30 @@ import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
 
 const tableColumnClasses = [
-  'pf-v5-c-table__td',
-  'pf-v5-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg', 'pf-v5-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v5-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v5-c-table__td'),
+  'pf-v6-c-table__td',
+  'pf-v6-c-table__td',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
   Kebab.columnClass,
 ];
 
 const componentsTableColumnClasses = [
-  'pf-v5-c-table__td',
-  'pf-v5-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v5-u-w-16-on-lg', 'pf-v5-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v5-c-table__td'),
+  'pf-v6-c-table__td',
+  'pf-v6-c-table__td',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
+
+export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, footer }) => {
+  return (
+    <Hint>
+      <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
+      <HintBody>{body}</HintBody>
+      <HintFooter>{footer}</HintFooter>
+    </Hint>
+  );
+};
 
 export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
@@ -98,7 +105,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Components */}
       <TableData className={tableColumnClasses[3]}>
-        <ul className="pf-v5-c-list pf-m-plain">
+        <ul className="pf-v6-c-list pf-m-plain">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
             <li key={csvName}>
               {obj.status?.phase === 'Complete' ? (
@@ -124,7 +131,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         {(obj.metadata.ownerReferences || [])
           .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
           .map((ref) => (
-            <ul key={ref.uid} className="pf-v5-c-list pf-m-plain">
+            <ul key={ref.uid} className="pf-v6-c-list pf-m-plain">
               <li>
                 <ResourceLink
                   kind={referenceForModel(SubscriptionModel)}
@@ -304,20 +311,21 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
     <>
       {needsApproval && canPatchInstallPlans && (
         <div className="co-m-pane__body">
-          <HintBlock title={t('olm~Review manual InstallPlan')}>
-            <p>
-              {t(
-                'olm~Inspect the requirements for the components specified in this InstallPlan before approving.',
-              )}
-            </p>
-            <Link
-              to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
-                obj.metadata.name
-              }/components`}
-            >
-              <Button variant="primary">{t('olm~Preview InstallPlan')}</Button>
-            </Link>
-          </HintBlock>
+          <InstallPlanHint
+            title={t('olm~Review manual InstallPlan')}
+            body={t(
+              'olm~Inspect the requirements for the components specified in this InstallPlan before approving.',
+            )}
+            footer={
+              <Link
+                to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
+                  obj.metadata.name
+                }/components`}
+              >
+                <Button variant="primary">{t('olm~Preview InstallPlan')}</Button>
+              </Link>
+            }
+          />
         </div>
       )}
       {needsApproval && !canPatchInstallPlans && (
@@ -429,49 +437,52 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
       )}
       {needsApproval && !hideApprovalBlock && canPatchInstallPlans && (
         <div className="co-m-pane__body">
-          <HintBlock title={t('olm~Review manual InstallPlan')}>
-            <InstallPlanReview installPlan={obj} />
-            <div className="pf-v5-c-form">
-              <div className="pf-v5-c-form__actions">
-                <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
-                  {needsApproval ? t('olm~Approve') : t('olm~Approved')}
-                </Button>
-                <Button
-                  variant="secondary"
-                  isDisabled={false}
-                  onClick={() =>
-                    history.push(
-                      `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(SubscriptionModel)}/${
-                        subscription.name
-                      }?showDelete=true`,
-                    )
-                  }
-                >
-                  {t('olm~Deny')}
-                </Button>
+          <InstallPlanHint
+            title={t('olm~Review manual InstallPlan')}
+            body={<InstallPlanReview installPlan={obj} />}
+            footer={
+              <div className="pf-v6-c-form">
+                <div className="pf-v6-c-form__actions">
+                  <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
+                    {needsApproval ? t('olm~Approve') : t('olm~Approved')}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    isDisabled={false}
+                    onClick={() =>
+                      history.push(
+                        `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                          SubscriptionModel,
+                        )}/${subscription.name}?showDelete=true`,
+                      )
+                    }
+                  >
+                    {t('olm~Deny')}
+                  </Button>
+                </div>
               </div>
-            </div>
-          </HintBlock>
+            }
+          />
         </div>
       )}
       {stepsByCSV.map((steps) => (
         <div key={steps[0].resolving} className="co-m-pane__body">
           <SectionHeading text={steps[0].resolving} />
           <div className="co-table-container">
-            <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v5-c-table__thead">
-                <tr className="pf-v5-c-table__tr">
+            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+              <thead className="pf-v6-c-table__thead">
+                <tr className="pf-v6-c-table__tr">
                   <th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</th>
                   <th className={componentsTableColumnClasses[1]}>{t('olm~Kind')}</th>
                   <th className={componentsTableColumnClasses[2]}>{t('olm~Status')}</th>
                   <th className={componentsTableColumnClasses[3]}>{t('olm~API version')}</th>
                 </tr>
               </thead>
-              <tbody className="pf-v5-c-table__tbody">
+              <tbody className="pf-v6-c-table__tbody">
                 {steps.map((step) => (
                   <tr
                     key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}
-                    className="pf-v5-c-table__tr"
+                    className="pf-v6-c-table__tr"
                   >
                     <td className={componentsTableColumnClasses[0]}>
                       {['Present', 'Created'].includes(step.status) ? (
@@ -536,6 +547,12 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
       ]}
     />
   );
+};
+
+type InstallPlanHintProps = {
+  title?: React.ReactNode;
+  body?: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
 export type InstallPlansListProps = {};

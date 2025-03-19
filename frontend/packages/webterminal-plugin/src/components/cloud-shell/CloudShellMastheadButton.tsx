@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons/dist/esm/icons/terminal-icon';
+import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
@@ -36,15 +37,14 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
 
   return (
     <Button
+      icon={<TerminalIcon />}
       variant="plain"
       aria-label={t('webterminal-plugin~Command line terminal')}
       onClick={openCloudshell}
-      className={open ? 'pf-m-selected' : undefined}
+      className={classNames({ 'pf-m-selected': open }, 'co-masthead-button')}
       data-tour-id="tour-cloud-shell-button"
       data-quickstart-id="qs-masthead-cloudshell"
-    >
-      <TerminalIcon className="co-masthead-icon" />
-    </Button>
+    />
   );
 };
 

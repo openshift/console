@@ -7,6 +7,7 @@ import { useExtensions } from '@console/plugin-sdk';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, ResourceLink, LoadingBox } from '../utils';
 import { connectToPlural } from '../../kinds';
@@ -64,7 +65,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
       </Helmet>
       <div className="co-storage-heading__wrapper">
         <Trans t={t} ns="public">
-          <h1 className="co-m-pane__heading">Add Storage</h1>
+          <PrimaryHeading>Add Storage</PrimaryHeading>
           <div className="co-m-pane__explanation co-storage-heading__subtitle">
             {' '}
             to{' '}

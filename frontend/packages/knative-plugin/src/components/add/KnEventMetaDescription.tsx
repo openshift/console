@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { KnEventCatalogMetaData } from './import-types';
@@ -29,7 +30,12 @@ const KnEventMetaDescription: React.FC<KnEventMetaDescriptionProps> = ({ normali
           </span>
         </div>
         <div className="co-clusterserviceversion-logo__name">
-          <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">{name}</h1>
+          <Title
+            headingLevel="h1"
+            className="co-clusterserviceversion-logo__name__clusterserviceversion"
+          >
+            {name}
+          </Title>
           {provider && (
             <span className="co-clusterserviceversion-logo__name__provider text-muted">
               {t('knative-plugin~Provided by {{provider}}', {

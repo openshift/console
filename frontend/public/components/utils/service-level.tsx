@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Alert, Label, Skeleton } from '@patternfly/react-core';
 import { NotificationEntry, NotificationTypes } from '@console/patternfly';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
-import { YellowExclamationTriangleIcon, RedExclamationCircleIcon } from '@console/shared';
 import { getDuration, dateFormatter } from './datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -64,12 +61,7 @@ const TrialDaysLeft: React.FC<{
   if (label) {
     return (
       <div>
-        <Label
-          color={variant === 'warning' ? 'orange' : 'red'}
-          icon={
-            variant === 'warning' ? <YellowExclamationTriangleIcon /> : <RedExclamationCircleIcon />
-          }
-        >
+        <Label status={variant ?? 'danger'} variant="outline">
           {alertText}
         </Label>
       </div>

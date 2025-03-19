@@ -33,12 +33,17 @@ Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
 });
 
-When('user clicks on the Helm tab', () => {
+When('user clicks on the Helm tab in dev perspective', () => {
+  cy.get('[data-quickstart-id="qs-admin-nav-helm"]').should('be.visible').click({ force: true });
   navigateTo(devNavigationMenu.Helm);
 });
 
 Then('user will be redirected to Helm releases page', () => {
   detailsPage.titleShouldContain('Helm');
+});
+
+Then('user will be redirected to Helm releases page under Helm tab', () => {
+  detailsPage.titleShouldContain(pageTitle.HelmReleases);
 });
 
 Then('user is able to see the message {string}', (noHelmReleasesFound: string) => {
@@ -90,6 +95,11 @@ Given('user has installed helm chart', () => {
 
 Given('user is at the Helm page', () => {
   navigateTo(devNavigationMenu.Helm);
+});
+
+Given('user is at the Helm Release tab in admin perspective', () => {
+  cy.byLegacyTestID('helm-releases-header').should('exist').click({ force: true });
+  detailsPage.titleShouldContain(pageTitle.HelmReleases);
 });
 
 When('user selects checkbox for the Deployed Helm charts', (workloadName: string) => {

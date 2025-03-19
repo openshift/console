@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { parsePrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
+  ChartLineProps,
+  ChartProps,
   Chart,
   ChartAxis,
   ChartBar,
   ChartGroup,
   ChartLine,
-  ChartLineProps,
-  ChartProps,
   ChartScatter,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 import { DomainPropType, DomainTuple } from 'victory-core';
 import { DEFAULT_CHART_HEIGHT } from '../../const';
@@ -68,12 +68,14 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
 
   const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: any = {
-    tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
+    tickLabels: {
+      fill: 'var(--pf-t--global--text--color--regular)',
+    },
   };
   if (tickValues.length > 7 || width < 225) {
     xAxisStyle = {
       tickLabels: {
-        fill: 'var(--pf-v5-global--Color--100)',
+        fill: 'var(--pf-t--global--text--color--regular)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',
@@ -116,7 +118,9 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
         showGrid
         tickFormat={yTickFormatter || yTickFormat}
         style={{
-          tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
+          tickLabels: {
+            fill: 'var(--pf-t--global--text--color--regular)',
+          },
         }}
       />
       <ChartGroup>

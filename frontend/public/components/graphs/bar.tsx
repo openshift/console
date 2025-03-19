@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { ChartBar, ChartLabel, ChartThemeColor, getCustomTheme } from '@patternfly/react-charts';
+import {
+  ChartBar,
+  ChartLabel,
+  ChartThemeColor,
+  getCustomTheme,
+} from '@patternfly/react-charts/victory';
 
 import { useRefWidth } from '../utils/ref-width-hook';
 import { usePrometheusPoll } from './prometheus-poll-hook';

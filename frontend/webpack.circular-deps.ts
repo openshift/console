@@ -74,7 +74,7 @@ const getCycleStats = (cycles: DetectedCycle[]): string => {
   lines.push('\nCycle count per directory:\n');
   lines.push(...sortedEntries(cycleCountByDir).map(([dir, count]) => `  ${dir} (${count})\n`));
 
-  lines.push('\nIndex files occurring within cycles:\n');
+  lines.push('\nBarrel files occurring within cycles:\n');
   lines.push(...sortedEntries(topIndexFiles).map(([file, count]) => `  ${file} (${count})\n`));
 
   return lines.join('');
@@ -128,7 +128,7 @@ export class CircularDependencyPreset {
       }),
       {
         // Ad-hoc plugin to handle detected module cycle information
-        apply: (compiler) => {
+        apply: (compiler: webpack.Compiler) => {
           compiler.hooks.emit.tap(HandleCyclesPluginName, (compilation) => {
             if (cycles.length === 0) {
               return;

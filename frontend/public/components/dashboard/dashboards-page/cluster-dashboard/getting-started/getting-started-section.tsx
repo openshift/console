@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import {
-  FLAGS,
-  GETTING_STARTED_USER_SETTINGS_KEY_CLUSTER_DASHBOARD,
-  useUserSettings,
-} from '@console/shared';
+import { FLAGS, useUserSettings } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   GettingStartedExpandableGrid,
@@ -15,17 +11,20 @@ import {
 
 import { ClusterSetupGettingStartedCard } from './cluster-setup-getting-started-card';
 import { ExploreAdminFeaturesGettingStartedCard } from './explore-admin-features-getting-started-card';
-import { USER_SETTINGS_KEY } from './constants';
 
 import './getting-started-section.scss';
 
-export const GettingStartedSection: React.FC = () => {
+type GettingStartedSectionProps = {
+  userSettingKey: string;
+};
+
+export const GettingStartedSection: React.FC<GettingStartedSectionProps> = ({ userSettingKey }) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
-  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(USER_SETTINGS_KEY);
+  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userSettingKey);
 
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserSettings<boolean>(
-    GETTING_STARTED_USER_SETTINGS_KEY_CLUSTER_DASHBOARD,
+    `${userSettingKey}.expanded`,
     true,
   );
 
@@ -44,6 +43,8 @@ export const GettingStartedSection: React.FC = () => {
         <QuickStartGettingStartedCard
           featured={[
             // All part of the console-operator:
+            // - Enable the Developer perspective
+            'enable-developer-perspective',
             // - Impersonate a user
             'user-impersonation',
             // - Monitor your sample application

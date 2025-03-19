@@ -7,9 +7,9 @@ Feature: Event Sources Installation View
             Given user has created or selected namespace "aut-eventsources"
 
         @regression @manual
-        Scenario: Install Event Source from Developer Catalog Page using YAML View: KF-01-TC01
+        Scenario: Install Event Source from Software Catalog Page using YAML View: KF-01-TC01
             Given user is at Add page
-             When user clicks on the Developer Catalog card on the Add page
+             When user clicks on the Software Catalog card on the Add page
               And user clicks on Event Sources
               And user clicks on the Ping Source Event Source card
               And user clicks on the Create Event Source button on side bar

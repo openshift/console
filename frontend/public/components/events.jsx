@@ -5,7 +5,8 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { Helmet } from 'react-helmet';
-import { Button, ButtonSize, ButtonVariant, Chip, ChipGroup } from '@patternfly/react-core';
+import { Label, LabelGroup, Button, ButtonSize, ButtonVariant } from '@patternfly/react-core';
+
 import { Trans, useTranslation } from 'react-i18next';
 
 import { namespaceProptype } from '../propTypes';
@@ -274,7 +275,7 @@ export const EventsList = (props) => {
         </div>
         <div className="form-group">
           {selected.size > 0 && (
-            <ChipGroup
+            <LabelGroup
               key="resources-category"
               categoryName={t('public~Resource')}
               defaultIsOpen={false}
@@ -285,13 +286,13 @@ export const EventsList = (props) => {
             >
               {[...selected].map((chip) => {
                 return (
-                  <Chip key={chip} onClick={() => removeResource(chip)}>
+                  <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
                     <ResourceIcon kind={chip} />
                     {kindForReference(chip)}
-                  </Chip>
+                  </Label>
                 );
               })}
-            </ChipGroup>
+            </LabelGroup>
           )}
         </div>
       </PageHeading>

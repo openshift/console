@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { EventSources } from '../import-types';
 import SecretKeySelector from '../SecretKeySelector';
 
@@ -18,7 +19,7 @@ const KafkaSourceNetSection: React.FC = () => {
 
   return (
     <>
-      <h3 className="co-section-heading-tertiary">Net</h3>
+      <TertiaryHeading>Net</TertiaryHeading>
       <CheckboxField
         data-test-id="kafkasource-sasl-field"
         name={`formData.data.${kafkaSource}.net.sasl.enable`}

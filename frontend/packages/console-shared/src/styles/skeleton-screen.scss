@@ -43,7 +43,7 @@ $skeleton-activity-size: auto;
   width: 100%;
   &::after {
     background-image: url('../images/skeleton-chart.svg');
-    .pf-v5-theme-dark & {
+    .pf-v6-theme-dark & {
       opacity: 0.2;
     }
     background-position: 0px bottom;

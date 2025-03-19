@@ -10,7 +10,7 @@ import {
   SplitItem,
   Stack,
   StackItem,
-  TextContent,
+  Content,
   Title,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
@@ -130,7 +130,9 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       debouncedLoadDetails();
     }
 
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, [resetVersions, selectedItem]);
 
   React.useEffect(() => {
@@ -202,7 +204,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
         )}
       </Level>
       {<PipelineQuickSearchTaskAlert ctaType={getTaskCtaType(selectedItem, selectedVersion)} />}
-      <TextContent className="opp-quick-search-details__description" data-test="task-description">
+      <Content className="opp-quick-search-details__description" data-test="task-description">
         {selectedItem.description}
         {hubLink && (
           <ExternalLink
@@ -212,7 +214,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
             text={t('pipelines-plugin~Read more')}
           />
         )}
-      </TextContent>
+      </Content>
       <Stack className="opp-quick-search-details__badges-section" hasGutter>
         {selectedItem?.attributes?.categories?.length > 0 && (
           <StackItem>

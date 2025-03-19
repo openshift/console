@@ -5,16 +5,21 @@
   max-width: 60%;
 }
 
-.pf-v5-c-menu.co-namespace-dropdown__menu {
+.pf-v6-c-menu .pf-v6-c-menu__content.co-namespace-dropdown__menu-content {
+  overflow-y: auto !important;
+}
+
+.pf-v6-c-menu.co-namespace-dropdown__menu {
   // Position is to ensure that the dropdown doesn't push content down when opened
   // Especially on the /topology/ns/[namespace]?view=graph page
-  position: fixed;
+  position: absolute;
+  z-index: 9999; // same as popper
 
   // This allows the menu to be longer than the menu toggle
   // Currently PatternFly does not support a min width on the menu component
-  --pf-v5-c-menu--MinWidth: 210px;
-  @media (min-width: $pf-v5-global--breakpoint--md) {
-    --pf-v5-c-menu--MinWidth: 325px;
+  --pf-v6-c-menu--MinWidth: 210px;
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    --pf-v6-c-menu--MinWidth: 325px;
   }
 }
 
@@ -22,7 +27,7 @@
 // more closely match the custom DropDown based drop down.
 // These are displayed side by site in the Developer view > Topology view.active.
 // Once the custom DropDown component changes to the PatternFly component, these styles can be removed.
-.pf-v5-c-menu-toggle.co-namespace-dropdown__menu-toggle {
+.pf-v6-c-menu-toggle.co-namespace-dropdown__menu-toggle {
   background-color: var(
     --co-namespace-dropdown__menu-toggle--BackgroundColor,
     inherit
@@ -31,7 +36,7 @@
   padding: 2px 0 !important;
   width: 100%;
 
-  @media (min-width: $pf-v5-global--breakpoint--md) {
+  @media (min-width: $pf-v6-global--breakpoint--md) {
     font-size: ($font-size-base + 2) !important;
     padding-bottom: 9px !important;
     padding-top: 9px !important;
@@ -48,23 +53,6 @@
 
   &:disabled {
     background: none;
-    color: var(--pf-v5-global--disabled-color--200);
-  }
-}
-
-// The PatternFly switch is displayed to the left of the label
-// The design for the namespace/project drop down has the switch to
-// the right of the label.  These styles allow for the variance to the
-// normal PatternFly display.
-// Tracked in https://github.com/patternfly/patternfly-react/issues/6059
-
-.co-namespace-dropdown__switch {
-  .pf-v5-c-switch__label {
-    padding-right: 60px; // Ensure switch doesn't land on top of text
-  }
-
-  .pf-v5-c-switch__toggle {
-    position: absolute;
-    right: 0;
+    color: var(--pf-t--global--text--color--disabled);
   }
 }

@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button, Level, LevelItem } from '@patternfly/react-core';
-import MonacoEditor from 'react-monaco-editor';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
+import { Language } from '@patternfly/react-code-editor';
+import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
 import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
@@ -23,33 +23,33 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   const { t } = useTranslation();
   return (
     <li className="co-resource-sidebar-item">
-      <h3 className="h4">
+      <Title headingLevel="h3" className="pf-v6-u-mb-sm">
         <span className="text-uppercase">{highlightText}</span> {title}
-      </h3>
+      </Title>
       {img && <img src={img} className="co-resource-sidebar-item__img img-responsive" />}
       <p>{description}</p>
       <Level>
         <LevelItem>
           <Button
+            icon={<PasteIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="load-sample"
             isInline
             onClick={() => loadSampleYaml(id, yaml, reference)}
           >
-            <PasteIcon className="co-icon-space-r" />
             {t('public~Try it')}
           </Button>
         </LevelItem>
         <LevelItem>
           <Button
+            icon={<DownloadIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="download-sample"
             isInline
             onClick={() => downloadSampleYaml(id, yaml, reference)}
           >
-            <DownloadIcon className="co-icon-space-r" />
             {t('public~Download YAML')}
           </Button>
         </LevelItem>
@@ -60,15 +60,12 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
 
 const lineHeight = 18;
 const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
-  const theme = React.useContext(ThemeContext);
-
   return (
     <div style={{ paddingTop: 10 }}>
-      <MonacoEditor
-        height={Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}
-        language="yaml"
-        value={yaml}
-        theme={theme === 'light' ? 'console-light' : 'console-dark'}
+      <BasicCodeEditor
+        height={`${Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}px`}
+        language={Language.yaml}
+        code={yaml}
         options={{
           lineHeight,
           readOnly: true,
@@ -124,14 +121,19 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
 
   return (
     <li className="co-resource-sidebar-item">
-      <h3 className="h4">
+      <Title headingLevel="h3" className="pf-v6-u-mb-sm">
         <span className="text-uppercase">{highlightText}</span> {title}
-      </h3>
+      </Title>
       <p>{description}</p>
       <Level>
         <LevelItem>
-          <Button type="button" variant="link" isInline onClick={insertSnippet}>
-            <PasteIcon className="co-icon-space-r" />
+          <Button
+            icon={<PasteIcon className="co-icon-space-r" />}
+            type="button"
+            variant="link"
+            isInline
+            onClick={insertSnippet}
+          >
             {t('public~Insert snippet')}
           </Button>
         </LevelItem>

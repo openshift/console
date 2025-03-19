@@ -448,12 +448,11 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
               />
               <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
                 <Button
+                  icon={<TimesIcon aria-hidden />}
                   variant="plain"
                   onClick={onClearButtonClick}
                   aria-label={t('public~Clear input value')}
-                >
-                  <TimesIcon aria-hidden />
-                </Button>
+                />
               </TextInputGroupUtilities>
             </TextInputGroup>
           </MenuToggle>

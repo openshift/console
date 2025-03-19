@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +57,7 @@ const tableColumnClasses = [
   '',
   '',
   'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-xl pf-v5-u-w-8-on-xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-8-on-xl',
   'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];

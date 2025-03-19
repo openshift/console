@@ -3,9 +3,9 @@
  */
 import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu } from '@console/internal/components/utils';
+import { ActionsMenu, SimpleTabNav } from '@console/internal/components/utils';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { edgeActions } from '../../actions/edgeActions';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import TopologyEdgeResourcesPanel from './TopologyEdgeResourcesPanel';
@@ -34,28 +34,24 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
   return (
     <div className="overview__sidebar-pane resource-overview">
       <div className="overview__sidebar-pane-head resource-overview__heading">
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             {t(connectorTypeToTitleKey(edge.getType()))}
           </div>
           <div className="co-actions">
             <ActionsMenu actions={edgeActions(edge, nodes)} />
           </div>
-        </h1>
+        </PrimaryHeading>
       </div>
-      <ul
-        className={classNames(
-          'co-m-horizontal-nav__menu',
-          'co-m-horizontal-nav__menu--within-sidebar',
-          'co-m-horizontal-nav__menu--within-overview-sidebar',
-          'odc-application-resource-tab',
-        )}
-      >
-        <li className="co-m-horizontal-nav__menu-item">
-          <button type="button">{t('topology~Resources')}</button>
-        </li>
-      </ul>
-      <TopologyEdgeResourcesPanel edge={edge} />
+      <SimpleTabNav
+        withinSidebar
+        tabs={[
+          {
+            name: t('topology~Resources'),
+            component: <TopologyEdgeResourcesPanel edge={edge} />,
+          },
+        ]}
+      />
     </div>
   );
 };

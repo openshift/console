@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormHelperText } from '@patternfly/react-core';
+import { FormHelperText, Title } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/shared';
@@ -83,7 +83,9 @@ const SecureRoute: React.FC = () => {
           />
           {tls.termination && tls.termination !== 'passthrough' && (
             <>
-              <h3>{t('devconsole~Certificates')}</h3>
+              <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+                {t('devconsole~Certificates')}
+              </Title>
               <FormHelperText>
                 {t(
                   "devconsole~TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",

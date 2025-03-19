@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ImageStreamIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { getAnnotationTags } from '@console/internal/components/image-stream';
 import { ExternalLink } from '@console/internal/components/utils';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { getSampleRepo } from '../../../utils/imagestream-utils';
 
 export type ImageStreamInfoProps = {
@@ -22,7 +23,9 @@ const ImageStreamInfo: React.FC<ImageStreamInfoProps> = ({ displayName, tag }) =
       <div className="co-catalog-item-details">
         <ImageStreamIcon tag={tag} iconSize="large" />
         <div>
-          <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
+          <SecondaryHeading className="co-catalog-item-details__name">
+            {displayName}
+          </SecondaryHeading>
           {annotationTags && (
             <p className="co-catalog-item-details__tags">
               {_.map(annotationTags, (annotationTag, i) => (

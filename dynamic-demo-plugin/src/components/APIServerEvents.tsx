@@ -4,7 +4,7 @@ import {
   ResourceEventStream,
   K8sResourceCommon,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { Page, Title } from '@patternfly/react-core';
+import { PageSection, Title } from '@patternfly/react-core';
 import * as React from 'react';
 
 const apiServerResource: WatchK8sResource = {
@@ -18,10 +18,14 @@ const APIServerEvents: React.FC = () => {
   const [object, loaded, loadError] = useK8sWatchResource<K8sResourceCommon>(apiServerResource);
 
   return (
-    <Page>
-      <Title headingLevel="h1">API Server Events</Title>
-      {loaded && !loadError && <ResourceEventStream resource={object} />}
-    </Page>
+    <>
+      <PageSection>
+        <Title headingLevel="h1">API Server Events</Title>
+      </PageSection>
+      <PageSection>
+        {loaded && !loadError && <ResourceEventStream resource={object} />}
+      </PageSection>
+    </>
   );
 };
 

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useFormikContext } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';

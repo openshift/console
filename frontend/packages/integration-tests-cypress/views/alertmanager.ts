@@ -84,7 +84,7 @@ export const alertmanager = {
     cy.visit(`/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`);
   },
   visitYAMLPage: () => {
-    detailsPage.selectTab('yaml');
+    detailsPage.selectTab('YAML');
     yamlEditor.isLoaded();
   },
 };

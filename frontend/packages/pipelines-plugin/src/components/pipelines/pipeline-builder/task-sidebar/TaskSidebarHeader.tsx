@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Divider } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu } from '@console/internal/components/utils';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { TaskKind } from '../../../../types';
 import PipelineResourceRef from '../../../shared/common/PipelineResourceRef';
 import TaskSidebarShortcuts from './TaskSidebarShortcuts';
@@ -19,7 +20,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({ removeThisTask, t
   return (
     <div className="opp-task-sidebar-header">
       <div className="opp-task-sidebar-header__title">
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             <PipelineResourceRef
               resourceKind={taskResource.kind}
@@ -38,7 +39,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({ removeThisTask, t
               ]}
             />
           </div>
-        </h1>
+        </PrimaryHeading>
       </div>
       <div className="opp-task-sidebar-header__shortcuts clearfix">
         <TaskSidebarShortcuts />

@@ -2,10 +2,8 @@ import * as React from 'react';
 import {
   Button,
   EmptyState,
-  EmptyStateIcon,
   EmptyStateVariant,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
@@ -21,35 +19,35 @@ const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearc
 
   return (
     <EmptyState
+      headingLevel="h3"
+      icon={TopologyIcon}
+      titleText={<>{t('topology~No resources found')}</>}
       className="odc-topology__empty-state"
       variant={EmptyStateVariant.full}
       data-test="no-resources-found"
     >
-      <EmptyStateHeader
-        titleText={<>{t('topology~No resources found')}</>}
-        icon={<EmptyStateIcon icon={TopologyIcon} />}
-        headingLevel="h3"
-      />
       <EmptyStateFooter>
         <EmptyStateActions>
-          <Trans t={t} ns="topology">
-            <Button
-              isInline
-              variant="link"
-              data-test="start-building-your-application"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsQuickSearchOpen(true);
-              }}
-            >
-              Start building your application
-            </Button>
-            {' or visit the '}
-            <Link to="/add" data-test="add-page">
-              Add page
-            </Link>
-            {' for more details.'}
-          </Trans>
+          <div>
+            <Trans t={t} ns="topology">
+              <Button
+                isInline
+                variant="link"
+                data-test="start-building-your-application"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsQuickSearchOpen(true);
+                }}
+              >
+                Start building your application
+              </Button>
+              {' or visit the '}
+              <Link to="/add" data-test="add-page">
+                Add page
+              </Link>
+              {' for more details.'}
+            </Trans>
+          </div>
         </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>

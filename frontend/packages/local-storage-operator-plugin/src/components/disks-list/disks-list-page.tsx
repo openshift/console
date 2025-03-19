@@ -163,7 +163,7 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
         <Button
           isDisabled={lvdRequestInProgress}
           isLoading={lvdRequestInProgress}
-          className="pf-v5-u-mt-0"
+          className="pf-v6-u-mt-0"
           onClick={() => makeLocalVolumeDiscoverRequest(operatorNs)}
           variant="primary"
           id="yaml-create"

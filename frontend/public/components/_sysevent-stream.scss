@@ -15,7 +15,7 @@
 }
 
 .co-sysevent-stream__connection-error {
-  color: var(--pf-v5-global--danger-color--100);
+  color: var(--pf-t--global--text--color--status--danger--default);
 }
 
 .co-sysevent-stream__timeline {
@@ -67,9 +67,10 @@
 
 .co-sysevent__box {
   background-color: var(
-    --pf-v5-global--BackgroundColor--100
+    --pf-t--global--background--color--primary--default
   ); // prevent overlapping text if events overlap each other
-  border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+  border: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--color--nonstatus--gray--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
   flex: none;
   padding: 10px;
   width: 100%;
@@ -140,7 +141,7 @@
 
 .co-sysevent__icon-line {
   background-color: var(
-    --pf-v5-global--BorderColor--300
+    --pf-t--global--color--nonstatus--gray--default
   ); // connector line that matches the .co-sysevent-stream__timeline and .co-sysevent__box border color
   height: 3px;
   position: absolute;
@@ -149,7 +150,7 @@
   width: 50%;
 }
 
-@media (min-width: $pf-v5-global--breakpoint--xl) {
+@media (min-width: $pf-v6-global--breakpoint--xl) {
   .co-sysevent {
     flex-wrap: nowrap;
     margin-left: -40px;
@@ -157,7 +158,7 @@
 
   .co-sysevent__box {
     flex: 1 2 auto;
-    border: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--color--nonstatus--gray--default);
     min-width: 0%; // necessary for wrapping since its a flex child
   }
 
@@ -171,8 +172,10 @@
   }
 
   .co-sysevent-stream__timeline {
-    border-bottom: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--300);
-    border-left: var(--pf-v5-global--BorderWidth--lg) solid var(--pf-v5-global--BorderColor--300);
+    border-bottom: var(--pf-t--global--border--width--extra-strong) solid
+      var(--pf-t--global--color--nonstatus--gray--default);
+    border-left: var(--pf-t--global--border--width--extra-strong) solid
+      var(--pf-t--global--color--nonstatus--gray--default);
     margin-left: 10px;
     &--empty {
       border: 0;

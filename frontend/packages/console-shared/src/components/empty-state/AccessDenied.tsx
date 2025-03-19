@@ -21,7 +21,7 @@ export const AccessDenied: React.FC = ({ children }) => {
         <FlexItem>{t("You don't have access to this section due to cluster policy")}</FlexItem>
         {children && (
           <FlexItem>
-            <Alert variant="danger" className="pf-v5-u-text-align-left" title={t('Error details')}>
+            <Alert variant="danger" className="pf-v6-u-text-align-left" title={t('Error details')}>
               {children}
             </Alert>
           </FlexItem>

@@ -19,15 +19,16 @@ import {
   useSecretDescription,
 } from './utils';
 import { SecretSubForm } from './SecretSubForm';
+import { isBinary } from 'istextorbinary';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
-  const { isCreate, modal, onCancel } = props;
+  const { isCreate, modal, onCancel, secretTypeAbstraction } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams();
 
   const existingSecret = _.pick(props.obj, ['metadata', 'type']);
-  const defaultSecretType = toDefaultSecretType(props.secretTypeAbstraction);
+  const defaultSecretType = toDefaultSecretType(secretTypeAbstraction);
   const initialSecret = _.defaultsDeep({}, props.fixed, existingSecret, {
     apiVersion: 'v1',
     data: {},
@@ -38,16 +39,18 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     type: defaultSecretType,
   });
 
-  const [secretTypeAbstraction] = React.useState(props.secretTypeAbstraction);
   const [secret, setSecret] = React.useState(initialSecret);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState();
   const [stringData, setStringData] = React.useState(
     _.mapValues(_.get(props.obj, 'data'), (value) => {
+      if (isBinary(null, Buffer.from(value, 'base64'))) {
+        return null;
+      }
       return value ? Base64.decode(value) : '';
     }),
   );
-  const [base64StringData, setBase64StringData] = React.useState({});
+  const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
   const title = useSecretTitle(isCreate, secretTypeAbstraction);
   const helptext = useSecretDescription(secretTypeAbstraction);
@@ -121,16 +124,17 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
               {t('public~Secret name')}
             </label>
             <div>
-              <input
-                className="pf-v5-c-form-control"
-                type="text"
-                onChange={onNameChanged}
-                value={secret?.metadata?.name}
-                aria-describedby="secret-name-help"
-                id="secret-name"
-                data-test="secret-name"
-                required
-              />
+              <span className="pf-v6-c-form-control">
+                <input
+                  type="text"
+                  onChange={onNameChanged}
+                  value={secret?.metadata?.name}
+                  aria-describedby="secret-name-help"
+                  id="secret-name"
+                  data-test="secret-name"
+                  required
+                />
+              </span>
               <p className="help-block" id="secret-name-help">
                 {t('public~Unique name of the new secret.')}
               </p>
@@ -145,6 +149,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           stringData={stringData}
           secretType={secret.type}
           isCreate={isCreate}
+          base64StringData={base64StringData}
         />
       </>
     );
@@ -171,7 +176,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
         <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
           {renderBody()}
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button
                 type="submit"
                 data-test="save-changes"

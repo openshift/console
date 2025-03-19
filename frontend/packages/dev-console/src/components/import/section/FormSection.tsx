@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormHelperText } from '@patternfly/react-core';
+import { FormHelperText, Title } from '@patternfly/react-core';
 import cx from 'classnames';
 import './FormSection.scss';
 
@@ -18,7 +18,7 @@ const flexStyle: React.CSSProperties = {
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
-  margin: 'var(--pf-v5-global--spacer--md) 0',
+  margin: 'var(--pf-t--global--spacer--md)',
 };
 
 const FormSection: React.FC<FormSectionProps> = ({
@@ -32,14 +32,18 @@ const FormSection: React.FC<FormSectionProps> = ({
   style,
 }) => (
   <div
-    className={cx('pf-v5-c-form', {
+    className={cx('pf-v6-c-form', {
       'co-m-pane__form': !fullWidth,
       'odc-form-section--extra-margin': extraMargin,
     })}
     style={{ ...(flexLayout ? flexStyle : {}), ...(style || {}) }}
     data-test={dataTest}
   >
-    {title && <h2 className="odc-form-section__heading">{title}</h2>}
+    {title && (
+      <Title headingLevel="h2" className="odc-form-section__heading">
+        {title}
+      </Title>
+    )}
     {subTitle && <FormHelperText>{subTitle}</FormHelperText>}
     {children}
   </div>

@@ -2,8 +2,6 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom-v5-compat';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,11 +10,11 @@ import {
   Button,
   Split,
   SplitItem,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
+  Title,
 } from '@patternfly/react-core';
-import { ResourceStatus } from '@console/dynamic-plugin-sdk';
+import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import {
   OverviewItem,
@@ -26,6 +24,10 @@ import {
   useCsvWatchResource,
 } from '@console/shared';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
+
 import {
   ActionsMenu,
   FirehoseResult,
@@ -63,7 +65,7 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
             crumb.name
           ) : (
             <Link
-              className="pf-v5-c-breadcrumb__link"
+              className="pf-v6-c-breadcrumb__link"
               to={crumb.path}
               data-test-id={`breadcrumb-link-${i}`}
             >
@@ -120,6 +122,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     helpText,
     'data-test': dataTestId,
   } = props;
+  const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
     props.resourceKeys,
     (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
@@ -137,10 +140,11 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
+  const isAdminPrespective = perspective === 'admin';
   return (
     <>
       {showBreadcrumbs && (
-        <div className="pf-v5-c-page__main-breadcrumb">
+        <div className="pf-v6-c-page__main-breadcrumb">
           <Split style={{ alignItems: 'baseline' }}>
             <SplitItem isFilled>
               <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
@@ -163,14 +167,14 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         style={style}
       >
         {showHeading && (
-          <Text
-            component={TextVariants.h1}
-            className={classNames('co-m-pane__heading', {
-              'co-m-pane__heading--baseline': link,
-              'co-m-pane__heading--center': centerText,
+          <PrimaryHeading
+            className={classNames({
               'co-m-pane__heading--logo': props.icon,
               'co-m-pane__heading--with-help-text': helpText,
+              'pf-v6-u-flex-grow-1': !showActions,
             })}
+            alignItemsBaseline={!!link}
+            centerText={centerText}
           >
             {props.icon ? (
               <props.icon obj={data} />
@@ -194,33 +198,41 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <span className="co-m-pane__heading-badge">{badge}</span>
             )}
             {link && <div className="co-m-pane__heading-link">{link}</div>}
-            {showActions && (
+            {(isAdminPrespective || showActions) && (
               <div className="co-actions" data-test-id="details-actions">
-                {hasButtonActions && (
-                  <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                {isAdminPrespective && <FavoriteButton />}
+                {showActions && (
+                  <>
+                    {hasButtonActions && (
+                      <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                    )}
+                    {hasMenuActions && (
+                      <ActionsMenu
+                        actions={
+                          _.isFunction(menuActions)
+                            ? menuActions(kindObj, data, extraResources, customData)
+                            : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                        }
+                      />
+                    )}
+                    {_.isFunction(customActionMenu)
+                      ? customActionMenu(kindObj, data)
+                      : customActionMenu}
+                  </>
                 )}
-                {hasMenuActions && (
-                  <ActionsMenu
-                    actions={
-                      _.isFunction(menuActions)
-                        ? menuActions(kindObj, data, extraResources, customData)
-                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                    }
-                  />
-                )}
-                {_.isFunction(customActionMenu)
-                  ? customActionMenu(kindObj, data)
-                  : customActionMenu}
               </div>
             )}
-          </Text>
+          </PrimaryHeading>
         )}
         {helpText && (
-          <TextContent>
-            <Text component={TextVariants.p} className="help-block co-m-pane__heading-help-text">
+          <Content>
+            <Content
+              component={ContentVariants.p}
+              className="help-block co-m-pane__heading-help-text"
+            >
               {helpText}
-            </Text>
-          </TextContent>
+            </Content>
+          </Content>
         )}
         {props.children}
       </div>
@@ -235,7 +247,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
   required,
   id,
 }) => (
-  <h2 className="co-section-heading" style={style} data-test-section-heading={text} id={id}>
+  <SecondaryHeading style={style} data-test-section-heading={text} id={id}>
     <span
       className={classNames({
         'co-required': required,
@@ -244,7 +256,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
       {text}
     </span>
     {children}
-  </h2>
+  </SecondaryHeading>
 );
 
 export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
@@ -253,10 +265,10 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
   style,
   className,
 }) => (
-  <h2 className={`sidebar__section-heading ${className}`} style={style}>
+  <Title headingLevel="h2" className={`sidebar__section-heading ${className}`} style={style}>
     {text}
     {children}
-  </h2>
+  </Title>
 );
 
 export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({
@@ -270,7 +282,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
   const isDeleting = !!resource.metadata.deletionTimestamp;
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
-      <h1 className="co-m-pane__heading">
+      <PrimaryHeading>
         <div className="co-m-pane__name co-resource-item">
           <ResourceIcon
             className="co-m-resource-icon--lg"
@@ -295,7 +307,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
             />
           </div>
         )}
-      </h1>
+      </PrimaryHeading>
       <HealthChecksAlert resource={resource} />
     </div>
   );

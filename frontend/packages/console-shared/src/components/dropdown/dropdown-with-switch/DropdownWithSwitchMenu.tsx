@@ -4,8 +4,6 @@ import {
   Menu,
   MenuContent,
   MenuSearch,
-  MenuItem,
-  MenuList,
   Switch,
   MenuSearchInput,
 } from '@patternfly/react-core';
@@ -22,7 +20,6 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
   switchLabel,
   switchLabelClassName,
   switchLabelIsReversed,
-  switchLabelOff,
   switchOnChange,
 }) => {
   return (
@@ -34,7 +31,7 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
         setOpen(false);
       }}
       ref={menuRef}
-      style={{ position: 'absolute' }}
+      style={{ position: 'absolute', zIndex: 100 }}
     >
       <MenuContent>
         <MenuSearch>
@@ -45,19 +42,12 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
               isDisabled={switchIsDisabled}
               isReversed={switchLabelIsReversed}
               label={switchLabel}
-              labelOff={switchLabelOff}
               onChange={(_event, value) => switchOnChange(value)}
               data-test="dropdown-with-switch-switch"
             />
           </MenuSearchInput>
         </MenuSearch>
         <Divider />
-        {/* PatternFly expects Menu to contain a MenuList with a MenuItem
-        see https://github.com/patternfly/patternfly-react/issues/7365
-        hack to workaround this bug by adding a hidden MenuList */}
-        <MenuList className="pf-v5-u-display-none">
-          <MenuItem> </MenuItem>
-        </MenuList>
         <DropdownWithSwitchGroups options={options} selectedKey={selected} />
       </MenuContent>
     </Menu>

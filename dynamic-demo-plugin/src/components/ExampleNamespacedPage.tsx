@@ -5,9 +5,7 @@ import {
   Card,
   CardBody,
   Flex,
-  Page,
   PageSection,
-  PageSectionVariants,
   Title,
 } from '@patternfly/react-core';
 import { NamespaceBar } from '@openshift-console/dynamic-plugin-sdk';
@@ -16,8 +14,8 @@ const NamespacePageContent = ({ namespace }: { namespace?: string }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
 
   return (
-    <Page>
-      <PageSection variant={PageSectionVariants.light}>
+    <>
+      <PageSection>
         <Title headingLevel="h1">{t('Example page with a namespace bar')}</Title>
       </PageSection>
       <PageSection>
@@ -29,13 +27,13 @@ const NamespacePageContent = ({ namespace }: { namespace?: string }) => {
               grow={{ default: 'grow' }}
               direction={{ default: 'column' }}
             >
-              <h1>{t('Currently selected namespace')}</h1>
-              <h2>{namespace}</h2>
+              <Title headingLevel='h1'>{t('Currently selected namespace')}</Title>
+              <Title headingLevel='h2'>{namespace}</Title>
             </Flex>
           </CardBody>
         </Card>
       </PageSection>
-    </Page>
+    </>
   );
 };
 

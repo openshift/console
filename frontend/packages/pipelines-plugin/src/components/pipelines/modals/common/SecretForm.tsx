@@ -13,6 +13,7 @@ import {
 } from '@console/internal/components/secrets/create-secret';
 import { ButtonBar } from '@console/internal/components/utils';
 import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { SecretAnnotationId } from '../../const';
 import './SecretForm.scss';
 
@@ -143,9 +144,9 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
 
   return (
     <div className="odc-secret-form">
-      <h1 className="co-section-heading-tertiary odc-secret-form__title">
+      <TertiaryHeading className="odc-secret-form__title">
         {t('pipelines-plugin~Create Secret')}
-      </h1>
+      </TertiaryHeading>
       <div className="form-group">
         <InputField
           type={TextInputTypes.text}

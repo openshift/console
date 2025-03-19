@@ -11,7 +11,7 @@ const StatusCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   const { t } = useTranslation();
   return (
-    <Card data-test-id="status-card" className="co-overview-card--gradient">
+    <Card data-test-id="status-card">
       <CardHeader>
         <CardTitle>{t('console-app~Status')}</CardTitle>
       </CardHeader>

@@ -2,8 +2,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
-import classNames from 'classnames';
-import { Link, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { NavBar } from '@console/internal/components/utils';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -13,7 +13,6 @@ import {
   EmptyStateVariant,
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
-  EmptyStateHeader,
   Breadcrumb,
   BreadcrumbItem,
 } from '@patternfly/react-core';
@@ -21,6 +20,7 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';
@@ -90,9 +90,9 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
 };
 
 const tableColumnClasses = [
-  'pf-v5-u-w-50-on-xs pf-v5-u-w-25-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-25-on-lg',
-  'pf-v5-u-w-50-on-xs',
+  'pf-v6-u-w-50-on-xs pf-v6-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-lg',
+  'pf-v6-u-w-50-on-xs',
   Kebab.columnClass,
 ];
 
@@ -306,8 +306,8 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
           <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-            <PencilAltIcon className="co-icon-space-r pf-v5-c-button-icon--plain" />
             {t('public~Configure')}
+            <PencilAltIcon className="co-icon-space-l" />
           </Link>
         ) : (
           integrationTypesLabel
@@ -402,8 +402,11 @@ ReceiversTable.displayName = 'ReceiversTable';
 const ReceiversEmptyState: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader titleText={<>{t('public~No receivers found')}</>} headingLevel="h2" />
+    <EmptyState
+      headingLevel="h2"
+      titleText={<>{t('public~No receivers found')}</>}
+      variant={EmptyStateVariant.full}
+    >
       <EmptyStateBody>
         {t(
           'public~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
@@ -519,19 +522,18 @@ const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = Reac
 
 export const AlertmanagerConfig: React.FC = () => {
   const { t } = useTranslation();
-  const { pathname: url } = useLocation();
 
-  const configPath = '/monitoring/alertmanagerconfig';
-  const YAMLPath = '/monitoring/alertmanageryaml';
+  const configPath = 'alertmanagerconfig';
+  const YAMLPath = 'alertmanageryaml';
 
   const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath);
 
   return (
     <>
-      <div className="pf-c-page__main-breadcrumb">
+      <div className="pf-v6-c-page__main-breadcrumb">
         <Breadcrumb className="monitoring-breadcrumbs">
           <BreadcrumbItem>
-            <Link className="pf-c-breadcrumb__link" to={breadcrumbs[0].path}>
+            <Link className="pf-v6-c-breadcrumb__link" to={breadcrumbs[0].path}>
               {breadcrumbs[0].name}
             </Link>
           </BreadcrumbItem>
@@ -539,34 +541,26 @@ export const AlertmanagerConfig: React.FC = () => {
         </Breadcrumb>
       </div>
       <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
               {t('public~Alertmanager')}
             </span>
           </div>
-        </h1>
+        </PrimaryHeading>
       </div>
-      <ul className="co-m-horizontal-nav__menu">
-        <li
-          className={classNames('co-m-horizontal-nav__menu-item', {
-            'co-m-horizontal-nav-item--active': url === configPath,
-          })}
-        >
-          <Link to={configPath} data-test-id="horizontal-link-details">
-            {t('public~Details')}
-          </Link>
-        </li>
-        <li
-          className={classNames('co-m-horizontal-nav__menu-item', {
-            'co-m-horizontal-nav-item--active': url === YAMLPath,
-          })}
-        >
-          <Link to={YAMLPath} data-test-id="horizontal-link-yaml">
-            {t('public~YAML')}
-          </Link>
-        </li>
-      </ul>
+      <NavBar
+        pages={[
+          {
+            name: t('public~Details'),
+            href: configPath,
+          },
+          {
+            name: t('public~YAML'),
+            href: YAMLPath,
+          },
+        ]}
+      />
       <Firehose
         resources={[
           {

@@ -9,20 +9,20 @@ type StepComponentProps = {
   content: StepContentType;
   selector?: string;
   placement?: string;
-  showClose?: boolean;
   showStepBadge?: boolean;
   nextButtonText: string;
   backButtonText: string;
+  expandableSelector?: string;
 };
 
 const StepComponent: React.FC<StepComponentProps> = ({
   heading,
   content,
+  expandableSelector,
   selector,
   placement,
   nextButtonText,
   backButtonText,
-  showClose = true,
   showStepBadge = true,
 }) => {
   const {
@@ -37,8 +37,8 @@ const StepComponent: React.FC<StepComponentProps> = ({
       content={content}
       heading={heading}
       selector={selector}
+      expandableSelector={expandableSelector}
       placement={placement}
-      showClose={showClose}
       totalSteps={totalSteps}
       showStepBadge={showStepBadge}
       nextButtonText={nextButtonText}

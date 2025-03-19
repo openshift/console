@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
@@ -167,47 +167,52 @@ export const AddGitHubPage = () => {
             <label className="control-label co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setClientID(e.currentTarget.value)}
-              value={clientID}
-              id="client-id"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setClientID(e.currentTarget.value)}
+                value={clientID}
+                id="client-id"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="password"
-              onChange={(e) => setClientSecret(e.currentTarget.value)}
-              value={clientSecret}
-              id="client-secret"
-              required
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="password"
+                onChange={(e) => setClientSecret(e.currentTarget.value)}
+                value={clientSecret}
+                id="client-secret"
+                required
+              />
+            </span>
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="hostname">
               {t('public~Hostname')}
             </label>
-            <input
-              className="pf-v5-c-form-control"
-              type="text"
-              onChange={(e) => setHostname(e.currentTarget.value)}
-              value={hostname}
-              id="hostname"
-              aria-describedby="idp-hostname-help"
-            />
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                onChange={(e) => setHostname(e.currentTarget.value)}
+                value={hostname}
+                id="hostname"
+                aria-describedby="idp-hostname-help"
+              />
+            </span>
             <p className="help-block" id="idp-hostname-help">
               {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
             </p>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <div className="co-form-section__separator" />
-          <h3>{t('public~Organizations')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Organizations')}
+          </Title>
           <p className="co-help-text">
             <Trans
               t={t}
@@ -225,7 +230,9 @@ export const AddGitHubPage = () => {
             helpText={t('public~Restricts which organizations are allowed to log in.')}
           />
           <div className="co-form-section__separator" />
-          <h3>{t('public~Teams')}</h3>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~Teams')}
+          </Title>
           <p className="co-help-text">
             <Trans
               t={t}
@@ -245,7 +252,7 @@ export const AddGitHubPage = () => {
             )}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-v5-c-form">
+            <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
                 {t('public~Add')}
               </Button>

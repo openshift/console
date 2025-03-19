@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import HelmReleaseDetails from '../HelmReleaseDetails';

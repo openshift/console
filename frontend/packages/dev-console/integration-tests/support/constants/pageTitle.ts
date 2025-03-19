@@ -21,7 +21,7 @@ export const pageTitle = {
   CreateServerlessFunction: 'Create Serverless function',
   CustomResourceDefinitions: 'CustomResourceDefinitions',
   Deployments: 'Deployments',
-  DeveloperCatalog: 'Software Catalog',
+  SoftwareCatalog: 'Software Catalog',
   Environments: 'Environments',
   Eventing: 'Eventing',
   EventListenerDetails: 'EventListener details',

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SimpleListItem, Title, Text } from '@patternfly/react-core';
+import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useToast } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -68,9 +68,9 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
         {label}
       </Title>
       {showDetails && (
-        <Text className="odc-add-card-item__description" data-test="description">
+        <Content component="p" className="odc-add-card-item__description" data-test="description">
           {description}
-        </Text>
+        </Content>
       )}
     </SimpleListItem>
   );

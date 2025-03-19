@@ -25,7 +25,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
-	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
+	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	gql "github.com/openshift/console/pkg/graphql"
 	"github.com/openshift/console/pkg/graphql/resolver"
@@ -96,6 +96,7 @@ type jsGlobals struct {
 	Branding                        string                     `json:"branding"`
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
+	ContentSecurityPolicy           string                     `json:"contentSecurityPolicy"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
 	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
@@ -151,6 +152,7 @@ type Server struct {
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
 	ContentSecurityPolicy               string
+	ContentSecurityPolicyEnabled        bool
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
@@ -170,6 +172,7 @@ type Server struct {
 	AnonymousInternalProxiedK8SRT       http.RoundTripper
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
+	ProxyHeaderDenyList                 []string
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
@@ -287,10 +290,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
+
+	tokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
+		return authHandler(withTokenReview(authenticator, h))
+	}
 	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
-	handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
+	handle(copyLoginEndpoint, tokenReviewHandler(s.handleCopyLogin))
 
 	handleFunc("/api/", notFoundHandler)
 
@@ -460,7 +467,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}),
 	))
 
-	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
+	handle("/api/console/monitoring-dashboard-config", tokenReviewHandler(s.handleMonitoringDashboardConfigmaps))
 	// Knative
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
 	knativeHandler := knative.NewKnativeHandler(
@@ -471,14 +478,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(knativeProxyEndpoint, authHandlerWithUser(knativeHandler.Handle))
 	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
-	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
-	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
+	handle("/api/console/knative-event-sources", tokenReviewHandler(s.handleKnativeEventSourceCRDs))
+	handle("/api/console/knative-channels", tokenReviewHandler(s.handleKnativeChannelCRDs))
 
-	// Dev-Console Proxy
+	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsoleProxy.Handler(user, w, r)
+			devconsole.Handler(user, w, r, internalProxiedDynamic, s.K8sMode, s.ProxyHeaderDenyList)
 		})),
 	)
 
@@ -518,7 +525,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(pluginAssetsEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginAssetsEndpoint),
-		authHandler(func(w http.ResponseWriter, r *http.Request) {
+		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 			pluginsHandler.HandlePluginAssets(w, r)
 		}),
 	))
@@ -556,20 +563,22 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}
 	}
 
-	handle(updatesEndpoint, authHandler(func(w http.ResponseWriter, r *http.Request) {
+	handle(updatesEndpoint, tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			w.Header().Set("Allow", "GET")
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
 			return
 		}
 		serverutils.SendResponse(w, http.StatusOK, struct {
-			ConsoleCommit string                  `json:"consoleCommit"`
-			Plugins       []string                `json:"plugins"`
-			Capabilities  []operatorv1.Capability `json:"capabilities,omitempty"`
+			ConsoleCommit         string                  `json:"consoleCommit"`
+			Plugins               []string                `json:"plugins"`
+			Capabilities          []operatorv1.Capability `json:"capabilities,omitempty"`
+			ContentSecurityPolicy string                  `json:"contentSecurityPolicy,omitempty"`
 		}{
-			ConsoleCommit: os.Getenv("SOURCE_GIT_COMMIT"),
-			Plugins:       pluginsHandler.GetPluginsList(),
-			Capabilities:  s.Capabilities,
+			ConsoleCommit:         os.Getenv("SOURCE_GIT_COMMIT"),
+			Plugins:               pluginsHandler.GetPluginsList(),
+			Capabilities:          s.Capabilities,
+			ContentSecurityPolicy: s.ContentSecurityPolicy,
 		})
 	}))
 
@@ -595,13 +604,13 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
 
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
-		authHandler(func(w http.ResponseWriter, r *http.Request) {
+		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 			promhttp.Handler().ServeHTTP(w, r)
 		}),
 	))
-	handleFunc("/metrics/usage", func(w http.ResponseWriter, r *http.Request) {
+	handleFunc("/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
-	})
+	}))
 
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
@@ -646,11 +655,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			authHandler(gitopsProxy.ServeHTTP),
-		))
+			tokenReviewHandler(gitopsProxy.ServeHTTP)),
+		)
 	}
 
-	handle("/api/console/version", authHandler(s.versionHandler))
+	handle("/api/console/version", tokenReviewHandler(s.versionHandler))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -680,13 +689,19 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	contentSecurityPolicy, err := utils.BuildCSPDirectives(s.K8sMode, s.ContentSecurityPolicy, indexPageScriptNonce)
-	if err != nil {
-		klog.Fatalf("Error building Content Security Policy directives: %s", err)
-		os.Exit(1)
+	if s.ContentSecurityPolicyEnabled {
+		cspDirectives, err := utils.BuildCSPDirectives(
+			s.K8sMode,
+			s.ContentSecurityPolicy,
+			indexPageScriptNonce,
+			r.Header.Get("Test-CSP-Reporting-Endpoint"),
+		)
+		if err != nil {
+			klog.Fatalf("Error building Content Security Policy directives: %s", err)
+			os.Exit(1)
+		}
+		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
 	}
-
-	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(contentSecurityPolicy, "; "))
 
 	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
 	for plugin := range s.EnabledConsolePlugins {

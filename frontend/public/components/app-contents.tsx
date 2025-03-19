@@ -28,7 +28,7 @@ import {
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
-import { PageSection, PageSectionVariants } from '@patternfly/react-core';
+import { PageSection } from '@patternfly/react-core';
 import { usePluginRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import CreateResource from './create-resource';
 import { TelemetryNotifier } from './global-telemetry-notifications';
@@ -815,25 +815,28 @@ const AppContents: React.FC<{}> = () => {
   const matches = matchRoutes(namespacedRoutes, location);
 
   return (
-    <div id="content">
-      <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+    <>
+      <PageSection
+        hasBodyWrapper={false}
+        padding={{ default: 'noPadding' }}
+        className="pf-v6-c-page__main-section--no-gap"
+      >
         <GlobalNotifications />
         {matches && <NamespaceBar />}
       </PageSection>
-      <div id="content-scrollable">
-        <PageSection
-          className="pf-v5-page__main-section--flex co-page-backdrop"
-          padding={{ default: 'noPadding' }}
-        >
-          <ErrorBoundaryPage>
-            <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
-          </ErrorBoundaryPage>
-        </PageSection>
-      </div>
-      <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-        <TelemetryNotifier />
+      <PageSection
+        isFilled={true}
+        hasBodyWrapper={false}
+        padding={{ default: 'noPadding' }}
+        className="pf-v6-c-page__main-section--no-gap pf-v6-u-flex-shrink-1"
+        id="content-scrollable"
+      >
+        <ErrorBoundaryPage>
+          <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
+        </ErrorBoundaryPage>
       </PageSection>
-    </div>
+      <TelemetryNotifier />
+    </>
   );
 };
 

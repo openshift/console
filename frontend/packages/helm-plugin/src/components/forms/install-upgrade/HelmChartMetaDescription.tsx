@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -28,9 +29,12 @@ const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ cha
           </span>
         </div>
         <div className="co-clusterserviceversion-logo__name">
-          <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">
+          <Title
+            headingLevel="h1"
+            className="co-clusterserviceversion-logo__name__clusterserviceversion"
+          >
             {displayName}
-          </h1>
+          </Title>
           {provider && (
             <span className="co-clusterserviceversion-logo__name__provider text-muted">
               {t('helm-plugin~{{chartVersion}} provided by {{provider}}', {

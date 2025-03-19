@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Button, Divider } from '@patternfly/react-core';
 
 import { FLAGS, useCopyLoginCommands } from '@console/shared';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
@@ -26,24 +28,23 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   const additionalCommandLineTools = _.map(cliData.concat(data), (tool) => {
     const displayName = tool.spec.displayName;
     const defaultLinkText = t('Download {{displayName}}', { displayName });
+    const sortedLinks = _.sortBy(tool.spec.links, 'text');
     return (
       <React.Fragment key={tool.metadata.uid}>
         <Divider className="co-divider" />
-        <h2 className="co-section-heading" data-test-id={displayName}>
-          {displayName}
-        </h2>
+        <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
         <SyncMarkdownView content={tool.spec.description} exactHeight />
-        {tool.spec.links.length === 1 && (
+        {sortedLinks.length === 1 && (
           <p>
             <ExternalLink
-              href={tool.spec.links[0].href}
-              text={tool.spec.links[0].text || defaultLinkText}
+              href={sortedLinks[0].href}
+              text={sortedLinks[0].text || defaultLinkText}
             />
           </p>
         )}
-        {tool.spec.links.length > 1 && (
+        {sortedLinks.length > 1 && (
           <ul>
-            {_.map(tool.spec.links, (link, i) => (
+            {_.map(sortedLinks, (link, i) => (
               <li key={i}>
                 <ExternalLink href={link.href} text={link.text || defaultLinkText} />
               </li>
@@ -60,9 +61,9 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
         <title>{t('public~Command Line Tools')}</title>
       </Helmet>
       <div className="co-m-pane__body">
-        <h1 className="co-m-pane__heading">
+        <PrimaryHeading>
           <div className="co-m-pane__name">{t('public~Command Line Tools')}</div>
-        </h1>
+        </PrimaryHeading>
         {showCopyLoginCommand && (
           <>
             <Divider className="co-divider" />

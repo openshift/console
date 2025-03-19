@@ -1,12 +1,7 @@
 html,
 body,
 #app,
-.pf-v5-c-drawer {
-  height: 100%;
-}
-
-#app,
-#content {
+.pf-v6-c-drawer {
   display: flex;
   flex-basis: 100%;
   flex-direction: column;
@@ -15,7 +10,6 @@ body,
 
 #content-scrollable {
   overflow: auto;
-  height: 100%;
 }
 .co-m-page__body {
   display: flex;
@@ -30,7 +24,7 @@ body,
   height: 100%; // doesn't work on safari without height
 }
 
-.co-m-app__content > .pf-v5-c-page {
+.co-m-app__content > .pf-v6-c-page {
   height: 0;
   flex: 1;
 }
@@ -43,6 +37,13 @@ body,
 
   &__body {
     flex: 2;
+    max-width: 100%;
+
+    @media (min-width: $screen-md-min) {
+      &--sidebar-open {
+        max-width: 66%;
+      }
+    }
   }
 
   &__close-button {
@@ -56,15 +57,17 @@ body,
     @media (min-width: $screen-md-min) {
       flex: 1 0 auto;
       overflow-y: auto;
+      max-width: 34%;
     }
 
     &--bordered {
       @media (max-width: $screen-sm-max) {
-        border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--100);
+        border-top: var(--pf-t--global--border--width--divider--default) solid
+          var(--pf-t--global--border--color--default);
       }
       @media (min-width: $screen-md-min) {
-        border-left: var(--pf-v5-global--BorderWidth--sm) solid
-          var(--pf-v5-global--BorderColor--100);
+        border-left: var(--pf-t--global--border--width--divider--default) solid
+          var(--pf-t--global--border--color--default);
       }
     }
   }

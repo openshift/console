@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartDonut, ChartDonutProps, ChartLabel } from '@patternfly/react-charts';
+import { ChartDonutProps, ChartDonut, ChartLabel } from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 
 interface SuccessRatioDonutProps {
@@ -31,11 +31,21 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
       }}
       subTitle={subTitle}
       subTitleComponent={
-        <ChartLabel style={{ fill: 'var(--pf-v5-global--Color--400)', fontSize: 14 }} />
+        <ChartLabel
+          style={{
+            fill: 'var(--pf-t--color--gray--50)',
+            fontSize: 14,
+          }}
+        />
       }
       title={title}
       titleComponent={
-        <ChartLabel style={{ fill: 'var(--pf-v5-global--Color--100)', fontSize: 24 }} />
+        <ChartLabel
+          style={{
+            fill: 'var(--pf-t--global--text--color--regular)',
+            fontSize: 24,
+          }}
+        />
       }
       width={width}
       style={{

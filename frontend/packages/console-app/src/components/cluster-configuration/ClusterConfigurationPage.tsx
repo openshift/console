@@ -4,9 +4,7 @@ import {
   Tab,
   TabProps,
   EmptyState,
-  EmptyStateIcon,
   EmptyStateBody,
-  EmptyStateHeader,
   TabContent,
   TabContentProps,
   TabTitleText,
@@ -17,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { LoadingBox, history } from '@console/internal/components/utils';
 import { PageLayout, isModifiedEvent } from '@console/shared';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import ClusterConfigurationForm from './ClusterConfigurationForm';
 import { getClusterConfigurationGroups } from './getClusterConfigurationGroups';
 import { ClusterConfigurationTabGroup } from './types';
@@ -110,12 +109,11 @@ const ClusterConfigurationPage: React.FC = () => {
         {!loaded ? (
           <LoadingBox />
         ) : clusterConfigurationTabs.length === 0 ? (
-          <EmptyState>
-            <EmptyStateHeader
-              titleText={<>{t('console-app~Insufficient permissions')}</>}
-              icon={<EmptyStateIcon icon={LockIcon} />}
-              headingLevel="h1"
-            />
+          <EmptyState
+            headingLevel="h1"
+            icon={LockIcon}
+            titleText={<>{t('console-app~Insufficient permissions')}</>}
+          >
             <EmptyStateBody>
               {t(
                 'console-app~You do not have sufficient permissions to read any cluster configuration.',
@@ -141,8 +139,10 @@ const ClusterConfigurationPage: React.FC = () => {
             </div>
             {groupNotFound ? (
               /* Similar to a TabContent */
-              <section className="co-cluster-configuration-page pf-v5-c-tab-content">
-                <h1>{t('console-app~{{section}} not found', { section: activeTabId })}</h1>
+              <section className="co-cluster-configuration-page pf-v6-c-tab-content">
+                <PrimaryHeading>
+                  {t('console-app~{{section}} not found', { section: activeTabId })}
+                </PrimaryHeading>
               </section>
             ) : null}
           </>

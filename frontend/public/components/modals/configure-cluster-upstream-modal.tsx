@@ -1,4 +1,16 @@
 import * as React from 'react';
+import {
+  Form,
+  FormHelperText,
+  FormSection,
+  HelperText,
+  HelperTextItem,
+  Radio,
+  Stack,
+  StackItem,
+  TextInput,
+} from '@patternfly/react-core';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
 
 import { ClusterVersionModel } from '../../models';
 import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
@@ -20,9 +32,7 @@ import {
 } from '../utils';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { RadioInput } from '../radio';
 import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
-import { TextInput } from '@patternfly/react-core';
 
 export const ConfigureClusterUpstreamModal = withHandlePromise(
   (props: ConfigureClusterUpstreamModalProps) => {
@@ -30,7 +40,8 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     const currentUpstream = cv?.spec?.upstream;
 
     const [customSelected, setCustomSelected] = React.useState(!!currentUpstream);
-    const [customURL, setCustomURL] = React.useState(currentUpstream);
+    const [customURL, setCustomURL] = React.useState(currentUpstream ?? '');
+    const customURLInputRef = React.useRef(null);
     const [invalidCustomURL, setInvalidCustomURL] = React.useState(false);
 
     const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -54,79 +65,97 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     const updateURL = getDocumentationURL(documentationURLs.updateService);
 
     return (
-      <form onSubmit={submit} name="form" className="modal-content">
+      <>
         <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
-        <ModalBody>
-          <p>
-            {t(
-              'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
-            )}
-          </p>
-          {!isManaged() && !isUpstream() && (
+        <Form onSubmit={submit} name="form" className="co-form--within-modal">
+          <ModalBody>
             <p>
-              <ExternalLink
-                href={updateURL}
-                text={t('public~Learn more about OpenShift local update services.')}
-              />
+              {t(
+                'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
+              )}
             </p>
-          )}
-          <div className="form-group">
-            <fieldset>
-              <label>{t('public~Configuration')}</label>
-              <RadioInput
-                value="default"
-                onChange={() => {
-                  setCustomSelected(false);
-                  setInvalidCustomURL(false);
-                }}
-                checked={!customSelected}
-                title={t('public~Default. Receive update information from Red Hat.')}
-              >
-                <TextInput
-                  id={'cluster-version-default-upstream-server-url'}
-                  type="url"
-                  isDisabled
-                  value={CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER}
-                  readOnlyVariant="default"
+            {!isManaged() && !isUpstream() && (
+              <p>
+                <ExternalLink
+                  href={updateURL}
+                  text={t('public~Learn more about OpenShift local update services.')}
                 />
-              </RadioInput>
-              <RadioInput
-                value="custom"
-                onChange={() => setCustomSelected(true)}
-                checked={customSelected}
-                title={t('public~Custom update service.')}
-              >
-                <TextInput
-                  id={'cluster-version-custom-upstream-server-url'}
-                  type="url"
-                  placeholder="https://example.com/api/upgrades_info/v1/graph"
-                  value={customURL}
-                  onChange={(_event, text) => {
-                    setCustomSelected(true);
-                    setCustomURL(text);
-                    setInvalidCustomURL(false);
-                  }}
-                  validated={invalidCustomURL ? 'error' : 'default'}
-                />
-                {invalidCustomURL && (
-                  <div className="pf-v5-c-form">
-                    <div className="pf-v5-c-form__helper-text pf-m-error">
-                      {t('public~Please enter a URL')}
-                    </div>
-                  </div>
-                )}
-              </RadioInput>
-            </fieldset>
-          </div>
-        </ModalBody>
-        <ModalSubmitFooter
-          errorMessage={props.errorMessage}
-          inProgress={props.inProgress}
-          submitText={t('public~Save')}
-          cancel={props.cancel}
-          submitDisabled={invalidCustomURL}
-        />
-      </form>
+              </p>
+            )}
+            <FormSection title={t('public~Configuration')}>
+              <Stack hasGutter>
+                <StackItem>
+                  <Radio
+                    name="config-default"
+                    id="config-default"
+                    onChange={() => {
+                      setCustomSelected(false);
+                      setInvalidCustomURL(false);
+                    }}
+                    label={t('public~Default')}
+                    isChecked={!customSelected}
+                  />
+                  <TextInput
+                    id={'cluster-version-default-upstream-server-url'}
+                    type="url"
+                    readOnly
+                    value={CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER}
+                    readOnlyVariant="default"
+                  />
+                  <FormHelperText>
+                    <HelperText>
+                      <HelperTextItem>
+                        {t('public~Receive update information from Red Hat.')}
+                      </HelperTextItem>
+                    </HelperText>
+                  </FormHelperText>
+                </StackItem>
+                <StackItem>
+                  <Radio
+                    name="config-custom"
+                    id="config-custom"
+                    onChange={() => {
+                      setCustomSelected(true);
+                      customURLInputRef.current.focus();
+                    }}
+                    label={t('public~Custom update service')}
+                    isChecked={customSelected}
+                  />
+                  <TextInput
+                    id="cluster-version-custom-upstream-server-url"
+                    type="url"
+                    placeholder="https://example.com/api/upgrades_info/v1/graph"
+                    value={customURL}
+                    onChange={(_event, text) => {
+                      setCustomSelected(true);
+                      setCustomURL(text);
+                      setInvalidCustomURL(false);
+                    }}
+                    validated={invalidCustomURL ? 'error' : 'default'}
+                    ref={customURLInputRef}
+                  />
+                  {invalidCustomURL && (
+                    <FormHelperText>
+                      <HelperText>
+                        <HelperTextItem icon={<ExclamationCircleIcon />} variant="error">
+                          {t('public~Please enter a URL.')}
+                        </HelperTextItem>
+                      </HelperText>
+                    </FormHelperText>
+                  )}
+                </StackItem>
+              </Stack>
+            </FormSection>
+          </ModalBody>
+          <ModalSubmitFooter
+            errorMessage={props.errorMessage}
+            inProgress={props.inProgress}
+            submitText={t('public~Save')}
+            cancel={props.cancel}
+            submitDisabled={invalidCustomURL}
+          />
+        </Form>
+      </>
     );
   },
 );

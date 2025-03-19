@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { RestoreGettingStartedButton } from '../RestoreGettingStartedButton';
 import { useGettingStartedShowState, GettingStartedShowState } from '../useGettingStartedShowState';
@@ -66,11 +65,9 @@ describe('RestoreGettingStartedButton', () => {
     ]);
 
     const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />).shallow();
-
     // TimesIcon is an x which is used by the PatternFly Label component to 'close' the label.
     wrapper
-      .find('TimesIcon')
-      .parent()
+      .find('Button[aria-label="Close Show getting started resources"]')
       .simulate('click', { preventDefault: jest.fn(), stopPropagation: jest.fn() });
 
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);

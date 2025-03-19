@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { Bullseye, Button, Icon, Spinner } from '@patternfly/react-core';
+import { Bullseye, Button, Icon, Spinner, Title } from '@patternfly/react-core';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
@@ -20,7 +20,7 @@ import { referenceFor } from '../module/k8s';
  * https://github.com/DefinitelyTyped/DefinitelyTyped/blob/3423b4fc3e3da09f8acc386bc2fee6fb8f5e0880/types/react/index.d.ts#L1763
  */
 const reactPropFix = {
-  translate: 'no',
+  translate: 'no' as 'no',
 };
 
 export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ errors, inFlight }) => {
@@ -31,7 +31,9 @@ export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ erro
     StatusBlock = (
       <>
         <Spinner size="lg" />
-        <h2>{t('public~Creating resources...')}</h2>
+        <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+          {t('public~Creating resources...')}
+        </Title>
       </>
     );
   } else if (!inFlight && !errors) {
@@ -41,9 +43,13 @@ export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ erro
           <GreenCheckCircleIcon />
         </Icon>
 
-        <h2 data-test="resources-successfully-created">
+        <Title
+          headingLevel="h2"
+          className="pf-v6-u-mb-sm"
+          data-test="resources-successfully-created"
+        >
           {t('public~Resources successfully created')}
-        </h2>
+        </Title>
       </>
     );
   } else {
@@ -53,11 +59,13 @@ export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ erro
           <YellowExclamationTriangleIcon />
         </Icon>
 
-        <h2>{t('public~One or more resources failed to be created')}</h2>
+        <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+          {t('public~One or more resources failed to be created')}
+        </Title>
       </>
     );
   }
-  return <div className="co-import-yaml-status pf-v5-u-text-align-center">{StatusBlock}</div>;
+  return <div className="co-import-yaml-status pf-v6-u-text-align-center">{StatusBlock}</div>;
 };
 
 export const ImportYAMLResourceStatus: React.FC<ImportYAMLResourceStatusProps> = ({
@@ -149,7 +157,6 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
             variant="compact"
             aria-label={t('public~Import YAML results')}
             {...reactPropFix}
-            data-codemods="true"
           >
             <Thead {...reactPropFix}>
               <Tr {...reactPropFix}>

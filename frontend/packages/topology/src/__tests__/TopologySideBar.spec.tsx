@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useUserSettings } from '@console/shared';
 import CloseButton from '@console/shared/src/components/close-button';

@@ -7,6 +7,7 @@ import {
   IncompleteDataError,
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
+import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { AccessDenied, EmptyBox } from '../empty-state';
 import { LoadError, LoadingBox } from '../loading';
 
@@ -46,7 +47,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
     if (status === 404) {
       return (
         <div className="co-m-pane__body">
-          <h1 className="co-m-pane__heading co-m-pane__heading--center">{t('404: Not Found')}</h1>
+          <PrimaryHeading centerText>{t('404: Not Found')}</PrimaryHeading>
         </div>
       );
     }
@@ -69,6 +70,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
                 }).format(loadError.labels),
               },
             )}
+            className="co-catalog-page__alert"
           />
           {props.children}
         </Data>

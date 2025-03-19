@@ -12,10 +12,9 @@ import {
   ButtonVariant,
   Divider,
   PageSection,
-  PageSectionVariants,
-  Text,
+  Content,
   Toolbar,
-  ToolbarChip,
+  ToolbarLabel,
   ToolbarContent,
   ToolbarFilter,
   ToolbarItem,
@@ -23,7 +22,6 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { getBadgeFromType, usePinnedResources } from '@console/shared';
-import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -51,8 +49,11 @@ import {
   isResourceListPage as isDynamicResourceListPage,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
-const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
+const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
+  const { plural } = useParams();
+  const [kindObj] = useK8sModel(kind || plural);
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
     isDynamicResourceListPage,
@@ -83,7 +84,7 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       hideColumnManagement
     />
   );
-});
+};
 
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [perspective] = useActivePerspective();
@@ -124,7 +125,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     setQueryArgument('kind', [...updateItems].join(','));
   };
 
-  const updateNewItems = (_filter: string, { key }: ToolbarChip) => {
+  const updateNewItems = (_filter: string, { key }: ToolbarLabel) => {
     const updateItems = selectedItems;
     updateItems.has(key) ? updateItems.delete(key) : updateItems.add(key);
     setSelectedItems(updateItems);
@@ -227,10 +228,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       <Helmet>
         <title>{t('public~Search')}</title>
       </Helmet>
-      <PageSection variant={PageSectionVariants.light}>
-        <Text component="h1">{t('public~Search')}</Text>
+      <PageSection hasBodyWrapper={false}>
+        <Content component="h1">{t('public~Search')}</Content>
         <Toolbar
-          className="co-toolbar-no-padding"
           id="search-toolbar"
           clearAllFilters={clearAll}
           collapseListedFiltersBreakpoint="xl"
@@ -239,8 +239,8 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           <ToolbarContent>
             <ToolbarItem>
               <ToolbarFilter
-                deleteChipGroup={clearSelectedItems}
-                chips={[...selectedItems].map((resourceKind) => ({
+                deleteLabelGroup={clearSelectedItems}
+                labels={[...selectedItems].map((resourceKind) => ({
                   key: resourceKind,
                   node: (
                     <>
@@ -249,12 +249,12 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                     </>
                   ),
                 }))}
-                deleteChip={updateNewItems}
+                deleteLabel={updateNewItems}
                 categoryName={t('public~Resource')}
-                chipGroupCollapsedText={t('public~{{numRemaining}} more', {
+                labelGroupCollapsedText={t('public~{{numRemaining}} more', {
                   numRemaining: '${remaining}',
                 })}
-                chipGroupExpandedText={t('public~Show less')}
+                labelGroupExpandedText={t('public~Show less')}
               >
                 <ResourceListDropdown
                   selected={[...selectedItems]}
@@ -265,14 +265,14 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             </ToolbarItem>
             <ToolbarItem className="co-search-group__filter">
               <ToolbarFilter
-                deleteChipGroup={clearLabelFilter}
-                chips={[...labelFilter]}
-                deleteChip={removeLabelFilter}
+                deleteLabelGroup={clearLabelFilter}
+                labels={[...labelFilter]}
+                deleteLabel={removeLabelFilter}
                 categoryName={t('public~Label')}
               >
                 <ToolbarFilter
-                  chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
-                  deleteChip={clearNameFilter}
+                  labels={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
+                  deleteLabel={clearNameFilter}
                   categoryName={t('public~Name')}
                 >
                   <SearchFilterDropdown
@@ -287,54 +287,55 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
         </Toolbar>
       </PageSection>
       <Divider component="div" />
-      <PageSection variant={PageSectionVariants.light}>
+      <PageSection hasBodyWrapper={false}>
         <Accordion asDefinitionList={false}>
           {[...selectedItems].map((resource) => {
             const isCollapsed = collapsedKinds.has(resource);
             return (
-              <div key={resource} className="co-search__accordion">
-                <AccordionItem>
-                  <AccordionToggle
-                    className="co-search__accordion-toggle"
-                    onClick={() => toggleKindExpanded(resource)}
-                    isExpanded={!isCollapsed}
-                    id={`${resource}-toggle`}
-                  >
-                    {getToggleText(resource)}
-                    {perspective !== 'admin' && pinnedResourcesLoaded && (
-                      <Button
-                        className="co-search-group__pin-toggle"
-                        variant={ButtonVariant.link}
-                        onClick={(e) => pinToggle(e, resource)}
-                      >
-                        {pinnedResources.includes(resource) ? (
-                          <>
-                            <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                            {t('public~Remove from navigation')}
-                          </>
-                        ) : (
-                          <>
-                            <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
-                            {t('public~Add to navigation')}
-                          </>
-                        )}
-                      </Button>
-                    )}
-                  </AccordionToggle>
-                  <AccordionContent isHidden={isCollapsed}>
-                    {!isCollapsed && (
-                      <ResourceList
-                        kind={resource}
-                        selector={selectorFromString(labelFilter.join(','))}
-                        nameFilter={typeaheadNameFilter}
-                        namespace={namespace}
-                        mock={noProjectsAvailable}
-                        key={resource}
-                      />
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              </div>
+              <AccordionItem
+                isExpanded={!isCollapsed}
+                key={resource}
+                className="co-search__accordion"
+              >
+                <AccordionToggle
+                  className="co-search__accordion-toggle"
+                  onClick={() => toggleKindExpanded(resource)}
+                  id={`${resource}-toggle`}
+                >
+                  {getToggleText(resource)}
+                  {perspective !== 'admin' && pinnedResourcesLoaded && (
+                    <Button
+                      className="co-search-group__pin-toggle"
+                      variant={ButtonVariant.link}
+                      onClick={(e) => pinToggle(e, resource)}
+                    >
+                      {pinnedResources.includes(resource) ? (
+                        <>
+                          <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          {t('public~Remove from navigation')}
+                        </>
+                      ) : (
+                        <>
+                          <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          {t('public~Add to navigation')}
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </AccordionToggle>
+                <AccordionContent>
+                  {!isCollapsed && (
+                    <ResourceList
+                      kind={resource}
+                      selector={selectorFromString(labelFilter.join(','))}
+                      nameFilter={typeaheadNameFilter}
+                      namespace={namespace}
+                      mock={noProjectsAvailable}
+                      key={resource}
+                    />
+                  )}
+                </AccordionContent>
+              </AccordionItem>
             );
           })}
         </Accordion>

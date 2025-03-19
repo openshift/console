@@ -1,7 +1,25 @@
 # Changelog for `@openshift-console/dynamic-plugin-sdk-webpack`
 
-Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
-version and PatternFly version compatibility.
+Console plugin SDK packages follow a semver scheme where the major and minor version number indicates
+the earliest supported OCP Console version, and the patch version number indicates the release of that
+particular package.
+
+For released (GA) versions of Console, use `4.x.z` packages.
+For current development version of Console, use `4.x.0-prerelease.n` packages.
+
+For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
+in [Console dynamic plugins README](./README.md).
+
+## 4.19.0-prerelease.2 - TBD
+
+- The base `tsconfig` file now sets the `jsx` option to `react-jsx` to use the new JSX transform introduced
+  in React 17+. Plugins should update their `tsconfig` files accordingly and run the `update-react-imports`
+  [react-codemod](https://github.com/reactjs/react-codemod) if needed. ([OCPBUGS-52589], [#14864])
+
+## 4.19.0-prerelease.1 - 2025-02-17
+
+- Remove Console provided PatternFly 4 shared modules ([CONSOLE-4379], [#14615])
+- Change generated JS build target from `es2016` to `es2021` ([CONSOLE-4400], [#14620])
 
 ## 1.3.0 - 2024-10-31
 
@@ -39,6 +57,8 @@ version and PatternFly version compatibility.
 
 [CONSOLE-3705]: https://issues.redhat.com/browse/CONSOLE-3705
 [CONSOLE-3853]: https://issues.redhat.com/browse/CONSOLE-3853
+[CONSOLE-4379]: https://issues.redhat.com/browse/CONSOLE-4379
+[CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -47,6 +67,7 @@ version and PatternFly version compatibility.
 [OCPBUGS-35928]: https://issues.redhat.com/browse/OCPBUGS-35928
 [OCPBUGS-38734]: https://issues.redhat.com/browse/OCPBUGS-38734
 [OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
+[OCPBUGS-52589]: https://issues.redhat.com/browse/OCPBUGS-52589
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -58,3 +79,6 @@ version and PatternFly version compatibility.
 [#13992]: https://github.com/openshift/console/pull/13992
 [#14167]: https://github.com/openshift/console/pull/14167
 [#14300]: https://github.com/openshift/console/pull/14300
+[#14615]: https://github.com/openshift/console/pull/14615
+[#14620]: https://github.com/openshift/console/pull/14620
+[#14864]: https://github.com/openshift/console/pull/14864

@@ -20,6 +20,9 @@
 // Ancillary Styles to achieve likeness with PatternFly 5
 @import 'style/ancillary/patternfly5';
 
+// :root variables
+@import 'style/root';
+
 // Overrides
 @import 'style/overrides';
 
@@ -48,16 +51,12 @@
 @import 'components/utils/log-window';
 @import 'components/utils/resource-log';
 @import 'components/utils/list-input';
-@import 'components/utils/hint-block';
 @import 'components/utils/field-level-help';
 @import 'components/image-stream';
-@import 'components/about-modal';
 @import 'components/build-pipeline';
 @import 'components/configure-ports';
 @import 'components/detail-table';
 @import 'components/dropdown';
-@import 'components/global-notification';
-@import 'components/global-telemetry-notification';
 @import 'components/import-yaml-results';
 @import 'components/list';
 @import 'components/monitoring/monitoring';
@@ -74,7 +73,6 @@
 @import 'components/sysevent-stream';
 @import 'components/icon-and-text';
 @import 'components/toggle-play';
-@import 'components/horizontal-nav';
 @import 'components/edit-yaml';
 @import 'components/sidebars/resource-sidebar';
 @import 'components/graphs/graphs';

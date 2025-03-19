@@ -1,7 +1,6 @@
-import * as React from 'react';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk/src';
-import { helmCatalogIconSVG } from '../utils';
+import { helmCatalogIconSVG } from '../utils/icons';
 
 export const AddHelmChartAction = (
   namespace: string,
@@ -10,9 +9,7 @@ export const AddHelmChartAction = (
 ): Action => ({
   id: 'helm',
   label: i18next.t('helm-plugin~Helm Charts'),
-  icon: (
-    <img style={{ height: '1em', width: '1em' }} src={helmCatalogIconSVG} alt="Helm Charts Logo" />
-  ),
+  icon: helmCatalogIconSVG,
   cta: {
     href: `/catalog/ns/${namespace}?catalogType=HelmChart`,
   },

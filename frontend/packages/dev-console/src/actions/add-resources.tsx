@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { BoltIcon } from '@patternfly/react-icons/dist/esm/icons/bolt-icon';
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { DatabaseIcon } from '@patternfly/react-icons/dist/esm/icons/database-icon';
@@ -8,7 +7,7 @@ import { LaptopCodeIcon } from '@patternfly/react-icons/dist/esm/icons/laptop-co
 import { OsImageIcon } from '@patternfly/react-icons/dist/esm/icons/os-image-icon';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk/src';
-import { eventIconStyle, ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
+import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import {
   INCONTEXT_ACTIONS_CONNECTS_TO,
@@ -167,7 +166,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   ) => ({
     id: 'create-serverless-function',
     label: i18next.t('devconsole~Create Serverless function'),
-    icon: <ServerlessFunctionIcon style={eventIconStyle} />,
+    icon: <ServerlessFunctionIcon />,
     cta: {
       href: resolvedURLWithParams(
         '/serverless-function/ns/:namespace',
@@ -188,7 +187,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   ) => ({
     id: 'create-serverless-function-samples',
     label: i18next.t('devconsole~Serverless function using Samples'),
-    icon: <ServerlessFunctionIcon style={eventIconStyle} />,
+    icon: <ServerlessFunctionIcon />,
     cta: {
       href: resolvedURLWithParams(
         '/samples/ns/:namespace?sampleType=Serverless function',

@@ -6,11 +6,14 @@ import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-ty
 import { SecondaryStatus } from '../../status';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
-const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
-  <div data-test={dataTest} className="co-dashboard-icon">
-    {(healthStateMapping[state] || healthStateMapping[HealthState.UNKNOWN]).icon}
-  </div>
-);
+const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => {
+  const Icon = (healthStateMapping[state] || healthStateMapping[HealthState.UNKNOWN]).icon;
+  return (
+    <div data-test={dataTest} className="co-dashboard-icon">
+      {React.cloneElement(Icon, { size: 'heading_2xl' })}
+    </div>
+  );
+};
 
 const HealthItem: React.FC<HealthItemProps> = React.memo(
   ({
@@ -37,7 +40,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
       >
         {state === HealthState.LOADING ? (
           <div className="skeleton-health">
-            <span className="pf-v5-u-screen-reader">
+            <span className="pf-v6-u-screen-reader">
               {t('public~Loading {{title}} status', { title })}
             </span>
           </div>

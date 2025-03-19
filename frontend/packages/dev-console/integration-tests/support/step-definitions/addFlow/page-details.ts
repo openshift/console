@@ -29,7 +29,7 @@ Then(
     addPage.verifyCard(addOptions.ImportFromGit);
     addPage.verifyCard(addOptions.ContainerImage);
     addPage.verifyCard(addOptions.YAML);
-    addPage.verifyCard(addOptions.DeveloperCatalog);
+    addPage.verifyCard(addOptions.SoftwareCatalog);
     addPage.verifyCard(addOptions.Database);
     addPage.verifyCard(addOptions.HelmChart);
   },
@@ -74,7 +74,7 @@ Then(
 );
 
 Then(
-  'user will see All services, Database, Operator Backed and Helm Chart options under Developer Catalog section',
+  'user will see All services, Database, Operator Backed and Helm Chart options under Software Catalog section',
   () => {
     verifyAddPage.verifyAddPageCard('Software Catalog');
     verifyAddPage.verifyAddPageCard('All services');
@@ -127,8 +127,8 @@ Then('user will see Detail toggle label {string}', (label: string) => {
     // find both switch labels (one for checked=on and one for unchecked=off)
     .find('span')
     // they are hidden via a CSS rule like
-    // .pf-v5-c-switch__input:not(:checked)~.pf-m-on { display: none; }
-    // .pf-v5-c-switch__input:checked~.pf-m-off { display: none; }
+    // .pf-v6-c-switch__input:not(:checked)~.pf-m-on { display: none; }
+    // .pf-v6-c-switch__input:checked~.pf-m-off { display: none; }
     .filter((_, element) => getComputedStyle(element).display !== 'none')
     .should('contain', label);
 });

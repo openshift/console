@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
+import { MemoryCellComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { formatBytesAsMiB } from '@console/internal/components/utils';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
 import { useMetricStats } from '../../../utils/useMetricStats';
@@ -12,13 +13,8 @@ type MemoryCellProps = {
   item: Node;
 };
 
-type MemoryCellComponentProps = {
-  totalBytes: number;
-  memoryByPod: any;
-};
-
 const MemoryCellComponent: React.FC<MemoryCellComponentProps> = React.memo(
-  ({ totalBytes, memoryByPod }) => (
+  ({ memoryByPod, totalBytes }) => (
     <div className="odc-topology-list-view__metrics-cell__detail--memory">
       <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
         <span>

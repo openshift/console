@@ -99,20 +99,20 @@ const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) =
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
     <EmptyBox label={t('public~Unhealthy conditions')} />
   ) : (
-    <table className="pf-v5-c-table pf-m-compact pf-m-border-rows">
-      <thead className="pf-v5-c-table__thead">
-        <tr className="pf-v5-c-table__tr">
-          <th className="pf-v5-c-table__th">{t('public~Type')}</th>
-          <th className="pf-v5-c-table__th">{t('public~Status')}</th>
-          <th className="pf-v5-c-table__th">{t('public~Timeout')}</th>
+    <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+      <thead className="pf-v6-c-table__thead">
+        <tr className="pf-v6-c-table__tr">
+          <th className="pf-v6-c-table__th">{t('public~Type')}</th>
+          <th className="pf-v6-c-table__th">{t('public~Status')}</th>
+          <th className="pf-v6-c-table__th">{t('public~Timeout')}</th>
         </tr>
       </thead>
-      <tbody className="pf-v5-c-table__tbody">
+      <tbody className="pf-v6-c-table__tbody">
         {obj.spec.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
-          <tr className="pf-v5-c-table__tr" key={i}>
-            <td className="pf-v5-c-table__td">{type}</td>
-            <td className="pf-v5-c-table__td">{status}</td>
-            <td className="pf-v5-c-table__td">{timeout}</td>
+          <tr className="pf-v6-c-table__tr" key={i}>
+            <td className="pf-v6-c-table__td">{type}</td>
+            <td className="pf-v6-c-table__td">{status}</td>
+            <td className="pf-v6-c-table__td">{timeout}</td>
           </tr>
         ))}
       </tbody>

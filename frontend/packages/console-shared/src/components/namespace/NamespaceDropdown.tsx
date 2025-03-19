@@ -15,7 +15,6 @@ import {
   Switch,
   TextInput,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import fuzzysearch from 'fuzzysearch';
@@ -24,14 +23,14 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ProjectModel, NamespaceModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  useUserSettingsCompatibility,
   ALL_NAMESPACES_KEY,
   NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
-  alphanumericCompare,
-} from '@console/shared';
-import { FLAGS } from '@console/shared/src/constants';
+  FLAGS,
+} from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { alphanumericCompare } from '@console/shared/src/utils';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';
@@ -44,17 +43,16 @@ export const NoResults: React.FC<{
   return (
     <>
       <Divider />
-      <EmptyState>
-        <EmptyStateHeader
-          titleText={
-            <>
-              {isProjects
-                ? t('console-shared~No projects found')
-                : t('console-shared~No namespaces found')}
-            </>
-          }
-          headingLevel="h4"
-        />
+      <EmptyState
+        headingLevel="h4"
+        titleText={
+          <>
+            {isProjects
+              ? t('console-shared~No projects found')
+              : t('console-shared~No namespaces found')}
+          </>
+        }
+      >
         <EmptyStateBody>{t('console-shared~No results match the filter criteria.')}</EmptyStateBody>
         <EmptyStateFooter>
           <EmptyStateActions>
@@ -131,7 +129,8 @@ const SystemSwitch: React.FC<{
             }
             isChecked={isChecked}
             onChange={(_, value) => onChange(value)}
-            className="pf-v5-c-select__menu-item pf-m-action co-namespace-dropdown__switch"
+            className="pf-v6-c-select__menu-item pf-m-action"
+            isReversed
           />
         </MenuSearchInput>
       </MenuSearch>
@@ -180,9 +179,6 @@ export const NamespaceGroup: React.FC<{
 };
 
 /* ****************************************** */
-
-// The items in the footer are not accessible via the keyboard.
-// This is being tracked in: https://github.com/patternfly/patternfly-react/issues/6031
 
 export const Footer: React.FC<{
   canCreateNew: boolean;
@@ -342,7 +338,7 @@ const NamespaceMenu: React.FC<{
       data-test="namespace-dropdown-menu"
       isScrollable
     >
-      <MenuContent maxMenuHeight="60vh">
+      <MenuContent maxMenuHeight="60vh" className="co-namespace-dropdown__menu-content">
         <Filter
           filterRef={filterRef}
           onFilterChange={setFilterText}

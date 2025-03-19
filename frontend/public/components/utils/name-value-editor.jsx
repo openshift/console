@@ -140,30 +140,34 @@ const NameValueEditor_ = withDragDropContext(
               {readOnly ? null : (
                 <div className="co-toolbar__group co-toolbar__group--left">
                   <Button
+                    icon={
+                      <PlusCircleIcon
+                        data-test-id="pairs-list__add-icon"
+                        className="co-icon-space-r"
+                      />
+                    }
                     className="pf-m-link--align-left"
                     data-test="add-button"
                     onClick={this._append}
                     type="button"
                     variant="link"
                   >
-                    <PlusCircleIcon
-                      data-test-id="pairs-list__add-icon"
-                      className="co-icon-space-r"
-                    />
                     {addString ? addString : t('public~Add more')}
                   </Button>
                   {addConfigMapSecret && (
                     <>
                       <Button
+                        icon={
+                          <PlusCircleIcon
+                            data-test-id="pairs-list__add-icon"
+                            className="co-icon-space-r"
+                          />
+                        }
                         className="pf-m-link--align-left"
                         onClick={this._appendConfigMapOrSecret}
                         type="button"
                         variant="link"
                       >
-                        <PlusCircleIcon
-                          data-test-id="pairs-list__add-icon"
-                          className="co-icon-space-r"
-                        />
                         {t('public~Add from ConfigMap or Secret')}
                       </Button>
                     </>
@@ -320,13 +324,14 @@ const EnvFromEditor_ = withDragDropContext(
             <div className="col-xs-12">
               {!readOnly && (
                 <Button
+                  icon={<PlusCircleIcon />}
                   className="pf-m-link--align-left"
                   onClick={this._append}
                   type="button"
                   variant="link"
                   isDisabled={addButtonDisabled}
                 >
-                  <PlusCircleIcon />{' '}
+                  {' '}
                   {addButtonLabel || t('public~Add all from ConfigMap or Secret')}
                 </Button>
               )}
@@ -481,21 +486,20 @@ const PairElement_ = DragSource(
         const deleteIcon = (
           <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            <span className="pf-v5-u-screen-reader">{t('public~Delete')}</span>
+            <span className="pf-v6-u-screen-reader">{t('public~Delete')}</span>
           </>
         );
         const dragButton = (
           <div>
             <Button
+              icon={<GripVerticalIcon className="pairs-list__action-icon--reorder" />}
               type="button"
               className="pairs-list__action-icon"
               tabIndex="-1"
               isDisabled={disableReorder}
               variant="plain"
               aria-label={t('public~Drag to reorder')}
-            >
-              <GripVerticalIcon className="pairs-list__action-icon--reorder" />
-            </Button>
+            />
           </div>
         );
         return connectDropTarget(
@@ -514,15 +518,16 @@ const PairElement_ = DragSource(
                 </div>
               )}
               <div className="col-xs-5 pairs-list__name-field">
-                <input
-                  type="text"
-                  data-test="pairs-list-name"
-                  className="pf-v5-c-form-control"
-                  placeholder={nameString}
-                  value={pair[NameValueEditorPair.Name]}
-                  onChange={this._onChangeName}
-                  disabled={readOnly}
-                />
+                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                  <input
+                    type="text"
+                    data-test="pairs-list-name"
+                    placeholder={nameString}
+                    value={pair[NameValueEditorPair.Name]}
+                    onChange={this._onChangeName}
+                    disabled={readOnly}
+                  />
+                </span>
               </div>
               {_.isPlainObject(pair[NameValueEditorPair.Value]) ? (
                 <div className="col-xs-5 pairs-list__value-pair-field">
@@ -537,21 +542,25 @@ const PairElement_ = DragSource(
                 </div>
               ) : (
                 <div className="col-xs-5 pairs-list__value-field">
-                  <input
-                    type="text"
-                    data-test="pairs-list-value"
-                    className="pf-v5-c-form-control"
-                    placeholder={valueString}
-                    value={pair[NameValueEditorPair.Value] || ''}
-                    onChange={this._onChangeValue}
-                    disabled={readOnly}
-                  />
+                  <span
+                    className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}
+                  >
+                    <input
+                      type="text"
+                      data-test="pairs-list-value"
+                      placeholder={valueString}
+                      value={pair[NameValueEditorPair.Value] || ''}
+                      onChange={this._onChangeValue}
+                      disabled={readOnly}
+                    />
+                  </span>
                 </div>
               )}
               {!readOnly && (
                 <div className="col-xs-1 pairs-list__action">
                   <Tooltip content={toolTip || t('public~Remove')}>
                     <Button
+                      icon={deleteIcon}
                       type="button"
                       data-test="delete-button"
                       className={classNames({
@@ -560,9 +569,7 @@ const PairElement_ = DragSource(
                       onClick={this._onRemove}
                       isDisabled={isEmpty && !alwaysAllowRemove}
                       variant="plain"
-                    >
-                      {deleteIcon}
-                    </Button>
+                    />
                   </Tooltip>
                 </div>
               )}
@@ -642,7 +649,7 @@ const EnvFromPairElement_ = DragSource(
         const deleteButton = (
           <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            <span className="pf-v5-u-screen-reader">{t('public~Delete')}</span>
+            <span className="pf-v6-u-screen-reader">{t('public~Delete')}</span>
           </>
         );
         return connectDropTarget(
@@ -658,14 +665,13 @@ const EnvFromPairElement_ = DragSource(
                 connectDragSource(
                   <div className="col-xs-1 pairs-list__action">
                     <Button
+                      icon={<GripVerticalIcon className="pairs-list__action-icon--reorder" />}
                       type="button"
                       className="pairs-list__action-icon"
                       tabIndex="-1"
                       variant="plain"
                       aria-label={t('public~Drag to reorder')}
-                    >
-                      <GripVerticalIcon className="pairs-list__action-icon--reorder" />
-                    </Button>
+                    />
                   </div>,
                 )}
               <div className="col-xs-5 pairs-list__value-pair-field">
@@ -679,28 +685,28 @@ const EnvFromPairElement_ = DragSource(
                 />
               </div>
               <div className="col-xs-5 pairs-list__name-field">
-                <input
-                  data-test-id="env-prefix"
-                  type="text"
-                  className="pf-v5-c-form-control"
-                  placeholder={valueString}
-                  value={pair[EnvFromPair.Prefix]}
-                  onChange={this._onChangePrefix}
-                  disabled={readOnly}
-                />
+                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                  <input
+                    data-test-id="env-prefix"
+                    type="text"
+                    placeholder={valueString}
+                    value={pair[EnvFromPair.Prefix]}
+                    onChange={this._onChangePrefix}
+                    disabled={readOnly}
+                  />
+                </span>
               </div>
               {readOnly ? null : (
                 <div className="col-xs-1 pairs-list__action">
                   <Tooltip content={t('public~Remove')}>
                     <Button
+                      icon={deleteButton}
                       type="button"
                       data-test-id="pairs-list__delete-from-btn"
                       className="pairs-list__span-btns"
                       onClick={this._onRemove}
                       variant="plain"
-                    >
-                      {deleteButton}
-                    </Button>
+                    />
                   </Tooltip>
                 </div>
               )}

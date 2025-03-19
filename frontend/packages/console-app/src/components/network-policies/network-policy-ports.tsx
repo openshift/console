@@ -34,7 +34,7 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
           {ports.map((port, idx) => {
             const key = `port-${idx}`;
             return (
-              <div className="pf-v5-c-input-group" key={key}>
+              <div className="pf-v6-c-input-group" key={key}>
                 <Dropdown
                   items={{
                     TCP: <>TCP</>,
@@ -47,33 +47,34 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
                   onChange={(protocol) => onSingleChange({ ...port, protocol }, idx)}
                   data-test="port-protocol"
                 />
-                <input
-                  className="pf-v5-c-form-control"
-                  onChange={(event) =>
-                    onSingleChange({ ...port, port: event.currentTarget.value }, idx)
-                  }
-                  placeholder="443"
-                  aria-describedby="ports-help"
-                  name={`${key}-port`}
-                  id={`${key}-port`}
-                  value={port.port}
-                  data-test="port-input"
-                />
+                <span className="pf-v6-c-form-control">
+                  <input
+                    onChange={(event) =>
+                      onSingleChange({ ...port, port: event.currentTarget.value }, idx)
+                    }
+                    placeholder="443"
+                    aria-describedby="ports-help"
+                    name={`${key}-port`}
+                    id={`${key}-port`}
+                    value={port.port}
+                    data-test="port-input"
+                  />
+                </span>
                 <Button
+                  icon={<MinusCircleIcon />}
                   aria-label={t('console-app~Remove port')}
                   className="co-create-networkpolicy__remove-port"
                   onClick={() => onRemove(idx)}
                   type="button"
                   variant="plain"
                   data-test="remove-port"
-                >
-                  <MinusCircleIcon />
-                </Button>
+                />
               </div>
             );
           })}
           <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__add-port">
             <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
               className="pf-m-link--align-left"
               onClick={() => {
                 onChange([...ports, { key: _.uniqueId('port-'), port: '', protocol: 'TCP' }]);
@@ -82,7 +83,6 @@ export const NetworkPolicyPorts: React.FunctionComponent<NetworkPolicyPortsProps
               variant="link"
               data-test="add-port"
             >
-              <PlusCircleIcon className="co-icon-space-r" />
               {t('console-app~Add port')}
             </Button>
           </div>

@@ -1,5 +1,4 @@
 /* eslint-disable tsdoc/syntax */
-import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -8,6 +7,7 @@ import * as classNames from 'classnames';
 import { Trans, withTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
+import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
 import {
   AsyncComponent,
@@ -555,7 +555,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
         )}
         <div className={classNames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
           {!currentEnvVars.isCreate && (
-            <h3 className="co-section-heading-tertiary">
+            <TertiaryHeading>
               {t('public~Single values (env)')}
               {!readOnly && (
                 <FieldLevelHelp>
@@ -568,7 +568,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
                   </Trans>
                 </FieldLevelHelp>
               )}
-            </h3>
+            </TertiaryHeading>
           )}
           <NameValueEditorComponent
             nameValueId={containerIndex}
@@ -584,7 +584,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
         </div>
         {currentEnvVars.isContainerArray && (
           <div className="co-m-pane__body-group environment-buttons">
-            <h3 className="co-section-heading-tertiary">
+            <TertiaryHeading>
               {t('public~All values from existing ConfigMaps or Secrets (envFrom)')}
               {!readOnly && (
                 <FieldLevelHelp>
@@ -600,7 +600,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
                   </>
                 </FieldLevelHelp>
               )}
-            </h3>
+            </TertiaryHeading>
             <EnvFromEditorComponent
               nameValueId={containerIndex}
               nameValuePairs={envVar[EnvType.ENV_FROM]}
@@ -619,7 +619,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
         {containerVars}
         {!currentEnvVars.isCreate && (
           <div className="co-m-pane__body-group">
-            <div className="pf-v5-c-form environment-buttons">
+            <div className="pf-v6-c-form environment-buttons">
               {errorMessage && (
                 <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
               )}

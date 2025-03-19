@@ -15,16 +15,16 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "exposedModules": {
-      "icons": "src/utils/icons.ts",
+      "icons": "src/utils/icons.tsx",
       "yamlTemplates": "src/templates/pipelines.ts",
-      "catalog": "src/components/catalog",
-      "topology": "src/topology",
-      "pipelineComponent": "src/components",
+      "catalog": "src/components/catalog/index.ts",
+      "topology": "src/topology/index.ts",
+      "pipelineComponent": "src/components/index.ts",
       "pipelinesComponent": "src/components/pipelines-index.ts",
       "tasksComponent": "src/components/tasks-index.ts",
       "triggersComponent": "src/components/triggers-index.ts",
       "pacComponent": "src/components/pac/index.ts",
-      "resultsComponent": "src/components/shared/results"
+      "resultsComponent": "src/components/shared/results/index.ts"
     }
   }
 }

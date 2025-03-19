@@ -65,7 +65,7 @@ const InvalidMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
       <div>
         <RedExclamationCircleIcon /> {t('public~Invalid cluster version')}
       </div>
-      <Button onClick={() => cancelUpdate(cv)} variant="primary" className="pf-v5-u-mt-xs">
+      <Button onClick={() => cancelUpdate(cv)} variant="primary" className="pf-v6-u-mt-xs">
         {t('public~Cancel update')}
       </Button>
     </div>

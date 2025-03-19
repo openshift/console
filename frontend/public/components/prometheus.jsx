@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
@@ -11,11 +10,11 @@ const { Edit, Delete, ModifyCount } = Kebab.factory;
 const menuActions = [ModifyCount, Edit, Delete];
 
 const tableColumnClasses = [
-  'pf-v5-u-w-25-on-xl',
-  'pf-v5-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v5-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-v5-u-w-8-on-xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-v5-u-w-16-on-xl',
+  'pf-v6-u-w-25-on-xl',
+  'pf-v6-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-8-on-xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-16-on-xl',
   Kebab.columnClass,
 ];
 

@@ -9,7 +9,7 @@
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "actions.useWebTerminalProvider" }
+      "handler": { "$codeRef": "useWebTerminalProvider.useWebTerminalProvider" }
     }
   },
   {

@@ -1,8 +1,8 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { CommandLineTools } from '@console/internal/components/command-line-tools';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 
 const obj = {
   data: [
@@ -52,7 +52,7 @@ describe('CommandLineTools', () => {
         wrappingComponent: Provider,
         wrappingComponentProps: { store },
       });
-      expect(wrapper.find('.co-section-heading').first().text()).toEqual(
+      expect(wrapper.find(SecondaryHeading).first().text()).toEqual(
         'oc - OpenShift Command Line Interface (CLI)',
       );
     });

@@ -5,7 +5,7 @@ import {
   Form,
   TextInput,
   FormGroup,
-  Text,
+  Content,
   Title,
   ValidatedOptions,
   Select,
@@ -78,7 +78,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [isDisabled, setDisabled] = React.useState(true);
   const [labels, setLabels] = React.useState([]);
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
-  const [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   const items: RequirementItems = React.useMemo(
     () => ({
       maxUnavailable: t('console-app~maxUnavailable'),
@@ -127,7 +127,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
 
   const handleAvailabilityRequirementKeyChange = (value: string) => {
     setRequirement(value);
-    setOpen(!isOpen);
+    setIsOpen(!isOpen);
     setDisabled(false);
     onFormValuesChange({
       ...formValues,
@@ -183,14 +183,14 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
             <FormGroup
               label={t('console-app~Labels')}
               fieldId="pdb-labels"
-              labelIcon={
+              labelHelp={
                 <FieldLevelHelp>
                   <Title headingLevel="h3">{t('console-app~Selector')}</Title>
-                  <Text className="pdb-form-popover__description">
+                  <Content component="p" className="pdb-form-popover__description">
                     {t(
                       'console-app~Label query over pods whose evictions are managed by the disruption budget. Anull selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
                     )}
-                  </Text>
+                  </Content>
                 </FieldLevelHelp>
               }
             >
@@ -221,13 +221,13 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
             <FormGroup
               fieldId="pdb-requirement"
               label={t('console-app~Availability requirement')}
-              labelIcon={<AvailabilityRequirementPopover />}
+              labelHelp={<AvailabilityRequirementPopover />}
             />
             <Split hasGutter>
               <SplitItem isFilled>
                 <Select
                   isOpen={isOpen}
-                  onOpenChange={(open) => setOpen(open)}
+                  onOpenChange={(open) => setIsOpen(open)}
                   selected={selectedRequirement}
                   onSelect={(value: string) => handleAvailabilityRequirementKeyChange(value)}
                   toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -235,7 +235,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                       ref={toggleRef}
                       isExpanded={isOpen}
                       isFullWidth
-                      onClick={(open) => setOpen(open)}
+                      onClick={() => setIsOpen(!isOpen)}
                     >
                       {selectedRequirement}
                     </MenuToggle>
@@ -292,7 +292,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
           )}
           <StackItem>
             <ButtonBar errorMessage={error} inProgress={inProgress}>
-              <ActionGroup className="pf-v5-c-form">
+              <ActionGroup className="pf-v6-c-form">
                 <Button
                   type="submit"
                   id="save-changes"

@@ -8,6 +8,7 @@ import {
   CardBody,
   Icon,
   Spinner,
+  Title,
 } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -78,9 +79,9 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
     obj?.metadata?.annotations?.[OLMAnnotation.InitializationResource];
   return (
     <>
-      <h2 className="co-clusterserviceversion-install__heading">
+      <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
         {t('olm~Operator installation failed')}
-      </h2>
+      </Title>
       <p>
         {t('olm~The operator did not install successfully.')}
         {hasInitializationResource && (
@@ -90,7 +91,7 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
           </>
         )}
       </p>
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
           <Button variant="primary">{t('olm~View error')}</Button>
         </Link>
@@ -119,10 +120,10 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
 
   return (
     <>
-      <h2 className="co-clusterserviceversion-install__heading">
+      <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
         {t('olm~Manual approval required')}
-      </h2>
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      </Title>
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <InstallPlanReview installPlan={installObj} />
         {((installObjIsInstallPlan && canPatchInstallPlans) || !installObjIsInstallPlan) && (
           <>
@@ -216,10 +217,10 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   });
   return (
     <>
-      <h2 className="co-clusterserviceversion-install__heading">
+      <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
         {t('olm~Installed operator')}: &nbsp;
         {initializationResource ? t('olm~custom resource required') : t('olm~ready for use')}
-      </h2>
+      </Title>
       {initializationResource && (
         <>
           <span>
@@ -233,7 +234,7 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
           />
         </>
       )}
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         {initializationResource ? (
           <CreateInitializationResourceButton
             initializationResource={initializationResource}
@@ -259,7 +260,9 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
   });
   return (
     <>
-      <h2 className="co-clusterserviceversion-install__heading">{t('olm~Installing Operator')}</h2>
+      <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
+        {t('olm~Installing Operator')}
+      </Title>
       {reason && (
         <p className="text-muted">
           {reason}: {message}
@@ -282,7 +285,7 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
           obj={obj}
         />
       )}
-      <ActionGroup className="pf-v5-c-form pf-v5-c-form__group--no-top-margin">
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         {initializationResource && (
           <CreateInitializationResourceButton
             disabled

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -73,7 +72,7 @@ describe('RevisionsOverviewListItem', () => {
     };
     wrapper.setProps({ service: mockServiceData });
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(wrapper.find('span.pf-v5-u-text-align-right').text()).toBe('100%');
+    expect(wrapper.find('span.pf-v6-u-text-align-right').text()).toBe('100%');
   });
 
   describe('RevisionsOverviewListItem: deployments', () => {

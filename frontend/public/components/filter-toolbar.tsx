@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom-v5-compat';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME out-of-sync @types/react-redux version as new types cause many build errors
 import { useDispatch } from 'react-redux';
 import {
   Badge,
@@ -14,7 +12,7 @@ import {
   SelectList,
   SelectOption,
   Toolbar,
-  ToolbarChip,
+  ToolbarLabel,
   ToolbarContent,
   ToolbarFilter,
   ToolbarGroup,
@@ -254,11 +252,11 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     <ToolbarFilter
       key={searchFilter.type}
       categoryName={translateFilterType(searchFilter.type)}
-      deleteChip={() => {
+      deleteLabel={() => {
         changeSearchFiltersState(searchFilter.type, '');
         applyTextFilter('', searchFilter.type);
       }}
-      chips={searchFiltersState[searchFilter.type] ? [searchFiltersState[searchFilter.type]] : []}
+      labels={searchFiltersState[searchFilter.type] ? [searchFiltersState[searchFilter.type]] : []}
     >
       <></>
     </ToolbarFilter>
@@ -357,7 +355,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   const showSearchFiltersDropdown = Object.keys(filterDropdownItems).length > 1;
   return (
     <Toolbar
-      className="co-toolbar-no-padding pf-m-toggle-group-container"
+      className="pf-m-toggle-group-container"
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}
@@ -373,21 +371,21 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   (acc, key) => (
                     <ToolbarFilter
                       key={key}
-                      chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
+                      labels={_.intersection(selectedRowFilters, filters[key]).map((item) => {
                         return {
                           key: item,
                           node: filtersNameMap[item],
                         };
                       })}
-                      deleteChip={(_filter, chip: ToolbarChip) =>
+                      deleteLabel={(_filter, chip: ToolbarLabel) =>
                         updateRowFilterSelected([chip.key])
                       }
                       categoryName={key}
-                      deleteChipGroup={() => clearAllRowFilter(key)}
-                      chipGroupCollapsedText={t('public~{{numRemaining}} more', {
+                      deleteLabelGroup={() => clearAllRowFilter(key)}
+                      labelGroupCollapsedText={t('public~{{numRemaining}} more', {
                         numRemaining: '${remaining}',
                       })}
-                      chipGroupExpandedText={t('public~Show less')}
+                      labelGroupExpandedText={t('public~Show less')}
                     >
                       {acc}
                     </ToolbarFilter>
@@ -427,26 +425,26 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
               <ToolbarItem className="co-filter-search--full-width">
                 {searchRowFilters}
                 <ToolbarFilter
-                  deleteChipGroup={() => {
+                  deleteLabelGroup={() => {
                     setLabelInputText('');
                     applyLabelFilters([]);
                   }}
-                  chips={labelSelection}
-                  deleteChip={(f, chip: string) => {
+                  labels={labelSelection}
+                  deleteLabel={(f, chip: string) => {
                     setLabelInputText('');
                     applyLabelFilters(_.difference(labelSelection, [chip]));
                   }}
                   categoryName={t('public~Label')}
                 >
                   <ToolbarFilter
-                    chips={nameInputText ? [nameInputText] : []}
-                    deleteChip={() => {
+                    labels={nameInputText ? [nameInputText] : []}
+                    deleteLabel={() => {
                       setNameInputText('');
                       applyNameFilter('');
                     }}
                     categoryName={translatedNameFilterTitle}
                   >
-                    <div className="pf-v5-c-input-group co-filter-group">
+                    <div className="pf-v6-c-input-group co-filter-group">
                       {showSearchFiltersDropdown && (
                         <DropdownInternal
                           items={filterDropdownItems}
@@ -505,6 +503,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
             <ToolbarItem>
               <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
                 <Button
+                  icon={<ColumnsIcon />}
                   variant="plain"
                   onClick={() =>
                     createColumnManagementModal({
@@ -513,9 +512,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   }
                   aria-label={t('public~Column management')}
                   data-test="manage-columns"
-                >
-                  <ColumnsIcon />
-                </Button>
+                />
               </Tooltip>
             </ToolbarItem>
           </ToolbarGroup>

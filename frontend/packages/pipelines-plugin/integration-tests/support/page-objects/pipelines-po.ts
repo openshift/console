@@ -57,7 +57,7 @@ export const pipelineBuilderPO = {
   },
   yamlView: {
     switchToYAMLView: '[id="form-radiobutton-editorType-yaml-field"]',
-    editor: 'div.react-monaco-editor-container',
+    editor: 'div.ocs-yaml-editor',
     yamlEditor: 'div.monaco-scrollable-element.editor-scrollable.vs-dark',
     sideBar: '[data-test="resource-sidebar"]',
     createButton: '[data-test-id="submit-button"]',
@@ -302,7 +302,7 @@ export const pipelinesPO = {
     },
     secretForm: '.odc-secret-form',
     advancedOptions: {
-      secretFormTitle: 'h1.odc-secret-form__title',
+      secretFormTitle: 'h3.odc-secret-form__title',
       secretName: '#form-input-secretName-field',
       accessTo: '#form-dropdown-annotations-key-field',
       serverUrl: '#form-input-annotations-value-field',

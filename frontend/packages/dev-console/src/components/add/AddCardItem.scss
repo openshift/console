@@ -1,21 +1,21 @@
 .odc-add-card-item {
-  .pf-v5-c-simple-list__item-link {
-    --pf-v5-c-simple-list__item-link--focus--FontWeight: normal;
-    --pf-v5-c-simple-list__item-link--active--FontWeight: normal;
-    --pf-v5-c-simple-list__item-link--hover--FontWeight: normal;
+  .pf-v6-c-simple-list__item-link {
+    --pf-v6-c-simple-list__item-link--focus--FontWeight: normal;
+    --pf-v6-c-simple-list__item-link--active--FontWeight: normal;
+    --pf-v6-c-simple-list__item-link--hover--FontWeight: normal;
   }
 
-  margin-top: var(--pf-v5-global--spacer--lg);
-  margin-left: calc(var(--pf-v5-global--spacer--lg) - var(--pf-v5-global--spacer--sm));
+  margin-top: var(--pf-t--global--spacer--lg);
+  margin-left: calc(var(--pf-t--global--spacer--lg) - var(--pf-t--global--spacer--sm));
 
   &__icon {
-    height: var(--pf-v5-global--FontSize--lg);
-    max-width: var(--pf-v5-global--spacer--lg);
-    min-width: var(--pf-v5-global--spacer--md);
-    color: var(--pf-v5-global--Color--100) !important;
-    // temporary fix since --pf-v5-global--FontSize--md is being computed to 14px instead of 16px
-    font-size: var(--pf-v5-global--FontSize--md);
-    margin-right: var(--pf-v5-global--spacer--sm);
+    height: var(--pf-t--global--font--size--lg);
+    max-width: var(--pf-t--global--spacer--lg);
+    min-width: var(--pf-t--global--spacer--md);
+    color: var(--pf-t--global--text--color--regular) !important;
+    // temporary fix since --pf-t--global--font--size--md is being computed to 14px instead of 16px
+    font-size: var(--pf-t--global--font--size--md);
+    margin-right: var(--pf-t--global--spacer--sm);
   }
 
   &__img-icon {
@@ -25,26 +25,20 @@
   &__title {
     display: inline;
     vertical-align: middle;
-    margin-left: var(--pf-v5-global--spacer--sm);
-    // temporary fix since --pf-v5-global--FontSize--md is being computed to 14px instead of 16px
-    font-size: var(--pf-v5-global--spacer--md) !important;
+    margin-left: var(--pf-t--global--spacer--sm);
+    // temporary fix since --pf-t--global--font--size--md is being computed to 14px instead of 16px
+    font-size: var(--pf-t--global--spacer--md) !important;
   }
 
   &__description {
-    margin: var(--pf-v5-global--spacer--sm) 0 0 var(--pf-v5-global--spacer--sm);
-    color: var(--pf-v5-global--Color--200);
-    // temporary fix since --pf-v5-global--FontSize--sm is being computed to 13px instead of 14px
-    font-size: var(--pf-v5-global--FontSize--md);
+    margin: var(--pf-t--global--spacer--sm) 0 0 var(--pf-t--global--spacer--sm);
+    color: var(--pf-t--global--text--color--subtle);
+    // temporary fix since --pf-t--global--font--size--sm is being computed to 13px instead of 14px
+    font-size: var(--pf-t--global--font--size--md);
   }
 
   a {
     padding-left: 0;
     text-decoration: none;
-  }
-}
-
-:root:where(.pf-v5-theme-dark) .odc-add-card-item {
-  &__img-icon {
-    filter: brightness(1.5) invert(1) hue-rotate(180deg) saturate(4);
   }
 }

@@ -196,7 +196,7 @@
       },
       "page": {
         "name": "Demo Plugin",
-        "href": "/demo-plugin"
+        "href": "demo-plugin"
       },
       "component": { "$codeRef": "projectTabContent" }
     }
@@ -402,7 +402,7 @@
       "href": "/test-horizontalnav"
     }
   },
-    {
+  {
     "type": "console.create-project-modal",
     "properties": {
       "component": { "$codeRef": "createProjectModal" }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ButtonType, ButtonVariant, Tooltip } from '@patternfly/react-core';
+import { Button, ButtonType, ButtonVariant, Title, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
@@ -26,7 +26,9 @@ const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (pro
 
   return (
     <div className="opp-task-sidebar-when-expression">
-      <h2>{t('pipelines-plugin~When expressions')}</h2>
+      <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+        {t('pipelines-plugin~When expressions')}
+      </Title>
       <p className="co-help-text opp-task-sidebar__paragraph">
         {field.value?.length > 0 ? (
           <Trans ns="pipelines-plugin">
@@ -49,18 +51,21 @@ const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (pro
             <div className="opp-task-sidebar-when-expression__control-button-wrapper">
               <Tooltip content={removeWhenExpressionLabel}>
                 <Button
+                  icon={
+                    <>
+                      <MinusCircleIcon />
+                      <span className="opp-task-sidebar-when-expression__control-label">
+                        {removeWhenExpressionLabel}
+                      </span>
+                    </>
+                  }
                   onClick={onDelete}
                   data-test="remove-when-expression"
                   className="opp-task-sidebar-when-expression__control-button"
                   aria-label={removeWhenExpressionLabel}
                   variant={ButtonVariant.plain}
                   type={ButtonType.button}
-                >
-                  <MinusCircleIcon />
-                  <span className="opp-task-sidebar-when-expression__control-label">
-                    {removeWhenExpressionLabel}
-                  </span>
-                </Button>
+                />
               </Tooltip>
             </div>
           </div>

@@ -41,8 +41,6 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   const renderFilterItem = (filter: CatalogFilterItem, filterName: string, groupName: string) => {
     const { label, active } = filter;
     const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
-    // TODO remove when adopting https://github.com/patternfly/patternfly-react/issues/5139
-    const dummyProps = {} as any;
     return (
       <FilterSidePanelCategoryItem
         key={filterName}
@@ -52,7 +50,6 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
           onFilterChange(groupName, filterName, e.target.checked)
         }
         data-test={`${groupName}-${_.kebabCase(filterName)}`}
-        {...dummyProps}
       >
         {label}
       </FilterSidePanelCategoryItem>

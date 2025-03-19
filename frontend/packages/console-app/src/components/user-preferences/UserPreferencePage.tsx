@@ -142,7 +142,7 @@ const UserPreferencePage: React.FC = () => {
                 activeKey={activeTabId}
                 onSelect={handleTabClick}
                 isVertical
-                variant="light300"
+                variant="secondary"
                 data-test="user-preferences tabs"
               >
                 <>{userPreferenceTabs}</>

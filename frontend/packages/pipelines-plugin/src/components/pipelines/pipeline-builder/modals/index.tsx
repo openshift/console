@@ -1,7 +1,6 @@
-import * as React from 'react';
 import { Icon } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
-import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
+import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
 import i18next from 'i18next';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import ModalContent from './ModalContent';

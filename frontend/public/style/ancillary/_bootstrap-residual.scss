@@ -12,15 +12,17 @@
   margin-top: 5px;
   margin-bottom: 10px;
   color: var(
-    --pf-v5-global--Color--100
-  ); // matches --pf-v5-c-helper-text__item-text--Color and picks up dark theme variable
+    --pf-t--global--text--color--regular
+  ); // matches --pf-v6-c-helper-text__item-text--Color and picks up dark theme variable
 }
 
-label {
-  display: inline-block;
-  max-width: 100%;
-  margin-bottom: 5px;
-  font-weight: bold;
+:where(:not([class*='pf-v6-c-'])) {
+  @at-root label#{&} {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
 }
 
 //
@@ -47,8 +49,8 @@ label {
   padding: 10px 15px;
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
-  background-color: var(--pf-v5-global--BackgroundColor--100);
-  border: 1px solid var(--pf-v5-global--BorderColor--100);
+  background-color: var(--pf-t--global--background--color--primary--default);
+  border: 1px solid var(--pf-t--global--border--color--default);
 }
 
 .radio,
@@ -79,7 +81,7 @@ label {
 .checkbox input[type='checkbox'],
 .checkbox-inline input[type='checkbox'] {
   position: absolute;
-  margin-top: 4px \9;
+  margin-top: 4px;
   margin-left: -20px;
 }
 
@@ -109,7 +111,7 @@ label {
 
 .small,
 small {
-  font-size: var(--pf-v5-global--FontSize--sm) !important;
+  font-size: var(--pf-t--global--font--size--sm) !important;
 }
 
 .table {
@@ -124,17 +126,19 @@ small {
       > th,
       > td {
         padding: var(
-          --pf-v5-global--spacer--sm
-        ); // matches --pf-v5-c-table--m-compact--cell--Padding
+          --pf-t--global--spacer--sm
+        ); // matches --pf-v6-c-table--m-compact--cell--Padding
         vertical-align: top;
-        border-top: var(--pf-v5-global--BorderWidth--sm) solid var(--pf-v5-global--BorderColor--300);
+        border-top: var(--pf-t--global--border--width--divider--default) solid
+          var(--pf-t--global--border--color--default);
       }
     }
   }
   // Bottom align for column headings
   > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: var(--pf-v5-global--BorderWidth--md) solid var(--pf-v5-global--BorderColor--300);
+    border-bottom: var(--pf-t--global--border--width--md) solid
+      var(--pf-t--global--border--color--default);
   }
   // Remove top border from thead by default
   > caption + thead,
@@ -150,9 +154,9 @@ small {
 }
 
 .text-muted {
-  color: var(--pf-v5-global--Color--200);
+  color: var(--pf-t--global--text--color--subtle);
 }
 
 .text-secondary {
-  color: var(--pf-v5-global--Color--200);
+  color: var(--pf-t--global--text--color--subtle);
 }
