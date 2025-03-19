@@ -41,7 +41,7 @@ const Search: React.FC<SearchPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <>
-      <DocumentTitle data-test="page-title">{t('devconsole~Search')}</DocumentTitle>
+      <DocumentTitle>{t('devconsole~Search')}</DocumentTitle>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
         <PageContents {...props} />
       </NamespacedPage>

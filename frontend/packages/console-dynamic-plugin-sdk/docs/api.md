@@ -2022,7 +2022,6 @@ This will change the title to "My Page Title · [Product Name]"
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `props` | The props for the Title component |
 | `children` | The title to display |
 
 

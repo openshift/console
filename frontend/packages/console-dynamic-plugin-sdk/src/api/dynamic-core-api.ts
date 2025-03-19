@@ -675,10 +675,10 @@ export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('
  * ```
  * This will change the title to "My Page Title · [Product Name]"
  *
- * @param {DocumentTitleProps} props - The props for the Title component
  * @param {DocumentTitleProps['string']} children - The title to display
  */
-export const DocumentTitle: React.FC<DocumentTitleProps> = require('@console/shared/src/components/document-title/DocumentTitle').DocumentTitle;
+export const DocumentTitle: React.FC<DocumentTitleProps> = require('@console/shared/src/components/document-title/DocumentTitle')
+  .DocumentTitle;
 
 /**
  * Sets up a poll to Prometheus for a single query.

@@ -4,10 +4,10 @@ import { DocumentTitleProps } from '@console/dynamic-plugin-sdk/src/extensions/c
 /**
  * A component to change the document title of the page.
  */
-export const DocumentTitle: React.FCC<DocumentTitleProps> = ({ children, ...props }) => {
+export const DocumentTitle: React.FCC<DocumentTitleProps> = ({ children }) => {
   return (
     <Helmet>
-      <title {...props}>{String(children)}</title>
+      <title>{String(children)}</title>
     </Helmet>
   );
 };

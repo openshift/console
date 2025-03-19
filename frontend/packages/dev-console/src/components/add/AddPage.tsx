@@ -46,7 +46,7 @@ const AddPage: React.FC = () => {
 
   return (
     <>
-      <DocumentTitle data-test-id="page-title">{`+${t('devconsole~Add')}`}</DocumentTitle>
+      <DocumentTitle>{`+${t('devconsole~Add')}`}</DocumentTitle>
       <NamespacedPage variant={nsVariant} hideApplications>
         <PageContentsWithStartGuide />
       </NamespacedPage>

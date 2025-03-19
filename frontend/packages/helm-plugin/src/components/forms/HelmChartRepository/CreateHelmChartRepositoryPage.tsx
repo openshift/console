@@ -37,9 +37,7 @@ const CreateHelmChartRepositoryPage: React.FC = () => {
 
   const renderForm = () => (
     <>
-      <DocumentTitle
-        data-test={`form-title ${isEditForm ? 'Edit' : 'Create'} Helm Chart Repository`}
-      >
+      <DocumentTitle>
         {isEditForm
           ? t('helm-plugin~Edit Helm Chart Repository')
           : t('helm-plugin~Create Helm Chart Repository')}
