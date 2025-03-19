@@ -14,7 +14,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
   getNewRoles,
@@ -158,7 +158,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
 
   return fullFormView ? (
     <NamespacedPage hideApplications variant={NamespacedPageVariants.light} disabled>
-      <Title>{t('devconsole~Project access')}</Title>
+      <DocumentTitle>{t('devconsole~Project access')}</DocumentTitle>
       {projectAccessForm}
     </NamespacedPage>
   ) : (

@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
@@ -64,7 +64,7 @@ const ResourceListPage_ = connectToPlural(
 
     return (
       <div className="co-m-list">
-        <Title>{kindObj.labelPlural}</Title>
+        <DocumentTitle>{kindObj.labelPlural}</DocumentTitle>
         <AsyncComponent
           autoFocus={!noProjectsAvailable}
           kind={modelRef}

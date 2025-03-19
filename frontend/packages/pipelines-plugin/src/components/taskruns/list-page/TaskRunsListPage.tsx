@@ -10,7 +10,7 @@ import {
   TableColumnsType,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import { ListPage } from '../../ListPage';
@@ -64,7 +64,7 @@ const TaskRunsListPage: React.FC<
   );
   return (
     <>
-      <Title>{t('pipelines-plugin~TaskRuns')}</Title>
+      <DocumentTitle>{t('pipelines-plugin~TaskRuns')}</DocumentTitle>
       {userSettingsLoaded && (
         <ListPage
           {...props}

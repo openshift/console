@@ -11,7 +11,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
@@ -117,7 +117,7 @@ const EditApplicationPage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Title>{t('devconsole~Edit')}</Title>
+      <DocumentTitle>{t('devconsole~Edit')}</DocumentTitle>
       <StatusBox loaded={isResourcesLoaded} data={editResData}>
         <EditApplicationComponent
           namespace={namespace}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams } from 'react-router-dom-v5-compat';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
@@ -60,7 +60,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
     <LoadingBox />
   ) : (
     <div className="co-m-pane__body">
-      <Title>{t('public~Add Storage')}</Title>
+      <DocumentTitle>{t('public~Add Storage')}</DocumentTitle>
       <div className="co-storage-heading__wrapper">
         <Trans t={t} ns="public">
           <PrimaryHeading>Add Storage</PrimaryHeading>

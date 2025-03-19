@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
 import { K8sResourceCommon, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   getDynamicChannelModel,
   useChannelModels,
@@ -56,7 +56,7 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
   );
   return (
     <>
-      <Title>{t('knative-plugin~Channels')}</Title>
+      <DocumentTitle>{t('knative-plugin~Channels')}</DocumentTitle>
       <MultiListPage
         {...props}
         label={t('knative-plugin~Channels')}

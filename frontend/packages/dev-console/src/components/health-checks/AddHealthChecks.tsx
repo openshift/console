@@ -16,7 +16,7 @@ import {
 import { ContainerModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
 import { useViewOnlyAccess, HealthCheckContext } from './health-checks-utils';
@@ -78,7 +78,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
 
   return (
     <HealthCheckContext.Provider value={{ viewOnly }}>
-      <Title>{pageTitle}</Title>
+      <DocumentTitle>{pageTitle}</DocumentTitle>
       <PageHeading
         title={
           <>

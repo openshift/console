@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { history } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate, referenceForModel } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { Title } from '@console/shared/src/components/title/Title';
 import { PipelineKind } from '../../../types';
 import { returnValidPipelineModel } from '../../../utils/pipeline-utils';
 import { initialPipelineFormData } from './const';
@@ -79,7 +79,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
 
   return (
     <div className="odc-pipeline-builder-page">
-      <Title>{t('pipelines-plugin~Pipeline builder')}</Title>
+      <DocumentTitle>{t('pipelines-plugin~Pipeline builder')}</DocumentTitle>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import {
@@ -225,7 +225,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   return (
     <>
-      <Title>{t('public~Search')}</Title>
+      <DocumentTitle>{t('public~Search')}</DocumentTitle>{' '}
       <PageSection hasBodyWrapper={false}>
         <Content component="h1">{t('public~Search')}</Content>
         <Toolbar

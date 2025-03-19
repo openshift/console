@@ -11,7 +11,7 @@ import {
   OperatorHubItem,
 } from '@console/operator-lifecycle-manager/src/components/operator-hub';
 import { OperatorHubTileView } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-items';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ExtensionCatalogItem } from '../database/types';
 import { useExtensionCatalogItems } from '../hooks/useExtensionCatalogItems';
@@ -66,7 +66,7 @@ const ExtensionCatalog = () => {
   return (
     <Page>
       <PageSection hasBodyWrapper={false}>
-        <Title>{t('Extension Catalog')}</Title>
+        <DocumentTitle>{t('Extension Catalog')}</DocumentTitle>
         <PageHeading title={t('Extension Catalog')} />
         <StatusBox
           skeleton={skeletonCatalog}

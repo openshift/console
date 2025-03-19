@@ -14,8 +14,8 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { LoadingBox, history } from '@console/internal/components/utils';
 import { PageLayout, isModifiedEvent } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
-import { Title } from '@console/shared/src/components/title/Title';
 import ClusterConfigurationForm from './ClusterConfigurationForm';
 import { getClusterConfigurationGroups } from './getClusterConfigurationGroups';
 import { ClusterConfigurationTabGroup } from './types';
@@ -97,7 +97,7 @@ const ClusterConfigurationPage: React.FC = () => {
 
   return (
     <div className="co-cluster-configuration-page">
-      <Title>{t('console-app~Cluster configuration')}</Title>
+      <DocumentTitle>{t('console-app~Cluster configuration')}</DocumentTitle>
       <PageLayout
         title={t('console-app~Cluster configuration')}
         hint={t(

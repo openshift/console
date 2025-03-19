@@ -902,7 +902,7 @@ export interface PodRCData {
   pods: ExtPodKind[];
 }
 
-export type TitleProps = React.HTMLProps<HTMLTitleElement> & {
+export type DocumentTitleProps = {
   /** The title to display */
   children: string;
 };

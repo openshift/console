@@ -19,7 +19,7 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { CatalogSourceModel } from '../models';
 
 enum AvailabilityValue {
@@ -87,7 +87,7 @@ export const CreateCatalogSource: React.FC = withHandlePromise(
     const title = t('olm~Create CatalogSource');
     return (
       <div className="co-m-pane__form">
-        <Title>{title}</Title>
+        <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
           title={title}
           helpText={t(

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { HorizontalNav, LoadingBox, Page } from '@console/internal/components/utils';
 import { DevPreviewBadge } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
 import GitOpsDetailsPage from './GitOpsDetailsPage';
 import GitOpsDeploymentHistory from './history/GitOpsDeploymentHistory';
@@ -39,7 +39,7 @@ export const GitOpsDetailsPageTabs: React.FC = () => {
 
   return (
     <>
-      <Title>{t('gitops-plugin~{{appName}} · Details', { appName })}</Title>
+      <DocumentTitle>{t('gitops-plugin~{{appName}} · Details', { appName })}</DocumentTitle>
       <GitOpsDetailsPageHeading
         url={location.pathname}
         appName={appName}

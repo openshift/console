@@ -19,9 +19,9 @@ import {
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
-import { Title } from '@console/shared/src/components/title/Title';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
@@ -255,7 +255,7 @@ export const OperatorHubPage = withFallback((props) => {
   );
   return (
     <>
-      <Title>OperatorHub</Title>
+      <DocumentTitle>OperatorHub</DocumentTitle>
       <div className="co-m-page__body">
         <div className="co-catalog">
           <PageHeading title="OperatorHub" />

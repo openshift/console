@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title as DocumentTitle } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   CodeBlock,

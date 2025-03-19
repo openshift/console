@@ -12,7 +12,7 @@ import {
   kindForReference,
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
@@ -49,7 +49,7 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
   const { labelPlural: projectLabelPlural } = kindObj;
   return (
     <>
-      <Title>{projectLabelPlural}</Title>
+      <DocumentTitle>{projectLabelPlural}</DocumentTitle>
       <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
         {(openProjectModal) => (
           <Trans t={t} ns="devconsole" values={{ projectLabelPlural }}>

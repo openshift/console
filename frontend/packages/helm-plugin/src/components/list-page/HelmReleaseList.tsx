@@ -13,7 +13,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { SecretModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled, CustomResourceList } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
 import {
   helmReleasesRowFilters,
@@ -131,7 +131,7 @@ const HelmReleaseList: React.FC = () => {
 
   return (
     <>
-      <Title>{t('helm-plugin~Helm Releases')}</Title>
+      <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
       <CustomResourceList
         resources={releases}
         loaded={secretsLoaded && releasesLoaded && newCount === secretsCountRef.current}

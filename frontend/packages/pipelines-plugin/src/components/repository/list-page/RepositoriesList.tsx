@@ -4,7 +4,7 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared/src';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const';
 import { RepositoryModel } from '../../../models';
 import RepositoryList from './ReppositoryList';
@@ -24,7 +24,7 @@ const RepositoriesList: React.FC<React.ComponentProps<typeof ListPage>> = (props
   }, [activePerspective, preferredTabLoaded, setPreferredTab]);
   return (
     <>
-      <Title>{t('pipelines-plugin~Pipeline Repositories')}</Title>
+      <DocumentTitle>{t('pipelines-plugin~Pipeline Repositories')}</DocumentTitle>
       <ListPage
         {...props}
         createProps={{

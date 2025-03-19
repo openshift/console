@@ -50,7 +50,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { Title as DocumentTitle } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import {

@@ -30,12 +30,12 @@ import {
   referenceFor,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
-import { Title as DocumentTitle } from '@console/shared/src/components/title/Title';
 import { RouteParams } from '@console/shared/src/types';
 import {
   ClusterServiceVersionModel,

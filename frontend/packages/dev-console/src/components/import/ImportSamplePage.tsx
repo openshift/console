@@ -13,7 +13,7 @@ import { ImageStreamModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import {
   normalizeBuilderImages,
@@ -130,7 +130,7 @@ const ImportSamplePage: React.FC = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <Title>{t('devconsole~Create Sample application')}</Title>
+      <DocumentTitle>{t('devconsole~Create Sample application')}</DocumentTitle>
       <PageHeading title={t('devconsole~Create Sample application')} />
       <Formik
         initialValues={initialValues}

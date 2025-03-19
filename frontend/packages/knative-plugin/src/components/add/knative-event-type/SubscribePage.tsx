@@ -6,7 +6,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { PageHeading } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   SUBSCRIBE_PROVIDER_API_VERSION_PARAM,
   SUBSCRIBE_PROVIDER_KIND_PARAM,
@@ -34,7 +34,7 @@ const SubscribePage: React.FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Title>{t('knative-plugin~Subscribe')}</Title>
+      <DocumentTitle>{t('knative-plugin~Subscribe')}</DocumentTitle>
       <PageHeading title={t('knative-plugin~Subscribe')}>
         {t('knative-plugin~Subscribe to')} {subscribeApiVersion} {subscribeKind} {namespace}/
         {subscribeName}

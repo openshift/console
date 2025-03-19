@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useProjectAccessRoles } from './hooks';
 import ProjectAccess from './ProjectAccess';
 
@@ -15,7 +15,7 @@ const ProjectAccessPage: React.FC = (props) => {
   const showFullForm = location.pathname.includes('project-access');
   return (
     <>
-      <Title>{t('devconsole~Project access')}</Title>
+      <DocumentTitle>{t('devconsole~Project access')}</DocumentTitle>
       <Firehose
         resources={[
           {

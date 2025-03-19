@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -192,7 +192,7 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
 
   return (
     <div>
-      <Title>{t('public~Debug {{name}}', { name })}</Title>
+      <DocumentTitle>{t('public~Debug {{name}}', { name })}</DocumentTitle>
       <PageHeading
         detail
         title={t('public~Debug {{name}}', { name })}

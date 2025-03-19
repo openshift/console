@@ -56,7 +56,7 @@
 54.  [CodeEditor](#codeeditor)
 55.  [ResourceYAMLEditor](#resourceyamleditor)
 56.  [ResourceEventStream](#resourceeventstream)
-57.  [Title](#title)
+57.  [DocumentTitle](#documenttitle)
 58.  [usePrometheusPoll](#useprometheuspoll)
 59.  [Timestamp](#timestamp)
 60.  [useModal](#usemodal)
@@ -1997,7 +1997,7 @@ return <ResourceEventStream resource={resource} />
 
 ---
 
-## `Title`
+## `DocumentTitle`
 
 ### Summary 
 
@@ -2009,7 +2009,7 @@ A component to change the document title of the page.
 
 
 ```tsx
-<Title>My Page Title</Title>
+<DocumentTitle>My Page Title</DocumentTitle>
 ```
 This will change the title to "My Page Title · [Product Name]"
 

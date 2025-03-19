@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ServiceModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { ServiceKind, ServiceTypeValue } from '../../types';
@@ -37,7 +37,7 @@ const ServicesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) =>
 
   return (
     <>
-      <Title>{t('knative-plugin~Services')}</Title>
+      <DocumentTitle>{t('knative-plugin~Services')}</DocumentTitle>
       <ListPage
         canCreate
         {...props}

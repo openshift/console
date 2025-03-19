@@ -44,7 +44,7 @@ import {
   ListKind,
 } from '@console/internal/module/k8s';
 import { getName, getNamespace, getAnnotations } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -220,7 +220,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   return (
     <div className="co-volume-snapshot__body">
       <div className="co-m-pane__form">
-        <Title>{title}</Title>
+        <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
           title={<div className="co-m-pane__name">{title}</div>}
           link={

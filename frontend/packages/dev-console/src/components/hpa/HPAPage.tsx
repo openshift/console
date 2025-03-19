@@ -7,7 +7,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { useRelatedHPA } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
@@ -43,7 +43,7 @@ const HPAPage: React.FC<PageComponentProps> = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
-      <Title>{fullyLoaded ? title : HorizontalPodAutoscalerModel.label}</Title>
+      <DocumentTitle>{fullyLoaded ? title : HorizontalPodAutoscalerModel.label}</DocumentTitle>
       {fullyLoaded || error ? (
         <>
           <HPAPageHeader

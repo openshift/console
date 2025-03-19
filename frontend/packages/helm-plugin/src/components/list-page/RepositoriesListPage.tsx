@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import RepositoriesList from './RepositoriesList';
 
@@ -107,7 +107,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
 
   return (
     <>
-      <Title>{t('helm-plugin~Helm Repositories')}</Title>
+      <DocumentTitle>{t('helm-plugin~Helm Repositories')}</DocumentTitle>
       <MultiListPage
         namespace={namespace}
         flatten={flatten}

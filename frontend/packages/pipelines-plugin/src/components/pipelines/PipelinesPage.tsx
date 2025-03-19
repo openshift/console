@@ -5,7 +5,7 @@ import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelinesResourceList from './PipelinesResourceList';
 
@@ -16,7 +16,7 @@ export const PipelinesPage: React.FC = (props) => {
 
   return (
     <>
-      <Title>{t('pipelines-plugin~Pipelines')}</Title>
+      <DocumentTitle>{t('pipelines-plugin~Pipelines')}</DocumentTitle>
       {namespace ? (
         <div>
           <PipelinesResourceList

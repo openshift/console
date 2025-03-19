@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { history, LoadingBox, PageHeading } from '@console/internal/components/utils';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PAC_GH_APP_NAME } from './const';
 import { usePacGHManifest } from './hooks/usePacGHManifest';
 import { pacValidationSchema } from './pac-validation-schema';
@@ -18,7 +18,7 @@ const PacForm: React.FC<{ namespace: string }> = ({ namespace }) => {
 
   return (
     <>
-      <Title>{t('pipelines-plugin~Setup GitHub App')}</Title>
+      <DocumentTitle>{t('pipelines-plugin~Setup GitHub App')}</DocumentTitle>
       <PageHeading
         title={t('pipelines-plugin~Setup GitHub App')}
         breadcrumbs={[

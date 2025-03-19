@@ -5,7 +5,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DevPreviewBadge } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
@@ -43,7 +43,7 @@ const GitOpsListPage: React.FC = () => {
 
   return (
     <>
-      <Title>{t('gitops-plugin~Environments')}</Title>
+      <DocumentTitle>{t('gitops-plugin~Environments')}</DocumentTitle>
       <PageHeading title={t('gitops-plugin~Environments')} badge={<DevPreviewBadge />} />
       {!appGroups && !emptyStateMsg ? (
         <LoadingBox />

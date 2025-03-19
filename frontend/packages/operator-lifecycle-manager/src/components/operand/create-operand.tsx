@@ -20,6 +20,7 @@ import {
   definitionFor,
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   getSchemaErrors,
   hasNoFields,
@@ -28,7 +29,6 @@ import {
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { Title } from '@console/shared/src/components/title/Title';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { RouteParams } from '@console/shared/src/types';
@@ -159,7 +159,9 @@ const CreateOperandPage: React.FC = () => {
 
   return (
     <>
-      <Title>{t('olm~Create {{item}}', { item: kindForReference(params.plural) })}</Title>
+      <DocumentTitle>
+        {t('olm~Create {{item}}', { item: kindForReference(params.plural) })}
+      </DocumentTitle>
       <ModelStatusBox groupVersionKind={params.plural}>
         {createResourceExtension ? (
           <ErrorBoundaryPage>

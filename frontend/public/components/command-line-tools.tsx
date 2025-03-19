@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { Button, Divider } from '@patternfly/react-core';
@@ -57,7 +57,7 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
 
   return (
     <>
-      <Title>{t('public~Command Line Tools')}</Title>
+      <DocumentTitle>{t('public~Command Line Tools')}</DocumentTitle>
       <div className="co-m-pane__body">
         <PrimaryHeading>
           <div className="co-m-pane__name">{t('public~Command Line Tools')}</div>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title as DocumentTitle } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';

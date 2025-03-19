@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { connect } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as classNames from 'classnames';
@@ -635,7 +635,7 @@ const BaseEditRoleBinding = (props) => {
 
   return (
     <div className="co-m-pane__form">
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={<div data-test="title">{title}</div>}
         helpText={t(

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -169,7 +169,7 @@ export const AddKeystonePage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         helpText={t(

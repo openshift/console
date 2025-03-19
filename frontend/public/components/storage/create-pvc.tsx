@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
 
 import { useTranslation } from 'react-i18next';
@@ -264,7 +264,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
 
   return (
     <div className="co-m-pane__form">
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         link={

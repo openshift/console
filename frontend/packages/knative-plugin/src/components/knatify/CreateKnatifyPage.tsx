@@ -18,7 +18,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { BadgeType, getBadgeFromType, usePerspectives, useRelatedHPA } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   getInitialValuesKnatify,
   knatifyResources,
@@ -115,7 +115,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Title>{t('knative-plugin~Make Serverless')}</Title>
+      <DocumentTitle>{t('knative-plugin~Make Serverless')}</DocumentTitle>
       <PageHeading
         title={t('knative-plugin~Make Serverless')}
         badge={getBadgeFromType(BadgeType.TECH)}

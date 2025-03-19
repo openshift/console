@@ -9,7 +9,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { FLAG_CAMEL_KAMELETS } from '../../../const';
 import { CamelKameletBindingModel } from '../../../models';
 import {
@@ -68,7 +68,7 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
   );
   return (
     <>
-      <Title>{t('knative-plugin~Event Sources')}</Title>
+      <DocumentTitle>{t('knative-plugin~Event Sources')}</DocumentTitle>
       <MultiListPage
         {...props}
         label={t('knative-plugin~Event Sources')}

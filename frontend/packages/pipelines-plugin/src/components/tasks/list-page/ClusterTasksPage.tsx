@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { DefaultPage } from '@console/internal/components/default-resource';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 
 const ClusterTasksPage = (props) => {
   const { t } = useTranslation();
   return (
     <>
-      <Title>{t('pipelines-plugin~ClusterTasks')}</Title>
+      <DocumentTitle>{t('pipelines-plugin~ClusterTasks')}</DocumentTitle>
       <DefaultPage {...props} />
     </>
   );

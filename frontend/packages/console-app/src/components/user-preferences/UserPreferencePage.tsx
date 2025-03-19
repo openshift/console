@@ -25,7 +25,7 @@ import {
   useQueryParams,
   Spotlight,
 } from '@console/shared';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { USER_PREFERENCES_BASE_URL } from './const';
 import {
   UserPreferenceTabGroup,
@@ -122,11 +122,11 @@ const UserPreferencePage: React.FC = () => {
   const activeTab = sortedUserPreferenceGroups.find((group) => group.id === activeTabId)?.label;
   return (
     <div className="co-user-preference-page">
-      <Title>
+      <DocumentTitle>
         {activeTab
           ? t('console-app~User Preferences {{activeTab}}', { activeTab })
           : t('console-app~User Preferences')}
-      </Title>
+      </DocumentTitle>
       <PageLayout
         title={t('console-app~User Preferences')}
         hint={t(

@@ -10,9 +10,9 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { Title } from '@console/shared/src/components/title/Title';
 import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../../../catalog/utils/const';
 import {
   HelmActionType,
@@ -216,7 +216,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <Title>{config.title}</Title>
+      <DocumentTitle>{config.title}</DocumentTitle>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

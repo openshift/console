@@ -12,7 +12,7 @@ import { ListPage } from '@console/internal/components/factory';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { PageHeading } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
 import { CreateActionDropdown } from './CreateActionDropdown';
@@ -26,7 +26,7 @@ const FunctionList: React.FC<{ namespace: string }> = (props) => {
   const { t } = useTranslation();
   return (
     <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
-      <Title>{t('knative-plugin~Functions')}</Title>
+      <DocumentTitle>{t('knative-plugin~Functions')}</DocumentTitle>
       <div className="odc-functions-list-page__heading">
         <PageHeading title={t('knative-plugin~Functions')} />
         <div className="co-m-nav-title">

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
-import { Title } from '@console/shared/src/components/title/Title';
 import AddBareMetalHost from './AddBareMetalHost';
 
 const AddBareMetalHostPage: React.FunctionComponent = () => {
@@ -17,7 +17,7 @@ const AddBareMetalHostPage: React.FunctionComponent = () => {
     : t('metal3-plugin~Add Bare Metal Host');
   return (
     <>
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       <div className="co-m-pane__body co-m-pane__form">
         {/* TODO(jtomasek): Turn this to PageHeading alternative for create forms (e.g.
         CreateResourceFormPageHeading) */}

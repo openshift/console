@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Table } from '@console/internal/components/factory';
 import { useUserSettings } from '@console/shared/src';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY } from '../../../const';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
@@ -45,7 +45,7 @@ export const PipelineRunList: React.FC<PipelineRunListProps> = (props) => {
 
   return (
     <>
-      <Title>{t('pipelines-plugin~PipelineRuns')}</Title>
+      <DocumentTitle>{t('pipelines-plugin~PipelineRuns')}</DocumentTitle>
       <Table
         {...props}
         aria-label={t(PipelineRunModel.labelPluralKey)}

@@ -5,7 +5,7 @@ import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { QUERY_PROPERTIES } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
@@ -80,7 +80,7 @@ const ImportPage: React.FunctionComponent = () => {
     <QueryFocusApplication>
       {(application) => (
         <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-          <Title>{importData.title}</Title>
+          <DocumentTitle>{importData.title}</DocumentTitle>
           <PageHeading
             title={importData.title}
             badge={importType === ImportTypes.devfile ? <DevPreviewBadge /> : null}

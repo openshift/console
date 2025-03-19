@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { Label, LabelGroup, Button, ButtonSize, ButtonVariant } from '@patternfly/react-core';
 
 import { Trans, useTranslation } from 'react-i18next';
@@ -343,7 +343,7 @@ export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest })
   const title = t('public~Events');
   return (
     <>
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       <EventsList
         {...rest}
         autoFocus={!noProjectsAvailable}

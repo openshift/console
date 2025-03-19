@@ -6,7 +6,7 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { history, getQueryArgument } from '@console/internal/components/utils';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HelmRelease, HelmActionType, HelmActionOrigins } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';
 import HelmReleaseRollbackForm from './HelmReleaseRollbackForm';
@@ -69,7 +69,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <Title>{config.title}</Title>
+      <DocumentTitle>{config.title}</DocumentTitle>
       <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
         {(props) => (
           <HelmReleaseRollbackForm

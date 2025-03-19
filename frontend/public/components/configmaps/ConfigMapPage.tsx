@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ConfigMapModel } from '@console/internal/models';
@@ -37,7 +37,7 @@ const ConfigMapPage: React.FC = () => {
 
   return (
     <>
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       {isCreateFlow ? (
         configMapForm
       ) : (

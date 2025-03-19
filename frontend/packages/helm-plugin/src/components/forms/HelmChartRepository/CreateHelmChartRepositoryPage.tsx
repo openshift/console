@@ -11,7 +11,7 @@ import {
 } from '@console/helm-plugin/src/models';
 import { kindForReference } from '@console/internal/module/k8s';
 import { useQueryParams } from '@console/shared/src';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateHelmChartRepository from './CreateHelmChartRepository';
 
 const CreateHelmChartRepositoryPage: React.FC = () => {
@@ -37,11 +37,13 @@ const CreateHelmChartRepositoryPage: React.FC = () => {
 
   const renderForm = () => (
     <>
-      <Title data-test={`form-title ${isEditForm ? 'Edit' : 'Create'} Helm Chart Repository`}>
+      <DocumentTitle
+        data-test={`form-title ${isEditForm ? 'Edit' : 'Create'} Helm Chart Repository`}
+      >
         {isEditForm
           ? t('helm-plugin~Edit Helm Chart Repository')
           : t('helm-plugin~Create Helm Chart Repository')}
-      </Title>
+      </DocumentTitle>
       <CreateHelmChartRepository
         showScopeType={canCreateHCR && canCreatePHCR}
         existingRepoName={params.name}

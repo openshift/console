@@ -11,7 +11,7 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useQueryParams } from '../../hooks';
 import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';
@@ -181,7 +181,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   return (
     <>
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       <div className="co-m-page__body">
         <div className="co-catalog">
           <PageHeading title={title} breadcrumbs={type ? breadcrumbs : null} />

@@ -6,7 +6,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useEventSinkStatus } from '../../hooks/useEventSinkStatus';
 import EventSink from './EventSink';
 import EventSinkAlert from './EventSinkAlert';
@@ -33,7 +33,7 @@ const EventSinkPage: React.FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Title>{t('knative-plugin~Event Sink')}</Title>
+      <DocumentTitle>{t('knative-plugin~Event Sink')}</DocumentTitle>
       <PageHeading title={t('knative-plugin~Create Event Sink')}>
         {t(
           'knative-plugin~Create an Event sink to receive incoming events from a particular source. Configure using YAML and form views.',

@@ -42,7 +42,7 @@ import {
 } from './build';
 import { ResourceEventStream } from './events';
 import { BuildConfigModel, BuildModel } from '../models';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared';
 import { displayDurationInWords } from './utils/build-utils';
@@ -405,7 +405,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
 
   return (
     <>
-      <Title>{t('public~BuildConfigs')}</Title>
+      <DocumentTitle>{t('public~BuildConfigs')}</DocumentTitle>
       <ListPage
         {...props}
         title={t('public~BuildConfigs')}

@@ -17,7 +17,7 @@ import {
   BreadcrumbItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
@@ -509,7 +509,7 @@ const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = Reac
     const { t } = useTranslation();
     return (
       <>
-        <Title>{t('public~Alerting')}</Title>
+        <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
         <StatusBox {...obj}>
           <AlertmanagerConfiguration {...props} obj={obj.data} />
         </StatusBox>

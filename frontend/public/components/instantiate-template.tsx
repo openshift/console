@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-import { Title } from '@console/shared/src/components/title/Title';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as classNames from 'classnames';
 import {
   ActionGroup,
@@ -417,7 +417,7 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
 
   return (
     <>
-      <Title>{title}</Title>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} />
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
         <Firehose resources={resources}>

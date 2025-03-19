@@ -4,6 +4,7 @@ import { ActionServiceProviderProps } from '../extensions/actions';
 import {
   CodeEditorProps,
   CodeEditorRef,
+  DocumentTitleProps,
   ErrorBoundaryFallbackProps,
   HorizontalNavProps,
   InventoryItemBodyProps,
@@ -25,7 +26,6 @@ import {
   ResourceYAMLEditorProps,
   TableDataProps,
   TimestampProps,
-  TitleProps,
   UseActiveColumns,
   UseActiveNamespace,
   UseAnnotationsModal,
@@ -671,14 +671,14 @@ export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('
  * A component to change the document title of the page.
  * @example
  * ```tsx
- * <Title>My Page Title</Title>
+ * <DocumentTitle>My Page Title</DocumentTitle>
  * ```
  * This will change the title to "My Page Title · [Product Name]"
  *
- * @param {TitleProps} props - The props for the Title component
- * @param {TitleProps['string']} children - The title to display
+ * @param {DocumentTitleProps} props - The props for the Title component
+ * @param {DocumentTitleProps['string']} children - The title to display
  */
-export const Title: React.FC<TitleProps> = require('@console/shared/src/components/title/Title').Title;
+export const DocumentTitle: React.FC<DocumentTitleProps> = require('@console/shared/src/components/document-title/DocumentTitle').DocumentTitle;
 
 /**
  * Sets up a poll to Prometheus for a single query.
