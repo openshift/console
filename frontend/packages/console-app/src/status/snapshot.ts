@@ -1,8 +1,12 @@
 import { TFunction } from 'i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { VolumeSnapshotStatus } from '@console/internal/module/k8s';
+import { VolumeGroupSnapshotStatus, VolumeSnapshotStatus } from '@console/internal/module/k8s';
 
-export const volumeSnapshotStatus = ({ status }: { status?: VolumeSnapshotStatus }) => {
+export const volumeSnapshotStatus = ({
+  status,
+}: {
+  status?: VolumeSnapshotStatus | VolumeGroupSnapshotStatus;
+}) => {
   const readyToUse = status?.readyToUse;
   const isError = !!status?.error?.message;
   return readyToUse ? 'Ready' : isError ? 'Error' : 'Pending';
