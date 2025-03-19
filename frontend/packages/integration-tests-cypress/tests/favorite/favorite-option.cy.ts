@@ -1,4 +1,5 @@
 import { checkErrors } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 import { nav } from '../../views/nav';
 
 describe('Favorites', () => {
@@ -6,6 +7,7 @@ describe('Favorites', () => {
     // clear any existing sessions
     Cypress.session.clearAllSavedSessions();
     cy.login();
+    guidedTour.close();
   });
 
   afterEach(() => {
