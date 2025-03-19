@@ -25,6 +25,7 @@ import {
   AlertmanagerModel,
   CronJobModel,
   HorizontalPodAutoscalerModel,
+  VolumeGroupSnapshotModel,
   VolumeSnapshotModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -564,7 +565,30 @@ const AppContents: React.FC<{}> = () => {
           />
         }
       />
-
+      <Route
+        path={`/k8s/ns/:ns/${VolumeGroupSnapshotModel.plural}/~new/form`}
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                '@console/app/src/components/volume-group-snapshot/create-volume-group-snapshot' /* webpackChunkName: "create-volume-group-snapshot" */
+              ).then((m) => m.VolumeGroupSnapshot)
+            }
+          />
+        }
+      />
+      <Route
+        path={`/k8s/all-namespaces/${VolumeGroupSnapshotModel.plural}/~new/form`}
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                '@console/app/src/components/volume-group-snapshot/create-volume-group-snapshot' /* webpackChunkName: "create-volume-group-snapshot" */
+              ).then((m) => m.VolumeGroupSnapshot)
+            }
+          />
+        }
+      />
       <Route
         path="/monitoring/alertmanagerconfig/receivers/~new"
         element={

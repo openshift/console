@@ -3,7 +3,12 @@ import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actio
 import { FLAGS } from '@console/shared/src/constants/common';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { fetchURL } from '../graphql/client';
-import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
+import {
+  GroupModel,
+  UserModel,
+  VolumeGroupSnapshotContentModel,
+  VolumeSnapshotContentModel,
+} from '../models';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -129,6 +134,14 @@ export const ssarChecks = [
     resourceAttributes: {
       group: VolumeSnapshotContentModel.apiGroup,
       resource: VolumeSnapshotContentModel.plural,
+      verb: 'list',
+    },
+  },
+  {
+    flag: FLAGS.CAN_LIST_VGSC,
+    resourceAttributes: {
+      group: VolumeGroupSnapshotContentModel.apiGroup,
+      resource: VolumeGroupSnapshotContentModel.plural,
       verb: 'list',
     },
   },

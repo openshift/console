@@ -5,9 +5,15 @@
       "id": "admin",
       "default": true,
       "name": "%console-app~Administrator%",
-      "icon": { "$codeRef": "perspective.icon" },
-      "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" },
-      "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
+      "icon": {
+        "$codeRef": "perspective.icon"
+      },
+      "landingPageURL": {
+        "$codeRef": "perspective.getLandingPageURL"
+      },
+      "importRedirectURL": {
+        "$codeRef": "perspective.getImportRedirectURL"
+      }
     }
   },
   {
@@ -32,7 +38,6 @@
       "flag": "CONSOLE_QUICKSTART"
     }
   },
-
   {
     "type": "console.flag/model",
     "properties": {
@@ -132,7 +137,6 @@
       }
     }
   },
-
   {
     "type": "console.flag/model",
     "properties": {
@@ -163,31 +167,47 @@
         "version": "v1",
         "kind": "OAuth"
       },
-      "component": { "$codeRef": "oauthConfigDetailsPage" }
+      "component": {
+        "$codeRef": "oauthConfigDetailsPage"
+      }
     },
     "flags": {
-      "required": ["OPENSHIFT_OAUTH_API"]
+      "required": [
+        "OPENSHIFT_OAUTH_API"
+      ]
     }
   },
   {
     "type": "console.context-provider",
     "properties": {
-      "provider": { "$codeRef": "tourContext.TourContextProvider" },
-      "useValueHook": { "$codeRef": "tourContext.useTourValuesForContext" }
+      "provider": {
+        "$codeRef": "tourContext.TourContextProvider"
+      },
+      "useValueHook": {
+        "$codeRef": "tourContext.useTourValuesForContext"
+      }
     }
   },
   {
     "type": "console.context-provider",
     "properties": {
-      "provider": { "$codeRef": "quickStartContext.QuickStartContextProvider" },
-      "useValueHook": { "$codeRef": "quickStartContext.useValuesForQuickStartContext" }
+      "provider": {
+        "$codeRef": "quickStartContext.QuickStartContextProvider"
+      },
+      "useValueHook": {
+        "$codeRef": "quickStartContext.useValuesForQuickStartContext"
+      }
     }
   },
   {
     "type": "console.context-provider",
     "properties": {
-      "provider": { "$codeRef": "fileUploadContext.FileUploadContextProvider" },
-      "useValueHook": { "$codeRef": "fileUploadContext.useValuesFileUploadContext" }
+      "provider": {
+        "$codeRef": "fileUploadContext.FileUploadContextProvider"
+      },
+      "useValueHook": {
+        "$codeRef": "fileUploadContext.useValuesFileUploadContext"
+      }
     }
   },
   {
@@ -204,7 +224,9 @@
       }
     },
     "flags": {
-      "required": ["CAN_LIST_VSC"]
+      "required": [
+        "CAN_LIST_VSC"
+      ]
     }
   },
   {
@@ -215,10 +237,14 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider" }
+      "provider": {
+        "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider"
+      }
     },
     "flags": {
-      "required": ["ALLOW_SERVICE_BINDING"]
+      "required": [
+        "ALLOW_SERVICE_BINDING"
+      ]
     }
   },
   {
@@ -229,10 +255,14 @@
         "version": "v1",
         "kind": "DeploymentConfig"
       },
-      "provider": { "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider" }
+      "provider": {
+        "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider"
+      }
     },
     "flags": {
-      "required": ["ALLOW_SERVICE_BINDING"]
+      "required": [
+        "ALLOW_SERVICE_BINDING"
+      ]
     }
   },
   {
@@ -248,7 +278,9 @@
       }
     },
     "flags": {
-      "required": ["ALLOW_SERVICE_BINDING"]
+      "required": [
+        "ALLOW_SERVICE_BINDING"
+      ]
     }
   },
   {
@@ -259,7 +291,9 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "deploymentProvider.useDeploymentActionsProvider" }
+      "provider": {
+        "$codeRef": "deploymentProvider.useDeploymentActionsProvider"
+      }
     }
   },
   {
@@ -270,10 +304,14 @@
         "version": "v1",
         "kind": "DeploymentConfig"
       },
-      "provider": { "$codeRef": "deploymentConfigProvider.useDeploymentConfigActionsProvider" }
+      "provider": {
+        "$codeRef": "deploymentConfigProvider.useDeploymentConfigActionsProvider"
+      }
     },
     "flags": {
-      "required": ["OPENSHIFT_DEPLOYMENTCONFIG"]
+      "required": [
+        "OPENSHIFT_DEPLOYMENTCONFIG"
+      ]
     }
   },
   {
@@ -284,7 +322,9 @@
         "version": "v1",
         "kind": "StatefulSet"
       },
-      "provider": { "$codeRef": "statefulSetProvider.useStatefulSetActionsProvider" }
+      "provider": {
+        "$codeRef": "statefulSetProvider.useStatefulSetActionsProvider"
+      }
     }
   },
   {
@@ -295,7 +335,9 @@
         "version": "v1",
         "kind": "DaemonSet"
       },
-      "provider": { "$codeRef": "daemonSetActionsProvider.useDaemonSetActionsProvider" }
+      "provider": {
+        "$codeRef": "daemonSetActionsProvider.useDaemonSetActionsProvider"
+      }
     }
   },
   {
@@ -306,7 +348,9 @@
         "version": "v1",
         "kind": "Job"
       },
-      "provider": { "$codeRef": "jobProvider.useJobActionsProvider" }
+      "provider": {
+        "$codeRef": "jobProvider.useJobActionsProvider"
+      }
     }
   },
   {
@@ -317,7 +361,9 @@
         "version": "v1",
         "kind": "CronJob"
       },
-      "provider": { "$codeRef": "cronJobProvider.useCronJobActionsProvider" }
+      "provider": {
+        "$codeRef": "cronJobProvider.useCronJobActionsProvider"
+      }
     }
   },
   {
@@ -327,7 +373,9 @@
         "version": "v1",
         "kind": "Pod"
       },
-      "provider": { "$codeRef": "podProvider.usePodActionsProvider" }
+      "provider": {
+        "$codeRef": "podProvider.usePodActionsProvider"
+      }
     }
   },
   {
@@ -338,7 +386,9 @@
         "version": "v1",
         "kind": "ReplicaSet"
       },
-      "provider": { "$codeRef": "replicaSetProvider.useReplicaSetActionsProvider" }
+      "provider": {
+        "$codeRef": "replicaSetProvider.useReplicaSetActionsProvider"
+      }
     }
   },
   {
@@ -361,7 +411,13 @@
         "kind": "StorageClass",
         "group": "storage.k8s.io"
       },
+<<<<<<< HEAD
       "provider": { "$codeRef": "storageClassProvider.useStorageClassActions" }
+=======
+      "provider": {
+        "$codeRef": "defaultProvider.useDefaultActionsProvider"
+      }
+>>>>>>> 028e543d17 (Adds CRUD action support for VolumeGroupSnapshots)
     }
   },
   {
@@ -372,32 +428,43 @@
         "kind": "VolumeSnapshotClass",
         "group": "snapshot.storage.k8s.io"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "defaultProvider.useDefaultActionsProvider"
+      }
     }
   },
-
   {
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/cluster-configuration", "/cluster-configuration/:group"],
-      "component": { "$codeRef": "ClusterConfigurationPage" }
+      "path": [
+        "/cluster-configuration",
+        "/cluster-configuration/:group"
+      ],
+      "component": {
+        "$codeRef": "ClusterConfigurationPage"
+      }
     }
   },
-
   {
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/cluster-configuration", "/cluster-configuration/:group"],
-      "component": { "$codeRef": "ClusterConfigurationPage" }
+      "path": [
+        "/cluster-configuration",
+        "/cluster-configuration/:group"
+      ],
+      "component": {
+        "$codeRef": "ClusterConfigurationPage"
+      }
     }
   },
-
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "perspectiveStateProvider.useDeveloperPerspectiveStateProvider" }
+      "handler": {
+        "$codeRef": "perspectiveStateProvider.useDeveloperPerspectiveStateProvider"
+      }
     }
   },
   {
@@ -423,7 +490,9 @@
       "insertAfter": "projects"
     },
     "flags": {
-      "required": ["DEVELOPER_PERSPECTIVE"]
+      "required": [
+        "DEVELOPER_PERSPECTIVE"
+      ]
     }
   },
   {
@@ -435,7 +504,9 @@
       "description": "%console-app~Show or hide perspectives by enabling, disabling or adding access review checks.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "perspectiveConfiguration" }
+        "component": {
+          "$codeRef": "perspectiveConfiguration"
+        }
       },
       "readAccessReview": [
         {
@@ -464,7 +535,9 @@
       "description": "%console-app~Configure a list of Quick Starts that are not shown to users.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "quickStartConfiguration" }
+        "component": {
+          "$codeRef": "quickStartConfiguration"
+        }
       },
       "readAccessReview": [
         {
@@ -492,7 +565,9 @@
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "usePerspectivesAvailable.usePerspectivesAvailable" }
+      "handler": {
+        "$codeRef": "usePerspectivesAvailable.usePerspectivesAvailable"
+      }
     }
   },
   {
@@ -539,8 +614,14 @@
             "value": "systemDefault",
             "label": "%console-app~System default%"
           },
-          { "value": "light", "label": "%console-app~Light%" },
-          { "value": "dark", "label": "%console-app~Dark%" }
+          {
+            "value": "light",
+            "label": "%console-app~Light%"
+          },
+          {
+            "value": "dark",
+            "label": "%console-app~Dark%"
+          }
         ]
       }
     }
@@ -554,12 +635,16 @@
       "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "PreferredPerspectiveSelect" }
+        "component": {
+          "$codeRef": "PreferredPerspectiveSelect"
+        }
       },
       "insertAfter": "console.theme"
     },
     "flags": {
-      "required": ["FLAG_PERSPECTIVES_AVAILABLE"]
+      "required": [
+        "FLAG_PERSPECTIVES_AVAILABLE"
+      ]
     }
   },
   {
@@ -571,7 +656,9 @@
       "description": "%console-app~If a project is not selected, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "NamespaceDropdown" }
+        "component": {
+          "$codeRef": "NamespaceDropdown"
+        }
       },
       "insertBefore": "topology.preferredView"
     }
@@ -592,8 +679,14 @@
             "value": "latest",
             "label": "%console-app~Last viewed%"
           },
-          { "value": "form", "label": "%console-app~Form%" },
-          { "value": "yaml", "label": "%console-app~YAML%" }
+          {
+            "value": "form",
+            "label": "%console-app~Form%"
+          },
+          {
+            "value": "yaml",
+            "label": "%console-app~YAML%"
+          }
         ]
       },
       "insertAfter": "topology.preferredView"
@@ -649,7 +742,9 @@
       "description": "%console-app~Select the language you want to use for the console.%",
       "field": {
         "type": "custom",
-        "component": { "$codeRef": "LanguageDropdown" }
+        "component": {
+          "$codeRef": "LanguageDropdown"
+        }
       }
     }
   },
@@ -670,7 +765,11 @@
       }
     },
     "flags": {
-      "required": ["PROMETHEUS", "MONITORING", "CAN_GET_NS"]
+      "required": [
+        "PROMETHEUS",
+        "MONITORING",
+        "CAN_GET_NS"
+      ]
     }
   },
   {
@@ -679,7 +778,10 @@
       "perspective": "admin",
       "id": "home",
       "name": "%console-app~Home%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-home", "data-tour-id": "tour-home-nav" }
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-home",
+        "data-tour-id": "tour-home-nav"
+      }
     }
   },
   {
@@ -688,7 +790,9 @@
       "perspective": "admin",
       "id": "operators",
       "name": "%console-app~Operators%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-operators" },
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-operators"
+      },
       "insertAfter": "home"
     }
   },
@@ -711,7 +815,9 @@
       "perspective": "admin",
       "id": "networking",
       "name": "%console-app~Networking%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-networking" },
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-networking"
+      },
       "insertAfter": "workloads"
     }
   },
@@ -721,7 +827,9 @@
       "perspective": "admin",
       "id": "storage",
       "name": "%console-app~Storage%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-storage" }
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-storage"
+      }
     }
   },
   {
@@ -730,9 +838,15 @@
       "perspective": "admin",
       "id": "builds",
       "name": "%console-app~Builds%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-builds" }
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-builds"
+      }
     },
-    "flags": { "required": ["OPENSHIFT"] }
+    "flags": {
+      "required": [
+        "OPENSHIFT"
+      ]
+    }
   },
   {
     "type": "console.navigation/section",
@@ -740,9 +854,15 @@
       "perspective": "admin",
       "id": "compute",
       "name": "%console-app~Compute%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-compute" }
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-compute"
+      }
     },
-    "flags": { "required": ["CAN_LIST_NODE"] }
+    "flags": {
+      "required": [
+        "CAN_LIST_NODE"
+      ]
+    }
   },
   {
     "type": "console.navigation/section",
@@ -750,7 +870,9 @@
       "perspective": "admin",
       "id": "usermanagement",
       "name": "%console-app~User Management%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-usermanagement" }
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-usermanagement"
+      }
     }
   },
   {
@@ -759,7 +881,9 @@
       "perspective": "admin",
       "id": "administration",
       "name": "%console-app~Administration%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-administration" }
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-administration"
+      }
     }
   },
   {
@@ -767,7 +891,10 @@
     "properties": {
       "perspective": "admin",
       "id": "observe",
-      "insertBefore": ["compute", "usermanagement"],
+      "insertBefore": [
+        "compute",
+        "usermanagement"
+      ],
       "name": "%console-app~Observe%",
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-monitoring"
@@ -784,7 +911,12 @@
       "href": "/dashboards"
     },
     "flags": {
-      "required": ["CAN_GET_NS", "OPENSHIFT", "PROMETHEUS", "MONITORING"]
+      "required": [
+        "CAN_GET_NS",
+        "OPENSHIFT",
+        "PROMETHEUS",
+        "MONITORING"
+      ]
     }
   },
   {
@@ -801,7 +933,11 @@
         "kind": "Project"
       }
     },
-    "flags": { "required": ["OPENSHIFT"] }
+    "flags": {
+      "required": [
+        "OPENSHIFT"
+      ]
+    }
   },
   {
     "type": "console.navigation/href",
@@ -824,7 +960,9 @@
       "insertAfter": "search",
       "name": "%console-app~API Explorer%",
       "href": "/api-explorer",
-      "startsWith": ["api-resource"]
+      "startsWith": [
+        "api-resource"
+      ]
     }
   },
   {
@@ -882,7 +1020,11 @@
         "kind": "DeploymentConfig"
       }
     },
-    "flags": { "required": ["OPENSHIFT_DEPLOYMENTCONFIG"] }
+    "flags": {
+      "required": [
+        "OPENSHIFT_DEPLOYMENTCONFIG"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -1053,7 +1195,11 @@
         "kind": "PersistentVolume"
       }
     },
-    "flags": { "required": ["CAN_LIST_PV"] }
+    "flags": {
+      "required": [
+        "CAN_LIST_PV"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -1127,7 +1273,11 @@
         "kind": "BuildConfig"
       }
     },
-    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
+    "flags": {
+      "required": [
+        "OPENSHIFT_BUILDCONFIG"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -1143,7 +1293,11 @@
         "kind": "Build"
       }
     },
-    "flags": { "required": ["OPENSHIFT_BUILD"] }
+    "flags": {
+      "required": [
+        "OPENSHIFT_BUILD"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -1153,7 +1307,9 @@
       "id": "imagestreams",
       "insertAfter": "builds",
       "name": "%console-app~ImageStreams%",
-      "startsWith": ["imagestreamtags"],
+      "startsWith": [
+        "imagestreamtags"
+      ],
       "model": {
         "group": "image.openshift.io",
         "version": "v1",
@@ -1184,7 +1340,11 @@
       "name": "%console-app~Machines%",
       "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine"
     },
-    "flags": { "required": ["CLUSTER_API"] }
+    "flags": {
+      "required": [
+        "CLUSTER_API"
+      ]
+    }
   },
   {
     "type": "console.navigation/href",
@@ -1196,7 +1356,11 @@
       "name": "%console-app~MachineSets%",
       "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
     },
-    "flags": { "required": ["CLUSTER_API"] }
+    "flags": {
+      "required": [
+        "CLUSTER_API"
+      ]
+    }
   },
   {
     "type": "console.navigation/href",
@@ -1208,7 +1372,11 @@
       "name": "%console-app~MachineAutoscalers%",
       "href": "/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler"
     },
-    "flags": { "required": ["MACHINE_AUTOSCALER"] }
+    "flags": {
+      "required": [
+        "MACHINE_AUTOSCALER"
+      ]
+    }
   },
   {
     "type": "console.navigation/href",
@@ -1220,7 +1388,11 @@
       "name": "%console-app~MachineHealthChecks%",
       "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck"
     },
-    "flags": { "required": ["MACHINE_HEALTH_CHECK"] }
+    "flags": {
+      "required": [
+        "MACHINE_HEALTH_CHECK"
+      ]
+    }
   },
   {
     "type": "console.navigation/separator",
@@ -1231,7 +1403,11 @@
       "insertAfter": "machinehealthchecks",
       "testID": "ComputeSeparator"
     },
-    "flags": { "required": ["MACHINE_CONFIG"] }
+    "flags": {
+      "required": [
+        "MACHINE_CONFIG"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1247,7 +1423,11 @@
         "kind": "MachineConfig"
       }
     },
-    "flags": { "required": ["MACHINE_CONFIG"] }
+    "flags": {
+      "required": [
+        "MACHINE_CONFIG"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1263,7 +1443,11 @@
         "kind": "MachineConfigPool"
       }
     },
-    "flags": { "required": ["MACHINE_CONFIG"] }
+    "flags": {
+      "required": [
+        "MACHINE_CONFIG"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1278,7 +1462,13 @@
         "kind": "User"
       }
     },
-    "flags": { "required": ["OPENSHIFT", "OPENSHIFT_USER_API", "CAN_LIST_USERS"] }
+    "flags": {
+      "required": [
+        "OPENSHIFT",
+        "OPENSHIFT_USER_API",
+        "CAN_LIST_USERS"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1294,7 +1484,13 @@
         "kind": "Group"
       }
     },
-    "flags": { "required": ["OPENSHIFT", "OPENSHIFT_GROUP_API", "CAN_LIST_GROUPS"] }
+    "flags": {
+      "required": [
+        "OPENSHIFT",
+        "OPENSHIFT_GROUP_API",
+        "CAN_LIST_GROUPS"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -1318,7 +1514,9 @@
       "id": "roles",
       "insertAfter": "serviceaccounts",
       "name": "%console-app~Roles%",
-      "startsWith": ["clusterroles"],
+      "startsWith": [
+        "clusterroles"
+      ],
       "model": {
         "group": "rbac.authorization.k8s.io",
         "version": "v1",
@@ -1334,7 +1532,9 @@
       "id": "rolebindings",
       "insertAfter": "roles",
       "name": "%console-app~RoleBindings%",
-      "startsWith": ["clusterrolebindings"],
+      "startsWith": [
+        "clusterrolebindings"
+      ],
       "model": {
         "group": "rbac.authorization.k8s.io",
         "version": "v1",
@@ -1357,7 +1557,11 @@
         "monitoring/alertmanageryaml"
       ]
     },
-    "flags": { "required": ["CLUSTER_VERSION"] }
+    "flags": {
+      "required": [
+        "CLUSTER_VERSION"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-cluster",
@@ -1372,7 +1576,11 @@
         "kind": "Namespace"
       }
     },
-    "flags": { "required": ["CAN_LIST_NS"] }
+    "flags": {
+      "required": [
+        "CAN_LIST_NS"
+      ]
+    }
   },
   {
     "type": "console.navigation/resource-ns",
@@ -1382,7 +1590,9 @@
       "id": "resourcequotas",
       "insertAfter": "namespaces",
       "name": "%console-app~ResourceQuotas%",
-      "startsWith": ["clusterresourcequotas"],
+      "startsWith": [
+        "clusterresourcequotas"
+      ],
       "model": {
         "version": "v1",
         "kind": "ResourceQuota"
@@ -1417,15 +1627,25 @@
         "kind": "CustomResourceDefinition"
       }
     },
-    "flags": { "required": ["CAN_LIST_CRD"] }
+    "flags": {
+      "required": [
+        "CAN_LIST_CRD"
+      ]
+    }
   },
   {
     "type": "console.dashboards/overview/health/resource",
     "properties": {
       "title": "%console-app~Dynamic Plugins%",
-      "resources": { "$codeRef": "DynamicPluginsPopover.dynamicPluginsResources" },
-      "healthHandler": { "$codeRef": "getDynamicPluginHealthState.getDynamicPluginHealthState" },
-      "popupComponent": { "$codeRef": "DynamicPluginsPopover" },
+      "resources": {
+        "$codeRef": "DynamicPluginsPopover.dynamicPluginsResources"
+      },
+      "healthHandler": {
+        "$codeRef": "getDynamicPluginHealthState.getDynamicPluginHealthState"
+      },
+      "popupComponent": {
+        "$codeRef": "DynamicPluginsPopover"
+      },
       "popupTitle": "%console-app~Dynamic Plugin status%"
     }
   },
@@ -1452,23 +1672,34 @@
           "iopsPerGB": {
             "name": "%console-app~IOPS per GiB%",
             "hintText": "%console-app~I/O operations per second per GiB%",
-            "validation": { "$codeRef": "storageProvisioners.validateAWSIopsPerGB" },
+            "validation": {
+              "$codeRef": "storageProvisioners.validateAWSIopsPerGB"
+            },
             "visible": true
           },
           "fsType": {
             "name": "%console-app~Filesystem Type%",
             "hintText": "%console-app~Filesystem type to use during volume creation. Default is ext4.%",
-            "values": { "ext4": "ext4", "xfs": "xfs", "ext2": "ext2", "ext3": "ext3" }
+            "values": {
+              "ext4": "ext4",
+              "xfs": "xfs",
+              "ext2": "ext2",
+              "ext3": "ext3"
+            }
           },
           "encrypted": {
             "name": "%console-app~Encrypted%",
             "type": "checkbox",
-            "format": { "$codeRef": "storageProvisioners.formatToString" }
+            "format": {
+              "$codeRef": "storageProvisioners.formatToString"
+            }
           },
           "kmsKeyId": {
             "name": "%console-app~KMS key ID%",
             "hintText": "%console-app~The full Amazon resource name of the key to use when encrypting the volume%",
-            "visible": { "$codeRef": "storageProvisioners.isAWSKmsKeyIdVisible" }
+            "visible": {
+              "$codeRef": "storageProvisioners.isAWSKmsKeyIdVisible"
+            }
           }
         }
       }
@@ -1480,7 +1711,9 @@
       "OTHERS": {
         "title": "%console-app~Local%",
         "provisioner": "kubernetes.io/no-provisioner",
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.LOCAL" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.LOCAL"
+        },
         "volumeBindingMode": "WaitForFirstConsumer"
       }
     }
@@ -1492,18 +1725,29 @@
         "title": "%console-app~AWS Elastic Block Storage%",
         "provisioner": "kubernetes.io/aws-ebs",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.AWS_EBS" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.AWS_EBS"
+        },
         "parameters": {
           "type": {
             "name": "%console-app~Type%",
-            "values": { "io1": "io1", "gp2": "gp2", "sc1": "sc1", "st1": "st1" },
+            "values": {
+              "io1": "io1",
+              "gp2": "gp2",
+              "sc1": "sc1",
+              "st1": "st1"
+            },
             "hintText": "%console-app~Select AWS Type%"
           },
           "iopsPerGB": {
             "name": "%console-app~IOPS per GiB%",
             "hintText": "%console-app~I/O operations per second per GiB%",
-            "validation": { "$codeRef": "storageProvisioners.validateAWSIopsPerGB" },
-            "visible": { "$codeRef": "storageProvisioners.isAWSIopsPerGBVisible" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validateAWSIopsPerGB"
+            },
+            "visible": {
+              "$codeRef": "storageProvisioners.isAWSIopsPerGBVisible"
+            }
           },
           "fsType": {
             "name": "%console-app~Filesystem type%",
@@ -1512,12 +1756,16 @@
           "encrypted": {
             "name": "%console-app~Encrypted%",
             "type": "checkbox",
-            "format": { "$codeRef": "storageProvisioners.formatToString" }
+            "format": {
+              "$codeRef": "storageProvisioners.formatToString"
+            }
           },
           "kmsKeyId": {
             "name": "%console-app~KMS key ID%",
             "hintText": "%console-app~The full Amazon resource name of the key to use when encrypting the volume%",
-            "visible": { "$codeRef": "storageProvisioners.isAWSKmsKeyIdVisible" }
+            "visible": {
+              "$codeRef": "storageProvisioners.isAWSKmsKeyIdVisible"
+            }
           }
         }
       }
@@ -1530,7 +1778,9 @@
         "title": "%console-app~GCE PD%",
         "provisioner": "kubernetes.io/gce-pd",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.GCE" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.GCE"
+        },
         "parameters": {
           "type": {
             "name": "%console-app~Type%",
@@ -1542,11 +1792,15 @@
           },
           "zone": {
             "name": "%console-app~Zone%",
-            "validation": { "$codeRef": "storageProvisioners.validateGcePdZone" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validateGcePdZone"
+            }
           },
           "zones": {
             "name": "%console-app~Zones%",
-            "validation": { "$codeRef": "storageProvisioners.validateGcePdZones" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validateGcePdZones"
+            }
           },
           "replication-type": {
             "name": "%console-app~Replication type%",
@@ -1555,7 +1809,9 @@
               "regional-pd": "regional-pd"
             },
             "hintText": "%console-app~Select Replication type%",
-            "validation": { "$codeRef": "storageProvisioners.validateGCEReplicationType" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validateGCEReplicationType"
+            }
           }
         }
       }
@@ -1568,7 +1824,9 @@
         "title": "%console-app~Glusterfs%",
         "provisioner": "kubernetes.io/glusterfs",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.GLUSTERFS" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.GLUSTERFS"
+        },
         "parameters": {
           "resturl": {
             "name": "%console-app~Gluster REST/Heketi URL%",
@@ -1588,11 +1846,15 @@
           },
           "gidMin": {
             "name": "%console-app~GID min%",
-            "validation": { "$codeRef": "storageProvisioners.validateGlusterGidMin" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validateGlusterGidMin"
+            }
           },
           "gidMax": {
             "name": "%console-app~GID max%",
-            "validation": { "$codeRef": "storageProvisioners.validateGlusterGidMax" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validateGlusterGidMax"
+            }
           },
           "volumetype": {
             "name": "%console-app~Volume type%"
@@ -1608,7 +1870,9 @@
         "title": "%console-app~OpenStack Cinder%",
         "provisioner": "kubernetes.io/cinder",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.OPENSTACK_CINDER" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.OPENSTACK_CINDER"
+        },
         "parameters": {
           "type": {
             "name": "%console-app~Volume type%"
@@ -1627,7 +1891,9 @@
         "title": "%console-app~Azure File%",
         "provisioner": "kubernetes.io/azure-file",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.AZURE_FILE" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.AZURE_FILE"
+        },
         "parameters": {
           "skuName": {
             "name": "%console-app~SKU name%",
@@ -1652,7 +1918,9 @@
         "title": "%console-app~Azure Disk%",
         "provisioner": "kubernetes.io/azure-disk",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.AZURE_DISK" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.AZURE_DISK"
+        },
         "parameters": {
           "storageaccounttype": {
             "name": "%console-app~Storage account type%",
@@ -1660,7 +1928,11 @@
           },
           "kind": {
             "name": "%console-app~Account kind%",
-            "values": { "shared": "shared", "dedicated": "dedicated", "managed": "managed" },
+            "values": {
+              "shared": "shared",
+              "dedicated": "dedicated",
+              "managed": "managed"
+            },
             "hintText": "%console-app~Select account kind%"
           }
         }
@@ -1674,7 +1946,9 @@
         "title": "%console-app~Quobyte%",
         "provisioner": "kubernetes.io/quobyte",
         "allowVolumeExpansion": false,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.QUOBYTE" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.QUOBYTE"
+        },
         "parameters": {
           "quobyteAPIServer": {
             "name": "%console-app~Quobyte API server%",
@@ -1719,7 +1993,9 @@
         "title": "%console-app~vSphere Volume%",
         "provisioner": "kubernetes.io/vsphere-volume",
         "allowVolumeExpansion": false,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.VSPHERE" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.VSPHERE"
+        },
         "parameters": {
           "diskformat": {
             "name": "%console-app~Disk format%",
@@ -1746,7 +2022,9 @@
         "title": "%console-app~Portworx Volume%",
         "provisioner": "kubernetes.io/portworx-volume",
         "allowVolumeExpansion": true,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.PORTWORX_VOLUME" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.PORTWORX_VOLUME"
+        },
         "parameters": {
           "fs": {
             "name": "%console-app~Filesystem%",
@@ -1760,12 +2038,16 @@
           "block_size": {
             "name": "%console-app~Block size%",
             "hintText": "%console-app~Block size in Kb%",
-            "validation": { "$codeRef": "storageProvisioners.validatePortworxBlockSize" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validatePortworxBlockSize"
+            }
           },
           "repl": {
             "name": "%console-app~Number of synchronous replicas to be provided in the form of replication factor%",
             "hintText": "%console-app~Number of replicas%",
-            "validation": { "$codeRef": "storageProvisioners.validatePortworxReplicas" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validatePortworxReplicas"
+            }
           },
           "io_priority": {
             "name": "%console-app~I/O priority%",
@@ -1779,25 +2061,34 @@
           "snap_interval": {
             "name": "%console-app~Snapshot interval%",
             "hintText": "%console-app~Clock/time interval in minutes for when to trigger snapshots%",
-            "validation": { "$codeRef": "storageProvisioners.validatePortworxSnapshotInterval" },
-            "format": { "$codeRef": "storageProvisioners.formatToString" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validatePortworxSnapshotInterval"
+            },
+            "format": {
+              "$codeRef": "storageProvisioners.formatToString"
+            }
           },
           "aggregation_level": {
             "name": "%console-app~Aggregation level%",
             "hintText": "%console-app~The number of chunks the volume would be distributed into%",
-            "validation": { "$codeRef": "storageProvisioners.validatePortworxAggregationLevel" },
-            "format": { "$codeRef": "storageProvisioners.formatToString" }
+            "validation": {
+              "$codeRef": "storageProvisioners.validatePortworxAggregationLevel"
+            },
+            "format": {
+              "$codeRef": "storageProvisioners.formatToString"
+            }
           },
           "ephemeral": {
             "name": "%console-app~Ephemeral%",
             "type": "checkbox",
-            "format": { "$codeRef": "storageProvisioners.formatToString" }
+            "format": {
+              "$codeRef": "storageProvisioners.formatToString"
+            }
           }
         }
       }
     }
   },
-
   {
     "type": "console.storage-class/provisioner",
     "properties": {
@@ -1805,7 +2096,9 @@
         "title": "ScaleIO",
         "provisioner": "kubernetes.io/scaleio",
         "allowVolumeExpansion": false,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.SCALEIO" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.SCALEIO"
+        },
         "parameters": {
           "gateway": {
             "name": "%console-app~API gateway%",
@@ -1843,7 +2136,9 @@
           "readOnly": {
             "name": "%console-app~Read Only%",
             "type": "checkbox",
-            "format": { "$codeRef": "storageProvisioners.formatToString" }
+            "format": {
+              "$codeRef": "storageProvisioners.formatToString"
+            }
           },
           "fsType": {
             "name": "%console-app~Filesystem Type%",
@@ -1853,7 +2148,6 @@
       }
     }
   },
-
   {
     "type": "console.storage-class/provisioner",
     "properties": {
@@ -1861,7 +2155,9 @@
         "title": "StorageOS",
         "provisioner": "kubernetes.io/storageos",
         "allowVolumeExpansion": false,
-        "documentationLink": { "$codeRef": "storageProvisionerDocs.STORAGEOS" },
+        "documentationLink": {
+          "$codeRef": "storageProvisionerDocs.STORAGEOS"
+        },
         "parameters": {
           "pool": {
             "name": "%console-app~Pool%",
@@ -1882,7 +2178,9 @@
           "adminSecretNamespace": {
             "name": "%console-app~Admin secret namespace%",
             "hintText": "%console-app~Namespace where the API configuration secret is located%",
-            "required": { "$codeRef": "storageProvisioners.isStorageOsAdminSecretNSRequired" }
+            "required": {
+              "$codeRef": "storageProvisioners.isStorageOsAdminSecretNSRequired"
+            }
           }
         }
       }
@@ -1892,16 +2190,24 @@
     "type": "console.node/status",
     "properties": {
       "title": "%console-app~Scheduling disabled%",
-      "PopoverContent": { "$codeRef": "SchedulableStatus.MarkAsSchedulablePopover" },
-      "isActive": { "$codeRef": "SchedulableStatus.isUnschedulableActive" }
+      "PopoverContent": {
+        "$codeRef": "SchedulableStatus.MarkAsSchedulablePopover"
+      },
+      "isActive": {
+        "$codeRef": "SchedulableStatus.isUnschedulableActive"
+      }
     }
   },
   {
     "type": "console.node/status",
     "properties": {
       "title": "%console-app~Approval required%",
-      "PopoverContent": { "$codeRef": "CSRStatus.ServerCSRPopoverContent" },
-      "isActive": { "$codeRef": "CSRStatus.isCSRActive" },
+      "PopoverContent": {
+        "$codeRef": "CSRStatus.ServerCSRPopoverContent"
+      },
+      "isActive": {
+        "$codeRef": "CSRStatus.isCSRActive"
+      },
       "resources": {
         "csrs": {
           "groupVersionKind": {
@@ -1953,7 +2259,9 @@
       "column": "left",
       "title": "%console-app~Description%",
       "description": "%console-app~Information describing the plugin.%",
-      "component": { "$codeRef": "consolePluginDescriptionDetail" },
+      "component": {
+        "$codeRef": "consolePluginDescriptionDetail"
+      },
       "sortWeight": 1
     }
   },
@@ -1969,7 +2277,9 @@
       "column": "right",
       "title": "%console-app~Version%",
       "description": "%console-app~The specific update of the plugin.%",
-      "component": { "$codeRef": "consolePluginVersionDetail" },
+      "component": {
+        "$codeRef": "consolePluginVersionDetail"
+      },
       "sortWeight": 0
     }
   },
@@ -1985,7 +2295,9 @@
       "column": "right",
       "title": "%console-app~Status%",
       "description": "%console-app~The state of the plugin.%",
-      "component": { "$codeRef": "consolePluginStatusDetail" },
+      "component": {
+        "$codeRef": "consolePluginStatusDetail"
+      },
       "sortWeight": 1
     }
   },
@@ -2001,7 +2313,9 @@
       "column": "right",
       "title": "%console-app~Enabled%",
       "description": "%console-app~Whether or not the plugin renders in console.%",
-      "component": { "$codeRef": "consolePluginEnabledStatusDetail" },
+      "component": {
+        "$codeRef": "consolePluginEnabledStatusDetail"
+      },
       "sortWeight": 2
     }
   },
@@ -2017,7 +2331,9 @@
       "column": "right",
       "title": "%console-app~CSP Violations%",
       "description": "%console-app~Whether or not the plugin might have violated the Console Content Security Policy.%",
-      "component": { "$codeRef": "consolePluginCSPStatusDetail" },
+      "component": {
+        "$codeRef": "consolePluginCSPStatusDetail"
+      },
       "sortWeight": 3
     }
   },
@@ -2033,7 +2349,9 @@
       "column": "right",
       "title": "%console-app~Backend Service%",
       "path": "spec.backend.service",
-      "component": { "$codeRef": "consolePluginBackendDetail" },
+      "component": {
+        "$codeRef": "consolePluginBackendDetail"
+      },
       "sortWeight": 4
     }
   },
@@ -2049,14 +2367,18 @@
       "column": "right",
       "title": "%console-app~Proxy Services%",
       "path": "spec.proxy",
-      "component": { "$codeRef": "consolePluginProxyDetail" },
+      "component": {
+        "$codeRef": "consolePluginProxyDetail"
+      },
       "sortWeight": 5
     }
   },
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "getConsoleOperatorConfigFlag" }
+      "handler": {
+        "$codeRef": "getConsoleOperatorConfigFlag"
+      }
     }
   },
   {
@@ -2068,6 +2390,73 @@
       "name": "%console-app~Dynamic Plugins%",
       "href": "/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins"
     },
-    "flags": { "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG"] }
+    "flags": {
+      "required": [
+        "CAN_GET_CONSOLE_OPERATOR_CONFIG"
+      ]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumegroupsnapshots",
+      "insertAfter": "volumesnapshotcontents",
+      "name": "%console-app~VolumeGroupSnapshots%",
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "version": "v1beta1",
+        "kind": "VolumeGroupSnapshot"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumegroupsnapshotclasses",
+      "insertAfter": "volumegroupsnapshots",
+      "name": "%console-app~VolumeGroupSnapshotClasses%",
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "version": "v1beta1",
+        "kind": "VolumeGroupSnapshotClass"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "id": "volumegroupsnapshotcontents",
+      "section": "storage",
+      "name": "%console-app~VolumeGroupSnapshotContents%",
+      "insertAfter": "volumegroupsnapshotclasses",
+      "model": {
+        "group": "groupsnapshot.storage.k8s.io",
+        "kind": "VolumeGroupSnapshotContent",
+        "version": "v1beta1"
+      }
+    },
+    "flags": {
+      "required": [
+        "CAN_LIST_VGSC"
+      ]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1beta1",
+        "kind": "VolumeGroupSnapshotClass",
+        "group": "groupsnapshot.storage.k8s.io"
+      },
+      "provider": {
+        "$codeRef": "defaultProvider.useDefaultActionsProvider"
+      }
+    }
   }
 ]

@@ -55,6 +55,8 @@ import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
   ClusterRoleBindingModel,
+  VolumeGroupSnapshotModel,
+  VolumeGroupSnapshotClassModel,
 } from '../models';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
@@ -287,9 +289,19 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       '@console/app/src/components/volume-snapshot/volume-snapshot-details' /* webpackChunkName: "volume-snapshot-details" */
     ).then((m) => m.default),
   )
+  .set(referenceForModel(VolumeGroupSnapshotModel), () =>
+    import(
+      '@console/app/src/components/volume-group-snapshot/volume-group-snapshot-details' /* webpackChunkName: "volume-group-snapshot-details" */
+    ).then((m) => m.default),
+  )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class-details' /* webpackChunkName: "volume-snapshot-class-details" */
+    ).then((m) => m.default),
+  )
+  .set(referenceForModel(VolumeGroupSnapshotClassModel), () =>
+    import(
+      '@console/app/src/components/volume-group-snapshot/volume-group-snapshot-class-details' /* webpackChunkName: "volume-group-snapshot-class-details" */
     ).then((m) => m.default),
   );
 
@@ -480,9 +492,19 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       '@console/app/src/components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot" */
     ).then((m) => m.default),
   )
+  .set(referenceForModel(VolumeGroupSnapshotModel), () =>
+    import(
+      '@console/app/src/components/volume-group-snapshot/volume-group-snapshot' /* webpackChunkName: "volume-group-snapshot" */
+    ).then((m) => m.default),
+  )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class' /* webpackChunkName: "volume-snapshot-class" */
+    ).then((m) => m.default),
+  )
+  .set(referenceForModel(VolumeGroupSnapshotClassModel), () =>
+    import(
+      '@console/app/src/components/volume-group-snapshot/volume-group-snapshot-class' /* webpackChunkName: "volume-group-snapshot-class" */
     ).then((m) => m.default),
   );
 
