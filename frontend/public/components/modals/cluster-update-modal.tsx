@@ -175,13 +175,6 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
   const notRecommendedOptions = notRecommendedSortedUpdates.map(({ release: { version } }) => {
     return dropdownItem(version);
   });
-  const options = [
-    {
-      items: recommendedOptions,
-      key: 'recommended',
-      label: t('public~Recommended'),
-    },
-  ];
   if (includeNotRecommended) {
     options.unshift({
       items: notRecommendedOptions,

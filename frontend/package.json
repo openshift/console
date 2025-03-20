@@ -133,6 +133,7 @@
     "resolver": "./jest-resolver.js"
   },
   "dependencies": {
+    "@openshift-console/dynamic-plugin-sdk": "^4.19.0-prerelease.1",
     "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2",
     "@patternfly/patternfly": "^6.2.0-prerelease.3",
     "@patternfly/quickstarts": "^6.2.0-prerelease.4",

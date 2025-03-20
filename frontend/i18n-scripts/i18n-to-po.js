@@ -127,21 +127,6 @@ function processFile(fileName, packageDir, language) {
   console.log(`Processed ${fileName}`);
 }
 
-const options = {
-  string: ['language', 'package', 'file'],
-  boolean: ['help'],
-  array: ['files'],
-  alias: {
-    h: 'help',
-    p: 'package',
-    f: 'files',
-    l: 'language',
-  },
-  default: {
-    files: [],
-  },
-};
-
 const args = minimist(process.argv.slice(2), options);
 
 if (args.help) {

@@ -1,6 +1,6 @@
 /// <reference path="./react.d.ts" />
 /// <reference path="./generated/graphql-queries.d.ts" />
-
+///  <reference path="./i18next.d.ts" />
 declare module '*.svg' {
   const value: string;
   export default value;

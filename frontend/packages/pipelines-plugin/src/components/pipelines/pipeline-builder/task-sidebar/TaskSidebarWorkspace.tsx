@@ -34,16 +34,6 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
     currentLinkedWorkspaceName &&
     dropdownWorkspaces.some((resource) => resource.name === currentLinkedWorkspaceName);
 
-  const options: FormSelectFieldOption[] = [
-    {
-      label: optional
-        ? t('pipelines-plugin~No workspace')
-        : t('pipelines-plugin~Select workspace...'),
-      value: '',
-      isPlaceholder: true,
-      isDisabled: !optional,
-    },
-  ];
   if (currentLinkedWorkspaceName && !currentLinkedWorkspaceSelectable) {
     options.push({
       label: currentLinkedWorkspaceName,

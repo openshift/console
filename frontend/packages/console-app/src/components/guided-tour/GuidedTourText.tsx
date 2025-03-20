@@ -6,18 +6,18 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 
 const HelpTourText: React.FC = () => {
   const { t } = useTranslation();
-  return t(
+  return <span>{t(
     'console-app~Access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console. You can also restart this tour anytime here.',
-  );
+  )}</span>;
 };
 
 export const helpTourText = <HelpTourText />;
 
 const UserPrefrencesTourText: React.FC = () => {
   const { t } = useTranslation();
-  return t(
+  return <span>{t(
     'console-app~Set your individual console preferences including default views, language, import settings, and more.',
-  );
+  )} </span>;
 };
 
 export const userPreferencesTourText = <UserPrefrencesTourText />;

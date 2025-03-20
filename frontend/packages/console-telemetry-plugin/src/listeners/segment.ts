@@ -90,7 +90,6 @@ const initSegment = () => {
     analytics._loadOptions = e;
   };
   analytics.SNIPPET_VERSION = '4.13.1';
-  const options: Record<string, any> = {};
   if (apiHost) {
     options.integrations = { 'Segment.io': { apiHost } };
   }

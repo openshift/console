@@ -156,7 +156,6 @@ export const GroupPage: React.FC<GroupPageProps> = (props) => {
 };
 
 const UserKebab: React.FC<UserKebabProps> = ({ group, user }) => {
-  const options: KebabOption[] = [removeUser(group, user)];
   return <Kebab options={options} />;
 };
 

@@ -82,18 +82,6 @@ const LogControls: React.FC<LogControlsProps> = ({
   setWrapLines,
   showSearch,
 }) => {
-  const options = (items) =>
-    items.map((value) => {
-      return (
-        <SelectOption
-          key={value}
-          value={value}
-          className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
-        >
-          {value}
-        </SelectOption>
-      );
-    });
   const { t } = useTranslation();
 
   return (

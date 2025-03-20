@@ -21,15 +21,6 @@ const LanguageDropdown: React.FC = () => {
   const fireTelemetryEvent = useTelemetry();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
   const [isOpen, setIsOpen] = React.useState(false);
-  const options: JSX.Element[] = React.useMemo(
-    () =>
-      Object.keys(supportedLocales).map((language) => (
-        <SelectOption key={language} value={language}>
-          {supportedLocales[language]}
-        </SelectOption>
-      )),
-    [],
-  );
 
   const [isUsingDefault, setIsUsingDefault] = React.useState<boolean>(!preferredLanguage);
   const checkboxLabel: string = t('console-app~Use the default browser language setting.');

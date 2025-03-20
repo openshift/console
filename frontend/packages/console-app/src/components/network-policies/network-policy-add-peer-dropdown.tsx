@@ -9,11 +9,6 @@ export const NetworkPolicyAddPeerDropdown: React.FunctionComponent<NetworkPolicy
 ) => {
   const { t } = useTranslation();
   const { title, onSelect } = props;
-  const options = [
-    t('console-app~Allow pods from the same namespace'),
-    t('console-app~Allow pods from inside the cluster'),
-    t('console-app~Allow peers by IP block'),
-  ];
   return (
     <div className="form-group co-create-networkpolicy__add-peer">
       <Dropdown

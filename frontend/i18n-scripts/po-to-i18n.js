@@ -56,16 +56,6 @@ function processDirectory(directory, language) {
   }
 }
 
-const options = {
-  string: ['language', 'directory'],
-  boolean: ['help'],
-  alias: {
-    h: 'help',
-    d: 'directory',
-    l: 'language',
-  },
-};
-
 const args = minimist(process.argv.slice(2), options);
 
 if (args.help) {

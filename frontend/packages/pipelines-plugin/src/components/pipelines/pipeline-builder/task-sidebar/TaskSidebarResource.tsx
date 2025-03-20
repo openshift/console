@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormSelectField, FormSelectFieldOption } from '@console/shared';
+import { FormSelectField, FormSelectFieldOption
+} from '@console/shared';
 import { TektonResource } from '../../../../types';
 import { PipelineBuilderFormikValues } from '../types';
 

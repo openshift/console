@@ -76,69 +76,6 @@ const PerspectiveVisibilitySelect: React.FC<{
 }> = ({ toggleId, disabled, value, onChange }) => {
   const { t } = useTranslation();
 
-  const options: PerspectiveVisibilitySelectOptions[] = [
-    {
-      value: 'Enabled',
-      title: t('console-app~Enabled'),
-      description: t('console-app~Perspectives are enabled by default.'),
-      visibility: { state: PerspectiveVisibilityState.Enabled },
-      isSelected: !value || !value.state || value.state === PerspectiveVisibilityState.Enabled,
-    },
-    {
-      value: 'RequiredNamespace',
-      title: t('console-app~Only visible for privileged users'),
-      description: t('console-app~Privileged users can list all namespaces.'),
-      visibility: {
-        state: PerspectiveVisibilityState.AccessReview,
-        accessReview: {
-          required: [
-            {
-              resource: 'namespaces',
-              verb: 'get',
-            },
-          ],
-        },
-      },
-      isSelected:
-        value?.state === PerspectiveVisibilityState.AccessReview &&
-        value.accessReview?.required?.length === 1 &&
-        value.accessReview.required[0].resource === 'namespaces' &&
-        value.accessReview.required[0].verb === 'get' &&
-        Object.values(value.accessReview.required[0]).filter(Boolean).length === 2 &&
-        !value.accessReview?.missing?.length,
-    },
-    {
-      value: 'MissingNamespace',
-      title: t('console-app~Only visible for unprivileged users'),
-      description: t('console-app~Unprivileged users cannot list all namespaces.'),
-      visibility: {
-        state: PerspectiveVisibilityState.AccessReview,
-        accessReview: {
-          missing: [
-            {
-              resource: 'namespaces',
-              verb: 'get',
-            },
-          ],
-        },
-      },
-      isSelected:
-        value?.state === PerspectiveVisibilityState.AccessReview &&
-        value.accessReview?.missing?.length === 1 &&
-        value.accessReview.missing[0].resource === 'namespaces' &&
-        value.accessReview.missing[0].verb === 'get' &&
-        Object.values(value.accessReview.missing[0]).filter(Boolean).length === 2 &&
-        !value.accessReview?.required?.length,
-    },
-    {
-      value: 'Disabled',
-      title: t('console-app~Disabled'),
-      description: t('console-app~Disable this perspectives for all users.'),
-      visibility: { state: PerspectiveVisibilityState.Disabled },
-      isSelected: value?.state === PerspectiveVisibilityState.Disabled,
-    },
-  ];
-
   if (!options.some((option) => option.isSelected)) {
     options.push({
       value: 'Custom',

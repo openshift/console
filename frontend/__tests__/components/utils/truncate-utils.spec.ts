@@ -17,7 +17,6 @@ describe('truncateMiddle: ', () => {
   });
 
   it('should honor setting the length', () => {
-    const options: TruncateOptions = { length: 50 };
     expect(shouldTruncate(testTruncateText, options)).toBe(false);
     const truncateResult = truncateMiddle(testTruncateText, options);
     const splits = truncateResult.split('\u2026');
@@ -26,7 +25,6 @@ describe('truncateMiddle: ', () => {
   });
 
   it('should honor truncating at the end', () => {
-    const options: TruncateOptions = { truncateEnd: true };
     expect(shouldTruncate(testTruncateText, options)).toBe(true);
     const truncateResult = truncateMiddle(testTruncateText, options);
     const splits = truncateResult.split('\u2026');
@@ -36,7 +34,6 @@ describe('truncateMiddle: ', () => {
   });
 
   it('should honor the omission text', () => {
-    const options: TruncateOptions = { omission: 'zzz' };
     expect(shouldTruncate(testTruncateText, options)).toBe(true);
     const truncateResult = truncateMiddle(testTruncateText, options);
     const splits = truncateResult.split('zzz');

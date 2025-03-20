@@ -3,47 +3,6 @@ const webpack = require('@cypress/webpack-preprocessor');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = (on, config) => {
-  const options = {
-    webpackOptions: {
-      resolve: {
-        extensions: ['.ts', '.tsx', '.js'],
-        fallback: {
-          fs: false,
-          child_process: false,
-          readline: false,
-        },
-      },
-      plugins: [
-        new NodePolyfillPlugin({
-          additionalAliases: ['process'],
-        }),
-      ],
-      module: {
-        rules: [
-          {
-            test: /\.tsx?$/,
-            loader: 'esbuild-loader',
-          },
-          {
-            test: /\.feature$/,
-            use: [
-              {
-                loader: 'cypress-cucumber-preprocessor/loader',
-              },
-            ],
-          },
-          {
-            test: /\.features$/,
-            use: [
-              {
-                loader: 'cypress-cucumber-preprocessor/lib/featuresLoader',
-              },
-            ],
-          },
-        ],
-      },
-    },
-  };
   // `on` is used to hook into various events Cypress emits
   on('task', {
     log(message) {

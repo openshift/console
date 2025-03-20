@@ -151,10 +151,6 @@ const RuleKebab = ({ name, namespace, i }) => {
       }),
   });
 
-  const options = [
-    // EditRule,
-    DeleteRule,
-  ].map((f) => f(name, namespace, i));
   return <Kebab options={options} />;
 };
 
