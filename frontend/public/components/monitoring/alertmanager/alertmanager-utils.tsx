@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import * as _ from 'lodash-es';
+import { Base64 } from 'js-base64';
 import { safeLoad, safeDump } from 'js-yaml';
 
 import { SecretModel } from '../../../models';
@@ -31,7 +32,7 @@ export const getAlertmanagerYAML = (
   }
 
   try {
-    const yaml = window.atob(alertManagerYaml);
+    const yaml = Base64.decode(alertManagerYaml);
     return { yaml };
   } catch (e) {
     return { yaml: '', errorMessage: `Error decoding alertmanager.yaml: ${e}` };
@@ -55,7 +56,7 @@ export const patchAlertmanagerConfig = (
   yaml: object | string,
 ): Promise<any> => {
   const yamlString = _.isObject(yaml) ? safeDump(yaml) : yaml;
-  const yamlEncodedString = window.btoa(yamlString);
+  const yamlEncodedString = Base64.encode(yamlString);
   const patch = [{ op: 'replace', path: '/data/alertmanager.yaml', value: yamlEncodedString }];
   return k8sPatch(SecretModel, secret, patch);
 };

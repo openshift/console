@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Base64 } from 'js-base64';
 
 export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps> = ({
   id,
@@ -15,7 +16,8 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
     (name: string, value: string): void => {
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();
-      const auth = username && password ? window.btoa(`${trimmedUsername}:${trimmedPassword}`) : '';
+      const auth =
+        username && password ? Base64.encode(`${trimmedUsername}:${trimmedPassword}`) : '';
       onChange(
         {
           address,

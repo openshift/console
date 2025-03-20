@@ -10,6 +10,7 @@ import {
   SecretChangeData,
 } from './types';
 import { isBinary } from 'istextorbinary';
+import { Base64 } from 'js-base64';
 
 export const toDefaultSecretType = (formType: SecretFormType): SecretType => {
   switch (formType) {
@@ -123,7 +124,7 @@ export const arrayifyPullSecret = (
     const dockerConfigData = getDockerConfigData(pullSecretData);
     const credentials = Object.entries<DockerConfigCredential>(dockerConfigData ?? {}).map(
       ([key, { auth, email, password, username }]) => {
-        const decodedAuth = window.atob(auth || '');
+        const decodedAuth = Base64.decode(auth || '');
         const [parsedUsername, parsedPassword] = decodedAuth?.split(':') ?? [];
         return {
           address: key,
@@ -149,7 +150,7 @@ export const stringifyPullSecret = (
     if (!address) {
       return acc;
     }
-    const auth = username && password ? window.btoa(`${username}:${password}`) : '';
+    const auth = username && password ? Base64.encode(`${username}:${password}`) : '';
     return {
       ...acc,
       [address]: {

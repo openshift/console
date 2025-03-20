@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -647,7 +648,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     const onMessage = (msg) => {
       if (msg) {
         clearTimeout(timeoutIdRef.current);
-        const text = window.atob(msg);
+        const text = Base64.decode(msg);
         countRef.current += buffer.current.ingest(text);
         // Set a timeout here to render more logs together when initializing
         timeoutIdRef.current = setTimeout(() => {

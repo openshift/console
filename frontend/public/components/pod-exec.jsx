@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Base64 } from 'js-base64';
 import { withTranslation } from 'react-i18next';
 import { ExpandIcon } from '@patternfly/react-icons/dist/esm/icons/expand-icon';
 import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
@@ -93,7 +94,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
               return;
             }
           }
-          const data = window.atob(raw.slice(1));
+          const data = Base64.decode(raw.slice(1));
           current && current.onDataReceived(data);
           previous = data;
         })
@@ -123,7 +124,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
 
     componentWillUnmount() {
       const exitCode = 'exit\r';
-      this.ws && exitCode.split('').map((t) => this.ws.send(`0${window.btoa(t)}`));
+      this.ws && exitCode.split('').map((t) => this.ws.send(`0${Base64.encode(t)}`));
       this.ws && this.ws.destroy();
       delete this.ws;
     }
@@ -154,7 +155,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     onResize_(rows, cols) {
-      const data = window.btoa(JSON.stringify({ Height: rows, Width: cols }));
+      const data = Base64.encode(JSON.stringify({ Height: rows, Width: cols }));
       this.ws && this.ws.send(`4${data}`);
     }
 
@@ -163,7 +164,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     onData_(data) {
-      this.ws && this.ws.send(`0${window.btoa(data)}`);
+      this.ws && this.ws.send(`0${Base64.encode(data)}`);
     }
 
     render() {

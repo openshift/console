@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
+import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
@@ -46,7 +47,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       if (isBinary(null, Buffer.from(value, 'base64'))) {
         return null;
       }
-      return value ? window.atob(value) : '';
+      return value ? Base64.decode(value) : '';
     }),
   );
   const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
@@ -78,7 +79,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     setInProgress(true);
     const data = {
       ..._.mapValues(stringData, (value) => {
-        return window.btoa(value);
+        return Base64.encode(value);
       }),
       ...base64StringData,
     };

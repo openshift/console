@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import { Base64 } from 'js-base64';
 import { Alert, CodeBlock, CodeBlockCode } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 
@@ -22,11 +23,11 @@ const generateSecretData = (formData) => {
   authParts.push(formData.password);
 
   config.auths[formData.address] = {
-    auth: window.btoa(authParts.join(':')),
+    auth: Base64.encode(authParts.join(':')),
     email: formData.email,
   };
 
-  return window.btoa(JSON.stringify(config));
+  return Base64.encode(JSON.stringify(config));
 };
 
 class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
@@ -80,7 +81,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
     let secretData;
 
     if (this.state.method === 'upload') {
-      secretData = window.btoa(this.state.fileData);
+      secretData = Base64.encode(this.state.fileData);
     } else {
       const elements = event.target.elements;
       const formData = {
