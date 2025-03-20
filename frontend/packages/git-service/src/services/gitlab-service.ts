@@ -1,6 +1,7 @@
 import * as GitUrlParse from 'git-url-parse';
 import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
+import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
@@ -97,7 +98,7 @@ export class GitlabService extends BaseService {
       case SecretType.PERSONAL_ACCESS_TOKEN:
       case SecretType.OAUTH:
       case SecretType.BASIC_AUTH:
-        return window.atob(this.gitsource.secretContent.password);
+        return Base64.decode(this.gitsource.secretContent.password);
       default:
         return null;
     }

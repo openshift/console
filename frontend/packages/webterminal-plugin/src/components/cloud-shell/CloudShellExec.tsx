@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, EmptyState, EmptyStateBody, EmptyStateFooter } from '@patternfly/react-core';
+import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -74,17 +75,17 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const { t } = useTranslation();
 
   const onData = (data: string): void => {
-    ws.current?.send(`0${window.btoa(data)}`);
+    ws.current?.send(`0${Base64.encode(data)}`);
     fireTelemetryEvent('Web Terminal Command Issued', { sessionId: workspaceId });
   };
 
   const handleResize = React.useCallback((cols: number, rows: number) => {
-    const data = window.btoa(JSON.stringify({ Height: rows, Width: cols }));
+    const data = Base64.encode(JSON.stringify({ Height: rows, Width: cols }));
     ws.current?.send(`4${data}`);
   }, []);
 
   const onCommand = React.useCallback((command: string): void => {
-    ws.current?.send(`0${window.btoa(`${command}\n`)}`);
+    ws.current?.send(`0${Base64.encode(`${command}\n`)}`);
   }, []);
 
   React.useEffect(() => {
@@ -140,7 +141,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             return;
           }
         }
-        const data = window.atob(msg.slice(1));
+        const data = Base64.decode(msg.slice(1));
         currentTerminal && currentTerminal.onDataReceived(data);
         previous = data;
       })
