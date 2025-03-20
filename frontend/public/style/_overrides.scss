@@ -307,22 +307,11 @@ ul {
   font-size: $font-size-base !important;
 }
 
-// TODO Remove this override when skip to content CSS is figured out.
-.pf-v6-c-skip-to-content {
-  position: absolute !important;
-}
-
 .properties-side-panel-pf-property-value {
   .pf-v6-c-alert__title,
   .pf-v6-c-menu__item-text,
   .pf-v6-c-menu-toggle {
     font-size: $font-size-base;
-  }
-}
-
-.odc-topology {
-  .pf-topology-content {
-    background-color: var(--pf-v6-c-page__main-section--BackgroundColor);
   }
 }
 
