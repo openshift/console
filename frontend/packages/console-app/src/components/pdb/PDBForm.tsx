@@ -229,7 +229,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                   isOpen={isOpen}
                   onOpenChange={(open) => setIsOpen(open)}
                   selected={selectedRequirement}
-                  onSelect={(value: string) => handleAvailabilityRequirementKeyChange(value)}
+                  onSelect={(_e, value: string) => handleAvailabilityRequirementKeyChange(value)}
                   toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
                     <MenuToggle
                       ref={toggleRef}

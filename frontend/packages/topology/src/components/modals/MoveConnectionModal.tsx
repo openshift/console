@@ -96,6 +96,7 @@ const MoveConnectionForm: React.FC<
             <Select
               id="target-node-dropdown"
               className="dropdown--full-width"
+              // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
               onSelect={(_, value: Node) => {
                 if (value) {
                   values.target = value;
