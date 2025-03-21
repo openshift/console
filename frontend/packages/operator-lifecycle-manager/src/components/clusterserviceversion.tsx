@@ -247,12 +247,12 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
 
   switch (managedNamespaces.length) {
     case 0:
-      return t('olm~All Namespaces');
+      return <span>t('olm~All Namespaces');</span>;
     case 1:
       return managedNamespaces[0] ? (
         <ResourceLink kind="Namespace" title={managedNamespaces[0]} name={managedNamespaces[0]} />
       ) : (
-        t('olm~All Namespaces')
+      <span>t('olm~All Namespaces')</span>
       );
     default:
       return (

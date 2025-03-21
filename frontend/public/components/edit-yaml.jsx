@@ -62,7 +62,7 @@ const stateToProps = (state) => ({
 });
 
 const WithYamlTemplates = (Component) =>
-  function Comp(props) {
+  (function Comp(props) {
     const kind = props?.obj?.kind;
     const [templateExtensions, resolvedTemplates] = useResolvedExtensions(
       React.useCallback((e) => isYAMLTemplate(e) && e.properties.model.kind === kind, [kind]),
@@ -84,7 +84,7 @@ const WithYamlTemplates = (Component) =>
         {...props}
       />
     );
-  };
+  });
 
 const EditYAMLInner = (props) => {
   const {
@@ -732,7 +732,6 @@ const EditYAMLInner = (props) => {
   }
 
   const readOnly = props.readOnly || notAllowed;
-  const options = { readOnly, scrollBeyondLastLine: false };
   const model = getModel(props.obj);
   const { samples, snippets } = model
     ? getResourceSidebarSamples(model, yamlSamplesList, t)

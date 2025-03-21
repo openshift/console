@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useClusterBuildStrategy } from '@console/dev-console/src/utils/shipwright-build-hook';
 import { ImportStrategy } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
-import { SingleDropdownField, SelectInputOption } from '@console/shared/src';
+import { SelectInputOption, SingleDropdownField,
+  // SelectInputOption
+} from '@console/shared/src';
 import {
   ClusterBuildStrategy,
   ReadableClusterBuildStrategies,

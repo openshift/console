@@ -15,7 +15,6 @@ export const stringPathToUISchemaPath = (path: string): string[] =>
   });
 
 export const useSchemaLabel = (schema: JSONSchema7, uiSchema: UiSchema, defaultLabel?: string) => {
-  const options = getUiOptions(uiSchema ?? {});
   const showLabel = options?.label ?? true;
   const label = (options?.title || schema?.title) as string;
   return [showLabel, label || defaultLabel] as [boolean, string];
@@ -175,10 +174,9 @@ const getJSONSchemaPropertySortWeight = (
   // Tier 5 = Infinity
   return (
     // Doesn't meet any sorting criteria, set to infinity
-    (!isRequired && !propertyUISchema && !controlFieldOffset ? Infinity : 0) -
+    ((!isRequired && !propertyUISchema && !controlFieldOffset ? Infinity : 0) -
     (isRequired ? BILLION : 0) -
-    (propertyUISchema ? MILLION : 0) +
-    offset
+    (propertyUISchema ? MILLION : 0) + offset)
   );
 };
 

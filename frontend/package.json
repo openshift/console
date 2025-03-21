@@ -133,6 +133,7 @@
     "resolver": "./jest-resolver.js"
   },
   "dependencies": {
+    "@openshift-console/dynamic-plugin-sdk": "^4.19.0-prerelease.1",
     "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2",
     "@patternfly/patternfly": "^6.2.0-prerelease.3",
     "@patternfly/quickstarts": "^6.2.0-prerelease.4",
@@ -170,7 +171,7 @@
     "graphql": "^14.0.0",
     "history": "^4.9.0",
     "hoist-non-react-statics": "3.x",
-    "i18next": "^21.8.14",
+    "i18next": "23.0.0",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-conv": "12.1.1",
     "i18next-http-backend": "^1.0.21",
@@ -194,7 +195,7 @@
     "react-dom": "^17.0.1",
     "react-draggable": "4.x",
     "react-helmet": "^6.1.0",
-    "react-i18next": "^11.7.3",
+    "react-i18next": "^13.2.2",
     "react-linkify": "^0.2.2",
     "react-modal": "^3.16.3",
     "react-redux": "7.2.9",

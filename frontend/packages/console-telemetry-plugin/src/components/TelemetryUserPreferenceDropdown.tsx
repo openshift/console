@@ -31,20 +31,6 @@ const TelemetryAnalyticsSelect: React.FC<{
   onChange: (selectedOption: TelemetryAnalyticsSelectOptions) => void;
 }> = ({ disabled, value, onChange }) => {
   const { t } = useTranslation();
-  const options: TelemetryAnalyticsSelectOptions[] = [
-    {
-      value: USER_TELEMETRY_ANALYTICS.ALLOW,
-      title: t('console-telemetry-plugin~Accept'),
-      description: t('console-telemetry-plugin~Send telemetry events.'),
-      isSelected: value === USER_TELEMETRY_ANALYTICS.ALLOW,
-    },
-    {
-      value: USER_TELEMETRY_ANALYTICS.DENY,
-      title: t('console-telemetry-plugin~Deny'),
-      description: t('console-telemetry-plugin~Do not send telemetry events.'),
-      isSelected: value === USER_TELEMETRY_ANALYTICS.DENY,
-    },
-  ];
   const [isOpen, setIsOpen] = React.useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
 

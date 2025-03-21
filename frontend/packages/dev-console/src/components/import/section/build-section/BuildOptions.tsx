@@ -7,7 +7,9 @@ import { getActiveNamespace } from '@console/internal/actions/ui';
 import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
 import { CLUSTER_PIPELINE_NS, FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
-import { SingleDropdownField, SelectInputOption, useFlag } from '@console/shared';
+import { SelectInputOption, SingleDropdownField,
+  // SelectInputOption
+  useFlag } from '@console/shared';
 import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../../const';
 import {
   isPreferredStrategyAvailable,

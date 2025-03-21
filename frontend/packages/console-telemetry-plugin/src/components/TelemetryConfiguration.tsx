@@ -42,32 +42,6 @@ const TelemetryAnalyticsSelect: React.FC<{
   onChange: (selectedOption: TelemetryAnalyticsSelectOptions) => void;
 }> = ({ disabled, value, onChange }) => {
   const { t } = useTranslation();
-  const options: TelemetryAnalyticsSelectOptions[] = [
-    {
-      value: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
-      title: t('console-telemetry-plugin~Opt-in'),
-      description: t('console-telemetry-plugin~Opt-in to send telemetry events.'),
-      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
-    },
-    {
-      value: CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
-      title: t('console-telemetry-plugin~Opt-out'),
-      description: t('console-telemetry-plugin~Opt-out to send telemetry events.'),
-      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
-    },
-    {
-      value: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
-      title: t('console-telemetry-plugin~Enforce'),
-      description: t('console-telemetry-plugin~Always send telemetry events.'),
-      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
-    },
-    {
-      value: CLUSTER_TELEMETRY_ANALYTICS.DISABLED,
-      title: t('console-telemetry-plugin~Disabled'),
-      description: t('console-telemetry-plugin~Disable the telemetry in the cluster.'),
-      isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.DISABLED,
-    },
-  ];
 
   const [isOpen, setIsOpen] = React.useState(false);
   const selection = options.find((option) => option.isSelected)?.value;

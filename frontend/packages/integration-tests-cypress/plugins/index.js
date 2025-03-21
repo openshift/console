@@ -5,21 +5,6 @@ const path = require('path');
 const wp = require('@cypress/webpack-preprocessor');
 
 module.exports = (on, config) => {
-  const options = {
-    webpackOptions: {
-      resolve: {
-        extensions: ['.ts', '.tsx', '.js'],
-      },
-      module: {
-        rules: [
-          {
-            test: /\.tsx?$/,
-            loader: 'esbuild-loader',
-          },
-        ],
-      },
-    },
-  };
   // `on` is used to hook into various events Cypress emits
   on('task', {
     log(message) {

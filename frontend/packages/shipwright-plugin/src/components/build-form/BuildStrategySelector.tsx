@@ -57,14 +57,6 @@ const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({ namespace
   }, [buildStrategies, watchedBuildStrategies]);
 
   const clusterBuildStrategyOptions = React.useMemo(() => {
-    const options: SelectInputOption[] = buildStrategies.reduce((acc, currentValue) => {
-      acc.push({
-        label: currentValue.metadata.name,
-        value: currentValue.metadata.name,
-        description: `${currentValue.apiVersion}~${currentValue.kind}`,
-      });
-      return acc;
-    }, []);
     return options;
   }, [buildStrategies]);
   const onChange = (selection) => {

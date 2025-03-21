@@ -98,12 +98,6 @@ const DefaultSourceKebab: React.FC<DefaultSourceKebabProps> = ({
   sourceDisabled,
   source,
 }) => {
-  const options = sourceDisabled
-    ? [enableSource(kind, operatorHub, sourceName)]
-    : [
-        disableSourceModal(kind, operatorHub, sourceName),
-        ...(source ? [Kebab.factory.Edit(CatalogSourceModel, source)] : []),
-      ];
   return <Kebab options={options} />;
 };
 

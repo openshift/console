@@ -37,7 +37,6 @@ const IconDropdown: React.FC<IconDropdownProps> = ({ placeholder, value, onChang
   }, [placeholder, value]);
 
   const items = React.useMemo<Record<string, React.ReactElement>>(() => {
-    const options: Record<string, React.ReactElement> = {};
     getIcons().forEach(({ label, url }) => {
       options[label] = <Icon label={label} url={url} />;
     });

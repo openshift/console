@@ -517,13 +517,6 @@ When('user clicks on Start', () => {
 Then(
   'user sees option Empty Directory, Config Map, Secret, PersistentVolumeClaim, VolumeClaimTemplate',
   () => {
-    const options = [
-      'Empty Directory',
-      'Config Map',
-      'Secret',
-      'PersistentVolumeClaim',
-      'VolumeClaimTemplate',
-    ];
     cy.byLegacyTestID('dropdown-menu').each(($el) => {
       expect(options).toContain($el.text());
     });
