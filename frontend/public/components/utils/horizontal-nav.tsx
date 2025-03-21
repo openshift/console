@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { Title } from '@console/shared/src/components/title/Title';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
@@ -229,13 +229,11 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
   const labelId = activePage?.nameKey?.split('~')[1] || activePage?.name || 'Details';
   return (
     <>
-      <Helmet>
-        <title data-telemetry={telemetryPrefix ? `${telemetryPrefix} · ${labelId}` : labelId}>
-          {titlePrefix
-            ? `${titlePrefix} · ${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`
-            : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`}
-        </title>
-      </Helmet>
+      <Title data-telemetry={telemetryPrefix ? `${telemetryPrefix} · ${labelId}` : labelId}>
+        {titlePrefix
+          ? `${titlePrefix} · ${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`
+          : `${activePage?.nameKey ? t(activePage.nameKey) : activePage?.name}`}
+      </Title>
       {tabs}
     </>
   );

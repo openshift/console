@@ -3,9 +3,9 @@ import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/d
 import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts/victory';
 import { Bullseye, Flex, FlexItem, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import Measure from 'react-measure';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
+import MeasureBounds from '@console/pipelines-plugin/src/utils/measure';
 import { DEFAULT_LEGEND_CHART_HEIGHT } from '../const';
 import { usePipelineRunDurationPoll } from '../hooks';
 import { LineChart } from './charts/lineChart';
@@ -88,7 +88,7 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
         </Bullseye>
       </GridItem>
       <GridItem span={9}>
-        <Measure bounds>
+        <MeasureBounds>
           {({ measureRef, contentRect }) => (
             <div ref={measureRef}>
               <LineChart
@@ -113,7 +113,7 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
               />
             </div>
           )}
-        </Measure>
+        </MeasureBounds>
       </GridItem>
     </Grid>
   );
