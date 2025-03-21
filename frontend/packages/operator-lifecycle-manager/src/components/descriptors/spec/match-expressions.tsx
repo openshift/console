@@ -29,7 +29,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
   return (
     <div className="row key-operator-value__row">
       <div className="col-md-4 col-xs-5 key-operator-value__name-field">
-        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary">
           {t('olm~Key')}
         </div>
         <span className="pf-v6-c-form-control">
@@ -41,7 +41,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
         </span>
       </div>
       <div className="col-md-3 col-xs-5 key-operator-value__operator-field">
-        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary">
           {t('olm~Operator')}
         </div>
         <Dropdown
@@ -53,7 +53,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
         />
       </div>
       <div className="col-md-3 col-xs-5 key-operator-value__value-field key-operator-value__value-field--stacked">
-        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary">
           {t('olm~Values')}
         </div>
         <span
@@ -110,9 +110,9 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
   return (
     <>
       <div className="row key-operator-value__heading hidden-sm hidden-xs">
-        <div className="col-md-4 text-secondary text-uppercase">{t('olm~Key')}</div>
-        <div className="col-md-3 text-secondary text-uppercase">{t('olm~Operator')}</div>
-        <div className="col-md-3 text-secondary text-uppercase">{t('olm~Values')}</div>
+        <div className="col-md-4 text-secondary">{t('olm~Key')}</div>
+        <div className="col-md-3 text-secondary">{t('olm~Operator')}</div>
+        <div className="col-md-3 text-secondary">{t('olm~Values')}</div>
       </div>
       {matchExpressions.map((expression, index) => (
         // Have to use array index in the key bc any other unique id whould have to use editable fields.
