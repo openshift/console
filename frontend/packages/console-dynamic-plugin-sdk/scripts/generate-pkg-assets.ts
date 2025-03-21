@@ -24,11 +24,9 @@ const rootPackage = readPkg.sync({ cwd: resolvePath('../..'), normalize: false }
 const missingDepNames = new Set<string>();
 const missingDepCallback = (name: string) => missingDepNames.add(name);
 
-const outPackages = [
-  getCorePackage(sdkPackage, rootPackage, missingDepCallback),
-  getInternalPackage(sdkPackage, rootPackage, missingDepCallback),
-  getWebpackPackage(sdkPackage, rootPackage, missingDepCallback),
-];
+const outPackages = [getCorePackage, getInternalPackage, getWebpackPackage].map((getPkg) =>
+  getPkg(sdkPackage, rootPackage, missingDepCallback),
+);
 
 if (missingDepNames.size > 0) {
   console.error(`Failed to parse package dependencies: ${Array.from(missingDepNames).join(', ')}`);
