@@ -30,7 +30,6 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(opened);
-  const onToggle = (_event, open: boolean): void => setIsOpen(open);
   let kindFilters = filters.filter(
     (f) => f.type === TopologyDisplayFilterType.kind && supportedKinds[f.id],
   );
@@ -110,7 +109,6 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   return (
     <Select
       toggle={toggle}
-      onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
       onOpenChange={(open) => setIsOpen(open)}
