@@ -41,6 +41,7 @@
   "StorageClasses present in this cluster:": "StorageClasses present in this cluster:",
   "Component is resolving": "Component is resolving",
   "Launch Modal": "Launch Modal",
+  "Launch Overlay": "Launch Overlay",
   "Launch Modal Asynchronously": "Launch Modal Asynchronously",
   "Hello {{planet}}! I am Thor!": "Hello {{planet}}! I am Thor!",
   "Hello {{planet}}! I am Loki!": "Hello {{planet}}! I am Loki!",

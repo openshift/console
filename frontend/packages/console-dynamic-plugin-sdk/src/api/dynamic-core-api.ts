@@ -700,6 +700,7 @@ export const Timestamp: React.FC<TimestampProps> = require('@console/internal/co
   .Timestamp;
 
 export { useModal } from '../app/modal-support/useModal';
+export { useOverlay } from '../app/modal-support/useOverlay';
 
 /**
  * Component that allows to receive contributions from other plugins for the `console.action/provider` extension type.

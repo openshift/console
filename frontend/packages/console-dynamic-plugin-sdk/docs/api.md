@@ -58,7 +58,7 @@
 56.  [ResourceEventStream](#resourceeventstream)
 57.  [usePrometheusPoll](#useprometheuspoll)
 58.  [Timestamp](#timestamp)
-59.  [useModal](#usemodal)
+59.  [useOverlay](#useoverlay)
 60.  [ActionServiceProvider](#actionserviceprovider)
 61.  [NamespaceBar](#namespacebar)
 62.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
@@ -73,6 +73,7 @@
 71. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
 72. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
 73. [DEPRECATED] [YAMLEditor](#yamleditor)
+74. [DEPRECATED] [useModal](#usemodal)
 
 ---
 
@@ -2049,11 +2050,11 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 ---
 
-## `useModal`
+## `useOverlay`
 
 ### Summary 
 
-A hook to launch Modals.
+A hook to launch Overlays.
 
 
 
@@ -2062,10 +2063,10 @@ A hook to launch Modals.
 
 ```tsx
 const AppPage: React.FC = () => {
- const launchModal = useModal();
- const onClick = () => launchModal(ModalComponent);
+ const launchOverlay = useOverlay();
+ const onClick = () => launchOverlay(OverlayComponent);
  return (
-   <Button onClick={onClick}>Launch a Modal</Button>
+   <Button onClick={onClick}>Launch an Overlay</Button>
  )
 }
 ```
@@ -2589,6 +2590,35 @@ An array with a pair of state value and its set function.
 | `onChange` | Callback for on code change event. |
 | `onSave` | Callback called when the command `CTRL + S` / `CMD + S` is triggered. |
 | `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, see https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html. |
+
+
+
+---
+
+## `useModal`
+
+### Summary [DEPRECATED]
+
+@deprecated - Use useOverlay from \@console/dynamic-plugin-sdk instead.<br/>A hook to launch Modals.
+
+
+
+### Example
+
+
+```tsx
+const AppPage: React.FC = () => {
+ const launchModal = useModal();
+ const onClick = () => launchModal(ModalComponent);
+ return (
+   <Button onClick={onClick}>Launch a Modal</Button>
+ )
+}
+```
+
+
+
+
 
 
 
