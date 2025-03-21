@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Measure, { ContentRect } from 'react-measure';
+import { getResizeObserver } from '@patternfly/react-core';
 import { Masonry } from './Masonry';
 import './MasonryLayout.scss';
 
@@ -25,22 +25,28 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
   LoadingComponent,
   resizeThreshold = 30,
 }) => {
+  const measureRef = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>(0);
-  const onResize = React.useCallback(
-    (contentRect: ContentRect) => {
-      const newWidth = contentRect.bounds?.width;
-      if (newWidth) {
-        setWidth((oldWidth) =>
-          Math.abs(oldWidth - newWidth) < resizeThreshold ? oldWidth : newWidth,
-        );
-      }
-    },
-    [resizeThreshold],
-  );
+  const handleResize = React.useCallback(() => {
+    const newWidth = measureRef.current.getBoundingClientRect().width;
+    if (newWidth) {
+      setWidth((oldWidth) =>
+        Math.abs(oldWidth - newWidth) < resizeThreshold ? oldWidth : newWidth,
+      );
+    }
+  }, [resizeThreshold]);
   const columnCount = React.useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : null), [
     columnWidth,
     width,
   ]);
+
+  React.useEffect(() => {
+    handleResize();
+
+    // change the column count if the window is resized
+    const observer = getResizeObserver(undefined, handleResize, true);
+    return () => observer();
+  }, [handleResize]);
 
   const columns: React.ReactElement[] =
     loading && LoadingComponent
@@ -48,12 +54,8 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
       : children;
 
   return (
-    <Measure bounds onResize={onResize}>
-      {({ measureRef }) => (
-        <div className="odc-masonry-container" ref={measureRef}>
-          {columnCount ? <Masonry columnCount={columnCount}>{columns}</Masonry> : null}
-        </div>
-      )}
-    </Measure>
+    <div className="odc-masonry-container" ref={measureRef}>
+      {columnCount ? <Masonry columnCount={columnCount}>{columns}</Masonry> : null}
+    </div>
   );
 };
