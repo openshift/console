@@ -48,7 +48,11 @@ export const FavoriteNavItems: React.FC = () => {
     };
     if (!loaded) return null;
     if (!favorites || favorites.length === 0) {
-      return <li className="co-no-favorites-message">{t('console-app~No favorites added')}</li>;
+      return (
+        <li className="co-no-favorites-message" data-test="no-favorites-message">
+          {t('console-app~No favorites added')}
+        </li>
+      );
     }
 
     return favorites.map((favorite) => (
@@ -78,6 +82,7 @@ export const FavoriteNavItems: React.FC = () => {
               }}
               className="co-favorite-delete-button"
               icon={<StarIcon color="gold" />}
+              data-test="remove-favorite-button"
             />
           </FlexItem>
         </Flex>
