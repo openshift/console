@@ -204,6 +204,7 @@ const getUpdateNotificationEntries = (
 export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   isDrawerExpanded,
   onDrawerChange,
+  drawerRef,
 }) => {
   const { t } = useTranslation();
   const clusterID = getClusterID(useClusterVersion());
@@ -361,7 +362,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   ) : null;
 
   return (
-    <PfNotificationDrawer>
+    <PfNotificationDrawer ref={drawerRef}>
       <NotificationDrawerHeader onClose={toggleNotificationDrawer} />
       <NotificationDrawerBody>
         {[criticalAlertCategory, nonCriticalAlertCategory, recommendationsCategory]}
@@ -374,6 +375,7 @@ export type NotificationDrawerProps = {
   toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;
   onDrawerChange: () => void;
+  drawerRef: React.Ref<typeof PfNotificationDrawer>;
 };
 
 type AlertErrorProps = {
