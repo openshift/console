@@ -25,6 +25,7 @@ import {
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
 import { getSample, getGitImportSample } from '../../../utils/samples';
+import { ApplicationFlowType } from '../../edit-application/edit-application-utils';
 import { GitData, DetectedStrategyFormData } from '../import-types';
 import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
@@ -78,6 +79,7 @@ export interface GitSectionProps {
   importType?: string;
   imageStreamName?: string;
   autoFocus?: boolean;
+  flowType?: ApplicationFlowType;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
@@ -90,6 +92,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   importType,
   imageStreamName,
   autoFocus = true,
+  flowType,
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
@@ -311,7 +314,11 @@ const GitSection: React.FC<GitSectionProps> = ({
           recommendedStrategy: null,
           showEditImportStrategy: true,
         });
-        setFieldValue('build.strategy', BuildStrategyType.Source);
+        if (flowType === ApplicationFlowType.Dockerfile) {
+          setFieldValue('build.strategy', BuildStrategyType.Docker);
+        } else {
+          setFieldValue('build.strategy', BuildStrategyType.Source);
+        }
         return;
       }
 
@@ -417,6 +424,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       handleBuilderImageRecommendation,
       builderImages,
       handleDevfileStrategyDetection,
+      flowType,
     ],
   );
 

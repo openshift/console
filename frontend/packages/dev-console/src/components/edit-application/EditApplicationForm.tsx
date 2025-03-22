@@ -49,7 +49,7 @@ const EditApplicationForm: React.FC<
         <FormBody flexLayout>
           {flowType === ApplicationFlowType.Git && <GitSection builderImages={builderImages} />}
           {flowType === ApplicationFlowType.Dockerfile && (
-            <GitSection builderImages={builderImages} />
+            <GitSection builderImages={builderImages} flowType={flowType} />
           )}
           {flowType === ApplicationFlowType.Git && (
             <BuilderSection
