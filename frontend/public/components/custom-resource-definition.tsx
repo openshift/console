@@ -269,6 +269,7 @@ export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsLi
               kind="CustomResourceDefinition"
               name={crd.metadata.name}
               namespace={crd.metadata.namespace}
+              metadata={crd.metadata}
               displayName={_.get(crd, 'spec.names.kind')}
             />
           </span>
