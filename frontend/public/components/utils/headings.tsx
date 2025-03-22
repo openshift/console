@@ -121,6 +121,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     centerText,
     helpText,
     'data-test': dataTestId,
+    hideFavoriteButton,
   } = props;
   const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
@@ -200,7 +201,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             {link && <div className="co-m-pane__heading-link">{link}</div>}
             {(isAdminPrespective || showActions) && (
               <div className="co-actions" data-test-id="details-actions">
-                {isAdminPrespective && <FavoriteButton />}
+                {isAdminPrespective && !hideFavoriteButton && <FavoriteButton />}
                 {showActions && (
                   <>
                     {hasButtonActions && (
@@ -354,6 +355,7 @@ export type PageHeadingProps = {
   className?: string;
   centerText?: boolean;
   helpText?: React.ReactNode;
+  hideFavoriteButton?: boolean;
 };
 
 export type ResourceOverviewHeadingProps = {
