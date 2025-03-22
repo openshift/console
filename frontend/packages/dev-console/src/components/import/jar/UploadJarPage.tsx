@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
@@ -7,6 +6,7 @@ import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { IMAGESTREAM_NAMESPACE, JAVA_IMAGESTREAM_NAME, QUERY_PROPERTIES } from '../../../const';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
@@ -49,9 +49,7 @@ const UploadJarPage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{t('devconsole~Upload JAR file')}</title>
-      </Helmet>
+      <DocumentTitle>{t('devconsole~Upload JAR file')}</DocumentTitle>
       <PageHeading title={t('devconsole~Upload JAR file')}>
         {t('devconsole~Upload a JAR file from your local desktop to OpenShift')}
       </PageHeading>

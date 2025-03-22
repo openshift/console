@@ -15,6 +15,8 @@ in [Console dynamic plugins README](./README.md).
 - The base `tsconfig` file now sets the `jsx` option to `react-jsx` to use the new JSX transform introduced
   in React 17+. Plugins should update their `tsconfig` files accordingly and run the `update-react-imports`
   [react-codemod](https://github.com/reactjs/react-codemod) if needed. ([OCPBUGS-52589], [#14864])
+- A new component `DocumentTitle` has been added which allows plugins to modify the document title
+  of the Console. ([CONSOLE-3960], [#14876])
 
 ## 4.19.0-prerelease.1 - 2025-02-17
 
@@ -80,6 +82,7 @@ in [Console dynamic plugins README](./README.md).
 [CONSOLE-3883]: https://issues.redhat.com/browse/CONSOLE-3883
 [CONSOLE-3899]: https://issues.redhat.com/browse/CONSOLE-3899
 [CONSOLE-3949]: https://issues.redhat.com/browse/CONSOLE-3949
+[CONSOLE-3960]: https://issues.redhat.com/browse/CONSOLE-3960
 [CONSOLE-4097]: https://issues.redhat.com/browse/CONSOLE-4097
 [CONSOLE-4185]: https://issues.redhat.com/browse/CONSOLE-4185
 [CONSOLE-4263]: https://issues.redhat.com/browse/CONSOLE-4263
@@ -126,3 +129,4 @@ in [Console dynamic plugins README](./README.md).
 [#14615]: https://github.com/openshift/console/pull/14615
 [#14620]: https://github.com/openshift/console/pull/14620
 [#14864]: https://github.com/openshift/console/pull/14864
+[#14876]: https://github.com/openshift/console/pull/14876

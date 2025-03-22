@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { getURLSearchParams } from '@console/internal/components/utils';
@@ -11,6 +10,7 @@ import {
   TableColumnsType,
   useUserSettingsCompatibility,
 } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import { ListPage } from '../../ListPage';
@@ -64,9 +64,7 @@ const TaskRunsListPage: React.FC<
   );
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~TaskRuns')}</title>
-      </Helmet>
+      <DocumentTitle>{t('pipelines-plugin~TaskRuns')}</DocumentTitle>
       {userSettingsLoaded && (
         <ListPage
           {...props}

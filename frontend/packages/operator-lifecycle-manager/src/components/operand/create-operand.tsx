@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -21,6 +20,7 @@ import {
   definitionFor,
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   getSchemaErrors,
   hasNoFields,
@@ -159,9 +159,9 @@ const CreateOperandPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('olm~Create {{item}}', { item: kindForReference(params.plural) })}</title>
-      </Helmet>
+      <DocumentTitle>
+        {t('olm~Create {{item}}', { item: kindForReference(params.plural) })}
+      </DocumentTitle>
       <ModelStatusBox groupVersionKind={params.plural}>
         {createResourceExtension ? (
           <ErrorBoundaryPage>

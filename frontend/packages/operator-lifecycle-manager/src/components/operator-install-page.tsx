@@ -10,7 +10,6 @@ import {
   Spinner,
   Title,
 } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
@@ -31,6 +30,7 @@ import {
   referenceFor,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
@@ -436,9 +436,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
   return (
     <>
       <div className="co-operator-install-page__main">
-        <Helmet>
-          <title>{t('olm~Installing Operator')}</title>
-        </Helmet>
+        <DocumentTitle>{t('olm~Installing Operator')}</DocumentTitle>
         <Bullseye>
           <div id="operator-install-page">
             {loading && (

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -12,6 +11,7 @@ import {
 } from '@console/helm-plugin/src/models';
 import { kindForReference } from '@console/internal/module/k8s';
 import { useQueryParams } from '@console/shared/src';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateHelmChartRepository from './CreateHelmChartRepository';
 
 const CreateHelmChartRepositoryPage: React.FC = () => {
@@ -37,13 +37,11 @@ const CreateHelmChartRepositoryPage: React.FC = () => {
 
   const renderForm = () => (
     <>
-      <Helmet data-test={`form-title ${isEditForm ? 'Edit' : 'Create'} Helm Chart Repository`}>
-        <title>
-          {isEditForm
-            ? t('helm-plugin~Edit Helm Chart Repository')
-            : t('helm-plugin~Create Helm Chart Repository')}
-        </title>
-      </Helmet>
+      <DocumentTitle>
+        {isEditForm
+          ? t('helm-plugin~Edit Helm Chart Repository')
+          : t('helm-plugin~Create Helm Chart Repository')}
+      </DocumentTitle>
       <CreateHelmChartRepository
         showScopeType={canCreateHCR && canCreatePHCR}
         existingRepoName={params.name}

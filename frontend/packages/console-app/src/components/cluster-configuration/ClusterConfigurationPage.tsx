@@ -10,11 +10,11 @@ import {
   TabTitleText,
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { LoadingBox, history } from '@console/internal/components/utils';
 import { PageLayout, isModifiedEvent } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import ClusterConfigurationForm from './ClusterConfigurationForm';
 import { getClusterConfigurationGroups } from './getClusterConfigurationGroups';
@@ -97,9 +97,7 @@ const ClusterConfigurationPage: React.FC = () => {
 
   return (
     <div className="co-cluster-configuration-page">
-      <Helmet>
-        <title>{t('console-app~Cluster configuration')}</title>
-      </Helmet>
+      <DocumentTitle>{t('console-app~Cluster configuration')}</DocumentTitle>
       <PageLayout
         title={t('console-app~Cluster configuration')}
         hint={t(

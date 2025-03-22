@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert, Button, Tooltip } from '@patternfly/react-core';
@@ -1062,11 +1062,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
-      {perspective === 'dev' && (
-        <Helmet>
-          <title>{t('public~Project details')}</title>
-        </Helmet>
-      )}
+      {perspective === 'dev' && <DocumentTitle>{t('public~Project details')}</DocumentTitle>}
       <div className="co-m-pane__body">
         {!customData?.hideHeading && (
           <SectionHeading text={t('public~{{kind}} details', { kind: ns.kind })} />

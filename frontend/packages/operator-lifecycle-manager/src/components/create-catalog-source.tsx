@@ -9,7 +9,6 @@ import {
   HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
@@ -20,6 +19,7 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { CatalogSourceModel } from '../models';
 
 enum AvailabilityValue {
@@ -87,9 +87,7 @@ export const CreateCatalogSource: React.FC = withHandlePromise(
     const title = t('olm~Create CatalogSource');
     return (
       <div className="co-m-pane__form">
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
+        <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
           title={title}
           helpText={t(

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { EventingBrokerModel } from '../../../models';
 import BrokerList from './BrokerList';
 
@@ -10,9 +10,7 @@ const BrokerListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) 
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title>{t('knative-plugin~Brokers')}</title>
-      </Helmet>
+      <DocumentTitle>{t('knative-plugin~Brokers')}</DocumentTitle>
       <ListPage
         canCreate={false}
         {...props}

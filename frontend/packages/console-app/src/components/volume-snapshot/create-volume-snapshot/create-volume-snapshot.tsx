@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Grid, GridItem, ActionGroup, Button, Alert } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
@@ -45,6 +44,7 @@ import {
   ListKind,
 } from '@console/internal/module/k8s';
 import { getName, getNamespace, getAnnotations } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -220,9 +220,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   return (
     <div className="co-volume-snapshot__body">
       <div className="co-m-pane__form">
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
+        <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
           title={<div className="co-m-pane__name">{title}</div>}
           link={

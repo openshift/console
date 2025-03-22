@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
@@ -166,9 +166,7 @@ export const AddLDAPPage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} helpText={t('public~Integrate with an LDAP identity provider.')} />
       <div className="co-m-pane__body">
         <form onSubmit={submit} name="form" className="co-m-pane__body-group">

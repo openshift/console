@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { Bullseye, Button, Icon, Spinner, Title } from '@patternfly/react-core';
 import {
@@ -146,9 +146,7 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
 
   return (
     <div className="co-import-yaml-results-page">
-      <Helmet>
-        <title>{t('public~Import YAML Results')}</title>
-      </Helmet>
+      <DocumentTitle>{t('public~Import YAML Results')}</DocumentTitle>
       <Bullseye>
         <div className="co-import-yaml-results-page__main">
           <ImportYAMLPageStatus inFlight={inFlight} errors={errors} />

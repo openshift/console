@@ -1,5 +1,4 @@
 import { Page, PageSection } from '@patternfly/react-core';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import {
   ConsoleEmptyState,
@@ -12,6 +11,7 @@ import {
   OperatorHubItem,
 } from '@console/operator-lifecycle-manager/src/components/operator-hub';
 import { OperatorHubTileView } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-items';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ExtensionCatalogItem } from '../database/types';
 import { useExtensionCatalogItems } from '../hooks/useExtensionCatalogItems';
@@ -66,9 +66,7 @@ const ExtensionCatalog = () => {
   return (
     <Page>
       <PageSection hasBodyWrapper={false}>
-        <Helmet>
-          <title>{t('Extension Catalog')}</title>
-        </Helmet>
+        <DocumentTitle>{t('Extension Catalog')}</DocumentTitle>
         <PageHeading title={t('Extension Catalog')} />
         <StatusBox
           skeleton={skeletonCatalog}

@@ -901,3 +901,8 @@ export interface PodRCData {
   isRollingOut: boolean;
   pods: ExtPodKind[];
 }
+
+export type DocumentTitleProps = {
+  /** The title to display */
+  children: string;
+};

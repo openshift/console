@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { Label, LabelGroup, Button, ButtonSize, ButtonVariant } from '@patternfly/react-core';
 
 import { Trans, useTranslation } from 'react-i18next';
@@ -343,9 +343,7 @@ export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest })
   const title = t('public~Events');
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <EventsList
         {...rest}
         autoFocus={!noProjectsAvailable}

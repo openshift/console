@@ -3,7 +3,6 @@ import { Form, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import {
   ContainerSelect,
@@ -17,6 +16,7 @@ import {
 import { ContainerModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
 import { useViewOnlyAccess, HealthCheckContext } from './health-checks-utils';
@@ -78,9 +78,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
 
   return (
     <HealthCheckContext.Provider value={{ viewOnly }}>
-      <Helmet>
-        <title>{pageTitle}</title>
-      </Helmet>
+      <DocumentTitle>{pageTitle}</DocumentTitle>
       <PageHeading
         title={
           <>

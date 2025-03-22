@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { PageHeading, Firehose } from '@console/internal/components/utils';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { QUERY_PROPERTIES } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
@@ -16,9 +16,7 @@ const DeployImagePage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{t('devconsole~Deploy Image')}</title>
-      </Helmet>
+      <DocumentTitle>{t('devconsole~Deploy Image')}</DocumentTitle>
       <PageHeading title={t('devconsole~Deploy Image')} />
       <QueryFocusApplication>
         {(desiredApplication) => (

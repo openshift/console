@@ -8,11 +8,11 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLink, ResourceLink, PageHeading } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 
 type PacOverviewProps = {
   namespace: string;
@@ -34,11 +34,7 @@ const PacOverview: React.FC<PacOverviewProps> = ({
     setAlertVisible(showSuccessAlert);
   }, [showSuccessAlert]);
 
-  const pageTitle = (
-    <Helmet>
-      <title>{t('pipelines-plugin~GitHub App Details')}</title>
-    </Helmet>
-  );
+  const pageTitle = <DocumentTitle>{t('pipelines-plugin~GitHub App Details')}</DocumentTitle>;
   const pageHeading = (
     <PageHeading
       title={t('pipelines-plugin~GitHub App Details')}

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -7,6 +6,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { PageHeading } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   SUBSCRIBE_PROVIDER_API_VERSION_PARAM,
   SUBSCRIBE_PROVIDER_KIND_PARAM,
@@ -34,9 +34,7 @@ const SubscribePage: React.FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{t('knative-plugin~Subscribe')}</title>
-      </Helmet>
+      <DocumentTitle>{t('knative-plugin~Subscribe')}</DocumentTitle>
       <PageHeading title={t('knative-plugin~Subscribe')}>
         {t('knative-plugin~Subscribe to')} {subscribeApiVersion} {subscribeKind} {namespace}/
         {subscribeName}

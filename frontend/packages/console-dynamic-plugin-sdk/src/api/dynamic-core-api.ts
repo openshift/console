@@ -4,6 +4,7 @@ import { ActionServiceProviderProps } from '../extensions/actions';
 import {
   CodeEditorProps,
   CodeEditorRef,
+  DocumentTitleProps,
   ErrorBoundaryFallbackProps,
   HorizontalNavProps,
   InventoryItemBodyProps,
@@ -26,16 +27,16 @@ import {
   TableDataProps,
   TimestampProps,
   UseActiveColumns,
+  UseActiveNamespace,
   UseAnnotationsModal,
   UseDeleteModal,
   UseLabelsModal,
   UseListPageFilter,
   UsePrometheusPoll,
-  UseResolvedExtensions,
-  VirtualizedTableFC,
-  UseActiveNamespace,
-  UseUserSettings,
   UseQuickStartContext,
+  UseResolvedExtensions,
+  UseUserSettings,
+  VirtualizedTableFC,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
@@ -665,6 +666,19 @@ export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = require('@c
  */
 export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('@console/internal/components/events')
   .WrappedResourceEventStream;
+
+/**
+ * A component to change the document title of the page.
+ * @example
+ * ```tsx
+ * <DocumentTitle>My Page Title</DocumentTitle>
+ * ```
+ * This will change the title to "My Page Title · [Product Name]"
+ *
+ * @param {DocumentTitleProps['string']} children - The title to display
+ */
+export const DocumentTitle: React.FC<DocumentTitleProps> = require('@console/shared/src/components/document-title/DocumentTitle')
+  .DocumentTitle;
 
 /**
  * Sets up a poll to Prometheus for a single query.
