@@ -1,7 +1,7 @@
 /* eslint-env node */
 const i18next = require('i18next');
-const react = require.requireActual('react');
-const reactI18next = require.requireActual('react-i18next');
+const react = (jest as any).requireActual('react');
+const reactI18next = (jest as any).requireActual('react-i18next');
 
 module.exports = {
   ...reactI18next,
