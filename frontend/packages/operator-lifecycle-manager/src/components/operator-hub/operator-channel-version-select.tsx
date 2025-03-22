@@ -85,7 +85,6 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
         selected={selectedUpdateChannel || '-'}
         onOpenChange={(isOpen) => setIsChannelSelectOpen(isOpen)}
         isOpen={isChannelSelectOpen}
-        maxMenuHeight
         isScrollable
       >
         <SelectList>{channelSelectOptions}</SelectList>
@@ -187,7 +186,6 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
         selected={selectedUpdateVersion}
         onOpenChange={(isOpen) => setIsVersionSelectOpen(isOpen)}
         isOpen={isVersionSelectOpen}
-        maxMenuHeight
         isScrollable
       >
         <SelectList>{versionSelectOptions}</SelectList>

@@ -39,7 +39,7 @@ type NodeLogsProps = {
 
 type LogControlsProps = {
   onTogglePath: () => void;
-  onChangePath: (event: React.ChangeEvent<HTMLInputElement>, newAPI: string) => void;
+  onChangePath: (event: React.MouseEvent<Element, MouseEvent>, newAPI: string) => void;
   path: string;
   isPathOpen: boolean;
   setPathOpen: (value: boolean) => void;
@@ -50,7 +50,7 @@ type LogControlsProps = {
   isLoadingFilenames: boolean;
   logFilenamesExist: boolean;
   onToggleFilename: () => void;
-  onChangeFilename: (event: React.ChangeEvent<HTMLInputElement>, newFilename: string) => void;
+  onChangeFilename: (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => void;
   setFilenameOpen: (value: boolean) => void;
   logFilename: string;
   isFilenameOpen: boolean;
@@ -287,7 +287,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     trimmedContent = content.substr(index + 1);
   }
 
-  const onChangePath = (event: React.ChangeEvent<HTMLInputElement>, newAPI: string) => {
+  const onChangePath = (event: React.MouseEvent<Element, MouseEvent>, newAPI: string) => {
     event.preventDefault();
     setPathOpen(false);
     setPath(newAPI);
@@ -308,7 +308,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       ? removeQueryArgument(unitQueryArgument)
       : setQueryArgument(unitQueryArgument, value);
   };
-  const onChangeFilename = (event: React.ChangeEvent<HTMLInputElement>, newFilename: string) => {
+  const onChangeFilename = (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => {
     event.preventDefault();
     setFilenameOpen(false);
     setLogFilename(newFilename);
