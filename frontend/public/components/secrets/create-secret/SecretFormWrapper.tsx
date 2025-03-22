@@ -11,7 +11,7 @@ import { PageHeading } from '../../utils/headings';
 import { resourceObjPath } from '../../utils/resource-link';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../factory/modal';
 import { SecretModel } from '../../../models';
-import { SecretTypeAbstraction } from './types';
+import { SecretFormType } from './types';
 import {
   toDefaultSecretType,
   determineSecretType,
@@ -22,13 +22,13 @@ import { SecretSubForm } from './SecretSubForm';
 import { isBinary } from 'istextorbinary';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
-  const { isCreate, modal, onCancel, secretTypeAbstraction } = props;
+  const { formType, isCreate, modal, onCancel } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams();
 
   const existingSecret = _.pick(props.obj, ['metadata', 'type']);
-  const defaultSecretType = toDefaultSecretType(secretTypeAbstraction);
+  const defaultSecretType = toDefaultSecretType(formType);
   const initialSecret = _.defaultsDeep({}, props.fixed, existingSecret, {
     apiVersion: 'v1',
     data: {},
@@ -52,8 +52,8 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   );
   const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
-  const title = useSecretTitle(isCreate, secretTypeAbstraction);
-  const helptext = useSecretDescription(secretTypeAbstraction);
+  const title = useSecretTitle(isCreate, formType);
+  const helptext = useSecretDescription(formType);
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
 
   const onDataChanged = (secretsData) => {
@@ -142,7 +142,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           </div>
         </fieldset>
         <SecretSubForm
-          typeAbstraction={props.secretTypeAbstraction}
+          formType={formType}
           onChange={onDataChanged}
           onError={onError}
           onFormDisable={(disable) => setDisableForm(disable)}
@@ -201,7 +201,7 @@ type BaseEditSecretProps_ = {
   kind?: string;
   isCreate?: boolean;
   modal?: boolean;
-  secretTypeAbstraction?: SecretTypeAbstraction;
+  formType?: SecretFormType;
   saveButtonText?: string;
   onCancel?: () => void;
   onSave?: (name: string) => void;
