@@ -626,7 +626,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     userInactivityTimeout.current = setTimeout(() => {
       authSvc.logout('', isKubeAdmin);
     }, window.SERVER_FLAGS.inactivityTimeout * 1000);
-  }, [openshiftFlag, isKubeAdmin]);
+  }, [isKubeAdmin]);
 
   React.useEffect(() => {
     const onStorageChange = (e) => {

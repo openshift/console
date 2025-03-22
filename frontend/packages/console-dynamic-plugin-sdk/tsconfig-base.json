@@ -10,7 +10,7 @@
     "experimentalDecorators": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
-    "lib": ["es2016", "es2017.object", "es2020.promise", "es2020.string", "dom"],
+    "lib": ["es2021", "dom"],
     "typeRoots": ["node_modules/@types", "@types", "../../node_modules/@types"],
     "types": ["node", "sdk"]
   }
