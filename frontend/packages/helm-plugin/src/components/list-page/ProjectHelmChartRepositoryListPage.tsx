@@ -19,7 +19,7 @@ const ProjectHelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof L
       {...props}
       canCreate
       createProps={createProps}
-      aria-label={t('helm-plugin~Project Helm Chart Repositories')}
+      aria-label={t('helm-plugin~ProjectHelmChartRepositories')}
       kind={referenceForModel(ProjectHelmChartRepositoryModel)}
       ListComponent={ProjectHelmChartRepositoryList}
     />
