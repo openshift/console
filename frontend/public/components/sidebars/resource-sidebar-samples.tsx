@@ -24,7 +24,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   return (
     <li className="co-resource-sidebar-item">
       <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-        <span className="text-uppercase">{highlightText}</span> {title}
+        <span>{highlightText}</span> {title}
       </Title>
       {img && <img src={img} className="co-resource-sidebar-item__img img-responsive" />}
       <p>{description}</p>
@@ -122,7 +122,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
   return (
     <li className="co-resource-sidebar-item">
       <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-        <span className="text-uppercase">{highlightText}</span> {title}
+        <span>{highlightText}</span> {title}
       </Title>
       <p>{description}</p>
       <Level>

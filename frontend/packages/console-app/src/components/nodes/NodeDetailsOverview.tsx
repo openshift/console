@@ -151,7 +151,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dt>{t('console-app~OS image')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.osImage', '-')}</dd>
             <dt>{t('console-app~Architecture')}</dt>
-            <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
+            <dd>{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
             <dt>{t('console-app~Kernel version')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.kernelVersion', '-')}</dd>
             <dt>{t('console-app~Boot ID')}</dt>
