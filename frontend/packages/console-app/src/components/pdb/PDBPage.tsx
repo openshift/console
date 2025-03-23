@@ -37,7 +37,7 @@ export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> =
     <>
       <ListPageHeader title={showTitle ? t(PodDisruptionBudgetModel.labelPluralKey) : undefined}>
         <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
-          {t('console-app~Create PodDiscruptionBudget')}
+          {t('console-app~Create PodDisruptionBudget')}
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
