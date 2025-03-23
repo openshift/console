@@ -529,7 +529,7 @@
   "Create {{label}}": "{{label}} の作成",
   "Edit {{label}}": "{{label}} の編集",
   "{helpText}": "{helpText}",
-  "Create PodDiscruptionBudget": "PodDiscruptionBudget の作成",
+  "Create PodDisruptionBudget": "PodDisruptionBudget の作成",
   "Disruption not allowed": "中断できません",
   "PodDisruptionBudget": "PodDisruptionBudget",
   "No PodDisruptionBudget": "PodDisruptionBudget がありません",

@@ -547,7 +547,7 @@
   "Create {{label}}": "Create {{label}}",
   "Edit {{label}}": "Edit {{label}}",
   "{helpText}": "{helpText}",
-  "Create PodDiscruptionBudget": "Create PodDiscruptionBudget",
+  "Create PodDisruptionBudget": "Create PodDisruptionBudget",
   "Disruption not allowed": "Disruption not allowed",
   "PodDisruptionBudget": "PodDisruptionBudget",
   "No PodDisruptionBudget": "No PodDisruptionBudget",
