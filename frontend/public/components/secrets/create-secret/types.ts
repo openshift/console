@@ -1,4 +1,4 @@
-export enum SecretTypeAbstraction {
+export enum SecretFormType {
   generic = 'generic',
   source = 'source',
   image = 'image',

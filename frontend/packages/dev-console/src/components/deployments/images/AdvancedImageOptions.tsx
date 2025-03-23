@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
+import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { ResourceDropdownField } from '@console/shared/src';
@@ -58,7 +58,7 @@ const AdvancedImageOptions: React.FC = () => {
           secretModalLauncher({
             namespace,
             save: handleSave,
-            secretType: SecretTypeAbstraction.image,
+            formType: SecretFormType.image,
           })
         }
       >
