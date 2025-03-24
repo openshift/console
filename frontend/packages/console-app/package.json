@@ -15,7 +15,6 @@
     "@console/internal": "0.0.0-fixed",
     "@console/insights-plugin": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
-    "@console/local-storage-operator-plugin": "0.0.0-fixed",
     "@console/metal3-plugin": "0.0.0-fixed",
     "@console/operator-lifecycle-manager": "0.0.0-fixed",
     "@console/operator-lifecycle-manager-v1": "0.0.0-fixed",
