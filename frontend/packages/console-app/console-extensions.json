@@ -348,7 +348,31 @@
         "version": "v1",
         "kind": "ReplicationController"
       },
-      "provider": { "$codeRef": "replicationControllersProvider.useReplicationControllerActionsProvider" }
+      "provider": {
+        "$codeRef": "replicationControllersProvider.useReplicationControllerActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "StorageClass",
+        "group": "storage.k8s.io"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "VolumeSnapshotClass",
+        "group": "snapshot.storage.k8s.io"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
     }
   },
 

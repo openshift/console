@@ -14,11 +14,16 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
-import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
-import { referenceForModel, VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
-import { getAnnotations } from '@console/shared';
+import {
+  referenceForModel,
+  VolumeSnapshotClassKind,
+  Selector,
+  referenceFor,
+} from '@console/internal/module/k8s';
+import { getAnnotations, LazyActionMenu } from '@console/shared';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -36,7 +41,8 @@ export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassK
 const Row: React.FC<RowProps<VolumeSnapshotClassKind>> = ({ obj }) => {
   const { name } = obj?.metadata || {};
   const { deletionPolicy, driver } = obj || {};
-
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData {...tableColumnInfo[0]}>
@@ -49,11 +55,7 @@ const Row: React.FC<RowProps<VolumeSnapshotClassKind>> = ({ obj }) => {
       <TableData {...tableColumnInfo[1]}>{driver}</TableData>
       <TableData {...tableColumnInfo[2]}>{deletionPolicy}</TableData>
       <TableData {...tableColumnInfo[3]}>
-        <ResourceKebab
-          kind={referenceForModel(VolumeSnapshotClassModel)}
-          resource={obj}
-          actions={Kebab.factory.common}
-        />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
