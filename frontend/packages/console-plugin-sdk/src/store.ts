@@ -172,7 +172,6 @@ export class PluginStore {
 
   private updateExtensions() {
     const allowedDynamicPluginNames = Array.from(this.allowedDynamicPluginNames.values());
-    console.dir(allowedDynamicPluginNames);
     const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values()).sort((a, b) => {
       const indexA = allowedDynamicPluginNames.indexOf(a.manifest.name);
       const indexB = allowedDynamicPluginNames.indexOf(b.manifest.name);
