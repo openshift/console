@@ -583,11 +583,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     setLastConsoleActivityTimestamp();
     clearTimeout(userInactivityTimeout.current);
     userInactivityTimeout.current = setTimeout(() => {
-      if (openshiftFlag) {
-        authSvc.logoutOpenShift(isKubeAdmin);
-      } else {
-        authSvc.logout();
-      }
+      authSvc.logout('', isKubeAdmin);
     }, window.SERVER_FLAGS.inactivityTimeout * 1000);
   }, [openshiftFlag, isKubeAdmin]);
 
