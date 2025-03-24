@@ -1,4 +1,4 @@
-import { InfraFeatures } from '@console/operator-lifecycle-manager/src/components/operator-hub';
+import { InfrastructureFeature } from '@console/operator-lifecycle-manager/src/components/operator-hub';
 
 export enum FileBasedCatalogSchema {
   package = 'olm.package',
@@ -84,7 +84,7 @@ export type ExtensionCatalogItemMetadata = {
   categories?: string[];
   description?: string;
   displayName?: string;
-  infrastructureFeatures?: InfraFeatures[];
+  infrastructureFeatures?: InfrastructureFeature[];
   keywords?: string[];
   longDescription?: string;
   provider?: string;
