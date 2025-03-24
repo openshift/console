@@ -12,6 +12,7 @@ import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
@@ -555,14 +556,11 @@ const AppContents: React.FC<{}> = () => {
         }
       />
       <Route
-        path={`/k8s/all-namespaces/${VolumeSnapshotModel.plural}/~new/form`}
+        path={`/k8s/all-namespaces/${VolumeSnapshotModel.plural}`}
         element={
-          <AsyncComponent
-            loader={() =>
-              import(
-                '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
-              ).then((m) => m.VolumeSnapshot)
-            }
+          <Navigate
+            to={`/k8s/all-namespaces/${getReferenceForModel(VolumeSnapshotModel)}`}
+            replace
           />
         }
       />
