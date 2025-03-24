@@ -19,6 +19,7 @@ import {
   CardTitle,
   Content,
   ContentVariants,
+  Switch,
 } from '@patternfly/react-core';
 import {
   Status,
@@ -118,6 +119,8 @@ import { useActiveColumns } from './factory/Table/active-columns-hook';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { PodTraffic } from './pod-traffic';
 import { RootState } from '../redux';
+
+import DataViewPodList from './data-view-poc/DataViewPodList';
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
 const showMetrics =
@@ -1134,9 +1137,18 @@ export const PodsPage: React.FC<PodPageProps> = ({
     groupVersionKind: resourceKind,
     namespace: namespace || 'default',
   };
+  // toggle between DataViewPodList and PodList
+  const [usedw, setUsedw] = React.useState(true);
   return (
     userSettingsLoaded && (
       <>
+        <Switch
+          isChecked={usedw}
+          label="Use data view pod list"
+          onChange={() => {
+            setUsedw((prev) => !prev);
+          }}
+        />
         <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
           {canCreate && (
             <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
@@ -1166,16 +1178,20 @@ export const PodsPage: React.FC<PodPageProps> = ({
             hideLabelFilter={hideLabelFilter}
             hideColumnManagement={hideColumnManagement}
           />
-          <PodList
-            data={filteredData}
-            unfilteredData={pods}
-            loaded={loaded}
-            loadError={loadError}
-            showNamespaceOverride={showNamespaceOverride}
-            showNodes={showNodes}
-            namespace={namespace}
-            mock={mock}
-          />
+          {usedw ? (
+            <DataViewPodList data={filteredData} showNodes={showNodes} loaded={loaded} />
+          ) : (
+            <PodList
+              data={filteredData}
+              unfilteredData={pods}
+              loaded={loaded}
+              loadError={loadError}
+              showNamespaceOverride={showNamespaceOverride}
+              showNodes={showNodes}
+              namespace={namespace}
+              mock={mock}
+            />
+          )}
         </ListPageBody>
       </>
     )
