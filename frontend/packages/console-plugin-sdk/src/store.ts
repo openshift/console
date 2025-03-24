@@ -186,7 +186,6 @@ export class PluginStore {
       (acc, plugin) => (plugin.enabled ? [...acc, ...plugin.processedExtensions] : acc),
       [] as LoadedExtension[],
     );
-    console.dir(this.dynamicPluginExtensions);
   }
 
   setDynamicPluginEnabled(pluginID: string, enabled: boolean) {
