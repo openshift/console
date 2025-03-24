@@ -61,7 +61,7 @@ if (process.env.NODE_ENV !== 'production') {
  * Note: `__webpack_init_sharing__` global function is available in webpack 5+ builds.
  * Once Console gets built with webpack 5, evaluate if we need this global in order to
  * allow plugins to attempt to provide shared modules into the application shared scope.
- *
+ * testing changes
  * @see https://webpack.js.org/concepts/module-federation/#dynamic-remote-containers
  */
 export const initSharedPluginModules = (entryModule: RemoteEntryModule) => {

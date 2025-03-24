@@ -215,7 +215,7 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvider" }
+      "provider": { "$codeRef": "serviceBindingProvider.useCreateServiceBindingProvidertesting" }
     },
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
