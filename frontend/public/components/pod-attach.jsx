@@ -14,19 +14,15 @@ import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';
 import { PodModel } from '../models';
-import { isWindowsPod } from '../module/k8s/pods';
 
-// pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
+// pod attach WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
 // Channel 0 is STDIN, 1 is STDOUT, 2 is STDERR (if TTY is not requested), and 3 is a special error channel - 4 is C&C
 // The server only reads from STDIN, writes to the other three.
 // see also: https://github.com/kubernetes/kubernetes/pull/13885
 
-const NO_SH =
-  'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
-
-const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
-  class PodExec extends React.PureComponent {
+const PodAttach_ = connectToFlags(FLAGS.OPENSHIFT)(
+  class PodAttach extends React.PureComponent {
     constructor(props) {
       super(props);
       this.state = {
@@ -47,19 +43,16 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
         metadata: { name, namespace },
       } = this.props.obj;
       const { activeContainer } = this.state;
-      const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
-      const command = isWindowsPod(this.props.obj) ? ['cmd'] : ['sh', '-i', '-c', 'TERM=xterm sh'];
       const params = {
         ns: namespace,
         name,
-        path: 'exec',
+        path: 'attach',
         queryParams: {
           stdout: 1,
           stdin: 1,
           stderr: 1,
           tty: 1,
           container: activeContainer,
-          command: command.map((c) => encodeURIComponent(c)).join('&command='),
         },
       };
 
@@ -72,7 +65,6 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       const impersonate = getImpersonate(store.getState()) || {};
       const subprotocols = (impersonate.subprotocols || []).concat('base64.channel.k8s.io');
 
-      let previous;
       this.ws = new WSFactory(`${name}-terminal`, {
         host: 'auto',
         reconnect: true,
@@ -82,26 +74,12 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       })
         .onmessage((raw) => {
           const { current } = this.terminal;
-          // error channel
-          if (raw[0] === '3') {
-            if (previous.includes(NO_SH)) {
-              current.reset();
-              current.onConnectionClosed(
-                `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${namespace} exec ${name} -ti <command>`,
-              );
-              this.ws.destroy();
-              previous = '';
-              return;
-            }
-          }
           const data = Base64.decode(raw.slice(1));
           current && current.onDataReceived(data);
-          previous = data;
         })
         .onopen(() => {
           const { current } = this.terminal;
           current && current.reset();
-          previous = '';
           this.setState({ open: true, error: null });
         })
         .onclose((evt) => {
@@ -227,4 +205,4 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
   },
 );
 
-export const PodExec = withTranslation()(PodExec_);
+export const PodAttach = withTranslation()(PodAttach_);
