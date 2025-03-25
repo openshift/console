@@ -177,7 +177,7 @@
     "i18next-v4-format-converter": "^1.0.3",
     "immutable": "3.x",
     "istextorbinary": "^9.5.0",
-    "js-base64": "^2.5.1",
+    "js-base64": "^3.7.7",
     "js-yaml": "^3.13.1",
     "json-schema": "^0.3.0",
     "lodash-es": "^4.17.21",
