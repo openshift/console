@@ -61,8 +61,12 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
 
   const children = navExtensions.map((extension) => {
     if (isSeparator(extension)) {
+      // changed role due to accessibility violation
+      // [role=separator] is not allowed under a role=list
+      // https://github.com/patternfly/patternfly-react/issues/11717
       return (
         <NavItemSeparator
+          role="presentation"
           key={extension.uid}
           className="oc-perspective-nav__divider"
           {...extension.properties.dataAttributes}
