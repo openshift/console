@@ -888,7 +888,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
       <div className="col-xs-12">
         <div className="panel-body">
           <AsyncComponent
-            loader={() => import('./pod-exec').then((c) => c.PodExec)}
+            loader={() => import('./pod-attach').then((c) => c.PodAttach)}
             obj={obj}
             message={message}
             infoMessage={infoMessage}
