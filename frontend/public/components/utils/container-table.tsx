@@ -2,42 +2,45 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { ContainerSpec } from '../../module/k8s';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 const ContainerRow: React.FC<ContainerRowProps> = ({ container }) => {
   const resourceLimits = _.get(container, 'resources.limits');
   const ports = _.get(container, 'ports');
   return (
-    <div className="row">
-      <div className="col-xs-5 col-sm-4 col-md-3 co-break-word">{container.name}</div>
-      <div className="col-xs-7 col-sm-5 co-break-all co-select-to-copy">
+    <Tr>
+      <Td>{container.name}</Td>
+      <Td className="co-select-to-copy" modifier="breakWord">
         {container.image || '-'}
-      </div>
-      <div className="col-sm-3 col-md-2 hidden-xs">
+      </Td>
+      <Td visibility={['hidden', 'visibleOnSm']}>
         {_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ') || '-'}
-      </div>
-      <div className="col-md-2 hidden-xs hidden-sm co-break-word">
+      </Td>
+      <Td visibility={['hidden', 'visibleOnMd']}>
         {_.map(ports, (port) => `${port.containerPort}/${port.protocol}`).join(', ') || '-'}
-      </div>
-    </div>
+      </Td>
+    </Tr>
   );
 };
 
 export const ContainerTable: React.FC<ContainerTableProps> = ({ containers }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-xs-5 col-sm-4 col-md-3">{t('public~Name')}</div>
-        <div className="col-xs-7 col-sm-5">{t('public~Image')}</div>
-        <div className="col-sm-3 col-md-2 hidden-xs">{t('public~Resource limits')}</div>
-        <div className="col-md-2 hidden-xs hidden-sm">{t('public~Ports')}</div>
-      </div>
-      <div className="co-m-table-grid__body">
+    <Table gridBreakPoint="">
+      <Thead>
+        <Tr>
+          <Th>{t('public~Name')}</Th>
+          <Th>{t('public~Image')}</Th>
+          <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Resource limits')}</Th>
+          <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Ports')}</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
         {_.map(containers, (c, i) => (
           <ContainerRow key={i} container={c} />
         ))}
-      </div>
-    </div>
+      </Tbody>
+    </Table>
   );
 };
 

@@ -22,6 +22,7 @@ import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/sha
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import PageBody from '@console/shared/src/components/layout/PageBody';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
@@ -256,7 +257,7 @@ export const OperatorHubPage = withFallback((props) => {
   return (
     <>
       <DocumentTitle>OperatorHub</DocumentTitle>
-      <div className="co-m-page__body">
+      <PageBody>
         <div className="co-catalog">
           <PageHeading title="OperatorHub" />
           <p className="co-catalog-page__description">
@@ -340,7 +341,7 @@ export const OperatorHubPage = withFallback((props) => {
             </Firehose>
           </div>
         </div>
-      </div>
+      </PageBody>
     </>
   );
 }, ErrorBoundaryFallbackPage);

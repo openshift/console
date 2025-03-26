@@ -9,6 +9,7 @@ import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/inte
 import { PodExecLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { resourcePath } from './utils/resource-link';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
@@ -59,11 +60,11 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
 
 const DebugTerminalError: React.FC<DebugTerminalErrorProps> = ({ error, description }) => {
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <Alert variant="danger" isInline title={error}>
         <p>{description}</p>
       </Alert>
-    </div>
+    </PaneBody>
   );
 };
 

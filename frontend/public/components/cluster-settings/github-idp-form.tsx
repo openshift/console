@@ -4,6 +4,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
 import { ButtonBar, ListInput, PageHeading } from '../utils';
@@ -158,8 +159,8 @@ export const AddGitHubPage = () => {
           'public~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
         )}
       />
-      <div className="co-m-pane__body">
-        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+      <PaneBody>
+        <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
@@ -260,7 +261,7 @@ export const AddGitHubPage = () => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

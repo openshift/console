@@ -22,6 +22,7 @@ import operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
 import { ErrorBoundary } from '@console/shared/src/components/error';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import {
   testClusterServiceVersion,
@@ -292,7 +293,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders description section for ClusterServiceVersion', () => {
-    expect(wrapper.find('.co-m-pane__body').at(0).find(SectionHeading).at(1).props().text).toEqual(
+    expect(wrapper.find(PaneBody).at(0).find(SectionHeading).at(1).props().text).toEqual(
       'Description',
     );
   });
@@ -364,15 +365,13 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders info section for ClusterServiceVersion', () => {
-    expect(wrapper.find('.co-m-pane__body').at(1).find(SectionHeading).props().text).toEqual(
+    expect(wrapper.find(PaneBody).at(1).find(SectionHeading).props().text).toEqual(
       'ClusterServiceVersion details',
     );
   });
 
   it('renders conditions section for ClusterServiceVersion', () => {
-    expect(wrapper.find('.co-m-pane__body').at(2).find(SectionHeading).props().text).toEqual(
-      'Conditions',
-    );
+    expect(wrapper.find(PaneBody).at(2).find(SectionHeading).props().text).toEqual('Conditions');
   });
 
   it('does not render service accounts section if empty', () => {

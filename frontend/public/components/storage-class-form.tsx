@@ -17,6 +17,7 @@ import {
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   AsyncComponent,
   ButtonBar,
@@ -583,7 +584,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           </Link>
         }
       />
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+      <PaneBody>
         <form data-test-id="storage-class-form">
           <div className={classNames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
             <label className="control-label co-required" htmlFor="storage-class-name">
@@ -719,7 +720,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

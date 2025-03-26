@@ -13,6 +13,7 @@ import {
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
@@ -26,7 +27,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   const sizeMetrics = size ? humanizeBinaryBytes(size).string : '-';
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('console-app~VolumeSnapshotContent details')} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
@@ -79,7 +80,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
           </dl>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

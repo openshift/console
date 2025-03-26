@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
@@ -36,6 +36,7 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
 import { ListPageBody, RowFilter, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -536,17 +537,6 @@ export const ContainerLastState: React.FC<ContainerLastStateProps> = ({ containe
   return <>-</>;
 };
 
-const podContainerClassNames = [
-  'col-lg-2 col-md-3 col-sm-4 col-xs-5',
-  'col-lg-2 col-md-3 col-sm-5 col-xs-7 ',
-  'col-lg-2 col-md-1 col-sm-3 hidden-xs',
-  'col-lg-2 hidden-md hidden-sm hidden-xs',
-  'col-lg-1 col-md-2 hidden-sm hidden-xs',
-  'col-lg-1 col-md-2 hidden-sm hidden-xs',
-  'col-lg-1 hidden-md hidden-sm hidden-xs',
-  'col-lg-1 hidden-md hidden-sm hidden-xs',
-];
-
 export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
@@ -554,28 +544,28 @@ export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) =>
   const finishedAt = _.get(cstate, 'finishedAt');
 
   return (
-    <div className="row">
-      <div className={podContainerClassNames[0]}>
+    <Tr>
+      <Td width={20}>
         <ContainerLink pod={pod} name={container.name} />
-      </div>
-      <div className={`${podContainerClassNames[1]} co-truncate co-nowrap co-select-to-copy`}>
+      </Td>
+      <Td className="co-select-to-copy" modifier="truncate">
         {container.image || '-'}
-      </div>
-      <div className={podContainerClassNames[2]}>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnMd']}>
         <Status status={cstate.label} />
-      </div>
-      <div className={podContainerClassNames[3]}>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnXl']}>
         <ContainerLastState containerLastState={cstatus?.lastState} />
-      </div>
-      <div className={podContainerClassNames[4]}>{getContainerRestartCount(cstatus)}</div>
-      <div className={podContainerClassNames[5]}>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnLg']}>{getContainerRestartCount(cstatus)}</Td>
+      <Td width={10} visibility={['hidden', 'visibleOnLg']}>
         <Timestamp timestamp={startedAt} />
-      </div>
-      <div className={podContainerClassNames[6]}>
+      </Td>
+      <Td width={10} visibility={['hidden', 'visibleOnXl']}>
         <Timestamp timestamp={finishedAt} />
-      </div>
-      <div className={podContainerClassNames[7]}>{_.get(cstate, 'exitCode', '-')}</div>
-    </div>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnXl']}>{_.get(cstate, 'exitCode', '-')}</Td>
+    </Tr>
   );
 };
 ContainerRow.displayName = 'ContainerRow';
@@ -589,23 +579,29 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({
   return (
     <>
       <SectionHeading text={heading} />
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className={podContainerClassNames[0]}>{t('public~Name')}</div>
-          <div className={podContainerClassNames[1]}>{t('public~Image')}</div>
-          <div className={podContainerClassNames[2]}>{t('public~State')}</div>
-          <div className={podContainerClassNames[3]}>{t('public~Last State')}</div>
-          <div className={podContainerClassNames[4]}>{t('public~Restarts')}</div>
-          <div className={podContainerClassNames[5]}>{t('public~Started')}</div>
-          <div className={podContainerClassNames[6]}>{t('public~Finished')}</div>
-          <div className={podContainerClassNames[7]}>{t('public~Exit code')}</div>
-        </div>
-        <div className="co-m-table-grid__body">
+      <Table gridBreakPoint="">
+        <Thead>
+          <Tr>
+            <Th width={20}>{t('public~Name')}</Th>
+            <Th>{t('public~Image')}</Th>
+            <Th visibility={['hidden', 'visibleOnMd']}>{t('public~State')}</Th>
+            <Th visibility={['hidden', 'visibleOnXl']}>{t('public~Last State')}</Th>
+            <Th visibility={['hidden', 'visibleOnLg']}>{t('public~Restarts')}</Th>
+            <Th width={10} visibility={['hidden', 'visibleOnLg']}>
+              {t('public~Started')}
+            </Th>
+            <Th width={10} visibility={['hidden', 'visibleOnXl']}>
+              {t('public~Finished')}
+            </Th>
+            <Th visibility={['hidden', 'visibleOnXl']}>{t('public~Exit code')}</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {containers.map((c: any, i: number) => (
             <ContainerRow key={i} pod={pod} container={c} />
           ))}
-        </div>
-      </div>
+        </Tbody>
+      </Table>
     </>
   );
 };
@@ -908,7 +904,7 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   return (
     <>
       <ScrollToTopOnMount />
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Pod details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -918,32 +914,32 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
             <PodDetailsList pod={pod} />
           </div>
         </div>
-      </div>
+      </PaneBody>
       {pod.spec.initContainers && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <PodContainerTable
             key="initContainerTable"
             heading={t('public~Init containers')}
             containers={pod.spec.initContainers}
             pod={pod}
           />
-        </div>
+        </PaneBody>
       )}
-      <div className="co-m-pane__body">
+      <PaneBody>
         <PodContainerTable
           key="containerTable"
           heading={t('public~Containers')}
           containers={pod.spec.containers}
           pod={pod}
         />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={pod} heading={t('public~Volumes')} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={pod.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -966,7 +962,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
   initialContainer,
   infoMessage,
 }) => (
-  <div className="co-m-pane__body">
+  <PaneBody>
     <div className="row">
       <div className="col-xs-12">
         <div className="panel-body">
@@ -980,7 +976,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
         </div>
       </div>
     </div>
-  </div>
+  </PaneBody>
 );
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
   const prometheusIsAvailable = usePrometheusGate();

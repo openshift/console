@@ -9,6 +9,7 @@ import {
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
@@ -49,30 +50,28 @@ const tableColumnClasses = [
 const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('public~StorageClass details')} />
-        <div className="row">
-          <div className="col-sm-6">
-            <ResourceSummary resource={obj}>
-              <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
-            </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
-              <dt>{t('public~Default class')}</dt>
-              <dd>{isDefaultClass(obj) ? t('public~True') : t('public~False')}</dd>
-              <DetailsItem
-                label={t('public~Volume binding mode')}
-                obj={obj}
-                path="volumeBindingMode"
-              />
-            </dl>
-          </div>
+    <PaneBody>
+      <SectionHeading text={t('public~StorageClass details')} />
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={obj}>
+            <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <dl className="co-m-pane__details">
+            <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
+            <dt>{t('public~Default class')}</dt>
+            <dd>{isDefaultClass(obj) ? t('public~True') : t('public~False')}</dd>
+            <DetailsItem
+              label={t('public~Volume binding mode')}
+              obj={obj}
+              path="volumeBindingMode"
+            />
+          </dl>
         </div>
       </div>
-    </>
+    </PaneBody>
   );
 };
 

@@ -58,7 +58,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
-import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core'; // PF4 Imports
+import { AlertVariant, Flex, Page, SkipToContent } from '@patternfly/react-core';
 import { AuthenticationErrorPage } from './error';
 import '../vendor.scss';
 import '../style.scss';
@@ -221,7 +221,11 @@ const App = (props) => {
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
-        <div id="app-content" className="co-m-app__content">
+        <Flex
+          id="app-content"
+          direction={{ default: 'column' }}
+          style={{ flex: '1 0 auto', height: '100%' }}
+        >
           <Page
             isContentFilled
             id="content"
@@ -253,6 +257,7 @@ const App = (props) => {
               />
             }
             isNotificationDrawerExpanded={isNotificationDrawerExpanded}
+            style={{ flex: '1', height: '0' }}
           >
             <AppContents />
           </Page>
@@ -261,7 +266,7 @@ const App = (props) => {
           )}
           <CloudShell />
           <GuidedTour />
-        </div>
+        </Flex>
         <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />

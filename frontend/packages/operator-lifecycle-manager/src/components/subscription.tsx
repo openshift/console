@@ -51,6 +51,8 @@ import {
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -444,7 +446,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <CatalogSourceHealthAlert
           health={catalogHealth}
           source={source}
@@ -462,7 +464,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
           />
         )}
         <SectionHeading text={t('olm~Subscription details')} />
-        <div className="co-m-pane__body-group">
+        <PaneBodyGroup>
           <SubscriptionUpdates
             catalogHealth={catalogHealth}
             pkg={pkg}
@@ -471,68 +473,66 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             installPlan={installPlan}
             subscriptions={subscriptions}
           />
-        </div>
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj} showAnnotations={false} />
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('olm~Installed version')}</dt>
-                <dd>
-                  {installedCSV ? (
-                    <ResourceLink
-                      kind={referenceForModel(ClusterServiceVersionModel)}
-                      name={getName(installedCSV)}
-                      namespace={getNamespace(installedCSV)}
-                      title={getName(installedCSV)}
-                    />
-                  ) : (
-                    t('olm~None')
-                  )}
-                </dd>
-                <dt>{t('olm~Starting version')}</dt>
-                <dd>{obj.spec.startingCSV || t('olm~None')}</dd>
-                <dt>{t('olm~CatalogSource')}</dt>
-                <dd>
-                  {source && sourceNamespace ? (
-                    <ResourceLink
-                      kind={referenceForModel(CatalogSourceModel)}
-                      name={source}
-                      namespace={sourceNamespace}
-                      title={source}
-                    >
-                      <ResourceStatus badgeAlt>
-                        <CatalogSourceStatusIconAndText healthy={catalogHealth?.healthy} />
-                      </ResourceStatus>
-                    </ResourceLink>
-                  ) : (
-                    t('olm~None')
-                  )}
-                </dd>
-                <dt>{t('olm~InstallPlan')}</dt>
-                <dd>
-                  {installPlan ? (
-                    <ResourceLink
-                      kind={referenceForModel(InstallPlanModel)}
-                      name={getName(installPlan)}
-                      namespace={getNamespace(installPlan)}
-                      title={getName(installPlan)}
-                    />
-                  ) : (
-                    t('olm~None')
-                  )}
-                </dd>
-              </dl>
-            </div>
+        </PaneBodyGroup>
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={obj} showAnnotations={false} />
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <dt>{t('olm~Installed version')}</dt>
+              <dd>
+                {installedCSV ? (
+                  <ResourceLink
+                    kind={referenceForModel(ClusterServiceVersionModel)}
+                    name={getName(installedCSV)}
+                    namespace={getNamespace(installedCSV)}
+                    title={getName(installedCSV)}
+                  />
+                ) : (
+                  t('olm~None')
+                )}
+              </dd>
+              <dt>{t('olm~Starting version')}</dt>
+              <dd>{obj.spec.startingCSV || t('olm~None')}</dd>
+              <dt>{t('olm~CatalogSource')}</dt>
+              <dd>
+                {source && sourceNamespace ? (
+                  <ResourceLink
+                    kind={referenceForModel(CatalogSourceModel)}
+                    name={source}
+                    namespace={sourceNamespace}
+                    title={source}
+                  >
+                    <ResourceStatus badgeAlt>
+                      <CatalogSourceStatusIconAndText healthy={catalogHealth?.healthy} />
+                    </ResourceStatus>
+                  </ResourceLink>
+                ) : (
+                  t('olm~None')
+                )}
+              </dd>
+              <dt>{t('olm~InstallPlan')}</dt>
+              <dd>
+                {installPlan ? (
+                  <ResourceLink
+                    kind={referenceForModel(InstallPlanModel)}
+                    name={getName(installPlan)}
+                    namespace={getNamespace(installPlan)}
+                    title={getName(installPlan)}
+                  />
+                ) : (
+                  t('olm~None')
+                )}
+              </dd>
+            </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />
         <Conditions conditions={obj?.status?.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

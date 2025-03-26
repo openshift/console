@@ -9,6 +9,7 @@ import { history, useAccessReview, Page } from '@console/internal/components/uti
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import CatalogPageHelpText from '../../catalog/CatalogPageHelpText';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import ProjectAccessPage from '../../project-access/ProjectAccessPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../CreateProjectListPage';
@@ -84,10 +85,12 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
   ) : (
     <CreateProjectListPage title={t('devconsole~Project Details')}>
       {(openProjectModal) => (
-        <Trans t={t} ns="devconsole">
-          Select a Project to view its details
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
+        <CatalogPageHelpText>
+          <Trans t={t} ns="devconsole">
+            Select a Project to view its details
+            <CreateAProjectButton openProjectModal={openProjectModal} />.
+          </Trans>
+        </CatalogPageHelpText>
       )}
     </CreateProjectListPage>
   );

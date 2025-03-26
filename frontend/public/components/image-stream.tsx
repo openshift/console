@@ -3,10 +3,11 @@ import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import * as classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { AlertVariant, Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -95,8 +96,8 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
   ]);
   const { t } = useTranslation();
   return (
-    <div className="row">
-      <div className="col-md-2 col-sm-4 col-xs-4 co-break-word">
+    <Tr>
+      <Td modifier="breakWord">
         <ResourceLink
           kind={ImageStreamTagsReference}
           name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)}
@@ -104,8 +105,8 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
           title={statusTag.tag}
           linkTo={!!image}
         />
-      </div>
-      <span className="col-md-3 col-sm-4 col-xs-8 co-break-all">
+      </Td>
+      <Td modifier="breakWord">
         {from && referencesTag && (
           <ResourceLink
             kind={ImageStreamTagsReference}
@@ -116,8 +117,8 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
         )}
         {from && !referencesTag && <>{from.name}</>}
         {!from && <span className="text-muted">{t('public~pushed image')}</span>}
-      </span>
-      <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
+      </Td>
+      <Td modifier="breakWord" visibility={['hidden', 'visibleOnSm']}>
         {!imageStreamStatus && dockerRepositoryCheck && (
           <>
             <YellowExclamationTriangleIcon />
@@ -134,12 +135,12 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
             &nbsp;{t('public~There is no image associated with this tag')}
           </>
         )}
-      </span>
-      <div className="col-md-3 hidden-sm hidden-xs">
+      </Td>
+      <Td visibility={['hidden', 'visibleOnMd']}>
         {created && <Timestamp timestamp={created} />}
         {!created && '-'}
-      </div>
-    </div>
+      </Td>
+    </Tr>
   );
 };
 
@@ -227,7 +228,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
 
   return (
     <div>
-      <div className="co-m-pane__body">
+      <PaneBody>
         {!_.isEmpty(importErrors) && (
           <ExpandableAlert
             variant={AlertVariant.warning}
@@ -250,34 +251,34 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
             <ExampleDockerCommandPopover imageStream={imageStream} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Tags')} />
         {_.isEmpty(imageStream.status.tags) ? (
           <span className="text-muted">{t('public~No tags')}</span>
         ) : (
-          <div className="row">
-            <div className="co-m-table-grid co-m-table-grid--bordered">
-              <div className="row co-m-table-grid__head">
-                <div className="col-md-2 col-sm-4 col-xs-4">{t('public~Name')}</div>
-                <div className="col-md-3 col-sm-4 col-xs-8">{t('public~From')}</div>
-                <div className="col-md-4 col-sm-4 hidden-xs">{t('public~Identifier')}</div>
-                <div className="col-md-3 hidden-sm hidden-xs">{t('public~Last updated')}</div>
-              </div>
-              <div className="co-m-table-grid__body">
-                {_.map(imageStream.status.tags, (statusTag) => (
-                  <ImageStreamTagsRow
-                    key={statusTag.tag}
-                    imageStream={imageStream}
-                    specTag={specTagByName[statusTag.tag]}
-                    statusTag={statusTag}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <PfTable gridBreakPoint="">
+            <Thead>
+              <Tr>
+                <Th>{t('public~Name')}</Th>
+                <Th>{t('public~From')}</Th>
+                <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Identifier')}</Th>
+                <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Last updated')}</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {_.map(imageStream.status.tags, (statusTag) => (
+                <ImageStreamTagsRow
+                  key={statusTag.tag}
+                  imageStream={imageStream}
+                  specTag={specTagByName[statusTag.tag]}
+                  statusTag={statusTag}
+                />
+              ))}
+            </Tbody>
+          </PfTable>
         )}
-      </div>
+      </PaneBody>
     </div>
   );
 };

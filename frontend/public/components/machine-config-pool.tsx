@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
 import { MachineConfigPoolModel } from '../models';
@@ -135,7 +137,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
   const { t } = useTranslation();
 
   return (
-    <div className="co-m-pane__body-group">
+    <PaneBodyGroup>
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
@@ -202,7 +204,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
           </div>
         </div>
       </div>
-    </div>
+    </PaneBodyGroup>
   );
 };
 
@@ -232,7 +234,7 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineConfigPool details')} />
         {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
         <MachineConfigPoolCounts obj={obj} />
@@ -244,11 +246,11 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
             <MachineConfigPoolCharacteristics obj={obj} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={_.get(obj, 'status.conditions')} />
-      </div>
+      </PaneBody>
     </>
   );
 };
