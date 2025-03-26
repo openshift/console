@@ -1,8 +1,8 @@
 {
-  "Helm Chart Repository": "Helm Chart Repository",
-  "Helm Chart Repositories": "Helm Chart Repositories",
-  "Project Helm Chart Repository": "Project Helm Chart Repository",
-  "Project Helm Chart Repositories": "Project Helm Chart Repositories",
+  "HelmChartRepository": "HelmChartRepository",
+  "HelmChartRepositories": "HelmChartRepositories",
+  "ProjectHelmChartRepository": "ProjectHelmChartRepository",
+  "ProjectHelmChartRepositories": "ProjectHelmChartRepositories",
   "Helm Chart repositories": "Helm Chart repositories",
   "Helm Chart": "Helm Chart",
   "Browse the catalog to discover and install Helm Charts": "Browse the catalog to discover and install Helm Charts",

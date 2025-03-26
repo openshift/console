@@ -7,8 +7,8 @@
         "version": "v1beta1",
         "kind": "HelmChartRepository"
       },
-      "label": "%helm-plugin~Helm Chart Repository%",
-      "labelPlural": "%helm-plugin~Helm Chart Repositories%",
+      "label": "%helm-plugin~HelmChartRepository%",
+      "labelPlural": "%helm-plugin~HelmChartRepositories%",
       "abbr": "HCR"
     }
   },
@@ -20,8 +20,8 @@
         "version": "v1beta1",
         "kind": "ProjectHelmChartRepository"
       },
-      "label": "%helm-plugin~Project Helm Chart Repository%",
-      "labelPlural": "%helm-plugin~Project Helm Chart Repositories%",
+      "label": "%helm-plugin~ProjectHelmChartRepository%",
+      "labelPlural": "%helm-plugin~ProjectHelmChartRepositories%",
       "abbr": "PHCR"
     }
   },
@@ -396,7 +396,9 @@
     "properties": {
       "id": "helm-release-panel-tab-section-details",
       "tab": "topology-side-bar-tab-details",
-      "provider": { "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelDetailsTabSection" }
+      "provider": {
+        "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelDetailsTabSection"
+      }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -407,7 +409,9 @@
     "properties": {
       "id": "helm-release-panel-tab-section-resource",
       "tab": "topology-side-bar-tab-resource",
-      "provider": { "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelResourceTabSection" }
+      "provider": {
+        "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelResourceTabSection"
+      }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -418,7 +422,9 @@
     "properties": {
       "id": "helm-release-panel-tab-section-releaseNotes",
       "tab": "helm-release-panel-tab-releaseNotes",
-      "provider": { "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelReleaseNotesTabSection" }
+      "provider": {
+        "$codeRef": "helmTopologySidebarTabSections.useHelmReleasePanelReleaseNotesTabSection"
+      }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -449,8 +455,12 @@
   {
     "type": "dev-console.detailsPage/breadcrumbs",
     "properties": {
-      "getModels": { "$codeRef": "useHelmChartRepositoriesBreadcrumbs.getHelmChartRepositoriesModel" },
-      "breadcrumbsProvider": { "$codeRef": "useHelmChartRepositoriesBreadcrumbs.useHelmChartRepositoriesBreadcrumbs" }
+      "getModels": {
+        "$codeRef": "useHelmChartRepositoriesBreadcrumbs.getHelmChartRepositoriesModel"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "useHelmChartRepositoriesBreadcrumbs.useHelmChartRepositoriesBreadcrumbs"
+      }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
