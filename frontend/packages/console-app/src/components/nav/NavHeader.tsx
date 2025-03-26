@@ -7,7 +7,6 @@ import {
   SelectOption,
   Title,
 } from '@patternfly/react-core';
-import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
@@ -16,7 +15,6 @@ import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ACM_LINK_ID, usePerspectiveExtension, usePerspectives } from '@console/shared';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
-import './NavHeader.scss';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
@@ -135,48 +133,46 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       : []),
   ];
 
-  return (
-    <>
-      {activePerspective !== ACM_PERSPECTIVE_ID && (
-        <div
-          className="oc-nav-header"
-          data-tour-id="tour-perspective-dropdown"
-          data-quickstart-id="qs-perspective-switcher"
-        >
-          <Select
-            isOpen={isPerspectiveDropdownOpen}
-            data-test-id="perspective-switcher-menu"
-            onOpenChange={(open) => setPerspectiveDropdownOpen(open)}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                isFullWidth
-                data-test-id="perspective-switcher-toggle"
-                isExpanded={isPerspectiveDropdownOpen}
-                ref={toggleRef}
-                onClick={() => (perspectiveItems.length === 1 ? null : togglePerspectiveOpen())}
-                className={cx({
-                  'oc-nav-header__menu-toggle--is-empty': perspectiveItems.length === 1,
-                })}
-                icon={<LazyIcon />}
-              >
-                {name && (
-                  <Title headingLevel="h2" size="md">
-                    {name}
-                  </Title>
-                )}
-              </MenuToggle>
-            )}
-            popperProps={{
-              appendTo: () =>
-                document.querySelector("[data-test-id='perspective-switcher-toggle']"),
-            }}
+  return activePerspective !== ACM_PERSPECTIVE_ID && perspectiveItems.length > 1 ? (
+    <div
+      className="oc-nav-header"
+      data-tour-id="tour-perspective-dropdown"
+      data-quickstart-id="qs-perspective-switcher"
+    >
+      <Select
+        isOpen={isPerspectiveDropdownOpen}
+        data-test-id="perspective-switcher-menu"
+        onOpenChange={(open) => setPerspectiveDropdownOpen(open)}
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            isFullWidth
+            data-test-id="perspective-switcher-toggle"
+            isExpanded={isPerspectiveDropdownOpen}
+            ref={toggleRef}
+            onClick={() => togglePerspectiveOpen()}
+            icon={<LazyIcon />}
           >
-            <SelectList>{perspectiveDropdownItems}</SelectList>
-          </Select>
-        </div>
-      )}
-    </>
-  );
+            {name && (
+              <Title headingLevel="h2" size="md">
+                {name}
+              </Title>
+            )}
+          </MenuToggle>
+        )}
+        popperProps={{
+          appendTo: () => document.querySelector("[data-test-id='perspective-switcher-toggle']"),
+        }}
+      >
+        <SelectList>{perspectiveDropdownItems}</SelectList>
+      </Select>
+    </div>
+  ) : (
+    <div
+      className="pf-v6-u-display-none"
+      data-test-id="perspective-switcher-toggle"
+      aria-hidden="true"
+    />
+  ); // Empty div for e2e purposes
 };
 
 export default NavHeader;
