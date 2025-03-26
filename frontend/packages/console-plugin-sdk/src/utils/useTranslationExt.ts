@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
-import { Namespace, useTranslation, UseTranslationOptions } from 'react-i18next';
+// import { Namespace } from 'i18next';
+import { Namespace } from 'i18next-v4-format-converter';
+import { useTranslation, UseTranslationOptions } from 'react-i18next';
 import { isTranslatableString, getTranslationKey } from './extension-i18n';
 
 /**
@@ -8,7 +10,7 @@ import { isTranslatableString, getTranslationKey } from './extension-i18n';
  *
  * Translatable strings in Console application must use the `%key%` pattern.
  */
-const useTranslationExt = (ns?: Namespace, options?: UseTranslationOptions) => {
+const useTranslationExt = (ns?: Namespace, options?: UseTranslationOptions<string>) => {
   const result = useTranslation(ns, options);
   const { t } = result;
   const cb: TFunction = React.useCallback(

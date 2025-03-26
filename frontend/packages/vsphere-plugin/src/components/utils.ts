@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
+import { TFunction } from 'i18next';
 import { encode, decode } from 'ini';
-import { TFunction } from 'react-i18next';
 import { VSPHERE_CREDS_SECRET_NAME, VSPHERE_CREDS_SECRET_NAMESPACE } from '../constants';
 import { ConnectionFormFormikValues } from './types';
 
