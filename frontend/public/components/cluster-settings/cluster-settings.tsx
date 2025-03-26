@@ -402,7 +402,7 @@ export const CurrentVersion: React.FC<CurrentVersionProps> = ({ cv }) => {
           {lastVersion}
         </span>
       </div>
-      <ReleaseNotesLink version={getLastCompletedUpdate(cv)} />
+      <ReleaseNotesLink version={lastVersion} />
     </>
   ) : (
     <>{t('public~None')}</>
@@ -752,9 +752,8 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
-  const minorVersionIsNewer = newestVersion
-    ? isMinorVersionNewer(lastVersion, newestVersion)
-    : false;
+  const minorVersionIsNewer =
+    lastVersion && newestVersion ? isMinorVersionNewer(lastVersion, newestVersion) : false;
   const secondNewestVersion = availableUpdates[1]?.version;
   const currentChannel = cv.spec.channel;
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
