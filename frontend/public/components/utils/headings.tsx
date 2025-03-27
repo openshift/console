@@ -238,8 +238,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
                         : customActionMenu}
                     </>
                   )}
-
-                  {props.children}
                 </ActionListGroup>
               </ActionList>
             )}
@@ -255,6 +253,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             </Content>
           </Content>
         )}
+        {props.children}
       </div>
     </>
   );
