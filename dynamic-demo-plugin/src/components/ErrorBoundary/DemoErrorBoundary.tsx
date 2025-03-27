@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { withTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { withTranslation, TFunction } from 'react-i18next';
 import { ErrorBoundaryFallbackProps } from "@openshift-console/dynamic-plugin-sdk";
 
 type DemoErrorBoundaryState = {

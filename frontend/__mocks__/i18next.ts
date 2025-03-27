@@ -1,4 +1,3 @@
-/* eslint-env node */
 import { TFunction } from 'react-i18next';
 
 const i18next = require.requireActual('i18next');
