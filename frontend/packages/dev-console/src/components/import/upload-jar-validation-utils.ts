@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import * as yup from 'yup';
 import { nameValidationSchema } from '@console/shared';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';

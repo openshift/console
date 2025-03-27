@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import {
+import { TFunction } from 'react-i18next';import {
   k8sCreate,
   k8sGet,
   K8sModel,

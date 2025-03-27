@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { useTranslation, TFunction } from 'react-i18next';
 import { Content, TextInput, ContentVariants } from '@patternfly/react-core';
 import * as semver from 'semver';
 

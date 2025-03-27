@@ -1,6 +1,5 @@
 import * as fuzzy from 'fuzzysearch';
-import { TFunction } from 'i18next';
-import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
+import { TFunction } from 'react-i18next';import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { Flatten } from '@console/internal/components/factory/list-page';

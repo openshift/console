@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';

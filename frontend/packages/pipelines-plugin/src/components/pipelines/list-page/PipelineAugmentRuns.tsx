@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { inject } from '@console/internal/components/utils';
 import { FirehoseResult } from '@console/internal/module/k8s';

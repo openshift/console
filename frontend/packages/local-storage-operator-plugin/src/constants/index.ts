@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { DiskMechanicalProperties } from '../components/local-volume-set/types';
+import { TFunction } from 'react-i18next';import { DiskMechanicalProperties } from '../components/local-volume-set/types';
 
 export enum DiskType {
   All = 'All',

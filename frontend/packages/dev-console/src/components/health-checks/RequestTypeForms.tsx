@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { InputField, CheckboxField, getFieldId, TextColumnField } from '@console/shared';

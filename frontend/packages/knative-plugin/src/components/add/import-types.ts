@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { TFunction } from 'react-i18next';import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   EVENTING_KAFKA_CHANNEL_KIND,
   EVENTING_IMC_KIND,

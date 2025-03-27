@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { confirmModal, deleteModal } from '@console/internal/components/modals';
+import { TFunction } from 'react-i18next';import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel } from '@console/internal/models';
 import {

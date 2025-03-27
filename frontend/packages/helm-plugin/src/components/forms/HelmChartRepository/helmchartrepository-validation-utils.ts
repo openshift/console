@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import * as yup from 'yup';
+import { TFunction } from 'react-i18next';import * as yup from 'yup';
 import { nameRegex } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HelmChartRepositoryData } from '../../../types/helm-types';

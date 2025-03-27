@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import EventType from '../components/eventing/EventType';

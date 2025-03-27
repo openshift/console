@@ -1,6 +1,5 @@
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
-import { tableColumnClasses } from './subscription-table';
+import { TFunction } from 'react-i18next';import { tableColumnClasses } from './subscription-table';
 
 const getSubscriptionHeaders = (t: TFunction, showChannel: boolean) => {
   const SubscriptionHeaders = () => [

@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { ImportStrategy } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';

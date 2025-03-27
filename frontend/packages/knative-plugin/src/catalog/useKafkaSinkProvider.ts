@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { KafkaSinkModel } from '../models';
 import { getEventSourceIcon } from '../utils/get-knative-icon';

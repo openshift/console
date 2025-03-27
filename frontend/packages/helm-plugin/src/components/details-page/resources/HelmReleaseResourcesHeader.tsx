@@ -1,6 +1,5 @@
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
-
+import { TFunction } from 'react-i18next';
 export const tableColumnClasses = {
   name: '',
   type: '',

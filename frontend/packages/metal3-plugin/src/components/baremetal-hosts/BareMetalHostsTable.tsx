@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { TableData, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';

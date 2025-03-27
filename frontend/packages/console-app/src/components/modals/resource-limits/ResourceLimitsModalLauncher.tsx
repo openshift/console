@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import { TFunction } from 'i18next';
+import { TFunction } from 'react-i18next';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { limitsValidationSchema } from '@console/dev-console/src/components/import/validation-schema';

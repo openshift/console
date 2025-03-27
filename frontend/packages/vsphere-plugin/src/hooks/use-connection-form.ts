@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { K8sModel, k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { ConnectionFormFormikValues } from '../components/types';
 import { decodeBase64, getErrorMessage, parseKeyValue } from '../components/utils';

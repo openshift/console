@@ -1,5 +1,5 @@
 /* eslint-env node */
-import { TFunction } from 'i18next';
+import { TFunction } from 'react-i18next';
 
 const i18next = require.requireActual('i18next');
 

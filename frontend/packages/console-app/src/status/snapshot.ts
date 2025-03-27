@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import { TFunction } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { VolumeSnapshotStatus } from '@console/internal/module/k8s';
 

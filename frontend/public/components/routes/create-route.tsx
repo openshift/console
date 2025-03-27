@@ -7,9 +7,7 @@ import { Alert, Button, Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { connect, FormikContextType, FormikValues } from 'formik';
-import { TFunction } from 'i18next';
-/* eslint-disable-next-line */
-import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
+import { useTranslation, withTranslation, WithTranslation, TFunction } from 'react-i18next';
 import { Dropdown, ResourceName } from '../utils';
 import { K8sResourceKind, RouteKind } from '../../module/k8s';
 import { getActiveNamespace } from '../../actions/ui';

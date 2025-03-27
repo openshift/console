@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled, useFlag } from '@console/shared';

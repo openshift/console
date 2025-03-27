@@ -11,8 +11,7 @@ import {
   ContentVariants,
   Tooltip,
 } from '@patternfly/react-core';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { Dropdown } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';

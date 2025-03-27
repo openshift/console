@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { Action, K8sKind } from '@console/dynamic-plugin-sdk';
+import { TFunction } from 'react-i18next';import { Action, K8sKind } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { deleteResourceModal } from '@console/shared';

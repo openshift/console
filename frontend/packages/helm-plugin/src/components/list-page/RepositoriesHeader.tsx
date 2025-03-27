@@ -1,7 +1,6 @@
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { TFunction } from 'i18next';
-import { Kebab } from '@console/internal/components/utils';
+import { TFunction } from 'react-i18next';import { Kebab } from '@console/internal/components/utils';
 
 const tableColumnClasses = [
   '', // Name

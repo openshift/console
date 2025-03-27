@@ -2,9 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-/* eslint-disable import/named */
-import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { useTranslation, withTranslation, WithTranslation, TFunction } from 'react-i18next';
 import {
   Routes,
   Route,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
+import { TFunction } from 'react-i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';

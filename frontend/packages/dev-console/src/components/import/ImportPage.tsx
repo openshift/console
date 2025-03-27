@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import Helmet from 'react-helmet';
+import { TFunction } from 'react-i18next';import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';

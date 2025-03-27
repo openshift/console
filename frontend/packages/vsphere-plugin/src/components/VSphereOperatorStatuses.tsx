@@ -8,8 +8,7 @@ import {
   t_color_green_50 as okColor,
   t_color_red_60 as errorColor,
 } from '@patternfly/react-tokens';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
   StatusPopupItem,

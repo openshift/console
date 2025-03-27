@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { toInteger } from 'lodash';
+import { TFunction } from 'react-i18next';import { toInteger } from 'lodash';
 import {
   HealthState,
   PrometheusHealthPopupProps,

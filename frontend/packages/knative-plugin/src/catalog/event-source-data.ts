@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import {
+import { TFunction } from 'react-i18next';import {
   EVENT_SOURCE_SINK_BINDING_KIND,
   EVENT_SOURCE_KAFKA_KIND,
   EVENT_SOURCE_API_SERVER_KIND,

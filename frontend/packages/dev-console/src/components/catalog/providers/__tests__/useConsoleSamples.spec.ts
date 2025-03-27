@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
+import { TFunction } from 'react-i18next';import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
 import { ConsoleSample } from '../../../../types';
 import { normalizeConsoleSamples } from '../useConsoleSamples';
 import { gitImportSample, containerImportSample } from './useConsoleSamples.data';

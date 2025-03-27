@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { Trans, useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { confirmModal } from '@console/internal/components/modals';

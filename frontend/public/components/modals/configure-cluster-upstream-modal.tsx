@@ -30,9 +30,7 @@ import {
   isUpstream,
   withHandlePromise,
 } from '../utils';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
+import { TFunction, useTranslation } from 'react-i18next';import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
 
 export const ConfigureClusterUpstreamModal = withHandlePromise(
   (props: ConfigureClusterUpstreamModalProps) => {

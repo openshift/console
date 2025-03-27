@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import {
   CatalogItem,
   CatalogItemDetailsDescription,

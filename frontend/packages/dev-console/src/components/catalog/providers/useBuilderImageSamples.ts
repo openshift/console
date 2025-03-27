@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import {

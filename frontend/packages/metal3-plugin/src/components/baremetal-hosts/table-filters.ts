@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import {
   HOST_REGISTERING_STATES,

@@ -1,6 +1,5 @@
 import * as GitUrlParse from 'git-url-parse';
-import { TFunction } from 'i18next';
-import { Base64 } from 'js-base64';
+import { TFunction } from 'react-i18next';import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { gitUrlRegex } from '@console/dev-console/src/components/import/validation-schema';

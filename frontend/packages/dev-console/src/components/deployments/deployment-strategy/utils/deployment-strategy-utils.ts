@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { Resources } from '../../../import/import-types';
+import { TFunction } from 'react-i18next';import { Resources } from '../../../import/import-types';
 import { DeploymentStrategyType, LifecycleAction } from './types';
 
 export const getDeploymentStrategyItems = (resourceType: Resources, t: TFunction) => {

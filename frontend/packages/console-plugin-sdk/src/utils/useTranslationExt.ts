@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
-// import { Namespace } from 'i18next';
 import { Namespace } from 'i18next-v4-format-converter';
-import { useTranslation, UseTranslationOptions } from 'react-i18next';
+import { useTranslation, UseTranslationOptions, TFunction} from 'react-i18next';
 import { isTranslatableString, getTranslationKey } from './extension-i18n';
 
 /**

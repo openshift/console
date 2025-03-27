@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import { EVENT_SINK_KAFKA_KIND } from '../const';
+import { TFunction } from 'react-i18next';import { EVENT_SINK_KAFKA_KIND } from '../const';
 
 export const getEventSinkCatalogProviderData = (
   ref: string,

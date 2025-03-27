@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import { TFunction } from 'react-i18next';
 import * as _ from 'lodash';
 import { MultiNetworkPolicyModel } from '@console/internal/models';
 import {

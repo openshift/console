@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Nav, NavItem, NavItemSeparator, NavList } from '@patternfly/react-core';
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';

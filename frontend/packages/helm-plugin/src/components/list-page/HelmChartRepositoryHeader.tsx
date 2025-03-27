@@ -1,6 +1,5 @@
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
-import { Kebab } from '@console/internal/components/utils';
+import { TFunction } from 'react-i18next';import { Kebab } from '@console/internal/components/utils';
 
 const HelmChartRepositoryHeader = (t: TFunction) => () => {
   return [

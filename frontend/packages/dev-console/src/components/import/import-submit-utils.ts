@@ -1,6 +1,5 @@
 import * as GitUrlParse from 'git-url-parse';
-import { TFunction } from 'i18next';
-import * as _ from 'lodash';
+import { TFunction } from 'react-i18next';import * as _ from 'lodash';
 import { Perspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
 import { BuildStrategyType } from '@console/internal/components/build';

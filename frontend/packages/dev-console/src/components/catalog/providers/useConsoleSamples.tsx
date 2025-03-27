@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useActiveNamespace } from '@console/shared/src';
 import { ConsoleSample } from '../../../types/samples';

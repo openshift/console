@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import { TFunction } from 'react-i18next';
 import {
   WatchK8sResources,
   ResourcesObject,

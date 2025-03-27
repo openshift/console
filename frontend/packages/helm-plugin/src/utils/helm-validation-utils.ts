@@ -1,5 +1,4 @@
-import { TFunction } from 'i18next';
-import * as yup from 'yup';
+import { TFunction } from 'react-i18next';import * as yup from 'yup';
 import { nameValidationSchema } from '@console/shared';
 import { HelmActionType } from '../types/helm-types';
 
