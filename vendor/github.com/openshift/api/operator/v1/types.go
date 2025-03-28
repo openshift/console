@@ -252,16 +252,19 @@ type StaticPodOperatorStatus struct {
 	// +listType=map
 	// +listMapKey=nodeName
 	// +optional
+	// +kubebuilder:validation:XValidation:rule="size(self.filter(status, status.?targetRevision.orValue(0) != 0)) <= 1",message="no more than 1 node status may have a nonzero targetRevision"
 	NodeStatuses []NodeStatus `json:"nodeStatuses,omitempty"`
 }
 
 // NodeStatus provides information about the current state of a particular node managed by this operator.
+// +kubebuilder:validation:XValidation:rule="has(self.currentRevision) || !has(oldSelf.currentRevision)",message="cannot be unset once set",fieldPath=".currentRevision"
 type NodeStatus struct {
 	// nodeName is the name of the node
 	// +required
 	NodeName string `json:"nodeName"`
 
 	// currentRevision is the generation of the most recently successful deployment
+	// +kubebuilder:validation:XValidation:rule="self >= oldSelf",message="must only increase"
 	CurrentRevision int32 `json:"currentRevision"`
 	// targetRevision is the generation of the deployment we're trying to apply
 	TargetRevision int32 `json:"targetRevision,omitempty"`
