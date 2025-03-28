@@ -432,6 +432,14 @@ describe('PluginStore', () => {
 
       expect(store.getExtensionsInUse()).toEqual([
         {
+          type: 'Baz',
+          properties: {},
+          flags: { required: [], disallowed: ['foo', 'bar'] },
+          pluginID: 'TestA@3.4.5',
+          pluginName: 'TestA',
+          uid: 'TestA@3.4.5[0]',
+        },
+        {
           type: 'Qux',
           properties: { value: 'test' },
           flags: { required: ['foo', 'bar'], disallowed: [] },
@@ -446,14 +454,6 @@ describe('PluginStore', () => {
           pluginID: 'TestC@2.3.4',
           pluginName: 'TestC',
           uid: 'TestC@2.3.4[0]',
-        },
-        {
-          type: 'Baz',
-          properties: {},
-          flags: { required: [], disallowed: ['foo', 'bar'] },
-          pluginID: 'TestA@3.4.5',
-          pluginName: 'TestA',
-          uid: 'TestA@3.4.5[0]',
         },
       ]);
 
