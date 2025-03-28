@@ -33,7 +33,7 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
       subTitleComponent={
         <ChartLabel
           style={{
-            fill: 'var(--pf-t--color--gray--50)',
+            fill: 'var(--pf-t--global--text--color--subtle)',
             fontSize: 14,
           }}
         />
