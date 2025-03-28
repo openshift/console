@@ -445,7 +445,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
   return inFlight ? null : (
     <>
-      <ListPageHeader title={showTitle ? t('olm~All Instances') : undefined}>
+      <ListPageHeader title={showTitle ? t('olm~All Instances') : undefined} hideFavoriteButton>
         {managesAllNamespaces && (
           <div className="co-operator-details__toggle-value pf-v6-u-ml-xl-on-md">
             <ShowOperandsInAllNamespacesRadioGroup />
@@ -513,7 +513,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
 
   return (
     <>
-      <ListPageHeader title={showTitle ? `${labelPlural}` : undefined}>
+      <ListPageHeader title={showTitle ? `${labelPlural}` : undefined} hideFavoriteButton>
         {managesAllNamespaces && (
           <div className="co-operator-details__toggle-value pf-v6-u-ml-xl-on-md">
             <ShowOperandsInAllNamespacesRadioGroup />
