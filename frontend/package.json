@@ -262,7 +262,7 @@
     "comment-json": "4.x",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^5.2.7",
-    "cypress": "^13.10.0",
+    "cypress": "^14.2.1",
     "cypress-axe": "^1.5.0",
     "cypress-cucumber-preprocessor": "latest",
     "cypress-file-upload": "^5.0.8",
