@@ -124,7 +124,7 @@ export const getCorePackage: GetPackageDefinition = (
       ...parseSharedModuleDeps(rootPackage, missingDepCallback),
       ...parseDeps(
         rootPackage,
-        ['classnames', 'immutable', 'reselect', 'typesafe-actions', 'whatwg-fetch'],
+        ['classnames', 'immutable', 'reselect', 'typesafe-actions'],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
