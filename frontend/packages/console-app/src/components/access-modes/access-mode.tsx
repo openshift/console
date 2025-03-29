@@ -137,6 +137,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
         <Select
           isOpen={isOpen}
           selected={selected}
+          // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
           onSelect={onSelect}
           onOpenChange={(open) => setIsOpen(open)}
           toggle={toggle}

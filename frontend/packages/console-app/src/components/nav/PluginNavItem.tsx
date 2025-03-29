@@ -32,7 +32,16 @@ export const PluginNavItem: React.FC<PluginNavItemProps> = ({ extension }) => {
     );
   }
   if (isSeparator(extension)) {
-    return <NavItemSeparator key={extension.uid} {...extension.properties.dataAttributes} />;
+    // changed role due to accessibility violation
+    // [role=separator] is not allowed under a role=list
+    // https://github.com/patternfly/patternfly-react/issues/11717
+    return (
+      <NavItemSeparator
+        role="presentation"
+        key={extension.uid}
+        {...extension.properties.dataAttributes}
+      />
+    );
   }
   if (isHrefNavItem(extension)) {
     return (

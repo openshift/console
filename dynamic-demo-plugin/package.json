@@ -17,9 +17,9 @@
     "@openshift-console/dynamic-plugin-sdk": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/core",
     "@openshift-console/dynamic-plugin-sdk-webpack": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
     "@openshift-console/plugin-shared": "file:../frontend/packages/console-plugin-shared/dist",
-    "@patternfly/react-core": "^6.2.0-prerelease.15",
-    "@patternfly/react-icons": "^6.2.0-prerelease.2",
-    "@patternfly/react-table": "^6.2.0-prerelease.16",
+    "@patternfly/react-core": "^6.2.0-prerelease.34",
+    "@patternfly/react-icons": "^6.2.0-prerelease.12",
+    "@patternfly/react-table": "^6.2.0-prerelease.35",
     "@types/react": "16.8.13",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
@@ -41,9 +41,6 @@
     "typescript": "5.7.2",
     "webpack": "^5.75.0",
     "webpack-cli": "5.0.x"
-  },
-  "resolutions": {
-    "@patternfly/react-core": "^6.2.0-prerelease.15"
   },
   "consolePlugin": {
     "name": "console-demo-plugin",

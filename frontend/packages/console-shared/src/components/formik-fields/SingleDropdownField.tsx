@@ -54,12 +54,13 @@ const SingleDropdownField: React.FC<SingleDropdownFieldProps> = ({
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
+      aria-label={ariaLabel}
       id={fieldId}
+      isDisabled={isDisabled}
+      isExpanded={isOpen}
+      isFullWidth
       onClick={onToggle}
       ref={toggleRef}
-      isExpanded={isOpen}
-      aria-label={ariaLabel}
-      isFullWidth
       status={isValid ? undefined : 'danger'}
     >
       {getLabelFromValue
@@ -76,7 +77,6 @@ const SingleDropdownField: React.FC<SingleDropdownFieldProps> = ({
         aria-label={ariaLabel}
         onSelect={onSelect}
         isOpen={isOpen}
-        isDisabled={isDisabled}
         onOpenChange={setIsOpen}
         popperProps={{ maxWidth: 'trigger' }} // prevents dropdown from going off screen
       >
