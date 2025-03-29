@@ -43,6 +43,7 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
         className={classNames('co-code-editor', props.className)}
         editorProps={{
           ...props?.editorProps,
+          theme: `console-${theme}`,
           beforeMount: (monacoInstance) => {
             defineThemes(monacoInstance?.editor);
             window.monaco = monacoInstance; // for e2e tests
@@ -51,7 +52,7 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
         }}
         options={{
           ...props?.options,
-          theme: `console-${theme}`,
+          fontFamily: 'var(--pf-t--global--font--family--mono)',
         }}
       />
     </ErrorBoundaryInline>

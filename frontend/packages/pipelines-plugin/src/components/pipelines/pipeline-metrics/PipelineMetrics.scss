@@ -2,7 +2,6 @@
 
 .pipeline-metrics-dashboard {
   &__body {
-    background-color: var(--pf-t--color--gray--10);
     margin-bottom: 0 !important;
     margin-top: 0;
   }
@@ -13,9 +12,6 @@
     margin-bottom: 0 !important;
     padding: var(--pf-t--global--spacer--md) $pf-v6-global-gutter--md 0;
   }
-}
-.pipeline-metrics-empty-state {
-  background-color: var(--pf-t--color--gray--10);
 }
 
 .pipeline-metrics {

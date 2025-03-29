@@ -1,7 +1,6 @@
 .opp-pipeline-run-list {
   &__signed-indicator {
     display: inline-block;
-    --pf-c-table--cell--Color: var(--pf-t--color--gray--50); // previous v5 token used transparency, so this may need adjustment still
     margin-left: var(--pf-t-global--spacer--sm);
     > img {
       height: var(--pf-t--global--font--size--lg);

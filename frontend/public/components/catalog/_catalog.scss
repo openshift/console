@@ -1,6 +1,6 @@
 $catalog-capability-level-icon-left: -20px;
 $catalog-capability-level-icon-top: 4px;
-$catalog-capability-level-inactive-color: var(--pf-t--color--gray--50);
+$catalog-capability-level-inactive-color: var(--pf-t--global--text--color--disabled);
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
 $co-modal-ignore-warning-icon-width: 30px;
@@ -302,7 +302,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 }
 
 .co-catalog-tab__empty {
-  color: var(--pf-t--color--gray--50);
+  color: var(--pf-t--global--text--color--subtle);
 }
 
 .co-modal-ignore-warning {

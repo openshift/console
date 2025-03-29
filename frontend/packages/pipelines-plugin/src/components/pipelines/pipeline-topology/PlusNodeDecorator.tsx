@@ -36,7 +36,7 @@ const PlusNodeDecorator: React.FC<PlusNodeProps> = ({
           className="odc-plus-node-decorator__circle"
         />
         <g transform="translate(-6, -6)">
-          <PlusIcon color="white" />
+          <PlusIcon color="var(--pf-t--global--text--color--on-brand--default)" />
         </g>
       </g>
     </Tooltip>
