@@ -9,6 +9,7 @@ import {
   ClusterOperatorModel,
   ConsoleOperatorConfigModel,
   ConsolePluginModel,
+  VolumeGroupSnapshotContentModel,
 } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
 import {
@@ -208,6 +209,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/List',
+    properties: {
+      model: VolumeGroupSnapshotContentModel,
+      loader: () =>
+        import(
+          './components/volume-group-snapshot/volume-group-snapshot-content' /* webpackChunkName: "volume-group-snapshot-content-page" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [FLAGS.CAN_LIST_VGSC],
+    },
+  },
+  {
     type: 'Page/Resource/Details',
     properties: {
       model: VolumeSnapshotContentModel,
@@ -218,6 +232,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAGS.CAN_LIST_VSC],
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: VolumeGroupSnapshotContentModel,
+      loader: () =>
+        import(
+          './components/volume-group-snapshot/volume-group-snapshot-content-details' /* webpackChunkName: "volume-group-snapshot-content-details-page" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [FLAGS.CAN_LIST_VGSC],
     },
   },
   {
