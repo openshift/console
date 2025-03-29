@@ -5,6 +5,7 @@ import * as classNames from 'classnames';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
@@ -43,7 +44,7 @@ const Details = ({ obj: replicaSet }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~ReplicaSet details')} />
         <div className="row">
           <div className="col-md-6">
@@ -64,14 +65,14 @@ const Details = ({ obj: replicaSet }) => {
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={replicaSet.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={replicaSet} heading={t('public~Volumes')} />
-      </div>
+      </PaneBody>
     </>
   );
 };

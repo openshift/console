@@ -32,6 +32,7 @@ import {
 } from '@console/internal/module/k8s';
 import { useDocumentListener, KEYBOARD_SHORTCUTS, useDeepCompareMemoize } from '@console/shared';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import ListPropProvider from './ListPropProvider';
 
 type CreateProps = {
@@ -328,14 +329,14 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
         {!title && badge && <div>{badge}</div>}
       </PageHeading>
       {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+      <PaneBody>
         {inject(props.children, {
           resources,
           expand,
           reduxIDs,
           applyFilter,
         })}
-      </div>
+      </PaneBody>
     </>
   );
 };

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
 import { ButtonBar, ListInput, PageHeading } from '../utils';
@@ -168,8 +169,8 @@ export const AddLDAPPage = () => {
     <div className="co-m-pane__form">
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} helpText={t('public~Integrate with an LDAP identity provider.')} />
-      <div className="co-m-pane__body">
-        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+      <PaneBody>
+        <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
@@ -278,7 +279,7 @@ export const AddLDAPPage = () => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

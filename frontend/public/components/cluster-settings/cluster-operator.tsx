@@ -8,6 +8,7 @@ import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-ico
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ClusterOperatorModel } from '../../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from '../factory';
 import { Conditions } from '../conditions';
@@ -152,7 +153,7 @@ const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => 
   return (
     <>
       {updateCondition && (
-        <div className="co-m-pane__body co-m-pane__body--section-heading">
+        <PaneBody sectionHeading>
           <Alert
             isInline
             className="co-alert"
@@ -161,7 +162,7 @@ const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => 
           >
             <ClusterVersionConditionsLink cv={cv} />
           </Alert>
-        </div>
+        </PaneBody>
       )}
     </>
   );
@@ -235,7 +236,7 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~ClusterOperator details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -260,15 +261,15 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Operand versions')} />
         <OperandVersions versions={versions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

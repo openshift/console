@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom-v5-compat';
 import { SearchPage } from '@console/internal/components/search';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import CatalogPageHelpText from './catalog/CatalogPageHelpText';
 import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
@@ -16,10 +17,12 @@ const ProjectListPage = () => {
   return (
     <CreateProjectListPage title={t('devconsole~Search')}>
       {(openProjectModal) => (
-        <Trans t={t} ns="devconsole">
-          Select a Project to search inside
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
+        <CatalogPageHelpText>
+          <Trans t={t} ns="devconsole">
+            Select a Project to search inside
+            <CreateAProjectButton openProjectModal={openProjectModal} />.
+          </Trans>
+        </CatalogPageHelpText>
       )}
     </CreateProjectListPage>
   );

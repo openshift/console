@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
@@ -175,7 +176,7 @@ const Details = ({ obj: ingress }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Ingress details')} />
         <ResourceSummary resource={ingress}>
           <dt>{t('public~TLS certificate')}</dt>
@@ -183,8 +184,8 @@ const Details = ({ obj: ingress }) => {
             <TLSCert ingress={ingress} />
           </dd>
         </ResourceSummary>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Ingress rules')} />
         <p className="co-m-pane__explanation">
           {t(
@@ -195,7 +196,7 @@ const Details = ({ obj: ingress }) => {
           <RulesHeader />
           <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
         </div>
-      </div>
+      </PaneBody>
     </>
   );
 };

@@ -73,6 +73,7 @@ import {
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { withFallback } from '@console/shared/src/components/error';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
@@ -1009,198 +1010,191 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
     <>
       <ScrollToTopOnMount />
 
-      <div className="co-m-pane__body">
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-9">
-              {status && status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && (
-                <Alert
-                  isInline
-                  className="co-alert"
-                  variant="danger"
-                  title={t('olm~Operator failed')}
-                >
-                  {status.reason === CSVConditionReason.CSVReasonCopied ? (
-                    <>
-                      <Trans t={t} ns="olm">
-                        This Operator was copied from another namespace. For the reason it failed,
-                        see{' '}
-                        <ResourceLink
-                          name={metadata.name}
-                          kind={referenceForModel(ClusterServiceVersionModel)}
-                          namespace={operatorNamespaceFor(props.obj)}
-                          hideIcon
-                          inline
-                        />
-                      </Trans>
-                    </>
-                  ) : (
-                    status.message
-                  )}
-                </Alert>
-              )}
-              {initializationResource && (
-                <InitializationResourceAlert
-                  initializationResource={initializationResource}
-                  csv={props.obj}
-                />
-              )}
-              {(deprecatedPackage.deprecation ||
-                deprecatedChannel.deprecation ||
-                deprecatedVersion.deprecation) && (
-                <DeprecatedOperatorWarningAlert
-                  deprecatedPackage={deprecatedPackage}
-                  deprecatedChannel={deprecatedChannel}
-                  deprecatedVersion={deprecatedVersion}
-                  dismissible
-                />
-              )}
-              <SectionHeading text={t('olm~Provided APIs')} />
-              <CRDCardRow csv={props.obj} providedAPIs={providedAPIs} />
-              <SectionHeading text={t('olm~Description')} />
-              <MarkdownView content={spec.description || t('olm~Not available')} />
-            </div>
-            <div className="col-sm-3">
-              <dl className="co-clusterserviceversion-details__field">
-                <dt>{t('olm~Provider')}</dt>
-                <dd>
-                  {spec.provider && spec.provider.name
-                    ? spec.provider.name
-                    : t('olm~Not available')}
-                </dd>
-                {supportWorkflowUrl && (
+      <PaneBody>
+        <div className="row">
+          <div className="col-sm-9">
+            {status && status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && (
+              <Alert
+                isInline
+                className="co-alert"
+                variant="danger"
+                title={t('olm~Operator failed')}
+              >
+                {status.reason === CSVConditionReason.CSVReasonCopied ? (
                   <>
-                    <dt>{t('olm~Support')}</dt>
-                    <dd>
-                      <ExternalLink href={supportWorkflowUrl} text={t('olm~Get support')} />
-                    </dd>
+                    <Trans t={t} ns="olm">
+                      This Operator was copied from another namespace. For the reason it failed, see{' '}
+                      <ResourceLink
+                        name={metadata.name}
+                        kind={referenceForModel(ClusterServiceVersionModel)}
+                        namespace={operatorNamespaceFor(props.obj)}
+                        hideIcon
+                        inline
+                      />
+                    </Trans>
                   </>
-                )}
-                <dt>{t('olm~Created at')}</dt>
-                <dd>
-                  <Timestamp timestamp={metadata.creationTimestamp} />
-                </dd>
-              </dl>
-              {csvPlugins.length > 0 && subscription && (
-                <ConsolePlugins
-                  csvPlugins={csvPlugins}
-                  trusted={isCatalogSourceTrusted(subscription?.spec?.source)}
-                />
-              )}
-              <dl className="co-clusterserviceversion-details__field">
-                <dt>{t('olm~Links')}</dt>
-                {spec.links && spec.links.length > 0 ? (
-                  spec.links.map((link) => (
-                    <dd key={link.url} style={{ display: 'flex', flexDirection: 'column' }}>
-                      {link.name}{' '}
-                      <ExternalLink
-                        href={link.url}
-                        text={link.url || '-'}
-                        additionalClassName="co-break-all"
-                      />
-                    </dd>
-                  ))
                 ) : (
-                  <dd>{t('olm~Not available')}</dd>
+                  status.message
                 )}
-              </dl>
-              <dl className="co-clusterserviceversion-details__field">
-                <dt>{t('olm~Maintainers')}</dt>
-                {spec.maintainers && spec.maintainers.length > 0 ? (
-                  spec.maintainers.map((maintainer) => (
-                    <dd key={maintainer.email} style={{ display: 'flex', flexDirection: 'column' }}>
-                      {maintainer.name}{' '}
-                      <a href={`mailto:${maintainer.email}`} className="co-break-all">
-                        {maintainer.email || '-'}
-                      </a>
-                    </dd>
-                  ))
-                ) : (
-                  <dd>{t('olm~Not available')}</dd>
-                )}
-              </dl>
-            </div>
+              </Alert>
+            )}
+            {initializationResource && (
+              <InitializationResourceAlert
+                initializationResource={initializationResource}
+                csv={props.obj}
+              />
+            )}
+            {(deprecatedPackage.deprecation ||
+              deprecatedChannel.deprecation ||
+              deprecatedVersion.deprecation) && (
+              <DeprecatedOperatorWarningAlert
+                deprecatedPackage={deprecatedPackage}
+                deprecatedChannel={deprecatedChannel}
+                deprecatedVersion={deprecatedVersion}
+                dismissible
+              />
+            )}
+            <SectionHeading text={t('olm~Provided APIs')} />
+            <CRDCardRow csv={props.obj} providedAPIs={providedAPIs} />
+            <SectionHeading text={t('olm~Description')} />
+            <MarkdownView content={spec.description || t('olm~Not available')} />
           </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('olm~ClusterServiceVersion details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={props.obj}>
-                <dt>
-                  <Popover
-                    headerContent={<div>{t('olm~Managed Namespaces')}</div>}
-                    bodyContent={
-                      <div>{t('olm~Operands in this Namespace are managed by the Operator.')}</div>
-                    }
-                    maxWidth="30rem"
-                  >
-                    <Button
-                      icon={t('olm~Managed Namespaces')}
-                      variant="plain"
-                      className="details-item__popover-button"
+          <div className="col-sm-3">
+            <dl className="co-clusterserviceversion-details__field">
+              <dt>{t('olm~Provider')}</dt>
+              <dd>
+                {spec.provider && spec.provider.name ? spec.provider.name : t('olm~Not available')}
+              </dd>
+              {supportWorkflowUrl && (
+                <>
+                  <dt>{t('olm~Support')}</dt>
+                  <dd>
+                    <ExternalLink href={supportWorkflowUrl} text={t('olm~Get support')} />
+                  </dd>
+                </>
+              )}
+              <dt>{t('olm~Created at')}</dt>
+              <dd>
+                <Timestamp timestamp={metadata.creationTimestamp} />
+              </dd>
+            </dl>
+            {csvPlugins.length > 0 && subscription && (
+              <ConsolePlugins
+                csvPlugins={csvPlugins}
+                trusted={isCatalogSourceTrusted(subscription?.spec?.source)}
+              />
+            )}
+            <dl className="co-clusterserviceversion-details__field">
+              <dt>{t('olm~Links')}</dt>
+              {spec.links && spec.links.length > 0 ? (
+                spec.links.map((link) => (
+                  <dd key={link.url} style={{ display: 'flex', flexDirection: 'column' }}>
+                    {link.name}{' '}
+                    <ExternalLink
+                      href={link.url}
+                      text={link.url || '-'}
+                      additionalClassName="co-break-all"
                     />
-                  </Popover>
-                </dt>
-                <dd>
-                  <ManagedNamespaces obj={props.obj} />
-                </dd>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <dt>{t('olm~Status')}</dt>
-              <dd>
-                <Status status={status ? status.phase : t('olm~Unknown')} />
-              </dd>
-              <dt>{t('olm~Status reason')}</dt>
-              <dd>{status ? status.message : t('olm~Unknown')}</dd>
-              {!_.isEmpty(spec.install.spec?.deployments) && (
-                <>
-                  <dt>{t('olm~Operator Deployments')}</dt>
-                  {spec.install.spec.deployments.map(({ name }) => (
-                    <dd key={name}>
-                      <ResourceLink
-                        name={name}
-                        kind="Deployment"
-                        namespace={operatorNamespaceFor(props.obj)}
-                      />
-                    </dd>
-                  ))}
-                </>
+                  </dd>
+                ))
+              ) : (
+                <dd>{t('olm~Not available')}</dd>
               )}
-              {!_.isEmpty(permissions) && (
-                <>
-                  <dt>{t('olm~Operator ServiceAccounts')}</dt>
-                  {permissions.map(({ serviceAccountName }) => (
-                    <dd key={serviceAccountName} data-service-account-name={serviceAccountName}>
-                      <ResourceLink
-                        name={serviceAccountName}
-                        kind="ServiceAccount"
-                        namespace={operatorNamespaceFor(props.obj)}
-                      />
-                    </dd>
-                  ))}
-                </>
+            </dl>
+            <dl className="co-clusterserviceversion-details__field">
+              <dt>{t('olm~Maintainers')}</dt>
+              {spec.maintainers && spec.maintainers.length > 0 ? (
+                spec.maintainers.map((maintainer) => (
+                  <dd key={maintainer.email} style={{ display: 'flex', flexDirection: 'column' }}>
+                    {maintainer.name}{' '}
+                    <a href={`mailto:${maintainer.email}`} className="co-break-all">
+                      {maintainer.email || '-'}
+                    </a>
+                  </dd>
+                ))
+              ) : (
+                <dd>{t('olm~Not available')}</dd>
               )}
-              <dt>{t('olm~OperatorGroup')}</dt>
-              <dd>
-                {operatorGroupFor(props.obj) ? (
-                  <ResourceLink
-                    name={operatorGroupFor(props.obj)}
-                    namespace={operatorNamespaceFor(props.obj)}
-                    kind={referenceForModel(OperatorGroupModel)}
-                  />
-                ) : (
-                  '-'
-                )}
-              </dd>
-            </div>
+            </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('olm~ClusterServiceVersion details')} />
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={props.obj}>
+              <dt>
+                <Popover
+                  headerContent={<div>{t('olm~Managed Namespaces')}</div>}
+                  bodyContent={
+                    <div>{t('olm~Operands in this Namespace are managed by the Operator.')}</div>
+                  }
+                  maxWidth="30rem"
+                >
+                  <Button
+                    icon={t('olm~Managed Namespaces')}
+                    variant="plain"
+                    className="details-item__popover-button"
+                  />
+                </Popover>
+              </dt>
+              <dd>
+                <ManagedNamespaces obj={props.obj} />
+              </dd>
+            </ResourceSummary>
+          </div>
+          <div className="col-sm-6">
+            <dt>{t('olm~Status')}</dt>
+            <dd>
+              <Status status={status ? status.phase : t('olm~Unknown')} />
+            </dd>
+            <dt>{t('olm~Status reason')}</dt>
+            <dd>{status ? status.message : t('olm~Unknown')}</dd>
+            {!_.isEmpty(spec.install.spec?.deployments) && (
+              <>
+                <dt>{t('olm~Operator Deployments')}</dt>
+                {spec.install.spec.deployments.map(({ name }) => (
+                  <dd key={name}>
+                    <ResourceLink
+                      name={name}
+                      kind="Deployment"
+                      namespace={operatorNamespaceFor(props.obj)}
+                    />
+                  </dd>
+                ))}
+              </>
+            )}
+            {!_.isEmpty(permissions) && (
+              <>
+                <dt>{t('olm~Operator ServiceAccounts')}</dt>
+                {permissions.map(({ serviceAccountName }) => (
+                  <dd key={serviceAccountName} data-service-account-name={serviceAccountName}>
+                    <ResourceLink
+                      name={serviceAccountName}
+                      kind="ServiceAccount"
+                      namespace={operatorNamespaceFor(props.obj)}
+                    />
+                  </dd>
+                ))}
+              </>
+            )}
+            <dt>{t('olm~OperatorGroup')}</dt>
+            <dd>
+              {operatorGroupFor(props.obj) ? (
+                <ResourceLink
+                  name={operatorGroupFor(props.obj)}
+                  namespace={operatorNamespaceFor(props.obj)}
+                  kind={referenceForModel(OperatorGroupModel)}
+                />
+              ) : (
+                '-'
+              )}
+            </dd>
+          </div>
+        </div>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />
         <Conditions
           conditions={(status?.conditions ?? []).map((c) => ({
@@ -1210,7 +1204,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
           }))}
           type={ConditionTypes.ClusterServiceVersion}
         />
-      </div>
+      </PaneBody>
     </>
   );
 };

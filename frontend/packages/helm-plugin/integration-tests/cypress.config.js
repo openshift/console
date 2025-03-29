@@ -47,5 +47,6 @@ module.exports = defineConfig({
     testIsolation: false,
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 5,
+    injectDocumentDomain: true,
   },
 });

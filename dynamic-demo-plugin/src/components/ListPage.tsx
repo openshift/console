@@ -26,7 +26,7 @@ type PodsTableProps = {
 };
 
 const PodsTable: React.FC<PodsTableProps> = ({ data, unfilteredData, loaded, loadError }) => {
-  const { t } = useTranslation("plugin__console-demo-plugin");
+  const { t } = useTranslation('plugin__console-demo-plugin');
 
   const columns: TableColumn<K8sResourceCommon>[] = [
     {
@@ -96,7 +96,7 @@ const ListPage = () => {
     isList: true,
     namespaced: true,
   });
-  const { t } = useTranslation("plugin__console-demo-plugin");
+  const { t } = useTranslation('plugin__console-demo-plugin');
 
   const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {
     name: { selected: ['openshift'] },
@@ -124,7 +124,9 @@ const ListPage = () => {
       </ListPageBody>
       <ListPageBody>
         <p>{t('Sample ResourceIcon')}</p>
-        <ResourceIcon kind="Pod" />
+        <p>
+          <ResourceIcon kind="Pod" />
+        </p>
       </ListPageBody>
     </>
   );

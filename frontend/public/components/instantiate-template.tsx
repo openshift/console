@@ -22,6 +22,7 @@ import { CompressIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons'
 import { useTranslation } from 'react-i18next';
 
 import { ANNOTATIONS, withActivePerspective } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
@@ -419,11 +420,11 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} />
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+      <PaneBody>
         <Firehose resources={resources}>
           <TemplateForm preselectedNamespace={preselectedNamespace} {...(props as any)} />
         </Firehose>
-      </div>
+      </PaneBody>
     </>
   );
 };

@@ -36,6 +36,7 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
 import { ListPageBody, RowFilter, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -908,7 +909,7 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   return (
     <>
       <ScrollToTopOnMount />
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Pod details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -918,32 +919,32 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
             <PodDetailsList pod={pod} />
           </div>
         </div>
-      </div>
+      </PaneBody>
       {pod.spec.initContainers && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <PodContainerTable
             key="initContainerTable"
             heading={t('public~Init containers')}
             containers={pod.spec.initContainers}
             pod={pod}
           />
-        </div>
+        </PaneBody>
       )}
-      <div className="co-m-pane__body">
+      <PaneBody>
         <PodContainerTable
           key="containerTable"
           heading={t('public~Containers')}
           containers={pod.spec.containers}
           pod={pod}
         />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={pod} heading={t('public~Volumes')} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={pod.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -966,7 +967,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
   initialContainer,
   infoMessage,
 }) => (
-  <div className="co-m-pane__body">
+  <PaneBody>
     <div className="row">
       <div className="col-xs-12">
         <div className="panel-body">
@@ -980,7 +981,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
         </div>
       </div>
     </div>
-  </div>
+  </PaneBody>
 );
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
   const prometheusIsAvailable = usePrometheusGate();

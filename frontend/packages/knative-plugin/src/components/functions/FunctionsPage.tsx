@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
+import CatalogPageHelpText from '@console/dev-console/src/components/catalog/CatalogPageHelpText';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -13,6 +14,7 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import { PageHeading } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import NavTitle from '@console/shared/src/components/layout/NavTitle';
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
 import { CreateActionDropdown } from './CreateActionDropdown';
@@ -29,9 +31,9 @@ const FunctionList: React.FC<{ namespace: string }> = (props) => {
       <DocumentTitle>{t('knative-plugin~Functions')}</DocumentTitle>
       <div className="odc-functions-list-page__heading">
         <PageHeading title={t('knative-plugin~Functions')} />
-        <div className="co-m-nav-title">
+        <NavTitle>
           <CreateActionDropdown namespace={props.namespace} />
-        </div>
+        </NavTitle>
       </div>
       <GettingStartedSection />
       <ListPage
@@ -55,10 +57,12 @@ const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (prop
     ) : (
       <CreateProjectListPage title={t('knative-plugin~Functions')}>
         {(openProjectModal) => (
-          <Trans t={t} ns="knative-plugin">
-            Select a Project to view its details
-            <CreateAProjectButton openProjectModal={openProjectModal} />.
-          </Trans>
+          <CatalogPageHelpText>
+            <Trans t={t} ns="knative-plugin">
+              Select a Project to view its details
+              <CreateAProjectButton openProjectModal={openProjectModal} />.
+            </Trans>
+          </CatalogPageHelpText>
         )}
       </CreateProjectListPage>
     )

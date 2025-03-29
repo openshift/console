@@ -10,6 +10,7 @@ import * as classNames from 'classnames';
 
 import { APIError } from '@console/shared';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ButtonBar } from '../../utils/button-bar';
 import { Dropdown } from '../../utils/dropdown';
 import { Firehose } from '../../utils/firehose';
@@ -363,110 +364,112 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const defaultString = isDefaultReceiver ? t('public~Default') : null;
 
   return (
-    <div className="co-m-pane__body co-m-pane__form">
+    <>
       <DocumentTitle>{t('public~{{titleVerb}} Receiver', { titleVerb })}</DocumentTitle>
-      <form className="co-m-pane__body-group" onSubmit={save}>
-        <PrimaryHeading>
+      <PaneBody className="co-m-pane__form">
+        <PrimaryHeading className="pf-v6-u-mb-md">
           {t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
             titleVerb,
             receiverTypeLabel,
             defaultString,
           })}
         </PrimaryHeading>
-        {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
-        {formValues.receiverName === 'Critical' && !formValues.receiverType && (
-          <ReceiverInfoTip type={InitialReceivers.Critical} />
-        )}
-        {formValues.receiverName === 'Watchdog' && !formValues.receiverType && (
-          <ReceiverInfoTip type={InitialReceivers.Watchdog} />
-        )}
-        <div
-          className={classNames('form-group', {
-            'has-error': receiverNameAlreadyExist,
-          })}
-        >
-          <label className="control-label co-required">{t('public~Receiver name')}</label>
-          <span className="pf-v6-c-form-control">
-            <input
-              type="text"
-              value={formValues.receiverName}
-              onChange={(e) =>
+        <form onSubmit={save}>
+          {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
+          {formValues.receiverName === 'Critical' && !formValues.receiverType && (
+            <ReceiverInfoTip type={InitialReceivers.Critical} />
+          )}
+          {formValues.receiverName === 'Watchdog' && !formValues.receiverType && (
+            <ReceiverInfoTip type={InitialReceivers.Watchdog} />
+          )}
+          <div
+            className={classNames('form-group', {
+              'has-error': receiverNameAlreadyExist,
+            })}
+          >
+            <label className="control-label co-required">{t('public~Receiver name')}</label>
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                value={formValues.receiverName}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { receiverName: e.target.value },
+                  })
+                }
+                aria-describedby="receiver-name-help"
+                name="receiverName"
+                data-test-id="receiver-name"
+                required
+              />
+            </span>
+            {receiverNameAlreadyExist && (
+              <span className="help-block">
+                <span data-test-id="receiver-name-already-exists-error">
+                  {t('public~A receiver with that name already exists.')}
+                </span>
+              </span>
+            )}
+          </div>
+          <div className="form-group co-m-pane__dropdown">
+            <label className="control-label co-required">{t('public~Receiver type')}</label>
+            <Dropdown
+              title="Select receiver type..."
+              name="receiverType"
+              items={receiverTypes}
+              dropDownClassName="dropdown--full-width"
+              data-test-id="receiver-type"
+              selectedKey={formValues.receiverType}
+              onChange={(receiverType) =>
                 dispatchFormChange({
                   type: 'setFormValues',
-                  payload: { receiverName: e.target.value },
+                  payload: {
+                    receiverType,
+                  },
                 })
               }
-              aria-describedby="receiver-name-help"
-              name="receiverName"
-              data-test-id="receiver-name"
-              required
             />
-          </span>
-          {receiverNameAlreadyExist && (
-            <span className="help-block">
-              <span data-test-id="receiver-name-already-exists-error">
-                {t('public~A receiver with that name already exists.')}
-              </span>
-            </span>
+          </div>
+
+          {formValues.receiverType && (
+            <>
+              <SubForm.Form
+                globals={defaultGlobals}
+                formValues={formValues}
+                dispatchFormChange={dispatchFormChange}
+              />
+              <RoutingLabelEditor
+                formValues={formValues}
+                dispatchFormChange={dispatchFormChange}
+                isDefaultReceiver={isDefaultReceiver}
+              />
+            </>
           )}
-        </div>
-        <div className="form-group co-m-pane__dropdown">
-          <label className="control-label co-required">{t('public~Receiver type')}</label>
-          <Dropdown
-            title="Select receiver type..."
-            name="receiverType"
-            items={receiverTypes}
-            dropDownClassName="dropdown--full-width"
-            data-test-id="receiver-type"
-            selectedKey={formValues.receiverType}
-            onChange={(receiverType) =>
-              dispatchFormChange({
-                type: 'setFormValues',
-                payload: {
-                  receiverType,
-                },
-              })
-            }
-          />
-        </div>
 
-        {formValues.receiverType && (
-          <>
-            <SubForm.Form
-              globals={defaultGlobals}
-              formValues={formValues}
-              dispatchFormChange={dispatchFormChange}
-            />
-            <RoutingLabelEditor
-              formValues={formValues}
-              dispatchFormChange={dispatchFormChange}
-              isDefaultReceiver={isDefaultReceiver}
-            />
-          </>
-        )}
-
-        <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
-          <ActionGroup className="pf-v6-c-form">
-            <Button
-              type="submit"
-              variant="primary"
-              data-test-id="save-changes"
-              isDisabled={isFormInvalid}
-            >
-              {saveButtonText}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              data-test-id="cancel"
-              onClick={() => navigate(-1)}
-            >
-              {t('public~Cancel')}
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
-    </div>
+          <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
+            <ActionGroup className="pf-v6-c-form">
+              <Button
+                type="submit"
+                variant="primary"
+                data-test-id="save-changes"
+                isDisabled={isFormInvalid}
+              >
+                {saveButtonText}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                data-test-id="cancel"
+                onClick={() => navigate(-1)}
+              >
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </PaneBody>
+    </>
   );
 };
 
