@@ -63,11 +63,7 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
     };
     createNamespaceOrProjectModal({ onSubmit: handleSubmit });
   }, [onCreate, setActiveNamespace, createNamespaceOrProjectModal]);
-  return (
-    <ProjectListPage {...props} title={title}>
-      {children(openProjectModal)}
-    </ProjectListPage>
-  );
+  return <ProjectListPage {...props} title={title} helpText={children(openProjectModal)} />;
 };
 
 export default CreateProjectListPage;
