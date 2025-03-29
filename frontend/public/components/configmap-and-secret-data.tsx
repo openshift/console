@@ -154,7 +154,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
             );
           })
       : [];
-  }, [data, reveal]);
+  }, [data, reveal, hasRevealableContent]);
 
   return (
     <>
