@@ -17,7 +17,7 @@ ADD . .
 
 USER 0
 
-ARG YARN_VERSION=v1.22.19
+ARG YARN_VERSION=v1.22.22
 
 # bootstrap yarn so we can install and run the other tools.
 RUN CACHED_YARN=./artifacts/yarn-${YARN_VERSION}.tar.gz; \
@@ -72,4 +72,3 @@ LABEL \
         io.k8s.display-name="OpenShift Console" \
         vendor="Red Hat" \
         io.openshift.tags="openshift,console"
-
