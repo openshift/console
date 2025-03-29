@@ -40,6 +40,7 @@ import {
   ProjectModel,
   SecretModel,
   ServiceAccountModel,
+  UserDefinedNetworkModel,
 } from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
@@ -76,6 +77,7 @@ import {
   ProjectDashboard,
 } from './dashboard/project-dashboard/project-dashboard';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import useUserDefinedNetworks from './utils/useUserDefinedNetworks';
 
 import {
   isCurrentUser,
@@ -84,6 +86,8 @@ import {
 } from '@console/shared/src/components/namespace';
 import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { getPrimaryUDN } from './utils/udnUtils';
 
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -210,6 +214,10 @@ const namespaceColumnInfo = Object.freeze({
   labels: {
     classes: '',
     id: 'labels',
+  },
+  networktype: {
+    classes: '',
+    id: 'networktype',
   },
 });
 
@@ -551,6 +559,15 @@ const projectTableHeader = ({ showMetrics, showActions }) => {
       props: { className: namespaceColumnInfo.labels.classes },
       additional: true,
     },
+    {
+      title: i18next.t('public~Network type'),
+      id: namespaceColumnInfo.networktype.id,
+      sortFunc: 'sortByUDN',
+      transforms: [sortable],
+      props: { className: namespaceColumnInfo.networktype.classes },
+      additional: true,
+    },
+
     ...(showActions ? [{ title: '', props: { className: Kebab.columnClass } }] : []),
   ];
 };
@@ -623,6 +640,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
     showActions,
     isColumnManagementEnabled = true,
     tableColumns,
+    userDefinedNetworks,
   } = customData;
   const bytes = metrics?.memory?.[name];
   const cores = metrics?.cpu?.[name];
@@ -633,6 +651,9 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
       ? new Set(tableColumns)
       : getProjectSelectedColumns({ showMetrics, showActions })
     : null;
+
+  const userDefinedNetwork = getPrimaryUDN(userDefinedNetworks, project?.metadata?.name);
+
   return (
     <>
       <TableData className={namespaceColumnInfo.name.classes}>
@@ -694,6 +715,19 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
       >
         <Timestamp timestamp={project.metadata.creationTimestamp} />
       </TableData>
+      <TableData
+        className={namespaceColumnInfo.networktype.classes}
+        columns={columns}
+        columnID={namespaceColumnInfo.networktype.id}
+      >
+        {userDefinedNetwork ? (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(UserDefinedNetworkModel)}
+            name={userDefinedNetwork?.metadata?.name}
+            namespace={project?.metadata?.name}
+          />
+        ) : null}
+      </TableData>
       {isColumnManagementEnabled && (
         <>
           <TableData
@@ -726,17 +760,23 @@ ProjectTableRow.displayName = 'ProjectTableRow';
 
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
+  const userDefinedNetworks = useUserDefinedNetworks(props.data);
   const customData = React.useMemo(
     () => ({
       ProjectLinkComponent: ProjectLink,
       actionsEnabled: false,
       isColumnManagementEnabled: false,
+      userDefinedNetworks,
     }),
     [],
   );
   return (
     <Table
       {...props}
+      customSorts={{
+        sortByUDN: (project) =>
+          getPrimaryUDN(userDefinedNetworks, project?.metadata?.name)?.metadata?.name,
+      }}
       aria-label={t('public~Projects')}
       Header={projectHeaderWithoutActions}
       Row={ProjectTableRow}
@@ -782,12 +822,16 @@ export const ProjectList = ({ data, ...tableProps }) => {
   );
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable && canGetNS && window.screen.width >= 1200;
+
+  const userDefinedNetworks = useUserDefinedNetworks(data);
+
   const customData = React.useMemo(
     () => ({
       showMetrics,
       tableColumns: tableColumns?.[projectColumnManagementID],
+      userDefinedNetworks,
     }),
-    [showMetrics, tableColumns],
+    [showMetrics, tableColumns, userDefinedNetworks],
   );
 
   // TODO Utilize usePoll hook
@@ -814,6 +858,10 @@ export const ProjectList = ({ data, ...tableProps }) => {
   return (
     <Table
       {...tableProps}
+      customSorts={{
+        sortByUDN: (project) =>
+          getPrimaryUDN(userDefinedNetworks, project?.metadata?.name)?.metadata?.name,
+      }}
       activeColumns={selectedColumns}
       columnManagementID={projectColumnManagementID}
       aria-label={t('public~Projects')}
