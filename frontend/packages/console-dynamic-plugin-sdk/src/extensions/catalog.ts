@@ -181,6 +181,7 @@ export type CatalogItemAttribute = {
   label: string;
   attribute: string;
   description?: string;
+  comparator?: CodeRef<(a: string, b: string) => number>;
 };
 
 export type CatalogItemBadge = {
