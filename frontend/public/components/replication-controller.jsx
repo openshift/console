@@ -10,6 +10,7 @@ import {
   ActionMenu,
   ActionMenuVariant,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
@@ -67,7 +68,7 @@ export const ReplicationControllersDetailsPage = (props) => {
     ]);
     return (
       <>
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~ReplicationController details')} />
           <div className="row">
             <div className="col-md-6">
@@ -101,14 +102,14 @@ export const ReplicationControllersDetailsPage = (props) => {
               </dl>
             </div>
           </div>
-        </div>
-        <div className="co-m-pane__body">
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Containers')} />
           <ContainerTable containers={replicationController.spec.template.spec.containers} />
-        </div>
-        <div className="co-m-pane__body">
+        </PaneBody>
+        <PaneBody>
           <VolumesTable resource={replicationController} heading={t('public~Volumes')} />
-        </div>
+        </PaneBody>
       </>
     );
   };

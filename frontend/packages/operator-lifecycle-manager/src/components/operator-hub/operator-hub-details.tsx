@@ -9,6 +9,7 @@ import {
   DetailsItem,
   useAccessReview,
 } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { OperatorHubModel } from '../../models';
 import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-source';
 import { editDefaultSourcesModal } from '../modals/edit-default-sources-modal';
@@ -24,7 +25,7 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
   });
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('olm~OperatorHub details')} />
       <div className="row">
         <div className="col-sm-6 col-xs-12">
@@ -66,7 +67,7 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
           </div>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

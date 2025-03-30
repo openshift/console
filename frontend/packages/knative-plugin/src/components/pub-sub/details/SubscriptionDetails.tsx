@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import DynamicResourceLink from './DynamicResourceLink';
 
 interface SubscriptionDetails {
@@ -14,7 +15,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('knative-plugin~Subscription details')} />
         <div className="row">
           <div className="col-sm-6">
@@ -39,12 +40,12 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
             )}
           </div>
         </div>
-      </div>
+      </PaneBody>
       {_.isArray(subscription?.status?.conditions) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('knative-plugin~Conditions')} />
           <Conditions conditions={subscription.status.conditions} />
-        </div>
+        </PaneBody>
       )}
     </>
   );

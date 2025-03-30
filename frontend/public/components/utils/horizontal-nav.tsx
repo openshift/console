@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
@@ -23,6 +22,7 @@ import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/comm
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import PageBody from '@console/shared/src/components/layout/PageBody';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
 import { PodsPage } from '../pod';
@@ -197,8 +197,8 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
     <div>
       <Tabs
         activeKey={defaultPage ? '' : lastElement}
-        inset={{ default: 'insetNone', xl: 'insetSm' }}
         component="nav"
+        className="co-horizontal-nav"
       >
         {pages.map(({ name, nameKey, href }) => {
           const to = `${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`;
@@ -379,10 +379,10 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   }
 
   return (
-    <div className={classNames('co-m-page__body', props.className)}>
+    <PageBody className={props.className}>
       {!props.hideNav && <NavBar pages={pages} />}
       {renderContent(routes)}
-    </div>
+    </PageBody>
   );
 }, _.isEqual);
 

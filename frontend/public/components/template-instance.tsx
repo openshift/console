@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
 import { Status } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import { Conditions } from './conditions';
 import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
@@ -129,39 +130,37 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
   const conditions = _.get(obj, 'status.conditions', []);
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~TemplateInstance details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj} />
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Status')}</dt>
-                <dd>
-                  <Status status={status} />
-                </dd>
-                {secretName && (
-                  <>
-                    <dt>{t('public~Parameters')}</dt>
-                    <dd>
-                      <ResourceLink
-                        kind="Secret"
-                        name={secretName}
-                        namespace={obj.metadata.namespace}
-                      />
-                    </dd>
-                  </>
-                )}
-                <dt>{t('public~Requester')}</dt>
-                <dd>{requester || '-'}</dd>
-              </dl>
-            </div>
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={obj} />
+          </div>
+          <div className="col-sm-6">
+            <dl className="co-m-pane__details">
+              <dt>{t('public~Status')}</dt>
+              <dd>
+                <Status status={status} />
+              </dd>
+              {secretName && (
+                <>
+                  <dt>{t('public~Parameters')}</dt>
+                  <dd>
+                    <ResourceLink
+                      kind="Secret"
+                      name={secretName}
+                      namespace={obj.metadata.namespace}
+                    />
+                  </dd>
+                </>
+              )}
+              <dt>{t('public~Requester')}</dt>
+              <dd>{requester || '-'}</dd>
+            </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Objects')} />
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">
@@ -189,11 +188,11 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
             )}
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

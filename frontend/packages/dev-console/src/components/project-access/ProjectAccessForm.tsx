@@ -10,6 +10,7 @@ import {
   FormFooter,
   NSDropdownField,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Roles, ignoreRoleBindingName } from './project-access-form-utils';
 import { UserRoleBinding } from './project-access-form-utils-types';
 import './ProjectAccessForm.scss';
@@ -80,7 +81,7 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
 
   return (
     <Form onSubmit={handleSubmit}>
-      <div className="co-m-pane__body odc-project-access-form__body">
+      <PaneBody className="odc-project-access-form__body">
         <div className="co-m-pane__form">
           <MultiColumnField
             name="projectAccess"
@@ -103,7 +104,7 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
             />
           </MultiColumnField>
         </div>
-      </div>
+      </PaneBody>
       <FormFooter
         handleReset={onReload}
         isSubmitting={isSubmitting}

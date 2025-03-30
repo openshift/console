@@ -27,6 +27,7 @@ import {
   SecondaryStatus,
   DASH,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {
   getHostNICs,
@@ -90,7 +91,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   const status = getHostStatus({ host, machine, node, nodeMaintenance });
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('metal3-plugin~Bare Metal Host Details')} />
       <div className="row">
         <div className="col-xs-12 col-sm-6" id="name-description-column">
@@ -229,7 +230,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
           </dl>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

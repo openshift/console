@@ -9,6 +9,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { AccessDenied, EmptyBox } from '../empty-state';
+import PaneBody from '../layout/PaneBody';
 import { LoadError, LoadingBox } from '../loading';
 
 const Data: React.FC<DataProps> = ({
@@ -46,9 +47,9 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
     const status = _.get(loadError, 'response.status');
     if (status === 404) {
       return (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <PrimaryHeading centerText>{t('404: Not Found')}</PrimaryHeading>
-        </div>
+        </PaneBody>
       );
     }
     if (status === 403) {

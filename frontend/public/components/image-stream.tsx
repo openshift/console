@@ -7,6 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { AlertVariant, Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -227,7 +228,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
 
   return (
     <div>
-      <div className="co-m-pane__body">
+      <PaneBody>
         {!_.isEmpty(importErrors) && (
           <ExpandableAlert
             variant={AlertVariant.warning}
@@ -250,8 +251,8 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
             <ExampleDockerCommandPopover imageStream={imageStream} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Tags')} />
         {_.isEmpty(imageStream.status.tags) ? (
           <span className="text-muted">{t('public~No tags')}</span>
@@ -277,7 +278,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
             </div>
           </div>
         )}
-      </div>
+      </PaneBody>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 import {
   CloudShellSetupFormData,
@@ -81,12 +82,12 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
 
   return (
     <>
-      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
+      <PaneBody style={{ paddingBottom: 0 }}>
         <SectionHeading
           text={t('webterminal-plugin~Initialize terminal')}
           style={{ marginBottom: 0 }}
         />
-      </div>
+      </PaneBody>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

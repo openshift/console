@@ -11,6 +11,7 @@ import {
 import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { usePostFormSubmitAction } from '@console/shared';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
@@ -66,7 +67,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
   useScrollToTopOnMount();
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <div className="row">
         <div className="col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
           {csv && providedAPI && (
@@ -95,7 +96,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
           />
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

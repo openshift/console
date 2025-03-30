@@ -6,24 +6,12 @@
       var(--pf-t--global--border--color--default);
     border-top: var(--pf-t--global--border--width--divider--default) solid
       var(--pf-t--global--border--color--default);
-    margin-left: -$pf-v6-global-gutter;
-    margin-right: -$pf-v6-global-gutter;
-    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      margin-left: -$pf-v6-global-gutter--md;
-      margin-right: -$pf-v6-global-gutter--md;
-    }
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      padding-left: $pf-v6-global-gutter--md;
-      padding-right: $pf-v6-global-gutter--md;
-    }
+    margin-left: calc($pf-v6-global-gutter-x * -1);
+    margin-right: calc($pf-v6-global-gutter-x * -1);
+    padding: var(--pf-t--global--spacer--sm) $pf-v6-global-gutter-x;
 
     &.margin {
       margin: var(--pf-t--global--spacer--md) 0;
     }
-  }
-
-  &__yaml-warning {
-    margin: $pf-v6-global-gutter--md $pf-v6-global-gutter--md 0;
   }
 }

@@ -9,6 +9,7 @@ import { sortable } from '@patternfly/react-table';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
@@ -634,137 +635,141 @@ const BaseEditRoleBinding = (props) => {
   ];
 
   return (
-    <div className="co-m-pane__form">
+    <>
       <DocumentTitle>{title}</DocumentTitle>
-      <PageHeading
-        title={<div data-test="title">{title}</div>}
-        helpText={t(
-          'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
-        )}
-      />
-      <div className="co-m-pane__body">
-        <form className="co-m-pane__body-group" onSubmit={save}>
-          {!_.get(fixed, 'kind') && (
-            <Section label={t('public~Binding type')}>
-              <RadioGroup currentValue={data?.kind} items={bindingKinds} onChange={setKind} />
-            </Section>
+      <div className="co-m-pane__form">
+        <PageHeading
+          title={<div data-test="title">{title}</div>}
+          helpText={t(
+            'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
           )}
+        />
+        <PaneBody>
+          <form onSubmit={save}>
+            {!_.get(fixed, 'kind') && (
+              <Section label={t('public~Binding type')}>
+                <RadioGroup currentValue={data?.kind} items={bindingKinds} onChange={setKind} />
+              </Section>
+            )}
 
-          <div className="co-form-section__separator" />
+            <div className="co-form-section__separator" />
 
-          <Section label={t('public~RoleBinding')}>
-            <div className="form-group">
-              <label htmlFor="role-binding-name" className="co-required">
-                {t('public~Name')}
-              </label>
-              {_.get(fixed, 'metadata.name') ? (
-                <ResourceName kind={data?.kind} name={data?.metadata?.name} />
-              ) : (
-                <span className="pf-v6-c-form-control">
+            <Section label={t('public~RoleBinding')}>
+              <div className="form-group">
+                <label htmlFor="role-binding-name" className="co-required">
+                  {t('public~Name')}
+                </label>
+                {_.get(fixed, 'metadata.name') ? (
+                  <ResourceName kind={data?.kind} name={data?.metadata?.name} />
+                ) : (
+                  <span className="pf-v6-c-form-control">
+                    <input
+                      type="text"
+                      onChange={changeName}
+                      placeholder={t('public~RoleBinding name')}
+                      value={data?.metadata?.name}
+                      required
+                      id="role-binding-name"
+                      data-test="role-binding-name"
+                    />
+                  </span>
+                )}
+              </div>
+              {data?.kind === 'RoleBinding' && (
+                <div className="form-group" data-test="namespace-dropdown">
+                  <label htmlFor="ns-dropdown" className="co-required">
+                    {t('public~Namespace')}
+                  </label>
+                  <NsDropdown
+                    fixed={!!_.get(fixed, 'metadata.namespace')}
+                    selectedKey={data?.metadata?.namespace}
+                    onChange={changeNamespace}
+                    id="ns-dropdown"
+                  />
+                </div>
+              )}
+            </Section>
+
+            <div className="co-form-section__separator" />
+
+            <Section label={t('public~Role')}>
+              <div className="form-group" data-test="role-dropdown">
+                <label htmlFor="role-dropdown" className="co-required">
+                  {t('public~Role name')}
+                </label>
+                <RoleDropdown
+                  fixed={!!_.get(fixed, 'roleRef.name')}
+                  namespace={data?.metadata?.namespace}
+                  onChange={changeRoleRef}
+                  selectedKey={_.get(fixed, 'roleRef.name') || data?.roleRef?.name}
+                  selectedKeyKind={_.get(fixed, 'roleRef.kind') || data?.roleRef?.kind}
+                  id="role-dropdown"
+                />
+              </div>
+            </Section>
+
+            <div className="co-form-section__separator" />
+
+            <Section label={t('public~Subject')}>
+              <div className="form-group">
+                <RadioGroup
+                  currentValue={subject?.kind}
+                  items={subjectKinds.map((obj) => ({
+                    ...obj,
+                    disabled: isSubjectDisabled,
+                  }))}
+                  onChange={changeSubjectKind}
+                />
+              </div>
+              {subject?.kind === 'ServiceAccount' && (
+                <div className="form-group">
+                  <label htmlFor="subject-namespace" className="co-required">
+                    {t('public~Subject namespace')}
+                  </label>
+                  <NsDropdown
+                    id="subject-namespace"
+                    selectedKey={subject?.namespace}
+                    onChange={changeSubjectNamespace}
+                  />
+                </div>
+              )}
+              <div className="form-group">
+                <label htmlFor="subject-name" className="co-required">
+                  {t('public~Subject name')}
+                </label>
+                <span
+                  className={classNames('pf-v6-c-form-control', { disabled: isSubjectDisabled })}
+                >
                   <input
                     type="text"
-                    onChange={changeName}
-                    placeholder={t('public~RoleBinding name')}
-                    value={data?.metadata?.name}
+                    onChange={changeSubjectName}
+                    placeholder={t('public~Subject name')}
+                    value={subject?.name}
                     required
-                    id="role-binding-name"
-                    data-test="role-binding-name"
+                    id="subject-name"
+                    disabled={isSubjectDisabled}
+                    data-test="subject-name"
                   />
                 </span>
-              )}
-            </div>
-            {data?.kind === 'RoleBinding' && (
-              <div className="form-group" data-test="namespace-dropdown">
-                <label htmlFor="ns-dropdown" className="co-required">
-                  {t('public~Namespace')}
-                </label>
-                <NsDropdown
-                  fixed={!!_.get(fixed, 'metadata.namespace')}
-                  selectedKey={data?.metadata?.namespace}
-                  onChange={changeNamespace}
-                  id="ns-dropdown"
-                />
               </div>
-            )}
-          </Section>
+            </Section>
 
-          <div className="co-form-section__separator" />
+            <div className="co-form-section__separator" />
 
-          <Section label={t('public~Role')}>
-            <div className="form-group" data-test="role-dropdown">
-              <label htmlFor="role-dropdown" className="co-required">
-                {t('public~Role name')}
-              </label>
-              <RoleDropdown
-                fixed={!!_.get(fixed, 'roleRef.name')}
-                namespace={data?.metadata?.namespace}
-                onChange={changeRoleRef}
-                selectedKey={_.get(fixed, 'roleRef.name') || data?.roleRef?.name}
-                selectedKeyKind={_.get(fixed, 'roleRef.kind') || data?.roleRef?.kind}
-                id="role-dropdown"
-              />
-            </div>
-          </Section>
-
-          <div className="co-form-section__separator" />
-
-          <Section label={t('public~Subject')}>
-            <div className="form-group">
-              <RadioGroup
-                currentValue={subject?.kind}
-                items={subjectKinds.map((obj) => ({
-                  ...obj,
-                  disabled: isSubjectDisabled,
-                }))}
-                onChange={changeSubjectKind}
-              />
-            </div>
-            {subject?.kind === 'ServiceAccount' && (
-              <div className="form-group">
-                <label htmlFor="subject-namespace" className="co-required">
-                  {t('public~Subject namespace')}
-                </label>
-                <NsDropdown
-                  id="subject-namespace"
-                  selectedKey={subject?.namespace}
-                  onChange={changeSubjectNamespace}
-                />
-              </div>
-            )}
-            <div className="form-group">
-              <label htmlFor="subject-name" className="co-required">
-                {t('public~Subject name')}
-              </label>
-              <span className={classNames('pf-v6-c-form-control', { disabled: isSubjectDisabled })}>
-                <input
-                  type="text"
-                  onChange={changeSubjectName}
-                  placeholder={t('public~Subject name')}
-                  value={subject?.name}
-                  required
-                  id="subject-name"
-                  disabled={isSubjectDisabled}
-                  data-test="subject-name"
-                />
-              </span>
-            </div>
-          </Section>
-
-          <div className="co-form-section__separator" />
-
-          <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v6-c-form">
-              <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
-                {saveButtonText || t('public~Create')}
-              </Button>
-              <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
+            <ButtonBar errorMessage={error} inProgress={inProgress}>
+              <ActionGroup className="pf-v6-c-form">
+                <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
+                  {saveButtonText || t('public~Create')}
+                </Button>
+                <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </PaneBody>
       </div>
-    </div>
+    </>
   );
 };
 

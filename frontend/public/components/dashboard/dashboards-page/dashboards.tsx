@@ -120,7 +120,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sMode
   ) : (
     <>
       <PageTitleContext.Provider value={titleProviderValues}>
-        <PageHeading title={title} detail={true} badge={badge} />
+        <PageHeading title={title} badge={badge} />
         <HorizontalNav pages={allPages} noStatusBox />
       </PageTitleContext.Provider>
     </>

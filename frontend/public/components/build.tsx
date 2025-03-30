@@ -17,6 +17,7 @@ import {
 import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sResourceKindReference,
   referenceFor,
@@ -271,7 +272,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
     build.status.config?.name || build.metadata.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
         <SectionHeading text={t('public~Build details')} />
         {hasPipeline && (
@@ -345,7 +346,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
             </BuildStrategy>
           </div>
         </div>
-      </div>
+      </PaneBody>
       <BuildHooks resource={build} />
     </>
   );

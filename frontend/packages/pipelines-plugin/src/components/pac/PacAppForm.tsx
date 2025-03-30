@@ -42,7 +42,7 @@ const PacAppForm: React.FC<FormikProps<FormikValues>> = ({
       method="post"
       data-test="form-setup-github-app"
     >
-      <FormBody flexLayout className="co-m-pane__body--no-top-margin">
+      <FormBody flexLayout className="pf-v6-c-page__main-section">
         <FormSection>
           <FormGroup
             label={t('pipelines-plugin~GitHub application name')}

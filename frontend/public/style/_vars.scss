@@ -20,9 +20,11 @@ $pf-v6-global--breakpoint--sm-max: calc(#{$pf-v6-global--breakpoint--sm} - 1);
 $pf-v6-global--breakpoint--md-max: calc(#{$pf-v6-global--breakpoint--md} - 1);
 $pf-v6-global--breakpoint--lg-max: calc(#{$pf-v6-global--breakpoint--lg} - 1);
 
-// Can not use --pf-v6-global--gutter --pf-v6-global--gutter--md because you can't get a negative value of a scss variable that is assigned a css custom property.
-$pf-v6-global-gutter: 1rem; // Matches --pf-t--global--spacer--gutter--default
-$pf-v6-global-gutter--md: 1.5rem;
+$pf-v6-global-gutter-x: calc(
+  var(--pf-v6-c-page__main-section--PaddingInlineStart) -
+    var(--pf-v6-c-page__main-container--BorderWidth)
+); // Matches pf-v6-c-page__main-section
+$pf-v6-global-gutter-y: var(--pf-t--global--spacer--md); // Matches pf-v6-c-page__main-section
 
 // == Custom variables
 $co-m-catalog-tile-height: 100%;

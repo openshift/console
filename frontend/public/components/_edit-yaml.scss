@@ -1,23 +1,26 @@
 .yaml-editor {
-  position: relative;
   display: flex;
-  height: 100%;
-  flex: 1;
   flex-direction: column;
-  align-items: center;
-
-  .ocs-yaml-editor, .yaml-editor__buttons {
-    width: calc(100% - $pf-v6-global-gutter * 2);
-    padding-top: $pf-v6-global-gutter--md;
-
-    @media (min-width: $pf-v6-global--breakpoint--xl) {
-      width: calc(100% - $pf-v6-global-gutter--md * 2);
-    }
-  }
+  flex: 1;
+  height: 100%;
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-y;
+  position: relative;
 }
 
 .yaml-editor__buttons {
-  padding-bottom: $pf-v6-global-gutter;
+  padding-top: $pf-v6-global-gutter-y;
+}
+
+// only used in packages and will be orphaned when packages move out
+.yaml-editor__header {
+  border-bottom: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
+}
+
+// only used in packages and will be orphaned when packages move out
+.yaml-editor__header-text {
+  margin: 0;
 }
 
 .yaml-editor__link {

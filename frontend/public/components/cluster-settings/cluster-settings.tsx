@@ -29,6 +29,7 @@ import {
   ClusterServiceVersionModel,
 } from '@console/operator-lifecycle-manager';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import {
@@ -923,7 +924,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <div className="co-m-pane__body-group">
           <ClusterSettingsAlerts cv={cv} machineConfigPools={machineConfigPools} />
           <div className="co-cluster-settings">
@@ -1008,84 +1009,82 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             </div>
           </div>
         </div>
-        <div className="co-m-pane__body-group">
-          <dl className="co-m-pane__details">
-            {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
-              <>
-                <dt>{t('public~Subscription')}</dt>
-                <dd>
-                  <ExternalLink
-                    text={t('public~OpenShift Cluster Manager')}
-                    href={getOCMLink(clusterID)}
-                  />
-                  .
-                </dd>
-              </>
-            )}
-            <ServiceLevel
-              clusterID={clusterID}
-              loading={
-                <>
-                  <dt>{serviceLevelTitle}</dt>
-                  <dd>
-                    <ServiceLevelLoading />
-                  </dd>
-                </>
-              }
-            >
+        <dl className="co-m-pane__details">
+          {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
+            <>
+              <dt>{t('public~Subscription')}</dt>
+              <dd>
+                <ExternalLink
+                  text={t('public~OpenShift Cluster Manager')}
+                  href={getOCMLink(clusterID)}
+                />
+                .
+              </dd>
+            </>
+          )}
+          <ServiceLevel
+            clusterID={clusterID}
+            loading={
               <>
                 <dt>{serviceLevelTitle}</dt>
                 <dd>
-                  <ServiceLevelText clusterID={clusterID} />
+                  <ServiceLevelLoading />
                 </dd>
               </>
-            </ServiceLevel>
-            <dt>{t('public~Cluster ID')}</dt>
-            <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">
-              {clusterID}
-            </dd>
-            <dt>{t('public~Desired release image')}</dt>
-            <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-image">
-              {imageParts.length === 2 ? (
-                <>
-                  <span className="text-muted">{imageParts[0]}@</span>
-                  {imageParts[1]}
-                </>
-              ) : (
-                desiredImage || '-'
-              )}
-            </dd>
-            <dt>{t('public~Cluster version configuration')}</dt>
-            <dd>
-              <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
-            </dd>
-            <UpstreamConfigDetailsItem resource={cv} />
-            {autoscalers && canUpgrade && (
+            }
+          >
+            <>
+              <dt>{serviceLevelTitle}</dt>
+              <dd>
+                <ServiceLevelText clusterID={clusterID} />
+              </dd>
+            </>
+          </ServiceLevel>
+          <dt>{t('public~Cluster ID')}</dt>
+          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">
+            {clusterID}
+          </dd>
+          <dt>{t('public~Desired release image')}</dt>
+          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-image">
+            {imageParts.length === 2 ? (
               <>
-                <dt data-test="cv-autoscaler">{t('public~Cluster autoscaler')}</dt>
-                <dd>
-                  {_.isEmpty(autoscalers) ? (
-                    <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
-                      <AddCircleOIcon className="co-icon-space-r" />
-                      {t('public~Create autoscaler')}
-                    </Link>
-                  ) : (
-                    autoscalers.map((autoscaler) => (
-                      <div key={autoscaler.metadata.uid}>
-                        <ResourceLink
-                          kind={clusterAutoscalerReference}
-                          name={autoscaler.metadata.name}
-                        />
-                      </div>
-                    ))
-                  )}
-                </dd>
+                <span className="text-muted">{imageParts[0]}@</span>
+                {imageParts[1]}
               </>
+            ) : (
+              desiredImage || '-'
             )}
-          </dl>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+          </dd>
+          <dt>{t('public~Cluster version configuration')}</dt>
+          <dd>
+            <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
+          </dd>
+          <UpstreamConfigDetailsItem resource={cv} />
+          {autoscalers && canUpgrade && (
+            <>
+              <dt data-test="cv-autoscaler">{t('public~Cluster autoscaler')}</dt>
+              <dd>
+                {_.isEmpty(autoscalers) ? (
+                  <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
+                    <AddCircleOIcon className="co-icon-space-r" />
+                    {t('public~Create autoscaler')}
+                  </Link>
+                ) : (
+                  autoscalers.map((autoscaler) => (
+                    <div key={autoscaler.metadata.uid}>
+                      <ResourceLink
+                        kind={clusterAutoscalerReference}
+                        name={autoscaler.metadata.name}
+                      />
+                    </div>
+                  ))
+                )}
+              </dd>
+            </>
+          )}
+        </dl>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Update history')} />
         {_.isEmpty(history) ? (
           <EmptyBox label={t('public~History')} />
@@ -1151,7 +1150,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             </div>
           </>
         )}
-      </div>
+      </PaneBody>
     </>
   );
 };

@@ -34,6 +34,7 @@ import {
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   ConsoleLinkModel,
   NamespaceModel,
@@ -975,11 +976,11 @@ const ResourceUsage = ({ ns }) => {
   const { t } = useTranslation();
   const isPrometheusAvailable = usePrometheusGate();
   return isPrometheusAvailable ? (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~Resource usage')} />
       <NamespaceLineCharts ns={ns} />
       <TopPodsBarChart ns={ns} />
-    </div>
+    </PaneBody>
   ) : null;
 };
 
@@ -1063,15 +1064,15 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   return (
     <div>
       {perspective === 'dev' && <DocumentTitle>{t('public~Project details')}</DocumentTitle>}
-      <div className="co-m-pane__body">
+      <PaneBody>
         {!customData?.hideHeading && (
           <SectionHeading text={t('public~{{kind}} details', { kind: ns.kind })} />
         )}
         <NamespaceSummary ns={ns} />
-      </div>
+      </PaneBody>
       {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}
       {!_.isEmpty(links) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Launcher')} />
           <ul className="pf-v6-c-list pf-m-plain">
             {_.map(_.sortBy(links, 'spec.text'), (link) => {
@@ -1082,7 +1083,7 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
               );
             })}
           </ul>
-        </div>
+        </PaneBody>
       )}
     </div>
   );

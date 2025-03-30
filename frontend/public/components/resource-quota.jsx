@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { DetailsPage, MultiListPage, Table, TableData } from './factory';
@@ -305,7 +306,7 @@ const Details = ({ obj: rq }) => {
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={text} />
         {charts}
         <div className="row">
@@ -348,8 +349,8 @@ const Details = ({ obj: rq }) => {
             </div>
           )}
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={text} style={{ display: 'block', marginBottom: '20px' }}>
           <FieldLevelHelp>
             <p>
@@ -397,7 +398,7 @@ const Details = ({ obj: rq }) => {
             ))}
           </div>
         </div>
-      </div>
+      </PaneBody>
     </>
   );
 };

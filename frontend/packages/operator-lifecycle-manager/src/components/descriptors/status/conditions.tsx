@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DescriptorType, StatusDescriptor } from '../types';
 import { useCalculatedDescriptorProperties } from '../utils';
 
@@ -37,10 +38,10 @@ export const DescriptorConditions: React.FC<ConditionsDescriptorProps> = ({
   }
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={displayName} />
       <Conditions conditions={value} />
-    </div>
+    </PaneBody>
   );
 };
 DescriptorConditions.displayName = 'DescriptorConditions';

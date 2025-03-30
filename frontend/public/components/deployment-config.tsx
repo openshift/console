@@ -17,6 +17,7 @@ import {
   EditHorizontalPodAutoScaler,
   hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   k8sCreate,
   K8sKind,
@@ -248,37 +249,35 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~DeploymentConfig details')} />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
         <PodRingSet key={dc.metadata.uid} obj={dc} path="/spec/replicas" />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
-                <dt>{t('public~Status')}</dt>
-                <dd>
-                  <Status status={getDeploymentConfigStatus(dc)} />
-                </dd>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <DeploymentConfigDetailsList dc={dc} />
-            </div>
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
+              <dt>{t('public~Status')}</dt>
+              <dd>
+                <Status status={getDeploymentConfigStatus(dc)} />
+              </dd>
+            </ResourceSummary>
+          </div>
+          <div className="col-sm-6">
+            <DeploymentConfigDetailsList dc={dc} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={dc.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={dc} heading={t('public~Volumes')} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={dc.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -359,8 +358,9 @@ export const DeploymentConfigsDetailsPage: React.FC = (props) => {
       customActionMenu={customActionMenu}
       pages={pages}
     >
-      <DeploymentConfigDeprecationAlert />
-      <br />
+      <div className="pf-v6-u-mt-md">
+        <DeploymentConfigDeprecationAlert />
+      </div>
     </DetailsPage>
   );
 };

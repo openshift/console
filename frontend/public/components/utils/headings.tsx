@@ -13,6 +13,7 @@ import {
   Content,
   ContentVariants,
   Title,
+  PageBreadcrumb,
 } from '@patternfly/react-core';
 import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
@@ -27,6 +28,7 @@ import { getActiveNamespace } from '@console/internal/reducers/ui';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
+import NavTitle from '@console/shared/src/components/layout/NavTitle';
 
 import {
   ActionsMenu,
@@ -102,7 +104,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {
     kind,
     kindObj,
-    detail,
     title,
     menuActions,
     buttonActions,
@@ -122,6 +123,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     helpText,
     'data-test': dataTestId,
     hideFavoriteButton,
+    children,
   } = props;
   const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
@@ -145,7 +147,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   return (
     <>
       {showBreadcrumbs && (
-        <div className="pf-v6-c-page__main-breadcrumb">
+        <PageBreadcrumb>
           <Split style={{ alignItems: 'baseline' }}>
             <SplitItem isFilled>
               <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
@@ -154,13 +156,11 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
             )}
           </Split>
-        </div>
+        </PageBreadcrumb>
       )}
-      <div
+      <NavTitle
         data-test-id={dataTestId}
         className={classNames(
-          'co-m-nav-title',
-          { 'co-m-nav-title--detail': detail },
           { 'co-m-nav-title--logo': props.icon },
           { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
           className,
@@ -171,7 +171,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           <PrimaryHeading
             className={classNames({
               'co-m-pane__heading--logo': props.icon,
-              'co-m-pane__heading--with-help-text': helpText,
               'pf-v6-u-flex-grow-1': !showActions,
             })}
             alignItemsBaseline={!!link}
@@ -227,16 +226,13 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         )}
         {helpText && (
           <Content>
-            <Content
-              component={ContentVariants.p}
-              className="help-block co-m-pane__heading-help-text"
-            >
+            <Content component={ContentVariants.p} className="pf-v6-u-mt-sm co-help-text">
               {helpText}
             </Content>
           </Content>
         )}
-        {props.children}
-      </div>
+        {children}
+      </NavTitle>
     </>
   );
 });
@@ -335,7 +331,6 @@ export type PageHeadingProps = {
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
   buttonActions?: any[];
   children?: React.ReactChildren;
-  detail?: boolean;
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
