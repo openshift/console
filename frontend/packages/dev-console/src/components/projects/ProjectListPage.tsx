@@ -9,16 +9,18 @@ export type ProjectListPageProps = {
   listComponent?: React.ComponentType<any>;
   children?: React.ReactNode;
   badge?: React.ReactNode;
+  helpText?: React.ReactNode;
 };
 const ProjectListPage: React.FC<ProjectListPageProps> = ({
   badge,
   title,
   children,
   listComponent,
+  helpText,
   ...listPageProps
 }) => (
   <div className="odc-project-list-page">
-    <PageHeading title={title} badge={badge}>
+    <PageHeading title={title} badge={badge} helpText={helpText}>
       {children}
     </PageHeading>
     <ListPage
