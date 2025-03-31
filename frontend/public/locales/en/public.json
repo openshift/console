@@ -53,7 +53,6 @@
   "The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}": "The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}",
   "The following subjects can {{verb}} {{plural}} in all namespaces": "The following subjects can {{verb}} {{plural}} in all namespaces",
   "The following subjects can {{verb}} {{plural}} at the cluster scope": "The following subjects can {{verb}} {{plural}} at the cluster scope",
-  "404: Not found": "404: Not found",
   "Explore": "Explore",
   "Resource details": "Resource details",
   "Details": "Details",

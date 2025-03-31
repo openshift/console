@@ -67,6 +67,7 @@ import {
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { ErrorPage404 } from './error';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -718,13 +719,7 @@ const APIResourcePage_ = (props) => {
   });
 
   if (!kindObj) {
-    return kindsInFlight ? (
-      <LoadingBox />
-    ) : (
-      <PaneBody>
-        <PageHeading title={t('public~404: Not found')} centerText />
-      </PaneBody>
-    );
+    return kindsInFlight ? <LoadingBox /> : <ErrorPage404 />;
   }
 
   const breadcrumbs = [

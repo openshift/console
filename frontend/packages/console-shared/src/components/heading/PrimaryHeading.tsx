@@ -6,7 +6,6 @@ const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
   children,
   className,
   alignItemsBaseline,
-  centerText,
   ...props
 }) => (
   <Title
@@ -14,7 +13,6 @@ const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
     className={classNames(
       'co-m-pane__heading',
       { 'co-m-pane__heading--baseline': alignItemsBaseline },
-      { 'co-m-pane__heading--center': centerText },
       className,
     )}
     {...props}
@@ -25,7 +23,6 @@ const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
 
 export type PrimaryHeadingProps = {
   alignItemsBaseline?: boolean;
-  centerText?: boolean;
   children: React.ReactNode;
   className?: string;
 };

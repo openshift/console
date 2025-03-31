@@ -103,7 +103,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     getResourceStatus = (resource: K8sResourceKind): string =>
       _.get(resource, ['status', 'phase'], null),
     className,
-    centerText,
     helpText,
     'data-test': dataTestId,
     hideFavoriteButton,
@@ -158,7 +157,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               'pf-v6-u-flex-grow-1': !showActions,
             })}
             alignItemsBaseline={!!link}
-            centerText={centerText}
           >
             {props.icon ? (
               <props.icon obj={data} />
@@ -303,7 +301,6 @@ export type PageHeadingProps = {
   icon?: React.ComponentType<{ obj?: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   className?: string;
-  centerText?: boolean;
   helpText?: React.ReactNode;
   hideFavoriteButton?: boolean;
 };
