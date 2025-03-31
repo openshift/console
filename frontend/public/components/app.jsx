@@ -242,8 +242,8 @@ const App = (props) => {
               />
             }
             skipToContent={
-              <SkipToContent href={`${location.pathname}${location.search}#content`}>
-                Skip to Content
+              <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
+                {t('public~Skip to content')}
               </SkipToContent>
             }
             notificationDrawer={
