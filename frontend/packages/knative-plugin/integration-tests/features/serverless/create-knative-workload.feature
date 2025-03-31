@@ -80,7 +80,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: Create a workload from DevCatalog BuilderImages card on Add page: KN-05-TC07
+        Scenario: Create a workload from Software Catalog BuilderImages card on Add page: KN-05-TC07
             Given user is at Software Catalog page
               And user creates the application with the selected builder image
               And user enters S2I Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
