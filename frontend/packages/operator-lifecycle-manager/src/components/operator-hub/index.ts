@@ -19,17 +19,17 @@ export enum CapabilityLevel {
   DeepInsights = 'Deep Insights',
 }
 
-export enum InfraFeatures {
-  disconnected = 'Disconnected',
-  proxyAware = 'Proxy-aware',
-  fipsMode = 'Designed for FIPS',
-  tlsProfiles = 'Configurable TLS ciphers',
-  cnf = 'Cloud-Native Network Function',
-  cni = 'Container Network Interface',
-  csi = 'Container Storage Interface',
-  sno = 'Single Node Clusters',
-  tokenAuth = 'Short-lived token authentication',
-  tokenAuthGCP = 'Auth Token GCP',
+export enum InfrastructureFeature {
+  Disconnected = 'Disconnected',
+  ProxyAware = 'Proxy-aware',
+  FIPSMode = 'Designed for FIPS',
+  TLSProfiles = 'Configurable TLS ciphers',
+  CNF = 'Cloud-Native Network Function',
+  CNI = 'Container Network Interface',
+  CSI = 'Container Storage Interface',
+  SNO = 'Single Node Clusters',
+  TokenAuth = 'Short-lived token authentication',
+  TokenAuthGCP = 'Auth Token GCP',
 }
 
 export enum ValidSubscriptionValue {
@@ -47,7 +47,7 @@ export type OperatorHubItem = {
   cloudCredentials: CloudCredentialKind;
   createdAt?: string;
   description: string;
-  infraFeatures: InfraFeatures[];
+  infraFeatures: InfrastructureFeature[];
   infrastructure: InfrastructureKind;
   installed: boolean;
   installState?: InstalledState;
@@ -64,61 +64,67 @@ export type OperatorHubItem = {
   [key: string]: any;
 };
 
-export enum OperatorHubCSVAnnotationKey {
-  certifiedLevel = 'certifiedLevel',
-  healthIndex = 'healthIndex',
-  repository = 'repository',
-  containerImage = 'containerImage',
-  createdAt = 'createdAt',
-  support = 'support',
-  description = 'description',
-  categories = 'categories',
-  capabilities = 'capabilities',
-  actionText = 'marketplace.openshift.io/action-text',
-  remoteWorkflow = 'marketplace.openshift.io/remote-workflow',
-  supportWorkflow = 'marketplace.openshift.io/support-workflow',
-  infrastructureFeatures = 'operators.openshift.io/infrastructure-features',
-  validSubscription = 'operators.openshift.io/valid-subscription',
-  tags = 'tags',
-  disconnected = 'features.operators.openshift.io/disconnected',
-  fipsCompliant = 'features.operators.openshift.io/fips-compliant',
-  proxyAware = 'features.operators.openshift.io/proxy-aware',
-  cnf = 'features.operators.openshift.io/cnf',
-  cni = 'features.operators.openshift.io/cni',
-  csi = 'features.operators.openshift.io/csi',
-  tlsProfiles = 'features.operators.openshift.io/tls-profiles',
-  tokenAuthAWS = 'features.operators.openshift.io/token-auth-aws',
-  tokenAuthAzure = 'features.operators.openshift.io/token-auth-azure',
-  tokenAuthGCP = 'features.operators.openshift.io/token-auth-gcp',
+export enum OLMAnnotation {
+  CertifiedLevel = 'certifiedLevel',
+  HealthIndex = 'healthIndex',
+  Repository = 'repository',
+  ContainerImage = 'containerImage',
+  CreatedAt = 'createdAt',
+  Support = 'support',
+  Description = 'description',
+  Categories = 'categories',
+  Capabilitiecs = 'capabilities',
+  ActionText = 'marketplace.openshift.io/action-text',
+  RemoteWorkflow = 'marketplace.openshift.io/remote-workflow',
+  SupportWorkflow = 'marketplace.openshift.io/support-workflow',
+  InfrastructureFeatures = 'operators.openshift.io/infrastructure-features',
+  ValidSubscription = 'operators.openshift.io/valid-subscription',
+  Tags = 'tags',
+  Disconnected = 'features.operators.openshift.io/disconnected',
+  FIPSCompliant = 'features.operators.openshift.io/fips-compliant',
+  ProxyAware = 'features.operators.openshift.io/proxy-aware',
+  CNF = 'features.operators.openshift.io/cnf',
+  CNI = 'features.operators.openshift.io/cni',
+  CSI = 'features.operators.openshift.io/csi',
+  TLSProfiles = 'features.operators.openshift.io/tls-profiles',
+  TokenAuthAWS = 'features.operators.openshift.io/token-auth-aws',
+  TokenAuthAzure = 'features.operators.openshift.io/token-auth-azure',
+  TokenAuthGCP = 'features.operators.openshift.io/token-auth-gcp',
+  SuggestedNamespaceTemplate = 'operatorframework.io/suggested-namespace-template',
+  InitializationResource = 'operatorframework.io/initialization-resource',
+  InternalObjects = 'operators.operatorframework.io/internal-objects',
+  OperatorPlugins = 'console.openshift.io/plugins',
+  OperatorType = 'operators.operatorframework.io/operator-type',
+  UninstallMessage = 'operator.openshift.io/uninstall-message',
 }
 
-export type OperatorHubCSVAnnotations = {
-  [OperatorHubCSVAnnotationKey.certifiedLevel]?: string;
-  [OperatorHubCSVAnnotationKey.healthIndex]?: string;
-  [OperatorHubCSVAnnotationKey.repository]?: string;
-  [OperatorHubCSVAnnotationKey.containerImage]?: string;
-  [OperatorHubCSVAnnotationKey.createdAt]?: string;
-  [OperatorHubCSVAnnotationKey.support]?: string;
-  [OperatorHubCSVAnnotationKey.description]?: string;
-  [OperatorHubCSVAnnotationKey.categories]?: string;
-  [OperatorHubCSVAnnotationKey.capabilities]?: CapabilityLevel;
-  [OperatorHubCSVAnnotationKey.actionText]?: string;
-  [OperatorHubCSVAnnotationKey.remoteWorkflow]?: string;
-  [OperatorHubCSVAnnotationKey.supportWorkflow]?: string;
-  [OperatorHubCSVAnnotationKey.infrastructureFeatures]?: string;
-  [OperatorHubCSVAnnotationKey.validSubscription]?: string;
-  [OperatorHubCSVAnnotationKey.tags]?: string[];
-  [OperatorHubCSVAnnotationKey.disconnected]?: string;
-  [OperatorHubCSVAnnotationKey.fipsCompliant]?: string;
-  [OperatorHubCSVAnnotationKey.proxyAware]?: string;
-  [OperatorHubCSVAnnotationKey.tlsProfiles]?: string;
-  [OperatorHubCSVAnnotationKey.cnf]?: string;
-  [OperatorHubCSVAnnotationKey.cni]?: string;
-  [OperatorHubCSVAnnotationKey.csi]?: string;
-  [OperatorHubCSVAnnotationKey.tlsProfiles]?: string;
-  [OperatorHubCSVAnnotationKey.tokenAuthAWS]?: string;
-  [OperatorHubCSVAnnotationKey.tokenAuthAzure]?: string;
-  [OperatorHubCSVAnnotationKey.tokenAuthGCP]?: string;
+export type CSVAnnotations = {
+  [OLMAnnotation.CertifiedLevel]?: string;
+  [OLMAnnotation.HealthIndex]?: string;
+  [OLMAnnotation.Repository]?: string;
+  [OLMAnnotation.ContainerImage]?: string;
+  [OLMAnnotation.CreatedAt]?: string;
+  [OLMAnnotation.Support]?: string;
+  [OLMAnnotation.Description]?: string;
+  [OLMAnnotation.Categories]?: string;
+  [OLMAnnotation.Capabilitiecs]?: CapabilityLevel;
+  [OLMAnnotation.ActionText]?: string;
+  [OLMAnnotation.RemoteWorkflow]?: string;
+  [OLMAnnotation.SupportWorkflow]?: string;
+  [OLMAnnotation.InfrastructureFeatures]?: string;
+  [OLMAnnotation.ValidSubscription]?: string;
+  [OLMAnnotation.Tags]?: string[];
+  [OLMAnnotation.Disconnected]?: string;
+  [OLMAnnotation.FIPSCompliant]?: string;
+  [OLMAnnotation.ProxyAware]?: string;
+  [OLMAnnotation.TLSProfiles]?: string;
+  [OLMAnnotation.CNF]?: string;
+  [OLMAnnotation.CNI]?: string;
+  [OLMAnnotation.CSI]?: string;
+  [OLMAnnotation.TLSProfiles]?: string;
+  [OLMAnnotation.TokenAuthAWS]?: string;
+  [OLMAnnotation.TokenAuthAzure]?: string;
+  [OLMAnnotation.TokenAuthGCP]?: string;
 } & ObjectMetadata['annotations'];
 
 type OperatorHubSpec = {
