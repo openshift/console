@@ -11,12 +11,12 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
 import { setFlag } from '@console/internal/actions/flags';
-import { FieldLevelHelp } from '@console/internal/components/utils';
 import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
 } from '@console/internal/components/utils/documentation';
+import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { ExternalLink } from '@console/internal/components/utils/link';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { ProjectRequestModel } from '@console/internal/models';
