@@ -40,7 +40,7 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
       : `"${plural}"`;
     return (
       <ErrorPage404
-        message={t(
+        bodyText={t(
           "devconsole~The server doesn't have a resource type {{missingType}}. Try refreshing the page if it was recently added.",
           { missingType },
         )}
