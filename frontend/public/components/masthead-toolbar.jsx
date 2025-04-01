@@ -31,10 +31,10 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
 import { getUser } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import * as UIActions from '../actions/ui';
 import { flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
@@ -303,10 +303,8 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
           ? [
               {
                 label: t('public~Quick Starts'),
-                callback: (e) => {
-                  e.preventDefault();
-                  history.push('/quickstart');
-                },
+                component: LinkTo('/quickstart'),
+                dataTest: 'masthead-quick-starts',
               },
             ]
           : []),
@@ -322,11 +320,10 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
           ? [
               {
                 label: t('public~Command Line Tools'),
-                callback: (e) => {
-                  e.preventDefault();
-                  history.push('/command-line-tools');
+                callback: () => {
                   fireTelemetryEvent('CLI Clicked');
                 },
+                component: LinkTo('/command-line-tools'),
               },
             ]
           : []),
@@ -400,9 +397,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                   {...externalProps(sectionAction.externalLink)}
                   onClick={sectionAction.callback}
                   component={sectionAction.component}
-                  data-test={
-                    sectionAction.dataTest ? sectionAction.dataTest : 'application-launcher-item'
-                  }
+                  data-test={sectionAction.dataTest ?? 'application-launcher-item'}
                   value={sectionAction.label}
                 >
                   {sectionAction.label}
@@ -463,10 +458,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     const userActions = [
       {
         label: t('public~User Preferences'),
-        callback: (e) => {
-          e.preventDefault();
-          history.push('/user-preferences');
-        },
+        component: LinkTo('/user-preferences'),
       },
     ];
 
@@ -514,10 +506,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         actions: [
           {
             label: t('public~Import YAML'),
-            callback: (e) => {
-              e.preventDefault();
-              history.push(getImportYAMLPath());
-            },
+            component: LinkTo(getImportYAMLPath()),
           },
           {
             component: () => (
