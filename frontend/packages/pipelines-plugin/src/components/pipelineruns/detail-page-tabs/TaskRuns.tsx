@@ -15,7 +15,12 @@ const TaskRuns: React.FC<TaskRunsProps> = ({ obj }) => {
       <DocumentTitle>{t('pipelines-plugin~TaskRuns')}</DocumentTitle>
       <TaskRunsListPage
         showTitle={false}
-        selector={{ matchLabels: { 'tekton.dev/pipelineRun': obj.metadata.name } }}
+        selector={{
+          matchLabels: {
+            'tekton.dev/pipelineRun': obj.metadata.name,
+            'tekton.dev/pipelineRunUID': obj.metadata?.uid,
+          },
+        }}
         showPipelineColumn={false}
         namespace={obj.metadata.namespace}
         hideBadge
