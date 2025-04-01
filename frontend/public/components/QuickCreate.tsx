@@ -85,18 +85,17 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
       onSelect={onSelect}
       onOpenChange={(open: boolean) => setIsOpen(open)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-        <MenuToggle
-          ref={toggleRef}
-          aria-label="kebab dropdown toggle"
-          variant="plain"
-          onClick={onToggleClick}
-          isExpanded={isOpen}
-          data-test="quick-create-dropdown"
-        >
-          <Tooltip content={t('public~Quick create')}>
-            <PlusCircleIcon alt="" />
-          </Tooltip>
-        </MenuToggle>
+        <Tooltip content={t('public~Quick create')} position="bottom">
+          <MenuToggle
+            ref={toggleRef}
+            aria-label={t('public~Quick create')}
+            variant="plain"
+            onClick={onToggleClick}
+            isExpanded={isOpen}
+            data-test="quick-create-dropdown"
+            icon={<PlusCircleIcon alt="" />}
+          />
+        </Tooltip>
       )}
       popperProps={{
         position: 'center',
