@@ -228,6 +228,8 @@
   "No, don't cancel": "No, don't cancel",
   "Retry rollout": "Retry rollout",
   "This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.": "This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.",
+  "Current default StorageClass": "Current default StorageClass",
+  "Set as default": "Set as default",
   "Access mode": "Access mode",
   "Cluster configuration": "Cluster configuration",
   "Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.": "Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.",
