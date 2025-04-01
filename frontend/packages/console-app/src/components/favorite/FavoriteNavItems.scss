@@ -1,15 +1,17 @@
-.co-favorite-delete-button {
-  background-color: transparent !important;
-  margin-left: auto;
-  margin-right: var(--pf-t--global--spacer--lg);
-}
-
 .co-favorite-resource.pf-v6-c-nav__item {
   .pf-v6-c-nav__link {
     padding-bottom: 0;
     padding-right: 0;
     padding-top: 0;
     white-space: nowrap;
+
+    .co-favorite-text {
+      margin: 0;
+    }
+
+    .co-favorite-delete-button {
+      margin-right: var(--pf-t--global--spacer--xs);
+    }
 
     &:hover {
       --pf-v6-c-nav__section-title--PaddingRight: 30px;

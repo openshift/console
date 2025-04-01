@@ -173,7 +173,6 @@ export const FavoriteButton = connectToModel(() => {
                 value={name || ''}
                 autoFocus
                 required
-                maxLength={20}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
