@@ -155,6 +155,18 @@
     react-dropzone "^14.3.5"
     tslib "^2.8.1"
 
+"@patternfly/react-core@^6.2.0-prerelease.35":
+  version "6.2.0-prerelease.35"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-6.2.0-prerelease.35.tgz#4a022b78b80dc1b3a146f6316ceef2d37ffc583a"
+  integrity sha512-P5x+hDNXXzYQwIJDQ2yy0dMRS7ZP5YmS7HlMCaezXTjxduoke/vXCkuSDMYQNvBCqaYVp54yuTbJ06t6RHzzqQ==
+  dependencies:
+    "@patternfly/react-icons" "^6.2.0-prerelease.12"
+    "@patternfly/react-styles" "^6.2.0-prerelease.11"
+    "@patternfly/react-tokens" "^6.2.0-prerelease.11"
+    focus-trap "7.6.4"
+    react-dropzone "^14.3.5"
+    tslib "^2.8.1"
+
 "@patternfly/react-icons@^6.2.0-prerelease.12":
   version "6.2.0-prerelease.12"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-6.2.0-prerelease.12.tgz#54eeab7279a2c6fcda0ea8bfb3b83b358029ce09"
@@ -276,16 +288,6 @@
 "@types/prop-types@*":
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
-
-"@types/react-redux@^7.1.20":
-  version "7.1.34"
-  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.34.tgz#83613e1957c481521e6776beeac4fd506d11bd0e"
-  integrity sha512-GdFaVjEbYv4Fthm2ZLvj1VSCedV7TqE5y1kNwnjSdBOTXuRSgowux6J8TAct15T3CKBr63UMk+2CO7ilRhyrAQ==
-  dependencies:
-    "@types/hoist-non-react-statics" "^3.3.0"
-    "@types/react" "*"
-    hoist-non-react-statics "^3.3.0"
-    redux "^4.0.0"
 
 "@types/react-redux@^7.1.20":
   version "7.1.34"

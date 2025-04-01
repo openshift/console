@@ -17,7 +17,7 @@
     "@openshift-console/dynamic-plugin-sdk": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/core",
     "@openshift-console/dynamic-plugin-sdk-webpack": "file:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack",
     "@openshift-console/plugin-shared": "file:../frontend/packages/console-plugin-shared/dist",
-    "@patternfly/react-core": "^6.2.0-prerelease.34",
+    "@patternfly/react-core": "^6.2.0-prerelease.35",
     "@patternfly/react-icons": "^6.2.0-prerelease.12",
     "@patternfly/react-table": "^6.2.0-prerelease.35",
     "@types/react": "16.8.13",
