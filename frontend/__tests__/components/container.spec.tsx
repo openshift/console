@@ -6,7 +6,7 @@ import {
 import { mount, ReactWrapper, shallow } from 'enzyme';
 import store from '@console/internal/redux';
 import { Provider } from 'react-redux';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router-dom';
 import {
   Firehose,
   HorizontalNav,
@@ -20,8 +20,8 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { StatusProps } from '@console/metal3-plugin/src/components/types';
 import { act } from 'react-dom/test-utils';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

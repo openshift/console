@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { DetailsPage } from '@console/internal/components/factory';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import * as rbacModule from '@console/internal/components/utils/rbac';
@@ -9,8 +9,8 @@ import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
 let spyUseAccessReview;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

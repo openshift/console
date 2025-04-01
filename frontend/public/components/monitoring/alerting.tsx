@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom-v5-compat';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import {
   ContainerModel,
   DaemonSetModel,

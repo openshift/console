@@ -1,6 +1,6 @@
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
+import { BrowserRouter } from 'react-router-dom';
 import store from '@console/internal/redux';
 
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';

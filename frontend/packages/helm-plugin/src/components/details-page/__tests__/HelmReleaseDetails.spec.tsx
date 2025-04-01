@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import { LoadingBox, StatusBox } from '@console/internal/components/utils';
@@ -13,8 +13,8 @@ import HelmReleaseDetails, { LoadedHelmReleaseDetails } from '../HelmReleaseDeta
 let helmReleaseDetailsProps: React.ComponentProps<typeof HelmReleaseDetails>;
 let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmReleaseDetails>;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

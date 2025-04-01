@@ -5,9 +5,8 @@ import { NavBar } from '@console/internal/components/utils';
 import { Alert, Breadcrumb, BreadcrumbItem, PageBreadcrumb } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
-
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import NavTitle from '@console/shared/src/components/layout/NavTitle';
 import { K8sResourceKind } from '../../../module/k8s';

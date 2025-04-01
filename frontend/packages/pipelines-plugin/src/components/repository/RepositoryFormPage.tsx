@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { history } from '@console/internal/components/utils';
 import { defaultRepositoryFormValues } from './consts';
 import { usePacInfo } from './hooks/pac-hook';

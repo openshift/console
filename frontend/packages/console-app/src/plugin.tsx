@@ -185,7 +185,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/quickstart/'],
+      path: '/quickstart/',
       loader: async () =>
         (
           await import(

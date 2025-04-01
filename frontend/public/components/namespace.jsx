@@ -6,11 +6,9 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert, Button, Tooltip } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
-
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { Link } from 'react-router-dom';
 

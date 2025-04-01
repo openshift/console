@@ -1,7 +1,7 @@
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router';
-import { history, SectionHeading } from '@console/internal/components/utils';
+import { BrowserRouter } from 'react-router-dom';
+import { SectionHeading } from '@console/internal/components/utils';
 import store from '@console/internal/redux';
 import { testResourceInstance } from '../../../../mocks';
 import { StatusCapability } from '../types';
@@ -19,9 +19,9 @@ describe('Conditions descriptor', () => {
       <DescriptorConditions descriptor={descriptor} obj={testResourceInstance} schema={{}} />,
       {
         wrappingComponent: (props) => (
-          <Router history={history}>
+          <BrowserRouter>
             <Provider store={store} {...props} />,
-          </Router>
+          </BrowserRouter>
         ),
       },
     );

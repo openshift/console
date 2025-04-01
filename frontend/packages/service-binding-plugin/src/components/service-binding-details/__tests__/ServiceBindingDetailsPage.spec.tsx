@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { modelFor, useModelFinder } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
@@ -20,13 +20,13 @@ jest.mock('@console/plugin-sdk', () => ({
   useResolvedExtensions: () => [[]],
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   Link: 'Link',
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
   useRoutes: jest.fn(),

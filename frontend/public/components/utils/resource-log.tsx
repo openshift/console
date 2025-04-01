@@ -46,7 +46,7 @@ import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/mod
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
 import { useFlag, useIsMobile } from '@console/shared/src/hooks';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';

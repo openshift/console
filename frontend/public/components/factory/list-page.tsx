@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useDocumentListener } from '@console/shared/src/hooks/document-listener';

@@ -5,7 +5,7 @@ import { HealthState } from '@console/dynamic-plugin-sdk';
 import {
   PrometheusHealthPopupProps,
   PrometheusHealthHandler,
-} from '@console/dynamic-plugin-sdk/dist/core/lib/lib-core';
+} from '@console/dynamic-plugin-sdk/src/extensions/dashboard-types';
 import { ConfigMap } from '../../resources';
 import { getVSphereHealth } from '../getVSphereHealth';
 import { VSphereConnectionModal } from '../VSphereConnectionModal';

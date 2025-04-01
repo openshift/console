@@ -14,7 +14,7 @@ import { sortable, wrappable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import {
   WatchK8sResource,
   ResourceStatus,

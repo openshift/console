@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import {
   CodeEditorField,
   FlexForm,

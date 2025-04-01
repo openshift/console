@@ -1,7 +1,7 @@
 import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import {
   Table,
   MultiListPage,
@@ -39,8 +39,8 @@ import {
   SubscriptionStatus,
 } from './subscription';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

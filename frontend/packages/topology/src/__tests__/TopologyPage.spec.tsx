@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
@@ -43,8 +43,8 @@ jest.mock('../user-preferences/usePreferredTopologyView', () => ({
   usePreferredTopologyView: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

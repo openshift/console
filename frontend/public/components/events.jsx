@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router-dom';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { Label, LabelGroup, Button, ButtonSize, ButtonVariant } from '@patternfly/react-core';
 

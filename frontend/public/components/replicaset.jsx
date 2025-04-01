@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

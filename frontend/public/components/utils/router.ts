@@ -1,20 +1,18 @@
 import * as _ from 'lodash-es';
-import { createBrowserHistory, createMemoryHistory, History } from 'history';
+import { createBrowserHistory, createMemoryHistory, History } from '@remix-run/router';
 
-let createHistory;
-
-try {
-  if (process.env.NODE_ENV === 'test') {
-    // Running in node. Can't use browser history
-    createHistory = createMemoryHistory;
-  } else {
-    createHistory = createBrowserHistory;
-  }
-} catch (unused) {
-  createHistory = createBrowserHistory;
-}
-
-export const history: History = createHistory({ basename: window.SERVER_FLAGS.basePath });
+/**
+ * TODO: Using custom pre-instantiated history object with React Router 6+ is highly discouraged.
+ * We should remove all usages of this history object and replace the current HistoryRouter impl.
+ * (marked in React Router docs as unstable) with standard BrowserRouter impl.
+ *
+ * https://github.com/remix-run/react-router/pull/7586
+ * https://github.com/remix-run/react-router/issues/9630#issuecomment-1341643731
+ */
+export const history: History =
+  process.env.NODE_ENV !== 'test'
+    ? createBrowserHistory({ v5Compat: true })
+    : createMemoryHistory({ v5Compat: true });
 
 const removeBasePath = (url = '/') =>
   _.startsWith(url, window.SERVER_FLAGS.basePath)

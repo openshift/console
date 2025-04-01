@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLocation, useParams, Location } from 'react-router-dom-v5-compat';
+import { useLocation, useParams, Location } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk/src';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';

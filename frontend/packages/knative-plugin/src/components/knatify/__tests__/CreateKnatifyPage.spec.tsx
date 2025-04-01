@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import { Formik } from 'formik';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useRelatedHPA } from '@console/shared/src/hooks/hpa-hooks';
@@ -18,8 +18,8 @@ jest.mock('@console/shared/src/hooks/hpa-hooks', () => ({
   useRelatedHPA: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

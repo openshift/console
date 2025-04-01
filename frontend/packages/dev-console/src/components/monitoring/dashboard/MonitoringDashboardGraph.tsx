@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
 import { Humanize } from '@console/internal/components/utils';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';

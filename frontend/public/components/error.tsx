@@ -17,7 +17,7 @@ import { t_global_icon_color_status_danger_default as globalDangerColor100 } fro
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from './utils';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 const ErrorComponent: React.FC<ErrorComponentProps> = ({ title, message }) => {
   const { t } = useTranslation();

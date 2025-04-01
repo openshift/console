@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import CatalogPageHelpText from '@console/dev-console/src/components/catalog/CatalogPageHelpText';
 import NamespacedPage, {
   NamespacedPageVariants,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   history,

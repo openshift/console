@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import ApplicationGroupResource from '../ApplicationGroupResource';

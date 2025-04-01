@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { configure, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 import store from '@console/internal/redux';
 import {
   DataState,

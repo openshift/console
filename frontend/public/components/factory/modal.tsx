@@ -3,7 +3,7 @@ import * as Modal from 'react-modal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
+import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
@@ -73,7 +73,7 @@ export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper
 
     return (
       <Provider store={store}>
-        <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
+        <HistoryRouter history={history} basename={window.SERVER_FLAGS.basePath}>
           <CompatRouter>
             {modalWrapper ? (
               <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
@@ -83,7 +83,7 @@ export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper
               <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
             )}
           </CompatRouter>
-        </Router>
+        </HistoryRouter>
       </Provider>
     );
   };

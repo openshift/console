@@ -5,8 +5,14 @@ import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
+import {
+  unstable_HistoryRouter as HistoryRouter,
+  Route,
+  Routes,
+  useParams,
+  useLocation,
+} from 'react-router-dom';
+import { CompatRouter } from 'react-router-dom-v5-compat';
 import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON, appInternalFetch } from '../co-fetch';
@@ -30,6 +36,7 @@ import DetectPerspective from '@console/app/src/components/detect-perspective/De
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
+import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
@@ -306,25 +313,37 @@ render(<LoadingBox />, document.getElementById('app'));
 
 const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
-  // Treat the authentication error page as a standalone route. There is no need to render the rest
-  // of the app if we know authentication has failed.
+
+  const standaloneRoutes = React.useMemo(
+    () =>
+      _.flatten(
+        standaloneRouteExtensions.map(({ uid, properties: { path, exact, component } }) =>
+          mapExtensionToRoutes({
+            uid,
+            path,
+            exact,
+            getElement: () => <AsyncComponent loader={component} />,
+          }),
+        ),
+      ),
+    [standaloneRouteExtensions],
+  );
+
   return (
-    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+    <HistoryRouter history={history} basename={window.SERVER_FLAGS.basePath}>
       <CompatRouter>
         <Routes>
+          {/*
+            Treat the authentication error page as a standalone route.
+            There is no need to render the rest of the app if we know authentication has failed.
+          */}
           <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
-          {standaloneRouteExtensions.map((e) => (
-            <Route
-              key={e.uid}
-              element={<AsyncComponent loader={e.properties.component} />}
-              path={`${e.properties.path}${e.properties.exact ? '' : '/*'}`}
-            />
-          ))}
+          {standaloneRoutes}
           <Route path="/terminal/*" element={<CloudShellTab />} />
           <Route path="/*" element={<AppWithExtensions />} />
         </Routes>
       </CompatRouter>
-    </Router>
+    </HistoryRouter>
   );
 };
 

@@ -5,7 +5,7 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
 import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';

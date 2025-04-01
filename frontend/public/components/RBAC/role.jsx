@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useParams } from 'react-router-dom';
 import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
 import * as classNames from 'classnames';
 import { useTranslation, withTranslation } from 'react-i18next';

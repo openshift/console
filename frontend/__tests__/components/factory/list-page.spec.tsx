@@ -17,8 +17,8 @@ jest.mock('react-redux', () => {
   };
 });
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...require.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
 }));
 

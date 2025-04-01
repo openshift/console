@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
 import { ResourceIcon } from './resource-icon';
 import { resourcePathFromModel, ResourceLink } from './resource-link';
 import {

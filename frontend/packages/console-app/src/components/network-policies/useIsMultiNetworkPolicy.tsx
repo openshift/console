@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { MultiNetworkPolicyModel } from '@console/internal/models';
 
 const useIsMultiNetworkPolicy = () => {

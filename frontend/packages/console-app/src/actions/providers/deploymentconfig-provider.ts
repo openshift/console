@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/dist/core/lib/lib-core';
 import { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { errorModal } from '@console/internal/components/modals';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentConfigKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { CommonActionFactory } from '../creators/common-factory';
