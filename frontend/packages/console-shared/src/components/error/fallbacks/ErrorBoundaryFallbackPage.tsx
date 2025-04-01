@@ -18,7 +18,7 @@ const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = (props) 
   const { t } = useTranslation();
   return (
     <ErrorState
-      titleText={t('console-shared~Oh no! Something went wrong.')}
+      titleText={t('console-shared~Something wrong happened')}
       defaultBodyText={t('console-shared~An error occurred. Please try again.')}
       bodyText={props.errorMessage}
       headingLevel="h1"

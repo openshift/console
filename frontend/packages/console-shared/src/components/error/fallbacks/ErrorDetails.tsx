@@ -53,7 +53,7 @@ export const ErrorDetailsModal: React.FC<ErrorDetailsModalProps> = ({ buttonProp
       </Button>
       <Modal
         variant={ModalVariant.large}
-        title={t('console-shared~Oh no! Something went wrong.')}
+        title={t('console-shared~Something wrong happened')}
         isOpen={isOpen}
         onClose={() => setOpen(false)}
       >

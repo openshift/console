@@ -5,39 +5,14 @@ import {
   ErrorStateProps as PfErrorStateProps,
 } from '@patternfly/react-component-groups';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  ActionList,
-  ActionListGroup,
-  ActionListItem,
-  CodeBlock,
-  CodeBlockCode,
-  Stack,
-  StackItem,
-  Button,
-} from '@patternfly/react-core';
+import { CodeBlock, CodeBlockCode, Stack, StackItem, Button } from '@patternfly/react-core';
 import { PathMissingIcon } from '@patternfly/react-icons/dist/dynamic/icons/path-missing-icon';
 
-import { useLocation } from 'react-router';
+import { useLocation, useHistory } from 'react-router';
 
 export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
   const { t } = useTranslation();
-
-  const HomeButton = (
-    <ActionList>
-      <ActionListGroup>
-        <ActionListItem>
-          <Button variant="primary" component="a" href="/">
-            {t('public~Return to home page')}
-          </Button>
-        </ActionListItem>
-        <ActionListItem>
-          <Button variant="secondary" component="a" href="/search">
-            {t('public~Search')}
-          </Button>
-        </ActionListItem>
-      </ActionListGroup>
-    </ActionList>
-  );
+  const history = useHistory();
 
   return (
     <>
@@ -47,10 +22,20 @@ export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
         icon={PathMissingIcon}
         headingLevel="h1"
         titleText={t('public~404: Page Not Found')}
-        bodyText={t(
-          "public~We couldn't find that page. Another page may have what you need, so try searching.",
-        )}
-        customFooter={HomeButton}
+        bodyText={t("public~We couldn't find that page.")}
+        customFooter={
+          <Button
+            variant="primary"
+            component="a"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push('/');
+            }}
+          >
+            {t('public~Return to home page')}
+          </Button>
+        }
         {...props}
       />
     </>
@@ -70,7 +55,7 @@ export const ErrorState: React.FC = () => {
 
   return (
     <PfErrorState
-      titleText={t('public~Something went wrong')}
+      titleText={t('public~An error occured')}
       headingLevel="h1"
       bodyText={
         <Stack>
