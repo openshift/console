@@ -9,6 +9,7 @@ import {
 } from '../../../../public/models';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
+import { guidedTour } from '../../views/guided-tour';
 import { masthead } from '../../views/masthead';
 import { overviewPage } from '../../views/overview';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -23,6 +24,7 @@ const overviewResources = ImmutableSet([
 describe('Visiting Overview page', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 
