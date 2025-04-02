@@ -47,9 +47,7 @@ const UserPreferenceCheckboxField: React.FC<UserPreferenceCheckboxFieldProps> = 
 
   return loaded ? (
     <>
-      {description && (
-        <div className="co-help-text co-user-preference-field--description">{description}</div>
-      )}
+      {description && <div className="co-user-preference-field--description">{description}</div>}
       <Checkbox
         id={id}
         label={label}
