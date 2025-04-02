@@ -78,6 +78,9 @@
     ]
   },
   "resolutions": {
-    "@patternfly/react-core": "^6.2.0-prerelease.36"
+    "@patternfly/react-core": "^6.2.0-prerelease.36",
+    "@patternfly/react-styles": "^6.2.0-prerelease.12",
+    "@patternfly/react-icons": "^6.2.0-prerelease.13",
+    "@patternfly/react-tokens": "^6.2.0-prerelease.12"
   }
 }

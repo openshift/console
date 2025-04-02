@@ -1854,7 +1854,7 @@
     lodash "^4.17.21"
     tslib "^2.8.1"
 
-"@patternfly/react-code-editor@^6.2.0-prerelease.49":
+"@patternfly/react-code-editor@^6.2.0-prerelease.40":
   version "6.2.0-prerelease.40"
   resolved "https://registry.yarnpkg.com/@patternfly/react-code-editor/-/react-code-editor-6.2.0-prerelease.40.tgz#9e37cfd6888f8a9685b70f63da85b6bc007c0e89"
   integrity sha512-p+jh51FvnG9/XUjhkJGvWKi7mfU8odBcylxxL6gYDPH7KyDwQEUUvTkz8TStQ7RWzpXZOGSHwK3PMbZIs/uqpg==
