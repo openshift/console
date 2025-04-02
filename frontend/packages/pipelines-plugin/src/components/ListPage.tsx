@@ -320,6 +320,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
         title={title}
         badge={title ? badge : null}
         className={classNames({ 'co-m-nav-title--row': createLink })}
+        helpText={helpText}
       >
         {createLink && (
           <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
@@ -328,7 +329,6 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
         )}
         {!title && badge && <div>{badge}</div>}
       </PageHeading>
-      {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
       <PaneBody>
         {inject(props.children, {
           resources,

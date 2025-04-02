@@ -220,10 +220,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           </PrimaryHeading>
         )}
         {helpText && (
-          <Content>
-            <Content component={ContentVariants.p} className="pf-v6-u-mt-sm co-help-text">
-              {helpText}
-            </Content>
+          <Content component={ContentVariants.p} className={classNames({ 'pf-v6-u-mt-sm': title })}>
+            {helpText}
           </Content>
         )}
         {children}

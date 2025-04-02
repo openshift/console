@@ -45,11 +45,6 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
   margin-bottom: $pf-v6-global-gutter-y;
 }
 
-.co-m-pane__help-text {
-  margin-top: calc(#{$pf-v6-global-gutter-y} * -0.5);
-  padding: 0 $pf-v6-global-gutter-x $pf-v6-global-gutter-y;
-}
-
 .co-m-pane__heading {
   display: flex;
   justify-content: space-between;
@@ -120,10 +115,6 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 
 .co-m-pane__explanation--alt {
   margin-bottom: var(--pf-t--global--spacer--md);
-}
-
-.co-help-text {
-  color: var(--pf-t--global--text--color--subtle);
 }
 
 .co-m-pane__explanation code {

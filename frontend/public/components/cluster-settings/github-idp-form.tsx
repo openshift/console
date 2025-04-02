@@ -212,7 +212,7 @@ export const AddGitHubPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Organizations')}
           </Title>
-          <p className="co-help-text">
+          <p>
             <Trans
               t={t}
               ns="public"
@@ -232,7 +232,7 @@ export const AddGitHubPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Teams')}
           </Title>
-          <p className="co-help-text">
+          <p>
             <Trans
               t={t}
               ns="public"
