@@ -53,7 +53,9 @@ import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useFeedbackLocal } from './feedback-local';
 import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
+import darkFeedbackImage from '../imgs/rh_feedback-dark.svg'; // TODO: update when PatternFly adds this graphic to their package
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from './QuickCreate';
+import { ThemeContext } from './ThemeProvider';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
@@ -85,13 +87,14 @@ const MultiClusterToolbarGroup = () => {
 
 const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
   const feedbackLocales = useFeedbackLocal(reportBugLink);
+  const theme = React.useContext(ThemeContext);
   return (
     <FeedbackModal
       onShareFeedback="https://console.redhat.com/self-managed-feedback-form?source=openshift"
       onOpenSupportCase={reportBugLink.href}
       feedbackLocale={feedbackLocales}
       onJoinMailingList="https://console.redhat.com/self-managed-research-form?source=openshift"
-      feedbackImg={feedbackImage}
+      feedbackImg={theme === 'dark' ? darkFeedbackImage : feedbackImage}
       isOpen={isOpen}
       onClose={onClose}
     />
