@@ -963,22 +963,24 @@ const PodEnvironmentComponent = (props) => (
   <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
-export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
+export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({
   obj,
   message,
   initialContainer,
   infoMessage,
+  attach = false,
 }) => (
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-xs-12">
         <div className="panel-body">
           <AsyncComponent
-            loader={() => import('./pod-attach').then((c) => c.PodAttach)}
+            loader={() => import('./pod-connect').then((c) => c.PodConnect)}
             obj={obj}
             message={message}
             infoMessage={infoMessage}
             initialContainer={initialContainer}
+            attach={attach}
           />
         </div>
       </div>
@@ -1012,7 +1014,7 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
         navFactory.envEditor(PodEnvironmentComponent),
         navFactory.logs(PodLogs),
         navFactory.events(ResourceEventStream),
-        navFactory.terminal(PodExecLoader),
+        navFactory.terminal(PodConnectLoader),
       ]}
     />
   );
@@ -1244,11 +1246,12 @@ export type PodDetailsListProps = {
   pod: PodKind;
 };
 
-type PodExecLoaderProps = {
+type PodConnectLoaderProps = {
   obj: PodKind;
   message?: React.ReactElement;
   infoMessage?: React.ReactElement;
   initialContainer?: string;
+  attach?: boolean;
 };
 
 type PodDetailsProps = {
