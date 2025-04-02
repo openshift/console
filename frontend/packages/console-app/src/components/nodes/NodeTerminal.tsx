@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
+import { PodConnectLoader } from '@console/internal/components/pod';
 import {
   Firehose,
   FirehoseResource,
   FirehoseResult,
   LoadingBox,
 } from '@console/internal/components/utils';
-import { NodeKind, PodKind } from '@console/internal/module/k8s';
-import { PodExecLoader } from '../../../../../public/components/pod';
-import { ImageStreamTagModel, NamespaceModel, PodModel } from '../../../../../public/models';
-import { k8sCreate, k8sGet, k8sKillByName } from '../../../../../public/module/k8s';
+import { ImageStreamTagModel, NamespaceModel, PodModel } from '@console/internal/models';
+import { NodeKind, PodKind, k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
 
 type NodeTerminalErrorProps = {
   error: React.ReactNode;
@@ -149,7 +148,7 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
         />
       );
     case 'Running':
-      return <PodExecLoader obj={obj.data} message={message} />;
+      return <PodConnectLoader obj={obj.data} message={message} attach />;
     default:
       return <LoadingBox />;
   }
