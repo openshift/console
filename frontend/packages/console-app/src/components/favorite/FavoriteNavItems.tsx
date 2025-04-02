@@ -71,10 +71,10 @@ export const FavoriteNavItems: React.FC = () => {
           flexWrap={{ default: 'nowrap' }}
           style={{ width: '100%' }}
         >
-          <FlexItem className="co-favorite-text">
+          <FlexItem className="pf-v6-u-m-0">
             <Truncate content={favorite.name} />
           </FlexItem>
-          <FlexItem className="co-favorite-delete-button">
+          <FlexItem className="pf-v6-u-mr-xs">
             <Button
               variant="plain"
               aria-label={`Unfavorite ${favorite.name}`}

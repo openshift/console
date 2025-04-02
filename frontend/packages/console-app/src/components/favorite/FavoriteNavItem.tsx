@@ -12,7 +12,12 @@ export const FavoriteNavItem: React.FC<FavoriteNavItemProps> = ({
 }) => {
   return (
     <NavItem className={className} isActive={isActive}>
-      <NavLink {...navLinkProps} {...dataAttributes} to={to} />
+      <NavLink
+        {...navLinkProps}
+        {...dataAttributes}
+        to={to}
+        className="pf-v6-u-py-0 pf-v6-u-pr-0"
+      />
     </NavItem>
   );
 };
