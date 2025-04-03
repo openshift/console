@@ -231,6 +231,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             <Content
               component={ContentVariants.p}
               className={classNames({ 'pf-v6-u-mt-sm': title })}
+              data-test="help-text"
             >
               {helpText}
             </Content>
