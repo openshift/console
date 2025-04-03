@@ -25,7 +25,12 @@ RUN chmod 777 -R ${HOME}
 # give every user read access to the "/root" folder where the binary is cached
 # we really only need to worry about the top folder, fortunately
 # TODO: there are other folders that need permissions but I don't know what they are yet, See: https://github.com/cypress-io/cypress/issues/23962
+RUN chmod -R 777 /root/.cache/Cypress
+RUN chmod -R 777 /app
 RUN chmod 777 /root
+RUN chmod 777 /root/.cache
+RUN chmod 777 /root/.config
+RUN chmod -R 777 /root/.config/Cypress
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
@@ -37,9 +42,6 @@ RUN apt-get update \
 # "fake" dbus address to prevent errors
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null \
-  # a few environment variables to make NPM installs easier
-  # good colors for most applications
-  TERM=xterm \
   # avoid too many progress messages
   # https://github.com/cypress-io/cypress/issues/1243
   CI=1 \
@@ -48,9 +50,6 @@ ENV DBUS_SESSION_BUS_ADDRESS=/dev/null \
   QT_X11_NO_MITSHM=1 \
   _X11_NO_MITSHM=1 \
   _MITSHM=0 \
-  # point Cypress at the /root/cache no matter what user account is used
-  # see https://on.cypress.io/caching
-  CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
 
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.27.1/bin/linux/$(go env GOARCH)/kubectl && \
     chmod +x ./kubectl && \
