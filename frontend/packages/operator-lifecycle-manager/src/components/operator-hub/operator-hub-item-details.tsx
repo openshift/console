@@ -24,6 +24,8 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
+import CatalogPageOverlay from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlay';
+import CatalogPageOverlayDescription from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlayDescription';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
@@ -55,7 +57,7 @@ const OperatorHubItemCustomizedHint: React.FC<OperatorHubItemCustomizedHintProps
   footer,
 }) => {
   return (
-    <Hint className="pf-v6-u-mb-sm">
+    <Hint className="pf-v6-u-mb-md">
       <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
       <HintBody>{body}</HintBody>
       <HintFooter>{footer}</HintFooter>
@@ -284,9 +286,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     currentChannel?.currentCSVDesc.annotations?.capabilities ?? item.capabilityLevel;
 
   const installedChannel = item?.subscription?.spec?.channel;
-  const notAvailable = (
-    <span className="properties-side-panel-pf-property-label">{t('olm~N/A')}</span>
-  );
+  const notAvailable = t('olm~N/A');
   const created = Date.parse(selectedChannelCreatedAt) ? (
     <Timestamp timestamp={selectedChannelCreatedAt} />
   ) : (
@@ -317,7 +317,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
 
   return item ? (
     <div className="modal-body modal-body-border">
-      <div className="co-catalog-page__overlay-body">
+      <CatalogPageOverlay>
         <PropertiesSidePanel>
           <PropertyItem
             label={t('olm~Channel')}
@@ -387,7 +387,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             }
           />
         </PropertiesSidePanel>
-        <div className="co-catalog-page__overlay-description">
+        <CatalogPageOverlayDescription>
           {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
             showCSTokenWarn &&
             infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth) && (
@@ -444,8 +444,8 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
           ) : (
             description
           )}
-        </div>
-      </div>
+        </CatalogPageOverlayDescription>
+      </CatalogPageOverlay>
     </div>
   ) : null;
 };

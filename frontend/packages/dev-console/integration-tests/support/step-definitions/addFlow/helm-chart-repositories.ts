@@ -30,7 +30,7 @@ When('user selects Helm Chart card on the Add page', () => {
 });
 
 When('user clicks {string} link in Helm Charts catalog description', (linkText: string) => {
-  cy.byLegacyTestID('catalog-page-description').within(() => {
+  cy.byTestID('help-text').within(() => {
     cy.get('a').contains(linkText).click();
   });
 });
