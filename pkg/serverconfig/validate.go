@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	configv1 "github.com/openshift/api/config/v1"
@@ -38,7 +39,9 @@ func Validate(fs *flag.FlagSet) error {
 	}
 
 	if _, err := validateControlPlaneTopology(fs.Lookup("control-plane-topology-mode").Value.String()); err != nil {
-		return err
+		// We log control plane topology errors but don't block deployments on them
+		// We can revert this back to `return err` once https://github.com/openshift/console/pull/14846 lands
+		fmt.Fprintln(os.Stderr, err.Error())
 	}
 
 	return nil
