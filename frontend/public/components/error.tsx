@@ -1,40 +1,32 @@
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { ButtonLink } from '@console/shared/src/components/links/ButtonLink';
 import {
   ErrorState as PfErrorState,
   ErrorStateProps as PfErrorStateProps,
+  NotFoundIcon,
 } from '@patternfly/react-component-groups';
 import { Trans, useTranslation } from 'react-i18next';
-import { CodeBlock, CodeBlockCode, Stack, StackItem, Button } from '@patternfly/react-core';
-import { PathMissingIcon } from '@patternfly/react-icons/dist/dynamic/icons/path-missing-icon';
+import { CodeBlock, CodeBlockCode, Stack, StackItem } from '@patternfly/react-core';
 
-import { useLocation, useHistory } from 'react-router';
+import { useLocation } from 'react-router';
 
 export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
   const { t } = useTranslation();
-  const history = useHistory();
 
   return (
     <>
       <DocumentTitle>{t('public~Page Not Found (404)')}</DocumentTitle>
       <PfErrorState
         status="none"
-        icon={PathMissingIcon}
+        icon={NotFoundIcon}
         headingLevel="h1"
         titleText={t('public~404: Page Not Found')}
-        bodyText={t("public~We couldn't find that page.")}
+        defaultBodyText={t("public~We couldn't find that page.")}
         customFooter={
-          <Button
-            variant="primary"
-            component="a"
-            href="/"
-            onClick={(e) => {
-              e.preventDefault();
-              history.push('/');
-            }}
-          >
-            {t('public~Return to home page')}
-          </Button>
+          <ButtonLink variant="link" href="/">
+            {t('public~Return to homepage')}
+          </ButtonLink>
         }
         {...props}
       />
@@ -126,9 +118,9 @@ export const AuthenticationErrorPage: React.FC = () => {
           </Stack>
         }
         customFooter={
-          <Button variant="link" href="/logout">
+          <ButtonLink variant="link" href="/logout">
             {t('public~Try again')}
-          </Button>
+          </ButtonLink>
         }
       />
     </>

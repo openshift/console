@@ -7,6 +7,10 @@ import { StatusBox } from '..';
 
 configure({ testIdAttribute: 'data-test' });
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  useNavigate: jest.fn(),
+}));
+
 describe('StatusBox', () => {
   it('should render 404: Page Not Found if the loadError status is 404', () => {
     const { getByText } = render(<StatusBox loadError={{ response: { status: 404 } }} />);
