@@ -111,7 +111,7 @@ Then(
 );
 
 When('user clicks on quick start link in helm catalog description', () => {
-  cy.get('[data-test-id="catalog-page-description"]>a').should('be.visible').click();
+  cy.get('[data-test="help-text"]>a').should('be.visible').click();
 });
 
 Then('user will see {string} quick start', (quickStartName: string) => {

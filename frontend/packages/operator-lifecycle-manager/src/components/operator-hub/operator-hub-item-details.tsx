@@ -9,6 +9,8 @@ import {
   HintTitle,
   HintBody,
   HintFooter,
+  Flex,
+  FlexItem,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import classNames from 'classnames';
@@ -55,7 +57,7 @@ const OperatorHubItemCustomizedHint: React.FC<OperatorHubItemCustomizedHintProps
   footer,
 }) => {
   return (
-    <Hint className="pf-v6-u-mb-sm">
+    <Hint className="pf-v6-u-mb-md">
       <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
       <HintBody>{body}</HintBody>
       <HintFooter>{footer}</HintFooter>
@@ -284,9 +286,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     currentChannel?.currentCSVDesc.annotations?.capabilities ?? item.capabilityLevel;
 
   const installedChannel = item?.subscription?.spec?.channel;
-  const notAvailable = (
-    <span className="properties-side-panel-pf-property-label">{t('olm~N/A')}</span>
-  );
+  const notAvailable = t('olm~N/A');
   const created = Date.parse(selectedChannelCreatedAt) ? (
     <Timestamp timestamp={selectedChannelCreatedAt} />
   ) : (
@@ -317,7 +317,12 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
 
   return item ? (
     <div className="modal-body modal-body-border">
-      <div className="co-catalog-page__overlay-body">
+      <Flex
+        className="pf-v6-u-mt-md"
+        alignItems={{ md: 'alignItemsFlexStart' }}
+        direction={{ default: 'column', md: 'row' }}
+        columnGap={{ default: 'columnGapNone' }}
+      >
         <PropertiesSidePanel>
           <PropertyItem
             label={t('olm~Channel')}
@@ -387,7 +392,10 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             }
           />
         </PropertiesSidePanel>
-        <div className="co-catalog-page__overlay-description">
+        <FlexItem
+          className="co-catalog-page__overlay-description pf-v6-u-mt-md pf-v6-u-mt-0-on-md pf-v6-u-ml-lg-on-md"
+          flex={{ md: 'flex_1' }}
+        >
           {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
             showCSTokenWarn &&
             infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth) && (
@@ -444,8 +452,8 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
           ) : (
             description
           )}
-        </div>
-      </div>
+        </FlexItem>
+      </Flex>
     </div>
   ) : null;
 };

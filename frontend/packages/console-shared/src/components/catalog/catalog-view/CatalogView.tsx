@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '../../../hooks/useQueryParams';
+import PaneBody from '../../layout/PaneBody';
 import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';
 import {
   categorize,
@@ -221,55 +223,61 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   }, []);
 
   return (
-    <div className="co-catalog-page">
-      {showSidebar && (
-        <div className="co-catalog-page__tabs">
-          {showCategories && (
-            <CatalogCategories
-              categories={catalogCategories}
-              categorizedIds={categorizedIds}
-              selectedCategory={activeCategoryId}
-              onSelectCategory={handleCategoryChange}
-            />
-          )}
-          {showTypeSelector && (
-            <CatalogTypeSelector
-              catalogTypes={catalogTypes}
-              catalogTypeCounts={catalogTypeCounts}
-            />
-          )}
-          {showFilters && (
-            <CatalogFilters
-              activeFilters={activeFilters}
-              filterGroupCounts={filterGroupCounts}
-              filterGroupMap={filterGroupMap}
-              filterGroupsShowAll={filterGroupsShowAll}
-              onShowAllToggle={handleShowAllToggle}
-              onFilterChange={handleFilterChange}
-            />
-          )}
-        </div>
-      )}
-      <div className="co-catalog-page__content">
-        <CatalogToolbar
-          ref={catalogToolbarRef}
-          title={activeCategory.label}
-          totalItems={totalItems}
-          searchKeyword={activeSearchKeyword}
-          sortOrder={sortOrder}
-          groupings={groupings}
-          activeGrouping={activeGrouping}
-          onGroupingChange={handleGroupingChange}
-          onSortOrderChange={handleSortOrderChange}
-          onSearchKeywordChange={handleSearchKeywordChange}
-        />
-        {totalItems > 0 ? (
-          <CatalogGrid items={catalogItems} renderTile={renderTile} isGrouped={isGrouped} />
-        ) : (
-          <CatalogEmptyState onClear={clearFilters} />
+    <PaneBody>
+      <Flex className="co-catalog-page" direction={{ default: 'column', md: 'row' }}>
+        {showSidebar && (
+          <FlexItem className="co-catalog-page__tabs" order={{ default: '2', md: '1' }}>
+            {showCategories && (
+              <CatalogCategories
+                categories={catalogCategories}
+                categorizedIds={categorizedIds}
+                selectedCategory={activeCategoryId}
+                onSelectCategory={handleCategoryChange}
+              />
+            )}
+            {showTypeSelector && (
+              <CatalogTypeSelector
+                catalogTypes={catalogTypes}
+                catalogTypeCounts={catalogTypeCounts}
+              />
+            )}
+            {showFilters && (
+              <CatalogFilters
+                activeFilters={activeFilters}
+                filterGroupCounts={filterGroupCounts}
+                filterGroupMap={filterGroupMap}
+                filterGroupsShowAll={filterGroupsShowAll}
+                onShowAllToggle={handleShowAllToggle}
+                onFilterChange={handleFilterChange}
+              />
+            )}
+          </FlexItem>
         )}
-      </div>
-    </div>
+        <FlexItem
+          className="co-catalog-page__content"
+          grow={{ default: 'grow' }}
+          order={{ default: '1', md: '2' }}
+        >
+          <CatalogToolbar
+            ref={catalogToolbarRef}
+            title={activeCategory.label}
+            totalItems={totalItems}
+            searchKeyword={activeSearchKeyword}
+            sortOrder={sortOrder}
+            groupings={groupings}
+            activeGrouping={activeGrouping}
+            onGroupingChange={handleGroupingChange}
+            onSortOrderChange={handleSortOrderChange}
+            onSearchKeywordChange={handleSearchKeywordChange}
+          />
+          {totalItems > 0 ? (
+            <CatalogGrid items={catalogItems} renderTile={renderTile} isGrouped={isGrouped} />
+          ) : (
+            <CatalogEmptyState onClear={clearFilters} />
+          )}
+        </FlexItem>
+      </Flex>
+    </PaneBody>
   );
 };
 

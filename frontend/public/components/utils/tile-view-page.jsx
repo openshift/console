@@ -25,6 +25,7 @@ import {
 import { useDebounceCallback, getURLWithParams, VirtualizedGrid } from '@console/shared';
 import { Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { isModifiedEvent } from '@console/shared/src/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { isModalOpen } from '../modals';
 import { Dropdown } from '../utils';
@@ -832,56 +833,62 @@ export const TileViewPage = (props) => {
   });
 
   return (
-    <div className="co-catalog-page">
-      <div className="co-catalog-page__tabs">
-        {renderCategoryTabs(activeCategory.id)}
-        {renderSidePanel()}
-      </div>
-      <div className="co-catalog-page__content">
-        <div className="co-catalog-page__header">
-          <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
-          <div className="co-catalog-page__filter">
-            <Flex>
-              <FlexItem>
-                <SearchInput
-                  data-test="search-operatorhub"
-                  ref={filterByKeywordInput}
-                  placeholder={t('public~Filter by keyword...')}
-                  value={activeFilters.keyword.value}
-                  onChange={(event, text) => onKeywordChange(text)}
-                  onClear={() => onKeywordChange('')}
-                  aria-label={t('public~Filter by keyword...')}
-                />
-              </FlexItem>
-              {groupItems && (
+    <PaneBody>
+      <Flex className="co-catalog-page" direction={{ default: 'column', md: 'row' }}>
+        <FlexItem className="co-catalog-page__tabs" order={{ default: '2', md: '1' }}>
+          {renderCategoryTabs(activeCategory.id)}
+          {renderSidePanel()}
+        </FlexItem>
+        <FlexItem
+          className="co-catalog-page__content"
+          grow={{ default: 'grow' }}
+          order={{ default: '1', md: '2' }}
+        >
+          <div className="co-catalog-page__header">
+            <div className="co-catalog-page__heading">{activeCategory.label}</div>
+            <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+              <Flex alignItems={{ default: 'alignItemsBaseline' }}>
                 <FlexItem>
-                  <Dropdown
-                    className="co-catalog-page__btn-group__group-by"
-                    menuClassName="dropdown-menu--text-wrap"
-                    items={groupByTypes}
-                    onChange={(e) => onGroupChange(e)}
-                    titlePrefix="Group By"
-                    title={groupBy}
+                  <SearchInput
+                    data-test="search-operatorhub"
+                    ref={filterByKeywordInput}
+                    placeholder={t('public~Filter by keyword...')}
+                    value={activeFilters.keyword.value}
+                    onChange={(event, text) => onKeywordChange(text)}
+                    onClear={() => onKeywordChange('')}
+                    aria-label={t('public~Filter by keyword...')}
                   />
                 </FlexItem>
-              )}
+                {groupItems && (
+                  <FlexItem>
+                    <Dropdown
+                      className="co-catalog-page__btn-group__group-by"
+                      menuClassName="dropdown-menu--text-wrap"
+                      items={groupByTypes}
+                      onChange={(e) => onGroupChange(e)}
+                      titlePrefix="Group By"
+                      title={groupBy}
+                    />
+                  </FlexItem>
+                )}
+              </Flex>
+              <FlexItem className="co-catalog-page__num-items">{numItems}</FlexItem>
             </Flex>
-            <div className="co-catalog-page__num-items">{numItems}</div>
           </div>
-        </div>
 
-        {activeCategory.numItems > 0 && (
-          <div className="co-catalog-page__grid">
-            {groupItems && groupBy !== groupByTypes.None ? (
-              renderGroupedItems(activeCategory.items)
-            ) : (
-              <VirtualizedGrid items={activeCategory.items} renderCell={renderTile} />
-            )}
-          </div>
-        )}
-        {activeCategory.numItems === 0 && renderEmptyState()}
-      </div>
-    </div>
+          {activeCategory.numItems > 0 && (
+            <div className="co-catalog-page__grid">
+              {groupItems && groupBy !== groupByTypes.None ? (
+                renderGroupedItems(activeCategory.items)
+              ) : (
+                <VirtualizedGrid items={activeCategory.items} renderCell={renderTile} />
+              )}
+            </div>
+          )}
+          {activeCategory.numItems === 0 && renderEmptyState()}
+        </FlexItem>
+      </Flex>
+    </PaneBody>
   );
 };
 

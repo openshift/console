@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Flex, FlexItem, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { ExternalLink, SectionHeading, Timestamp } from '@console/internal/components/utils';
@@ -18,9 +18,7 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
   ) : (
     creationTimestamp
   );
-  const notAvailable = (
-    <span className="properties-side-panel-pf-property-label">{t('console-shared~N/A')}</span>
-  );
+  const notAvailable = t('console-shared~N/A');
   const providerLabel = t('console-shared~Provider');
   const createdAtLabel = t('console-shared~Created at');
   const supportLabel = t('console-shared~Support');
@@ -28,7 +26,12 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
 
   return (
     <div className="modal-body modal-body-border">
-      <div className="co-catalog-page__overlay-body">
+      <Flex
+        className="pf-v6-u-mt-md"
+        alignItems={{ md: 'alignItemsFlexStart' }}
+        direction={{ default: 'column', md: 'row' }}
+        columnGap={{ default: 'columnGapNone' }}
+      >
         <PropertiesSidePanel>
           {details?.properties
             ?.filter((property) => !property?.isHidden)
@@ -74,7 +77,10 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
           )}
         </PropertiesSidePanel>
         {(details?.descriptions?.length || description) && (
-          <div className="co-catalog-page__overlay-description">
+          <FlexItem
+            className="co-catalog-page__overlay-description pf-v6-u-mt-md pf-v6-u-mt-0-on-md pf-v6-u-ml-lg-on-md"
+            flex={{ md: 'flex_1' }}
+          >
             <Stack hasGutter>
               {!details?.descriptions?.[0]?.label && (
                 <SectionHeading text={t('console-shared~Description')} />
@@ -88,9 +94,9 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
                 </StackItem>
               ))}
             </Stack>
-          </div>
+          </FlexItem>
         )}
-      </div>
+      </Flex>
     </div>
   );
 };
