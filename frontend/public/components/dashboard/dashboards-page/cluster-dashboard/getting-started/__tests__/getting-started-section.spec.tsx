@@ -12,12 +12,12 @@ import { GettingStartedSection } from '../getting-started-section';
 import { CLUSTER_DASHBOARD_USER_SETTINGS_KEY } from '../constants';
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...require.requireActual('@console/shared/src/hooks/flag'),
+  ...jest.requireActual('@console/shared/src/hooks/flag'),
   useFlag: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/getting-started', () => ({
-  ...require.requireActual('@console/shared/src/components/getting-started'),
+  ...jest.requireActual('@console/shared/src/components/getting-started'),
   useGettingStartedShowState: jest.fn(),
 }));
 

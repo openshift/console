@@ -24,7 +24,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 
 jest.mock('../../utils/user-settings', () => {
   // requireActual exist in used jest 21 and still in latest version, but was not defined well in old TS definition
-  const originalModule = (jest as any).requireActual('../../utils/user-settings');
+  const originalModule = jest.requireActual('../../utils/user-settings');
   return {
     ...originalModule,
     createConfigMap: jest.fn(),
@@ -33,7 +33,7 @@ jest.mock('../../utils/user-settings', () => {
 });
 
 jest.mock('react-redux', () => {
-  const originalModule = (jest as any).requireActual('react-redux');
+  const originalModule = jest.requireActual('react-redux');
   return {
     ...originalModule,
     useSelector: jest.fn(),

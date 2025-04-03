@@ -27,7 +27,7 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
 });
 
 jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+  const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
     useFlag: jest.fn<boolean>(),

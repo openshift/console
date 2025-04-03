@@ -12,20 +12,20 @@ import SourceSection, { SourceSectionFormData } from '../SourceSection';
 
 // Skip Firehose fetching and render just the children
 jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...require.requireActual('@console/internal/components/utils/firehose'),
+  ...jest.requireActual('@console/internal/components/utils/firehose'),
   Firehose: ({ children }) => children,
 }));
 
 // Skip network calls to any external git service
 jest.mock('@console/git-service', () => ({
-  ...require.requireActual('@console/git-service'),
+  ...jest.requireActual('@console/git-service'),
   getGitService: function mockedGetGitService() {
     return null;
   },
 }));
 
 jest.mock('../EditorField', () =>
-  require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
+  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
 const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
