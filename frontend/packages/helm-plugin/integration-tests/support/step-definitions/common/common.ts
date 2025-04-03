@@ -1,4 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
@@ -116,5 +117,6 @@ Given('user is at Add page', () => {
 Given('user has logged in as admin user', () => {
   cy.login();
   perspective.switchTo(switchPerspective.Administrator);
+  guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
 });

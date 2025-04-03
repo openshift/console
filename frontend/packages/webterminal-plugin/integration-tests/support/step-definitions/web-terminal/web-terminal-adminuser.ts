@@ -1,4 +1,5 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   switchPerspective,
@@ -23,6 +24,7 @@ Given('user has logged in as admin user', () => {
   cy.login();
   perspective.switchTo(switchPerspective.Administrator);
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
+  guidedTour.close();
 });
 
 Given('user has closed existing terminal workspace', () => {
