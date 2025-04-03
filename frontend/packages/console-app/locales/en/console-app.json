@@ -273,6 +273,7 @@
   "Name can only contain letters, numbers, spaces, and hyphens.": "Name can only contain letters, numbers, spaces, and hyphens.",
   "The name {{favoriteName}} already exists in your favorites. Choose a unique name to save to your favorites.": "The name {{favoriteName}} already exists in your favorites. Choose a unique name to save to your favorites.",
   "Maximum number of favorites ({{maxCount}}) reached. To add another favorite, remove an existing page from your favorites.": "Maximum number of favorites ({{maxCount}}) reached. To add another favorite, remove an existing page from your favorites.",
+  "Remove from favorites": "Remove from favorites",
   "Add to favorites": "Add to favorites",
   "Save": "Save",
   "Cancel": "Cancel",

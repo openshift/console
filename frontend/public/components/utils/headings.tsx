@@ -5,15 +5,18 @@ import { Link } from 'react-router-dom-v5-compat';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
+  ActionList,
+  ActionListGroup,
+  ActionListItem,
   Breadcrumb,
   BreadcrumbItem,
   Button,
-  Split,
-  SplitItem,
   Content,
   ContentVariants,
-  Title,
   PageBreadcrumb,
+  Split,
+  SplitItem,
+  Title,
 } from '@patternfly/react-core';
 import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
@@ -80,24 +83,26 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   </Breadcrumb>
 );
 
-export const ActionButtons: React.SFC<ActionButtonsProps> = ({ actionButtons }) => (
-  <div className="co-action-buttons">
+export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) => (
+  <>
     {_.map(actionButtons, (actionButton, i) => {
       if (!_.isEmpty(actionButton)) {
         return (
-          <Button
-            className="co-action-buttons__btn"
-            variant="primary"
-            onClick={actionButton.callback}
-            key={i}
-            data-test={actionButton.label}
-          >
-            {actionButton.label}
-          </Button>
+          <ActionListItem>
+            <Button
+              className="co-action-buttons__btn"
+              variant="primary"
+              onClick={actionButton.callback}
+              key={i}
+              data-test={actionButton.label}
+            >
+              {actionButton.label}
+            </Button>
+          </ActionListItem>
         );
       }
     })}
-  </div>
+  </>
 );
 
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
@@ -143,7 +148,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
-  const isAdminPrespective = perspective === 'admin';
+  const isAdminPerspective = perspective === 'admin';
   return (
     <>
       {showBreadcrumbs && (
@@ -198,29 +203,42 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <span className="co-m-pane__heading-badge">{badge}</span>
             )}
             {link && <div className="co-m-pane__heading-link">{link}</div>}
-            {(isAdminPrespective || showActions) && (
-              <div className="co-actions" data-test-id="details-actions">
-                {isAdminPrespective && !hideFavoriteButton && <FavoriteButton />}
-                {showActions && (
-                  <>
-                    {hasButtonActions && (
-                      <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-                    )}
-                    {hasMenuActions && (
-                      <ActionsMenu
-                        actions={
-                          _.isFunction(menuActions)
-                            ? menuActions(kindObj, data, extraResources, customData)
-                            : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                        }
-                      />
-                    )}
-                    {_.isFunction(customActionMenu)
-                      ? customActionMenu(kindObj, data)
-                      : customActionMenu}
-                  </>
-                )}
-              </div>
+            {(isAdminPerspective || showActions) && (
+              <ActionList className="co-actions" data-test-id="details-actions">
+                <ActionListGroup>
+                  {isAdminPerspective && !hideFavoriteButton && (
+                    <ActionListItem>
+                      <FavoriteButton />
+                    </ActionListItem>
+                  )}
+
+                  {showActions && (
+                    <>
+                      {hasButtonActions && (
+                        <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                      )}
+
+                      {hasMenuActions && (
+                        <ActionListItem>
+                          <ActionsMenu
+                            actions={
+                              _.isFunction(menuActions)
+                                ? menuActions(kindObj, data, extraResources, customData)
+                                : menuActions.map((a) =>
+                                    a(kindObj, data, extraResources, customData),
+                                  )
+                            }
+                          />
+                        </ActionListItem>
+                      )}
+
+                      {_.isFunction(customActionMenu)
+                        ? customActionMenu(kindObj, data)
+                        : customActionMenu}
+                    </>
+                  )}
+                </ActionListGroup>
+              </ActionList>
             )}
           </PrimaryHeading>
         )}
