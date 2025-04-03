@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavExpandable, Button, FlexItem, Flex } from '@patternfly/react-core';
+import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -71,8 +71,10 @@ export const FavoriteNavItems: React.FC = () => {
           flexWrap={{ default: 'nowrap' }}
           style={{ width: '100%' }}
         >
-          <FlexItem className="pf-m-truncate">{favorite.name}</FlexItem>
-          <FlexItem>
+          <FlexItem className="pf-v6-u-m-0">
+            <Truncate content={favorite.name} />
+          </FlexItem>
+          <FlexItem className="pf-v6-u-mr-xs">
             <Button
               variant="plain"
               aria-label={`Unfavorite ${favorite.name}`}
@@ -80,7 +82,6 @@ export const FavoriteNavItems: React.FC = () => {
                 e.preventDefault();
                 handleUnfavorite(favorite.url);
               }}
-              className="co-favorite-delete-button"
               icon={<StarIcon color="gold" />}
               data-test="remove-favorite-button"
             />
