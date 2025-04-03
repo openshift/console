@@ -48,7 +48,7 @@ const TrialDaysLeft: React.FC<{
 
   let variant: 'warning' | 'danger' = 'warning';
 
-  let alertText = t('public~{{count}} days remaining', { count: trialDaysLeft });
+  let alertText = t('public~{{count}} day remaining', { count: trialDaysLeft });
   if (trialDaysLeft === 0) {
     alertText = t('public~< 1 day remaining');
   }
