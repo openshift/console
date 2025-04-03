@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { Alert, Button, Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -306,7 +306,7 @@ class CreateRouteWithTranslation extends React.Component<
             {t('public~Name')}
           </label>
           <span
-            className={classnames('pf-v6-c-form-control', { 'pf-m-disabled': !!existingRoute })}
+            className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': !!existingRoute })}
           >
             <input
               type="text"

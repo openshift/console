@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -130,7 +130,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                       {t('public~Key')}
                     </div>
                     <span
-                      className={classnames('pf-v6-c-form-control', {
+                      className={classNames('pf-v6-c-form-control', {
                         'pf-m-readonly': keyReadOnly,
                       })}
                     >
@@ -167,7 +167,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                       {t('public~Value')}
                     </div>
                     <span
-                      className={classnames('pf-v6-c-form-control', {
+                      className={classNames('pf-v6-c-form-control', {
                         'pf-m-readonly': valueReadOnly,
                       })}
                     >
