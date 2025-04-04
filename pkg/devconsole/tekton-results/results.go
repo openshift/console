@@ -82,33 +82,39 @@ func getTRHost(dynamicClient *dynamic.DynamicClient, k8sMode string) (string, er
 	return cachedTektonResultsHost, nil
 }
 
-func makeHTTPRequest(url, userToken string) (common.DevConsoleCommonResponse, error) {
+func makeHTTPRequest(url, userToken string, k8sMode string) (common.DevConsoleCommonResponse, error) {
 	serviceRequest, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	// Needed for TektonResults API
-	serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", userToken))
-
-	// Load the CA certificate
-	caCert, err := os.ReadFile(tlsCertPath)
-	if err != nil {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read CA certificate: %v", err)
-	}
-
-	// Create a CertPool and add the CA certificate
-	caCertPool := x509.NewCertPool()
-	if !caCertPool.AppendCertsFromPEM(caCert) {
-		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to append CA certificate")
-	}
-
 	serviceTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
-		TLSClientConfig: &tls.Config{
+	}
+
+	// Needed for TektonResults API
+	serviceRequest.Header.Set("Authorization", fmt.Sprintf("Bearer %s", userToken))
+	if k8sMode == "off-cluster" {
+		serviceTransport.TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: true,
+		}
+	} else {
+		// Load the CA certificate
+		caCert, err := os.ReadFile(tlsCertPath)
+		if err != nil {
+			return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read CA certificate: %v", err)
+		}
+
+		// Create a CertPool and add the CA certificate
+		caCertPool := x509.NewCertPool()
+		if !caCertPool.AppendCertsFromPEM(caCert) {
+			return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to append CA certificate")
+		}
+
+		serviceTransport.TLSClientConfig = &tls.Config{
 			RootCAs: caCertPool,
-		},
+		}
 	}
 
 	serviceClient := &http.Client{
@@ -154,7 +160,7 @@ func GetTektonResults(r *http.Request, user *auth.User, dynamicClient *dynamic.D
 		parsedParams.Encode(),
 	)
 
-	return makeHTTPRequest(TEKTON_RESULTS_URL, user.Token)
+	return makeHTTPRequest(TEKTON_RESULTS_URL, user.Token, k8sMode)
 }
 
 func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -179,7 +185,7 @@ func GetResultsSummary(r *http.Request, user *auth.User, dynamicClient *dynamic.
 		parsedParams.Encode(),
 	)
 
-	return makeHTTPRequest(SUMMARY_URL, user.Token)
+	return makeHTTPRequest(SUMMARY_URL, user.Token, k8sMode)
 }
 
 func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string) (common.DevConsoleCommonResponse, error) {
@@ -198,5 +204,5 @@ func GetTaskRunLog(r *http.Request, user *auth.User, dynamicClient *dynamic.Dyna
 		request.TaskRunPath,
 	)
 
-	return makeHTTPRequest(TASKRUN_LOG_URL, user.Token)
+	return makeHTTPRequest(TASKRUN_LOG_URL, user.Token, k8sMode)
 }
