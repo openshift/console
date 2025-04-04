@@ -9,7 +9,7 @@ let mockCurrentSearchQuery = '';
 let mockLabelsQuery = '';
 
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = (jest as any).requireActual('@console/shared');
   return {
     ...ActualShared,
     useQueryParams: () =>

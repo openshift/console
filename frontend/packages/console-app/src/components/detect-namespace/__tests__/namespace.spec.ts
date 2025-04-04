@@ -11,12 +11,12 @@ import { useValuesForNamespaceContext } from '../namespace';
 import { useLastNamespace } from '../useLastNamespace';
 
 jest.mock('react-redux', () => ({
-  ...require.requireActual('react-redux'),
+  ...(jest as any).requireActual('react-redux'),
   useDispatch: jest.fn(),
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...(jest as any).requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));
