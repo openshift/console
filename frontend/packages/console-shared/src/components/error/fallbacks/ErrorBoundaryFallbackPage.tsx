@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
-import { ErrorDetailsModal } from './ErrorDetails';
+import { ErrorDetailsModal } from '@console/shared/src/components/modals/ErrorDetailsModal';
 
 /**
  * Standard fallback catch -- expected to take up the whole page.

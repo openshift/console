@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, ButtonVariant, Split, SplitItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
-import { ErrorDetailsModal } from './ErrorDetails';
+import { ErrorDetailsModal } from '@console/shared/src/components/modals/ErrorDetailsModal';
 
 /**
  * Support for error boundary content that won't consume the whole page.
