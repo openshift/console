@@ -1,4 +1,5 @@
 /// <reference path="./react.d.ts" />
+/// <reference path="./jest.d.ts" />
 /// <reference path="./generated/graphql-queries.d.ts" />
 
 declare module '*.svg' {
