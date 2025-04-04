@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { createHash } from 'crypto-browserify';
 import { useSelector } from 'react-redux';
 import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
+import { generateHash } from '@console/shared/src/utils/utils';
 import {
   createConfigMap,
   deseralizeData,
@@ -30,6 +30,51 @@ const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => vo
     counterRef.current -= 1;
   }, []);
   return [counterRef.current !== initialValue, increment, decrement];
+};
+
+const useUserUid = () => {
+  // Unique username
+  const uniqueUsernameRef = React.useRef<string>('');
+  const [userUidLoading, setUserUidLoading] = React.useState<boolean>(true);
+
+  // User id and impersonate name
+  const userImpersonateNameOrUID = useSelector((state: RootState) => {
+    const impersonateName = getImpersonate(state)?.name;
+    const uid = getUser(state)?.uid;
+    return impersonateName || uid || '';
+  });
+
+  // Username
+  const username = useSelector((state: RootState) => {
+    return getUser(state)?.username;
+  });
+
+  // construct unique username
+  React.useEffect(() => {
+    let activeGenerate = true;
+
+    if (username === 'kube:admin') {
+      uniqueUsernameRef.current = 'kubeadmin';
+    } else if (username) {
+      setUserUidLoading(true);
+      generateHash('SHA-256', username)
+        .then((hash) => {
+          if (activeGenerate) {
+            uniqueUsernameRef.current = hash;
+          }
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('Could not generate unique username hash:', err);
+        });
+    }
+    return () => {
+      activeGenerate = false;
+      setUserUidLoading(false);
+    };
+  }, [username]);
+
+  return { userUidLoading, userUid: userImpersonateNameOrUID || uniqueUsernameRef.current || '' };
 };
 
 export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = false) => {
@@ -64,26 +109,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   // Request counter
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
-  const hashNameOrKubeadmin = (name: string): string | null => {
-    if (!name) {
-      return null;
-    }
-
-    if (name === 'kube:admin') {
-      return 'kubeadmin';
-    }
-    const hash = createHash('sha256');
-    hash.update(name);
-    return hash.digest('hex');
-  };
-
-  // User and impersonate
-  const userUid = useSelector((state: RootState) => {
-    const impersonateName = getImpersonate(state)?.name;
-    const { uid, username } = getUser(state) ?? {};
-    const hashName = hashNameOrKubeadmin(username);
-    return impersonateName || uid || hashName || '';
-  });
+  const { userUidLoading, userUid } = useUserUid();
 
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
 
@@ -98,7 +124,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
 
   const isLocalStorage = fallbackLocalStorage || impersonate;
   const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
-    alwaysUseFallbackLocalStorage && !impersonate
+    alwaysUseFallbackLocalStorage && !impersonate && !userUidLoading
       ? 'console-user-settings'
       : `console-user-settings-${userUid}`,
     keyRef.current,
