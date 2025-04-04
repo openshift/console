@@ -190,7 +190,7 @@ export const GlobalConfigPage: React.FC = () => {
     <PaneBody>
       {!loading && (
         <>
-          <Content component={ContentVariants.p}>
+          <Content component={ContentVariants.p} className="pf-v6-u-mb-xl">
             {t('public~Edit the following resources to manage the configuration of your cluster.')}
           </Content>
           <Toolbar>

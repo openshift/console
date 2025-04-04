@@ -4,6 +4,7 @@ import { FilterValue } from '@console/dynamic-plugin-sdk/src/extensions/console-
 import { ListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { referenceForModel } from '@console/internal/module/k8s';
+import HelpTextAlert from '@console/shared/src/components/layout/HelpTextAlert';
 import { ServiceBindingModel } from '../../models';
 import { ServiceBinding } from '../../types';
 import { getComputedServiceBindingStatus } from '../../utils';
@@ -46,7 +47,11 @@ const ServiceBindingListPage: React.FC<ServiceBindingListPageProps> = (props) =>
       ListComponent={ServiceBindingTable}
       rowFilters={filters}
       canCreate
-      helpText={<ServiceBindingDeprecationAlert />}
+      helpText={
+        <HelpTextAlert>
+          <ServiceBindingDeprecationAlert />
+        </HelpTextAlert>
+      }
       {...propsWithoutName}
     />
   );

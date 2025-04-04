@@ -15,7 +15,7 @@ const ListPageHeader: React.FC<ListPageHeaderProps> = ({
     <PageHeading
       title={title}
       badge={title ? badge : null}
-      className="co-m-nav-title--row"
+      navTitleAsRow
       hideFavoriteButton={hideFavoriteButton}
       helpText={helpText}
     >

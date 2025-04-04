@@ -70,7 +70,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
 
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
-      <PageHeading className="co-m-nav-title--row" title={title} badge={badge}>
+      <PageHeading title={title} badge={badge} navTitleAsRow>
         {secondaryButtonAction && (
           <ActionListItem>
             <Button
