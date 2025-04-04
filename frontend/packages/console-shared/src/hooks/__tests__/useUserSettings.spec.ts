@@ -23,7 +23,6 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 jest.mock('../../utils/user-settings', () => {
-  // requireActual exist in used jest 21 and still in latest version, but was not defined well in old TS definition
   const originalModule = jest.requireActual('../../utils/user-settings');
   return {
     ...originalModule,
