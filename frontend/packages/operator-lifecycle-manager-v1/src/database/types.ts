@@ -90,6 +90,7 @@ export type ExtensionCatalogItemMetadata = {
   provider?: string;
   source?: string;
   validSubscription?: string[];
+  creationTimestamp?: string;
 };
 
 type SemverCoercableString = string;

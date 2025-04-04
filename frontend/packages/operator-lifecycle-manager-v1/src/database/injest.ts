@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { bundleHasProperty } from './bundles';
+import { bundleHasProperty } from '../fbc/bundles';
+import { addPackagesToExtensionCatalog } from '../fbc/packages';
+import { isFileBasedCatalogBundle } from '../fbc/type-guards';
+import { FileBasedCatalogObject, FileBasedCatalogPropertyType } from '../fbc/types';
 import { putItem, getItems, clearObjectStores } from './indexeddb';
 import { fetchAndProcessJSONLines } from './jsonl';
-import { addPackagesToExtensionCatalog } from './packages';
-import { isFileBasedCatalogBundle } from './type-guards';
-import { FileBasedCatalogItem, FileBasedCatalogSchema } from './types';
 
 const populateExtensionCatalogs = async (db: IDBDatabase): Promise<number> => {
   const packages = await getItems(db, 'olm.package');
@@ -17,7 +17,7 @@ const populateExtensionCatalogs = async (db: IDBDatabase): Promise<number> => {
 const streamFBCObjectsToIndexedDB = (
   db: IDBDatabase,
   catalog: string,
-  reader: ReadableStreamDefaultReader<FileBasedCatalogItem>,
+  reader: ReadableStreamDefaultReader<FileBasedCatalogObject>,
   count?: number,
 ): Promise<number> =>
   reader.read().then(async ({ done, value }) => {
@@ -26,7 +26,7 @@ const streamFBCObjectsToIndexedDB = (
     }
     if (
       isFileBasedCatalogBundle(value) &&
-      !bundleHasProperty(value, FileBasedCatalogSchema.csvMetadata)
+      !bundleHasProperty(value, FileBasedCatalogPropertyType.CSVMetadata)
     ) {
       return streamFBCObjectsToIndexedDB(db, catalog, reader, count ?? 0);
     }
@@ -45,8 +45,8 @@ const injestClusterCatalog = async (
 ): Promise<number> => {
   const catalogName = catalog.metadata.name;
   console.log('[Extension Catalog Database] Injesting FBC from ClusterCatalog', catalogName);
-  return fetchAndProcessJSONLines<FileBasedCatalogItem>(
-    `/api/catalogd/catalogs/${catalogName}/all.json`,
+  return fetchAndProcessJSONLines<FileBasedCatalogObject>(
+    `/api/catalogd/catalogs/${catalogName}/api/v1/all`,
     { 'Content-Type': 'application/jsonl' },
   )
     .then((reader) => streamFBCObjectsToIndexedDB(db, catalogName, reader))
