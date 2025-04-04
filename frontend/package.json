@@ -238,7 +238,7 @@
     "@types/glob": "7.x",
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^22.x",
     "@types/json-schema": "^7.0.7",
     "@types/lodash-es": "4.17.x",
     "@types/node": "18.x",
