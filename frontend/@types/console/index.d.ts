@@ -1,4 +1,3 @@
-/// <reference path="./jest.d.ts" />
 /// <reference path="./react.d.ts" />
 /// <reference path="./generated/graphql-queries.d.ts" />
 
