@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import cx from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, Button } from '@patternfly/react-core';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
@@ -57,7 +57,7 @@ export const DetailsCard: React.FC = () => {
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('public~Description')}>
             <span
-              className={cx({
+              className={classNames({
                 'text-muted': !description,
                 'co-project-dashboard-details-card__description': description,
               })}
