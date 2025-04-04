@@ -56,7 +56,7 @@ describe('Cluster Settings cluster update modal', () => {
     cy.byTestID('update-cluster-modal')
       .find('[data-test="dropdown-with-switch-switch"]')
       .should('exist')
-      .click();
+      .click({ force: true });
     cy.byTestID('update-cluster-modal')
       .find('[data-test="dropdown-with-switch-menu-item-4.17.1"]')
       .should('exist')
