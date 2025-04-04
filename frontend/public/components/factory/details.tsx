@@ -173,6 +173,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           customData={props.customData}
           badge={props.badge || getBadgeFromType(kindObj?.badge)}
           icon={props.icon}
+          helpText={props.helpText}
         >
           {props.children}
         </PageHeading>
@@ -218,6 +219,7 @@ export type DetailsPageProps = {
   getResourceStatus?: (resource: K8sResourceKind) => string;
   children?: React.ReactNode;
   customKind?: string;
+  helpText?: React.ReactNode;
 };
 
 DetailsPage.displayName = 'DetailsPage';

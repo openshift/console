@@ -321,7 +321,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       <PageHeading
         title={title}
         badge={title ? badge : null}
-        className={classNames({ 'co-m-nav-title--row': createLink })}
+        navTitleAsRow={!!createLink}
         helpText={helpText}
       >
         {createLink && (

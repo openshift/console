@@ -13,6 +13,7 @@ import {
   Content,
   ContentVariants,
   PageBreadcrumb,
+  PageSection,
   Split,
   SplitItem,
   Title,
@@ -107,6 +108,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     'data-test': dataTestId,
     hideFavoriteButton,
     children,
+    navTitleAsRow,
   } = props;
   const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
@@ -144,8 +146,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       <NavTitle
         data-test-id={dataTestId}
         className={classNames(
-          { 'co-m-nav-title--logo': props.icon },
           { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
+          { 'co-m-nav-title--row': navTitleAsRow },
           className,
         )}
         style={style}
@@ -219,13 +221,21 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             )}
           </PrimaryHeading>
         )}
-        {helpText && (
-          <Content component={ContentVariants.p} className={classNames({ 'pf-v6-u-mt-sm': title })}>
-            {helpText}
-          </Content>
-        )}
+        {helpText &&
+          !children &&
+          (React.isValidElement(helpText) ? (
+            <>{helpText}</>
+          ) : (
+            <Content
+              component={ContentVariants.p}
+              className={classNames({ 'pf-v6-u-mt-sm': title })}
+            >
+              {helpText}
+            </Content>
+          ))}
         {children}
       </NavTitle>
+      {helpText && children && <PageSection className="pf-v6-u-pt-0">{helpText}</PageSection>}
     </>
   );
 });
@@ -301,6 +311,7 @@ export type PageHeadingProps = {
   className?: string;
   helpText?: React.ReactNode;
   hideFavoriteButton?: boolean;
+  navTitleAsRow?: boolean;
 };
 
 export type SectionHeadingProps = {

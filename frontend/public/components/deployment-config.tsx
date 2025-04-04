@@ -54,6 +54,7 @@ import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { Alert } from '@patternfly/react-core';
+import HelpTextAlert from '@console/shared/src/components/layout/HelpTextAlert';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -357,11 +358,12 @@ export const DeploymentConfigsDetailsPage: React.FC = (props) => {
       kind={DeploymentConfigsReference}
       customActionMenu={customActionMenu}
       pages={pages}
-    >
-      <div className="pf-v6-u-mt-md">
-        <DeploymentConfigDeprecationAlert />
-      </div>
-    </DetailsPage>
+      helpText={
+        <HelpTextAlert>
+          <DeploymentConfigDeprecationAlert />
+        </HelpTextAlert>
+      }
+    />
   );
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
