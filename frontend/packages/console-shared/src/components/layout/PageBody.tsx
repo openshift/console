@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Flex } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 const PageBody: React.FC<PageBodyProps> = ({ children, className, ...props }) => {
   return (

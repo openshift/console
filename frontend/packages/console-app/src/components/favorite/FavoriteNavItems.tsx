@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useUserSettingsCompatibility } from '@console/shared';
 import {

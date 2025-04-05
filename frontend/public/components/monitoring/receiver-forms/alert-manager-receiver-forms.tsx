@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 import { APIError } from '@console/shared';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';

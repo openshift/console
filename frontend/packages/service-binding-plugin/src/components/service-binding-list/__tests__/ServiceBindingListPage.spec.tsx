@@ -6,7 +6,7 @@ import { connectedServiceBinding, failedServiceBinding } from '../../../__tests_
 import ServiceBindingListPage from '../ServiceBindingListPage';
 
 jest.mock('@console/internal/components/factory', () => ({
-  ...require.requireActual('@console/internal/components/factory'),
+  ...jest.requireActual('@console/internal/components/factory'),
   ListPage: jest.fn(),
 }));
 

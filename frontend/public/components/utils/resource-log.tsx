@@ -29,7 +29,7 @@ import {
   OutlinedWindowRestoreIcon,
   OutlinedPlayCircleIcon,
 } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import {
   FLAGS,
   LOG_WRAP_LINES_USERSETTINGS_KEY,

@@ -9,7 +9,7 @@ type PipelineBuilderPageProps = React.ComponentProps<typeof PipelineBuilderPage>
 type BuilderProps = React.ComponentProps<typeof Formik>;
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 

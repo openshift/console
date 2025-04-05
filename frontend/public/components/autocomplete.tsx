@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useDocumentListener, getLabelsAsString } from '@console/shared';
 import { KeyEventModes } from '@console/shared/src/hooks';
 import { fuzzyCaseInsensitive } from './factory/table-filters';

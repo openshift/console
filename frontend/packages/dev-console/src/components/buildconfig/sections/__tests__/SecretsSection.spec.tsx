@@ -10,7 +10,7 @@ configure({ testIdAttribute: 'data-test' });
 
 // Skip Firehose fetching and render just the children
 jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...require.requireActual('@console/internal/components/utils/firehose'),
+  ...jest.requireActual('@console/internal/components/utils/firehose'),
   Firehose: ({ children }) => children,
 }));
 

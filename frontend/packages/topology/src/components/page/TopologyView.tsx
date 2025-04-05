@@ -7,7 +7,7 @@ import {
   TopologyQuadrant,
   Visualization,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';

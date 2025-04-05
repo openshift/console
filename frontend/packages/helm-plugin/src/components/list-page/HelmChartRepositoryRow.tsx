@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';

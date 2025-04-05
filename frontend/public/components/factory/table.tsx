@@ -13,7 +13,7 @@ import {
   ISortBy,
   OnSort,
 } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
   AutoSizer,

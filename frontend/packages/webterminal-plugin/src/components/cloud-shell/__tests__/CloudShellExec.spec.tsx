@@ -5,7 +5,7 @@ import { InternalCloudShellExec, CloudShellExecProps } from '../CloudShellExec';
 import TerminalLoadingBox from '../TerminalLoadingBox';
 
 jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+  const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
     useTelemetry: () => {},

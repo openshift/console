@@ -8,7 +8,7 @@ import {
   LazyActionMenu,
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {

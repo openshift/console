@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 export const GitOpsDeploymentHistoryTableColumnClasses = [
   classNames('pf-m-width-30'),

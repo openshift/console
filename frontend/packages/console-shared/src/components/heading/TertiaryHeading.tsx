@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 const TertiaryHeading: React.FC<TertiaryHeadingProps> = ({
   altSpacing,
