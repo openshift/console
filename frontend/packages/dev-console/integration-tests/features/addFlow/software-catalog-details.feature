@@ -72,7 +72,7 @@ Feature: Software Catalog Page
               And user clicks on View Details under customization on the sidebar
               And user clicks on View Details under developerCatalog on the sidebar
               And user clicks on View Details under categories on the sidebar
-             Then user will see categories which are shown in the developer catalog
+             Then user will see categories which are shown in the software catalog
 
 
         @smoke @manual

@@ -83,7 +83,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
     path,
     disabled: accessReviewDisabled,
   }),
-  DevCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+  SoftwareCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'dev-catalog',
     label: i18next.t('devconsole~From Catalog'),
     icon: <CatalogIcon />,

@@ -9,7 +9,7 @@ Feature: Helm Chart Installation View
 
         # This test is broken because now there is only on version of nodejs chart.
         @regression
-        Scenario: Grouping of Helm multiple chart versions together in developer catalog: HR-04-TC01
+        Scenario: Grouping of Helm multiple chart versions together in software catalog: HR-04-TC01
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user clicks on "open-shift-helm-charts" chart repository

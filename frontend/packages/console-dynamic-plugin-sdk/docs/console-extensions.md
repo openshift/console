@@ -215,7 +215,7 @@ This extension allows plugins to contribute a provider for a catalog item type. 
 
 ### Summary 
 
-This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define<br/>a new catalog item type as HelmCharts that it wants to contribute to the Developer Catalog.
+This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define<br/>a new catalog item type as HelmCharts that it wants to contribute to the Software Catalog.
 
 ### Properties
 

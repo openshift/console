@@ -80,7 +80,7 @@
   "Display name": "Display name",
   "A display name for the Helm Chart repository.": "A display name for the Helm Chart repository.",
   "A description for the Helm Chart repository.": "A description for the Helm Chart repository.",
-  "Disable usage of the repo in the developer catalog.": "Disable usage of the repo in the developer catalog.",
+  "Disable usage of the repo in the Software Catalog.": "Disable usage of the repo in the Software Catalog.",
   "URL": "URL",
   "Helm Chart repository URL.": "Helm Chart repository URL.",
   "Hide advanced options": "Hide advanced options",

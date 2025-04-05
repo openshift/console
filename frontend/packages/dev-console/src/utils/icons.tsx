@@ -23,7 +23,7 @@ export const deployIconElement = <OsImageIcon />;
 
 export const samplesIconElement = <LaptopCodeIcon />;
 
-export const devCatalogIconElement = <CatalogIcon />;
+export const softwareCatalogIconElement = <CatalogIcon />;
 
 export const databaseCatalogIconElement = <DatabaseIcon />;
 

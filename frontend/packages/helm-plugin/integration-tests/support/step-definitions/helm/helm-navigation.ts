@@ -50,7 +50,7 @@ Then('user is able to see the message {string}', (noHelmReleasesFound: string) =
   helmPage.verifyMessage(noHelmReleasesFound);
 });
 
-Then('user will get the link to install helm charts from developer catalog', () => {
+Then('user will get the link to install helm charts from software catalog', () => {
   helmPage.verifyInstallHelmLink();
 });
 

@@ -3,7 +3,7 @@ import { HELM_CHART_CATALOG_TYPE_ID } from '@console/helm-plugin/src/const';
 import {
   useGetAllDisabledSubCatalogs,
   isCatalogTypeEnabled,
-  useIsDeveloperCatalogEnabled,
+  useIsSoftwareCatalogEnabled,
 } from '@console/shared';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { mockExtensions } from './catalogTypeExtensions.data';
@@ -73,45 +73,45 @@ describe('isSubCatalogTypeEnabled - get sub-catalog status', () => {
   });
 });
 
-describe('useIsDeveloperCatalogEnabled - check if developer catalog is enabled or not', () => {
-  it('should show developer catalog as enabled when enabled list is empty', () => {
+describe('useIsSoftwareCatalogEnabled - check if software catalog is enabled or not', () => {
+  it('should show software catalog as enabled when enabled list is empty', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" , "enabled": [] }';
-      const isEnabled = useIsDeveloperCatalogEnabled();
+      const isEnabled = useIsSoftwareCatalogEnabled();
       expect(isEnabled).toBe(true);
     });
   });
-  it('should show developer catalog as disabled when disabled list is empty', () => {
+  it('should show software catalog as disabled when disabled list is empty', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" , "disabled": [] }';
-      const isEnabled = useIsDeveloperCatalogEnabled();
+      const isEnabled = useIsSoftwareCatalogEnabled();
       expect(isEnabled).toBe(false);
     });
   });
-  it('should show developer catalog as enabled when enabled list is not empty', () => {
+  it('should show software catalog as enabled when enabled list is not empty', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes =
         '{"state" : "Enabled" , "enabled": ["HelmChart"] }';
-      const isEnabled = useIsDeveloperCatalogEnabled();
+      const isEnabled = useIsSoftwareCatalogEnabled();
       expect(isEnabled).toBe(true);
     });
   });
-  it('should show developer catalog as disabled when all sub-catalogs are disabled', () => {
+  it('should show software catalog as disabled when all sub-catalogs are disabled', () => {
     testHook(() => {
       window.SERVER_FLAGS.developerCatalogTypes =
         '{"state" : "Disabled" , "disabled": ["HelmChart","Devfile","EventSource","EventSink","OperatorBackedService","Sample","Template","BuilderImage"]}';
-      const isEnabled = useIsDeveloperCatalogEnabled();
+      const isEnabled = useIsSoftwareCatalogEnabled();
       expect(isEnabled).toBe(false);
     });
   });
-  it('should show developer catalog as enabled when enabled attribute is not added', () => {
+  it('should show software catalog as enabled when enabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Enabled" }';
-    const isEnabled = useIsDeveloperCatalogEnabled();
+    const isEnabled = useIsSoftwareCatalogEnabled();
     expect(isEnabled).toBe(true);
   });
-  it('should show developer catalog as enabled when enabled attribute is not added', () => {
+  it('should show software catalog as enabled when enabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" }';
-    const isEnabled = useIsDeveloperCatalogEnabled();
+    const isEnabled = useIsSoftwareCatalogEnabled();
     expect(isEnabled).toBe(false);
   });
 });

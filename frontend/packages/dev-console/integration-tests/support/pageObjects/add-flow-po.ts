@@ -410,7 +410,7 @@ export const quickSearchAddPO = {
     return `[data-test="item-name-${itemName}-${itemType}"]`;
   },
   quickSearchCreateButton: '[data-test="create-quick-search"]',
-  viewInDevCatalog: '#devCatalog',
+  viewInSoftwareCatalog: '#devCatalog',
   quickSearchNoResults: '[data-test="quick-search-no-results"]',
 };
 

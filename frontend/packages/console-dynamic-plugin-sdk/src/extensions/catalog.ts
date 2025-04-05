@@ -3,7 +3,7 @@ import { ExtensionHook } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define
-    a new catalog item type as HelmCharts that it wants to contribute to the Developer Catalog. */
+    a new catalog item type as HelmCharts that it wants to contribute to the Software Catalog. */
 export type CatalogItemType = ExtensionDeclaration<
   'console.catalog/item-type',
   {

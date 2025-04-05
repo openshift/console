@@ -155,7 +155,7 @@ Given('user is at Software Catalog form with builder images', () => {
   addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
-When('user searches builder image {string} in developer catalog', (searchItem: string) => {
+When('user searches builder image {string} in software catalog', (searchItem: string) => {
   catalogPage.search(searchItem);
 });
 

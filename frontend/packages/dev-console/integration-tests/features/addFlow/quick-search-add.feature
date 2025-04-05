@@ -27,7 +27,7 @@ Feature: Provide quick search in Add page
         Scenario: View all results option for django in Add page: A-11-TC03
              When user clicks Add to project button
               And user enters "django" in Add to project search bar
-              And user clicks on View all developer catalog items link
+              And user clicks on View all software catalog items link
              Then user will see Catalog with "django" text filter
 
 

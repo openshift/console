@@ -1,9 +1,9 @@
 @customize @dev-console
 Feature: Customization of catalogs
-              Allows cluster admins to selectively disable a sub-catalog and all links to the specific sub-catalog or disable the complete developer catalog
+              Allows cluster admins to selectively disable a sub-catalog and all links to the specific sub-catalog or disable the complete software catalog
 
         Background:
-            Given user has created or selected namespace "aut-developer-catalog"
+            Given user has created or selected namespace "aut-software-catalog"
 
         @regression @manual
         Scenario: When all the sub-catalogs are disabled: DC-01-TC01

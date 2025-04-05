@@ -23,7 +23,7 @@ import {
 
 const defaultClusterRoleNames = ['admin', 'edit', 'view'];
 
-type DeveloperCatalogClusterRolesConfig = K8sResourceKind & {
+type SoftwareCatalogClusterRolesConfig = K8sResourceKind & {
   spec: {
     customization?: {
       projectAccess?: {
@@ -72,7 +72,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
 
   // Current configuration
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    DeveloperCatalogClusterRolesConfig
+    SoftwareCatalogClusterRolesConfig
   >();
   const [selectedClusterRoles, setSelectedClusterRoles] = React.useState<string[]>();
   React.useEffect(() => {
@@ -138,7 +138,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
     });
     setSaveStatus({ status: 'in-progress' });
 
-    const patch: DeveloperCatalogClusterRolesConfig = {
+    const patch: SoftwareCatalogClusterRolesConfig = {
       spec: {
         customization: {
           projectAccess: {
