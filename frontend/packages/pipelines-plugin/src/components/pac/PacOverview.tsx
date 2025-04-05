@@ -84,11 +84,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
               {annotations?.appUrl && (
                 <Trans t={t} ns="pipelines-plugin">
                   <p>
-                    Use the{' '}
-                    <a href={annotations.appUrl} target="_blank" rel="noopener noreferrer">
-                      link
-                    </a>{' '}
-                    to install the newly created GitHub application to your repositories in your
+                    Use the <ExternalLink href={annotations.appUrl}>link</ExternalLink> to install
+                    the newly created GitHub application to your repositories in your
                     organization/account
                   </p>
                 </Trans>
@@ -99,12 +96,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
             <Hint>
               <HintBody>
                 <Trans t={t} ns="pipelines-plugin">
-                  Use this{' '}
-                  <a href={annotations.appUrl} target="_blank" rel="noopener noreferrer">
-                    link
-                  </a>{' '}
-                  to install the GitHub Application to your repositories in your
-                  organization/account.
+                  Use this <ExternalLink href={annotations.appUrl}>link</ExternalLink> to install
+                  the GitHub Application to your repositories in your organization/account.
                 </Trans>
               </HintBody>
             </Hint>
