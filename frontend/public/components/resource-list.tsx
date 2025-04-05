@@ -52,7 +52,7 @@ const ResourceListPage_ = connectToPlural(
         : `"${plural}"`;
       return (
         <ErrorPage404
-          message={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`}
+          bodyText={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`}
         />
       );
     }

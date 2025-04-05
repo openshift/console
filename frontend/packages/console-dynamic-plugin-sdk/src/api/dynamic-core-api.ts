@@ -762,7 +762,7 @@ export const NamespaceBar: React.FC<NamespaceBarProps> = require('@console/inter
   .NamespaceBar;
 
 /**
- * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information.
+ * Creates a full page ErrorBoundaryFallbackPage component to display the "Something wrong happened" message along with the stack trace and other helpful debugging information.
  * This is to be used in conjunction with an `ErrorBoundary` component.
  *
  * @param {string} errorMessage - text description of the error message

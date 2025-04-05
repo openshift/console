@@ -1,53 +1,38 @@
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { Trans, useTranslation } from 'react-i18next';
+import { ButtonLink } from '@console/shared/src/components/links/ButtonLink';
 import {
-  CodeBlock,
-  CodeBlockCode,
-  EmptyState,
-  EmptyStateBody,
-  Stack,
-  StackItem,
-  EmptyStateActions,
-  Icon,
-  Title,
-} from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
-import { t_global_icon_color_status_danger_default as globalDangerColor100 } from '@patternfly/react-tokens';
+  ErrorState as PfErrorState,
+  ErrorStateProps as PfErrorStateProps,
+  NotFoundIcon,
+} from '@patternfly/react-component-groups';
+import { Trans, useTranslation } from 'react-i18next';
+import { CodeBlock, CodeBlockCode, Stack, StackItem } from '@patternfly/react-core';
 
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { PageHeading } from './utils';
 import { useLocation } from 'react-router';
 
-const ErrorComponent: React.FC<ErrorComponentProps> = ({ title, message }) => {
+export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
   const { t } = useTranslation();
+
   return (
     <>
-      <PageHeading title={t('public~Error')} hideFavoriteButton />
-      <PaneBody data-test-id="error-page">
-        <PageHeading title={title} centerText />
-        {message && <div className="pf-v6-u-text-align-center">{message}</div>}
-      </PaneBody>
+      <DocumentTitle>{t('public~Page Not Found (404)')}</DocumentTitle>
+      <PfErrorState
+        status="none"
+        icon={NotFoundIcon}
+        headingLevel="h1"
+        titleText={t('public~404: Page Not Found')}
+        defaultBodyText={t("public~We couldn't find that page.")}
+        customFooter={
+          <ButtonLink variant="link" href="/">
+            {t('public~Return to homepage')}
+          </ButtonLink>
+        }
+        {...props}
+      />
     </>
   );
 };
-
-export const ErrorPage404: React.FC<ErrorPage404Props> = (props) => {
-  const { t } = useTranslation();
-  return (
-    <div>
-      <DocumentTitle>{t('public~Page Not Found (404)')}</DocumentTitle>
-      <ErrorComponent title={t('public~404: Page Not Found')} message={props.message} />
-    </div>
-  );
-};
-
-export type ErrorComponentProps = {
-  title: string;
-  message?: string;
-};
-
-export type ErrorPage404Props = Omit<ErrorComponentProps, 'title'>;
 
 const ErrorStateMessage = () => (
   <Trans ns="public">
@@ -59,19 +44,12 @@ const ErrorStateMessage = () => (
 
 export const ErrorState: React.FC = () => {
   const { t } = useTranslation();
-  const DangerIcon = () => (
-    <Icon size="sm">
-      <ExclamationCircleIcon color={globalDangerColor100.value} />
-    </Icon>
-  );
+
   return (
-    <EmptyState
-      headingLevel="h6"
-      icon={DangerIcon}
-      titleText={<>{t('public~Something went wrong')}</>}
-      variant="xs"
-    >
-      <EmptyStateBody>
+    <PfErrorState
+      titleText={t('public~An error occured')}
+      headingLevel="h1"
+      bodyText={
         <Stack>
           <StackItem>
             {t('public~There was a problem processing the request. Please try again.')}
@@ -80,8 +58,8 @@ export const ErrorState: React.FC = () => {
             <ErrorStateMessage />
           </StackItem>
         </Stack>
-      </EmptyStateBody>
-    </EmptyState>
+      }
+    />
   );
 };
 
@@ -126,8 +104,10 @@ export const AuthenticationErrorPage: React.FC = () => {
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
-      <EmptyState titleText={<Title headingLevel="h1">{title}</Title>} icon={ExclamationCircleIcon}>
-        <EmptyStateBody>
+      <PfErrorState
+        headingLevel="h1"
+        titleText={title}
+        bodyText={
           <Stack>
             <StackItem>
               <LoginErrorMessage />
@@ -136,11 +116,13 @@ export const AuthenticationErrorPage: React.FC = () => {
               <ErrorStateMessage />
             </StackItem>
           </Stack>
-        </EmptyStateBody>
-        <EmptyStateActions>
-          <a href="/logout">{t('public~Try again')}</a>
-        </EmptyStateActions>
-      </EmptyState>
+        }
+        customFooter={
+          <ButtonLink variant="link" href="/logout">
+            {t('public~Try again')}
+          </ButtonLink>
+        }
+      />
     </>
   );
 };
