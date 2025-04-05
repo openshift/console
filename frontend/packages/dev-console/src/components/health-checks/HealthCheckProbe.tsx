@@ -128,7 +128,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
       <div className="pf-v6-c-form__helper-text">
         {getHealthChecksProbeConfig(probeType, t).formSubtitle}
       </div>
-      <div className="co-toolbar__group co-toolbar__group--left">{renderProbe()}</div>
+      <div>{renderProbe()}</div>
     </>
   );
 };

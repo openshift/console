@@ -52,8 +52,8 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
 
     return (
       <div className="co-catalog-page__header">
-        <div className="co-catalog-page__heading text-capitalize">{title}</div>
-        <div className="co-catalog-page__filter">
+        <div className="co-catalog-page__heading">{title}</div>
+        <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
           <Flex>
             <FlexItem>
               <SearchInput
@@ -88,10 +88,10 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               </FlexItem>
             )}
           </Flex>
-          <div className="co-catalog-page__num-items">
+          <FlexItem className="co-catalog-page__num-items">
             {t('console-shared~{{totalItems}} items', { totalItems })}
-          </div>
-        </div>
+          </FlexItem>
+        </Flex>
       </div>
     );
   },

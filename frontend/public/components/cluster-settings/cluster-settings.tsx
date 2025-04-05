@@ -30,6 +30,7 @@ import {
 } from '@console/operator-lifecycle-manager';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import {
@@ -925,7 +926,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
   return (
     <>
       <PaneBody>
-        <div className="co-m-pane__body-group">
+        <PaneBodyGroup>
           <ClusterSettingsAlerts cv={cv} machineConfigPools={machineConfigPools} />
           <div className="co-cluster-settings">
             <div className="co-cluster-settings__row">
@@ -1008,7 +1009,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               </div>
             </div>
           </div>
-        </div>
+        </PaneBodyGroup>
         <dl className="co-m-pane__details">
           {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
             <>

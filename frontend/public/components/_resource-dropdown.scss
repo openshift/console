@@ -1,16 +1,3 @@
-.co-search {
-  padding-bottom: 30px;
-  @media (max-width: $pf-v6-global--breakpoint--sm-max) {
-    .pf-v6-c-input-group {
-      display: block;
-      .pf-v6-c-menu-toggle {
-        margin-bottom: 2px;
-        width: 100%;
-      }
-    }
-  }
-}
-
 .co-search-group {
   display: flex;
   flex-direction: column;

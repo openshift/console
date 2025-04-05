@@ -132,10 +132,10 @@ class Details extends React.Component {
         </PaneBody>
         <PaneBody>
           <SectionHeading text={t('public~Rules')} />
-          <div className="co-m-pane__filter-row">
+          <div>
             {/* This page is temporarily disabled until we update the safe resources list.
-            <div className="co-m-pane__filter-bar-group">
-              <Link to={addHref(name, namespace)} className="co-m-primary-action">
+            <div>
+              <Link to={addHref(name, namespace)}>
                 <Button variant="primary">{t('public~Add Rule')}</Button>
               </Link>
             </div>

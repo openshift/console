@@ -199,7 +199,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
         />
       )}
       <SectionHeading text={t('public~Webhooks')} />
-      <div className="co-table-container pf-v6-c-scroll-inner-wrapper">
+      <div className="co-table-container">
         <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
           <thead className="pf-v6-c-table__thead">
             <tr className="pf-v6-c-table__tr">

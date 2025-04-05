@@ -11,6 +11,7 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
 import {
   K8sKind,
@@ -153,7 +154,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
   })}`;
 
   return (
-    <div className="co-m-pane__body-group">
+    <PaneBodyGroup>
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
@@ -224,7 +225,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
           </div>
         </div>
       </div>
-    </div>
+    </PaneBodyGroup>
   );
 };
 
