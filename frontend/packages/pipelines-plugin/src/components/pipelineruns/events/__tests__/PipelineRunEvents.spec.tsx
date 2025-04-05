@@ -18,7 +18,7 @@ const spyUsePipelineRunRelatedResources = jest.spyOn(utils, 'usePipelineRunRelat
 type PipelineRunEventsProps = React.ComponentProps<typeof PipelineRunEvents>;
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 

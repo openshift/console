@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import './SelectorCard.scss';
 
 interface SelectorCardProps {

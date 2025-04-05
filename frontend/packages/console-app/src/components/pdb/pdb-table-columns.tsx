@@ -1,5 +1,5 @@
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import i18next from 'i18next';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 import { Kebab } from '@console/internal/components/utils';

@@ -10,7 +10,7 @@ import {
 import { Firehose, PageHeading } from '../../../public/components/utils';
 
 jest.mock('react-redux', () => {
-  const ActualReactRedux = require.requireActual('react-redux');
+  const ActualReactRedux = jest.requireActual('react-redux');
   return {
     ...ActualReactRedux,
     useDispatch: jest.fn(),
@@ -18,7 +18,7 @@ jest.mock('react-redux', () => {
 });
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useNavigate: jest.fn(),
 }));
 

@@ -13,7 +13,7 @@ import {
   useCombineRefs,
   NodeLabel,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   NodeShadows,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { useHover } from '@patternfly/react-topology';
-import * as cx from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { truncateMiddle } from '@console/internal/components/utils';
 import { BUILDER_NODE_ADD_RADIUS } from './const';
@@ -54,7 +54,7 @@ const TaskList: React.FC<any> = ({
       >
         <rect
           ref={triggerRef}
-          className={cx('odc-task-list-node__trigger-background')}
+          className={classNames('odc-task-list-node__trigger-background')}
           width={width}
           height={height}
         />

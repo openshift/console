@@ -3,7 +3,7 @@ import {
   GraphComponent as BaseGraphComponent,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 type GraphComponentProps = React.ComponentProps<typeof BaseGraphComponent> & {
   dragInProgress?: boolean;

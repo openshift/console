@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert, Button, Hint, HintTitle, HintBody, HintFooter } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';

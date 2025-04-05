@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as semver from 'semver';
 import {
   Alert,

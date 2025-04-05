@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { connect } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';

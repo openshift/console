@@ -10,7 +10,7 @@ import { ServiceBindingModel } from '../../../models';
 import { ServiceBindingHeader, ServiceBindingRow } from '../ServiceBindingTable';
 
 jest.mock('@console/internal/module/k8s/k8s-models', () => ({
-  ...require.requireActual('@console/internal/module/k8s/k8s-models'),
+  ...jest.requireActual('@console/internal/module/k8s/k8s-models'),
   modelFor: jest.fn(),
 }));
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
 
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';

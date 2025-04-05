@@ -1,5 +1,5 @@
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import i18n from '@console/internal/i18n';
 
 const tableColumnClasses = [

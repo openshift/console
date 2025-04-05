@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';

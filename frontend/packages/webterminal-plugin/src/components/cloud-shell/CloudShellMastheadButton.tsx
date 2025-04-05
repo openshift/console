@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons/dist/esm/icons/terminal-icon';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';

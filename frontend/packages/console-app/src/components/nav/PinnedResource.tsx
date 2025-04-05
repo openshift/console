@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { debounce } from 'lodash';
 import { useDrag, useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';

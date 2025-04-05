@@ -1,5 +1,5 @@
 import * as React from 'react';
-import cx from 'classnames';
+import classNames from 'classnames';
 import { ResourceIcon, ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import * as models from '../../../models';
@@ -34,7 +34,7 @@ const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
     kind = referenceForModel(model);
   }
 
-  const classNames = cx('opp-pipeline-resource-ref', {
+  const classes = classNames('opp-pipeline-resource-ref', {
     'co-m-resource-icon--lg': largeIcon,
     'opp-pipeline-resource-ref--pipeline-color': !model,
   });
@@ -42,7 +42,7 @@ const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
   if (disableLink || !model) {
     return (
       <>
-        <ResourceIcon className={classNames} kind={kind} />
+        <ResourceIcon className={classes} kind={kind} />
         {displayName || resourceName}
       </>
     );
@@ -50,7 +50,7 @@ const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
 
   return (
     <ResourceLink
-      className={classNames}
+      className={classes}
       kind={kind}
       name={resourceName}
       displayName={displayName || resourceName}

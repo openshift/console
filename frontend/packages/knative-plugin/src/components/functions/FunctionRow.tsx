@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
@@ -36,10 +36,13 @@ const FunctionRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
           {obj.metadata.name}
         </Link>
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {(obj.status && obj.status.url && (
           <ExternalLink
             href={obj.status.url}

@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { Trans, withTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 

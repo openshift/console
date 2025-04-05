@@ -6,7 +6,7 @@ import {
   ExclamationTriangleIcon,
   InfoCircleIcon,
 } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 import './icons.scss';
 

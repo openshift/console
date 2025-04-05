@@ -7,8 +7,8 @@ import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link
 import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 
 jest.mock('react', () => ({
-  ...require.requireActual('react'),
-  useLayoutEffect: require.requireActual('react').useEffect,
+  ...jest.requireActual('react'),
+  useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
 jest.mock('@console/shared/src/hooks/useCanClusterUpgrade', () => ({
