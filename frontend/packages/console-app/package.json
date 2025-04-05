@@ -43,6 +43,7 @@
       "jobProvider": "src/actions/providers/job-provider.ts",
       "cronJobProvider": "src/actions/providers/cronjob-provider.ts",
       "serviceBindingProvider": "src/actions/providers/service-binding-provider.ts",
+      "storageClassProvider": "src/actions/providers/storageclass-provider.ts",
       "replicaSetProvider": "src/actions/providers/replicaset-provider.ts",
       "replicationControllersProvider": "src/actions/providers/replication-controllers-provider.ts",
       "podProvider": "src/actions/providers/pod-provider.ts",

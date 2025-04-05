@@ -361,7 +361,7 @@
         "kind": "StorageClass",
         "group": "storage.k8s.io"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": { "$codeRef": "storageClassProvider.useStorageClassActions" }
     }
   },
   {

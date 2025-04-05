@@ -30,7 +30,7 @@ import {
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
-const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
+export const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
 const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
 export const isDefaultClass = (storageClass: K8sResourceKind) => {
   const annotations = _.get(storageClass, 'metadata.annotations') || {};
