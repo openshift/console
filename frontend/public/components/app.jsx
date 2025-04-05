@@ -257,12 +257,12 @@ const App = (props) => {
           >
             <AppContents />
           </Page>
-          {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
-            <Lightspeed />
-          )}
           <CloudShell />
           <GuidedTour />
         </Flex>
+        {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
+          <Lightspeed />
+        )}
         <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
