@@ -112,7 +112,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />
+        <ResourceLink kind={kind} name={name} namespace={namespace} title={name} metadata={obj.metadata} />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
