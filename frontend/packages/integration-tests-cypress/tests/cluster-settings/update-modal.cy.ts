@@ -54,15 +54,16 @@ describe('Cluster Settings cluster update modal', () => {
     cy.wait(`@${CLUSTER_VERSION_ALIAS}`, WAIT_OPTIONS);
     clusterSettings.openUpdateModalAndOpenDropdown();
     cy.byTestID('update-cluster-modal')
-      .find('[data-test="dropdown-with-switch-switch"]')
-      .should('exist')
-      .click({ force: true });
-    cy.byTestID('update-cluster-modal')
       .find('[data-test="dropdown-with-switch-menu-item-4.17.1"]')
       .should('exist')
       .click();
     cy.byTestID('update-cluster-modal-not-recommended-alert').should('not.exist');
     cy.byTestID('update-cluster-modal').find('[data-test="dropdown-with-switch-toggle"]').click();
+    cy.byTestID('update-cluster-modal')
+      .find('[data-test="dropdown-with-switch-switch"]')
+      .should('exist')
+      .click();
+    cy.byLegacyTestID('modal-title').should('contain.text', 'Update cluster'); // arbitrary check to force delay
     cy.byTestID('update-cluster-modal')
       .find('[data-test="dropdown-with-switch-menu-item-4.16.4"]')
       .should('exist')
