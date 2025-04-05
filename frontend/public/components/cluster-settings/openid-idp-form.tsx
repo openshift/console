@@ -218,7 +218,7 @@ export const AddOpenIDIDPPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Claims')}
           </Title>
-          <p className="co-help-text">
+          <p>
             {t(
               'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
             )}

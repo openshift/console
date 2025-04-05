@@ -52,6 +52,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -463,7 +464,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
           />
         )}
         <SectionHeading text={t('olm~Subscription details')} />
-        <div className="co-m-pane__body-group">
+        <PaneBodyGroup>
           <SubscriptionUpdates
             catalogHealth={catalogHealth}
             pkg={pkg}
@@ -472,7 +473,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             installPlan={installPlan}
             subscriptions={subscriptions}
           />
-        </div>
+        </PaneBodyGroup>
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} showAnnotations={false} />

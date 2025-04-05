@@ -3,7 +3,17 @@ import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
 import { withTranslation } from 'react-i18next';
 import { ExpandIcon } from '@patternfly/react-icons/dist/esm/icons/expand-icon';
-import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
+import {
+  Button,
+  Alert,
+  AlertActionLink,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
+  Flex,
+  FlexItem,
+} from '@patternfly/react-core';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import store from '../redux';
@@ -192,38 +202,46 @@ const PodConnect_ = connectToFlags(FLAGS.OPENSHIFT)(
       return (
         <div>
           {infoMessage}
-          <div className="co-toolbar">
-            <div className="co-toolbar__group co-toolbar__group--left">
-              <div className="co-toolbar__item">{t('public~Connecting to')}</div>
-              <div className="co-toolbar__item">
-                {Object.keys(containers).length > 1 ? (
-                  <ContainerSelect
-                    currentKey={activeContainer}
-                    containers={this.state.containers}
-                    onChange={this.onChangeContainer}
-                  />
-                ) : (
-                  <ContainerLabel name={activeContainer} />
-                )}
-              </div>
-            </div>
-            {!error && (
-              <div className="co-toolbar__group co-toolbar__group--right">
-                <div className="co-toolbar__item">
-                  <Button
-                    icon={<ExpandIcon className="co-icon-space-r" />}
-                    variant="link"
-                    className="pf-m-link--align-right"
-                    onClick={() => this.setFullscreen(true)}
-                  >
-                    {t('public~Expand')}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
+          <Toolbar>
+            <ToolbarContent alignItems="center">
+              <Flex direction={{ default: 'column', sm: 'row' }}>
+                <FlexItem>{t('public~Connecting to')}</FlexItem>
+                <FlexItem>
+                  {Object.keys(containers).length > 1 ? (
+                    <ContainerSelect
+                      currentKey={activeContainer}
+                      containers={this.state.containers}
+                      onChange={this.onChangeContainer}
+                    />
+                  ) : (
+                    <ContainerLabel name={activeContainer} />
+                  )}
+                </FlexItem>
+              </Flex>
+              {!error && (
+                <ToolbarGroup align={{ default: 'alignEnd' }}>
+                  <ToolbarItem>
+                    <Button
+                      icon={<ExpandIcon className="co-icon-space-r" />}
+                      variant="link"
+                      className="pf-m-link--align-right"
+                      onClick={() => this.setFullscreen(true)}
+                    >
+                      {t('public~Expand')}
+                    </Button>
+                  </ToolbarItem>
+                </ToolbarGroup>
+              )}
+            </ToolbarContent>
+          </Toolbar>
           {error && (
-            <Alert variant="warning" title={error} actionLinks={reconnectAction} isInline />
+            <Alert
+              variant="warning"
+              title={error}
+              actionLinks={reconnectAction}
+              isInline
+              className="pf-v6-u-mb-md"
+            />
           )}
           {message}
           {contents}

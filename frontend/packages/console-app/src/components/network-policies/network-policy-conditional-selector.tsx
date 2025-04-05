@@ -70,7 +70,7 @@ export const NetworkPolicyConditionalSelector: React.FunctionComponent<NetworkPo
           />
         </>
       ) : (
-        <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__show-selector">
+        <div className="co-create-networkpolicy__show-selector">
           <Button
             icon={<PlusCircleIcon className="co-icon-space-r" />}
             className="pf-m-link--align-left"
