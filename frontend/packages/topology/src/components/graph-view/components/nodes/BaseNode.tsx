@@ -1,27 +1,20 @@
 import * as React from 'react';
 import {
-  BadgeLocation,
   DEFAULT_LAYER,
   DefaultNode,
   Layer,
-  Node,
-  NodeStatus,
   observer,
   ScaleDetailsLevel,
   TOP_LAYER,
   useCombineRefs,
-  WithContextMenuProps,
-  WithDndDropProps,
-  WithDragNodeProps,
-  WithSelectionProps,
   StatusModifier,
 } from '@patternfly/react-topology';
 import classNames from 'classnames';
+import { BaseNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
-import { K8sVerb, modelFor, referenceFor } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
 import useHover from '../../../../behavior/useHover';
-import { WithCreateConnectorProps } from '../../../../behavior/withCreateConnector';
 import { useSearchFilter } from '../../../../filters';
 import { useShowLabel } from '../../../../filters/useShowLabel';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
@@ -29,37 +22,6 @@ import { getKindStringAndAbbreviation } from './nodeUtils';
 
 import '../../../svg/SvgResourceIcon.scss';
 import './BaseNode.scss';
-
-type BaseNodeProps = {
-  className?: string;
-  innerRadius?: number;
-  icon?: string;
-  kind?: string;
-  labelIconClass?: string; // Icon to show in label
-  labelIcon?: React.ReactNode;
-  labelIconPadding?: number;
-  badge?: string;
-  badgeColor?: string;
-  badgeTextColor?: string;
-  badgeBorderColor?: string;
-  badgeClassName?: string;
-  badgeLocation?: BadgeLocation;
-  children?: React.ReactNode;
-  attachments?: React.ReactNode;
-  element: Node;
-  hoverRef?: (node: Element) => () => void;
-  dragging?: boolean;
-  dropTarget?: boolean;
-  canDrop?: boolean;
-  createConnectorAccessVerb?: K8sVerb;
-  nodeStatus?: NodeStatus;
-  showStatusBackground?: boolean;
-  alertVariant?: NodeStatus;
-} & Partial<WithSelectionProps> &
-  Partial<WithDragNodeProps> &
-  Partial<WithDndDropProps> &
-  Partial<WithContextMenuProps> &
-  Partial<WithCreateConnectorProps>;
 
 const BaseNode: React.FC<BaseNodeProps> = ({
   className,
