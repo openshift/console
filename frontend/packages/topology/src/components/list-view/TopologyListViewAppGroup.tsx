@@ -7,7 +7,7 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { showKind, useDisplayFilters, useSearchFilter } from '../../filters';
 import { ApplicationModel } from '../../models';

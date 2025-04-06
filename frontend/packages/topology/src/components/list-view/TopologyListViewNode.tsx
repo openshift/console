@@ -11,7 +11,7 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core';
 import { observer } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { TopologyListViewNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';

@@ -5,12 +5,12 @@ import { PageContents as AddPage } from '../AddPage';
 import AddCardsLoader from '../AddPageLayout';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 
 jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+  const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
     useFlag: jest.fn<boolean>(),

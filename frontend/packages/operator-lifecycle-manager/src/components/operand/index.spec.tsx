@@ -49,7 +49,7 @@ import {
 } from '.';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -110,12 +110,12 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => {
 });
 
 jest.mock('react-redux', () => ({
-  ...(jest as any).requireActual('react-redux'),
+  ...jest.requireActual('react-redux'),
   useDispatch: () => jest.fn(),
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

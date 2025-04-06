@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DropdownItemProps, KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Action, ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';

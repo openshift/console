@@ -7,7 +7,7 @@ import PipelineStartButton from './PipelineStartButton';
 import TriggerLastRunButton from './TriggerLastRunButton';
 
 jest.mock('@console/internal/module/k8s/k8s-models', () => {
-  const dependency = require.requireActual('@console/internal/module/k8s/k8s-models');
+  const dependency = jest.requireActual('@console/internal/module/k8s/k8s-models');
   return {
     ...dependency,
     modelFor: () => ({}),

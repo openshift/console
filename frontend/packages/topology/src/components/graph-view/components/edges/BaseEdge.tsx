@@ -12,7 +12,7 @@ import {
   NodeStatus,
   GraphElement,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';

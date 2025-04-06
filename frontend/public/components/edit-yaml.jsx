@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';

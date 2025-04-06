@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';

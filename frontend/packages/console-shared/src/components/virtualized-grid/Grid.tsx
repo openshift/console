@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { Item, GridChildrenProps } from './types';
 import { CellMeasurementContext } from './utils';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from './utils';
 import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';

@@ -4,7 +4,7 @@ import { GettingStartedCard } from '@console/shared/src/components/getting-start
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
 jest.mock('@console/shared/src', () => ({
-  ...require.requireActual('@console/shared/src'),
+  ...jest.requireActual('@console/shared/src'),
   useActiveNamespace: jest.fn(),
   useOpenShiftVersion: () => '4.8.0',
   useFlag: jest.fn<boolean>(),

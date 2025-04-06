@@ -4,7 +4,7 @@ import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';

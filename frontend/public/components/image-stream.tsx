@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { AlertVariant, Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';

@@ -3,7 +3,7 @@ import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/re
 import { FieldProps, UiSchema } from '@rjsf/core';
 import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
 import { retrieveSchema, getUiOptions } from '@rjsf/core/dist/cjs/utils';
-import * as classnames from 'classnames';
+import classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +47,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   return (
     <div id={`${id}_field`} className="form-group">
       {showLabel && label && (
-        <label className={classnames('form-label', { 'co-required': required })} htmlFor={id}>
+        <label className={classNames('form-label', { 'co-required': required })} htmlFor={id}>
           {label}
         </label>
       )}
@@ -76,7 +76,7 @@ export const FieldSet: React.FC<FieldSetProps> = ({
       <AccordionItem isExpanded={expanded}>
         <AccordionToggle id={`${idSchema.$id}_accordion-toggle`} onClick={onToggle}>
           <label
-            className={classnames({ 'co-required': required })}
+            className={classNames({ 'co-required': required })}
             htmlFor={`${idSchema.$id}_accordion-content`}
           >
             {label}

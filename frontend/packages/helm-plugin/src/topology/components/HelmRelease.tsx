@@ -7,7 +7,7 @@ import {
   WithContextMenuProps,
   WithDragNodeProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import GroupNode from '@console/topology/src/components/graph-view/components/groups/GroupNode';
