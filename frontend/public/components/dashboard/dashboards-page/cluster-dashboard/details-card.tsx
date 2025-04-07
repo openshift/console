@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import {
   BlueArrowCircleUpIcon,
@@ -20,7 +20,6 @@ import {
   CustomOverviewDetailItem as CustomOverviewDetailItemType,
   OverviewDetailItem as OverviewDetailItemType,
 } from '@console/dynamic-plugin-sdk';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
@@ -165,7 +164,7 @@ export const DetailsCard = withDashboardResources(
           {flagPending(openshiftFlag) ? (
             <LoadingInline />
           ) : (
-            <DetailsBody>
+            <DescriptionList>
               {openshiftFlag ? (
                 <>
                   <OverviewDetailItem
@@ -301,7 +300,7 @@ export const DetailsCard = withDashboardResources(
                   {k8sGitVersion}
                 </OverviewDetailItem>
               )}
-            </DetailsBody>
+            </DescriptionList>
           )}
         </CardBody>
       </Card>

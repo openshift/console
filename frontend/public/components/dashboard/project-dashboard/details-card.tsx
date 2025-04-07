@@ -2,8 +2,14 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, CardTitle, Button } from '@patternfly/react-core';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Button,
+  DescriptionList,
+} from '@patternfly/react-core';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
 import { LabelList, resourcePathFromModel } from '../../utils';
@@ -38,7 +44,7 @@ export const DetailsCard: React.FC = () => {
         <CardTitle>{t('public~Details')}</CardTitle>
       </CardHeader>
       <CardBody>
-        <DetailsBody>
+        <DescriptionList>
           <OverviewDetailItem isLoading={!obj} title={t('public~Name')}>
             {getName(obj)}
           </OverviewDetailItem>
@@ -70,7 +76,7 @@ export const DetailsCard: React.FC = () => {
               <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
             </OverviewDetailItem>
           )}
-        </DetailsBody>
+        </DescriptionList>
       </CardBody>
     </Card>
   );
