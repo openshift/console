@@ -13,7 +13,6 @@ interface QuickSearchModalProps {
   allCatalogItemsLoaded: boolean;
   searchCatalog: (searchTerm: string) => QuickSearchData;
   searchPlaceholder: string;
-  viewContainer?: HTMLElement;
   limitItemCount?: number;
   icon?: React.ReactNode;
   detailsRenderer?: DetailsRendererFunction;
@@ -26,7 +25,6 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   searchCatalog,
   searchPlaceholder,
   allCatalogItemsLoaded,
-  viewContainer,
   icon,
   limitItemCount,
   detailsRenderer,
@@ -45,7 +43,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
     return () => document.removeEventListener('click', handleOnClick);
   }, [ref, closeModal]);
 
-  return viewContainer ? (
+  return (
     <Modal
       className="ocs-quick-search-modal"
       variant={ModalVariant.medium}
@@ -53,7 +51,6 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
       isOpen={isOpen}
       position="top"
       positionOffset="15%"
-      appendTo={viewContainer}
     >
       <div ref={ref}>
         <QuickSearchModalBody
@@ -68,7 +65,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
         />
       </div>
     </Modal>
-  ) : null;
+  );
 };
 
 export default QuickSearchModal;

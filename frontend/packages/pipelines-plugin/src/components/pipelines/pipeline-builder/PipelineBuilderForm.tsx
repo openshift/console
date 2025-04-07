@@ -207,7 +207,6 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 <FormBody flexLayout disablePaneBody className="pf-v6-c-page__main-section">
                   <PipelineQuickSearch
                     namespace={namespace}
-                    viewContainer={contentRef.current}
                     isOpen={menuOpen}
                     callback={savedCallback.current}
                     setIsOpen={(open) => setMenuOpen(open)}
