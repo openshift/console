@@ -33,6 +33,15 @@ export const getGuidedTour = (): TourDataType => ({
     },
     {
       placement: 'bottom',
+      // t('console-app~Quick create')
+      heading: '%console-app~Quick create%',
+      // t('console-app~Create resources in just a few steps via Git, YAML,  or container images.')
+      content:
+        '%console-app~Create resources in just a few steps via Git, YAML,  or container images.%',
+      selector: getSelector('tour-quick-create-button'),
+    },
+    {
+      placement: 'bottom',
       // t('console-app~Help')
       heading: '%console-app~Help%',
       content: helpTourText,
