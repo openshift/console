@@ -1,6 +1,7 @@
 .co-cloudshell-terminal {
   &__container {
-    background-color: #000;
+    background-color: var(--pf-t--color--black);
+    color: var(--pf-t--color--white);
     height: 100%;
     overflow: hidden;
   }
