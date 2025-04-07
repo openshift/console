@@ -127,7 +127,7 @@ export const FavoriteButton = connectToModel(() => {
 
   return (
     <div className="co-fav-actions-icon">
-      <Tooltip content={tooltipText} position="left">
+      <Tooltip content={tooltipText} position="top">
         <Button
           icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
           className="co-xl-icon-button"
