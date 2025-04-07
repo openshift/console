@@ -18,15 +18,16 @@ ENV NODE_VERSION="v22.14.0"
 ENV YARN_VERSION="v1.22.22"
 
 # yarn needs a home writable by any user running the container
-ENV HOME /opt/home
+ENV HOME=/opt/home
 RUN mkdir -p ${HOME}
 RUN chmod 777 -R ${HOME}
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
     curl wget git unzip bzip2 jq expect \
-    libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-    # ^^ additional Cypress dependencies: https://docs.cypress.io/guides/guides/continuous-integration.html#Dependencies
+    # additional Cypress dependencies: https://docs.cypress.io/guides/guides/continuous-integration.html#Dependencies
+    libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth libglib2.0-0 \
+    xvfb libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libgtk-3-0 libgbm1 libasound2
 
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.27.1/bin/linux/$(go env GOARCH)/kubectl && \
     chmod +x ./kubectl && \
@@ -41,6 +42,7 @@ RUN cd /tmp && \
     cp -r lib/node_modules /usr/local/lib/node_modules && \
     cp bin/node /usr/local/bin && \
     ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+
 # so any container user can install global node modules if needed
 RUN chmod 777 /usr/local/lib/node_modules
 # cleanup
