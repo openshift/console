@@ -27,6 +27,12 @@ import {
   referenceFor,
   referenceForModel,
 } from '../module/k8s';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
@@ -59,16 +65,20 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
           </ResourceSummary>
         </div>
         <div className="col-sm-6">
-          <dl className="co-m-pane__details">
+          <DescriptionList>
             <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
-            <dt>{t('public~Default class')}</dt>
-            <dd>{isDefaultClass(obj) ? t('public~True') : t('public~False')}</dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Default class')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {isDefaultClass(obj) ? t('public~True') : t('public~False')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             <DetailsItem
               label={t('public~Volume binding mode')}
               obj={obj}
               path="volumeBindingMode"
             />
-          </dl>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

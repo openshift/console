@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DescriptionList } from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +73,7 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
           {value?.length ? (
             _.times(value.length, (i) => (
               <div className="details-item__value--group">
-                <dl>
+                <DescriptionList>
                   {_.map(arrayElementDescriptors, (primitiveDescriptor: Descriptor) => {
                     const path = primitiveDescriptor.path.replace(/\d+/, String(i));
                     return (
@@ -87,7 +88,7 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
                       />
                     );
                   })}
-                </dl>
+                </DescriptionList>
               </div>
             ))
           ) : (
@@ -118,7 +119,7 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   return (
     <div className={className}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
-        <dl className="details-item__value--group olm-descriptors__group">
+        <DescriptionList className="details-item__value--group olm-descriptors__group">
           {!_.isEmpty(primitives) && (
             <div>
               {_.map(primitives, ({ descriptor: primitiveDescriptor }) => (
@@ -150,7 +151,7 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
               ))}
             </div>
           )}
-        </dl>
+        </DescriptionList>
       </DetailsItem>
     </div>
   );
@@ -169,7 +170,7 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
     descriptors,
   ]);
   return (
-    <dl className={`olm-descriptors olm-descriptors--${type}`}>
+    <DescriptionList className={`olm-descriptors olm-descriptors--${type}`}>
       {_.map(groupedDescriptors, (group, groupPath) => {
         const groupProps = {
           group,
@@ -214,7 +215,7 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
           />
         );
       })}
-    </dl>
+    </DescriptionList>
   );
 };
 

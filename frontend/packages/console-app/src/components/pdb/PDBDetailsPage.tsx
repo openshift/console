@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DescriptionList } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -26,7 +27,7 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
           <ResourceSummary resource={obj} showPodSelector />
         </div>
         <div className="col-sm-6">
-          <dl className="co-m-pane__details">
+          <DescriptionList>
             <DetailsItem
               label={
                 !_.isNil(obj.spec.minAvailable)
@@ -45,7 +46,7 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
             >
               {obj.status.disruptionsAllowed}
             </DetailsItem>
-          </dl>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

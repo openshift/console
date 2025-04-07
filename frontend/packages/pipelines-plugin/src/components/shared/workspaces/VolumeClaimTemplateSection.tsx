@@ -1,4 +1,9 @@
 import * as React from 'react';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -33,9 +38,11 @@ const VolumeClaimTemplatesSection: React.FC<VolumeClaimTemplatesSectionProps> = 
   if (!matchedPVCs || matchedPVCs.length === 0) return null;
 
   return (
-    <dl data-test-id="volumeClaimTemplate-resources-section">
-      <dt>{t('pipelines-plugin~VolumeClaimTemplate Resources')}</dt>
-      <dd>
+    <DescriptionListGroup data-test-id="volumeClaimTemplate-resources-section">
+      <DescriptionListTerm>
+        {t('pipelines-plugin~VolumeClaimTemplate Resources')}
+      </DescriptionListTerm>
+      <DescriptionListDescription>
         {matchedPVCs.map((pvcResource) => {
           return (
             <ResourceLink
@@ -46,8 +53,8 @@ const VolumeClaimTemplatesSection: React.FC<VolumeClaimTemplatesSectionProps> = 
             />
           );
         })}
-      </dd>
-    </dl>
+      </DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };
 

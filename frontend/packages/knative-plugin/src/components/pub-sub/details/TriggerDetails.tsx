@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
@@ -30,12 +36,14 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
           <div className="col-sm-6">
             {filterData.length > 0 && (
               <div className="kn-resource-link-list kn-resource-link-list--addSpaceBelow">
-                <dl>
-                  <dt>{t('knative-plugin~Filter')}</dt>
-                  <dd>
-                    <FilterTable filters={filterData} />
-                  </dd>
-                </dl>
+                <DescriptionList>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('knative-plugin~Filter')}</DescriptionListTerm>
+                    <DescriptionListDescription>
+                      <FilterTable filters={filterData} />
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
+                </DescriptionList>
               </div>
             )}
             {trigger.spec?.broker && (

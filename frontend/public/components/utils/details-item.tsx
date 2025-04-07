@@ -6,6 +6,9 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Button,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
   Popover,
   Split,
   SplitItem,
@@ -76,9 +79,9 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   const value: React.ReactNode = children || _.get(obj, path, defaultValue);
   const editable = onEdit && canEdit;
   return hide ? null : (
-    <>
-      <dt
-        className={classNames('details-item__label', labelClassName)}
+    <DescriptionListGroup>
+      <DescriptionListTerm
+        className={classNames('pf-v6-u-display-block details-item__label', labelClassName)}
         data-test-selector={`details-item-label__${label}`}
       >
         <Split>
@@ -119,8 +122,8 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
             </>
           )}
         </Split>
-      </dt>
-      <dd
+      </DescriptionListTerm>
+      <DescriptionListDescription
         className={classNames('details-item__value', valueClassName, {
           'details-item__value--group': editable && editAsGroup,
         })}
@@ -133,8 +136,8 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
         ) : (
           value
         )}
-      </dd>
-    </>
+      </DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };
 

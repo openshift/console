@@ -7,6 +7,10 @@ import {
   CardFooter,
   Popover,
   CardTitle,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -290,35 +294,42 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
   return (
     <>
       {consoleOperatorConfig && canPatchConsoleOperatorConfig && (
-        <dl className="co-clusterserviceversion-details__field">
-          <dt>{t('olm~Console plugin', { count: csvPluginsCount })}</dt>
-          {csvPlugins.map((pluginName) => (
-            <dd key={pluginName} className="co-clusterserviceversion-details__field-description">
-              <strong className="text-muted">{pluginName}: </strong>
-              <Button
-                data-test="edit-console-plugin"
-                type="button"
-                isInline
-                onClick={() =>
-                  consolePluginModal({
-                    consoleOperatorConfig,
-                    pluginName,
-                    trusted,
-                  })
-                }
-                variant="link"
-                icon={<PencilAltIcon />}
-                iconPosition="end"
+        <DescriptionList className="co-clusterserviceversion-details__field">
+          <DescriptionListGroup>
+            <DescriptionListTerm>
+              {t('olm~Console plugin', { count: csvPluginsCount })}
+            </DescriptionListTerm>
+            {csvPlugins.map((pluginName) => (
+              <DescriptionListDescription
+                key={pluginName}
+                className="co-clusterserviceversion-details__field-description"
               >
-                <>
-                  {isPluginEnabled(consoleOperatorConfig, pluginName)
-                    ? t('olm~Enabled')
-                    : t('olm~Disabled')}
-                </>
-              </Button>
-            </dd>
-          ))}
-        </dl>
+                <strong className="text-muted">{pluginName}: </strong>
+                <Button
+                  data-test="edit-console-plugin"
+                  type="button"
+                  isInline
+                  onClick={() =>
+                    consolePluginModal({
+                      consoleOperatorConfig,
+                      pluginName,
+                      trusted,
+                    })
+                  }
+                  variant="link"
+                  icon={<PencilAltIcon />}
+                  iconPosition="end"
+                >
+                  <>
+                    {isPluginEnabled(consoleOperatorConfig, pluginName)
+                      ? t('olm~Enabled')
+                      : t('olm~Disabled')}
+                  </>
+                </Button>
+              </DescriptionListDescription>
+            ))}
+          </DescriptionListGroup>
+        </DescriptionList>
       )}
     </>
   );
@@ -1057,62 +1068,78 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
             <MarkdownView content={spec.description || t('olm~Not available')} />
           </div>
           <div className="col-sm-3">
-            <dl className="co-clusterserviceversion-details__field">
-              <dt>{t('olm~Provider')}</dt>
-              <dd>
-                {spec.provider && spec.provider.name ? spec.provider.name : t('olm~Not available')}
-              </dd>
+            <DescriptionList className="co-clusterserviceversion-details__field">
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Provider')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {spec.provider && spec.provider.name
+                    ? spec.provider.name
+                    : t('olm~Not available')}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               {supportWorkflowUrl && (
-                <>
-                  <dt>{t('olm~Support')}</dt>
-                  <dd>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('olm~Support')}</DescriptionListTerm>
+                  <DescriptionListDescription>
                     <ExternalLink href={supportWorkflowUrl} text={t('olm~Get support')} />
-                  </dd>
-                </>
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-              <dt>{t('olm~Created at')}</dt>
-              <dd>
-                <Timestamp timestamp={metadata.creationTimestamp} />
-              </dd>
-            </dl>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Created at')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Timestamp timestamp={metadata.creationTimestamp} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
             {csvPlugins.length > 0 && subscription && (
               <ConsolePlugins
                 csvPlugins={csvPlugins}
                 trusted={isCatalogSourceTrusted(subscription?.spec?.source)}
               />
             )}
-            <dl className="co-clusterserviceversion-details__field">
-              <dt>{t('olm~Links')}</dt>
-              {spec.links && spec.links.length > 0 ? (
-                spec.links.map((link) => (
-                  <dd key={link.url} style={{ display: 'flex', flexDirection: 'column' }}>
-                    {link.name}{' '}
-                    <ExternalLink
-                      href={link.url}
-                      text={link.url || '-'}
-                      additionalClassName="co-break-all"
-                    />
-                  </dd>
-                ))
-              ) : (
-                <dd>{t('olm~Not available')}</dd>
-              )}
-            </dl>
-            <dl className="co-clusterserviceversion-details__field">
-              <dt>{t('olm~Maintainers')}</dt>
-              {spec.maintainers && spec.maintainers.length > 0 ? (
-                spec.maintainers.map((maintainer) => (
-                  <dd key={maintainer.email} style={{ display: 'flex', flexDirection: 'column' }}>
-                    {maintainer.name}{' '}
-                    <a href={`mailto:${maintainer.email}`} className="co-break-all">
-                      {maintainer.email || '-'}
-                    </a>
-                  </dd>
-                ))
-              ) : (
-                <dd>{t('olm~Not available')}</dd>
-              )}
-            </dl>
+            <DescriptionList className="co-clusterserviceversion-details__field">
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Links')}</DescriptionListTerm>
+                {spec.links && spec.links.length > 0 ? (
+                  spec.links.map((link) => (
+                    <DescriptionListDescription
+                      key={link.url}
+                      style={{ display: 'flex', flexDirection: 'column' }}
+                    >
+                      {link.name}{' '}
+                      <ExternalLink
+                        href={link.url}
+                        text={link.url || '-'}
+                        additionalClassName="co-break-all"
+                      />
+                    </DescriptionListDescription>
+                  ))
+                ) : (
+                  <DescriptionListDescription>{t('olm~Not available')}</DescriptionListDescription>
+                )}
+              </DescriptionListGroup>
+            </DescriptionList>
+            <DescriptionList className="co-clusterserviceversion-details__field">
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Maintainers')}</DescriptionListTerm>
+                {spec.maintainers && spec.maintainers.length > 0 ? (
+                  spec.maintainers.map((maintainer) => (
+                    <DescriptionListDescription
+                      key={maintainer.email}
+                      style={{ display: 'flex', flexDirection: 'column' }}
+                    >
+                      {maintainer.name}{' '}
+                      <a href={`mailto:${maintainer.email}`} className="co-break-all">
+                        {maintainer.email || '-'}
+                      </a>
+                    </DescriptionListDescription>
+                  ))
+                ) : (
+                  <DescriptionListDescription>{t('olm~Not available')}</DescriptionListDescription>
+                )}
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>
@@ -1121,73 +1148,86 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={props.obj}>
-              <dt>
-                <Popover
-                  headerContent={<div>{t('olm~Managed Namespaces')}</div>}
-                  bodyContent={
-                    <div>{t('olm~Operands in this Namespace are managed by the Operator.')}</div>
-                  }
-                  maxWidth="30rem"
-                >
-                  <Button
-                    icon={t('olm~Managed Namespaces')}
-                    variant="plain"
-                    className="details-item__popover-button"
-                  />
-                </Popover>
-              </dt>
-              <dd>
-                <ManagedNamespaces obj={props.obj} />
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>
+                  <Popover
+                    headerContent={<div>{t('olm~Managed Namespaces')}</div>}
+                    bodyContent={
+                      <div>{t('olm~Operands in this Namespace are managed by the Operator.')}</div>
+                    }
+                    maxWidth="30rem"
+                  >
+                    <Button
+                      icon={t('olm~Managed Namespaces')}
+                      variant="plain"
+                      className="details-item__popover-button"
+                    />
+                  </Popover>
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <ManagedNamespaces obj={props.obj} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
-            <dt>{t('olm~Status')}</dt>
-            <dd>
-              <Status status={status ? status.phase : t('olm~Unknown')} />
-            </dd>
-            <dt>{t('olm~Status reason')}</dt>
-            <dd>{status ? status.message : t('olm~Unknown')}</dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Status status={status ? status.phase : t('olm~Unknown')} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('olm~Status reason')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {status ? status.message : t('olm~Unknown')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {!_.isEmpty(spec.install.spec?.deployments) && (
-              <>
-                <dt>{t('olm~Operator Deployments')}</dt>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Operator Deployments')}</DescriptionListTerm>
                 {spec.install.spec.deployments.map(({ name }) => (
-                  <dd key={name}>
+                  <DescriptionListDescription key={name}>
                     <ResourceLink
                       name={name}
                       kind="Deployment"
                       namespace={operatorNamespaceFor(props.obj)}
                     />
-                  </dd>
+                  </DescriptionListDescription>
                 ))}
-              </>
+              </DescriptionListGroup>
             )}
             {!_.isEmpty(permissions) && (
-              <>
-                <dt>{t('olm~Operator ServiceAccounts')}</dt>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Operator ServiceAccounts')}</DescriptionListTerm>
                 {permissions.map(({ serviceAccountName }) => (
-                  <dd key={serviceAccountName} data-service-account-name={serviceAccountName}>
+                  <DescriptionListDescription
+                    key={serviceAccountName}
+                    data-service-account-name={serviceAccountName}
+                  >
                     <ResourceLink
                       name={serviceAccountName}
                       kind="ServiceAccount"
                       namespace={operatorNamespaceFor(props.obj)}
                     />
-                  </dd>
+                  </DescriptionListDescription>
                 ))}
-              </>
+              </DescriptionListGroup>
             )}
-            <dt>{t('olm~OperatorGroup')}</dt>
-            <dd>
-              {operatorGroupFor(props.obj) ? (
-                <ResourceLink
-                  name={operatorGroupFor(props.obj)}
-                  namespace={operatorNamespaceFor(props.obj)}
-                  kind={referenceForModel(OperatorGroupModel)}
-                />
-              ) : (
-                '-'
-              )}
-            </dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('olm~OperatorGroup')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {operatorGroupFor(props.obj) ? (
+                  <ResourceLink
+                    name={operatorGroupFor(props.obj)}
+                    namespace={operatorNamespaceFor(props.obj)}
+                    kind={referenceForModel(OperatorGroupModel)}
+                  />
+                ) : (
+                  '-'
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
           </div>
         </div>
       </PaneBody>

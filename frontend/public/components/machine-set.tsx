@@ -6,7 +6,14 @@ import classNames from 'classnames';
 import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
-import { Tooltip, Button } from '@patternfly/react-core';
+import {
+  Tooltip,
+  Button,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+} from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
 
@@ -158,70 +165,89 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Desired count')}</dt>
-              <dd>
-                {canUpdate ? (
-                  <Button
-                    icon={<PencilAltIcon />}
-                    iconPosition="end"
-                    variant="link"
-                    type="button"
-                    isInline
-                    onClick={editReplicas}
-                  >
-                    {desiredReplicasText}
-                  </Button>
-                ) : (
-                  desiredReplicasText
-                )}
-              </dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Current count')}</dt>
-              <dd>
-                <Tooltip content={t('public~The most recently observed number of replicas.')}>
-                  <span>{t('public~{{replicas}} machine', { replicas, count: replicas })}</span>
-                </Tooltip>
-              </dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Ready count')}</dt>
-              <dd>
-                <Tooltip
-                  content={t(
-                    'public~The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Desired count')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  {canUpdate ? (
+                    <Button
+                      icon={<PencilAltIcon />}
+                      iconPosition="end"
+                      variant="link"
+                      type="button"
+                      isInline
+                      onClick={editReplicas}
+                    >
+                      {desiredReplicasText}
+                    </Button>
+                  ) : (
+                    desiredReplicasText
                   )}
-                >
-                  <span>
-                    {t('public~{{readyReplicas}} machine', { readyReplicas, count: readyReplicas })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </div>
+          <div className="co-detail-table__section">
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Current count')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Tooltip content={t('public~The most recently observed number of replicas.')}>
+                    <span>{t('public~{{replicas}} machine', { replicas, count: replicas })}</span>
+                  </Tooltip>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </div>
+          <div className="co-detail-table__section">
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Ready count')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Tooltip
+                    content={t(
+                      'public~The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
+                    )}
+                  >
+                    <span>
+                      {t('public~{{readyReplicas}} machine', {
+                        readyReplicas,
+                        count: readyReplicas,
+                      })}
+                    </span>
+                  </Tooltip>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
           <div className="co-detail-table__section co-detail-table__section--last">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Available count')}</dt>
-              <dd>
-                <Tooltip
-                  content={t(
-                    'public~The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
-                  )}
-                >
-                  <span>
-                    {t('public~{{availableReplicas}} machine', {
-                      availableReplicas,
-                      count: availableReplicas,
-                    })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Available count')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Tooltip
+                    content={t(
+                      'public~The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
+                    )}
+                  >
+                    <span>
+                      {t('public~{{availableReplicas}} machine', {
+                        availableReplicas,
+                        count: availableReplicas,
+                      })}
+                    </span>
+                  </Tooltip>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
         </div>
       </div>
@@ -245,33 +271,37 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
       <div className="row">
         <div className="col-md-6">
           <ResourceSummary resource={obj}>
-            <dt>{t('public~Selector')}</dt>
-            <dd>
-              <Selector
-                kind={machineReference}
-                selector={obj.spec?.selector}
-                namespace={obj.metadata.namespace}
-              />
-            </dd>
-            <dt>{t('public~Instance type')}</dt>
-            <dd>{instanceType || '-'}</dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Selector')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Selector
+                  kind={machineReference}
+                  selector={obj.spec?.selector}
+                  namespace={obj.metadata.namespace}
+                />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Instance type')}</DescriptionListTerm>
+              <DescriptionListDescription>{instanceType || '-'}</DescriptionListDescription>
+            </DescriptionListGroup>
             {machineRole && (
-              <>
-                <dt>{t('public~Machine role')}</dt>
-                <dd>{machineRole}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Machine role')}</DescriptionListTerm>
+                <DescriptionListDescription>{machineRole}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {region && (
-              <>
-                <dt>{t('public~Region')}</dt>
-                <dd>{region}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Region')}</DescriptionListTerm>
+                <DescriptionListDescription>{region}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {availabilityZone && (
-              <>
-                <dt>{t('public~Availability zone')}</dt>
-                <dd>{availabilityZone}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Availability zone')}</DescriptionListTerm>
+                <DescriptionListDescription>{availabilityZone}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
           </ResourceSummary>
         </div>

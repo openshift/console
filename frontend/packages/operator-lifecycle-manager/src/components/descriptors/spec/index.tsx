@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Button, Switch, Checkbox } from '@patternfly/react-core';
+import {
+  Button,
+  Switch,
+  Checkbox,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -105,16 +113,20 @@ const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
   const { t } = useTranslation();
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-      <dl className="co-spec-descriptor--resource-requirements">
-        <dt>{t('olm~Resource limits')}</dt>
-        <dd>
-          <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
-        </dd>
-        <dt>{t('olm~Resource requests')}</dt>
-        <dd>
-          <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
-        </dd>
-      </dl>
+      <DescriptionList className="co-spec-descriptor--resource-requirements">
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('olm~Resource limits')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('olm~Resource requests')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
     </DetailsItem>
   );
 };

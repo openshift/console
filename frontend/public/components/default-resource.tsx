@@ -22,6 +22,7 @@ import {
   SectionHeading,
   Timestamp,
 } from './utils';
+import { DescriptionList } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -64,7 +65,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
             </ResourceSummary>
           </div>
           {rightDetailsItems.length > 0 && (
-            <dl className="co-m-pane__details col-md-6">{rightDetailsItems}</dl>
+            <DescriptionList className="col-md-6">{rightDetailsItems}</DescriptionList>
           )}
         </div>
       </PaneBody>

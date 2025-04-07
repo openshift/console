@@ -1,7 +1,12 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import classNames from 'classnames';
 import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
-
 import './DynamicResourceLinkList.scss';
 
 export type ResourceModelLink = {
@@ -33,28 +38,30 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
         'odc-dynamic-resource-link-list--addSpaceBelow': !removeSpaceBelow,
       })}
     >
-      <dl>
-        {title && <dt>{title}</dt>}
-        <dd>
-          {links.map(({ name, resourceKind, qualifier = '', disableLink = false }) => {
-            let linkName = qualifier;
-            if (qualifier?.length > 0 && name !== qualifier) {
-              linkName += ` (${name})`;
-            }
-            return (
-              <div key={`${resourceKind}/${linkName}`}>
-                <PipelineResourceRef
-                  resourceKind={resourceKind}
-                  resourceName={name}
-                  displayName={linkName}
-                  namespace={namespace}
-                  disableLink={disableLink}
-                />
-              </div>
-            );
-          })}
-        </dd>
-      </dl>
+      <DescriptionList>
+        <DescriptionListGroup>
+          {title && <DescriptionListTerm>{title}</DescriptionListTerm>}
+          <DescriptionListDescription>
+            {links.map(({ name, resourceKind, qualifier = '', disableLink = false }) => {
+              let linkName = qualifier;
+              if (qualifier?.length > 0 && name !== qualifier) {
+                linkName += ` (${name})`;
+              }
+              return (
+                <div key={`${resourceKind}/${linkName}`}>
+                  <PipelineResourceRef
+                    resourceKind={resourceKind}
+                    resourceName={name}
+                    displayName={linkName}
+                    namespace={namespace}
+                    disableLink={disableLink}
+                  />
+                </div>
+              );
+            })}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
     </div>
   );
 };

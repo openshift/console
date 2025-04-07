@@ -1,4 +1,4 @@
-import { Button } from '@patternfly/react-core';
+import { Button, DescriptionListTerm } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
@@ -287,7 +287,9 @@ describe('SubscriptionDetails', () => {
     wrapper = wrapper.setProps({ obj, clusterServiceVersions: [testClusterServiceVersion] });
 
     const link = wrapper
-      .findWhere((node) => node.equals(<dt>Installed version</dt>))
+      .findWhere((node) =>
+        node.equals(<DescriptionListTerm>Installed version</DescriptionListTerm>),
+      )
       .parents()
       .at(0)
       .find('dd')
@@ -300,7 +302,7 @@ describe('SubscriptionDetails', () => {
 
   it('renders link to catalog source', () => {
     const link = wrapper
-      .findWhere((node) => node.equals(<dt>CatalogSource</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>CatalogSource</DescriptionListTerm>))
       .parents()
       .at(0)
       .find('dd')

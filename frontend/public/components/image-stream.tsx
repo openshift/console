@@ -4,7 +4,14 @@ import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import classNames from 'classnames';
 import { sortable, Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
-import { AlertVariant, Button, Popover } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  Button,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Popover
+} from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -241,12 +248,24 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={imageStream}>
-              {imageRepository && <dt>{t('public~Image repository')}</dt>}
-              {imageRepository && <dd>{imageRepository}</dd>}
-              {publicImageRepository && <dt>{t('public~Public image repository')}</dt>}
-              {publicImageRepository && <dd>{publicImageRepository}</dd>}
-              <dt>{t('public~Image count')}</dt>
-              <dd>{imageCount ? imageCount : 0}</dd>
+              {imageRepository && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Image repository')}</DescriptionListTerm>
+                  <DescriptionListDescription>{imageRepository}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {publicImageRepository && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Public image repository')}</DescriptionListTerm>
+                  <DescriptionListDescription>{publicImageRepository}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Image count')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {imageCount ? imageCount : 0}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />
           </div>

@@ -20,6 +20,7 @@ import {
 import { SecretType } from './secrets/create-secret/types';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
+import { DescriptionList } from '@patternfly/react-core';
 
 export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;
@@ -107,9 +108,9 @@ const SecretDetails = ({ obj: secret }) => {
           </div>
           {type && (
             <div className="col-md-6">
-              <dl data-test-id="resource-type" className="co-m-pane__details">
+              <DescriptionList data-test-id="resource-type">
                 <DetailsItem label={t('public~Type')} obj={secret} path="type" />
-              </dl>
+              </DescriptionList>
             </div>
           )}
         </div>

@@ -11,6 +11,10 @@ import {
   AccordionItem,
   AccordionToggle,
   AccordionContent,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -731,38 +735,44 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       const memoryRequestsPath = `requests.memory`;
       const storageRequestsPath = 'requests.ephemeral-storage';
       return (
-        <dl style={{ marginLeft: '15px' }}>
-          <dt>{t('olm~Limits')}</dt>
-          <dd>
-            <ResourceRequirements
-              cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
-              memory={currentValue.getIn?.(_.toPath(memoryLimitsPath))}
-              storage={currentValue.getIn?.(_.toPath(storageLimitsPath))}
-              onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuLimitsPath}`, value)}
-              onChangeMemory={(value) => handleFormDataUpdate(`${path}.${memoryLimitsPath}`, value)}
-              onChangeStorage={(value) =>
-                handleFormDataUpdate(`${path}.${storageLimitsPath}`, value)
-              }
-              path={`${id}.limits`}
-            />
-          </dd>
-          <dt>{t('olm~Requests')}</dt>
-          <dd>
-            <ResourceRequirements
-              cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
-              memory={currentValue.getIn?.(_.toPath(memoryRequestsPath))}
-              storage={currentValue.getIn?.(_.toPath(storageRequestsPath))}
-              onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuRequestsPath}`, value)}
-              onChangeMemory={(value) =>
-                handleFormDataUpdate(`${path}.${memoryRequestsPath}`, value)
-              }
-              onChangeStorage={(value) =>
-                handleFormDataUpdate(`${path}.${storageRequestsPath}`, value)
-              }
-              path={`${id}.requests`}
-            />
-          </dd>
-        </dl>
+        <DescriptionList className="pf-v6-ml-md">
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('olm~Limits')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ResourceRequirements
+                cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
+                memory={currentValue.getIn?.(_.toPath(memoryLimitsPath))}
+                storage={currentValue.getIn?.(_.toPath(storageLimitsPath))}
+                onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuLimitsPath}`, value)}
+                onChangeMemory={(value) =>
+                  handleFormDataUpdate(`${path}.${memoryLimitsPath}`, value)
+                }
+                onChangeStorage={(value) =>
+                  handleFormDataUpdate(`${path}.${storageLimitsPath}`, value)
+                }
+                path={`${id}.limits`}
+              />
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('olm~Requests')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ResourceRequirements
+                cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
+                memory={currentValue.getIn?.(_.toPath(memoryRequestsPath))}
+                storage={currentValue.getIn?.(_.toPath(storageRequestsPath))}
+                onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuRequestsPath}`, value)}
+                onChangeMemory={(value) =>
+                  handleFormDataUpdate(`${path}.${memoryRequestsPath}`, value)
+                }
+                onChangeStorage={(value) =>
+                  handleFormDataUpdate(`${path}.${storageRequestsPath}`, value)
+                }
+                path={`${id}.requests`}
+              />
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+        </DescriptionList>
       );
     }
     if (capabilities.includes(SpecCapability.password)) {

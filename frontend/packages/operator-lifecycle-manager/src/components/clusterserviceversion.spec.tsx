@@ -1,4 +1,4 @@
-import { CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
+import { CardTitle, CardBody, CardFooter, DescriptionListTerm } from '@patternfly/react-core';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
@@ -306,7 +306,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders list of maintainers from ClusterServiceVersion', () => {
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Maintainers</DescriptionListTerm>))
       .parents()
       .at(0)
       .find('dd');
@@ -324,7 +324,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders important links from ClusterServiceVersion', () => {
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>Links</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Links</DescriptionListTerm>))
       .parents()
       .at(0)
       .find('dd');
@@ -343,18 +343,18 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper.setProps({ obj: emptyClusterServiceVersion });
 
     const provider = wrapper
-      .findWhere((node) => node.equals(<dt>Provider</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Provider</DescriptionListTerm>))
       .parents()
       .at(0)
       .find('dd')
       .at(0);
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>Links</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Links</DescriptionListTerm>))
       .parents()
       .at(0)
       .find('dd');
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Maintainers</DescriptionListTerm>))
       .parents()
       .at(0)
       .find('dd');

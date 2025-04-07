@@ -1,4 +1,9 @@
 import * as React from 'react';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
@@ -17,10 +22,14 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <ResourceSummary resource={obj}>
-            <dt>{t('console-app~Driver')}</dt>
-            <dd>{obj?.driver}</dd>
-            <dt>{t('console-app~Deletion policy')}</dt>
-            <dd>{obj?.deletionPolicy}</dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Driver')}</DescriptionListTerm>
+              <DescriptionListDescription>{obj?.driver}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Deletion policy')}</DescriptionListTerm>
+              <DescriptionListDescription>{obj?.deletionPolicy}</DescriptionListDescription>
+            </DescriptionListGroup>
           </ResourceSummary>
         </div>
       </div>

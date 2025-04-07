@@ -2,7 +2,13 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
-import { Tooltip } from '@patternfly/react-core';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Tooltip,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
@@ -94,42 +100,48 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
   const { t } = useTranslation();
 
   return (
-    <dl className="co-m-pane__details">
-      <dt>{t('public~Max unavailable machines')}</dt>
-      <dd>{maxUnavailable}</dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('public~Max unavailable machines')}</DescriptionListTerm>
+        <DescriptionListDescription>{maxUnavailable}</DescriptionListDescription>
+      </DescriptionListGroup>
       {configuration && (
         <>
-          <dt>{t('public~Current configuration')}</dt>
-          <dd>
-            {configuration.name ? (
-              <ResourceLink
-                kind={machineConfigReference}
-                name={configuration.name}
-                title={configuration.name}
-              />
-            ) : (
-              '-'
-            )}
-          </dd>
-          <dt>{t('public~Current configuration source')}</dt>
-          <dd>
-            {configuration.source
-              ? _.map(configuration.source, ({ apiVersion, kind, name }) => (
-                  <ResourceLink
-                    key={`${apiVersion}-${kind}-${name}`}
-                    kind={machineConfigReference}
-                    name={name}
-                    title={name}
-                  />
-                ))
-              : '-'}
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Current configuration')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              {configuration.name ? (
+                <ResourceLink
+                  kind={machineConfigReference}
+                  name={configuration.name}
+                  title={configuration.name}
+                />
+              ) : (
+                '-'
+              )}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Current configuration source')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              {configuration.source
+                ? _.map(configuration.source, ({ apiVersion, kind, name }) => (
+                    <ResourceLink
+                      key={`${apiVersion}-${kind}-${name}`}
+                      kind={machineConfigReference}
+                      name={name}
+                      title={name}
+                    />
+                  ))
+                : '-'}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
           <DetailsItem label={t('public~Paused')} obj={obj} path={'spec.paused'}>
             {obj.spec?.paused ? t('public~True') : t('public~False')}
           </DetailsItem>
         </>
       )}
-    </dl>
+    </DescriptionList>
   );
 };
 
@@ -141,66 +153,84 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Total machine count')}</dt>
-              <dd>
-                <Tooltip content={t('public~Total number of machines in the machine pool.')}>
-                  <span>
-                    {obj?.status?.machineCount}{' '}
-                    {t('public~machine', { count: obj?.status?.machineCount })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Total machine count')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Tooltip content={t('public~Total number of machines in the machine pool.')}>
+                    <span>
+                      {obj?.status?.machineCount}{' '}
+                      {t('public~machine', { count: obj?.status?.machineCount })}
+                    </span>
+                  </Tooltip>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
           <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Ready machines')}</dt>
-              <dd>
-                <Tooltip content={t('public~Total number of ready machines targeted by the pool.')}>
-                  <span>
-                    {obj?.status?.readyMachineCount}{' '}
-                    {t('public~machine', { count: obj?.status?.readyMachineCount })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Ready machines')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Tooltip
+                    content={t('public~Total number of ready machines targeted by the pool.')}
+                  >
+                    <span>
+                      {obj?.status?.readyMachineCount}{' '}
+                      {t('public~machine', { count: obj?.status?.readyMachineCount })}
+                    </span>
+                  </Tooltip>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
           <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Updated count')}</dt>
-              <dd>
-                <Tooltip
-                  content={t(
-                    'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
-                  )}
-                >
-                  <span>
-                    {obj?.status?.updatedMachineCount}{' '}
-                    {t('public~machine', { count: obj?.status?.updatedMachineCount })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Updated count')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Tooltip
+                    content={t(
+                      'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
+                    )}
+                  >
+                    <span>
+                      {obj?.status?.updatedMachineCount}{' '}
+                      {t('public~machine', { count: obj?.status?.updatedMachineCount })}
+                    </span>
+                  </Tooltip>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
           <div className="co-detail-table__section co-detail-table__section--last">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Unavailable count')}</dt>
-              <dd>
-                <Tooltip
-                  content={t(
-                    'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
-                  )}
-                >
-                  <span>
-                    {obj?.status?.unavailableMachineCount}{' '}
-                    {t('public~machine', {
-                      count: obj?.status?.unavailableMachineCount,
-                    })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm className="co-detail-table__section-header">
+                  {t('public~Unavailable count')}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Tooltip
+                    content={t(
+                      'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
+                    )}
+                  >
+                    <span>
+                      {obj?.status?.unavailableMachineCount}{' '}
+                      {t('public~machine', {
+                        count: obj?.status?.unavailableMachineCount,
+                      })}
+                    </span>
+                  </Tooltip>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
         </div>
       </div>
@@ -213,10 +243,12 @@ const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({ ob
   const { t } = useTranslation();
   return (
     <ResourceSummary resource={obj} showNodeSelector nodeSelector="spec.nodeSelector">
-      <dt>{t('public~MachineConfig selector')}</dt>
-      <dd>
-        <Selector kind={machineConfigReference} selector={machineConfigSelector} />
-      </dd>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('public~MachineConfig selector')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <Selector kind={machineConfigReference} selector={machineConfigSelector} />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
     </ResourceSummary>
   );
 };

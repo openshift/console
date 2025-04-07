@@ -30,6 +30,7 @@ import {
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { DescriptionList } from '@patternfly/react-core';
 
 const { AddStorage, common, ModifyCount } = Kebab.factory;
 export const menuActions: KebabAction[] = [
@@ -68,9 +69,9 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
               <RuntimeClass obj={ss} />
             </ResourceSummary>
           </div>
-          <dl className="co-m-pane__details">
+          <DescriptionList>
             <PodDisruptionBudgetField obj={ss} />
-          </dl>
+          </DescriptionList>
         </div>
       </PaneBody>
       <PaneBody>

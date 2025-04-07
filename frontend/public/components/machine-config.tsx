@@ -41,8 +41,10 @@ const machineConfigMenuActions = [
 
 const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
-    <dt>{t('public~OS image URL')}</dt>
-    <dd>{obj.spec.osImageURL || '-'}</dd>
+    <DescriptionListGroup>
+      <DescriptionListTerm>{t('public~OS image URL')}</DescriptionListTerm>
+      <DescriptionListDescription>{obj.spec.osImageURL || '-'}</DescriptionListDescription>
+    </DescriptionListGroup>
   </ResourceSummary>
 );
 
@@ -76,22 +78,20 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
                     headerContent={t('public~Properties')}
                     bodyContent={
                       <DescriptionList isHorizontal isFluid>
-                        <DescriptionListGroup>
-                          {file.mode && (
-                            <>
-                              <DescriptionListTerm>{t('public~Mode')}</DescriptionListTerm>
-                              <DescriptionListDescription>{file.mode}</DescriptionListDescription>
-                            </>
-                          )}
-                          {file.overwrite && (
-                            <>
-                              <DescriptionListTerm>{t('public~Overwrite')}</DescriptionListTerm>
-                              <DescriptionListDescription>
-                                {file.overwrite.toString()}
-                              </DescriptionListDescription>
-                            </>
-                          )}
-                        </DescriptionListGroup>
+                        {file.mode && (
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>{t('public~Mode')}</DescriptionListTerm>
+                            <DescriptionListDescription>{file.mode}</DescriptionListDescription>
+                          </DescriptionListGroup>
+                        )}
+                        {file.overwrite && (
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>{t('public~Overwrite')}</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {file.overwrite.toString()}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        )}
                       </DescriptionList>
                     }
                   >

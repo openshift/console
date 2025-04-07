@@ -49,6 +49,12 @@ import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
@@ -98,7 +104,7 @@ export const menuActions = [
 export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ deployment }) => {
   const { t } = useTranslation();
   return (
-    <dl className="co-m-pane__details">
+    <DescriptionList>
       <DetailsItem label={t('public~Update strategy')} obj={deployment} path="spec.strategy.type" />
       {deployment.spec.strategy.type === 'RollingUpdate' && (
         <>
@@ -145,7 +151,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
       <RuntimeClass obj={deployment} />
       <PodDisruptionBudgetField obj={deployment} />
       <VerticalPodAutoscalerRecommendations obj={deployment} />
-    </dl>
+    </DescriptionList>
   );
 };
 DeploymentDetailsList.displayName = 'DeploymentDetailsList';
@@ -162,15 +168,17 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                {deployment.status.availableReplicas === deployment.status.updatedReplicas &&
-                deployment.spec.replicas === deployment.status.availableReplicas ? (
-                  <Status status="Up to date" />
-                ) : (
-                  <Status status="Updating" />
-                )}
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {deployment.status.availableReplicas === deployment.status.updatedReplicas &&
+                  deployment.spec.replicas === deployment.status.availableReplicas ? (
+                    <Status status="Up to date" />
+                  ) : (
+                    <Status status="Updating" />
+                  )}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
