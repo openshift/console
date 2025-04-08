@@ -119,14 +119,12 @@ class Details extends React.Component {
                   <DescriptionListDescription>{name}</DescriptionListDescription>
                 </DescriptionListGroup>
                 {namespace && (
-                  <div>
-                    <DescriptionListGroup>
-                      <DescriptionListTerm>{t('public~Namespace')}</DescriptionListTerm>
-                      <DescriptionListDescription>
-                        <ResourceLink kind="Namespace" name={namespace} />
-                      </DescriptionListDescription>
-                    </DescriptionListGroup>
-                  </div>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~Namespace')}</DescriptionListTerm>
+                    <DescriptionListDescription>
+                      <ResourceLink kind="Namespace" name={namespace} />
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
                 )}
               </DescriptionList>
             </div>

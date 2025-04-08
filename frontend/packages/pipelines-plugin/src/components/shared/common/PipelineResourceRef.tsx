@@ -51,6 +51,7 @@ const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
   return (
     <ResourceLink
       className={classNames}
+      dataTest="pipeline-resource-ref"
       kind={kind}
       name={resourceName}
       displayName={displayName || resourceName}

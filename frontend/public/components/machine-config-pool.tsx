@@ -3,6 +3,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import {
+  Card,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
@@ -150,90 +151,62 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
 
   return (
     <PaneBodyGroup>
-      <div className="co-detail-table">
-        <div className="co-detail-table__row row">
-          <div className="co-detail-table__section">
-            <DescriptionList>
-              <DescriptionListGroup>
-                <DescriptionListTerm className="co-detail-table__section-header">
-                  {t('public~Total machine count')}
-                </DescriptionListTerm>
-                <DescriptionListDescription>
-                  <Tooltip content={t('public~Total number of machines in the machine pool.')}>
-                    <span>
-                      {obj?.status?.machineCount}{' '}
-                      {t('public~machine', { count: obj?.status?.machineCount })}
-                    </span>
-                  </Tooltip>
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-            </DescriptionList>
-          </div>
-          <div className="co-detail-table__section">
-            <DescriptionList>
-              <DescriptionListGroup>
-                <DescriptionListTerm className="co-detail-table__section-header">
-                  {t('public~Ready machines')}
-                </DescriptionListTerm>
-                <DescriptionListDescription>
-                  <Tooltip
-                    content={t('public~Total number of ready machines targeted by the pool.')}
-                  >
-                    <span>
-                      {obj?.status?.readyMachineCount}{' '}
-                      {t('public~machine', { count: obj?.status?.readyMachineCount })}
-                    </span>
-                  </Tooltip>
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-            </DescriptionList>
-          </div>
-          <div className="co-detail-table__section">
-            <DescriptionList>
-              <DescriptionListGroup>
-                <DescriptionListTerm className="co-detail-table__section-header">
-                  {t('public~Updated count')}
-                </DescriptionListTerm>
-                <DescriptionListDescription>
-                  <Tooltip
-                    content={t(
-                      'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
-                    )}
-                  >
-                    <span>
-                      {obj?.status?.updatedMachineCount}{' '}
-                      {t('public~machine', { count: obj?.status?.updatedMachineCount })}
-                    </span>
-                  </Tooltip>
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-            </DescriptionList>
-          </div>
-          <div className="co-detail-table__section co-detail-table__section--last">
-            <DescriptionList>
-              <DescriptionListGroup>
-                <DescriptionListTerm className="co-detail-table__section-header">
-                  {t('public~Unavailable count')}
-                </DescriptionListTerm>
-                <DescriptionListDescription>
-                  <Tooltip
-                    content={t(
-                      'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
-                    )}
-                  >
-                    <span>
-                      {obj?.status?.unavailableMachineCount}{' '}
-                      {t('public~machine', {
-                        count: obj?.status?.unavailableMachineCount,
-                      })}
-                    </span>
-                  </Tooltip>
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-            </DescriptionList>
-          </div>
-        </div>
-      </div>
+      <DescriptionList className="co-detail-table">
+        <Card>
+          <DescriptionListTerm>{t('public~Total machine count')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip content={t('public~Total number of machines in the machine pool.')}>
+              <span>
+                {obj?.status?.machineCount}{' '}
+                {t('public~machine', { count: obj?.status?.machineCount })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+        <Card>
+          <DescriptionListTerm>{t('public~Ready machines')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip content={t('public~Total number of ready machines targeted by the pool.')}>
+              <span>
+                {obj?.status?.readyMachineCount}{' '}
+                {t('public~machine', { count: obj?.status?.readyMachineCount })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+        <Card>
+          <DescriptionListTerm>{t('public~Updated count')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip
+              content={t(
+                'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
+              )}
+            >
+              <span>
+                {obj?.status?.updatedMachineCount}{' '}
+                {t('public~machine', { count: obj?.status?.updatedMachineCount })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+        <Card>
+          <DescriptionListTerm>{t('public~Unavailable count')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip
+              content={t(
+                'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
+              )}
+            >
+              <span>
+                {obj?.status?.unavailableMachineCount}{' '}
+                {t('public~machine', {
+                  count: obj?.status?.unavailableMachineCount,
+                })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+      </DescriptionList>
     </PaneBodyGroup>
   );
 };

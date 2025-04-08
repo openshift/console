@@ -69,32 +69,28 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
   return (
     <div className={className}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
-        <div className="details-item__array">
-          {value?.length ? (
-            _.times(value.length, (i) => (
-              <div className="details-item__value--group">
-                <DescriptionList>
-                  {_.map(arrayElementDescriptors, (primitiveDescriptor: Descriptor) => {
-                    const path = primitiveDescriptor.path.replace(/\d+/, String(i));
-                    return (
-                      <DescriptorDetailsItem
-                        descriptor={{ ...primitiveDescriptor, path }}
-                        key={`${type}.${path}`}
-                        model={model}
-                        obj={obj}
-                        onError={onError}
-                        schema={getSchemaAtPath(schema, path)}
-                        type={type}
-                      />
-                    );
-                  })}
-                </DescriptionList>
-              </div>
-            ))
-          ) : (
-            <span className="text-muted">{t('public~None')}</span>
-          )}
-        </div>
+        {value?.length ? (
+          _.times(value.length, (i) => (
+            <DescriptionList className="co-editable-label-group">
+              {_.map(arrayElementDescriptors, (primitiveDescriptor: Descriptor) => {
+                const path = primitiveDescriptor.path.replace(/\d+/, String(i));
+                return (
+                  <DescriptorDetailsItem
+                    descriptor={{ ...primitiveDescriptor, path }}
+                    key={`${type}.${path}`}
+                    model={model}
+                    obj={obj}
+                    onError={onError}
+                    schema={getSchemaAtPath(schema, path)}
+                    type={type}
+                  />
+                );
+              })}
+            </DescriptionList>
+          ))
+        ) : (
+          <span className="text-muted">{t('public~None')}</span>
+        )}
       </DetailsItem>
     </div>
   );
@@ -119,38 +115,32 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   return (
     <div className={className}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
-        <DescriptionList className="details-item__value--group olm-descriptors__group">
-          {!_.isEmpty(primitives) && (
-            <div>
-              {_.map(primitives, ({ descriptor: primitiveDescriptor }) => (
-                <DescriptorDetailsItem
-                  descriptor={primitiveDescriptor}
-                  key={`${type}.${primitiveDescriptor.path}`}
-                  model={model}
-                  obj={obj}
-                  onError={onError}
-                  schema={schema}
-                  type={type}
-                />
-              ))}
-            </div>
-          )}
-          {!_.isEmpty(arrayGroups) && (
-            <div>
-              {_.map(arrayGroups, (arrayGroup: DescriptorGroup) => (
-                <DescriptorDetailsItemArrayGroup
-                  group={arrayGroup}
-                  groupPath={arrayGroup.arrayGroupPath}
-                  key={`${type}.${groupPath}.${arrayGroup.arrayGroupPath}`}
-                  model={model}
-                  obj={obj}
-                  onError={onError}
-                  schema={schema}
-                  type={type}
-                />
-              ))}
-            </div>
-          )}
+        <DescriptionList className="olm-descriptors__group co-editable-label-group">
+          {!_.isEmpty(primitives) &&
+            _.map(primitives, ({ descriptor: primitiveDescriptor }) => (
+              <DescriptorDetailsItem
+                descriptor={primitiveDescriptor}
+                key={`${type}.${primitiveDescriptor.path}`}
+                model={model}
+                obj={obj}
+                onError={onError}
+                schema={schema}
+                type={type}
+              />
+            ))}
+          {!_.isEmpty(arrayGroups) &&
+            _.map(arrayGroups, (arrayGroup: DescriptorGroup) => (
+              <DescriptorDetailsItemArrayGroup
+                group={arrayGroup}
+                groupPath={arrayGroup.arrayGroupPath}
+                key={`${type}.${groupPath}.${arrayGroup.arrayGroupPath}`}
+                model={model}
+                obj={obj}
+                onError={onError}
+                schema={schema}
+                type={type}
+              />
+            ))}
         </DescriptionList>
       </DetailsItem>
     </div>

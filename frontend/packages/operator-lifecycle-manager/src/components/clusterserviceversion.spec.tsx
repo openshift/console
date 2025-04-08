@@ -1,4 +1,10 @@
-import { CardTitle, CardBody, CardFooter, DescriptionListTerm } from '@patternfly/react-core';
+import {
+  CardTitle,
+  CardBody,
+  CardFooter,
+  DescriptionListTerm,
+  DescriptionListDescription,
+} from '@patternfly/react-core';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
@@ -309,7 +315,8 @@ describe(ClusterServiceVersionDetails.displayName, () => {
       .findWhere((node) => node.equals(<DescriptionListTerm>Maintainers</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription)
+      .shallow();
 
     expect(maintainers.length).toEqual(testClusterServiceVersion.spec.maintainers.length);
 
@@ -327,7 +334,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
       .findWhere((node) => node.equals(<DescriptionListTerm>Links</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription);
 
     expect(links.length).toEqual(testClusterServiceVersion.spec.links.length);
   });
@@ -346,18 +353,20 @@ describe(ClusterServiceVersionDetails.displayName, () => {
       .findWhere((node) => node.equals(<DescriptionListTerm>Provider</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd')
-      .at(0);
+      .find(DescriptionListDescription)
+      .shallow();
     const links = wrapper
       .findWhere((node) => node.equals(<DescriptionListTerm>Links</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription)
+      .shallow();
     const maintainers = wrapper
       .findWhere((node) => node.equals(<DescriptionListTerm>Maintainers</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription)
+      .shallow();
 
     expect(provider.text()).toEqual('Not available');
     expect(links.text()).toEqual('Not available');
@@ -388,11 +397,9 @@ describe(ClusterServiceVersionDetails.displayName, () => {
       />,
     );
     expect(emptyTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(0);
-    expect(
-      wrapper.findWhere(
-        (node) => node.type() === 'dt' && node.text() === 'Operator ServiceAccounts',
-      ).length,
-    ).toEqual(0);
+    expect(wrapper.findWhere((node) => node.text() === 'Operator ServiceAccounts').length).toEqual(
+      0,
+    );
   });
 
   it('does not render duplicate service accounts', () => {
@@ -410,11 +417,9 @@ describe(ClusterServiceVersionDetails.displayName, () => {
       />,
     );
     expect(duplicateTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(2);
-    expect(
-      wrapper.findWhere(
-        (node) => node.type() === 'dt' && node.text() === 'Operator ServiceAccounts',
-      ).length,
-    ).toEqual(1);
+    expect(wrapper.findWhere((node) => node.text() === 'Operator ServiceAccounts').length).toEqual(
+      1,
+    );
     expect(
       wrapper.find(`[data-service-account-name="${permission.serviceAccountName}"]`).length,
     ).toEqual(1);

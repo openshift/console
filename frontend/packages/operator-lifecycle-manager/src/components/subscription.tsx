@@ -6,8 +6,11 @@ import {
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
+  Card,
   DescriptionListTerm,
   Popover,
+  Split,
+  SplitItem,
 } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -28,7 +31,6 @@ import {
 } from '@console/internal/components/factory';
 import {
   KebabAction,
-  FieldLevelHelp,
   Kebab,
   LoadingInline,
   ConsoleEmptyState,
@@ -59,6 +61,7 @@ import {
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import {
@@ -621,112 +624,98 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
   const { deprecatedChannel } = findDeprecatedOperator(obj);
 
   return (
-    <div className="co-detail-table">
-      <div className="co-detail-table__row row">
-        <div className="co-detail-table__section col-sm-3">
-          <DescriptionList>
-            <DescriptionListGroup>
-              <DescriptionListTerm className="co-detail-table__section-header">
-                {t('olm~Update channel')}
-                <FieldLevelHelp>
-                  {t('olm~The channel to track and receive the updates from.')}
-                </FieldLevelHelp>
-              </DescriptionListTerm>
-              <DescriptionListDescription>
-                {waitingForUpdate ? (
-                  <LoadingInline />
-                ) : (
-                  <>
-                    <Button
-                      type="button"
-                      isInline
-                      onClick={channelModal}
-                      variant="link"
-                      isDisabled={!pkg}
-                      data-test="subscription-channel-update-button"
-                      icon={<PencilAltIcon />}
-                      iconPosition="end"
+    <DescriptionList className="co-detail-table">
+      <Card>
+        <DescriptionListTermHelp
+          text={t('olm~Update channel')}
+          textHelp={t('olm~The channel to track and receive the updates from.')}
+        />
+        <DescriptionListDescription>
+          {waitingForUpdate ? (
+            <LoadingInline />
+          ) : (
+            <>
+              <Button
+                type="button"
+                isInline
+                onClick={channelModal}
+                variant="link"
+                isDisabled={!pkg}
+                data-test="subscription-channel-update-button"
+                icon={<PencilAltIcon />}
+                iconPosition="end"
+              >
+                {obj.spec.channel || t('olm~No channel')}
+              </Button>
+              {deprecatedChannel.deprecation && (
+                <DeprecatedOperatorWarningIcon
+                  dataTest="deprecated-operator-warning-subscription-update-icon"
+                  deprecation={deprecatedChannel.deprecation}
+                />
+              )}
+            </>
+          )}
+        </DescriptionListDescription>
+      </Card>
+      <Card>
+        <DescriptionListTermHelp
+          text={t('olm~Update approval')}
+          textHelp={t('olm~The strategy to determine either manual or automatic updates.')}
+        />
+        <DescriptionListDescription>
+          {waitingForUpdate ? (
+            <LoadingInline />
+          ) : (
+            <>
+              <div>
+                <Button
+                  icon={<PencilAltIcon />}
+                  iconPosition="end"
+                  type="button"
+                  isInline
+                  onClick={approvalModal}
+                  variant="link"
+                >
+                  {obj.spec.installPlanApproval || 'Automatic'}
+                </Button>
+              </div>
+              {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&
+                manualSubscriptionsInNamespace?.length > 0 && (
+                  <div>
+                    <Popover
+                      headerContent={<>{t('olm~Functioning as manual approval strategy')}</>}
+                      bodyContent={
+                        <NamespaceIncludesManualApproval
+                          subscriptions={manualSubscriptionsInNamespace}
+                          namespace={obj.metadata.namespace}
+                        />
+                      }
                     >
-                      {obj.spec.channel || t('olm~No channel')}
-                    </Button>
-                    {deprecatedChannel.deprecation && (
-                      <DeprecatedOperatorWarningIcon
-                        dataTest="deprecated-operator-warning-subscription-update-icon"
-                        deprecation={deprecatedChannel.deprecation}
-                      />
-                    )}
-                  </>
-                )}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          </DescriptionList>
-        </div>
-        <div className="co-detail-table__section col-sm-3">
-          <DescriptionList>
-            <DescriptionListGroup>
-              <DescriptionListTerm className="co-detail-table__section-header">
-                {t('olm~Update approval')}
-                <FieldLevelHelp>
-                  {t('olm~The strategy to determine either manual or automatic updates.')}
-                </FieldLevelHelp>
-              </DescriptionListTerm>
-              <DescriptionListDescription>
-                {waitingForUpdate ? (
-                  <LoadingInline />
-                ) : (
-                  <>
-                    <div>
-                      <Button
-                        icon={<PencilAltIcon />}
-                        iconPosition="end"
-                        type="button"
-                        isInline
-                        onClick={approvalModal}
-                        variant="link"
-                      >
-                        {obj.spec.installPlanApproval || 'Automatic'}
+                      <Button type="button" isInline variant="link">
+                        <BlueInfoCircleIcon className="co-icon-space-r" />
+                        {t('olm~Functioning as manual')}
                       </Button>
-                    </div>
-                    {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&
-                      manualSubscriptionsInNamespace?.length > 0 && (
-                        <div>
-                          <Popover
-                            headerContent={<>{t('olm~Functioning as manual approval strategy')}</>}
-                            bodyContent={
-                              <NamespaceIncludesManualApproval
-                                subscriptions={manualSubscriptionsInNamespace}
-                                namespace={obj.metadata.namespace}
-                              />
-                            }
-                          >
-                            <Button type="button" isInline variant="link">
-                              <BlueInfoCircleIcon className="co-icon-space-r" />
-                              {t('olm~Functioning as manual')}
-                            </Button>
-                          </Popover>
-                        </div>
-                      )}
-                  </>
+                    </Popover>
+                  </div>
                 )}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          </DescriptionList>
-        </div>
-        <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
-          <DescriptionList>
-            <DescriptionListGroup>
-              <DescriptionListTerm className="co-detail-table__section-header">
-                {t('olm~Upgrade status')}
-              </DescriptionListTerm>
-              <DescriptionListDescription>
-                <SubscriptionUpgradeStatus catalogHealth={catalogHealth} subscription={obj} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          </DescriptionList>
+            </>
+          )}
+        </DescriptionListDescription>
+      </Card>
+      <Card>
+        <Split>
+          <SplitItem>
+            <DescriptionListTerm>{t('olm~Upgrade status')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <SubscriptionUpgradeStatus catalogHealth={catalogHealth} subscription={obj} />
+            </DescriptionListDescription>
+          </SplitItem>
           {catalogHealth && catalogHealth.healthy && (
             <>
-              <div className="co-detail-table__bracket" />
-              <div className="co-detail-table__breakdown">
+              <SplitItem>
+                <div className="co-detail-table__bracket" />
+              </SplitItem>
+              <SplitItem className="co-detail-table__breakdown">
                 {obj?.status?.installedCSV && installedCSV ? (
                   <Link
                     to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
@@ -751,12 +740,12 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                 ) : (
                   <span>{t('olm~0 installing')}</span>
                 )}
-              </div>
+              </SplitItem>
             </>
           )}
-        </div>
-      </div>
-    </div>
+        </Split>
+      </Card>
+    </DescriptionList>
   );
 };
 

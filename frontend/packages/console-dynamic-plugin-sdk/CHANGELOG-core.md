@@ -17,6 +17,8 @@ in [Console dynamic plugins README](./README.md).
   [react-codemod](https://github.com/reactjs/react-codemod) if needed. ([OCPBUGS-52589], [#14864])
 - A new component `DocumentTitle` has been added which allows plugins to modify the document title
   of the Console. ([CONSOLE-3960], [#14876])
+- Upgraded the `monaco-editor` version used by the `CodeEditor`, `YAMLEditor`, and `ResourceYAMLEditor`
+  components to version `0.51.0`. This affects the `ref` which these components expose. ([CONSOLE-4407], [#14663])
 
 ## 4.19.0-prerelease.1 - 2025-02-17
 
@@ -89,6 +91,7 @@ in [Console dynamic plugins README](./README.md).
 [CONSOLE-4269]: https://issues.redhat.com/browse/CONSOLE-4269
 [CONSOLE-4379]: https://issues.redhat.com/browse/CONSOLE-4379
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
+[CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -124,6 +127,7 @@ in [Console dynamic plugins README](./README.md).
 [#14156]: https://github.com/openshift/console/pull/14156
 [#14421]: https://github.com/openshift/console/pull/14421
 [#14447]: https://github.com/openshift/console/pull/14447
+[#14463]: https://github.com/openshift/console/pull/14663
 [#14487]: https://github.com/openshift/console/pull/14487
 [#14575]: https://github.com/openshift/console/pull/14575
 [#14615]: https://github.com/openshift/console/pull/14615

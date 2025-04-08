@@ -86,7 +86,6 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
               label={t('console-app~Labels')}
               obj={node}
               path="metadata.labels"
-              valueClassName="details-item__value--labels"
               onEdit={launchLabelsModal}
               canEdit={canUpdate}
               editAsGroup

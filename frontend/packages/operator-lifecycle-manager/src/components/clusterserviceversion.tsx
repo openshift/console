@@ -75,6 +75,7 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -1149,21 +1150,13 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
           <div className="col-sm-6">
             <ResourceSummary resource={props.obj}>
               <DescriptionListGroup>
-                <DescriptionListTerm>
-                  <Popover
-                    headerContent={<div>{t('olm~Managed Namespaces')}</div>}
-                    bodyContent={
-                      <div>{t('olm~Operands in this Namespace are managed by the Operator.')}</div>
-                    }
-                    maxWidth="30rem"
-                  >
-                    <Button
-                      icon={t('olm~Managed Namespaces')}
-                      variant="plain"
-                      className="details-item__popover-button"
-                    />
-                  </Popover>
-                </DescriptionListTerm>
+                <DescriptionListTermHelp
+                  text={t('olm~Managed Namespaces')}
+                  textHelp={t('olm~Operands in this Namespace are managed by the Operator.')}
+                  popoverProps={{
+                    maxWidth: '30rem',
+                  }}
+                />
                 <DescriptionListDescription>
                   <ManagedNamespaces obj={props.obj} />
                 </DescriptionListDescription>

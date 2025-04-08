@@ -1,4 +1,4 @@
-import { Button, DescriptionListTerm } from '@patternfly/react-core';
+import { Button, DescriptionListDescription, DescriptionListTerm } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
@@ -10,6 +10,7 @@ import {
 } from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import {
   testSubscription,
   testSubscriptions,
@@ -229,15 +230,16 @@ describe('SubscriptionUpdates', () => {
 
   it('renders link to configure update channel', () => {
     const channel = wrapper
-      .findWhere(
-        (node) =>
-          node.type() === 'dt' &&
-          node.hasClass('co-detail-table__section-header') &&
-          node.text().includes('Update channel'),
+      .findWhere((node) =>
+        node.equals(
+          <DescriptionListTermHelp
+            text="Update channel"
+            textHelp="The channel to track and receive the updates from."
+          />,
+        ),
       )
       .parents()
       .at(0)
-      .shallow()
       .find(Button)
       .render()
       .text();
@@ -247,15 +249,16 @@ describe('SubscriptionUpdates', () => {
 
   it('renders link to set approval strategy', () => {
     const strategy = wrapper
-      .findWhere(
-        (node) =>
-          node.type() === 'dt' &&
-          node.hasClass('co-detail-table__section-header') &&
-          node.text().includes('Update approval'),
+      .findWhere((node) =>
+        node.equals(
+          <DescriptionListTermHelp
+            text="Update approval"
+            textHelp="The strategy to determine either manual or automatic updates."
+          />,
+        ),
       )
       .parents()
       .at(0)
-      .shallow()
       .find(Button)
       .render()
       .text();
@@ -292,7 +295,7 @@ describe('SubscriptionDetails', () => {
       )
       .parents()
       .at(0)
-      .find('dd')
+      .find(DescriptionListDescription)
       .find(ResourceLink)
       .at(0);
 
@@ -305,7 +308,7 @@ describe('SubscriptionDetails', () => {
       .findWhere((node) => node.equals(<DescriptionListTerm>CatalogSource</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd')
+      .find(DescriptionListDescription)
       .find(ResourceLink)
       .at(0);
 

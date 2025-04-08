@@ -116,6 +116,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
@@ -285,9 +286,9 @@ export const ChannelDocLink: React.FC<{}> = () => {
 const ChannelHeader: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
-    <>
-      {t('public~Channel')}
-      <FieldLevelHelp>
+    <DescriptionListTermHelp
+      text={t('public~Channel')}
+      textHelp={
         <Content>
           <Content component={ContentVariants.p}>
             {t(
@@ -300,8 +301,8 @@ const ChannelHeader: React.FC<{}> = () => {
             </Content>
           )}
         </Content>
-      </FieldLevelHelp>
-    </>
+      }
+    />
   );
 };
 
@@ -959,9 +960,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                   <div className="co-cluster-settings__row">
                     <DescriptionList className="co-cluster-settings__details">
                       <DescriptionListGroup>
-                        <DescriptionListTerm>
-                          <ChannelHeader />
-                        </DescriptionListTerm>
+                        <ChannelHeader />
                         <DescriptionListDescription>
                           <CurrentChannel cv={cv} canUpgrade={canUpgrade} />
                         </DescriptionListDescription>

@@ -8,7 +8,8 @@ import {
   Button,
   DescriptionListDescription,
   DescriptionListGroup,
-  DescriptionListTerm,
+  DescriptionListTermHelpText,
+  DescriptionListTermHelpTextButton,
   Popover,
   Split,
   SplitItem,
@@ -39,7 +40,7 @@ export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> =
   );
 };
 
-const EditButton: React.SFC<EditButtonProps> = (props) => {
+const EditButton: React.FCC<EditButtonProps> = (props) => {
   return (
     <Button
       icon={<PencilAltIcon />}
@@ -51,13 +52,16 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
       data-test={
         props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
       }
-      className={props.className}
     >
       {props.children}
     </Button>
   );
 };
 
+/**
+ * A wrapper around PatternFly's `DescriptionListGroup`. This component
+ * must be used inside a `DescriptionList`!
+ */
 export const DetailsItem: React.FC<DetailsItemProps> = ({
   children,
   defaultValue = '-',
@@ -80,15 +84,15 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   const editable = onEdit && canEdit;
   return hide ? null : (
     <DescriptionListGroup>
-      <DescriptionListTerm
-        className={classNames('pf-v6-u-display-block details-item__label', labelClassName)}
+      <DescriptionListTermHelpText
         data-test-selector={`details-item-label__${label}`}
+        className={labelClassName}
       >
-        <Split>
-          <SplitItem className="details-item__label">
+        <Split className="pf-v6-u-w-100">
+          <SplitItem isFilled>
             {popoverContent || path ? (
               <Popover
-                headerContent={<div>{label}</div>}
+                headerContent={label}
                 {...(popoverContent && {
                   bodyContent: (
                     <LinkifyExternal>
@@ -99,33 +103,27 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
                 {...(path && { footerContent: <PropertyPath kind={model?.kind} path={path} /> })}
                 maxWidth="30rem"
               >
-                <Button data-test={label} variant="plain" className="details-item__popover-button">
+                <DescriptionListTermHelpTextButton data-test={label}>
                   {label}
-                </Button>
+                </DescriptionListTermHelpTextButton>
               </Popover>
             ) : (
               label
             )}
           </SplitItem>
+
           {editable && editAsGroup && (
-            <>
-              <SplitItem isFilled />
-              <SplitItem>
-                <EditButton
-                  testId={label}
-                  onClick={onEdit}
-                  className="details-item__edit-button--within-dt"
-                >
-                  {t('public~Edit')}
-                </EditButton>
-              </SplitItem>
-            </>
+            <SplitItem>
+              <EditButton testId={label} onClick={onEdit}>
+                {t('public~Edit')}
+              </EditButton>
+            </SplitItem>
           )}
         </Split>
-      </DescriptionListTerm>
+      </DescriptionListTermHelpText>
       <DescriptionListDescription
-        className={classNames('details-item__value', valueClassName, {
-          'details-item__value--group': editable && editAsGroup,
+        className={classNames(valueClassName, {
+          'co-editable-label-group': editable && editAsGroup,
         })}
         data-test-selector={`details-item-value__${label}`}
       >
@@ -158,7 +156,7 @@ export type DetailsItemProps = {
 type EditButtonProps = {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
-  className?: string;
+  children?: React.ReactNode;
 };
 
 DetailsItem.displayName = 'DetailsItem';

@@ -19,9 +19,6 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
-  DescriptionListTermHelpText,
-  DescriptionListTermHelpTextButton,
-  Popover,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { sortable } from '@patternfly/react-table';
@@ -74,6 +71,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { ErrorPage404 } from './error';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -428,16 +426,10 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
         </DescriptionListGroup>
         {shortNames && (
           <DescriptionListGroup>
-            <DescriptionListTermHelpText>
-              <Popover
-                headerContent={t('public~Short names')}
-                bodyContent={t('public~Short names can be used to match this resource on the CLI.')}
-              >
-                <DescriptionListTermHelpTextButton>
-                  {t('public~Short names')}
-                </DescriptionListTermHelpTextButton>
-              </Popover>
-            </DescriptionListTermHelpText>
+            <DescriptionListTermHelp
+              text={t('public~Short names')}
+              textHelp={t('public~Short names can be used to match this resource on the CLI.')}
+            />
             <DescriptionListDescription>{shortNames.join(', ')}</DescriptionListDescription>
           </DescriptionListGroup>
         )}
