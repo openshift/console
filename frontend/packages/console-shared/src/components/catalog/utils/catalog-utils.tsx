@@ -141,16 +141,16 @@ export const applyCatalogItemMetadata = (
 
 export const isCatalogTypeEnabled = (catalogType: string): boolean => {
   if (window.SERVER_FLAGS.developerCatalogTypes) {
-    const developerCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
+    const softwareCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
     if (
-      developerCatalogTypes?.state === CatalogVisibilityState.Enabled &&
-      developerCatalogTypes?.enabled?.length > 0
+      softwareCatalogTypes?.state === CatalogVisibilityState.Enabled &&
+      softwareCatalogTypes?.enabled?.length > 0
     ) {
-      return developerCatalogTypes?.enabled.includes(catalogType);
+      return softwareCatalogTypes?.enabled.includes(catalogType);
     }
-    if (developerCatalogTypes?.state === CatalogVisibilityState.Disabled) {
-      if (developerCatalogTypes?.disabled?.length > 0) {
-        return !developerCatalogTypes?.disabled.includes(catalogType);
+    if (softwareCatalogTypes?.state === CatalogVisibilityState.Disabled) {
+      if (softwareCatalogTypes?.disabled?.length > 0) {
+        return !softwareCatalogTypes?.disabled.includes(catalogType);
       }
       return false;
     }
@@ -165,19 +165,19 @@ export const useGetAllDisabledSubCatalogs = () => {
   });
   let disabledSubCatalogs = [];
   if (window.SERVER_FLAGS.developerCatalogTypes) {
-    const developerCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
+    const softwareCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
     if (
-      developerCatalogTypes?.state === CatalogVisibilityState.Enabled &&
-      developerCatalogTypes?.enabled?.length > 0
+      softwareCatalogTypes?.state === CatalogVisibilityState.Enabled &&
+      softwareCatalogTypes?.enabled?.length > 0
     ) {
       disabledSubCatalogs = catalogTypeExtensions.filter(
-        (val) => !developerCatalogTypes?.enabled.includes(val),
+        (val) => !softwareCatalogTypes?.enabled.includes(val),
       );
       return [disabledSubCatalogs];
     }
-    if (developerCatalogTypes?.state === CatalogVisibilityState.Disabled) {
-      if (developerCatalogTypes?.disabled?.length > 0) {
-        return [developerCatalogTypes?.disabled, catalogTypeExtensions];
+    if (softwareCatalogTypes?.state === CatalogVisibilityState.Disabled) {
+      if (softwareCatalogTypes?.disabled?.length > 0) {
+        return [softwareCatalogTypes?.disabled, catalogTypeExtensions];
       }
       return [catalogTypeExtensions];
     }
@@ -185,7 +185,7 @@ export const useGetAllDisabledSubCatalogs = () => {
   return [disabledSubCatalogs];
 };
 
-export const useIsDeveloperCatalogEnabled = (): boolean => {
+export const useIsSoftwareCatalogEnabled = (): boolean => {
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
   const [catalogExtensionsArray] = useResolvedExtensions<CatalogItemType>(isCatalogItemType);
   const catalogTypeExtensions = catalogExtensionsArray.map((type) => {

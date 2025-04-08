@@ -116,8 +116,8 @@ Then('user can see {string} workload in topology list view', (workloadName: stri
   topologyHelper.verifyWorkloadInTopologyPage(workloadName);
 });
 
-When('user clicks on View all developer catalog items link', () => {
-  cy.get(quickSearchAddPO.viewInDevCatalog).scrollIntoView().click();
+When('user clicks on View all software catalog items link', () => {
+  cy.get(quickSearchAddPO.viewInSoftwareCatalog).scrollIntoView().click();
 });
 
 Then('user will see Catalog with {string} text filter', (filterWord: string) => {

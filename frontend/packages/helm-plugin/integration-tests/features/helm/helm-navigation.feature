@@ -12,7 +12,7 @@ Feature: Navigations on Helm Chart
              When user clicks on the Helm tab in dev perspective
              Then user will be redirected to Helm releases page
               And user is able to see the message "No Helm Releases found"
-              And user will get the link to install helm charts from developer catalog
+              And user will get the link to install helm charts from software catalog
 
 
         @smoke

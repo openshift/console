@@ -1,10 +1,10 @@
 @customize-catalogs
 Feature: Customization of catalogs and Add page through form view
-              Allows cluster admins to selectively disable a sub-catalog and cards in Add page or disable the complete developer catalog and all cards in Add page through customisation form view
+              Allows cluster admins to selectively disable a sub-catalog and cards in Add page or disable the complete software catalog and all cards in Add page through customisation form view
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-developer-catalog"
+              And user has created or selected namespace "aut-software-catalog"
 
 
         @regression
