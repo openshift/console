@@ -30,7 +30,7 @@ import {
   StorageClassResourceKind,
   VolumeGroupSnapshotKind,
 } from '@console/internal/module/k8s';
-import { getNamespace } from '@console/shared';
+import { getName } from '@console/shared';
 import './_create-volume-group-snapshot.scss';
 import { PVCTable } from './pvc-table';
 
@@ -50,105 +50,46 @@ const VolumeGroupSnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (
     />
   );
 };
-
 const CreateGroupSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   const { namespace, handlePromise, inProgress, errorMessage } = props;
   const { t } = useTranslation();
-  const [pvcObjs, setPVCObjs] = React.useState<PersistentVolumeClaimKind[]>([]);
   const [groupSnapshotName, setGroupSnapshotName] = React.useState('group-snapshot');
   const [groupSnapshotClassName, setGroupSnapshotClassName] = React.useState('');
   const title = t('console-app~Create VolumeGroupSnapshot');
   const [labelExpressions, setLabelExpressions] = React.useState<MatchExpression[]>([]);
-  const [labels, setLabels] = React.useState<{ [key: string]: string[] }>({});
-  const [validationError, setValidationError] = React.useState<string | null>(null);
-
-  const resourceWatch = React.useMemo(() => {
-    const watch = {
+  const filteredResourceWatch = React.useMemo(() => {
+    const filteredWatch = {
       kind: referenceForModel(PersistentVolumeClaimModel),
       isList: true,
       namespace,
       selector: labelExpressions.length > 0 ? { matchExpressions: labelExpressions } : undefined,
     };
-
-    return watch;
+    return filteredWatch;
   }, [namespace, labelExpressions]);
-
-  const [data, loaded, loadError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(resourceWatch);
-
-  const [storageClasses, setStorageClasses] = React.useState<StorageClassResourceKind[]>([]);
+  const allResourceWatch = React.useMemo(() => {
+    const filteredWatch = {
+      kind: referenceForModel(PersistentVolumeClaimModel),
+      isList: true,
+      namespace,
+    };
+    return filteredWatch;
+  }, [namespace]);
+  const [filteredPVCs, loaded, loadError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(
+    filteredResourceWatch,
+  );
+  const [allPVCs, allLoaded, allLoadedError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(
+    allResourceWatch,
+  );
   const storageClassWatch = {
     kind: StorageClassModel.kind,
     isList: true,
   };
 
   const [storageClassData] = useK8sWatchResource<StorageClassResourceKind[]>(storageClassWatch);
-
-  React.useEffect(() => {
-    if (storageClassData) {
-      setStorageClasses(storageClassData);
-    }
-  }, [storageClassData]);
-
-  const getProvisioner = React.useCallback(
-    (storageClassName: string): string | null => {
-      if (!storageClassName || !storageClasses.length) return null;
-
-      const storageClass = storageClasses.find((sc) => sc.metadata.name === storageClassName);
-      return storageClass?.provisioner || null;
-    },
-    [storageClasses],
-  );
-
-  const validatePVCs = React.useCallback(
-    (pvcs: PersistentVolumeClaimKind[]) => {
-      if (!pvcs || pvcs.length <= 1 || labelExpressions.length === 0) {
-        setValidationError(null);
-        return;
-      }
-
-      const provisioners = new Set();
-      pvcs.forEach((pvc) => {
-        const storageClassName = pvc.spec?.storageClassName;
-        if (storageClassName) {
-          const provisioner = getProvisioner(storageClassName);
-          if (provisioner) {
-            provisioners.add(provisioner);
-          }
-        }
-      });
-
-      if (provisioners.size > 1) {
-        setValidationError(
-          t(
-            'console-app~Selected PVCs have different storage provisioners. All PVCs must have StorageClasses with the same provisioner.',
-          ),
-        );
-        return;
-      }
-
-      setValidationError(null);
-    },
-    [getProvisioner, labelExpressions.length, t],
-  );
-
-  React.useEffect(() => {
-    if (loaded && !loadError) {
-      const newPvcObjs = data || [];
-      setPVCObjs(newPvcObjs);
-
-      // Validate PVCs for same provisioner
-      if (newPvcObjs.length > 1) {
-        validatePVCs(newPvcObjs);
-      } else {
-        setValidationError(null);
-      }
-    }
-  }, [data, loaded, loadError, validatePVCs]);
-
-  React.useEffect(() => {
-    if (loaded && data?.length) {
+  const labels = React.useMemo(() => {
+    if (allLoaded && !allLoadedError && allPVCs?.length) {
       const labelsMap: { [key: string]: string[] } = {};
-      data.forEach((pvc) => {
+      allPVCs.forEach((pvc) => {
         if (pvc.metadata?.labels) {
           Object.entries(pvc.metadata.labels).forEach(([key, value]) => {
             if (!labelsMap[key]) {
@@ -160,31 +101,70 @@ const CreateGroupSnapshotForm = withHandlePromise<SnapshotResourceProps>((props)
           });
         }
       });
-      setLabels(labelsMap);
+      return labelsMap;
     }
-  }, [data, loaded]);
+    return {};
+  }, [allPVCs, allLoaded, allLoadedError]);
+  const getProvisioner = React.useCallback(
+    (storageClassName: string): string | null => {
+      if (!storageClassName || !storageClassData.length) return null;
+      const storageClass = storageClassData.find((sc) => getName(sc) === storageClassName);
+      return storageClass?.provisioner || null;
+    },
+    [storageClassData],
+  );
 
+  const validatePVCs = React.useCallback(
+    (pvcs: PersistentVolumeClaimKind[]): string | undefined => {
+      if (!pvcs || pvcs.length <= 1 || labelExpressions.length === 0) {
+        return undefined;
+      }
+
+      const provisioners = new Set();
+      pvcs.forEach((pvc) => {
+        const storageClassName = pvc.spec?.storageClassName;
+        const provisioner = getProvisioner(storageClassName);
+        if (provisioner) {
+          provisioners.add(provisioner);
+        }
+      });
+      if (provisioners.size > 1) {
+        return t(
+          'console-app~Selected PVCs have different storage provisioners. All PVCs must have StorageClasses with the same provisioner.',
+        );
+      }
+      return undefined;
+    },
+    [getProvisioner, labelExpressions.length, t],
+  );
+
+  const validationError = React.useMemo(() => {
+    if (loaded && !loadError) {
+      // Validate PVCs for same provisioner
+      if (filteredPVCs.length > 1) {
+        return validatePVCs(filteredPVCs);
+      }
+      return null;
+    }
+    return undefined; // Fixed: Return undefined when condition fails
+  }, [filteredPVCs, loaded, loadError, validatePVCs]);
   const handleSnapshotName: React.ReactEventHandler<HTMLInputElement> = (event) =>
     setGroupSnapshotName(event.currentTarget.value);
-
   const create = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
-
-    if (!pvcObjs.length) {
+    if (!filteredPVCs.length) {
       return;
     }
-
     // Don't proceed if validation errors exist
     if (validationError) {
       return;
     }
-
     const groupSnapshot: VolumeGroupSnapshotKind = {
       apiVersion: apiVersionForModel(VolumeGroupSnapshotModel),
       kind: VolumeGroupSnapshotModel.kind,
       metadata: {
         name: groupSnapshotName,
-        namespace: getNamespace(pvcObjs[0]),
+        namespace,
       },
       spec: {
         volumeGroupSnapshotClassName: groupSnapshotClassName,
@@ -195,14 +175,12 @@ const CreateGroupSnapshotForm = withHandlePromise<SnapshotResourceProps>((props)
         },
       },
     };
-
     handlePromise(k8sCreate(VolumeGroupSnapshotModel, groupSnapshot), (resource) => {
       history.push(resourceObjPath(resource, referenceFor(resource)));
     });
   };
-
   return (
-    <div className="co-volume-snapshot__body">
+    <div className="pf-v6-u-m-lg co-volume-snapshot__body">
       <div className="co-m-pane__form">
         <Helmet>
           <title>{title}</title>
@@ -258,19 +236,9 @@ const CreateGroupSnapshotForm = withHandlePromise<SnapshotResourceProps>((props)
                     { namespace },
                   )}
                 </div>
-
-                {validationError && (
-                  <div className="pf-v6-c-form__helper-text pf-m-error">
-                    <span className="pf-v6-c-form__helper-text-icon">
-                      <i className="fas fa-exclamation-circle" aria-hidden="true" />
-                    </span>
-                    {validationError}
-                  </div>
-                )}
-
                 <PVCTable
                   namespace={namespace}
-                  pvcObjs={labelExpressions.length > 0 ? pvcObjs : []}
+                  pvcObjs={labelExpressions.length > 0 ? filteredPVCs : []}
                   labels={labels}
                   labelExpressions={labelExpressions}
                   setLabelExpressions={setLabelExpressions}
@@ -291,7 +259,7 @@ const CreateGroupSnapshotForm = withHandlePromise<SnapshotResourceProps>((props)
                   isDisabled={
                     !groupSnapshotClassName ||
                     !groupSnapshotName ||
-                    pvcObjs.length === 0 ||
+                    filteredPVCs.length === 0 ||
                     !!validationError
                   }
                 >
@@ -308,20 +276,17 @@ const CreateGroupSnapshotForm = withHandlePromise<SnapshotResourceProps>((props)
     </div>
   );
 });
-
 export const VolumeGroupSnapshot: React.FC = () => {
   const params = useParams();
   const { pvc } = getURLSearchParams();
   return <CreateGroupSnapshotForm namespace={params.ns} pvcName={pvc} />;
 };
-
 type SnapshotClassDropdownProps = {
   selectedKey: string;
   onChange: (string) => void;
   id?: string;
   dataTest?: string;
 };
-
 type SnapshotResourceProps = HandlePromiseProps & {
   namespace: string;
   pvcName?: string;

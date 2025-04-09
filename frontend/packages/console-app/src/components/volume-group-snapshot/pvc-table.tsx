@@ -52,8 +52,8 @@ export const PVCTable: React.FC<PVCTableProps> = ({
     }
 
     return (
-      <div className="pf-v5-u-mt-md pf-v5-u-mb-md">
-        <div className="pf-v5-u-mb-xs">
+      <div className="pf-v6-u-mt-md pf-v6-u-mb-md">
+        <div className="pf-v6-u-mb-xs">
           <strong>{t('console-app~Applied filters:')}</strong>
         </div>
         <LabelGroup>
@@ -91,7 +91,11 @@ export const PVCTable: React.FC<PVCTableProps> = ({
 
   if (loadError) {
     return (
-      <EmptyState titleText="No PVCs have been selected" headingLevel="h4" icon={CubesIcon}>
+      <EmptyState
+        titleText={t('console-app~No PVCs have been selected')}
+        headingLevel="h4"
+        icon={CubesIcon}
+      >
         <Title headingLevel="h4" size="lg">
           {t('console-app~Error loading PVCs')}
         </Title>
@@ -109,7 +113,7 @@ export const PVCTable: React.FC<PVCTableProps> = ({
       {loaded && renderLabelExpressions()}
 
       {loaded && labelExpressions.length > 0 && (
-        <div className="pf-v5-u-mb-md">
+        <div className="pf-v6-u-mb-md">
           <LabelExpressionSelectorModal
             labels={labels}
             onSubmit={setLabelExpressions}
@@ -120,7 +124,7 @@ export const PVCTable: React.FC<PVCTableProps> = ({
 
       {loaded && (
         <>
-          <Table aria-label="PVCs table" variant="compact" borders>
+          <Table aria-label={t('console-app~PVCs table')} variant="compact" borders>
             <Thead>
               <Tr>
                 <Th>{columnNames.name}</Th>
@@ -202,7 +206,7 @@ export const PVCTable: React.FC<PVCTableProps> = ({
             </Tbody>
           </Table>
 
-          <div className="co-m-pane__body-section pf-v5-u-p-md">
+          <div className="co-m-pane__body-section pf-v6-u-p-md">
             <span>
               <strong>
                 {pvcObjs.length} {t('console-app~PVCs')}

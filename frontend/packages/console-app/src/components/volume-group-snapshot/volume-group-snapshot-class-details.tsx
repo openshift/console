@@ -11,7 +11,7 @@ const { editYaml, events } = navFactory;
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <div className="pf-v6-u-m-lg">
       <SectionHeading text={t('console-app~VolumeGroupSnapshotClass details')} />
       <div className="row">
         <div className="col-md-6 col-xs-12">

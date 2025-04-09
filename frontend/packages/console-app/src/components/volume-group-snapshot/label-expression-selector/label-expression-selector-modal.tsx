@@ -30,7 +30,7 @@ export const LabelExpressionSelectorModal: React.FC<LabelExpressionSelectorModal
   onSubmit,
   isOpen,
   onClose,
-  buttonText = 'Filter PVCs by Label',
+  buttonText,
 }) => {
   const [internalIsModalOpen, setInternalIsModalOpen] = React.useState(false);
   const isModalOpen = isOpen !== undefined ? isOpen : internalIsModalOpen;
@@ -61,7 +61,7 @@ export const LabelExpressionSelectorModal: React.FC<LabelExpressionSelectorModal
     <>
       {isOpen === undefined && (
         <Button variant={ButtonVariant.link} onClick={() => setInternalIsModalOpen(true)}>
-          {buttonText} <CogIcon />
+          {buttonText || t('console-app~Filter PVCs by Label')} <CogIcon />
         </Button>
       )}
 
@@ -69,7 +69,7 @@ export const LabelExpressionSelectorModal: React.FC<LabelExpressionSelectorModal
         variant={ModalVariant.medium}
         isOpen={isModalOpen}
         onClose={handleModalToggle}
-        title="Filter PVCs by Label"
+        title={t('console-app~Filter PVCs by Label')}
         aria-labelledby="volume-group-snapshot-labels-selector"
         aria-describedby="volume-group-snapshot-labels-selector"
       >
@@ -90,10 +90,10 @@ export const LabelExpressionSelectorModal: React.FC<LabelExpressionSelectorModal
         </ModalBody>
         <ModalFooter>
           <Button key="confirm" variant="primary" onClick={handleConfirm}>
-            Filter PVCs
+            {t('Filter PVCs')}
           </Button>
           <Button key="cancel" variant="link" onClick={handleModalToggle}>
-            Cancel
+            {t('Cancel')}
           </Button>
         </ModalFooter>
       </Modal>

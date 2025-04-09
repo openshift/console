@@ -9,15 +9,21 @@ import {
   SectionHeading,
   navFactory,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   PersistentVolumeClaimModel,
   VolumeGroupSnapshotClassModel,
   VolumeGroupSnapshotContentModel,
 } from '@console/internal/models';
-import { VolumeGroupSnapshotKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  PersistentVolumeClaimKind,
+  VolumeGroupSnapshotKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { FLAGS, Status } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { volumeSnapshotStatus } from '../../status';
+import { PVCResourceViewer } from './pvc-resource-viewer';
 
 const { editYaml, events } = navFactory;
 const { common } = Kebab.factory;
@@ -32,8 +38,27 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
 
   const canListVSC = useFlag(FLAGS.CAN_LIST_VGSC);
 
+  const labelExpressions = obj?.spec?.source.selector.matchExpressions;
+
+  const resourceWatch = React.useMemo(() => {
+    const matchLabels = obj?.spec?.source?.selector?.matchLabels || {};
+    const watch = {
+      kind: referenceForModel(PersistentVolumeClaimModel),
+      isList: true,
+      namespace,
+      selector: {
+        matchLabels,
+        matchExpressions: labelExpressions,
+      },
+    };
+
+    return watch;
+  }, [namespace, obj?.spec?.source?.selector?.matchLabels, labelExpressions]);
+
+  const [data, loaded, loadError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(resourceWatch);
+
   return (
-    <div className="co-m-pane__body">
+    <div className="pf-v6-u-m-lg">
       <SectionHeading text={t('console-app~VolumeGroupSnapshot details')} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
@@ -48,11 +73,14 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
           <dl className="co-m-pane__details">
             <dt>{t('console-app~Source')}</dt>
             <dd>
-              <ResourceLink
-                kind={referenceForModel(PersistentVolumeClaimModel)}
-                name={'pvc'}
-                namespace={namespace}
-              />
+              {loaded && !loadError && (
+                <PVCResourceViewer
+                  limit={5}
+                  pvcNames={data.map((pvc) => pvc.metadata.name)}
+                  namespace={namespace}
+                  asList
+                />
+              )}
             </dd>
             {canListVSC && (
               <>

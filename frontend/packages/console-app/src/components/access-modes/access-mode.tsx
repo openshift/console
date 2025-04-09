@@ -19,7 +19,7 @@ export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: stri
   _.reduce(
     resource?.spec?.accessModes,
     (res, value) => {
-      const mode = getAccessModeOptions().find((accessMode) => accessMode.value === value);
+      const mode = getAccessModeOptions()?.find((accessMode) => accessMode.value === value);
       if (mode) {
         res.push(mode[key]);
       }
@@ -59,9 +59,15 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
   );
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<string>(
-    getAccessModeOptions().find((mode) => mode.value === pvcInitialAccessMode[0]).title,
-  );
+
+  // Fix: Add a null check and provide a default value if the mode isn't found as in case of VolumeSnapshotGroup
+  const defaultOption = getAccessModeOptions()[0] || { title: '', value: '' };
+  const foundMode =
+    pvcInitialAccessMode?.length > 0
+      ? getAccessModeOptions().find((mode) => mode.value === pvcInitialAccessMode[0])
+      : null;
+
+  const [selected, setSelected] = React.useState<string>(foundMode?.title || defaultOption.title);
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -115,11 +121,15 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
 
   React.useEffect(() => {
     // Make sure the default or already checked option button value is from any one of allowed the access mode
-    if (allowedAccessModes) {
-      if (!accessMode && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
+    if (allowedAccessModes?.length) {
+      if (
+        !accessMode &&
+        pvcInitialAccessMode?.length &&
+        allowedAccessModes.includes(pvcInitialAccessMode[0])
+      ) {
         // To view the same access mode value of pvc
         changeAccessMode(pvcInitialAccessMode[0]);
-      } else if (!allowedAccessModes.includes(accessMode)) {
+      } else if (!accessMode || !allowedAccessModes.includes(accessMode)) {
         // Old access mode will be disabled
         changeAccessMode(allowedAccessModes[0]);
       }
@@ -133,7 +143,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
       fieldId="access-mode"
       className={className}
     >
-      {loaded && allowedAccessModes && (
+      {loaded && allowedAccessModes?.length > 0 && (
         <Select
           isOpen={isOpen}
           selected={selected}
@@ -147,12 +157,12 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
         </Select>
       )}
 
-      {allowedAccessModes && allowedAccessModes && description && (
+      {allowedAccessModes?.length > 0 && description && (
         <p className="help-block" id="access-mode-help">
           {description}
         </p>
       )}
-      {(!loaded || !allowedAccessModes) && <div className="skeleton-text" />}
+      {(!loaded || !allowedAccessModes?.length) && <div className="skeleton-text" />}
     </FormGroup>
   );
 };

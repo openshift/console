@@ -12,7 +12,6 @@ import {
   GridItem,
   HelperText,
   HelperTextItem,
-  SelectOption,
   Split,
   SplitItem,
 } from '@patternfly/react-core';
@@ -23,9 +22,9 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { MatchExpression } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon } from '@console/shared';
 import { AsyncLoader } from './async-loader';
-import './labelExpressionSelector.scss';
 import { LabelValueSelectDropdown } from './label-values-select-dropdown';
-import { SingleSelectDropdown } from './single-select-dropdown';
+import './labelExpressionSelector.scss';
+import { TypeaheadDropdown } from './typeahead-dropdown';
 
 // Only selective operator are used as options.
 enum Operator {
@@ -57,8 +56,8 @@ const matchExpressionSummaryError = (expandString: string, t: TFunction): React.
       <RedExclamationCircleIcon />
     </SplitItem>
     <SplitItem>
-      <span className="pf-v5-c-form__helper-text pf-m-error">
-        &nbsp; {expandString || t('Expand to fix validation errors')}
+      <span className="pf-v6-c-form__helper-text pf-m-error">
+        &nbsp; {expandString || t('console-app~Expand to fix validation errors')}
       </span>
     </SplitItem>
   </Split>
@@ -77,30 +76,30 @@ export const matchExpressionSummary = (
 
   // Converting the selected label expression as text to summerize,
   // Only for the display purpose
-  let operatorStr = t('unknown');
+  let operatorStr = t('console-app~unknown');
   switch (operator) {
     case Operator.In:
       if (!!values && values.length > 1) {
-        operatorStr = t('equals any of');
+        operatorStr = t('console-app~equals any of');
       } else {
-        operatorStr = t('equals');
+        operatorStr = t('console-app~equals');
       }
       break;
     case Operator.NotIn:
       if (!!values && values.length > 1) {
-        operatorStr = t('does not equal any of');
+        operatorStr = t('console-app~does not equal any of');
       } else {
-        operatorStr = t('does not equal');
+        operatorStr = t('console-app~does not equal');
       }
       break;
     case Operator.Exists:
-      operatorStr = t('exists');
+      operatorStr = t('console-app~exists');
       break;
     case Operator.DoesNotExist:
-      operatorStr = t('does not exist');
+      operatorStr = t('console-app~does not exist');
       break;
     default:
-      operatorStr = t('unknown');
+      operatorStr = t('console-app~unknown');
       break;
   }
 
@@ -108,7 +107,7 @@ export const matchExpressionSummary = (
     return matchExpressionSummaryError(expandString, t);
   }
   return !key
-    ? expandString || t('Expand to enter expression')
+    ? expandString || t('console-app~Expand to enter expression')
     : `${key} ${operatorStr} ${values.join(', ')}`;
 };
 
@@ -125,31 +124,20 @@ const ExpressionElement: React.FC<ExpressionElementProps> = ({
 
   // Display each label key as options
   const keyOptions = React.useMemo(
-    () =>
-      Object.keys(labels).map((labelKey) => (
-        <SelectOption key={labelKey} value={labelKey}>
-          {labelKey}
-        </SelectOption>
-      )),
+    () => Object.keys(labels).map((labelKey) => ({ content: labelKey, value: labelKey })),
     [labels],
   );
 
   // Default options of Operator enum.
-  const operatorOptions = Object.values(Operator).map((option) => (
-    <SelectOption key={option} value={option}>
-      {option}
-    </SelectOption>
-  ));
+  const operatorOptions = Object.values(Operator).map((option) => ({
+    content: option,
+    value: option,
+  }));
 
   // Display each values of the selected key as options
   // Modify value options based on key selection.
   const valueOptions = React.useMemo(
-    () =>
-      (key ? labels[key] || [] : []).map((value) => (
-        <SelectOption key={value} value={value}>
-          {value}
-        </SelectOption>
-      )),
+    () => (key ? labels[key] || [] : []).map((value) => ({ content: value, value })),
     [labels, key],
   );
 
@@ -194,29 +182,28 @@ const ExpressionElement: React.FC<ExpressionElementProps> = ({
   return (
     <Grid hasGutter>
       <GridItem lg={4} sm={4}>
-        <FormGroup label={t('Label')} hasNoPaddingTop isRequired>
-          <SingleSelectDropdown
+        <FormGroup label={t('console-app~Label')} hasNoPaddingTop isRequired>
+          <TypeaheadDropdown
             id="label-selection-dropdown"
-            placeholderText={t('Select a label')}
+            placeholderText={t('console-app~Select a label')}
             selectedKey={key}
             selectOptions={keyOptions}
             onChange={onKeyChange}
             required
-            validated={isKeyValid}
             isCreatable
           />
           <FormHelperText>
             <HelperText>
               <HelperTextItem variant={isKeyValid}>
-                {isKeyValid === 'error' && t('Required')}
+                {isKeyValid === 'error' && t('console-app~Required')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
       </GridItem>
       <GridItem lg={4} sm={4}>
-        <FormGroup label={t('Operator')} hasNoPaddingTop>
-          <SingleSelectDropdown
+        <FormGroup label={t('console-app~Operator')} hasNoPaddingTop>
+          <TypeaheadDropdown
             id="operator-selection-dropdown"
             selectedKey={operator}
             selectOptions={operatorOptions}
@@ -227,23 +214,22 @@ const ExpressionElement: React.FC<ExpressionElementProps> = ({
       </GridItem>
       {!isLabelOnlyOperator(operator) && (
         <GridItem lg={4} sm={4}>
-          <FormGroup label={t('Values')} hasNoPaddingTop isRequired>
+          <FormGroup label={t('console-app~Values')} hasNoPaddingTop isRequired>
             <LabelValueSelectDropdown
               id="values-selection-dropdown"
               placeholderText={
                 values?.length
-                  ? t('{{count}} selected', { count: values.length })
-                  : t('Select the values')
+                  ? t('console-app~{{count}} selected', { count: values.length })
+                  : t('console-app~Select the values')
               }
               selections={values}
               selectOptions={valueOptions}
               onChange={onValuesChange}
-              isCreatable
             />
             <FormHelperText>
               <HelperText>
                 <HelperTextItem variant={isValuesValid}>
-                  {isValuesValid === 'error' && t('Required')}
+                  {isValuesValid === 'error' && t('console-app~Required')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
@@ -350,7 +336,7 @@ export const LabelExpressionSelector: React.FC<LabelExpressionSelectorProps> = (
   );
 
   return (
-    <div className="pf-v5-u-mt-sm">
+    <div className="pf-v6-u-mt-sm">
       {selectedExpressions.map((expression, index) => (
         <ArrayInput
           key={`expression-${expression.key}-${expression.values.join('-')}`}
@@ -364,13 +350,13 @@ export const LabelExpressionSelector: React.FC<LabelExpressionSelectorProps> = (
         />
       ))}
       <Button
-        className="pf-v5-u-mt-md"
+        className="pf-v6-u-mt-md"
         type="button"
         variant={ButtonVariant.link}
         onClick={addExpression}
       >
         <PlusCircleIcon className="co-icon-space-r" />
-        {addExpressionString || t('Add label expression')}
+        {addExpressionString || t('console-app~Add label expression')}
       </Button>
     </div>
   );
