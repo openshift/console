@@ -1617,7 +1617,7 @@
   "Self-support": "Self-support",
   "Self-support, 60 day trial": "Self-support, 60 day trial",
   "{{count}} day remaining_one": "{{count}} day remaining",
-  "{{count}} day remaining_other": "{{count}} day remainings",
+  "{{count}} day remaining_other": "{{count}} days remaining",
   "< 1 day remaining": "< 1 day remaining",
   "Trial expired": "Trial expired",
   "API failed to return the Service Level Agreement setting for this cluster. Check again later.": "API failed to return the Service Level Agreement setting for this cluster. Check again later.",
