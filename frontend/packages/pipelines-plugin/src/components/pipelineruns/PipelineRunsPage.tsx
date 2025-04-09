@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import CatalogPageHelpText from '@console/dev-console/src/components/catalog/CatalogPageHelpText';
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -21,12 +20,10 @@ const PipelineRunsPage: React.FC = (props) => {
   ) : (
     <CreateProjectListPage title={pipelineRunLabel} badge={badge}>
       {(openProjectModal) => (
-        <CatalogPageHelpText>
-          <Trans t={t} ns="pipelines-plugin" values={{ pipelineRunLabel }}>
-            Select a Project to view the list of {{ pipelineRunLabel }}
-            <CreateAProjectButton openProjectModal={openProjectModal} />.
-          </Trans>
-        </CatalogPageHelpText>
+        <Trans t={t} ns="pipelines-plugin" values={{ pipelineRunLabel }}>
+          Select a Project to view the list of {{ pipelineRunLabel }}
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
+        </Trans>
       )}
     </CreateProjectListPage>
   );

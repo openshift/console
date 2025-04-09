@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Content, ContentVariants } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import * as _ from 'lodash';
@@ -147,13 +146,11 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
   const helpText = (
-    <Content component={ContentVariants.p} className="pf-v6-u-mt-md">
-      <Trans ns="olm">
-        Catalogs are groups of Operators you can make available on the cluster. Use{' '}
-        <Link to="/operatorhub">OperatorHub</Link> to subscribe and grant namespaces access to use
-        installed Operators.
-      </Trans>
-    </Content>
+    <Trans ns="olm">
+      Catalogs are groups of Operators you can make available on the cluster. Use{' '}
+      <Link to="/operatorhub">OperatorHub</Link> to subscribe and grant namespaces access to use
+      installed Operators.
+    </Trans>
   );
 
   const customData = React.useMemo(

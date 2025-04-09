@@ -13,7 +13,6 @@ import {
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import CatalogPageHelpText from './catalog/CatalogPageHelpText';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
@@ -53,12 +52,10 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
       <DocumentTitle>{projectLabelPlural}</DocumentTitle>
       <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
         {(openProjectModal) => (
-          <CatalogPageHelpText>
-            <Trans t={t} ns="devconsole" values={{ projectLabelPlural }}>
-              Select a Project to view the list of {{ projectLabelPlural }}
-              <CreateAProjectButton openProjectModal={openProjectModal} />.
-            </Trans>
-          </CatalogPageHelpText>
+          <Trans t={t} ns="devconsole" values={{ projectLabelPlural }}>
+            Select a Project to view the list of {{ projectLabelPlural }}
+            <CreateAProjectButton openProjectModal={openProjectModal} />.
+          </Trans>
         )}
       </CreateProjectListPage>
     </>

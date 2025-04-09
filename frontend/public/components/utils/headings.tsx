@@ -85,6 +85,16 @@ export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) 
   </>
 );
 
+const HelpTextContent: React.FC<HelpTextContentProps> = ({ children, className }) => (
+  <Content component={ContentVariants.p} className={className} data-test="help-text">
+    {children}
+  </Content>
+);
+
+const HelpPageSection: React.FC<HelpPageSectionProps> = ({ children }) => (
+  <PageSection className="pf-v6-u-pt-0">{children}</PageSection>
+);
+
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {
     kind,
@@ -105,6 +115,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       _.get(resource, ['status', 'phase'], null),
     className,
     helpText,
+    helpAlert,
     'data-test': dataTestId,
     hideFavoriteButton,
     children,
@@ -129,6 +140,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
   const isAdminPerspective = perspective === 'admin';
+  const childrenHasNodes = React.Children.toArray(children).length > 0; // children with empty nodes removed is not empty
+  const navTitleHelpClassName = classNames({ 'pf-v6-u-mt-sm': title });
   return (
     <>
       {showBreadcrumbs && (
@@ -221,21 +234,18 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
             )}
           </PrimaryHeading>
         )}
-        {helpText &&
-          !children &&
-          (React.isValidElement(helpText) ? (
-            <>{helpText}</>
-          ) : (
-            <Content
-              component={ContentVariants.p}
-              className={classNames({ 'pf-v6-u-mt-sm': title })}
-            >
-              {helpText}
-            </Content>
-          ))}
+        {helpAlert && !childrenHasNodes && <div className={navTitleHelpClassName}>{helpAlert}</div>}
+        {helpText && !childrenHasNodes && (
+          <HelpTextContent className={navTitleHelpClassName}>{helpText}</HelpTextContent>
+        )}
         {children}
       </NavTitle>
-      {helpText && children && <PageSection className="pf-v6-u-pt-0">{helpText}</PageSection>}
+      {helpAlert && childrenHasNodes && <HelpPageSection>{helpAlert}</HelpPageSection>}
+      {helpText && childrenHasNodes && (
+        <HelpPageSection>
+          <HelpTextContent>{helpText}</HelpTextContent>
+        </HelpPageSection>
+      )}
     </>
   );
 });
@@ -286,6 +296,15 @@ export type KebabOptionsCreator = (
   customData?: any,
 ) => KebabOption[];
 
+type HelpTextContentProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+type HelpPageSectionProps = {
+  children: React.ReactNode;
+};
+
 export type PageHeadingProps = {
   'data-test'?: string;
   breadcrumbs?: { name: string; path: string }[];
@@ -310,6 +329,7 @@ export type PageHeadingProps = {
   getResourceStatus?: (resource: K8sResourceKind) => string;
   className?: string;
   helpText?: React.ReactNode;
+  helpAlert?: React.ReactNode;
   hideFavoriteButton?: boolean;
   navTitleAsRow?: boolean;
 };

@@ -174,6 +174,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           badge={props.badge || getBadgeFromType(kindObj?.badge)}
           icon={props.icon}
           helpText={props.helpText}
+          helpAlert={props.helpAlert}
         >
           {props.children}
         </PageHeading>
@@ -220,6 +221,7 @@ export type DetailsPageProps = {
   children?: React.ReactNode;
   customKind?: string;
   helpText?: React.ReactNode;
+  helpAlert?: React.ReactNode;
 };
 
 DetailsPage.displayName = 'DetailsPage';
