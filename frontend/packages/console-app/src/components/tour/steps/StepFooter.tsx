@@ -18,27 +18,32 @@ const StepFooter: React.FC<StepFooterProps> = ({
   primaryButton: { name: primaryButton, onClick: primaryButtonCallback },
   secondaryButton: { name: secondaryButton, onClick: secondaryButtonCallback },
 }) => (
-  <Flex>
+  <Flex alignItems={{ default: 'alignItemsCenter' }}>
     {children && <FlexItem>{children}</FlexItem>}
-    <FlexItem align={{ default: 'alignRight' }}>
-      <Button
-        variant="secondary"
-        id="tour-step-footer-secondary"
-        data-test="tour-step-footer-secondary"
-        onClick={secondaryButtonCallback}
-      >
-        {secondaryButton}
-      </Button>
-    </FlexItem>
+    {children && <FlexItem grow={{ default: 'grow' }} />}
     <FlexItem>
-      <Button
-        variant="primary"
-        id="tour-step-footer-primary"
-        data-test="tour-step-footer-primary"
-        onClick={primaryButtonCallback}
-      >
-        {primaryButton}
-      </Button>
+      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+        <FlexItem>
+          <Button
+            variant="secondary"
+            id="tour-step-footer-secondary"
+            data-test="tour-step-footer-secondary"
+            onClick={secondaryButtonCallback}
+          >
+            {secondaryButton}
+          </Button>
+        </FlexItem>
+        <FlexItem>
+          <Button
+            variant="primary"
+            id="tour-step-footer-primary"
+            data-test="tour-step-footer-primary"
+            onClick={primaryButtonCallback}
+          >
+            {primaryButton}
+          </Button>
+        </FlexItem>
+      </Flex>
     </FlexItem>
   </Flex>
 );
