@@ -7,13 +7,13 @@ export const EndpointRow: React.FC<EndpointRowProps> = ({ endpoint }) => {
     (element, field) =>
       endpoint?.[field] ? (
         <span>
-          <span className="text-muted">{field}:</span>
+          <span className="pf-v6-u-text-color-subtle">{field}:</span>
           {endpoint[field]}
         </span>
       ) : (
         element
       ),
-    <span className="text-muted">--</span>,
+    <span className="pf-v6-u-text-color-subtle">--</span>,
   );
 
   return (
@@ -47,7 +47,7 @@ export const EndpointList: React.FC<EndpointListProps> = (props) => {
         {props.endpoints ? (
           props.endpoints.map((e) => <EndpointRow endpoint={e} key={e.port} />)
         ) : (
-          <span className="text-muted">{t('olm~No endpoints')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('olm~No endpoints')}</span>
         )}
       </div>
     </div>

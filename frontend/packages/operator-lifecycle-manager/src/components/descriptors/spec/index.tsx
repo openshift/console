@@ -89,7 +89,7 @@ const NamespaceSelector: React.FC<SpecCapabilityProps<{ matchNames: string[] }>>
       {value?.matchNames?.[0] ? (
         <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
       ) : (
-        <span className="text-muted">{t('public~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
       )}
     </DetailsItem>
   );

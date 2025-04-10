@@ -198,7 +198,7 @@ const SubscriptionStatus: React.FC<{ muted?: boolean; subscription: Subscription
 
   const subscriptionStatus = getSubscriptionStatus(subscription);
   return (
-    <span className={muted ? 'text-muted' : 'co-icon-and-text'}>
+    <span className={muted ? 'pf-v6-u-text-color-subtle' : 'co-icon-and-text'}>
       {muted ? (
         subscriptionStatus.title
       ) : (
@@ -241,7 +241,7 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
           title={obj.metadata.namespace}
           name={obj.metadata.namespace}
         />
-        <span className="text-muted">{obj.status.message}</span>
+        <span className="pf-v6-u-text-color-subtle">{obj.status.message}</span>
       </>
     );
   }
@@ -294,7 +294,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
           <dt>{t('olm~Console plugin', { count: csvPluginsCount })}</dt>
           {csvPlugins.map((pluginName) => (
             <dd key={pluginName} className="co-clusterserviceversion-details__field-description">
-              <strong className="text-muted">{pluginName}: </strong>
+              <strong className="pf-v6-u-text-color-subtle">{pluginName}: </strong>
               <Button
                 data-test="edit-console-plugin"
                 type="button"
@@ -502,7 +502,7 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 
       {/* Managed Namespaces */}
       <TableData className={managedNamespacesColumnClass}>
-        <span className="text-muted">{t('olm~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('olm~None')}</span>
       </TableData>
 
       {/* Status */}
@@ -517,7 +517,7 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 
       {/* Provided APIs */}
       <TableData className={providedAPIsColumnClass}>
-        <span className="text-muted">{t('olm~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('olm~None')}</span>
       </TableData>
 
       {/* Kebab */}
@@ -903,7 +903,7 @@ export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
           <CRDCard key={referenceForProvidedAPI(crd)} crd={crd} csv={csv} />
         ))
       ) : (
-        <span className="text-muted">
+        <span className="pf-v6-u-text-color-subtle">
           {t('olm~No Kubernetes APIs are being provided by this Operator.')}
         </span>
       )}

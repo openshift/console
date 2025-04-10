@@ -37,7 +37,7 @@ const KnEventMetaDescription: React.FC<KnEventMetaDescriptionProps> = ({ normali
             {name}
           </Title>
           {provider && (
-            <span className="co-clusterserviceversion-logo__name__provider text-muted">
+            <span className="co-clusterserviceversion-logo__name__provider pf-v6-u-text-color-subtle">
               {t('knative-plugin~Provided by {{provider}}', {
                 provider,
               })}

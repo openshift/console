@@ -18,7 +18,7 @@ const namespaceSelectorLinks = ({ spec }) => {
       </span>
     ));
   }
-  return <span className="text-muted">--</span>;
+  return <span className="pf-v6-u-text-color-subtle">--</span>;
 };
 
 const serviceSelectorLinks = ({ spec }) => {

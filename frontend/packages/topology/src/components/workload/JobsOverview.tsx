@@ -81,7 +81,7 @@ export const JobsOverview: React.FC<JobsOverviewProps> = ({
         )}
       </SidebarSectionHeading>
       {!(jobs?.length > 0) ? (
-        <span className="text-muted">{emptyMessage}</span>
+        <span className="pf-v6-u-text-color-subtle">{emptyMessage}</span>
       ) : (
         <JobsOverviewList jobs={jobs.slice(0, MAX_JOBS)} />
       )}

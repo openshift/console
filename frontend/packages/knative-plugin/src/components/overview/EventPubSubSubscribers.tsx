@@ -74,7 +74,7 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
           ))}
         </ul>
       ) : (
-        <span className="text-muted">
+        <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No Subscribers found for this resource.')}
         </span>
       )}

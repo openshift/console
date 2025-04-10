@@ -68,7 +68,7 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
               subTitle={`(${t('public~default')})`}
             >
               <div className="co-m-radio-desc">
-                <p className="text-muted">
+                <p className="pf-v6-u-text-color-subtle">
                   {t('olm~New updates will be installed as soon as they become available.')}
                 </p>
               </div>
@@ -82,7 +82,7 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
               title={t(`olm~Manual`)}
             >
               <div className="co-m-radio-desc">
-                <p className="text-muted">
+                <p className="pf-v6-u-text-color-subtle">
                   {t('olm~New updates need to be manually approved before installation begins.')}
                 </p>
               </div>

@@ -14,7 +14,7 @@ export const StatusPopupSection: React.FC<StatusPopupSectionProps> = ({
   <>
     <div className="co-status-popup__row">
       <div className="co-status-popup__text--bold">{firstColumn}</div>
-      {secondColumn && <div className="text-secondary">{secondColumn}</div>}
+      {secondColumn && <div className="pf-v6-u-text-color-subtle">{secondColumn}</div>}
     </div>
     {children}
   </>
@@ -25,7 +25,7 @@ const Status: React.FC<StatusPopupItemProps> = ({ value, icon, children }) => (
     {children}
     {(value || icon) && (
       <div className="co-status-popup__status">
-        {value && <div className="text-secondary">{value}</div>}
+        {value && <div className="pf-v6-u-text-color-subtle">{value}</div>}
         {icon && <div className="co-status-popup__icon">{icon}</div>}
       </div>
     )}

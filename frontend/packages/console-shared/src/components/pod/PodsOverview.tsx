@@ -274,7 +274,9 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
       </SidebarSectionHeading>
       {buildConfigData?.loaded && !buildConfigData?.loadError && podAlert}
       {_.isEmpty(filteredPods) ? (
-        <span className="text-muted">{loaded || !!loadError ? emptyMessage : <LoadingBox />}</span>
+        <span className="pf-v6-u-text-color-subtle">
+          {loaded || !!loadError ? emptyMessage : <LoadingBox />}
+        </span>
       ) : (
         <PodsOverviewList pods={_.take(filteredPods, podsShown)} />
       )}

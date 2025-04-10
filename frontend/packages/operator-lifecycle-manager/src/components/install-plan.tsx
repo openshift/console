@@ -142,7 +142,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
                 />
               </li>
             </ul>
-          )) || <span className="text-muted">{t('olm~None')}</span>}
+          )) || <span className="pf-v6-u-text-color-subtle">{t('olm~None')}</span>}
       </TableData>
 
       {/* Kebab */}

@@ -1032,7 +1032,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     subTitle={t('olm~(default)')}
                   >
                     <div className="co-m-radio-desc">
-                      <p className="text-muted">
+                      <p className="pf-v6-u-text-color-subtle">
                         {descFor(InstallModeType.InstallModeTypeAllNamespaces)}
                       </p>
                     </div>
@@ -1051,7 +1051,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     title={t('olm~A specific namespace on the cluster')}
                   >
                     <div className="co-m-radio-desc">
-                      <p className="text-muted">
+                      <p className="pf-v6-u-text-color-subtle">
                         {descFor(InstallModeType.InstallModeTypeOwnNamespace)}
                       </p>
                     </div>
@@ -1173,7 +1173,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             </Title>
             <div className="co-crd-card-row">
               {!providedAPIs.length ? (
-                <span className="text-muted">
+                <span className="pf-v6-u-text-color-subtle">
                   {t('olm~No Kubernetes APIs are provided by this Operator.')}
                 </span>
               ) : (

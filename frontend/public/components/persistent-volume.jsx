@@ -55,7 +55,7 @@ const PVTableRow = ({ obj }) => {
             title={obj.spec.claimRef.name}
           />
         ) : (
-          <div className="text-muted">{t('public~No claim')}</div>
+          <div className="pf-v6-u-text-color-subtle">{t('public~No claim')}</div>
         )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>

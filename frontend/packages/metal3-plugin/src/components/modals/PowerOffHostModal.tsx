@@ -150,7 +150,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
           isChecked={forceOff}
           data-checked-state={forceOff}
         />
-        <div className="text-secondary">{helpText}</div>
+        <div className="pf-v6-u-text-color-subtle">{helpText}</div>
       </StackItem>
       <StackItem>{forceOff && <PowerOffWarning />}</StackItem>
     </Stack>

@@ -131,7 +131,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
             title={obj.spec.volumeName}
           />
         ) : (
-          <div className="text-muted">{t('public~No PersistentVolume')}</div>
+          <div className="pf-v6-u-text-color-subtle">{t('public~No PersistentVolume')}</div>
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

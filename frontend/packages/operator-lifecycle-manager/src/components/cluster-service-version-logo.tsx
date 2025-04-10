@@ -40,7 +40,7 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
           )}
         </Title>
         {provider && (
-          <span className="co-clusterserviceversion-logo__name__provider text-muted">
+          <span className="co-clusterserviceversion-logo__name__provider pf-v6-u-text-color-subtle">
             {t('olm~{{version}} provided by {{provider}}', {
               version: version || '',
               provider: _.get(provider, 'name', provider),
