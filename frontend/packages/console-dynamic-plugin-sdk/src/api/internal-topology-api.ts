@@ -18,6 +18,7 @@ import {
   GetWorkloadResources,
   ContextMenuActions,
   CreateConnectorProps,
+  OdcBaseNodeConstructor,
 } from '../extensions/topology-types';
 
 export const CpuCellComponent: React.FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
@@ -73,3 +74,6 @@ export const CreateConnector: CreateConnectorProps = require('@console/topology/
 
 export const createConnectorCallback = require('@console/topology/src/components/graph-view')
   .createConnectorCallback;
+
+export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements')
+  .OdcBaseNode;
