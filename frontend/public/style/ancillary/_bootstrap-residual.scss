@@ -9,8 +9,7 @@
 
 .help-block {
   display: block; // account for any element using help-block
-  margin-top: 5px;
-  margin-bottom: 10px;
+  margin-top: var(--pf-t--global--spacer--xs);
 }
 
 :where(:not([class*='pf-v6-c-'])) {
