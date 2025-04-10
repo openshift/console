@@ -94,7 +94,7 @@ const ReleaseNotAcceptedMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
 const UpdatesAvailableMessage: React.FC<CVStatusMessageProps> = () => {
   const { t } = useTranslation();
   return (
-    <div data-test="cv-update-status-available-updates">
+    <div className="co-update-status" data-test="cv-update-status-available-updates">
       <BlueArrowCircleUpIcon /> {t('public~Available updates')}
     </div>
   );

@@ -20,9 +20,6 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
   DescriptionListGroup,
-  Card,
-  Split,
-  SplitItem,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
@@ -253,14 +250,16 @@ export const UpdateLink: React.FC<CurrentVersionProps> = ({ cv, canUpgrade }) =>
       status === ClusterUpdateStatus.Updating ||
       (status === ClusterUpdateStatus.UpToDate && hasNotRecommended)) &&
     workerMachineConfigPoolIsEditable ? (
-    <Button
-      variant="primary"
-      type="button"
-      onClick={() => clusterUpdateModal({ cv })}
-      data-test-id="cv-update-button"
-    >
-      {t('public~Select a version')}
-    </Button>
+    <div className="co-cluster-settings__details">
+      <Button
+        variant="primary"
+        type="button"
+        onClick={() => clusterUpdateModal({ cv })}
+        data-test-id="cv-update-button"
+      >
+        {t('public~Select a version')}
+      </Button>
+    </div>
   ) : null;
 };
 
@@ -934,85 +933,91 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
       <PaneBody>
         <PaneBodyGroup>
           <ClusterSettingsAlerts cv={cv} machineConfigPools={machineConfigPools} />
-          <DescriptionList className="co-detail-table">
-            <Card>
-              <DescriptionListTerm data-test="cv-current-version-header">
-                <CurrentVersionHeader cv={cv} />
-              </DescriptionListTerm>
-              <DescriptionListDescription data-test="cv-current-version">
-                <CurrentVersion cv={cv} />
-              </DescriptionListDescription>
-            </Card>
-            <Card className="co-cluster-settings__updates-card">
-              <Split hasGutter isWrappable className="co-cluster-settings__updates-card-split">
-                <SplitItem>
+          <div className="co-cluster-settings">
+            <div className="co-cluster-settings__row">
+              <div className="co-cluster-settings__section co-cluster-settings__section--current">
+                <DescriptionList className="co-cluster-settings__details">
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('public~Update status')}</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      <UpdateStatus cv={cv} />
+                    <DescriptionListTerm data-test="cv-current-version-header">
+                      <CurrentVersionHeader cv={cv} />
+                    </DescriptionListTerm>
+                    <DescriptionListDescription data-test="cv-current-version">
+                      <CurrentVersion cv={cv} />
                     </DescriptionListDescription>
                   </DescriptionListGroup>
-                </SplitItem>
-                <SplitItem isFilled>
-                  <DescriptionListGroup>
-                    <ChannelHeader />
-                    <DescriptionListDescription>
-                      <CurrentChannel cv={cv} canUpgrade={canUpgrade} />
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                </SplitItem>
-                <SplitItem>
-                  <UpdateLink cv={cv} canUpgrade={canUpgrade} />
-                </SplitItem>
-              </Split>
-              {clusterIsUpToDateOrUpdateAvailable(status) && (
-                <>
-                  {!hasAvailableUpdates(cv) && hasNotRecommendedUpdates(cv) && (
-                    <Alert
-                      className="pf-v6-u-my-sm"
-                      isInline
-                      isPlain
-                      title={t(
-                        'public~Click "Select a version" to view versions with known issues.',
-                      )}
-                      variant="info"
-                      data-test="cv-not-recommended-alert"
-                    />
-                  )}
-                  <UpdatesGraph cv={cv} />
-                  {workerMachineConfigPool && (
-                    <UpdatesProgress>
-                      <NodesUpdatesGroup
-                        desiredVersion={desiredVersion}
-                        divided
-                        hideIfComplete
-                        machineConfigPool={workerMachineConfigPool}
-                        name={NodeTypeNames.Worker}
-                        updateStartedTime={updateStartedTime}
+                </DescriptionList>
+              </div>
+              <div className="co-cluster-settings__section">
+                <div className="co-cluster-settings__row">
+                  <DescriptionList className="co-cluster-settings__details co-cluster-settings__details--status">
+                    <DescriptionListGroup>
+                      <DescriptionListTerm>{t('public~Update status')}</DescriptionListTerm>
+                      <DescriptionListDescription>
+                        <UpdateStatus cv={cv} />
+                      </DescriptionListDescription>
+                    </DescriptionListGroup>
+                  </DescriptionList>
+                  <div className="co-cluster-settings__row">
+                    <DescriptionList className="co-cluster-settings__details">
+                      <DescriptionListGroup>
+                        <ChannelHeader />
+                        <DescriptionListDescription>
+                          <CurrentChannel cv={cv} canUpgrade={canUpgrade} />
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                    </DescriptionList>
+                    <UpdateLink cv={cv} canUpgrade={canUpgrade} />
+                  </div>
+                </div>
+                {clusterIsUpToDateOrUpdateAvailable(status) && (
+                  <>
+                    {!hasAvailableUpdates(cv) && hasNotRecommendedUpdates(cv) && (
+                      <Alert
+                        className="pf-v6-u-my-sm"
+                        isInline
+                        isPlain
+                        title={t(
+                          'public~Click "Select a version" to view versions with known issues.',
+                        )}
+                        variant="info"
+                        data-test="cv-not-recommended-alert"
                       />
-                      {machineConfigPools.length > 2 && (
-                        <OtherNodes
+                    )}
+                    <UpdatesGraph cv={cv} />
+                    {workerMachineConfigPool && (
+                      <UpdatesProgress>
+                        <NodesUpdatesGroup
                           desiredVersion={desiredVersion}
+                          divided
                           hideIfComplete
-                          machineConfigPools={machineConfigPools}
+                          machineConfigPool={workerMachineConfigPool}
+                          name={NodeTypeNames.Worker}
                           updateStartedTime={updateStartedTime}
                         />
-                      )}
-                    </UpdatesProgress>
-                  )}
-                </>
-              )}
-              {(status === ClusterUpdateStatus.UpdatingAndFailing ||
-                status === ClusterUpdateStatus.Updating) && (
-                <UpdateInProgress
-                  desiredVersion={desiredVersion}
-                  machineConfigPools={machineConfigPools}
-                  updateStartedTime={updateStartedTime}
-                  workerMachineConfigPool={workerMachineConfigPool}
-                />
-              )}
-            </Card>
-          </DescriptionList>
+                        {machineConfigPools.length > 2 && (
+                          <OtherNodes
+                            desiredVersion={desiredVersion}
+                            hideIfComplete
+                            machineConfigPools={machineConfigPools}
+                            updateStartedTime={updateStartedTime}
+                          />
+                        )}
+                      </UpdatesProgress>
+                    )}
+                  </>
+                )}
+                {(status === ClusterUpdateStatus.UpdatingAndFailing ||
+                  status === ClusterUpdateStatus.Updating) && (
+                  <UpdateInProgress
+                    desiredVersion={desiredVersion}
+                    machineConfigPools={machineConfigPools}
+                    updateStartedTime={updateStartedTime}
+                    workerMachineConfigPool={workerMachineConfigPool}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </PaneBodyGroup>
         <DescriptionList>
           {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
