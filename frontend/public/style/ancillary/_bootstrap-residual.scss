@@ -16,8 +16,8 @@
   @at-root label#{&} {
     display: inline-block;
     max-width: 100%;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: var(--pf-t--global--spacer--xs);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
   }
 }
 
