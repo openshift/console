@@ -143,44 +143,44 @@
     semver "^7.3.7"
     yup "^0.32.11"
 
-"@patternfly/react-core@^6.2.0-prerelease.34", "@patternfly/react-core@^6.2.0-prerelease.36":
-  version "6.2.0-prerelease.36"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-6.2.0-prerelease.36.tgz#becf352eb1a11b3fcf01a928ba453cab174c5463"
-  integrity sha512-HLCZEgTMsDzX/r1INbKNo8EhNyyIpv0nvvGapJdG8anTWpPRqaCqVWBbuw7y7ZHo0lZHrx6i1FvmBGhPSKOJCA==
+"@patternfly/react-core@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-6.2.0.tgz#8cd2e5b3716352ab21859f3aebeeafd42f72035e"
+  integrity sha512-yh5de7Tv1ft8c4+xHi5wr49yk4E/FgOXsxj3bl2VjdieTxXmZEmeWcqeYFXoUdnMSqCay4Mt5k6gyRYgO0y9oQ==
   dependencies:
-    "@patternfly/react-icons" "^6.2.0-prerelease.13"
-    "@patternfly/react-styles" "^6.2.0-prerelease.12"
-    "@patternfly/react-tokens" "^6.2.0-prerelease.12"
+    "@patternfly/react-icons" "^6.2.0"
+    "@patternfly/react-styles" "^6.2.0"
+    "@patternfly/react-tokens" "^6.2.0"
     focus-trap "7.6.4"
     react-dropzone "^14.3.5"
     tslib "^2.8.1"
 
-"@patternfly/react-icons@^6.2.0-prerelease.12", "@patternfly/react-icons@^6.2.0-prerelease.13":
-  version "6.2.0-prerelease.13"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-6.2.0-prerelease.13.tgz#1ca247fb1b516ce7d1cb7ef5f5a2c7ba403a5b14"
-  integrity sha512-4gs4Bx2MvPWc8TVQPR++hdBLolSPYfaagVQK5PsJo+kCXee8MXIyMjMIxsgsBgCl67haBwvF080WXMlxAe7AJQ==
+"@patternfly/react-icons@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-6.2.0.tgz#a140b893b8fa945c891fbf4bd797d992be8ec5f6"
+  integrity sha512-moGLd1qM80+yjVVVEl+aNHQn7K5ANMUgyQZ4ECxnA/vjPlWmNZSJ1imsaCxYrywp9zzO0yZ5uN5wO/Z2hdz3MA==
 
-"@patternfly/react-styles@^6.2.0-prerelease.11", "@patternfly/react-styles@^6.2.0-prerelease.12":
-  version "6.2.0-prerelease.12"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-6.2.0-prerelease.12.tgz#de098763ef67ca33c167b16ca9f29fe93e279165"
-  integrity sha512-C9d6q7idyUQqMR6Krf0FOQm/m6fphGcEaTBXLMBJrW/P4ch8OhgyX8UJsdHA4KUQB2YIDkx6KYjXV8dC2uXaBw==
+"@patternfly/react-styles@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-6.2.0.tgz#0a1dec5bd81d74158cc33b6d1f0eedeb1a2665a8"
+  integrity sha512-Cv2flqlc8GEuzshjQrLj1qfYAVx9IDOudi46yfiOIvG7GUPdDCH+Ib4XGC/oZry7qj1Dwr78BJ6QOinM1cSiog==
 
-"@patternfly/react-table@^6.2.0-prerelease.35":
-  version "6.2.0-prerelease.35"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-6.2.0-prerelease.35.tgz#fe7e1e9eec89b97500e0225b63fc2f13e129bc17"
-  integrity sha512-i8iIsgMXDIiqVQ9CuBk0dB9jUnU5VTxuMXlbwJzqH3MhfvjxMvahfpEHSaTL8Nv3oq/k9ULhZbJstXbewrRMag==
+"@patternfly/react-table@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-6.2.0.tgz#23396b0539a35f75870455b709c86ef580443b0f"
+  integrity sha512-6FwyzvaajgN5x/qrpPWax+GNyRllAd1dHhrgpZqZbeWyoywEifr1K2dxYmYNzMKOyYj9jEK0NnCWWIzFvaVfDg==
   dependencies:
-    "@patternfly/react-core" "^6.2.0-prerelease.34"
-    "@patternfly/react-icons" "^6.2.0-prerelease.12"
-    "@patternfly/react-styles" "^6.2.0-prerelease.11"
-    "@patternfly/react-tokens" "^6.2.0-prerelease.11"
+    "@patternfly/react-core" "^6.2.0"
+    "@patternfly/react-icons" "^6.2.0"
+    "@patternfly/react-styles" "^6.2.0"
+    "@patternfly/react-tokens" "^6.2.0"
     lodash "^4.17.21"
     tslib "^2.8.1"
 
-"@patternfly/react-tokens@^6.2.0-prerelease.11", "@patternfly/react-tokens@^6.2.0-prerelease.12":
-  version "6.2.0-prerelease.12"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-6.2.0-prerelease.12.tgz#6e1583d2d2bac6cd2e4d487b37d10a670a4d2aa3"
-  integrity sha512-iozWAp9gtyo/p/0Avhc7luibVmF956J/8zMx6hnLrGkFgNHEcjlhb1kPy8/6owGSepGhGnJvOzBC/mgiZbemcA==
+"@patternfly/react-tokens@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-6.2.0.tgz#7535256d934a27ba6ba4a1f80588e244811e953b"
+  integrity sha512-KyzbsQYXTCxTmwkLlN4GdmTCNlOKnPUpY389loaC4/B0wHNq8Vw4OMIsAPVi4RSSvTaSxitlPAwt3xBTjNIzFA==
 
 "@remix-run/router@1.6.2":
   version "1.6.2"
