@@ -115,7 +115,7 @@ const InputField: React.FC<InputFieldProps> = ({
       <fieldset>
         <label className="co-required">{label}</label>
         <FieldLevelHelp>{helpText}</FieldLevelHelp>
-        <div className="co-toolbar__item">
+        <div>
           <TextInput
             autoFocus
             placeholder={placeholder}

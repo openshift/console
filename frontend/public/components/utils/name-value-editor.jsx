@@ -138,7 +138,7 @@ const NameValueEditor_ = withDragDropContext(
           <div className="row">
             <div className="col-xs-12">
               {readOnly ? null : (
-                <div className="co-toolbar__group co-toolbar__group--left">
+                <div>
                   <Button
                     icon={
                       <PlusCircleIcon

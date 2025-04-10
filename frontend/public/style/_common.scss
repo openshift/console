@@ -31,16 +31,6 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
   margin-top: var(--pf-t--global--spacer--lg);
 }
 
-dl.co-inline {
-  dd {
-    margin-bottom: 1em;
-  }
-  dt {
-    float: left;
-    margin-right: 0.4em;
-  }
-}
-
 .co-m-pane__body {
   gap: 0;
   &--section-heading {
@@ -53,58 +43,6 @@ dl.co-inline {
 
 .co-m-pane__createLink--no-title {
   margin-bottom: $pf-v6-global-gutter-y;
-}
-
-.co-m-pane__filter-bar {
-  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-x 0;
-}
-
-.co-m-pane__help-text {
-  margin-top: calc(#{$pf-v6-global-gutter-y} * -0.5);
-  padding: 0 $pf-v6-global-gutter-x $pf-v6-global-gutter-y;
-}
-
-.co-button-help-icon {
-  padding: 0 5px; // override default left and right padding to bring help icon closer to text
-}
-
-.co-m-pane__filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  .co-m-primary-action,
-  .pf-v6-c-form-control {
-    margin-bottom: 10px;
-  }
-}
-
-.co-m-pane__filter-bar-group {
-  display: flex;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
-.co-m-pane__filter-bar-group--filter {
-  @media (min-width: $screen-xs-min) {
-    flex: 1 0 auto;
-    justify-content: flex-end;
-  }
-}
-
-// Use to left align content filters that aren't using .pf-v6-c-toolbar
-.co-m-pane__filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: $pf-v6-global-gutter-y;
-}
-
-.co-m-pane__filter-row-action {
-  padding-top: $pf-v6-global-gutter-y;
-  @media (min-width: $screen-xs-min) {
-    padding-top: 0;
-  }
 }
 
 .co-m-pane__heading {
@@ -144,29 +82,18 @@ dl.co-inline {
 }
 
 .cos-error-title {
-  color: #ee0000;
+  color: var(--pf-t--global--color--status--danger--default);
 }
 
 .co-section-heading {
   display: flex;
   justify-content: space-between;
-  margin: 0 0 20px 0;
-}
-
-.co-switch-label {
-  margin-bottom: 0;
-
-  // TODO: remove when $font-size-base goes away or to 16px
-  // and when override `label` font-weight style from _bootstrap-residual.scss is removed
-  .pf-v6-c-switch__label {
-    font-size: $font-size-base;
-    font-weight: var(--pf-t--global--font--weight--body--default);
-  }
+  margin: 0 0 var(--pf-t--global--spacer--md) 0;
 }
 
 .co-table-container {
+  margin-bottom: var(----pf-t--global--spacer--lg);
   overflow: auto;
-  margin-bottom: 30px;
 }
 
 .co-m-pane__details {
@@ -181,21 +108,13 @@ dl.co-inline {
   }
 }
 
-.co-m-pane__dropdown {
-  margin-bottom: 20px;
-}
-
 .co-m-pane__explanation {
   color: var(--pf-t--global--text--color--subtle);
-  margin-bottom: 30px;
+  margin-bottom: var(--pf-t--global--spacer--lg);
 }
 
 .co-m-pane__explanation--alt {
-  margin-bottom: 20px;
-}
-
-.co-help-text {
-  color: var(--pf-t--global--text--color--subtle);
+  margin-bottom: var(--pf-t--global--spacer--md);
 }
 
 .co-m-pane__explanation code {
@@ -226,14 +145,8 @@ dl.co-inline {
 }
 
 .co-error {
-  color: #ee0000;
+  color: var(--pf-t--global--color--status--danger--default);
   white-space: nowrap;
-}
-
-.error-message {
-  color: var(--pf-t--color--white);
-  padding: 2px 12px;
-  background-color: #d64456;
 }
 
 .co-break-word {
@@ -269,7 +182,6 @@ dl.co-inline {
     padding-right: $co-external-link-padding-right * 2; // extra padding for external link icon
   }
 }
-// Enable break word within co-m-table-grid
 .co-external-link--block {
   display: block;
 }
@@ -313,67 +225,7 @@ dl.co-inline {
 }
 
 .co-sidebar-dismiss {
-  padding: 0 5px;
-}
-
-.co-toolbar {
-  align-items: stretch;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.co-toolbar__item {
-  max-width: 100%;
-  padding: 5px 0;
-  .co-toolbar__item-dropdown {
-    max-width: 100%;
-  }
-}
-
-.co-toolbar__group {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-width: 0;
-
-  @media (max-width: $screen-xs-max) {
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-}
-
-.co-toolbar__group--left {
-  justify-content: flex-start;
-  .co-toolbar__item {
-    padding-right: 15px;
-  }
-  @media (max-width: $screen-xs-max) {
-    align-items: flex-start;
-  }
-}
-
-.co-toolbar__group--alongside-kebab {
-  flex: 1 1 0;
-  flex-direction: row;
-}
-
-.co-toolbar__group--kebab {
-  justify-content: flex-start;
-}
-
-.co-toolbar__group--right {
-  justify-content: flex-end;
-  @media (min-width: $screen-xs-min) {
-    .co-toolbar__item {
-      padding-left: 15px;
-    }
-  }
-  @media (max-width: $screen-xs-max) {
-    align-items: flex-end;
-  }
+  padding: 0 $pf-v6-global-gutter-x;
 }
 
 .co-legend {
@@ -412,7 +264,7 @@ dl.co-inline {
 }
 
 .co-m-form-row {
-  margin-bottom: 20px;
+  margin-bottom: var(--pf-t--global--spacer--md);
 }
 
 .co-m-form-row:last-child {
@@ -427,46 +279,8 @@ dl.co-inline {
   padding: 0 0 $pf-v6-global-gutter-y 0;
 }
 
-.co-m-table-grid {
-  &__body {
-    min-height: 50px;
-    position: relative;
-    width: 100%;
-    .row {
-      padding: 10px 20px 10px 0; // right padding creates space for .co-resource-kebab
-    }
-  }
-  &__head {
-    font-weight: var(--pf-t--global--font--weight--body--bold);
-    padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
-    a {
-      cursor: pointer;
-    }
-  }
-  &--bordered {
-    .co-m-table-grid__body .row,
-    .co-m-table-grid__head {
-      border-bottom: var(--pf-t--global--border--width--divider--default) solid
-        var(--pf-t--global--border--color--default);
-    }
-  }
-  .co-m-table-grid {
-    padding-left: 20px;
-  }
-  .row {
-    line-height: normal;
-    margin: 0;
-    position: relative;
-    vertical-align: middle;
-  }
-}
-
 .co-m-loader {
   min-width: 18px;
-}
-
-.no-margin {
-  margin: 0 !important;
 }
 
 .co-overview-card__actions {
@@ -474,8 +288,8 @@ dl.co-inline {
 }
 
 .co-m-timeout-error {
-  margin-bottom: 30px;
-  margin-top: 20px;
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  margin-top: var(--pf-t--global--spacer--md);
   text-align: center;
 }
 

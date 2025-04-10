@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import classNames from 'classnames';
@@ -537,17 +537,6 @@ export const ContainerLastState: React.FC<ContainerLastStateProps> = ({ containe
   return <>-</>;
 };
 
-const podContainerClassNames = [
-  'col-lg-2 col-md-3 col-sm-4 col-xs-5',
-  'col-lg-2 col-md-3 col-sm-5 col-xs-7 ',
-  'col-lg-2 col-md-1 col-sm-3 hidden-xs',
-  'col-lg-2 hidden-md hidden-sm hidden-xs',
-  'col-lg-1 col-md-2 hidden-sm hidden-xs',
-  'col-lg-1 col-md-2 hidden-sm hidden-xs',
-  'col-lg-1 hidden-md hidden-sm hidden-xs',
-  'col-lg-1 hidden-md hidden-sm hidden-xs',
-];
-
 export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
@@ -555,28 +544,28 @@ export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) =>
   const finishedAt = _.get(cstate, 'finishedAt');
 
   return (
-    <div className="row">
-      <div className={podContainerClassNames[0]}>
+    <Tr>
+      <Td width={20}>
         <ContainerLink pod={pod} name={container.name} />
-      </div>
-      <div className={`${podContainerClassNames[1]} co-truncate co-nowrap co-select-to-copy`}>
+      </Td>
+      <Td className="co-select-to-copy" modifier="truncate">
         {container.image || '-'}
-      </div>
-      <div className={podContainerClassNames[2]}>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnMd']}>
         <Status status={cstate.label} />
-      </div>
-      <div className={podContainerClassNames[3]}>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnXl']}>
         <ContainerLastState containerLastState={cstatus?.lastState} />
-      </div>
-      <div className={podContainerClassNames[4]}>{getContainerRestartCount(cstatus)}</div>
-      <div className={podContainerClassNames[5]}>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnLg']}>{getContainerRestartCount(cstatus)}</Td>
+      <Td width={10} visibility={['hidden', 'visibleOnLg']}>
         <Timestamp timestamp={startedAt} />
-      </div>
-      <div className={podContainerClassNames[6]}>
+      </Td>
+      <Td width={10} visibility={['hidden', 'visibleOnXl']}>
         <Timestamp timestamp={finishedAt} />
-      </div>
-      <div className={podContainerClassNames[7]}>{_.get(cstate, 'exitCode', '-')}</div>
-    </div>
+      </Td>
+      <Td visibility={['hidden', 'visibleOnXl']}>{_.get(cstate, 'exitCode', '-')}</Td>
+    </Tr>
   );
 };
 ContainerRow.displayName = 'ContainerRow';
@@ -590,23 +579,29 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({
   return (
     <>
       <SectionHeading text={heading} />
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className={podContainerClassNames[0]}>{t('public~Name')}</div>
-          <div className={podContainerClassNames[1]}>{t('public~Image')}</div>
-          <div className={podContainerClassNames[2]}>{t('public~State')}</div>
-          <div className={podContainerClassNames[3]}>{t('public~Last State')}</div>
-          <div className={podContainerClassNames[4]}>{t('public~Restarts')}</div>
-          <div className={podContainerClassNames[5]}>{t('public~Started')}</div>
-          <div className={podContainerClassNames[6]}>{t('public~Finished')}</div>
-          <div className={podContainerClassNames[7]}>{t('public~Exit code')}</div>
-        </div>
-        <div className="co-m-table-grid__body">
+      <Table gridBreakPoint="">
+        <Thead>
+          <Tr>
+            <Th width={20}>{t('public~Name')}</Th>
+            <Th>{t('public~Image')}</Th>
+            <Th visibility={['hidden', 'visibleOnMd']}>{t('public~State')}</Th>
+            <Th visibility={['hidden', 'visibleOnXl']}>{t('public~Last State')}</Th>
+            <Th visibility={['hidden', 'visibleOnLg']}>{t('public~Restarts')}</Th>
+            <Th width={10} visibility={['hidden', 'visibleOnLg']}>
+              {t('public~Started')}
+            </Th>
+            <Th width={10} visibility={['hidden', 'visibleOnXl']}>
+              {t('public~Finished')}
+            </Th>
+            <Th visibility={['hidden', 'visibleOnXl']}>{t('public~Exit code')}</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {containers.map((c: any, i: number) => (
             <ContainerRow key={i} pod={pod} container={c} />
           ))}
-        </div>
-      </div>
+        </Tbody>
+      </Table>
     </>
   );
 };

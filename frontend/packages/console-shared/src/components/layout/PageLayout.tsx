@@ -14,7 +14,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, title, hint }) => (
         {title}
       </Content>
       {hint && (
-        <Content component={ContentVariants.p} className="ocs-page-layout__hint co-help-text">
+        <Content component={ContentVariants.p} className="ocs-page-layout__hint">
           {hint}
         </Content>
       )}

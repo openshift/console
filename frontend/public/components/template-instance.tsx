@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
 import { Status } from '@console/shared';
@@ -162,32 +162,34 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Objects')} />
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-6">{t('public~Name')}</div>
-            <div className="col-sm-6">{t('public~Namespace')}</div>
-          </div>
-          <div className="co-m-table-grid__body">
-            {_.isEmpty(objects) ? (
-              <EmptyBox label={t('public~Objects')} />
-            ) : (
-              _.map(objects, ({ ref }, i) => (
-                <div className="row co-resource-list__item" key={i}>
-                  <div className="col-sm-6">
+        {_.isEmpty(objects) ? (
+          <EmptyBox label={t('public~Objects')} />
+        ) : (
+          <PfTable gridBreakPoint="">
+            <Thead>
+              <Tr>
+                <Th>{t('public~Name')}</Th>
+                <Th>{t('public~Namespace')}</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {_.map(objects, ({ ref }, i) => (
+                <Tr key={i}>
+                  <Td>
                     <ResourceLink
                       kind={referenceFor(ref)}
                       name={ref.name}
                       namespace={ref.namespace}
                     />
-                  </div>
-                  <div className="col-sm-6">
+                  </Td>
+                  <Td>
                     {ref.namespace ? <ResourceLink kind="Namespace" name={ref.namespace} /> : '-'}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </PfTable>
+        )}
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />

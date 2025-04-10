@@ -228,9 +228,7 @@ export const AddLDAPPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Attributes')}
           </Title>
-          <p className="co-help-text">
-            {t('public~Attributes map LDAP attributes to identities.')}
-          </p>
+          <p>{t('public~Attributes map LDAP attributes to identities.')}</p>
           <ListInput
             label={t('public~ID')}
             required

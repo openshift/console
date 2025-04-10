@@ -81,9 +81,7 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
 
   return loaded ? (
     <>
-      {description && (
-        <div className="co-help-text co-user-preference-field--description">{description}</div>
-      )}
+      {description && <div className="co-user-preference-field--description">{description}</div>}
       <Select
         selected={selected}
         onOpenChange={(open) => setIsOpen(open)}

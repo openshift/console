@@ -271,7 +271,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
   if (canCreate) {
     if (createProps.to) {
       createLink = (
-        <Link className="co-m-primary-action" to={createProps.to}>
+        <Link to={createProps.to}>
           <Button variant="primary" id="yaml-create" data-test="item-create">
             {createButtonText}
           </Button>
@@ -279,7 +279,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       );
     } else if (createProps.items) {
       createLink = (
-        <div className="co-m-primary-action">
+        <div>
           <Dropdown
             buttonClassName="pf-m-primary"
             id="item-create"
@@ -294,7 +294,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       );
     } else {
       createLink = (
-        <div className="co-m-primary-action">
+        <div>
           <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
             {createButtonText}
           </Button>
@@ -319,7 +319,8 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       <PageHeading
         title={title}
         badge={title ? badge : null}
-        className={classNames({ 'co-m-nav-title--row': createLink })}
+        navTitleAsRow={!!createLink}
+        helpText={helpText}
       >
         {createLink && (
           <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
@@ -328,7 +329,6 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
         )}
         {!title && badge && <div>{badge}</div>}
       </PageHeading>
-      {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
       <PaneBody>
         {inject(props.children, {
           resources,

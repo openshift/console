@@ -606,7 +606,7 @@ export const Kebab: KebabComponent = (props) => {
   );
 };
 Kebab.factory = kebabFactory;
-Kebab.columnClass = 'dropdown-kebab-pf pf-v6-c-table__action';
+Kebab.columnClass = 'pf-v6-c-table__action';
 Kebab.getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
 export type KebabOption = {

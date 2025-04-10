@@ -413,7 +413,6 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       selected={selectedRowFilters}
                       maxMenuHeight="60vh"
                       isScrollable
-                      className="co-toolbar__selector"
                     >
                       <SelectList data-test="filter-dropdown-list">{dropdownItems}</SelectList>
                     </Select>
