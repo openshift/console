@@ -31,7 +31,7 @@
 
 .list-group {
   // No need to set list-style: none; since .list-group-item is block level
-  margin-bottom: 20px;
+  margin-bottom: var(--pf-t--global--spacer--lg);
   padding-left: 0; // reset padding because ul and ol
 }
 
@@ -42,7 +42,7 @@
 .list-group-item {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
   background-color: var(--pf-t--global--background--color--primary--default);
