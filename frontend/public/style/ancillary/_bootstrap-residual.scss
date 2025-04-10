@@ -1,6 +1,6 @@
 // Residual css rules within codebase that pertain to Bootstrap
 .form-group {
-  margin-bottom: $form-group-margin-bottom;
+  margin-bottom: var(--pf-t--global--spacer--md);
 }
 
 .has-feedback {

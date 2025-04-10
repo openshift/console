@@ -1004,7 +1004,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   />
                 </fieldset>
               </div>
-              <div className="form-group form-group--doubled-bottom-margin">
+              <div className="form-group pf-v6-u-mb-xl">
                 <fieldset>
                   <label className="co-required">{t('olm~Version')}</label>
                   <OperatorVersionSelect
@@ -1058,7 +1058,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   </RadioInput>
                 </fieldset>
               </div>
-              <div className="form-group form-group--doubled-bottom-margin">
+              <div className="form-group pf-v6-u-mb-xl">
                 <label className="co-required" htmlFor="dropdown-selectbox">
                   {t('olm~Installed Namespace')}
                 </label>
