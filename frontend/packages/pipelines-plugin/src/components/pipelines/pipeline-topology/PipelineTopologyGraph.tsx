@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ComponentFactory, Model } from '@patternfly/react-topology';
-import * as cx from 'classnames';
+import classNames from 'classnames';
 import PipelineVisualizationSurface from './PipelineVisualizationSurface';
 
 import './PipelineTopologyGraph.scss';
@@ -20,7 +20,7 @@ const PipelineTopologyGraph: React.FC<PipelineTopologyGraphProps> = ({
 }) => {
   return (
     <div
-      className={cx('odc-pipeline-topology-graph', { builder })}
+      className={classNames('odc-pipeline-topology-graph', { builder })}
       data-test={props['data-test'] || 'pipeline-topology-graph'}
     >
       <PipelineVisualizationSurface
