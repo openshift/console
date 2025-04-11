@@ -78,8 +78,8 @@ export const mapExtensionToRoutes = (data: {
 
   return routePaths.map((currentPath) => (
     <Route
-      key={`${uid}/${path}`}
-      path={`${path}${exact ? '' : '/*'}`}
+      key={`${uid}/${currentPath}`}
+      path={`${currentPath}${exact ? '' : '/*'}`}
       element={getElement(currentPath)}
     />
   ));
