@@ -1,8 +1,8 @@
 // TODO file should be renamed replica-set.jsx to match convention
 
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

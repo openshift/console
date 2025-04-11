@@ -9,6 +9,6 @@
   width: 37px;
 
   &.co-toggle-play--active {
-    border-color: var(--pf-t--color--green--40);
+    border-color: var(--pf-t--global--border--color--status--success--default);
   }
 }

@@ -1,4 +1,5 @@
 import { checkErrors, testName } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 import { oauth } from '../../views/oauth';
 
 describe('OAuth', () => {
@@ -6,6 +7,7 @@ describe('OAuth', () => {
 
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.exec('oc get oauths cluster -o json').then((result) => {
       originalOAuthConfig = JSON.parse(result.stdout);
     });

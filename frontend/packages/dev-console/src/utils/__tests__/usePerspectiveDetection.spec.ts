@@ -3,7 +3,7 @@ import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { usePerspectiveDetection } from '../perspective';
 
 jest.mock('react-redux', () => ({
-  ...(jest as any).requireActual('react-redux'),
+  ...jest.requireActual('react-redux'),
   useSelector: jest.fn(),
 }));
 

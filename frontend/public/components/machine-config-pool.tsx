@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';

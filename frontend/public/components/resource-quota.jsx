@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { useParams } from 'react-router-dom';
+import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';
 import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-empty-icon';

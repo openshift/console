@@ -249,8 +249,8 @@ const App = (props) => {
               />
             }
             skipToContent={
-              <SkipToContent href={`${location.pathname}${location.search}#content`}>
-                Skip to Content
+              <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
+                {t('public~Skip to content')}
               </SkipToContent>
             }
             notificationDrawer={
@@ -264,12 +264,12 @@ const App = (props) => {
           >
             <AppContents />
           </Page>
-          {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
-            <Lightspeed />
-          )}
           <CloudShell />
           <GuidedTour />
         </Flex>
+        {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
+          <Lightspeed />
+        )}
         <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />

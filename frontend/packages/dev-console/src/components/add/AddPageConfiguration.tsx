@@ -21,7 +21,7 @@ import {
   SaveStatusProps,
 } from '@console/shared/src/components/cluster-configuration';
 
-type DeveloperCatalogAddPageConfig = K8sResourceKind & {
+type SoftwareCatalogAddPageConfig = K8sResourceKind & {
   spec: {
     customization?: {
       addPage?: {
@@ -64,7 +64,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
 
   // Current configuration
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    DeveloperCatalogAddPageConfig
+    SoftwareCatalogAddPageConfig
   >();
   const [disabled, setDisabled] = React.useState<string[]>();
   React.useEffect(() => {
@@ -120,7 +120,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
     });
     setSaveStatus({ status: 'in-progress' });
 
-    const patch: DeveloperCatalogAddPageConfig = {
+    const patch: SoftwareCatalogAddPageConfig = {
       spec: {
         customization: {
           addPage: {

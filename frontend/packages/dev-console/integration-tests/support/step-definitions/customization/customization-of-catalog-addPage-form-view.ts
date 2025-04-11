@@ -44,8 +44,8 @@ When('user clicks on Developer tab', () => {
 });
 
 When('user disables all the items in Software Catalog', () => {
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.removeAllAction)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.removeAllAction)
     .scrollIntoView()
     .then(($el) => {
       if ($el.is(':enabled')) {
@@ -53,49 +53,49 @@ When('user disables all the items in Software Catalog', () => {
       }
     });
 
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.addAllAction)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.addAllAction)
     .scrollIntoView()
     .click();
 });
 
 When('user disables {string} the item in Software Catalog', (actionName: string) => {
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.removeAllAction)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.removeAllAction)
     .click();
 
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.availableSearchInput)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.availableSearchInput)
     .type(actionName);
 
-  cy.byTestID(customizationPO.developerCatalog.formSection)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
     .find(customizationPO.role.option)
     .contains(actionName)
     .scrollIntoView()
     .click();
 
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.addSelectedAction)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.addSelectedAction)
     .scrollIntoView()
     .click();
 });
 
 Given('user enabled {string} and disables everything', (actionName: string) => {
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.addAllAction)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.addAllAction)
     .click();
 
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.choosenSearchInput)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.choosenSearchInput)
     .type(actionName);
 
-  cy.byTestID(customizationPO.developerCatalog.formSection)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
     .find(customizationPO.role.option)
     .contains(actionName)
     .click();
 
-  cy.byTestID(customizationPO.developerCatalog.formSection)
-    .find(customizationPO.developerCatalog.removeSelectedAction)
+  cy.byTestID(customizationPO.softwareCatalog.formSection)
+    .find(customizationPO.softwareCatalog.removeSelectedAction)
     .click();
 });
 

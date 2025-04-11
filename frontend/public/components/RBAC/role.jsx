@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom';
 import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';

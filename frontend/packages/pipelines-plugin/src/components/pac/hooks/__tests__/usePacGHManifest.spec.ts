@@ -7,7 +7,7 @@ import { usePacGHManifest } from '../usePacGHManifest';
 const k8sListMock = k8sListResourceItems as jest.Mock;
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => {
-  const originalModule = (jest as any).requireActual('@console/dynamic-plugin-sdk/src/utils/k8s');
+  const originalModule = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s');
   return {
     ...originalModule,
     k8sListResourceItems: jest.fn(),

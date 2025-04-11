@@ -11,7 +11,7 @@ import {
 import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { sortable, wrappable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams, useLocation } from 'react-router-dom';
@@ -338,14 +338,11 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
     verb: 'patch',
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
-  const aPluginIsDisabled =
-    !consoleOperatorConfig?.spec?.plugins?.length ||
-    csvPlugins.some((plugin) => !isPluginEnabled(consoleOperatorConfig, plugin));
 
   return (
     consoleOperatorConfig &&
     canPatchConsoleOperatorConfig &&
-    aPluginIsDisabled && (
+    csvPlugins.length > 0 && (
       <Popover
         headerContent={<div>{t('olm~Console plugin available')}</div>}
         bodyContent={

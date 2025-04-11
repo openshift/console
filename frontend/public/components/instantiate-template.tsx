@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import {
   ActionGroup,
   Button,

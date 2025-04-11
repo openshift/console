@@ -8,6 +8,7 @@ import { nav } from '../../views/nav';
 describe('Visiting other routes', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
   });
 
   afterEach(() => {
@@ -129,6 +130,7 @@ describe('Visiting other routes', () => {
 describe('Test perspective query parameters', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
   });
 
   beforeEach(() => {

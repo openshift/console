@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActionList, ActionListItem, Button } from '@patternfly/react-core';
+import { ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -71,32 +71,30 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
       <PageHeading className="co-m-nav-title--row" title={title} badge={badge}>
-        <ActionList>
+        {secondaryButtonAction && (
           <ActionListItem>
-            {secondaryButtonAction && (
-              <Button
-                type="button"
-                variant="secondary"
-                data-test="secondary-action"
-                component={(props) => <Link {...props} to={secondaryButtonAction.href} />}
-              >
-                {secondaryButtonAction.label}
-              </Button>
-            )}
+            <Button
+              type="button"
+              variant="secondary"
+              data-test="secondary-action"
+              component={(props) => <Link {...props} to={secondaryButtonAction.href} />}
+            >
+              {secondaryButtonAction.label}
+            </Button>
           </ActionListItem>
-          <ActionListItem>
-            {items && (
-              <Dropdown
-                buttonClassName="pf-m-primary"
-                menuClassName="prevent-overflow"
-                title={t('console-shared~Create')}
-                noSelection
-                items={items}
-                onChange={onSelectCreateAction}
-              />
-            )}
-          </ActionListItem>
-        </ActionList>
+        )}
+        <ActionListItem>
+          {items && (
+            <Dropdown
+              buttonClassName="pf-m-primary"
+              menuClassName="prevent-overflow"
+              title={t('console-shared~Create')}
+              noSelection
+              items={items}
+              onChange={onSelectCreateAction}
+            />
+          )}
+        </ActionListItem>
       </PageHeading>
       <HorizontalNav pages={pages} noStatusBox />
     </PageTitleContext.Provider>

@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';

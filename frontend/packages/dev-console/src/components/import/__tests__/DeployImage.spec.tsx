@@ -17,7 +17,7 @@ import ImageSearchSection from '../image-search/ImageSearchSection';
 import { DeploySection } from '../section/deploy-section/DeploySection';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

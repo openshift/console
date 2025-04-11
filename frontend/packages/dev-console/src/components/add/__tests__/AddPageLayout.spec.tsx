@@ -9,7 +9,7 @@ import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => {
-  const addActionGroupExtensions = require.requireActual('./add-page-test-data');
+  const addActionGroupExtensions = jest.requireActual('./add-page-test-data');
   return { useExtensions: () => addActionGroupExtensions };
 });
 

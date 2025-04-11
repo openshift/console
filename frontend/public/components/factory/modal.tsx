@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as Modal from 'react-modal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { useLocation } from 'react-router-dom';
+import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';

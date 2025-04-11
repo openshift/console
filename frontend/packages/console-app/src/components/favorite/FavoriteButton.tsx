@@ -26,8 +26,7 @@ export const FAVORITES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/favorites`;
 const MAX_FAVORITE_COUNT = 10;
 
 export const FavoriteButton = connectToModel(() => {
-  const { t } = useTranslation();
-  const ref = React.useRef();
+  const { t } = useTranslation('console-app');
   const [isStarred, setIsStarred] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [name, setName] = React.useState<string>('');
@@ -77,18 +76,18 @@ export const FavoriteButton = connectToModel(() => {
   const handleConfirmStar = () => {
     const trimmedName = name.trim();
     if (!trimmedName) {
-      setError(t('console-app~Name is required.'));
+      setError(t('Name is required.'));
       return;
     }
     if (!alphanumericRegex.test(trimmedName)) {
-      setError(t('console-app~Name can only contain letters, numbers, spaces, and hyphens.'));
+      setError(t('Name can only contain letters, numbers, spaces, and hyphens.'));
       return;
     }
     const nameExists = favorites?.some((favorite) => favorite.name === name.trim());
     if (nameExists) {
       setError(
         t(
-          'console-app~The name {{favoriteName}} already exists in your favorites. Choose a unique name to save to your favorites.',
+          'The name {{favoriteName}} already exists in your favorites. Choose a unique name to save to your favorites.',
           { favoriteName: name },
         ),
       );
@@ -107,63 +106,57 @@ export const FavoriteButton = connectToModel(() => {
   const handleNameChange = (value: string) => {
     setName(value);
     if (!alphanumericRegex.test(value)) {
-      setError(t('console-app~Name can only contain letters, numbers, spaces, and hyphens.'));
+      setError(t('Name can only contain letters, numbers, spaces, and hyphens.'));
     } else {
       setError(null);
     }
   };
 
-  const tooltipText = t(
-    'console-app~Maximum number of favorites ({{maxCount}}) reached. To add another favorite, remove an existing page from your favorites.',
+  const isDisabled = favorites?.length >= MAX_FAVORITE_COUNT && !isStarred;
+
+  const disabledTooltipText = t(
+    'Maximum number of favorites ({{maxCount}}) reached. To add another favorite, remove an existing page from your favorites.',
     { maxCount: MAX_FAVORITE_COUNT },
   );
 
+  const tooltipText = isDisabled
+    ? disabledTooltipText
+    : isStarred
+    ? t('Remove from favorites')
+    : t('Add to favorites');
+
   return (
     <div className="co-fav-actions-icon">
-      {favorites?.length >= MAX_FAVORITE_COUNT && !isStarred ? (
-        <Tooltip content={tooltipText} triggerRef={ref} position="left">
-          <div ref={ref}>
-            <Button
-              icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
-              className="co-xl-icon-button"
-              variant="plain"
-              aria-label={t('console-app~Add to favorites')}
-              aria-pressed={isStarred}
-              onClick={handleStarClick}
-              isDisabled
-              data-test="favorite-button"
-            />
-          </div>
-        </Tooltip>
-      ) : (
+      <Tooltip content={tooltipText} position="left">
         <Button
           icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
           className="co-xl-icon-button"
+          data-test="favorite-button"
           variant="plain"
-          aria-label={t('console-app~Add to favorites')}
+          aria-label={tooltipText}
           aria-pressed={isStarred}
           onClick={handleStarClick}
-          data-test="favorite-button"
+          isDisabled={isDisabled}
         />
-      )}
+      </Tooltip>
 
       {isModalOpen && (
         <Modal
-          title={t('console-app~Add to favorites')}
+          title={t('Add to favorites')}
           isOpen={isModalOpen}
           onClose={handleModalClose}
           actions={[
             <Button key="confirm" variant="primary" onClick={handleConfirmStar}>
-              {t('console-app~Save')}
+              {t('Save')}
             </Button>,
             <Button key="cancel" variant="link" onClick={handleModalClose}>
-              {t('console-app~Cancel')}
+              {t('Cancel')}
             </Button>,
           ]}
           variant={ModalVariant.small}
         >
           <Form>
-            <FormGroup label={t('console-app~Name')} isRequired fieldId="input-name">
+            <FormGroup label={t('Name')} isRequired fieldId="input-name">
               <TextInput
                 id="input-name"
                 data-test="input-name"
@@ -173,7 +166,6 @@ export const FavoriteButton = connectToModel(() => {
                 value={name || ''}
                 autoFocus
                 required
-                maxLength={20}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();

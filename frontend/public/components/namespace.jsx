@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert, Button, Tooltip } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';

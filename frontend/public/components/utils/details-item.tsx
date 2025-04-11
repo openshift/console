@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classnames from 'classnames';
+import classNames from 'classnames';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import {
   Breadcrumb,
@@ -78,7 +78,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   return hide ? null : (
     <>
       <dt
-        className={classnames('details-item__label', labelClassName)}
+        className={classNames('details-item__label', labelClassName)}
         data-test-selector={`details-item-label__${label}`}
       >
         <Split>
@@ -121,7 +121,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
         </Split>
       </dt>
       <dd
-        className={classnames('details-item__value', valueClassName, {
+        className={classNames('details-item__value', valueClassName, {
           'details-item__value--group': editable && editAsGroup,
         })}
         data-test-selector={`details-item-value__${label}`}

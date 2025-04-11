@@ -286,7 +286,7 @@ const git = {
 };
 
 jest.mock('@console/git-service', () => ({
-  ...require.requireActual('@console/git-service'),
+  ...jest.requireActual('@console/git-service'),
   getGitService: function mockedGetGitService() {
     return {
       getFileContent: (path: string) =>
@@ -300,7 +300,7 @@ jest.mock('@console/git-service', () => ({
 }));
 
 jest.mock('@console/internal/co-fetch', () => ({
-  ...require.requireActual('@console/internal/co-fetch'),
+  ...jest.requireActual('@console/internal/co-fetch'),
   coFetch: function mockedCoFetch() {
     return Promise.resolve({
       text: () => mockExternalDeploymentYaml,

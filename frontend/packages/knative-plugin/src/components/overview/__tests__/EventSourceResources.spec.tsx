@@ -14,7 +14,7 @@ import { getEventSourceResponse } from '../../../topology/__tests__/topology-kna
 import { EventSourceTarget } from '../EventSourceResources';
 
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = jest.requireActual('@console/shared');
   return {
     ...ActualShared,
     usePodsWatcher: jest.fn(),

@@ -13,24 +13,24 @@ import { ServiceBindingModel } from '../../../models';
 import ServiceBindingDetailsTab from '../ServiceBindingDetailsTab';
 
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
-  ...require.requireActual('@console/shared/src/hooks/useK8sModel'),
+  ...jest.requireActual('@console/shared/src/hooks/useK8sModel'),
   useK8sModel: () => [],
 }));
 
 jest.mock('@console/internal/module/k8s/k8s-models', () => ({
-  ...require.requireActual('@console/internal/module/k8s/k8s-models'),
+  ...jest.requireActual('@console/internal/module/k8s/k8s-models'),
   modelFor: jest.fn(),
 }));
 
 jest.mock('@console/internal/module/k8s', () => ({
-  ...require.requireActual('@console/internal/module/k8s'),
+  ...jest.requireActual('@console/internal/module/k8s'),
   useModelFinder: jest.fn(() => ({
     findModel: jest.fn(),
   })),
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
-  ...require.requireActual('@console/internal/components/utils/rbac'),
+  ...jest.requireActual('@console/internal/components/utils/rbac'),
   useAccessReview: () => true,
 }));
 

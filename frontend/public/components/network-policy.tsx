@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FlagsObject } from '../reducers/features';
 import { BlueInfoCircleIcon, FLAGS } from '@console/shared';

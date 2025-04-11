@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -28,6 +29,7 @@ spec:
 describe('Start a Job from a CronJob', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

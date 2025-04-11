@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';

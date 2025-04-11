@@ -18,25 +18,25 @@ describe('getAddGroups', () => {
   });
 
   it('should add actions to their respective action groups', () => {
-    const devCatalogGroupItems: ResolvedExtension<
+    const softwareCatalogGroupItems: ResolvedExtension<
       AddAction
     >[] = addActionExtensions.filter((action) =>
       action.properties.groupId.includes('developer-catalog'),
     );
     const addGroups: AddGroup[] = getAddGroups(addActionExtensions, addActionGroup);
     expect(addGroups.find((group) => group.id === 'developer-catalog').items.length).toEqual(
-      devCatalogGroupItems.length,
+      softwareCatalogGroupItems.length,
     );
   });
 
   it('should filter out the groups for which there are no add actions', () => {
-    const addActionsExcludingDevCatalogGroupItems: ResolvedExtension<
+    const addActionsExcludingSoftwareCatalogGroupItems: ResolvedExtension<
       AddAction
     >[] = addActionExtensions.filter(
       (action) => !action.properties.groupId.includes('developer-catalog'),
     );
     const addGroups: AddGroup[] = getAddGroups(
-      addActionsExcludingDevCatalogGroupItems,
+      addActionsExcludingSoftwareCatalogGroupItems,
       addActionGroup,
     );
     expect(addGroups.find((group) => group.id === 'developer-catalog')).toBeUndefined();

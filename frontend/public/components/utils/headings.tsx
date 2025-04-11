@@ -1,50 +1,32 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
+  ActionList,
+  ActionListGroup,
+  ActionListItem,
   Breadcrumb,
   BreadcrumbItem,
   Button,
-  Split,
-  SplitItem,
   Content,
   ContentVariants,
-  Title,
   PageBreadcrumb,
+  Split,
+  SplitItem,
+  Title,
 } from '@patternfly/react-core';
 import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { RootState } from '@console/internal/redux';
-import {
-  OverviewItem,
-  Status,
-  HealthChecksAlert,
-  YellowExclamationTriangleIcon,
-  useCsvWatchResource,
-} from '@console/shared';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { Status, YellowExclamationTriangleIcon } from '@console/shared';
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
 import NavTitle from '@console/shared/src/components/layout/NavTitle';
 
-import {
-  ActionsMenu,
-  FirehoseResult,
-  KebabAction,
-  KebabOption,
-  ResourceIcon,
-  resourcePath,
-} from './index';
+import { ActionsMenu, FirehoseResult, KebabOption, ResourceIcon } from './index';
 import { connectToModel } from '../../kinds';
-import {
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-} from '../../module/k8s';
+import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
 import { ManagedByOperatorLink } from './managed-by';
 
 export const ResourceItemDeleting = () => {
@@ -80,24 +62,26 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   </Breadcrumb>
 );
 
-export const ActionButtons: React.SFC<ActionButtonsProps> = ({ actionButtons }) => (
-  <div className="co-action-buttons">
+export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) => (
+  <>
     {_.map(actionButtons, (actionButton, i) => {
       if (!_.isEmpty(actionButton)) {
         return (
-          <Button
-            className="co-action-buttons__btn"
-            variant="primary"
-            onClick={actionButton.callback}
-            key={i}
-            data-test={actionButton.label}
-          >
-            {actionButton.label}
-          </Button>
+          <ActionListItem>
+            <Button
+              className="co-action-buttons__btn"
+              variant="primary"
+              onClick={actionButton.callback}
+              key={i}
+              data-test={actionButton.label}
+            >
+              {actionButton.label}
+            </Button>
+          </ActionListItem>
         );
       }
     })}
-  </div>
+  </>
 );
 
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
@@ -143,7 +127,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
-  const isAdminPrespective = perspective === 'admin';
+  const isAdminPerspective = perspective === 'admin';
   return (
     <>
       {showBreadcrumbs && (
@@ -198,29 +182,42 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               <span className="co-m-pane__heading-badge">{badge}</span>
             )}
             {link && <div className="co-m-pane__heading-link">{link}</div>}
-            {(isAdminPrespective || showActions) && (
-              <div className="co-actions" data-test-id="details-actions">
-                {isAdminPrespective && !hideFavoriteButton && <FavoriteButton />}
-                {showActions && (
-                  <>
-                    {hasButtonActions && (
-                      <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-                    )}
-                    {hasMenuActions && (
-                      <ActionsMenu
-                        actions={
-                          _.isFunction(menuActions)
-                            ? menuActions(kindObj, data, extraResources, customData)
-                            : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                        }
-                      />
-                    )}
-                    {_.isFunction(customActionMenu)
-                      ? customActionMenu(kindObj, data)
-                      : customActionMenu}
-                  </>
-                )}
-              </div>
+            {(isAdminPerspective || showActions) && (
+              <ActionList className="co-actions" data-test-id="details-actions">
+                <ActionListGroup>
+                  {isAdminPerspective && !hideFavoriteButton && (
+                    <ActionListItem>
+                      <FavoriteButton />
+                    </ActionListItem>
+                  )}
+
+                  {showActions && (
+                    <>
+                      {hasButtonActions && (
+                        <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                      )}
+
+                      {hasMenuActions && (
+                        <ActionListItem>
+                          <ActionsMenu
+                            actions={
+                              _.isFunction(menuActions)
+                                ? menuActions(kindObj, data, extraResources, customData)
+                                : menuActions.map((a) =>
+                                    a(kindObj, data, extraResources, customData),
+                                  )
+                            }
+                          />
+                        </ActionListItem>
+                      )}
+
+                      {_.isFunction(customActionMenu)
+                        ? customActionMenu(kindObj, data)
+                        : customActionMenu}
+                    </>
+                  )}
+                </ActionListGroup>
+              </ActionList>
             )}
           </PrimaryHeading>
         )}
@@ -268,48 +265,6 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
   </Title>
 );
 
-export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({
-  kindObj,
-  actions,
-  resources,
-}) => {
-  const { obj: resource, ...otherResources } = resources;
-  const ns = useSelector((state: RootState) => getActiveNamespace(state));
-  const { csvData } = useCsvWatchResource(ns);
-  const isDeleting = !!resource.metadata.deletionTimestamp;
-  return (
-    <div className="overview__sidebar-pane-head resource-overview__heading">
-      <PrimaryHeading>
-        <div className="co-m-pane__name co-resource-item">
-          <ResourceIcon
-            className="co-m-resource-icon--lg"
-            kind={kindObj.crd ? referenceForModel(kindObj) : resource.kind}
-          />
-          <Link
-            to={resourcePath(
-              kindObj.crd ? referenceForModel(kindObj) : resource.kind,
-              resource.metadata.name,
-              resource.metadata.namespace,
-            )}
-            className="co-resource-item__resource-name"
-          >
-            {resource.metadata.name}
-          </Link>
-          {isDeleting && <ResourceItemDeleting />}
-        </div>
-        {!isDeleting && (
-          <div className="co-actions">
-            <ActionsMenu
-              actions={actions.map((a) => a(kindObj, resource, otherResources, { csvs: csvData }))}
-            />
-          </div>
-        )}
-      </PrimaryHeading>
-      <HealthChecksAlert resource={resource} />
-    </div>
-  );
-};
-
 export type ActionButtonsProps = {
   actionButtons: any[];
 };
@@ -353,12 +308,6 @@ export type PageHeadingProps = {
   hideFavoriteButton?: boolean;
 };
 
-export type ResourceOverviewHeadingProps = {
-  actions: KebabAction[];
-  kindObj: K8sKind;
-  resources?: OverviewItem;
-};
-
 export type SectionHeadingProps = {
   children?: any;
   style?: any;
@@ -376,6 +325,5 @@ export type SidebarSectionHeadingProps = {
 
 BreadCrumbs.displayName = 'BreadCrumbs';
 PageHeading.displayName = 'PageHeading';
-ResourceOverviewHeading.displayName = 'ResourceOverviewHeading';
 SectionHeading.displayName = 'SectionHeading';
 SidebarSectionHeading.displayName = 'SidebarSectionHeading';
