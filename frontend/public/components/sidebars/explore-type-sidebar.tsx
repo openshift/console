@@ -85,7 +85,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     }
   };
 
-  const breadcrumbClicked = (e: React.MouseEvent<HTMLButtonElement>, i: number) => {
+  const breadcrumbClicked = (e: React.MouseEvent<any>, i: number) => {
     e.preventDefault();
     setDrilldownHistory(_.take(drilldownHistory, i));
   };
@@ -114,23 +114,12 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   return (
     <>
       {!_.isEmpty(breadcrumbs) && (
-        <Breadcrumb className="co-breadcrumb co-break-word">
+        <Breadcrumb className="co-break-word">
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
-              <BreadcrumbItem key={i} isActive={isLast}>
-                {isLast ? (
-                  crumb
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={(e) => breadcrumbClicked(e, i)}
-                    isInline
-                    variant="link"
-                  >
-                    {crumb}
-                  </Button>
-                )}
+              <BreadcrumbItem key={i} isActive={isLast} onClick={(e) => breadcrumbClicked(e, i)}>
+                {crumb}
               </BreadcrumbItem>
             );
           })}

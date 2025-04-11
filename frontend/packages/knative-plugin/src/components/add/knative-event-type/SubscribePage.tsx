@@ -35,10 +35,15 @@ const SubscribePage: React.FC = () => {
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <DocumentTitle>{t('knative-plugin~Subscribe')}</DocumentTitle>
-      <PageHeading title={t('knative-plugin~Subscribe')}>
-        {t('knative-plugin~Subscribe to')} {subscribeApiVersion} {subscribeKind} {namespace}/
-        {subscribeName}
-      </PageHeading>
+      <PageHeading
+        title={t('knative-plugin~Subscribe')}
+        helpText={
+          <>
+            {t('knative-plugin~Subscribe to')} {subscribeApiVersion} {subscribeKind} {namespace}/
+            {subscribeName}
+          </>
+        }
+      />
       <Subscribe source={source} />
     </NamespacedPage>
   );
