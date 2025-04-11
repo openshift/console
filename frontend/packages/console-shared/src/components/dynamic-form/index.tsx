@@ -70,6 +70,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     );
   };
 
+  const goBack = () => history.go(-1);
+
   return (
     <>
       {showAlert && (
@@ -111,7 +113,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                   <Button type="submit" variant="primary" data-test="create-dynamic-form">
                     {t('console-shared~Create')}
                   </Button>
-                  <Button onClick={onCancel || history.goBack} variant="secondary">
+                  <Button onClick={onCancel || goBack} variant="secondary">
                     {t('console-shared~Cancel')}
                   </Button>
                 </ActionGroup>

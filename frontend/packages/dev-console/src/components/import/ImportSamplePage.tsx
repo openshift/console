@@ -135,7 +135,7 @@ const ImportSamplePage: React.FC = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema(t)}
       >
         {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}

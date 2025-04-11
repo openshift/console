@@ -67,7 +67,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={brokerValidationSchema(t)}
     >
       {(formikProps) => <AddBrokerForm {...formikProps} namespace={namespace} />}

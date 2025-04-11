@@ -129,7 +129,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   return loaded ? (
     <Formik

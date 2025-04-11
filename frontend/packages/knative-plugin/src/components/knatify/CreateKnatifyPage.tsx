@@ -133,7 +133,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
           )}
           validationSchema={deployValidationSchema(t)}
           onSubmit={handleSubmit}
-          onReset={history.goBack}
+          onReset={() => history.go(-1)}
         >
           {(formikProps) => (
             <KnatifyForm

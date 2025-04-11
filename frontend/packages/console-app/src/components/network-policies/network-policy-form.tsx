@@ -412,7 +412,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             <Button type="submit" id="save-changes" variant="primary">
               {t('console-app~Create')}
             </Button>
-            <Button onClick={history.goBack} id="cancel" variant="secondary">
+            <Button onClick={() => history.go(-1)} id="cancel" variant="secondary">
               {t('console-app~Cancel')}
             </Button>
           </ActionGroup>

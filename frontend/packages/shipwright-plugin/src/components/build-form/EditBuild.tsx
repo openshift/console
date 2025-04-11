@@ -76,7 +76,7 @@ const EditBuild: React.FC<EditBuildProps> = ({ heading, build: watchedBuild, nam
     }
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   return (
     <Formik

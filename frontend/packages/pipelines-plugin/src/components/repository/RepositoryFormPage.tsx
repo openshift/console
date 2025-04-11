@@ -41,7 +41,7 @@ const RepositoryFormPage: React.FC = () => {
     <Formik
       initialValues={defaultRepositoryFormValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={repositoryValidationSchema(t)}
     >
       {(formikProps) => <RepositoryForm {...formikProps} />}

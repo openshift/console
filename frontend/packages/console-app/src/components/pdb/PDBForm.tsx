@@ -302,7 +302,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                 >
                   {existingResource ? t('console-app~Save') : t('console-app~Create')}
                 </Button>
-                <Button onClick={history.goBack} id="cancel" variant="secondary">
+                <Button onClick={() => history.go(-1)} id="cancel" variant="secondary">
                   {t('console-app~Cancel')}
                 </Button>
               </ActionGroup>

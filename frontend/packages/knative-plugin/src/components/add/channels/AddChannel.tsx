@@ -94,7 +94,7 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication })
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={addChannelValidationSchema(t)}

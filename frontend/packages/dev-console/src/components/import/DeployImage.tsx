@@ -196,7 +196,7 @@ const DeployImage: React.FC<Props> = ({
     <Formik
       initialValues={initialVals}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={deployValidationSchema(t)}
     >
       {(formikProps) => <DeployImageForm {...formikProps} projects={projects} />}

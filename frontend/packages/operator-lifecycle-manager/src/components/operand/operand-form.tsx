@@ -58,7 +58,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
         ),
       );
     } else {
-      history.goBack();
+      history.go(-1);
     }
   };
 

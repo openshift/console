@@ -83,7 +83,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema()}
       >
         {(formikProps) => (

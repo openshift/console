@@ -79,7 +79,7 @@ const EditBuildConfig: React.FC<EditBuildConfigProps> = ({
     }
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   return (
     <Formik

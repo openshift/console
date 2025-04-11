@@ -70,7 +70,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <DocumentTitle>{config.title}</DocumentTitle>
-      <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
+      <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={() => history.go(-1)}>
         {(props) => (
           <HelmReleaseRollbackForm
             {...props}

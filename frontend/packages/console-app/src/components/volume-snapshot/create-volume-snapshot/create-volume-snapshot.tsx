@@ -310,7 +310,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
                 >
                   {t('console-app~Create')}
                 </Button>
-                <Button type="button" variant="secondary" onClick={history.goBack}>
+                <Button type="button" variant="secondary" onClick={() => history.go(-1)}>
                   {t('console-app~Cancel')}
                 </Button>
               </ActionGroup>

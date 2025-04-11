@@ -220,7 +220,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={getHelmActionValidationSchema(helmAction, t)}
       >
         {(formikProps) => (

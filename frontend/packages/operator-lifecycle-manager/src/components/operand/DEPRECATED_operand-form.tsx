@@ -1161,7 +1161,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 <Button onClick={submit} type="submit" variant="primary">
                   {t('public~Create')}
                 </Button>
-                <Button onClick={history.goBack} variant="secondary">
+                <Button onClick={() => history.go(-1)} variant="secondary">
                   {t('public~Cancel')}
                 </Button>
               </ActionGroup>
