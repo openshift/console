@@ -264,7 +264,7 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
         {t('olm~Installing Operator')}
       </Title>
       {reason && (
-        <p className="text-muted">
+        <p className="pf-v6-u-text-color-subtle">
           {reason}: {message}
         </p>
       )}

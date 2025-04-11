@@ -89,7 +89,9 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
     }
 
     if (!this.props.loaded || !selectedKey || !unorderedItems[selectedKey || state.defaultClass]) {
-      state.title = <span className="text-muted">{t('public~Select StorageClass')}</span>;
+      state.title = (
+        <span className="pf-v6-u-text-color-subtle">{t('public~Select StorageClass')}</span>
+      );
     }
 
     const selectedItem = unorderedItems[selectedKey || state.defaultClass];
@@ -168,7 +170,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
         {loaded && itemsAvailableToShow && (
           <div>
             <label
-              className={classNames('control-label', this.props.hideClassName, {
+              className={classNames(this.props.hideClassName, {
                 'co-required': this.props.required,
               })}
               htmlFor={id}
@@ -228,7 +230,7 @@ const StorageClassDropdownEntry = (props) => {
       <ResourceIcon kind={props.kindLabel} />
       <span className="co-resource-item__resource-name">
         {props.name}
-        <div className="text-muted small"> {storageClassDescriptionLine}</div>
+        <div className="pf-v6-u-text-color-subtle small"> {storageClassDescriptionLine}</div>
       </span>
     </span>
   );

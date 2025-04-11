@@ -23,5 +23,5 @@ export const hpaPO = {
   switchToggler: '[data-test-id="topology-switcher-view"]',
   hpaFormName: '[id="form-input-formData-metadata-name-field"]',
   podRing: '[class="odc-pod-ring"]',
-  nodeList: '[class="list-group-item container-fluid"]',
+  nodeList: '[class="list-group-item"]',
 };

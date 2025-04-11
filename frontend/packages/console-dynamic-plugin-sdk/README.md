@@ -182,6 +182,7 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed `co-m-nav-title` spacing styling. Use
   [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
 - Removed `co-button-help-icon`, `co-inline`, `co-resource-list*`, `co-toolbar*` styling.
+- Removed Bootstrap `table`, `text-muted`, `text-secondary` styling.
 
 ### PatternFly 5+ dynamic modules
 

@@ -29,7 +29,9 @@ export const ConsolePluginFormGroup: React.FC<ConsolePluginFormGroupProps> = ({
           <fieldset key={plugin}>
             <div>
               {csvPluginsCount > 1 && (
-                <legend className="co-legend co-legend--nested text-muted">{plugin}</legend>
+                <legend className="co-legend co-legend--nested pf-v6-u-text-color-subtle">
+                  {plugin}
+                </legend>
               )}
               <ConsolePluginRadioInputs
                 name={plugin}

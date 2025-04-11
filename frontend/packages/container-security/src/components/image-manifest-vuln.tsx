@@ -190,7 +190,7 @@ export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVu
         {queryURL ? (
           <ExternalLink text={shortenHash(obj.spec.manifest)} href={queryURL} />
         ) : (
-          <span className="small text-muted">-</span>
+          <span className="small pf-v6-u-text-color-subtle">-</span>
         )}
       </TableData>
     </>

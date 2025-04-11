@@ -206,7 +206,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     return (
       <span className="co-search-group__accordion-label">
         {labelPluralKey ? t(labelPluralKey) : labelPlural}{' '}
-        <div className="text-muted small">
+        <div className="pf-v6-u-text-color-subtle small">
           {apiGroup || 'core'}/{apiVersion}
         </div>
       </span>

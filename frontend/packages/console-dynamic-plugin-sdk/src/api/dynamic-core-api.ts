@@ -419,7 +419,7 @@ export {
  *     firstColumn={
  *       <>
  *         <span>{title}</span>
- *         <span className="text-secondary">
+ *         <span className="pf-v6-u-text-color-subtle">
  *           My Example Item
  *         </span>
  *       </>

@@ -40,7 +40,7 @@ class TranslatedLabelList extends React.Component<LabelListProps> {
     return (
       <>
         {_.isEmpty(list) ? (
-          <div className="text-muted" key="0">
+          <div className="pf-v6-u-text-color-subtle" key="0">
             {t('public~No labels')}
           </div>
         ) : (

@@ -124,7 +124,9 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title: subPath || <span className="text-muted">{i18next.t('public~No subpath')}</span>,
+        title: subPath || (
+          <span className="pf-v6-u-text-color-subtle">{i18next.t('public~No subpath')}</span>
+        ),
         props: {
           className: volumeRowColumnClasses[2],
         },

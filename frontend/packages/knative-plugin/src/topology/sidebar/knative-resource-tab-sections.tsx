@@ -24,7 +24,7 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
     <>
       <SidebarSectionHeading text={t('knative-plugin~Source')} />
       {!reference && !sinkUri ? (
-        <span data-test="event-sink-text" className="text-muted">
+        <span data-test="event-sink-text" className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No Source found for this resource.')}
         </span>
       ) : (
@@ -39,7 +39,7 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
               />
             ) : (
               <>
-                <span data-test="event-sink-target-uri" className="text-muted">
+                <span data-test="event-sink-target-uri" className="pf-v6-u-text-color-subtle">
                   {t('knative-plugin~Target URI:')}{' '}
                 </span>
                 <ExternalLink

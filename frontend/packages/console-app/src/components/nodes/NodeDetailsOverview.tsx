@@ -133,9 +133,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             {_.has(node, 'spec.unschedulable') && <dt>{t('console-app~Unschedulable')}</dt>}
             {_.has(node, 'spec.unschedulable') && (
-              <dd className="text-capitalize">
-                {_.get(node, 'spec.unschedulable', '-').toString()}
-              </dd>
+              <dd>{_.get(node, 'spec.unschedulable', '-').toString()}</dd>
             )}
             <dt>{t('console-app~Created')}</dt>
             <dd>
@@ -146,9 +144,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
             <dt>{t('console-app~Operating system')}</dt>
-            <dd className="text-capitalize">
-              {_.get(node, 'status.nodeInfo.operatingSystem', '-')}
-            </dd>
+            <dd>{_.get(node, 'status.nodeInfo.operatingSystem', '-')}</dd>
             <dt>{t('console-app~OS image')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.osImage', '-')}</dd>
             <dt>{t('console-app~Architecture')}</dt>

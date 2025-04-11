@@ -10,7 +10,7 @@ describe('<GraphEmpty />', () => {
 
   it('should render an empty state', () => {
     const wrapper = shallow(<GraphEmpty />);
-    expect(wrapper.find('.text-secondary').exists()).toBe(true);
+    expect(wrapper.find('.pf-v6-u-text-color-subtle').exists()).toBe(true);
     expect(wrapper.text()).toEqual('No datapoints found.');
   });
 });

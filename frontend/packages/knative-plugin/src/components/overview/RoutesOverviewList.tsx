@@ -20,7 +20,9 @@ const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ ksroutes, resou
     <>
       <SidebarSectionHeading text={t('knative-plugin~Routes')} />
       {_.isEmpty(ksroutes) ? (
-        <span className="text-muted">{t('knative-plugin~No Routes found for this resource.')}</span>
+        <span className="pf-v6-u-text-color-subtle">
+          {t('knative-plugin~No Routes found for this resource.')}
+        </span>
       ) : (
         <ul className="list-group">
           {_.map(ksroutes, (route) => {

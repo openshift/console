@@ -125,7 +125,7 @@ export const ColumnManagementModal: React.FC<
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <span className="col-sm-6">
-              <label className="control-label">
+              <label>
                 {t('public~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
               </label>
               <DataList
@@ -145,7 +145,7 @@ export const ColumnManagementModal: React.FC<
               </DataList>
             </span>
             <span className="col-sm-6">
-              <label className="control-label">{t('public~Additional columns')}</label>
+              <label>{t('public~Additional columns')}</label>
               <DataList
                 aria-label={t('public~Additional column list')}
                 id="additional-column-management"

@@ -21,7 +21,11 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
   return (
     <div className="row co-m-form-row">
       <div className="col-xs-4">
-        <label style={{ fontWeight: 300 }} className="text-muted" htmlFor={`${path}.cpu`}>
+        <label
+          style={{ fontWeight: 300 }}
+          className="pf-v6-u-text-color-subtle"
+          htmlFor={`${path}.cpu`}
+        >
           {t('olm~CPU cores')}
         </label>
         <span className="pf-v6-c-form-control">
@@ -36,7 +40,11 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
         </span>
       </div>
       <div className="col-xs-4">
-        <label style={{ fontWeight: 300 }} className="text-muted" htmlFor={`${path}.memory`}>
+        <label
+          style={{ fontWeight: 300 }}
+          className="pf-v6-u-text-color-subtle"
+          htmlFor={`${path}.memory`}
+        >
           {t('olm~Memory')}
         </label>
         <span className="pf-v6-c-form-control">
@@ -53,7 +61,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
       <div className="col-xs-4">
         <label
           style={{ fontWeight: 300 }}
-          className="text-muted"
+          className="pf-v6-u-text-color-subtle"
           htmlFor={`${path}.ephemeral-storage`}
         >
           {t('olm~Storage')}

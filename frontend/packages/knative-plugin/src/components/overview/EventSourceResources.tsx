@@ -53,7 +53,9 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
             )}
             {sinkUri && (
               <>
-                <span className="text-muted">{t('knative-plugin~Target URI:')} </span>
+                <span className="pf-v6-u-text-color-subtle">
+                  {t('knative-plugin~Target URI:')}{' '}
+                </span>
                 <ExternalLink
                   href={sinkUri}
                   additionalClassName="co-external-link--block"
@@ -64,7 +66,9 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
           </li>
         </ul>
       ) : (
-        <span className="text-muted">{t('knative-plugin~No sink found for this resource.')}</span>
+        <span className="pf-v6-u-text-color-subtle">
+          {t('knative-plugin~No sink found for this resource.')}
+        </span>
       )}
     </>
   );

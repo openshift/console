@@ -121,7 +121,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       <>
         <fieldset disabled={!isCreate}>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="secret-name">
+            <label className="co-required" htmlFor="secret-name">
               {t('public~Secret name')}
             </label>
             <div>

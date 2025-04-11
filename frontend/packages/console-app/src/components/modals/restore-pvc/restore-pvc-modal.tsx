@@ -231,7 +231,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             )}
           </FormGroup>
           <div className="co-restore-pvc-modal__details-section">
-            <p className="text-muted">
+            <p className="pf-v6-u-text-color-subtle">
               {t('console-app~{{resourceKind}} details', {
                 resourceKind: VolumeSnapshotModel.label,
               })}

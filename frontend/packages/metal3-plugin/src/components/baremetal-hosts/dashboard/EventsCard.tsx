@@ -113,7 +113,7 @@ const EventsCard: React.FC<EventsCardProps> = ({
             </Activity>
           ) : (
             <Activity>
-              <div className="text-secondary">
+              <div className="pf-v6-u-text-color-subtle">
                 {t('metal3-plugin~There are no ongoing activities.')}
               </div>
             </Activity>

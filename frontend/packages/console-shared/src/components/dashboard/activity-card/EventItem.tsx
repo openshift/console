@@ -31,7 +31,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
         })}
       >
         <div className="co-recent-item__title">
-          <div className="co-recent-item__title-timestamp text-secondary">
+          <div className="co-recent-item__title-timestamp pf-v6-u-text-color-subtle">
             {lastTime ? (
               <span title={lastTime}>{timeFormatter.format(new Date(lastTime))}</span>
             ) : (

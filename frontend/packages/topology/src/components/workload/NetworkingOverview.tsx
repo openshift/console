@@ -13,12 +13,12 @@ const ServicePortList: React.FC<ServicePortListProps> = ({ service }) => {
     <ul className="port-list">
       {ports.map(({ name, port, protocol, targetPort }) => (
         <li key={name || `${protocol}/${port}`}>
-          <span className="text-muted">{t('topology~Service port:')}</span>{' '}
+          <span className="pf-v6-u-text-color-subtle">{t('topology~Service port:')}</span>{' '}
           {name || `${protocol}/${port}`}
           &nbsp;
           <LongArrowAltRightIcon />
           &nbsp;
-          <span className="text-muted">{t('topology~Pod port:')}</span> {targetPort}
+          <span className="pf-v6-u-text-color-subtle">{t('topology~Pod port:')}</span> {targetPort}
         </li>
       ))}
     </ul>
@@ -49,7 +49,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({ route }
   return (
     <li className="list-group-item">
       <ResourceLink kind="Route" name={name} namespace={namespace} />
-      <span className="text-muted">{t('topology~Location:')}</span>
+      <span className="pf-v6-u-text-color-subtle">{t('topology~Location:')}</span>
       <RouteLocation obj={route} />
     </li>
   );
@@ -74,14 +74,18 @@ export const NetworkingOverview: React.FC<NetworkingOverviewProps> = ({ obj }) =
     <>
       <SidebarSectionHeading text={t('topology~Services')} />
       {!(services?.length > 0) ? (
-        <span className="text-muted">{t('topology~No Services found for this resource.')}</span>
+        <span className="pf-v6-u-text-color-subtle">
+          {t('topology~No Services found for this resource.')}
+        </span>
       ) : (
         <ServicesOverviewList services={services} />
       )}
 
       <SidebarSectionHeading text={t('topology~Routes')} />
       {!(routes?.length > 0) ? (
-        <span className="text-muted">{t('topology~No Routes found for this resource.')}</span>
+        <span className="pf-v6-u-text-color-subtle">
+          {t('topology~No Routes found for this resource.')}
+        </span>
       ) : (
         <RoutesOverviewList routes={routes} />
       )}

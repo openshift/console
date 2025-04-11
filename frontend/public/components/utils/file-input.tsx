@@ -52,10 +52,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
         )}
 
         <div className="form-group">
-          <label
-            className={classNames('control-label', { 'co-required': isRequired })}
-            htmlFor={id}
-          >
+          <label className={classNames({ 'co-required': isRequired })} htmlFor={id}>
             {this.props.label}
           </label>
           <div className="modal-body__field">

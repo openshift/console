@@ -12,7 +12,7 @@ import { CapabilityProps, SpecCapability, StatusCapability } from './types';
 
 export const Invalid: React.FC<{ path: string }> = ({ path }) => {
   return (
-    <span className="text-muted olm-descriptors__invalid-pod-descriptor">
+    <span className="pf-v6-u-text-color-subtle olm-descriptors__invalid-pod-descriptor">
       <YellowExclamationTriangleIcon />
       &nbsp;&nbsp;
       <Trans ns="olm">
@@ -32,7 +32,7 @@ export const DefaultCapability: React.FC<CommonCapabilityProps<string | number |
   const { t } = useTranslation();
   const detail = React.useMemo(() => {
     if (_.isEmpty(value) && !_.isFinite(value) && !_.isBoolean(value)) {
-      return <span className="text-muted">{t('public~None')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
     }
     return _.toString(value);
   }, [t, value]);
@@ -56,7 +56,7 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps<string>> 
   const { t } = useTranslation();
   const detail = React.useMemo(() => {
     if (!value) {
-      return <span className="text-muted">{t('public~None')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
     }
 
     const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];

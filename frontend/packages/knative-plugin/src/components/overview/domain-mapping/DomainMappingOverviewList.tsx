@@ -36,7 +36,7 @@ const DomainMappingOverviewList: React.FC<DomainMappingOverviewListProps> = ({
               />
               {status?.url?.length > 0 && (
                 <>
-                  <span className="text-muted">{t('knative-plugin~Location:')}</span>
+                  <span className="pf-v6-u-text-color-subtle">{t('knative-plugin~Location:')}</span>
                   <ExternalLinkWithCopy
                     link={status.url}
                     text={status.url}

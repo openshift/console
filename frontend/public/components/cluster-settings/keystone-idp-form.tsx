@@ -181,7 +181,7 @@ export const AddKeystonePage = () => {
         <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="domain-name">
+            <label className="co-required" htmlFor="domain-name">
               {t('public~Domain name')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -195,7 +195,7 @@ export const AddKeystonePage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
+            <label className="co-required" htmlFor="url">
               {t('public~URL')}
             </label>
             <span className="pf-v6-c-form-control">

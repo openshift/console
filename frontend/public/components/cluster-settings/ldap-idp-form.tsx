@@ -173,7 +173,7 @@ export const AddLDAPPage = () => {
         <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
+            <label className="co-required" htmlFor="url">
               {t('public~URL')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -191,9 +191,7 @@ export const AddLDAPPage = () => {
             </div>
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="bind-dn">
-              {t('public~Bind DN')}
-            </label>
+            <label htmlFor="bind-dn">{t('public~Bind DN')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -208,9 +206,7 @@ export const AddLDAPPage = () => {
             </div>
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="bind-password">
-              {t('public~Bind password')}
-            </label>
+            <label htmlFor="bind-password">{t('public~Bind password')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="password"

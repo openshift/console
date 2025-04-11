@@ -74,15 +74,15 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
         ) : (
           <>
             <div className="row taint-modal__heading hidden-sm hidden-xs">
-              <div className="col-sm-4 text-secondary">{t('public~Key')}</div>
-              <div className="col-sm-3 text-secondary">{t('public~Value')}</div>
-              <div className="col-sm-4 text-secondary">{t('public~Effect')}</div>
+              <div className="col-sm-4 pf-v6-u-text-color-subtle">{t('public~Key')}</div>
+              <div className="col-sm-3 pf-v6-u-text-color-subtle">{t('public~Value')}</div>
+              <div className="col-sm-4 pf-v6-u-text-color-subtle">{t('public~Effect')}</div>
               <div className="col-sm-1 co-empty__header" />
             </div>
             {_.map(taints, (c, i) => (
               <div className="row taint-modal__row" key={i}>
                 <div className="col-md-4 col-xs-5 taint-modal__field">
-                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary">
+                  <div className="taint-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                     {t('public~Key')}
                   </div>
                   <span className="pf-v6-c-form-control">
@@ -96,7 +96,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   </span>
                 </div>
                 <div className="col-md-3 col-xs-5 taint-modal__field">
-                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary">
+                  <div className="taint-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                     {t('public~Value')}
                   </div>
                   <span className="pf-v6-c-form-control">
@@ -105,7 +105,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                 </div>
                 <div className="clearfix visible-sm visible-xs" />
                 <div className="col-md-4 col-xs-5 taint-modal__field">
-                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary">
+                  <div className="taint-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                     {t('public~Effect')}
                   </div>
                   <Dropdown
