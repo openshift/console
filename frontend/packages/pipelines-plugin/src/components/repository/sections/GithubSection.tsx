@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Content } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
+import { ExternalLink } from '@console/internal/components/utils/link';
 import { ConfigMapKind } from '@console/internal/module/k8s/types';
 
 type GithubSectionProps = {
@@ -13,11 +14,8 @@ const GithubSection: React.FC<GithubSectionProps> = ({ pac }) => {
   return (
     <Content component="p">
       <Trans t={t} ns="pipelines-plugin">
-        Use{' '}
-        <a target="_blank" href={appLink} rel="noopener noreferrer">
-          {appLink}
-        </a>{' '}
-        link to install the GitHub Application to your repositories in your organisation/account.
+        Use <ExternalLink href={appLink}>{appLink}</ExternalLink> link to install the GitHub
+        Application to your repositories in your organisation/account.
       </Trans>
     </Content>
   );

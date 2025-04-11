@@ -593,7 +593,7 @@ const CSVListNoDataEmptyMsg = () => {
       </div>
       <div>
         <Trans ns="olm">
-          Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.
+          Discover and install Operators from the <Link to="/operatorhub">OperatorHub</Link>.
         </Trans>
       </div>
     </>
