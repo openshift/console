@@ -1,6 +1,7 @@
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 
 export const checkDeveloperPerspective = () => {
+  guidedTour.close();
   cy.get('body').then(($body) => {
     cy.byLegacyTestID('perspective-switcher-toggle').then(($switcher) => {
       // switcher is present
@@ -19,15 +20,16 @@ export const checkDeveloperPerspective = () => {
         `oc patch console.operator.openshift.io/cluster --type='merge' -p '{"spec":{"customization":{"perspectives":[{"id":"dev","visibility":{"state":"Enabled"}}]}}}'`,
         { failOnNonZeroExit: true },
       ).then((result) => {
+        cy.log(result.stdout);
         cy.log(result.stderr);
       });
-      cy.reload(true);
-      cy.document().its('readyState').should('eq', 'complete');
       cy.exec(`  oc rollout status -w deploy/console -n openshift-console`, {
         failOnNonZeroExit: true,
       }).then((result) => {
         cy.log(result.stderr);
       });
+      cy.reload(true);
+      cy.document().its('readyState').should('eq', 'complete');
       cy.log('perspective switcher menu refreshed');
     });
 
