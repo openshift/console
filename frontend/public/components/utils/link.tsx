@@ -78,7 +78,7 @@ export const ExternalLink: React.FC<ExternalLinkProps> = ({
 }) => (
   <a
     {...props}
-    className={classNames('co-external-link', additionalClassName)}
+    className={classNames('co-external-link', additionalClassName, props?.className)}
     href={href}
     target="_blank"
     rel="noopener noreferrer"
