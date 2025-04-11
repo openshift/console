@@ -1,8 +1,22 @@
 import * as React from 'react';
+import { Location, useLocation } from 'react-router-dom';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
+
+/** get around hooks not being usable in class components */
+const withLocation = (Component: React.ComponentType<any>) => {
+  const ComponentWithLocation = (props: any) => {
+    const location = useLocation();
+    return <Component {...props} location={location} />;
+  };
+  return ComponentWithLocation;
+};
 
 type ErrorBoundaryProps = {
   FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
+};
+
+type InternalErrorBoundaryProps = ErrorBoundaryProps & {
+  location: Location<any>;
 };
 
 /** Needed for tests -- should not be imported by application logic */
@@ -14,9 +28,7 @@ export type ErrorBoundaryState = {
 
 const DefaultFallback: React.FC = () => <div />;
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  unlisten: () => void = () => {};
-
+class ErrorBoundary extends React.Component<InternalErrorBoundaryProps, ErrorBoundaryState> {
   readonly defaultState: ErrorBoundaryState = {
     hasError: false,
     error: {
@@ -39,12 +51,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     this.setState(this.defaultState);
   };
 
-  componentDidMount() {
-    window.addEventListener('popstate', this.resetState);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('popstate', this.resetState);
+  /** Reset ErrorBoundary state when the location changes */
+  componentDidUpdate(prevProps: InternalErrorBoundaryProps) {
+    const { location } = this.props;
+    if (location.key !== prevProps.location.key) {
+      this.resetState();
+    }
   }
 
   componentDidCatch(error, errorInfo) {
@@ -74,4 +86,4 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
-export default ErrorBoundary;
+export default withLocation(ErrorBoundary) as React.ComponentType<ErrorBoundaryProps>;

@@ -364,6 +364,7 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   // notify of identity change
   const user = useSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
+  const location = useLocation();
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -383,31 +384,19 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
   // Also because some pages update the URL as the user enters a search term.
-  const fireUrlChangeEvent = useDebounceCallback((location) => {
+  const fireUrlChangeEvent = useDebounceCallback((newLocation) => {
     fireTelemetryEvent('page', {
       perspective,
       title: getTelemetryTitle(),
-      ...withoutSensitiveInformations(location),
+      ...withoutSensitiveInformations(newLocation),
     });
   }, debounceTime);
   React.useEffect(() => {
     if (!titleOnLoad) {
       return;
     }
-    fireUrlChangeEvent(history.location);
-    // let { pathname, search } = history.location;
-    // const unlisten = history.listen((location) => {
-    // const { pathname: nextPathname, search: nextSearch } = history.location;
-    // if (pathname !== nextPathname || search !== nextSearch) {
-    // pathname = nextPathname;
-    // search = nextSearch;
     fireUrlChangeEvent(location);
-    // }
-    // });
-    // return () => {
-    //   unlisten();
-    // };
-  }, [perspective, fireUrlChangeEvent, titleOnLoad]);
+  }, [perspective, fireUrlChangeEvent, titleOnLoad, location]);
 
   return null;
 });

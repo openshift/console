@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { LinkProps, useNavigate } from 'react-router-dom';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { resourceListPathFromModel, withHandlePromise, HandlePromiseProps } from '../utils';
@@ -19,7 +19,6 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
 import { ResourceLink } from '../utils/resource-link';
-import { To as LocationTo } from 'history';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
@@ -169,7 +168,7 @@ export type DeleteModalProps = {
   kind: K8sModel;
   resource: K8sResourceCommon;
   close?: () => void;
-  redirectTo?: LocationTo;
+  redirectTo?: LinkProps['to'];
   message?: JSX.Element;
   cancel?: () => void;
   btnText?: React.ReactNode;

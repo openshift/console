@@ -2,6 +2,8 @@ import * as _ from 'lodash-es';
 import { createBrowserHistory, createMemoryHistory, History } from '@remix-run/router';
 
 /**
+ * @deprecated
+ *
  * TODO: Using custom pre-instantiated history object with React Router 6+ is highly discouraged.
  * We should remove all usages of this history object and replace the current HistoryRouter impl.
  * (marked in React Router docs as unstable) with standard BrowserRouter impl.

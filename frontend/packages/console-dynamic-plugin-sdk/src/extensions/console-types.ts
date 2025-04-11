@@ -3,8 +3,8 @@ import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
-import { To as LocationTo } from 'history';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { To as LocationTo } from 'react-router-dom';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,

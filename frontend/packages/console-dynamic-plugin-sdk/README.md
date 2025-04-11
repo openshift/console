@@ -171,6 +171,7 @@ This section documents notable changes in the Console provided shared modules ac
 - Upgraded `react-router` and `react-router-dom` shared modules to v6. Plugins using these modules must
   ensure that their dependencies are up to date.
 - Shared module `react-router-dom-v5-compat` is deprecated and will be removed in the future.
+- Upgraded `react-router-dom-v5-compat` to version `npm:react-router-dom@^6.30.x`.
 - Upgraded `monaco-editor` to version `0.51.0`.
 
 ##### CSS styling
