@@ -111,7 +111,7 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
   } = pod;
   const { t } = useTranslation();
   return (
-    <li className="list-group-item container-fluid">
+    <li className="list-group-item">
       <div className="row">
         <span className="col-xs-5">
           <ResourceLink kind={kind} name={name} namespace={namespace} />

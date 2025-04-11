@@ -25,7 +25,7 @@ const TopologyGroupResourceItem: React.FC<TopologyGroupResourceItemProps> = ({
     <ResourceLink kind={kind} name={name} namespace={resourceNamespace} />
   );
   return (
-    <li className="list-group-item container-fluid">
+    <li className="list-group-item">
       <div className="row">
         <span className="col-xs-12">{link}</span>
       </div>
