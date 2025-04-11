@@ -395,18 +395,18 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
       return;
     }
     fireUrlChangeEvent(history.location);
-    let { pathname, search } = history.location;
-    const unlisten = history.listen((location) => {
-      const { pathname: nextPathname, search: nextSearch } = history.location;
-      if (pathname !== nextPathname || search !== nextSearch) {
-        pathname = nextPathname;
-        search = nextSearch;
-        fireUrlChangeEvent(location);
-      }
-    });
-    return () => {
-      unlisten();
-    };
+    // let { pathname, search } = history.location;
+    // const unlisten = history.listen((location) => {
+    // const { pathname: nextPathname, search: nextSearch } = history.location;
+    // if (pathname !== nextPathname || search !== nextSearch) {
+    // pathname = nextPathname;
+    // search = nextSearch;
+    fireUrlChangeEvent(location);
+    // }
+    // });
+    // return () => {
+    //   unlisten();
+    // };
   }, [perspective, fireUrlChangeEvent, titleOnLoad]);
 
   return null;

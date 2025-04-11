@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils/router';
 
 type ErrorBoundaryProps = {
   FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
@@ -35,15 +34,17 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     this.state = this.defaultState;
   }
 
+  resetState = () => {
+    // reset state to default when location changes
+    this.setState(this.defaultState);
+  };
+
   componentDidMount() {
-    this.unlisten = history.listen(() => {
-      // reset state to default when location changes
-      this.setState(this.defaultState);
-    });
+    window.addEventListener('popstate', this.resetState);
   }
 
   componentWillUnmount() {
-    this.unlisten();
+    window.removeEventListener('popstate', this.resetState);
   }
 
   componentDidCatch(error, errorInfo) {

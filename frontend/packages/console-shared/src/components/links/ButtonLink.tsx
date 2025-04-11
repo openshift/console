@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 
 type ButtonLinkProps = Omit<ButtonProps, 'component' | 'href'> & {
   /** Equivalent to the `to` prop of the `react-router` `Link` component. */
