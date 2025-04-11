@@ -12,7 +12,6 @@ import {
   useParams,
   useLocation,
 } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
 import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON, appInternalFetch } from '../co-fetch';
@@ -343,18 +342,16 @@ const AppRouter = () => {
 
   return (
     <HistoryRouter history={history} basename={window.SERVER_FLAGS.basePath}>
-      <CompatRouter>
-        <Routes>
-          {/*
+      <Routes>
+        {/*
             Treat the authentication error page as a standalone route.
             There is no need to render the rest of the app if we know authentication has failed.
           */}
-          <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
-          {standaloneRoutes}
-          <Route path="/terminal/*" element={<CloudShellTab />} />
-          <Route path="/*" element={<AppWithExtensions />} />
-        </Routes>
-      </CompatRouter>
+        <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
+        {standaloneRoutes}
+        <Route path="/terminal/*" element={<CloudShellTab />} />
+        <Route path="/*" element={<AppWithExtensions />} />
+      </Routes>
     </HistoryRouter>
   );
 };
