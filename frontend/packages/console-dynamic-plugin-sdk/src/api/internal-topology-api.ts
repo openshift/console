@@ -93,3 +93,7 @@ export const withContextMenu: WithContextMenu = require('@console/topology/src/c
 
 export const withCreateConnector: WithCreateConnector = require('@console/topology/src/behavior')
   .withCreateConnector;
+
+export const OdcBaseNode = require('@console/topology/src/elements').OdcBaseNode;
+type OdcBaseNodeType = typeof OdcBaseNode;
+export type { OdcBaseNodeType };
