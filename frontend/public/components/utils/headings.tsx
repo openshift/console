@@ -1,7 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import {
   ActionList,
@@ -24,6 +23,7 @@ import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeadin
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
 import NavTitle from '@console/shared/src/components/layout/NavTitle';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 
 import { ActionsMenu, FirehoseResult, KebabOption, ResourceIcon } from './index';
 import { connectToModel } from '../../kinds';
@@ -39,24 +39,18 @@ export const ResourceItemDeleting = () => {
   );
 };
 
-export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
-  <Breadcrumb className="co-breadcrumb">
+export const BreadCrumbs: React.FCC<BreadCrumbsProps> = ({ breadcrumbs }) => (
+  <Breadcrumb>
     {breadcrumbs.map((crumb, i, { length }) => {
-      const isLast = i === length - 1;
-
       return (
-        <BreadcrumbItem key={i} isActive={isLast}>
-          {isLast ? (
-            crumb.name
-          ) : (
-            <Link
-              className="pf-v6-c-breadcrumb__link"
-              to={crumb.path}
-              data-test-id={`breadcrumb-link-${i}`}
-            >
-              {crumb.name}
-            </Link>
-          )}
+        <BreadcrumbItem
+          to={crumb.path}
+          key={i}
+          data-test-id={`breadcrumb-link-${i}`}
+          isActive={i === length - 1}
+          component={LinkTo(crumb.path)}
+        >
+          {crumb.name}
         </BreadcrumbItem>
       );
     })}

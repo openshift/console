@@ -19,11 +19,12 @@ const EventingChannelPage: React.FC = () => {
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <DocumentTitle>{t('knative-plugin~Channel')}</DocumentTitle>
-      <PageHeading title={t('knative-plugin~Channel')}>
-        {t(
+      <PageHeading
+        title={t('knative-plugin~Channel')}
+        helpText={t(
           'knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
         )}
-      </PageHeading>
+      />
       <AddChannel
         namespace={namespace}
         channels={channels}
