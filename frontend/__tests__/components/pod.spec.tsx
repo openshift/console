@@ -22,8 +22,8 @@ import { t } from '../../__mocks__/i18next';
 import * as ReactRouter from 'react-router-dom';
 import { PodKind } from '@console/internal/module/k8s';
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

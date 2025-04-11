@@ -49,8 +49,8 @@ jest.mock('@console/internal/components/utils/firehose', () => ({
   Firehose: ({ children }) => children,
 }));
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
 }));

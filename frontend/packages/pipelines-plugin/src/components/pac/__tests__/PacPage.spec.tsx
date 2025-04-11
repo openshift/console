@@ -14,8 +14,8 @@ import PacPage from '../PacPage';
 // eslint-disable-next-line no-var
 var mockNavigate = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
   useNavigate: () => mockNavigate,

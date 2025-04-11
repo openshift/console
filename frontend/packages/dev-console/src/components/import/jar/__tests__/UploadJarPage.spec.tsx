@@ -10,8 +10,8 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

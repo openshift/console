@@ -4,8 +4,8 @@ import CreateProjectListPage from '@console/dev-console/src/components/projects/
 import { PipelinesPage } from '../PipelinesPage';
 import PipelinesResourceList from '../PipelinesResourceList';
 
-jest.mock('react-router-dom', () => ({
-  ...require.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
