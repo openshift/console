@@ -18,6 +18,12 @@ import {
   navFactory,
 } from './utils';
 import { ServiceModel } from '../models';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const menuActions = [
   Kebab.factory.ModifyPodSelector,
@@ -249,24 +255,28 @@ const Details = ({ obj: s }) => {
         </div>
         <div className="col-md-6">
           <SectionHeading text={t('public~Service routing')} />
-          <dl>
-            <dt>{t('public~Hostname')}</dt>
-            <dd>
-              <div className="co-select-to-copy">
-                {s.metadata.name}.{s.metadata.namespace}.svc.cluster.local
-              </div>
-              <div>{t('public~Accessible within the cluster only')}</div>
-            </dd>
-            <dt>{t('public~Service address')}</dt>
-            <dd className="service-ips">
-              <ServiceAddress s={s} />
-            </dd>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Hostname')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <div className="co-select-to-copy">
+                  {s.metadata.name}.{s.metadata.namespace}.svc.cluster.local
+                </div>
+                <div>{t('public~Accessible within the cluster only')}</div>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Service address')}</DescriptionListTerm>
+              <DescriptionListDescription className="service-ips">
+                <ServiceAddress s={s} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             <DetailsItem label={t('public~Service port mapping')} obj={s} path="spec.ports">
               <div className="service-ips">
                 {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
               </div>
             </DetailsItem>
-          </dl>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

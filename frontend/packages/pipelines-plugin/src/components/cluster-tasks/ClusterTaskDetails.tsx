@@ -6,8 +6,6 @@ import { ClusterTaskModel } from '../../models';
 import { TaskKind } from '../../types';
 import WorkspaceDefinitionList from '../shared/workspaces/WorkspaceDefinitionList';
 
-import './ClusterTaskDetails.scss';
-
 export interface ClusterTaskDetailsProps {
   obj: TaskKind;
 }

@@ -40,6 +40,12 @@ import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 import { tableFilters } from './factory/table-filters';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
@@ -123,7 +129,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
             <ResourceSummary resource={obj} />
           </div>
           <div className="col-sm-6">
-            <dl className="co-m-pane__details">
+            <DescriptionList>
               <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
                 <Status status={getMachinePhase(obj)} />
               </DetailsItem>
@@ -135,42 +141,44 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
                 {providerState}
               </DetailsItem>
               {nodeName && (
-                <>
-                  <dt>{t('public~Node')}</dt>
-                  <dd>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Node')}</DescriptionListTerm>
+                  <DescriptionListDescription>
                     <NodeLink name={nodeName} />
-                  </dd>
-                </>
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {machineRole && (
-                <>
-                  <dt>{t('public~Machine role')}</dt>
-                  <dd>{machineRole}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Machine role')}</DescriptionListTerm>
+                  <DescriptionListDescription>{machineRole}</DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {instanceType && (
-                <>
-                  <dt>{t('public~Instance type')}</dt>
-                  <dd>{instanceType}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Instance type')}</DescriptionListTerm>
+                  <DescriptionListDescription>{instanceType}</DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {region && (
-                <>
-                  <dt>{t('public~Region')}</dt>
-                  <dd>{region}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Region')}</DescriptionListTerm>
+                  <DescriptionListDescription>{region}</DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {zone && (
-                <>
-                  <dt>{t('public~Availability zone')}</dt>
-                  <dd>{zone}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Availability zone')}</DescriptionListTerm>
+                  <DescriptionListDescription>{zone}</DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-              <dt>{t('public~Machine addresses')}</dt>
-              <dd>
-                <NodeIPList ips={getMachineAddresses(obj)} expand />
-              </dd>
-            </dl>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Machine addresses')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <NodeIPList ips={getMachineAddresses(obj)} expand />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

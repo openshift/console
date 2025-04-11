@@ -1,5 +1,17 @@
 import * as React from 'react';
-import { Grid, GridItem, ActionGroup, Button, Alert } from '@patternfly/react-core';
+import {
+  Grid,
+  GridItem,
+  ActionGroup,
+  Button,
+  Alert,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+  Content,
+  ContentVariants,
+} from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
@@ -90,36 +102,52 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
   );
   const volumeMode = persistentVolumeClaim?.spec?.volumeMode;
   return (
-    <dl>
-      <dt className="co-volume-snapshot__details-body">
+    <>
+      <Content component={ContentVariants.h3}>
         {t('console-app~PersistentVolumeClaim details')}
-      </dt>
-      <dt>{t('console-app~Name')}</dt>
-      <dd>
-        <ResourceIcon kind={PersistentVolumeClaimModel.kind} />
-        {getName(persistentVolumeClaim)}
-      </dd>
-      <dt>{t('console-app~Namespace')}</dt>
-      <dd>
-        <ResourceIcon kind={NamespaceModel.kind} />
-        {getNamespace(persistentVolumeClaim)}
-      </dd>
-      <dt>{t('console-app~Status')}</dt>
-      <dd>
-        <PVCStatus pvc={persistentVolumeClaim} />
-      </dd>
-      <dt>{t('console-app~StorageClass')}</dt>
-      <dd>
-        <ResourceIcon kind={StorageClassModel.kind} />
-        {storageClass}
-      </dd>
-      <dt>{t('console-app~Requested capacity')}</dt>
-      <dd>{sizeMetrics}</dd>
-      <dt>{t('console-app~Access mode')}</dt>
-      <dd>{accessModes.title}</dd>
-      <dt>{t('console-app~Volume mode')}</dt>
-      <dd>{volumeMode}</dd>
-    </dl>
+      </Content>
+      <DescriptionList>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-app~Name')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ResourceIcon kind={PersistentVolumeClaimModel.kind} />
+            {getName(persistentVolumeClaim)}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-app~Namespace')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ResourceIcon kind={NamespaceModel.kind} />
+            {getNamespace(persistentVolumeClaim)}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <PVCStatus pvc={persistentVolumeClaim} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-app~StorageClass')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ResourceIcon kind={StorageClassModel.kind} />
+            {storageClass}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-app~Requested capacity')}</DescriptionListTerm>
+          <DescriptionListDescription>{sizeMetrics}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-app~Access mode')}</DescriptionListTerm>
+          <DescriptionListDescription>{accessModes.title}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-app~Volume mode')}</DescriptionListTerm>
+          <DescriptionListDescription>{volumeMode}</DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
+    </>
   );
 };
 
@@ -318,16 +346,10 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
           </form>
         </PaneBody>
       </div>
-      <div className="co-volume-snapshot__info">
-        <Grid hasGutter>
-          <GridItem span={1} />
-          <GridItem span={10}>
-            {selectedPVCName && pvcObj && loaded && <PVCSummary persistentVolumeClaim={pvcObj} />}
-            {!loaded && <LoadingComponent />}
-          </GridItem>
-          <GridItem span={1} />
-        </Grid>
-      </div>
+      <PaneBody className="co-volume-snapshot__info">
+        {selectedPVCName && pvcObj && loaded && <PVCSummary persistentVolumeClaim={pvcObj} />}
+        {!loaded && <LoadingComponent />}
+      </PaneBody>
     </div>
   );
 });

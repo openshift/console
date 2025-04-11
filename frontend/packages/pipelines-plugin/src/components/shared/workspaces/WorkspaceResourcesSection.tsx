@@ -1,4 +1,9 @@
 import * as React from 'react';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { ConfigMapModel, PersistentVolumeClaimModel, SecretModel } from '@console/internal/models';
@@ -70,10 +75,10 @@ const WorkspaceResourcesSection: React.FC<WorkspaceResourcesSectionProps> = ({
   if (workspacesRenders.length === 0) return null;
 
   return (
-    <dl data-test-id="workspace-resources-section">
-      <dt>{t('pipelines-plugin~Workspace Resources')}</dt>
-      <dd>{workspacesRenders}</dd>
-    </dl>
+    <DescriptionListGroup data-test-id="workspace-resources-section">
+      <DescriptionListTerm>{t('pipelines-plugin~Workspace Resources')}</DescriptionListTerm>
+      <DescriptionListDescription>{workspacesRenders}</DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };
 

@@ -21,6 +21,7 @@ import {
   Timestamp,
   navFactory,
 } from './utils';
+import { DescriptionList } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];
@@ -140,7 +141,7 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
-            <dl className="co-m-pane__details">
+            <DescriptionList>
               <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
               <DetailsItem
                 label={t('public~Expected machines')}
@@ -152,7 +153,7 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
                 obj={obj}
                 path="status.currentHealthy"
               />
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

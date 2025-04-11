@@ -44,6 +44,7 @@ import { CronJobModel } from '../models';
 import { PodList, getFilters as getPodFilters } from './pod';
 import { JobsList } from './job';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { DescriptionList } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
@@ -134,7 +135,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
           </div>
           <div className="col-md-6">
             <SectionHeading text={t('public~Job details')} />
-            <dl className="co-m-pane__details">
+            <DescriptionList>
               <DetailsItem
                 label={t('public~Desired completions')}
                 obj={cronjob}
@@ -155,7 +156,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
                   : t('public~Not configured')}
               </DetailsItem>
               <PodDisruptionBudgetField obj={cronjob} />
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

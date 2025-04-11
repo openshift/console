@@ -7,14 +7,18 @@ import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
+  Breadcrumb,
+  BreadcrumbItem,
   Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
-  Breadcrumb,
-  BreadcrumbItem,
   PageBreadcrumb,
   Toolbar,
   ToolbarContent,
@@ -69,26 +73,36 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
       </SectionHeading>
       <div className="row">
         <div className="col-sm-6">
-          <dl className="co-m-pane__details">
-            <dt>{t('public~Group by')}</dt>
-            <dd data-test-id="group_by_value">
-              {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
-            </dd>
-            <dt>{t('public~Group wait')}</dt>
-            <dd data-test-id="group_wait_value">{_.get(config, ['route', 'group_wait'], '-')}</dd>
-          </dl>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Group by')}</DescriptionListTerm>
+              <DescriptionListDescription data-test-id="group_by_value">
+                {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Group wait')}</DescriptionListTerm>
+              <DescriptionListDescription data-test-id="group_wait_value">
+                {_.get(config, ['route', 'group_wait'], '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
         </div>
         <div className="col-sm-6">
-          <dl className="co-m-pane__details">
-            <dt>{t('public~Group interval')}</dt>
-            <dd data-test-id="group_interval_value">
-              {_.get(config, ['route', 'group_interval'], '-')}
-            </dd>
-            <dt>{t('public~Repeat interval')}</dt>
-            <dd data-test-id="repeat_interval_value">
-              {_.get(config, ['route', 'repeat_interval'], '-')}
-            </dd>
-          </dl>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Group interval')}</DescriptionListTerm>
+              <DescriptionListDescription data-test-id="group_interval_value">
+                {_.get(config, ['route', 'group_interval'], '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Repeat interval')}</DescriptionListTerm>
+              <DescriptionListDescription data-test-id="repeat_interval_value">
+                {_.get(config, ['route', 'repeat_interval'], '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

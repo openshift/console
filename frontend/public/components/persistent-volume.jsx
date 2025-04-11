@@ -16,6 +16,12 @@ import {
   Timestamp,
 } from './utils';
 import { PersistentVolumeModel } from '../models';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
@@ -97,53 +103,63 @@ const Details = ({ obj: pv }) => {
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={pv}>
-            <dt>{t('public~Reclaim policy')}</dt>
-            <dd>{reclaimPolicy}</dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Reclaim policy')}</DescriptionListTerm>
+              <DescriptionListDescription>{reclaimPolicy}</DescriptionListDescription>
+            </DescriptionListGroup>
           </ResourceSummary>
         </div>
         <div className="col-sm-6">
-          <dl>
-            <dt>{t('public~Status')}</dt>
-            <dd>
-              <PVStatus pv={pv} />
-            </dd>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <PVStatus pv={pv} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {storage && (
-              <>
-                <dt>{t('public~Capacity')}</dt>
-                <dd>{storage}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Capacity')}</DescriptionListTerm>
+                <DescriptionListDescription>{storage}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {!_.isEmpty(accessModes) && (
-              <>
-                <dt>{t('public~Access modes')}</dt>
-                <dd>{accessModes.join(', ')}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Access modes')}</DescriptionListTerm>
+                <DescriptionListDescription>{accessModes.join(', ')}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('public~Volume mode')}</dt>
-            <dd>{volumeMode || t('public~Filesystem')}</dd>
-            <dt>{t('public~StorageClass')}</dt>
-            <dd>
-              {storageClassName ? (
-                <ResourceLink kind="StorageClass" name={storageClassName} />
-              ) : (
-                t('public~None')
-              )}
-            </dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Volume mode')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {volumeMode || t('public~Filesystem')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~StorageClass')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {storageClassName ? (
+                  <ResourceLink kind="StorageClass" name={storageClassName} />
+                ) : (
+                  t('public~None')
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {pvcName && (
-              <>
-                <dt>{t('public~PersistentVolumeClaim')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~PersistentVolumeClaim')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <ResourceLink kind="PersistentVolumeClaim" name={pvcName} namespace={namespace} />
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {nfsExport && (
-              <>
-                <dt>{t('public~NFS-export')}</dt>
-                <dd>{nfsExport}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~NFS-export')}</DescriptionListTerm>
+                <DescriptionListDescription>{nfsExport}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-          </dl>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -95,65 +101,73 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
       <SectionHeading text={t('metal3-plugin~Bare Metal Host Details')} />
       <div className="row">
         <div className="col-xs-12 col-sm-6" id="name-description-column">
-          <dl>
-            <dt>{t('metal3-plugin~Name')}</dt>
-            <dd>{getName(host)}</dd>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Name')}</DescriptionListTerm>
+              <DescriptionListDescription>{getName(host)}</DescriptionListDescription>
+            </DescriptionListGroup>
             {description && (
-              <>
-                <dt>{t('metal3-plugin~Description')}</dt>
-                <dd>{description}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Description')}</DescriptionListTerm>
+                <DescriptionListDescription>{description}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('metal3-plugin~Host Addresses')}</dt>
-            <dd>
-              <DetailPropertyList>
-                <DetailPropertyListItem title="Management">
-                  {getHostBMCAddress(host) || DASH}
-                </DetailPropertyListItem>
-                <DetailPropertyListItem title="NICs">{ips}</DetailPropertyListItem>
-                <DetailPropertyListItem title="Boot Interface MAC">
-                  {getHostBootMACAddress(host)}
-                </DetailPropertyListItem>
-              </DetailPropertyList>
-            </dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Host Addresses')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <DetailPropertyList>
+                  <DetailPropertyListItem title="Management">
+                    {getHostBMCAddress(host) || DASH}
+                  </DetailPropertyListItem>
+                  <DetailPropertyListItem title="NICs">{ips}</DetailPropertyListItem>
+                  <DetailPropertyListItem title="Boot Interface MAC">
+                    {getHostBootMACAddress(host)}
+                  </DetailPropertyListItem>
+                </DetailPropertyList>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {machineName && (
-              <>
-                <dt>{t('metal3-plugin~Machine')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Machine')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <MachineLink host={host} />
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {nodeName && (
-              <>
-                <dt>{t('metal3-plugin~Node')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Node')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <ResourceLink
                     kind={referenceForModel(NodeModel)}
                     name={nodeName}
                     namespace={namespace}
                     title={nodeName}
                   />
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('metal3-plugin~Created at')}</dt>
-            <dd>
-              <Timestamp timestamp={creationTimestamp} />
-            </dd>
-          </dl>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Created at')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Timestamp timestamp={creationTimestamp} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
         </div>
         <div className="col-xs-12 col-sm-6">
-          <dl>
-            <dt>{t('metal3-plugin~Status')}</dt>
-            <dd>
-              <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
-            </dd>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Status')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {/* power status is not available until host registration/inspection is finished */}
             {!HOST_REGISTERING_STATES.includes(provisioningState) && (
-              <>
-                <dt>{t('metal3-plugin~Power Status')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Power Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   {!hasPowerManagement(host) ? (
                     <SecondaryStatus status={t('metal3-plugin~No power management')} />
                   ) : (
@@ -170,25 +184,27 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                       )}
                     </>
                   )}
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {role && (
-              <>
-                <dt>{t('metal3-plugin~Role')}</dt>
-                <dd>{role}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Role')}</DescriptionListTerm>
+                <DescriptionListDescription>{role}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {(manufacturer || productName) && (
-              <>
-                <dt>{t('metal3-plugin~Model')}</dt>
-                <dd>{_.filter([manufacturer, productName]).join(', ')}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Model')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {_.filter([manufacturer, productName]).join(', ')}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {bios && (
-              <>
-                <dt>{t('metal3-plugin~Bios')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Bios')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <DetailPropertyList>
                     <DetailPropertyListItem title="Version">
                       {bios.version || DASH}
@@ -200,19 +216,19 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                       {bios.date || DASH}
                     </DetailPropertyListItem>
                   </DetailPropertyList>
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {serialNumber && (
-              <>
-                <dt>{t('metal3-plugin~Serial Number')}</dt>
-                <dd>{serialNumber}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Serial Number')}</DescriptionListTerm>
+                <DescriptionListDescription>{serialNumber}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {_.get(host, 'status.hardware') && (
-              <>
-                <dt>{t('metal3-plugin~Hardware')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Hardware')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <DetailPropertyList>
                     <DetailPropertyListItem title={t('metal3-plugin~CPU')}>
                       {CPUCount ? `${CPUCount}x ${CPUModel}` : DASH}
@@ -224,10 +240,10 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                       {totalStorageCapacity}
                     </DetailPropertyListItem>
                   </DetailPropertyList>
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-          </dl>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

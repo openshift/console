@@ -21,6 +21,11 @@ import {
   ResourceSummary,
   SectionHeading,
 } from './utils';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common];
@@ -142,14 +147,24 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={obj}>
-              <dt>{t('public~Scale target')}</dt>
-              <dd>
-                <MachineAutoscalerTargetLink obj={obj} />
-              </dd>
-              <dt>{t('public~Min replicas')}</dt>
-              <dd>{_.get(obj, 'spec.minReplicas', '-')}</dd>
-              <dt>{t('public~Max replicas')}</dt>
-              <dd>{_.get(obj, 'spec.maxReplicas') || '-'}</dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Scale target')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <MachineAutoscalerTargetLink obj={obj} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Min replicas')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {_.get(obj, 'spec.minReplicas', '-')}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Max replicas')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {_.get(obj, 'spec.maxReplicas') || '-'}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
           </div>
         </div>

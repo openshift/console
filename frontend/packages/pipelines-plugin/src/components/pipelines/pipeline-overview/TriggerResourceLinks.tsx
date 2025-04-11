@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { DescriptionList, DescriptionListDescription } from '@patternfly/react-core';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { RouteTemplate } from '../utils/triggers';
-
 import './TriggerResourceLinks.scss';
 
 type TriggerResourceLinksProps = {
@@ -19,33 +19,31 @@ const TriggerResourceLinks: React.FC<TriggerResourceLinksProps> = ({
     return null;
   }
   return (
-    <div>
-      <dl>
-        {links.map(({ routeURL, triggerTemplateName }) => {
-          return (
-            <dd key={triggerTemplateName}>
-              <ResourceLink
-                kind={referenceForModel(model)}
-                name={triggerTemplateName}
-                namespace={namespace}
-                title={triggerTemplateName}
-                inline
-              />
-              {routeURL && (
-                <div className="opp-trigger-template-link">
-                  <ExternalLinkWithCopy
-                    key={routeURL}
-                    link={routeURL}
-                    text={routeURL}
-                    additionalClassName="co-external-link--block"
-                  />
-                </div>
-              )}
-            </dd>
-          );
-        })}
-      </dl>
-    </div>
+    <DescriptionList>
+      {links.map(({ routeURL, triggerTemplateName }) => {
+        return (
+          <DescriptionListDescription key={triggerTemplateName}>
+            <ResourceLink
+              kind={referenceForModel(model)}
+              name={triggerTemplateName}
+              namespace={namespace}
+              title={triggerTemplateName}
+              inline
+            />
+            {routeURL && (
+              <div className="opp-trigger-template-link">
+                <ExternalLinkWithCopy
+                  key={routeURL}
+                  link={routeURL}
+                  text={routeURL}
+                  additionalClassName="co-external-link--block"
+                />
+              </div>
+            )}
+          </DescriptionListDescription>
+        );
+      })}
+    </DescriptionList>
   );
 };
 

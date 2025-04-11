@@ -5,6 +5,12 @@ import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind } from '../../module/k8s';
 import { SectionHeading } from './headings';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
   const postCommitArgs = _.get(resource, 'spec.postCommit.args');
@@ -15,26 +21,32 @@ export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
   return !_.isEmpty(postCommitCommand) || !_.isEmpty(postCommitArgs) || postCommitScript ? (
     <PaneBody>
       <SectionHeading text={t('public~Post-commit hooks')} />
-      <dl className="co-m-pane__details">
-        {!_.isEmpty(postCommitCommand) && <dt>{t('public~Command')}</dt>}
+      <DescriptionList>
         {!_.isEmpty(postCommitCommand) && (
-          <dd>
-            <code className="co-code">{postCommitCommand.join(' ')}</code>
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Command')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <code className="co-code">{postCommitCommand.join(' ')}</code>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         )}
-        {postCommitScript && <dt>{t('public~Script')}</dt>}
         {postCommitScript && (
-          <dd>
-            <code className="co-code">{postCommitScript}</code>
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Script')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <code className="co-code">{postCommitScript}</code>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         )}
-        {!_.isEmpty(postCommitArgs) && <dt>{t('public~Args')}</dt>}
         {!_.isEmpty(postCommitArgs) && (
-          <dd>
-            <code className="co-code">{postCommitArgs.join(' ')}</code>
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Args')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <code className="co-code">{postCommitArgs.join(' ')}</code>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         )}
-      </dl>
+      </DescriptionList>
     </PaneBody>
   ) : null;
 };

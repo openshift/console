@@ -3,7 +3,13 @@ import * as _ from 'lodash-es';
 import classNames from 'classnames';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
-import { Alert } from '@patternfly/react-core';
+import {
+  Alert,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
@@ -243,22 +249,26 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
             <ResourceSummary resource={obj} />
           </div>
           <div className="col-sm-6">
-            <dl>
+            <DescriptionList>
               {operatorVersion && (
-                <>
-                  <dt>{t('public~Version')}</dt>
-                  <dd>{operatorVersion}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Version')}</DescriptionListTerm>
+                  <DescriptionListDescription>{operatorVersion}</DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                <OperatorStatusIconAndLabel status={status} />
-              </dd>
-              <dt>{t('public~Message')}</dt>
-              <dd className="co-pre-line">
-                <LinkifyExternal>{message || '-'}</LinkifyExternal>
-              </dd>
-            </dl>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <OperatorStatusIconAndLabel status={status} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Message')}</DescriptionListTerm>
+                <DescriptionListDescription className="co-pre-line">
+                  <LinkifyExternal>{message || '-'}</LinkifyExternal>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

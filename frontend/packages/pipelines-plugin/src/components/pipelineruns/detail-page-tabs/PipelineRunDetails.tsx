@@ -2,7 +2,6 @@ import * as React from 'react';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PipelineRunKind } from '../../../types';
 import PipelineRunDetailsSection from './PipelineRunDetailsSection';
-import './TriggeredBySection.scss';
 
 export interface PipelineRunDetailsProps {
   obj: PipelineRunKind;
