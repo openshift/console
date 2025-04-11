@@ -3,8 +3,8 @@ import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import Form, { FormProps } from '@rjsf/core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import { ErrorBoundary } from '@console/shared/src/components/error';
 import { K8S_UI_SCHEMA } from './const';
 import defaultFields from './fields';
@@ -41,6 +41,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   ...restProps
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const schemaErrors = getSchemaErrors(schema);
   // IF the top level schema is unsupported, don't render a form at all.
   if (schemaErrors.length) {
@@ -70,7 +71,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     );
   };
 
-  const goBack = () => history.go(-1);
+  const goBack = () => navigate(-1);
 
   return (
     <>

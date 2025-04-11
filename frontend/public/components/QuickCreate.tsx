@@ -6,7 +6,6 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { history } from '@console/internal/components/utils';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ALL_NAMESPACES_KEY, formatNamespacedRouteForResource, useFlag } from '@console/shared/src';
 import * as React from 'react';
@@ -67,6 +66,7 @@ const useCanCreateResource = () => {
 const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
+  const navigate = useNavigate();
 
   const canCreate = useCanCreateResource();
   const [isOpen, setIsOpen] = React.useState(false);
@@ -110,7 +110,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
           to={importYAMLURL}
           onClick={(ev: any) => {
             ev.preventDefault();
-            history.push(importYAMLURL);
+            navigate(importYAMLURL);
           }}
           tooltipProps={{
             content: t('public~Create resources from their YAML or JSON definitions'),
@@ -128,7 +128,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
               to={getImportFromGitURL(namespace)}
               onClick={(ev: any) => {
                 ev.preventDefault();
-                history.push(getImportFromGitURL(namespace));
+                navigate(getImportFromGitURL(namespace));
               }}
               tooltipProps={{
                 content: t('public~Import code from your Git repository to be built and deployed'),
@@ -144,7 +144,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
               to={getContainerImageURL(namespace)}
               onClick={(ev: any) => {
                 ev.preventDefault();
-                history.push(getContainerImageURL(namespace));
+                navigate(getContainerImageURL(namespace));
               }}
               tooltipProps={{
                 content: t(

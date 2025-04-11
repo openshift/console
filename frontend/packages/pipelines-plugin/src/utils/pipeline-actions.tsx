@@ -30,7 +30,7 @@ import {
 } from './pipeline-augment';
 import { getSbomTaskRun, returnValidPipelineRunModel } from './pipeline-utils';
 
-export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
+const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   history.push(
     resourcePathFromModel(
       PipelineRunModel,

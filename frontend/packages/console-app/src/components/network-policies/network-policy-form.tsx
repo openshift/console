@@ -14,13 +14,12 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
   ButtonBar,
   ExternalLink,
   getNetworkPolicyDocURL,
-  history,
   isManaged,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
@@ -61,6 +60,7 @@ type NetworkPolicyFormProps = {
 export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, onChange }) => {
   const { t } = useTranslation();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
+  const navigate = useNavigate();
 
   const { ns: namespace } = useParams();
 
@@ -196,7 +196,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
     k8sCreate(model, policy)
       .then(() => {
         setInProgress(false);
-        history.push(resourcePathFromModel(model, networkPolicy.name, networkPolicy.namespace));
+        navigate(resourcePathFromModel(model, networkPolicy.name, networkPolicy.namespace));
       })
       .catch((err) => {
         setError(err.message);
@@ -412,7 +412,7 @@ export const NetworkPolicyForm: React.FC<NetworkPolicyFormProps> = ({ formData, 
             <Button type="submit" id="save-changes" variant="primary">
               {t('console-app~Create')}
             </Button>
-            <Button onClick={() => history.go(-1)} id="cancel" variant="secondary">
+            <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
               {t('console-app~Cancel')}
             </Button>
           </ActionGroup>

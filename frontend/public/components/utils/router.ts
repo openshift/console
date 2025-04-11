@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import { createBrowserHistory, createMemoryHistory, History } from '@remix-run/router';
 
 /**
- * @deprecated
+ * @deprecated - use useNavigate instead
  *
  * TODO: Using custom pre-instantiated history object with React Router 6+ is highly discouraged.
  * We should remove all usages of this history object and replace the current HistoryRouter impl.
@@ -31,6 +31,7 @@ history.push = (url: string) => (history as any).__push__(removeBasePath(url));
 export const getQueryArgument = (arg: string) =>
   new URLSearchParams(window.location.search).get(arg);
 
+/** @deprecated - use useNavigate instead */
 export const setQueryArgument = (k: string, v: string) => {
   const params = new URLSearchParams(window.location.search);
   if (params.get(k) !== v) {
@@ -40,6 +41,7 @@ export const setQueryArgument = (k: string, v: string) => {
   }
 };
 
+/** @deprecated - use useNavigate instead */
 export const setQueryArguments = (newParams: { [k: string]: string }) => {
   const params = new URLSearchParams(window.location.search);
   let update = false;
@@ -55,6 +57,7 @@ export const setQueryArguments = (newParams: { [k: string]: string }) => {
   }
 };
 
+/** @deprecated - use useNavigate instead */
 export const setAllQueryArguments = (newParams: { [k: string]: string }) => {
   const params = new URLSearchParams();
   let update = false;
@@ -70,6 +73,7 @@ export const setAllQueryArguments = (newParams: { [k: string]: string }) => {
   }
 };
 
+/** @deprecated - use useNavigate instead */
 export const removeQueryArgument = (k: string) => {
   const params = new URLSearchParams(window.location.search);
   if (params.has(k)) {
@@ -79,6 +83,7 @@ export const removeQueryArgument = (k: string) => {
   }
 };
 
+/** @deprecated - use useNavigate instead */
 export const removeQueryArguments = (...keys: string[]) => {
   const params = new URLSearchParams(window.location.search);
   let update = false;
@@ -94,5 +99,6 @@ export const removeQueryArguments = (...keys: string[]) => {
   }
 };
 
+/** @deprecated - use useNavigate instead */
 export const setOrRemoveQueryArgument = (k: string, v: string) =>
   v ? setQueryArgument(k, v) : removeQueryArgument(k);

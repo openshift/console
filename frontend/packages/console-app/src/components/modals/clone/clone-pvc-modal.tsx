@@ -7,6 +7,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   ModalBody,
   ModalComponentProps,
@@ -23,7 +24,6 @@ import {
   LoadingInline,
   ResourceIcon,
   humanizeBinaryBytes,
-  history,
   withHandlePromise,
   RequestSizeInput,
   validate,
@@ -55,6 +55,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { t } = useTranslation();
   const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
   const { name: pvcName, namespace } = resource?.metadata;
+  const navigate = useNavigate();
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;
@@ -127,7 +128,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
 
     return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj), (cloneResource) => {
       close();
-      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
+      navigate(resourceObjPath(cloneResource, referenceFor(cloneResource)));
     });
   };
 

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { resourcePath, history } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom';
+import { resourcePath } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { JobModel, PodModel } from '@console/internal/models';
 import { PodKind, JobKind } from '@console/internal/module/k8s';
@@ -20,6 +21,7 @@ const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({
   onViewLog,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [job, jobLoaded] = useK8sWatchResource<JobKind>({
     kind: JobModel.kind,
     name: EXPORT_JOB_PREFIX + name,
@@ -53,7 +55,7 @@ const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({
       return;
     }
     e.preventDefault();
-    history.push(path);
+    navigate(path);
     onViewLog?.();
   };
 

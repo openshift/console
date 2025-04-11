@@ -8,8 +8,9 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { history, Timestamp, ExternalLink } from '@console/internal/components/utils';
+import { Timestamp, ExternalLink } from '@console/internal/components/utils';
 import { Button, ButtonVariant, Title } from '@patternfly/react-core';
+import { useNavigate } from 'react-router-dom';
 
 // eslint-disable-next-line no-shadow
 export enum NotificationTypes {
@@ -75,6 +76,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
   type,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const notificationTypeString = (notificationType: NotificationTypes): string => {
     switch (notificationType) {
       case NotificationTypes.warning:
@@ -91,7 +93,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
   };
   const onClick = () => {
     toggleNotificationDrawer();
-    alertAction ? alertAction() : history.push(actionPath);
+    alertAction ? alertAction() : navigate(actionPath);
   };
   return (
     <li
@@ -106,7 +108,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
       onClick={
         targetPath
           ? () => {
-              history.push(targetPath);
+              navigate(targetPath);
               toggleNotificationDrawer();
             }
           : null
