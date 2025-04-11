@@ -4,6 +4,7 @@ import { LaunchModal, ModalContext } from './ModalProvider';
 type UseModalLauncher = () => LaunchModal;
 
 /**
+ * @deprecated - Use useOverlay from \@console/dynamic-plugin-sdk instead.
  * A hook to launch Modals.
  * @example
  *```tsx
