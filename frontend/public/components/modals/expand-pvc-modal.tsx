@@ -74,7 +74,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
             process.
           </Trans>
         </p>
-        <label className="control-label co-required">{t('public~Total size')}</label>
+        <label className="co-required">{t('public~Total size')}</label>
         <RequestSizeInput
           name={t('public~requestSize')}
           required

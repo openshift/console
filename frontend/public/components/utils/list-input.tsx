@@ -52,7 +52,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
     const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
       <div className="form-group">
-        <label className={classNames('control-label', { 'co-required': required })}>{label}</label>
+        <label className={classNames({ 'co-required': required })}>{label}</label>
         {_.map(values, (v: string, i: number) => (
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">

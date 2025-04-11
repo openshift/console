@@ -175,7 +175,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
             </div>
             <div className="col-xs-9">
               <div className="radio">
-                <label className="control-label">
+                <label>
                   <input
                     type="radio"
                     id="namespace-pull-secret-method--form"
@@ -187,7 +187,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                 </label>
               </div>
               <div className="radio">
-                <label className="control-label">
+                <label>
                   <input
                     type="radio"
                     checked={this.state.method === 'upload'}

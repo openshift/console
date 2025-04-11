@@ -54,7 +54,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 
               <div className="row co-m-form-row">
                 <div className="col-sm-3">
-                  <label htmlFor="input-max-unavailable" className="control-label co-break-word">
+                  <label htmlFor="input-max-unavailable" className="co-break-word">
                     {t('public~Max unavailable')}
                   </label>
                 </div>
@@ -100,7 +100,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 
               <div className="row co-m-form-row">
                 <div className="col-sm-3">
-                  <label htmlFor="input-max-surge" className="control-label co-break-word">
+                  <label htmlFor="input-max-surge" className="co-break-word">
                     {t('public~Max surge')}
                   </label>
                 </div>

@@ -167,7 +167,7 @@ export const AddOpenIDIDPPage = () => {
         <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
+            <label className="co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -181,7 +181,7 @@ export const AddOpenIDIDPPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
+            <label className="co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -195,7 +195,7 @@ export const AddOpenIDIDPPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="issuer">
+            <label className="co-required" htmlFor="issuer">
               {t('public~Issuer URL')}
             </label>
             <span className="pf-v6-c-form-control">

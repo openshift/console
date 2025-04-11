@@ -21,7 +21,7 @@ export const WebHookSecretForm: React.FC<SecretSubFormProps> = ({ onChange, stri
 
   return (
     <div className="form-group">
-      <label className="control-label co-required" htmlFor="webhook-secret-key">
+      <label className="co-required" htmlFor="webhook-secret-key">
         {t('public~Webhook secret key')}
       </label>
       <div className="pf-v6-c-input-group">

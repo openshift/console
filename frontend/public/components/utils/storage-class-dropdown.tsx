@@ -170,7 +170,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
         {loaded && itemsAvailableToShow && (
           <div>
             <label
-              className={classNames('control-label', this.props.hideClassName, {
+              className={classNames(this.props.hideClassName, {
                 'co-required': this.props.required,
               })}
               htmlFor={id}
