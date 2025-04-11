@@ -9,20 +9,13 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Button,
-  Content,
-  ContentVariants,
-  PageBreadcrumb,
-  PageSection,
-  Split,
-  SplitItem,
   Title,
 } from '@patternfly/react-core';
+import { PageHeader, PageHeaderLinkProps } from '@patternfly/react-component-groups';
 import { ResourceStatus, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Status, YellowExclamationTriangleIcon } from '@console/shared';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
-import NavTitle from '@console/shared/src/components/layout/NavTitle';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 
 import { ActionsMenu, FirehoseResult, KebabOption, ResourceIcon } from './index';
@@ -79,41 +72,32 @@ export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) 
   </>
 );
 
-const HelpTextContent: React.FC<HelpTextContentProps> = ({ children, className }) => (
-  <Content component={ContentVariants.p} className={className} data-test="help-text">
-    {children}
-  </Content>
-);
-
-const HelpPageSection: React.FC<HelpPageSectionProps> = ({ children }) => (
-  <PageSection className="pf-v6-u-pt-0">{children}</PageSection>
-);
-
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {
-    kind,
-    kindObj,
-    title,
-    menuActions,
-    buttonActions,
-    customActionMenu,
-    link,
-    obj,
+    'data-test': dataTestId,
+    badge,
     breadcrumbs,
     breadcrumbsFor,
-    titleFunc,
-    style,
+    buttonActions,
+    children,
+    className,
+    customActionMenu,
     customData,
-    badge,
     getResourceStatus = (resource: K8sResourceKind): string =>
       _.get(resource, ['status', 'phase'], null),
-    className,
-    helpText,
     helpAlert,
-    'data-test': dataTestId,
+    helpText,
     hideFavoriteButton,
-    children,
-    navTitleAsRow,
+    icon,
+    kind,
+    kindObj,
+    linkProps,
+    menuActions,
+    obj,
+    OverrideTitle,
+    title,
+    titleFunc,
+    primaryAction,
   } = props;
   const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
@@ -131,112 +115,86 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     hasData &&
     !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
-  const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
   const isAdminPerspective = perspective === 'admin';
-  const childrenHasNodes = React.Children.toArray(children).length > 0; // children with empty nodes removed is not empty
-  const navTitleHelpClassName = classNames({ 'pf-v6-u-mt-sm': title });
+
   return (
-    <>
-      {showBreadcrumbs && (
-        <PageBreadcrumb>
-          <Split style={{ alignItems: 'baseline' }}>
-            <SplitItem isFilled>
-              <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
-            </SplitItem>
-            {badge && (
-              <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
-            )}
-          </Split>
-        </PageBreadcrumb>
-      )}
-      <NavTitle
-        data-test-id={dataTestId}
-        className={classNames({ 'co-m-nav-title--row': navTitleAsRow }, className)}
-        style={style}
-      >
-        {showHeading && (
-          <PrimaryHeading
-            className={classNames({
-              'co-m-pane__heading--logo': props.icon,
-              'pf-v6-u-flex-grow-1': !showActions,
-            })}
-            alignItemsBaseline={!!link}
-          >
-            {props.icon ? (
-              <props.icon obj={data} />
-            ) : (
-              <div className="co-m-pane__name co-resource-item">
-                {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-                <span data-test-id="resource-title" className="co-resource-item__resource-name">
-                  {resourceTitle}
-                  {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
-                    <ManagedByOperatorLink obj={data} />
-                  )}
-                </span>
-                {resourceStatus && (
-                  <ResourceStatus additionalClassNames="hidden-xs">
-                    <Status status={resourceStatus} />
-                  </ResourceStatus>
+    <div
+      data-test={dataTestId ?? 'page-heading'}
+      className={classNames('co-m-nav-title', className)}
+    >
+      <PageHeader
+        title={
+          OverrideTitle ? (
+            <OverrideTitle obj={data} />
+          ) : (
+            <div className="co-m-pane__name co-resource-item">
+              {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
+              <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                {resourceTitle}
+                {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
+                  <ManagedByOperatorLink obj={data} />
                 )}
-              </div>
-            )}
-            {!breadcrumbsFor && !breadcrumbs && badge && (
-              <span className="co-m-pane__heading-badge">{badge}</span>
-            )}
-            {link && <div className="co-m-pane__heading-link">{link}</div>}
-            {(isAdminPerspective || showActions) && (
-              <ActionList className="co-actions" data-test-id="details-actions">
-                <ActionListGroup>
-                  {isAdminPerspective && !hideFavoriteButton && (
-                    <ActionListItem>
-                      <FavoriteButton />
-                    </ActionListItem>
-                  )}
+              </span>
+              {resourceStatus && (
+                <ResourceStatus additionalClassNames="hidden-xs">
+                  <Status status={resourceStatus} />
+                </ResourceStatus>
+              )}
+            </div>
+          )
+        }
+        actionMenu={
+          ((isAdminPerspective && !hideFavoriteButton) || showActions || primaryAction) && (
+            <ActionList className="co-actions" data-test-id="details-actions">
+              <ActionListGroup>
+                {isAdminPerspective && !hideFavoriteButton && (
+                  <ActionListItem>
+                    <FavoriteButton />
+                  </ActionListItem>
+                )}
 
-                  {showActions && (
-                    <>
-                      {hasButtonActions && (
-                        <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-                      )}
+                {primaryAction}
 
-                      {hasMenuActions && (
-                        <ActionListItem>
-                          <ActionsMenu
-                            actions={
-                              _.isFunction(menuActions)
-                                ? menuActions(kindObj, data, extraResources, customData)
-                                : menuActions.map((a) =>
-                                    a(kindObj, data, extraResources, customData),
-                                  )
-                            }
-                          />
-                        </ActionListItem>
-                      )}
+                {showActions && (
+                  <>
+                    {hasButtonActions && (
+                      <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+                    )}
 
-                      {_.isFunction(customActionMenu)
-                        ? customActionMenu(kindObj, data)
-                        : customActionMenu}
-                    </>
-                  )}
-                </ActionListGroup>
-              </ActionList>
-            )}
-          </PrimaryHeading>
-        )}
-        {helpAlert && !childrenHasNodes && <div className={navTitleHelpClassName}>{helpAlert}</div>}
-        {helpText && !childrenHasNodes && (
-          <HelpTextContent className={navTitleHelpClassName}>{helpText}</HelpTextContent>
-        )}
+                    {hasMenuActions && (
+                      <ActionListItem>
+                        <ActionsMenu
+                          actions={
+                            _.isFunction(menuActions)
+                              ? menuActions(kindObj, data, extraResources, customData)
+                              : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                          }
+                        />
+                      </ActionListItem>
+                    )}
+
+                    {_.isFunction(customActionMenu)
+                      ? customActionMenu(kindObj, data)
+                      : customActionMenu}
+                  </>
+                )}
+              </ActionListGroup>
+            </ActionList>
+          )
+        }
+        breadcrumbs={
+          showBreadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
+        }
+        subtitle={helpText}
+        icon={icon}
+        label={badge}
+        linkProps={linkProps}
+      >
+        {helpAlert && helpAlert}
         {children}
-      </NavTitle>
-      {helpAlert && childrenHasNodes && <HelpPageSection>{helpAlert}</HelpPageSection>}
-      {helpText && childrenHasNodes && (
-        <HelpPageSection>
-          <HelpTextContent>{helpText}</HelpTextContent>
-        </HelpPageSection>
-      )}
-    </>
+      </PageHeader>
+    </div>
   );
 });
 
@@ -286,42 +244,42 @@ export type KebabOptionsCreator = (
   customData?: any,
 ) => KebabOption[];
 
-type HelpTextContentProps = {
-  children: React.ReactNode;
-  className?: string;
-};
-
-type HelpPageSectionProps = {
-  children: React.ReactNode;
-};
-
 export type PageHeadingProps = {
   'data-test'?: string;
+  /** A badge that is displayed next to the title of the heading */
+  badge?: React.ReactNode;
   breadcrumbs?: { name: string; path: string }[];
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
   buttonActions?: any[];
   children?: React.ReactChildren;
-  kind?: K8sResourceKindReference;
-  kindObj?: K8sKind;
-  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  className?: string;
+  /** Renders a custom action menu if the `obj` prop is passed with `data` */
   customActionMenu?:
     | React.ReactNode
-    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
-  link?: React.ReactNode;
+    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode);
+  customData?: any;
+  getResourceStatus?: (resource: K8sResourceKind) => string;
+  /** An alert placed below the heading in the same PageSection. */
+  helpAlert?: React.ReactNode;
+  /** A subtitle placed below the title. */
+  helpText?: React.ReactNode;
+  /** An icon which is placed next to the title with a divider line */
+  icon?: React.ReactNode;
+  /** Whether to hide the favorite button */
+  hideFavoriteButton?: boolean;
+  /** A component to override the title of the page */
+  OverrideTitle?: React.ComponentType<{ obj?: K8sResourceKind }>;
+  kind?: K8sResourceKindReference;
+  kindObj?: K8sKind;
+  /** Optional link below subtitle */
+  linkProps?: PageHeaderLinkProps;
+  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
   obj?: FirehoseResult<K8sResourceKind>;
+  /** A primary action that is always rendered. */
+  primaryAction?: React.ReactNode;
   resourceKeys?: string[];
-  style?: object;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
-  customData?: any;
-  badge?: React.ReactNode;
-  icon?: React.ComponentType<{ obj?: K8sResourceKind }>;
-  getResourceStatus?: (resource: K8sResourceKind) => string;
-  className?: string;
-  helpText?: React.ReactNode;
-  helpAlert?: React.ReactNode;
-  hideFavoriteButton?: boolean;
-  navTitleAsRow?: boolean;
 };
 
 export type SectionHeadingProps = {

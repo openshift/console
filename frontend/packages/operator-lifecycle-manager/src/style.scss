@@ -41,6 +41,7 @@ $co-affinity-row-margin: 15px;
 .co-clusterserviceversion-logo {
   align-items: flex-start;
   display: flex;
+  gap: var(--pf-t--global--spacer--md);
 }
 
 .co-clusterserviceversion-logo__icon {
@@ -49,7 +50,7 @@ $co-affinity-row-margin: 15px;
   display: flex;
   flex: 0 0 auto;
   justify-content: center;
-  margin: 0 15px 5px 0;
+  margin-bottom: 5px;
 }
 
 .co-clusterserviceversion-logo__name {
