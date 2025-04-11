@@ -5,8 +5,8 @@ import * as rbacModule from '@console/internal/components/utils/rbac';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { PageContents } from '../MonitoringPage';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

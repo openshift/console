@@ -13,8 +13,8 @@ import HelmReleaseDetails, { LoadedHelmReleaseDetails } from '../HelmReleaseDeta
 let helmReleaseDetailsProps: React.ComponentProps<typeof HelmReleaseDetails>;
 let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmReleaseDetails>;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

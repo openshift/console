@@ -4,8 +4,8 @@ import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { MultiTabListPage } from '@console/shared';
 import EventingListPage from '../EventingListPage';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

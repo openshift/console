@@ -8,8 +8,8 @@ import PipelineBuilderPage from '../PipelineBuilderPage';
 type PipelineBuilderPageProps = React.ComponentProps<typeof PipelineBuilderPage>;
 type BuilderProps = React.ComponentProps<typeof Formik>;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

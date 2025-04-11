@@ -8,8 +8,8 @@ import { PodModel, ConfigMapModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

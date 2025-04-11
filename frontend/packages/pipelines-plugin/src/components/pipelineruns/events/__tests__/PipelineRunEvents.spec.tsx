@@ -17,8 +17,8 @@ const { taskRuns, pods } = pipeline;
 const spyUsePipelineRunRelatedResources = jest.spyOn(utils, 'usePipelineRunRelatedResources');
 type PipelineRunEventsProps = React.ComponentProps<typeof PipelineRunEvents>;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

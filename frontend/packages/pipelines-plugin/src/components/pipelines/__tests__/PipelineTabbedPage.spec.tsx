@@ -8,8 +8,8 @@ import RepositoriesList from '../../repository/list-page/RepositoriesList';
 import PipelinesList from '../list-page/PipelinesList';
 import PipelineTabbedPage, { PageContents } from '../PipelineTabbedPage';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
   useNavigate: jest.fn(),

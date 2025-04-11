@@ -4,8 +4,8 @@ import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { PageContents as AddPage } from '../AddPage';
 import AddCardsLoader from '../AddPageLayout';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 
