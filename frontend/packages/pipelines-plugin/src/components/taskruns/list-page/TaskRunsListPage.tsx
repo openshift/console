@@ -38,7 +38,14 @@ const TaskRunsListPage: React.FC<
   const ns = namespace || params?.ns;
   const badge = usePipelineTechPreviewBadge(ns);
   const trForPlr = props.selector && props.selector?.matchLabels?.['tekton.dev/pipelineRun'];
-  const [taskRuns, taskRunsLoaded, taskRunsLoadError, getNextPage] = useTaskRuns(ns, trForPlr);
+  const trForPlrUid = props.selector && props.selector?.matchLabels?.['tekton.dev/pipelineRunUID'];
+  const [taskRuns, taskRunsLoaded, taskRunsLoadError, getNextPage] = useTaskRuns(
+    ns,
+    trForPlr,
+    undefined,
+    undefined,
+    trForPlrUid,
+  );
 
   const taskRunsResource = {
     [referenceForModel(TaskRunModel)]: {
