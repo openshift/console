@@ -46,7 +46,7 @@ const ServiceBindingListPage: React.FC<ServiceBindingListPageProps> = (props) =>
       ListComponent={ServiceBindingTable}
       rowFilters={filters}
       canCreate
-      helpText={<ServiceBindingDeprecationAlert />}
+      helpAlert={<ServiceBindingDeprecationAlert />}
       {...propsWithoutName}
     />
   );

@@ -292,7 +292,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
     <>
       <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
         <ListPageCreate groupVersionKind={referenceForModel(MachineModel)}>
-          {t('public~Create machine')}
+          {t('public~Create Machine')}
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>

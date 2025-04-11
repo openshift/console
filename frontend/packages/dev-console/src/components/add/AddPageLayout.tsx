@@ -25,7 +25,6 @@ type AddPageLayoutProps = {
 const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additionalHint }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
-  const [viewContainer, setViewContainer] = React.useState<HTMLElement>(null);
   const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
     typeof getQueryArgument('catalogSearch') === 'string',
   );
@@ -99,7 +98,6 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
           </div>
           <TopologyQuickSearch
             namespace={activeNamespace}
-            viewContainer={viewContainer}
             isOpen={isQuickSearchOpen}
             setIsOpen={setIsQuickSearchOpenAndFireEvent}
           />
@@ -112,11 +110,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
   };
 
   return (
-    <div
-      className="odc-add-page-layout ocs-quick-search-modal__no-backdrop"
-      data-test="add-page"
-      ref={setViewContainer}
-    >
+    <div className="odc-add-page-layout ocs-quick-search-modal__no-backdrop" data-test="add-page">
       <PageLayout title={title} hint={getHint()}>
         <GettingStartedSection userSettingKey="devconsole.addPage.gettingStarted" />
         <AddCardSection

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Toolbar, ToolbarContent } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Table, TextFilter } from '@console/internal/components/factory';
 import { fuzzyCaseInsensitive } from '@console/internal/components/factory/table-filters';
@@ -29,13 +30,15 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
     <div className="gop-gitops-list">
       {!emptyStateMsg && appGroups ? (
         <>
-          <div className="co-m-pane__filter-row">
-            <TextFilter
-              value={textFilter}
-              label={t('gitops-plugin~by name')}
-              onChange={(_event, val) => setTextFilter(val)}
-            />
-          </div>
+          <Toolbar>
+            <ToolbarContent>
+              <TextFilter
+                value={textFilter}
+                label={t('gitops-plugin~by name')}
+                onChange={(_event, val) => setTextFilter(val)}
+              />
+            </ToolbarContent>
+          </Toolbar>
           <Table
             data={visibleItems}
             aria-label={t('gitops-plugin~Environments table')}

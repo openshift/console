@@ -2194,7 +2194,7 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 
 ### Summary 
 
-Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information.<br/>This is to be used in conjunction with an `ErrorBoundary` component.
+Creates a full page ErrorBoundaryFallbackPage component to display the "Something wrong happened" message along with the stack trace and other helpful debugging information.<br/>This is to be used in conjunction with an `ErrorBoundary` component.
 
 
 

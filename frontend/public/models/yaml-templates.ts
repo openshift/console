@@ -1226,10 +1226,11 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: ''
+  name: example
 spec:
   selector:
-    {}
+    matchLabels:
+      app: hello-openShift
 `,
   )
   .setIn(

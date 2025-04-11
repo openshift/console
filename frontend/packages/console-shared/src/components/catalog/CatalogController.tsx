@@ -184,35 +184,32 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageBody>
-        <div className="co-catalog">
-          <PageHeading title={title} breadcrumbs={type ? breadcrumbs : null} />
-          <p data-test-id="catalog-page-description" className="co-catalog-page__description">
-            {getCatalogTypeDescription()}
-          </p>
-          <div className="co-catalog__body">
-            <StatusBox
-              skeleton={skeletonCatalog}
-              data={items}
-              loaded={loaded}
-              loadError={loadError}
-              label={t('console-shared~Catalog items')}
-            >
-              <CatalogView
-                catalogType={type}
-                catalogTypes={catalogTypes}
-                items={catalogItems}
-                categories={categories}
-                filters={availableFilters}
-                filterGroups={filterGroups}
-                filterGroupMap={filterGroupMap}
-                groupings={groupings}
-                renderTile={renderTile}
-                hideSidebar={hideSidebar}
-              />
-              <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
-            </StatusBox>
-          </div>
-        </div>
+        <PageHeading
+          title={title}
+          breadcrumbs={type ? breadcrumbs : null}
+          helpText={getCatalogTypeDescription()}
+        />
+        <StatusBox
+          skeleton={skeletonCatalog}
+          data={items}
+          loaded={loaded}
+          loadError={loadError}
+          label={t('console-shared~Catalog items')}
+        >
+          <CatalogView
+            catalogType={type}
+            catalogTypes={catalogTypes}
+            items={catalogItems}
+            categories={categories}
+            filters={availableFilters}
+            filterGroups={filterGroups}
+            filterGroupMap={filterGroupMap}
+            groupings={groupings}
+            renderTile={renderTile}
+            hideSidebar={hideSidebar}
+          />
+          <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
+        </StatusBox>
       </PageBody>
     </>
   );

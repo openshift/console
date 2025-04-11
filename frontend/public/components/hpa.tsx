@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
@@ -31,11 +31,11 @@ const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel), ...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
-  <div className="row">
-    <div className="col-xs-6">{type}</div>
-    <div className="col-xs-3">{current || '-'}</div>
-    <div className="col-xs-3">{target || '-'}</div>
-  </div>
+  <Tr>
+    <Td width={50}>{type}</Td>
+    <Td width={25}>{current || '-'}</Td>
+    <Td width={25}>{target || '-'}</Td>
+  </Tr>
 );
 
 const externalRow = (metric, current, key) => {
@@ -117,13 +117,15 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
   return (
     <>
       <SectionHeading text={t('public~Metrics')} />
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-xs-6">{t('public~Type')}</div>
-          <div className="col-xs-3">{t('public~Current')}</div>
-          <div className="col-xs-3">{t('public~Target')}</div>
-        </div>
-        <div className="co-m-table-grid__body">
+      <PfTable gridBreakPoint="">
+        <Thead>
+          <Tr>
+            <Th width={50}>{t('public~Type')}</Th>
+            <Th width={25}>{t('public~Current')}</Th>
+            <Th width={25}>{t('public~Target')}</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {hpa.spec.metrics.map((metric, i) => {
             // https://github.com/kubernetes/api/blob/master/autoscaling/v2beta1/types.go
             const current = _.get(hpa, ['status', 'currentMetrics', i]);
@@ -144,17 +146,17 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
                 return resourceRow(metric, current, i);
               default:
                 return (
-                  <div key={i} className="row">
-                    <div className="col-xs-12">
+                  <Tr key={i}>
+                    <Td width={50}>
                       {metric.type}{' '}
                       <span className="small text-muted">{t('public~(unrecognized type)')}</span>
-                    </div>
-                  </div>
+                    </Td>
+                  </Tr>
                 );
             }
           })}
-        </div>
-      </div>
+        </Tbody>
+      </PfTable>
     </>
   );
 };

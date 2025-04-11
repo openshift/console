@@ -16,6 +16,7 @@
   margin-bottom: -19em;
   display: flex;
   flex-direction: column;
+  gap: var(--pf-t--global--spacer--gap--group--vertical);
   @media (min-width: $screen-xs-min) and (max-width: $screen-sm-min) {
     max-width: 200px;
   }
@@ -24,17 +25,4 @@
 .co-suggestion-box__suggestions--shadowed {
   box-shadow: var(--pf-t--global--box-shadow--md);
   padding: var(--pf-t--global--spacer--sm);
-}
-
-.co-suggestion-line {
-  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
-  background-color: var(--pf-t--color--gray--10);
-  border-radius: 12px;
-  overflow: hidden;
-  display: inline;
-  align-self: flex-start;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: calc(100% - var(--pf-t--global--spacer--sm));
-  margin: 0.15rem 0;
 }

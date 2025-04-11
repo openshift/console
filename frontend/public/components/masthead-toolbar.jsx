@@ -53,7 +53,7 @@ import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useFeedbackLocal } from './feedback-local';
 import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
-import darkFeedbackImage from '../imgs/rh_feedback-dark.svg'; // TODO: update when PatternFly adds this graphic to their package
+import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback-dark.svg';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from './QuickCreate';
 import { ThemeContext } from './ThemeProvider';
 

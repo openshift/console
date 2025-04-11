@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamTagModel } from '../models';
 import { DetailsPage, Table } from './factory';
@@ -147,7 +148,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
 
   return (
     <PaneBody>
-      <div className="co-m-pane__body-group">
+      <PaneBodyGroup>
         <div className="row">
           <div className="col-md-6 col-sm-12">
             <SectionHeading text={t('public~ImageStreamTag details')} />
@@ -179,8 +180,8 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body-group">
+      </PaneBodyGroup>
+      <PaneBodyGroup>
         <SectionHeading text={t('public~Image labels')} />
         {_.isEmpty(sortedLabels) ? (
           <span className="text-muted">{t('public~No labels')}</span>
@@ -204,8 +205,8 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
             </table>
           </div>
         )}
-      </div>
-      <div className="co-m-pane__body-group">
+      </PaneBodyGroup>
+      <PaneBodyGroup>
         <SectionHeading text={t('public~Environment variables')} />
         {_.isEmpty(config.Env) ? (
           <span className="text-muted">{t('public~No environment variables')}</span>
@@ -232,7 +233,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
             </table>
           </div>
         )}
-      </div>
+      </PaneBodyGroup>
       <SupportedPlatformsTable
         submanifests={sortedSubmanifests}
         policy={importPolicyPreserveOriginal}

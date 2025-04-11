@@ -357,11 +357,8 @@ export const DeploymentConfigsDetailsPage: React.FC = (props) => {
       kind={DeploymentConfigsReference}
       customActionMenu={customActionMenu}
       pages={pages}
-    >
-      <div className="pf-v6-u-mt-md">
-        <DeploymentConfigDeprecationAlert />
-      </div>
-    </DetailsPage>
+      helpAlert={<DeploymentConfigDeprecationAlert />}
+    />
   );
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
@@ -407,7 +404,7 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (prop
       ListComponent={DeploymentConfigsList}
       createProps={createProps}
       canCreate={true}
-      helpText={<DeploymentConfigDeprecationAlert />}
+      helpAlert={<DeploymentConfigDeprecationAlert />}
       {...props}
     />
   );

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
-import CatalogPageHelpText from '@console/dev-console/src/components/catalog/CatalogPageHelpText';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -100,12 +99,10 @@ export const PageContents: React.FC = () => {
   ) : (
     <CreateProjectListPage title={t('pipelines-plugin~Pipelines')}>
       {(openProjectModal) => (
-        <CatalogPageHelpText>
-          <Trans t={t} ns="pipelines-plugin">
-            Select a Project to view its details
-            <CreateAProjectButton openProjectModal={openProjectModal} />.
-          </Trans>
-        </CatalogPageHelpText>
+        <Trans t={t} ns="pipelines-plugin">
+          Select a Project to view its details
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
+        </Trans>
       )}
     </CreateProjectListPage>
   );

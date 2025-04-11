@@ -82,7 +82,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
           setTextValue={handleInputValue}
           placeholder={t('topology~Find by label...')}
           data={data}
-          className="co-text-node"
+          color="purple"
           labelPath={'metadata.labels'}
         />
       ) : (

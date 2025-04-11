@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
-import { useParams } from 'react-router-dom';
 import classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import { useParams } from 'react-router-dom';
+import { sortable, Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';
 import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-empty-icon';
 import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
@@ -193,28 +193,28 @@ export const ResourceUsageRow = ({ quota, resourceType, namespace = undefined })
   if (isACRQ) {
     const { used, totalUsed, max, percent } = getACRQResourceUsage(quota, resourceType, namespace);
     return (
-      <div className="row co-m-row">
-        <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
-        <div className="col-sm-2 hidden-xs co-resource-quota-icon">
+      <Tr>
+        <Td modifier="breakWord">{resourceType}</Td>
+        <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
           <UsageIcon percent={percent.namespace} />
-        </div>
-        <div className="col-sm-2 col-xs-2">{used.namespace}</div>
-        <div className="col-sm-2 col-xs-2">{totalUsed}</div>
-        <div className="col-sm-2 col-xs-2">{max}</div>
-      </div>
+        </Td>
+        <Td>{used.namespace}</Td>
+        <Td>{totalUsed}</Td>
+        <Td>{max}</Td>
+      </Tr>
     );
   }
 
   const { used, max, percent } = getResourceUsage(quota, resourceType);
   return (
-    <div className="row co-m-row">
-      <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
-      <div className="col-sm-2 hidden-xs co-resource-quota-icon">
+    <Tr>
+      <Td modifier="breakWord">{resourceType}</Td>
+      <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
         <UsageIcon percent={percent} />
-      </div>
-      <div className="col-sm-3 col-xs-3">{used}</div>
-      <div className="col-sm-3 col-xs-3">{max}</div>
-    </div>
+      </Td>
+      <Td>{used}</Td>
+      <Td>{max}</Td>
+    </Tr>
   );
 };
 
@@ -370,34 +370,22 @@ const Details = ({ obj: rq }) => {
             </p>
           </FieldLevelHelp>
         </SectionHeading>
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-4 col-xs-6">{t('public~Resource type')}</div>
-            <div className="col-sm-2 hidden-xs">{t('public~Capacity')}</div>
-            <div
-              className={classNames(
-                { 'col-sm-2 col-xs-2': isACRQ },
-                { 'col-sm-3 col-xs-3': !isACRQ },
-              )}
-            >
-              {t('public~Used')}
-            </div>
-            {isACRQ && <div className="col-sm-2 col-xs-2">{t('public~Total used')}</div>}
-            <div
-              className={classNames(
-                { 'col-sm-2 col-xs-2': isACRQ },
-                { 'col-sm-3 col-xs-3': !isACRQ },
-              )}
-            >
-              {t('public~Max')}
-            </div>
-          </div>
-          <div className="co-m-table-grid__body">
+        <PfTable gridBreakPoint="">
+          <Thead>
+            <Tr>
+              <Th>{t('public~Resource type')}</Th>
+              <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Capacity')}</Th>
+              <Th>{t('public~Used')}</Th>
+              {isACRQ && <Th>{t('public~Total used')}</Th>}
+              <Th>{t('public~Max')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {resourceTypes.map((type) => (
               <ResourceUsageRow key={type} quota={rq} resourceType={type} namespace={namespace} />
             ))}
-          </div>
-        </div>
+          </Tbody>
+        </PfTable>
       </PaneBody>
     </>
   );

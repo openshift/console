@@ -185,6 +185,7 @@ export type FireManProps = {
   resources: FirehoseResource[];
   badge?: React.ReactNode;
   helpText?: React.ReactNode;
+  helpAlert?: React.ReactNode;
   title?: string;
   autoFocus?: boolean;
 };
@@ -198,6 +199,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     createButtonText,
     createProps = {},
     helpText,
+    helpAlert,
     badge,
     title,
   } = props;
@@ -273,7 +275,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
   if (canCreate) {
     if (createProps.to) {
       createLink = (
-        <Link className="co-m-primary-action" to={createProps.to}>
+        <Link to={createProps.to}>
           <Button variant="primary" id="yaml-create" data-test="item-create">
             {createButtonText}
           </Button>
@@ -281,7 +283,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       );
     } else if (createProps.items) {
       createLink = (
-        <div className="co-m-primary-action">
+        <div>
           <Dropdown
             buttonClassName="pf-m-primary"
             id="item-create"
@@ -296,7 +298,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       );
     } else {
       createLink = (
-        <div className="co-m-primary-action">
+        <div>
           <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
             {createButtonText}
           </Button>
@@ -321,7 +323,9 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       <PageHeading
         title={title}
         badge={title ? badge : null}
-        className={classNames({ 'co-m-nav-title--row': createLink })}
+        navTitleAsRow={!!createLink}
+        helpText={helpText}
+        helpAlert={helpAlert}
       >
         {createLink && (
           <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
@@ -330,7 +334,6 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
         )}
         {!title && badge && <div>{badge}</div>}
       </PageHeading>
-      {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
       <PaneBody>
         {inject(props.children, {
           resources,
@@ -352,6 +355,7 @@ export type Flatten<
 export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   kind: string;
   helpText?: React.ReactNode;
+  helpAlert?: React.ReactNode;
   selector?: Selector;
   fieldSelector?: string;
   createHandler?: () => void;
@@ -375,6 +379,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     nameFilterPlaceholder,
     filters,
     helpText,
+    helpAlert,
     kind,
     limit,
     ListComponent,
@@ -452,6 +457,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       labelFilterPlaceholder={labelFilterPlaceholder}
       flatten={flatten}
       helpText={helpText}
+      helpAlert={helpAlert}
       label={t(labelPluralKey) || labelPlural}
       ListComponent={ListComponent}
       mock={mock}
@@ -505,6 +511,7 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   label?: string;
   hideTextFilter?: boolean;
   helpText?: React.ReactNode;
+  helpAlert?: React.ReactNode;
   resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
   staticFilters?: { key: string; value: string }[];
   nameFilter?: string;
@@ -522,6 +529,7 @@ export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
     labelFilterPlaceholder,
     flatten,
     helpText,
+    helpAlert,
     label,
     ListComponent,
     mock,
@@ -557,6 +565,7 @@ export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
       createProps={createProps}
       filterLabel={filterLabel || t('public~by name')}
       helpText={helpText}
+      helpAlert={helpAlert}
       resources={mock ? [] : resources}
       textFilter={textFilter}
       title={showTitle ? title : undefined}

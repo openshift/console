@@ -4,6 +4,8 @@ import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { ExternalLink, SectionHeading, Timestamp } from '@console/internal/components/utils';
+import CatalogPageOverlay from '../catalog-view/CatalogPageOverlay';
+import CatalogPageOverlayDescription from '../catalog-view/CatalogPageOverlayDescription';
 import { customPropertyPresent } from '../utils';
 
 type CatalogDetailsPanelProps = {
@@ -18,9 +20,7 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
   ) : (
     creationTimestamp
   );
-  const notAvailable = (
-    <span className="properties-side-panel-pf-property-label">{t('console-shared~N/A')}</span>
-  );
+  const notAvailable = t('console-shared~N/A');
   const providerLabel = t('console-shared~Provider');
   const createdAtLabel = t('console-shared~Created at');
   const supportLabel = t('console-shared~Support');
@@ -28,7 +28,7 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
 
   return (
     <div className="modal-body modal-body-border">
-      <div className="co-catalog-page__overlay-body">
+      <CatalogPageOverlay>
         <PropertiesSidePanel>
           {details?.properties
             ?.filter((property) => !property?.isHidden)
@@ -74,7 +74,7 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
           )}
         </PropertiesSidePanel>
         {(details?.descriptions?.length || description) && (
-          <div className="co-catalog-page__overlay-description">
+          <CatalogPageOverlayDescription>
             <Stack hasGutter>
               {!details?.descriptions?.[0]?.label && (
                 <SectionHeading text={t('console-shared~Description')} />
@@ -88,9 +88,9 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
                 </StackItem>
               ))}
             </Stack>
-          </div>
+          </CatalogPageOverlayDescription>
         )}
-      </div>
+      </CatalogPageOverlay>
     </div>
   );
 };

@@ -16,6 +16,9 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   PageBreadcrumb,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -438,21 +441,24 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~Receivers')} />
-      <div className="co-m-pane__filter-row">
-        <TextFilter
-          defaultValue=""
-          label={t('public~Receivers by name')}
-          onChange={(_event, val) => setReceiverFilter(val)}
-        />
-        <Link
-          className="co-m-primary-action co-m-pane__filter-row-action"
-          to="/monitoring/alertmanagerconfig/receivers/~new"
-        >
-          <Button variant="primary" data-test-id="create-receiver">
-            {t('public~Create Receiver')}
-          </Button>
-        </Link>
-      </div>
+      <Toolbar>
+        <ToolbarContent>
+          <ToolbarItem>
+            <TextFilter
+              defaultValue=""
+              label={t('public~Receivers by name')}
+              onChange={(_event, val) => setReceiverFilter(val)}
+            />
+          </ToolbarItem>
+          <ToolbarItem align={{ default: 'alignEnd' }}>
+            <Link to="/monitoring/alertmanagerconfig/receivers/~new">
+              <Button variant="primary" data-test-id="create-receiver">
+                {t('public~Create Receiver')}
+              </Button>
+            </Link>
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
       {numOfIncompleteReceivers > 0 && (
         <Alert
           isInline

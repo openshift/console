@@ -19,12 +19,9 @@ const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   return namespace || canListNS ? (
     <>
-      <PageHeading title={t('helm-plugin~Helm Releases')} className="co-m-nav-title--row">
+      <PageHeading title={t('helm-plugin~Helm Releases')} navTitleAsRow>
         <div>
-          <Link
-            className="co-m-primary-action"
-            to={`/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`}
-          >
+          <Link to={`/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`}>
             <Button variant="primary" id="yaml-create" data-test="item-create">
               {t('helm-plugin~Create Helm Release')}
             </Button>
@@ -35,7 +32,7 @@ const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
     </>
   ) : (
     <>
-      <PageHeading title={t('helm-plugin~Helm Releases')} className="co-m-nav-title--row" />
+      <PageHeading title={t('helm-plugin~Helm Releases')} />
       <EmptyBox label={t('helm-plugin~Helm Releases')} />
     </>
   );

@@ -239,10 +239,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
       )}
       <RequireCreatePermission model={ConsolePluginModel}>
         <div className="co-m-pane__createLink--no-title">
-          <Link
-            className="co-m-primary-action"
-            to={`/k8s/cluster/${consolePluginConcatenatedGVK}/~new`}
-          >
+          <Link to={`/k8s/cluster/${consolePluginConcatenatedGVK}/~new`}>
             <Button variant="primary" id="yaml-create" data-test="item-create">
               {t('public~Create {{label}}', { label: t(ConsolePluginModel.label) })}
             </Button>

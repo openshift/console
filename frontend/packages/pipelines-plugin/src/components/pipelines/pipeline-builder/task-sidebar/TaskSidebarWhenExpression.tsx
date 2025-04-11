@@ -29,7 +29,7 @@ const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (pro
       <Title headingLevel="h2" className="pf-v6-u-mb-sm">
         {t('pipelines-plugin~When expressions')}
       </Title>
-      <p className="co-help-text opp-task-sidebar__paragraph">
+      <p className="opp-task-sidebar__paragraph">
         {field.value?.length > 0 ? (
           <Trans ns="pipelines-plugin">
             Use this format when you reference variables in this form:{' '}

@@ -37,10 +37,8 @@ const ServiceBindingDetailsPage: React.FC<DetailsPageProps> = (props) => {
       getResourceStatus={getComputedServiceBindingStatus}
       customActionMenu={customActionMenu}
       pages={pages}
-    >
-      <ServiceBindingDeprecationAlert />
-      <br />
-    </DetailsPage>
+      helpAlert={<ServiceBindingDeprecationAlert />}
+    />
   );
 };
 

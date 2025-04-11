@@ -87,7 +87,7 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
               />
             </div>
           ))}
-          <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__add-exception">
+          <div className="co-create-networkpolicy__add-exception">
             <Button
               icon={<PlusCircleIcon className="co-icon-space-r" />}
               className="pf-m-link--align-left"

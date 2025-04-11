@@ -258,10 +258,10 @@ export const OperatorHubPage = withFallback((props) => {
     <>
       <DocumentTitle>OperatorHub</DocumentTitle>
       <PageBody>
-        <div className="co-catalog">
-          <PageHeading title="OperatorHub" />
-          <p className="co-catalog-page__description">
-            {isSoftwareCatalogEnabled && isOperatorBackedServiceEnabled ? (
+        <PageHeading
+          title="OperatorHub"
+          helpText={
+            isSoftwareCatalogEnabled && isOperatorBackedServiceEnabled ? (
               <Trans ns="olm">
                 Discover Operators from the Kubernetes community and Red Hat partners, curated by
                 Red Hat. You can purchase commercial software through{' '}
@@ -280,67 +280,65 @@ export const OperatorHubPage = withFallback((props) => {
                 services to your developers. The Operator Backed Software Catalog is currently
                 disabled, thus Operator capabilities will not be exposed to developers.
               </Trans>
-            )}
-          </p>
-          <div className="co-catalog__body">
-            <Firehose
-              resources={[
-                {
-                  isList: true,
-                  kind: referenceForModel(OperatorGroupModel),
-                  prop: 'operatorGroups',
-                },
-                {
-                  isList: true,
-                  kind: referenceForModel(PackageManifestModel),
-                  namespace: params.ns,
-                  selector: { 'openshift-marketplace': 'true' },
-                  prop: 'marketplacePackageManifests',
-                },
-                {
-                  isList: true,
-                  kind: referenceForModel(PackageManifestModel),
-                  namespace: params.ns,
-                  selector: fromRequirements([
-                    { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
-                    { key: 'csc-owner-name', operator: 'DoesNotExist' },
-                  ]),
-                  prop: 'packageManifests',
-                },
-                {
-                  isList: true,
-                  kind: referenceForModel(SubscriptionModel),
-                  prop: 'subscriptions',
-                },
-                {
-                  kind: referenceForModel(ClusterServiceVersionModel),
-                  namespaced: true,
-                  isList: true,
-                  namespace: params.ns,
-                  prop: 'clusterServiceVersions',
-                },
-                {
-                  kind: referenceForModel(CloudCredentialModel),
-                  prop: 'cloudCredentials',
-                  name: 'cluster',
-                },
-                {
-                  kind: referenceForModel(InfrastructureModel),
-                  prop: 'infrastructure',
-                  name: 'cluster',
-                },
-                {
-                  kind: referenceForModel(AuthenticationModel),
-                  prop: 'authentication',
-                  name: 'cluster',
-                },
-              ]}
-            >
-              {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-              <OperatorHubList {...(props as any)} namespace={params.ns} />
-            </Firehose>
-          </div>
-        </div>
+            )
+          }
+        />
+        <Firehose
+          resources={[
+            {
+              isList: true,
+              kind: referenceForModel(OperatorGroupModel),
+              prop: 'operatorGroups',
+            },
+            {
+              isList: true,
+              kind: referenceForModel(PackageManifestModel),
+              namespace: params.ns,
+              selector: { 'openshift-marketplace': 'true' },
+              prop: 'marketplacePackageManifests',
+            },
+            {
+              isList: true,
+              kind: referenceForModel(PackageManifestModel),
+              namespace: params.ns,
+              selector: fromRequirements([
+                { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
+                { key: 'csc-owner-name', operator: 'DoesNotExist' },
+              ]),
+              prop: 'packageManifests',
+            },
+            {
+              isList: true,
+              kind: referenceForModel(SubscriptionModel),
+              prop: 'subscriptions',
+            },
+            {
+              kind: referenceForModel(ClusterServiceVersionModel),
+              namespaced: true,
+              isList: true,
+              namespace: params.ns,
+              prop: 'clusterServiceVersions',
+            },
+            {
+              kind: referenceForModel(CloudCredentialModel),
+              prop: 'cloudCredentials',
+              name: 'cluster',
+            },
+            {
+              kind: referenceForModel(InfrastructureModel),
+              prop: 'infrastructure',
+              name: 'cluster',
+            },
+            {
+              kind: referenceForModel(AuthenticationModel),
+              prop: 'authentication',
+              name: 'cluster',
+            },
+          ]}
+        >
+          {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
+          <OperatorHubList {...(props as any)} namespace={params.ns} />
+        </Firehose>
       </PageBody>
     </>
   );

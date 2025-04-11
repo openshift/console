@@ -23,7 +23,7 @@ const PageContents: React.FC = () => {
     />
   ) : (
     <>
-      <PageHeading title={t('helm-plugin~Helm Repositories')} className="co-m-nav-title--row" />
+      <PageHeading title={t('helm-plugin~Helm Repositories')} />
       <EmptyBox label={t('helm-plugin~Helm Repositories')} />
     </>
   );

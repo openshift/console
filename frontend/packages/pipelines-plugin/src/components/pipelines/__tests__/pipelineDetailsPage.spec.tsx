@@ -53,6 +53,7 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
+  useNavigate: jest.fn(),
 }));
 
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;

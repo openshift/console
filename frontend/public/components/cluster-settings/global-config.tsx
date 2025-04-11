@@ -2,7 +2,14 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { AlertVariant } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  Content,
+  ContentVariants,
+  Toolbar,
+  ToolbarContent,
+} from '@patternfly/react-core';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -43,20 +50,20 @@ export const breadcrumbsForGlobalConfig = (detailsPageKind: string, detailsPageP
 
 const ItemRow = ({ item, showAPIGroup }) => {
   return (
-    <div className="row co-resource-list__item" data-test-action={item.label}>
-      <div className="col-xs-10 col-sm-4">
+    <Tr data-test-action={item.label}>
+      <Td width={30}>
         <Link to={item.path} data-test-id={item.label}>
           {item.label}
         </Link>
         {showAPIGroup && <div className="text-muted small">{item.apiGroup}</div>}
-      </div>
-      <div className="hidden-xs col-sm-7">
+      </Td>
+      <Td visibility={['hidden', 'visibleOnSm']}>
         <div className="co-line-clamp">{item.description || '-'}</div>
-      </div>
-      <div className="dropdown-kebab-pf">
+      </Td>
+      <Td>
         <Kebab options={item.menuItems} />
-      </div>
-    </div>
+      </Td>
+    </Tr>
   );
 };
 
@@ -183,16 +190,18 @@ export const GlobalConfigPage: React.FC = () => {
     <PaneBody>
       {!loading && (
         <>
-          <p className="co-help-text co-cluster-paragraph">
+          <Content component={ContentVariants.p} className="pf-v6-u-mb-xl">
             {t('public~Edit the following resources to manage the configuration of your cluster.')}
-          </p>
-          <div className="co-m-pane__filter-row">
-            <TextFilter
-              value={textFilter}
-              label={t('public~by name or description')}
-              onChange={(_event, val) => setTextFilter(val)}
-            />
-          </div>
+          </Content>
+          <Toolbar>
+            <ToolbarContent>
+              <TextFilter
+                value={textFilter}
+                label={t('public~by name or description')}
+                onChange={(_event, val) => setTextFilter(val)}
+              />
+            </ToolbarContent>
+          </Toolbar>
         </>
       )}
       {!_.isEmpty(errors) && (
@@ -208,17 +217,19 @@ export const GlobalConfigPage: React.FC = () => {
         (_.isEmpty(visibleItems) ? (
           <EmptyBox label={t('public~Configuration resources')} />
         ) : (
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <div className="row co-m-table-grid__head">
-              <div className="col-xs-10 col-sm-4">{t('public~Configuration resource')}</div>
-              <div className="hidden-xs col-sm-7">{t('public~Description')}</div>
-            </div>
-            <div className="co-m-table-grid__body">
+          <Table gridBreakPoint="">
+            <Thead>
+              <Tr>
+                <Th width={30}>{t('public~Configuration resource')}</Th>
+                <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Description')}</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
               {_.map(visibleItems, (item) => (
                 <ItemRow item={item} key={item.id} showAPIGroup={showAPIGroup(item.label)} />
               ))}
-            </div>
-          </div>
+            </Tbody>
+          </Table>
         ))}
     </PaneBody>
   );

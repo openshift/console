@@ -58,7 +58,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
     const { iconImg, iconClass } = getIconProps(item);
     return (
       <img
-        className="ocs-quick-search-list__item-icon-img"
+        className="ocs-quick-search-list__item-icon-img pf-v6-u-text-truncate"
         src={iconClass ? getImageForIconClass(iconClass) : iconImg}
         alt={`${item.name} icon`}
       />
