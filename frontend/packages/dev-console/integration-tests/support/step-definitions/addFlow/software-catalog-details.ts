@@ -16,7 +16,7 @@ When('user clicks on Helm Charts type', () => {
 });
 
 Then('user will see All Items already selected', () => {
-  cy.get('.co-catalog-page__heading').should('contain.text', 'All items');
+  cy.byTestID('catalog-heading').should('contain.text', 'All items');
 });
 
 Then('user will see CICD, Databases, Languages, Middleware, Other categories', () => {
