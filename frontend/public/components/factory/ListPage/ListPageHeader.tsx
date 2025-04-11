@@ -19,13 +19,15 @@ const ListPageHeader: React.FC<ListPageHeaderProps> = ({
       hideFavoriteButton={hideFavoriteButton}
       helpText={helpText}
     >
-      <div
-        className={classNames('co-operator-details__actions', {
-          'co-m-pane__createLink--no-title': !title,
-        })}
-      >
-        {children}
-      </div>
+      {children && (
+        <div
+          className={classNames('co-operator-details__actions', {
+            'co-m-pane__createLink--no-title': !title,
+          })}
+        >
+          {children}
+        </div>
+      )}
       {!title && badge && <div>{badge}</div>}
     </PageHeading>
   </>

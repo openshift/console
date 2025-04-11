@@ -30,7 +30,7 @@
     margin-top: 30px;
   }
   .help-text {
-    color: $color-text-secondary;
+    color: var(--pf-t--global--icon--color--subtle);
     position: relative;
     top: -3px;
     left: 20px;

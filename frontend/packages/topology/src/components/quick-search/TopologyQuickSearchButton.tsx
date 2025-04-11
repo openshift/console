@@ -11,7 +11,7 @@ const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }
   const { t } = useTranslation();
 
   return (
-    <Tooltip position="right" content={t('topology~Add to Project')}>
+    <Tooltip position="bottom" content={t('topology~Add to Project')}>
       <Button
         icon={<QuickSearchIcon height="2rem" width="2rem" />}
         className="co-xl-icon-button"

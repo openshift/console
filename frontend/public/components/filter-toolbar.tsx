@@ -454,7 +454,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       )}
                       {filterType === FilterType.LABEL && (
                         <AutocompleteInput
-                          className="co-text-node"
+                          color="purple"
                           onSuggestionSelect={(selected) => {
                             applyLabelFilters(_.uniq([...labelSelection, selected]));
                           }}
