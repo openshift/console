@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
@@ -129,7 +129,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   return loaded ? (
     <Formik

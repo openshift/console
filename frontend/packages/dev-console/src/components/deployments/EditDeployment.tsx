@@ -96,7 +96,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   return (
     <Formik

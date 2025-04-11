@@ -103,7 +103,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={validationSchema(t)}
     >
       {(formikProps) => (

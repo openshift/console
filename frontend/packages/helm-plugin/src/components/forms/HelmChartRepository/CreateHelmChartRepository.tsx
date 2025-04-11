@@ -156,7 +156,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   if (isEditForm && hcrLoaded && !hcr) {
     return <ErrorPage404 />;

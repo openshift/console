@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { configure, render, cleanup } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import store from '@console/internal/redux';
@@ -41,8 +41,8 @@ jest.mock(
   }),
 );
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

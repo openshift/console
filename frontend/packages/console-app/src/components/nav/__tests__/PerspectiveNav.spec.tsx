@@ -1,7 +1,7 @@
 import { Nav } from '@patternfly/react-core';
 import { shallow, mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
+import { BrowserRouter } from 'react-router-dom';
 import store from '@console/internal/redux';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import PerspectiveNav from '../PerspectiveNav';

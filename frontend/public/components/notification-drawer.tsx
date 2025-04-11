@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { NotificationEntry, NotificationCategory, NotificationTypes } from '@console/patternfly';
 import {
   isNotLoadedDynamicPluginInfo,

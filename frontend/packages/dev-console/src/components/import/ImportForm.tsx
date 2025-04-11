@@ -273,7 +273,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       <Formik
         initialValues={initialVals}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema(t)}
       >
         {renderForm}

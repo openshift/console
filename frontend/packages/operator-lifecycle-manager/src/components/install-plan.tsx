@@ -6,7 +6,7 @@ import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router-dom';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {

@@ -150,7 +150,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={validationSchema(t)}
     >
       {renderForm}

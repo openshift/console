@@ -1,7 +1,7 @@
 import { Button } from '@patternfly/react-core';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
+import { BrowserRouter } from 'react-router-dom';
 import { ResourceLink, Selector } from '@console/internal/components/utils';
 import store from '@console/internal/redux';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';

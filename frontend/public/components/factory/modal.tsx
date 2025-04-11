@@ -3,8 +3,7 @@ import * as Modal from 'react-modal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
+import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
 import CloseButton from '@console/shared/src/components/close-button';
@@ -73,17 +72,15 @@ export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper
 
     return (
       <Provider store={store}>
-        <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-          <CompatRouter>
-            {modalWrapper ? (
-              <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
-                <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-              </ModalWrapper>
-            ) : (
+        <HistoryRouter history={history} basename={window.SERVER_FLAGS.basePath}>
+          {modalWrapper ? (
+            <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
               <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-            )}
-          </CompatRouter>
-        </Router>
+            </ModalWrapper>
+          ) : (
+            <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+          )}
+        </HistoryRouter>
       </Provider>
     );
   };

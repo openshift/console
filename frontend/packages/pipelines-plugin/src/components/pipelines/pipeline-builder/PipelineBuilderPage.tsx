@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik, FormikBag } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { history } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate, referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -83,7 +83,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema()}
       >
         {(formikProps) => (

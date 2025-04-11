@@ -141,7 +141,7 @@ The following shared modules are provided by Console, without plugins providing 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
 
-### Changes in shared modules
+### Changes in shared modules and plugin APIs
 
 This section documents notable changes in the Console provided shared modules across Console versions.
 
@@ -168,10 +168,19 @@ This section documents notable changes in the Console provided shared modules ac
 
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
+- Upgraded `react-router` and `react-router-dom` shared modules to v6. Plugins using these modules must
+  ensure that their dependencies are up to date.
+- Shared module `react-router-dom-v5-compat` is deprecated and will be removed in the future.
+- Upgraded `react-router-dom-v5-compat` to version `npm:react-router-dom@^6.30.x`. This change is API-
+  compatible with the previous version of `react-router-dom-v5-compat`. Plugins that need to support
+  versions of OpenShift starting from `4.14.x` can continue to use this deprecated shared module as is.
+- Upgraded `monaco-editor` to version `0.51.0`.
+
+##### CSS styling
+
 - Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
-- Upgraded `monaco-editor` to version `0.51.0`.
 - Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve
   correct styling.
 - Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
@@ -549,9 +558,7 @@ configs or choose other options.
 
 The list of shared modules planned for deprecation:
 
-- Console provided React Router v5 shared modules
-  - `react-router`
-  - `react-router-dom`
+- `react-router-dom-v5-compat`
 
 ## i18n translations for messages
 

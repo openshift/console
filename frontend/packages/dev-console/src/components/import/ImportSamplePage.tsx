@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import {
   FirehoseResource,
   LoadingBox,
@@ -135,7 +135,7 @@ const ImportSamplePage: React.FC = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema(t)}
       >
         {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}

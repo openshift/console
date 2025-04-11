@@ -160,7 +160,7 @@ const EventSink: React.FC<EventSinkProps> = ({
     <Formik
       initialValues={catalogInitialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={eventSinkValidationSchema(t)}

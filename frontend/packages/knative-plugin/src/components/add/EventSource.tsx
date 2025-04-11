@@ -172,7 +172,7 @@ export const EventSource: React.FC<Props> = ({
     <Formik
       initialValues={catalogInitialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={eventSourceValidationSchema(t)}
