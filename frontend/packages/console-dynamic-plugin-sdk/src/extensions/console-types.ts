@@ -350,6 +350,8 @@ export type ListPageHeaderProps = {
   title: string;
   helpText?: React.ReactNode;
   badge?: React.ReactNode;
+  /** Actions rendered in the header */
+  children?: React.ReactNode;
   hideFavoriteButton?: boolean;
 };
 

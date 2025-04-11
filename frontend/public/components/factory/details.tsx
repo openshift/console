@@ -29,7 +29,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { Firehose } from '../utils/firehose';
 import { HorizontalNav, Page, PageComponentProps } from '../utils/horizontal-nav';
-import { PageHeading, KebabOptionsCreator } from '../utils/headings';
+import { PageHeading, PageHeadingProps, KebabOptionsCreator } from '../utils/headings';
 import { FirehoseResource } from '../utils/types';
 import { AsyncComponent } from '../utils/async';
 import { KebabAction } from '../utils/kebab';
@@ -163,6 +163,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           buttonActions={props.buttonActions}
           customActionMenu={props.customActionMenu}
           kind={props.customKind || props.kind}
+          icon={props.icon}
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
             props.breadcrumbsFor ??
@@ -172,7 +173,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           getResourceStatus={props.getResourceStatus}
           customData={props.customData}
           badge={props.badge || getBadgeFromType(kindObj?.badge)}
-          icon={props.icon}
+          OverrideTitle={props.OverrideTitle}
           helpText={props.helpText}
           helpAlert={props.helpAlert}
         >
@@ -200,9 +201,8 @@ export type DetailsPageProps = {
   menuActions?: KebabAction[] | KebabOptionsCreator;
   buttonActions?: any[];
   createRedirect?: boolean;
-  customActionMenu?:
-    | React.ReactNode
-    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
+  customActionMenu?: PageHeadingProps['customActionMenu'];
+  icon?: PageHeadingProps['icon'];
   pages?: Page[];
   pagesFor?: (obj: K8sResourceKind) => Page[];
   kind: K8sResourceKindReference;
@@ -216,12 +216,12 @@ export type DetailsPageProps = {
   ) => ({ name: string; path: string } | { name: string; path: Location })[];
   customData?: any;
   badge?: React.ReactNode;
-  icon?: React.ComponentType<{ obj: K8sResourceKind }>;
+  OverrideTitle?: PageHeadingProps['OverrideTitle'];
   getResourceStatus?: (resource: K8sResourceKind) => string;
   children?: React.ReactNode;
   customKind?: string;
-  helpText?: React.ReactNode;
-  helpAlert?: React.ReactNode;
+  helpText?: PageHeadingProps['helpText'];
+  helpAlert?: PageHeadingProps['helpAlert'];
 };
 
 DetailsPage.displayName = 'DetailsPage';
