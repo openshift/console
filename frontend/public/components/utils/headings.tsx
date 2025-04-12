@@ -40,7 +40,7 @@ export const ResourceItemDeleting = () => {
 };
 
 export const BreadCrumbs: React.FCC<BreadCrumbsProps> = ({ breadcrumbs }) => (
-  <Breadcrumb>
+  <Breadcrumb data-test="page-heading-breadcrumbs">
     {breadcrumbs.map((crumb, i, { length }) => {
       return (
         <BreadcrumbItem
