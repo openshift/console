@@ -119,26 +119,30 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
       <PageHeading
         title={fullFormView ? t('devconsole~Project access') : null}
         data-test="project-access-page"
-      >
-        <Content component={ContentVariants.p}>
-          <Trans t={t} ns="devconsole">
-            {
-              "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in "
-            }
-            <Link to={`/k8s/ns/${namespace}/${RoleModel.plural}`}>Roles</Link> and{' '}
-            <Link to={`/k8s/ns/${namespace}/${RoleBindingModel.plural}`}>Role Bindings</Link>.
-          </Trans>
-        </Content>
-        {!isManaged() && (
-          <Content component={ContentVariants.p}>
-            <Trans t={t} ns="devconsole">
-              {' '}
-              For more information, see the{' '}
-              <ExternalLink href={rbacURL}>role-based access control documentation</ExternalLink>.
-            </Trans>
-          </Content>
-        )}
-      </PageHeading>
+        helpText={
+          <>
+            <Content component={ContentVariants.p}>
+              <Trans t={t} ns="devconsole">
+                {
+                  "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in "
+                }
+                <Link to={`/k8s/ns/${namespace}/${RoleModel.plural}`}>Roles</Link> and{' '}
+                <Link to={`/k8s/ns/${namespace}/${RoleBindingModel.plural}`}>Role Bindings</Link>.
+              </Trans>
+              {!isManaged() && (
+                <Trans t={t} ns="devconsole">
+                  {' '}
+                  For more information, see the{' '}
+                  <ExternalLink href={rbacURL}>
+                    role-based access control documentation
+                  </ExternalLink>
+                  .
+                </Trans>
+              )}
+            </Content>
+          </>
+        }
+      />
       {roleBindings.loadError ? (
         <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
       ) : (

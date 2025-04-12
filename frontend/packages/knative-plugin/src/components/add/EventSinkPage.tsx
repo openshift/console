@@ -34,11 +34,12 @@ const EventSinkPage: React.FC = () => {
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <DocumentTitle>{t('knative-plugin~Event Sink')}</DocumentTitle>
-      <PageHeading title={t('knative-plugin~Create Event Sink')}>
-        {t(
+      <PageHeading
+        title={t('knative-plugin~Create Event Sink')}
+        helpText={t(
           'knative-plugin~Create an Event sink to receive incoming events from a particular source. Configure using YAML and form views.',
         )}
-      </PageHeading>
+      />
       {loaded && isValidSink && !createSinkAccessLoading && createSinkAccess ? (
         <EventSink
           namespace={namespace}
