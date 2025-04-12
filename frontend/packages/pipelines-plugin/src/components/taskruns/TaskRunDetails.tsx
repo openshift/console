@@ -7,8 +7,6 @@ import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import ResultsList from '../shared/results/ResultsList';
 import TaskRunDetailsSection from './TaskRunDetailsSection';
 
-import './TaskRunDetails.scss';
-
 export interface TaskRunDetailsProps {
   obj: TaskRunKind;
 }

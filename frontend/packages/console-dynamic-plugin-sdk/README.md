@@ -168,10 +168,18 @@ This section documents notable changes in the Console provided shared modules ac
 
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
+
+##### CSS styling
+
+- Support for PatternFly 5.x within Console is deprecated and will be removed in the future.
+
+> [!WARNING]
+> Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
+> as a courtesy for plugins which use these unsupported CSS classes.
+
 - Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
-- Upgraded `monaco-editor` to version `0.51.0`.
 - Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve
   correct styling.
 - Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
@@ -183,6 +191,8 @@ This section documents notable changes in the Console provided shared modules ac
   [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
 - Removed `co-button-help-icon`, `co-inline`, `co-resource-list*`, `co-toolbar*` styling.
 - Removed Bootstrap `table`, `text-muted`, `text-secondary` styling.
+- Removed `co-m-pane__details` and `details-item` styling. Use
+  [PatternFly DescriptionList](https://www.patternfly.org/components/description-list) instead.
 
 ### PatternFly 5+ dynamic modules
 

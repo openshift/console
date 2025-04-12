@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DescriptionList } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -58,7 +59,7 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
             />
           </div>
           <div className="col-md-6">
-            <dl>
+            <DescriptionList>
               {isServerlessFunction(obj) && (
                 <DetailsItem label={t('knative-plugin~Type')} obj={obj}>
                   {t('knative-plugin~Function')}
@@ -78,7 +79,7 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
                   <RevisionsOverviewList revisions={revisions} service={obj} hideSectionHeading />
                 </DetailsItem>
               )}
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

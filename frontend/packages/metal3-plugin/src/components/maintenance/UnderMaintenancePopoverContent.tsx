@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import {
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -24,14 +30,18 @@ const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentPro
           "metal3-plugin~Node is under maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
         )}
       </p>
-      <dl>
-        <dt>{t('metal3-plugin~Maintenance reason:')}</dt>
-        <dd>{reason}</dd>
-        <dt>{t('metal3-plugin~Requested:')}</dt>
-        <dd>
-          <Timestamp timestamp={creationTimestamp} />
-        </dd>
-      </dl>
+      <DescriptionList>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('metal3-plugin~Maintenance reason:')}</DescriptionListTerm>
+          <DescriptionListDescription>{reason}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('metal3-plugin~Requested:')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Timestamp timestamp={creationTimestamp} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
       <br />
       <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance, t)} isInline>
         {t('metal3-plugin~Stop maintenance')}

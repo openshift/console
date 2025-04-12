@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
@@ -36,7 +37,7 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
           />
         </div>
         <div className="col-sm-6 col-xs-12">
-          <div className="co-m-pane__details">
+          <DescriptionList>
             <DetailsItem
               label={t('olm~Default sources')}
               obj={operatorHub}
@@ -50,7 +51,7 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
                 .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
                 .map((source, idx) => {
                   return (
-                    <dl key={source.name}>
+                    <DescriptionList key={source.name}>
                       <DetailsItem
                         label={source.name}
                         obj={operatorHub}
@@ -60,11 +61,11 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
                           {source.disabled ? t('public~Disabled') : t('public~Enabled')}
                         </p>
                       </DetailsItem>
-                    </dl>
+                    </DescriptionList>
                   );
                 })}
             </DetailsItem>
-          </div>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

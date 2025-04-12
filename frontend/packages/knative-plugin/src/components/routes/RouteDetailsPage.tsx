@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClipboardCopy } from '@patternfly/react-core';
+import { ClipboardCopy, DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -38,7 +38,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
             <ResourceSummary resource={route} />
           </div>
           <div className="col-sm-6">
-            <dl>
+            <DescriptionList>
               <DetailsItem
                 label={t('knative-plugin~Location')}
                 obj={route}
@@ -57,7 +57,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   />
                 )}
               </DetailsItem>
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

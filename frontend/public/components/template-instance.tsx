@@ -18,6 +18,12 @@ import {
   ResourceSummary,
   SectionHeading,
 } from './utils';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const menuActions = Kebab.factory.common;
 
@@ -137,26 +143,30 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
             <ResourceSummary resource={obj} />
           </div>
           <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                <Status status={status} />
-              </dd>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Status status={status} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               {secretName && (
-                <>
-                  <dt>{t('public~Parameters')}</dt>
-                  <dd>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Parameters')}</DescriptionListTerm>
+                  <DescriptionListDescription>
                     <ResourceLink
                       kind="Secret"
                       name={secretName}
                       namespace={obj.metadata.namespace}
                     />
-                  </dd>
-                </>
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-              <dt>{t('public~Requester')}</dt>
-              <dd>{requester || '-'}</dd>
-            </dl>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Requester')}</DescriptionListTerm>
+                <DescriptionListDescription>{requester || '-'}</DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

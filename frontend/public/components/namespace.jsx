@@ -4,7 +4,15 @@ import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Alert, Button, Tooltip } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Tooltip,
+} from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -933,10 +941,14 @@ export const PullSecret = (props) => {
   };
 
   return (
-    <>
-      <dt>{t('public~Default pull Secret', { count: data.length })}</dt>
-      <dd>{isLoading ? <LoadingInline /> : secrets()}</dd>
-    </>
+    <DescriptionListGroup>
+      <DescriptionListTerm>
+        {t('public~Default pull Secret', { count: data.length })}
+      </DescriptionListTerm>
+      <DescriptionListDescription>
+        {isLoading ? <LoadingInline /> : secrets()}
+      </DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };
 
@@ -1008,51 +1020,61 @@ export const NamespaceSummary = ({ ns }) => {
       <div className="col-sm-6 col-xs-12">
         {/* Labels aren't editable on kind Project, only Namespace. */}
         <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
-          <dt>{t('public~Display name')}</dt>
-          <dd
-            className={classNames({
-              'pf-v6-u-text-color-subtle': !displayName,
-            })}
-          >
-            {displayName || t('public~No display name')}
-          </dd>
-          <dt>{t('public~Description')}</dt>
-          <dd>
-            <p
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Display name')}</DescriptionListTerm>
+            <DescriptionListDescription
               className={classNames({
-                'pf-v6-u-text-color-subtle': !description,
-                'co-pre-wrap': description,
-                'co-namespace-summary__description': description,
+                'text-muted': !displayName,
               })}
             >
-              {description || t('public~No description')}
-            </p>
-          </dd>
-          {requester && <dt>Requester</dt>}
-          {requester && <dd>{requester}</dd>}
+              {displayName || t('public~No display name')}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Description')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <p
+                className={classNames({
+                  'pf-v6-u-text-color-subtle': !description,
+                  'co-pre-wrap': description,
+                  'co-namespace-summary__description': description,
+                })}
+              >
+                {description || t('public~No description')}
+              </p>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          {requester && (
+            <DescriptionListGroup>
+              <DescriptionListTerm>Requester</DescriptionListTerm>{' '}
+              <DescriptionListDescription>{requester}</DescriptionListDescription>
+            </DescriptionListGroup>
+          )}
         </ResourceSummary>
       </div>
       <div className="col-sm-6 col-xs-12">
-        <dl className="co-m-pane__details">
+        <DescriptionList>
           <DetailsItem label={t('public~Status')} obj={ns} path="status.phase">
             <Status status={ns.status?.phase} />
           </DetailsItem>
           <PullSecret namespace={ns} canViewSecrets={canListSecrets} />
-          <dt>{t('public~NetworkPolicies')}</dt>
-          <dd>
-            <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>
-              {t('public~NetworkPolicies')}
-            </Link>
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~NetworkPolicies')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>
+                {t('public~NetworkPolicies')}
+              </Link>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
           {serviceMeshEnabled && (
-            <>
-              <dt>{t('public~Service mesh')}</dt>
-              <dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Service mesh')}</DescriptionListTerm>
+              <DescriptionListDescription>
                 <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
-              </dd>
-            </>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
           )}
-        </dl>
+        </DescriptionList>
       </div>
     </div>
   );

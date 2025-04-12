@@ -3,7 +3,13 @@ import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
 import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
-import { Button } from '@patternfly/react-core';
+import {
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 import * as ITOB from 'istextorbinary';
@@ -52,17 +58,21 @@ export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
     .forEach((k) => {
       const value = data[k];
       dl.push(
-        <dt i18n-not-translated="true" key={`${k}-k`}>
-          {k}
-        </dt>,
-      );
-      dl.push(
-        <dd key={`${k}-v`}>
-          <DownloadBinaryButton label={k} value={value} />
-        </dd>,
+        <DescriptionListGroup>
+          <DescriptionListTerm i18n-not-translated="true" key={`${k}-k`}>
+            {k}
+          </DescriptionListTerm>
+          <DescriptionListDescription key={`${k}-v`}>
+            <DownloadBinaryButton label={k} value={value} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>,
       );
     });
-  return dl.length ? <dl>{dl}</dl> : <EmptyBox label={t('public~binary data')} />;
+  return dl.length ? (
+    <DescriptionList>{dl}</DescriptionList>
+  ) : (
+    <EmptyBox label={t('public~binary data')} />
+  );
 };
 ConfigMapBinaryData.displayName = 'ConfigMapBinaryData';
 
@@ -73,17 +83,17 @@ export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => 
     .forEach((k) => {
       const value = data[k];
       dl.push(
-        <dt i18n-not-translated="true" key={`${k}-k`}>
-          {k}
-        </dt>,
-      );
-      dl.push(
-        <dd key={`${k}-v`}>
-          <CopyToClipboard value={value} />
-        </dd>,
+        <DescriptionListGroup>
+          <DescriptionListTerm i18n-not-translated="true" key={`${k}-k`}>
+            {k}
+          </DescriptionListTerm>
+          <DescriptionListDescription key={`${k}-v`}>
+            <CopyToClipboard value={value} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>,
       );
     });
-  return dl.length ? <dl>{dl}</dl> : <EmptyBox label={label} />;
+  return dl.length ? <DescriptionList>{dl}</DescriptionList> : <EmptyBox label={label} />;
 };
 ConfigMapData.displayName = 'ConfigMapData';
 
@@ -139,18 +149,18 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
               setHasRevealableContent(hasRevealableContent || !isBinary);
             }
             return (
-              <React.Fragment key={k}>
-                <dt i18n-not-translated="true" data-test="secret-data-term">
+              <DescriptionListGroup key={k}>
+                <DescriptionListTerm i18n-not-translated="true" data-test="secret-data-term">
                   {k}
-                </dt>
-                <dd>
+                </DescriptionListTerm>
+                <DescriptionListDescription>
                   {isBinary ? (
                     <DownloadBinaryButton label={k} value={data[k]} />
                   ) : (
                     <SecretValue value={data[k]} reveal={reveal} id={k} />
                   )}
-                </dd>
-              </React.Fragment>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             );
           })
       : [];
@@ -164,7 +174,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
         ) : null}
       </SectionHeading>
       {dataDescriptionList.length ? (
-        <dl data-test="secret-data">{dataDescriptionList}</dl>
+        <DescriptionList data-test="secret-data">{dataDescriptionList}</DescriptionList>
       ) : (
         <EmptyBox label={t('public~Data')} />
       )}

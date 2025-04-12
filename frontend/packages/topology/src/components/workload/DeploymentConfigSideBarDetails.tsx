@@ -1,4 +1,9 @@
 import * as React from 'react';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
@@ -27,19 +32,21 @@ const DeploymentConfigSideBarDetails: React.FC<DeploymentConfigSideBarDetailsPro
       </div>
       <div className="resource-overview__summary">
         <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
-          <dt>{t('topology~Status')}</dt>
-          <dd>
-            {dc.status.availableReplicas === dc.status.updatedReplicas ? (
-              t('topology~Active')
-            ) : (
-              <div>
-                <span className="co-icon-space-r">
-                  <LoadingInline />
-                </span>{' '}
-                {t('topology~Updating')}
-              </div>
-            )}
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('topology~Status')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              {dc.status.availableReplicas === dc.status.updatedReplicas ? (
+                t('topology~Active')
+              ) : (
+                <div>
+                  <span className="co-icon-space-r">
+                    <LoadingInline />
+                  </span>{' '}
+                  {t('topology~Updating')}
+                </div>
+              )}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         </ResourceSummary>
       </div>
       <div className="resource-overview__details">

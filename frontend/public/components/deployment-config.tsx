@@ -53,7 +53,13 @@ import {
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { Alert } from '@patternfly/react-core';
+import {
+  Alert,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -150,7 +156,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   const interval = _.get(dc, 'spec.strategy.rollingParams.intervalSeconds');
   const triggers = _.map(dc.spec.triggers, 'type').join(', ');
   return (
-    <dl className="co-m-pane__details">
+    <DescriptionList>
       <DetailsItem label={t('public~Latest version')} obj={dc} path="status.latestVersion" />
       <DetailsItem label={t('public~Message')} obj={dc} path="status.details.message" hideEmpty />
       <DetailsItem label={t('public~Update strategy')} obj={dc} path="spec.strategy.type" />
@@ -212,7 +218,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
       </DetailsItem>
       <RuntimeClass obj={dc} />
       <PodDisruptionBudgetField obj={dc} />
-    </dl>
+    </DescriptionList>
   );
 };
 
@@ -256,10 +262,12 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                <Status status={getDeploymentConfigStatus(dc)} />
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Status status={getDeploymentConfigStatus(dc)} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">

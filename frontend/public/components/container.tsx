@@ -3,7 +3,15 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { CodeBlock, CodeBlockCode, Divider } from '@patternfly/react-core';
+import {
+  CodeBlock,
+  CodeBlockCode,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Divider,
+} from '@patternfly/react-core';
 import { Status } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
@@ -278,100 +286,150 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
       <div className="row">
         <div className="col-lg-4">
           <SectionHeading text={t('public~Container details')} />
-          <dl className="co-m-pane__details">
-            <dt>{t('public~State')}</dt>
-            <dd>
-              <Status status={stateValue} />
-            </dd>
-            <dt>{t('public~Last State')}</dt>
-            <dd>
-              <ContainerLastState containerLastState={status?.lastState} />
-            </dd>
-            <dt>{t('public~ID')}</dt>
-            <dd>
-              {status?.containerID ? (
-                <div className="co-break-all co-select-to-copy">{status.containerID}</div>
-              ) : (
-                '-'
-              )}
-            </dd>
-            <dt>{t('public~Restarts')}</dt>
-            <dd>{getContainerRestartCount(status)}</dd>
-            <dt>{t('public~Resource requests')}</dt>
-            <dd>{getResourceRequestsValue(container) || '-'}</dd>
-            <dt>{t('public~Resource limits')}</dt>
-            <dd>{getResourceLimitsValue(container) || '-'}</dd>
-            <dt>{t('public~Lifecycle hooks')}</dt>
-            <dd>
-              <Lifecycle lifecycle={container.lifecycle} />
-            </dd>
-            <dt>{t('public~Readiness probe')}</dt>
-            <dd>
-              <Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} />
-            </dd>
-            <dt>{t('public~Liveness probe')}</dt>
-            <dd>
-              <Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} />
-            </dd>
-            <dt>{t('public~Started')}</dt>
-            <dd>
-              <Timestamp timestamp={state.startedAt} />
-            </dd>
-            <dt>{t('public~Finished')}</dt>
-            <dd>
-              <Timestamp timestamp={state.finishedAt} />
-            </dd>
-            <dt>{t('public~Pod')}</dt>
-            <dd>
-              <ResourceLink kind="Pod" name={params.podName} namespace={params.ns} />
-            </dd>
-          </dl>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~State')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Status status={stateValue} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Last State')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <ContainerLastState containerLastState={status?.lastState} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~ID')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {status?.containerID ? (
+                  <div className="co-break-all co-select-to-copy">{status.containerID}</div>
+                ) : (
+                  '-'
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Restarts')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {getContainerRestartCount(status)}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Resource requests')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {getResourceRequestsValue(container) || '-'}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Resource limits')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {getResourceLimitsValue(container) || '-'}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Lifecycle hooks')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Lifecycle lifecycle={container.lifecycle} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Readiness probe')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Liveness probe')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Started')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Timestamp timestamp={state.startedAt} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Finished')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Timestamp timestamp={state.finishedAt} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Pod')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <ResourceLink kind="Pod" name={params.podName} namespace={params.ns} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
         </div>
 
         <div className="col-lg-4">
           <SectionHeading text={t('public~Image details')} />
-          <dl className="co-m-pane__details">
-            <dt>{t('public~Image')}</dt>
-            <dd>
-              {imageName ? <div className="co-break-all co-select-to-copy">{imageName}</div> : '-'}
-            </dd>
-            <dt>{t('public~Image version/tag')}</dt>
-            <dd>{imageTag || '-'}</dd>
-            <dt>{t('public~Command')}</dt>
-            <dd>
-              {container.command ? (
-                <CodeBlock className="co-code-block--no-header">
-                  <CodeBlockCode>{container.command.join(' ')}</CodeBlockCode>
-                </CodeBlock>
-              ) : (
-                <span>-</span>
-              )}
-            </dd>
-            <dt>{t('public~Args')}</dt>
-            <dd>
-              {container.args ? (
-                <CodeBlock>
-                  <CodeBlockCode>{container.args.join(' ')}</CodeBlockCode>
-                </CodeBlock>
-              ) : (
-                <span>-</span>
-              )}
-            </dd>
-            <dt>{t('public~Pull policy')}</dt>
-            <dd>{getPullPolicyLabel(container)}</dd>
-          </dl>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Image')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {imageName ? (
+                  <div className="co-break-all co-select-to-copy">{imageName}</div>
+                ) : (
+                  '-'
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Image version/tag')}</DescriptionListTerm>
+              <DescriptionListDescription>{imageTag || '-'}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Command')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {container.command ? (
+                  <CodeBlock className="co-code-block--no-header">
+                    <CodeBlockCode>{container.command.join(' ')}</CodeBlockCode>
+                  </CodeBlock>
+                ) : (
+                  <span>-</span>
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Args')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {container.args ? (
+                  <CodeBlock>
+                    <CodeBlockCode>{container.args.join(' ')}</CodeBlockCode>
+                  </CodeBlock>
+                ) : (
+                  <span>-</span>
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Pull policy')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {getPullPolicyLabel(container)}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
         </div>
 
         <div className="col-lg-4">
           <SectionHeading text={t('public~Network')} />
-          <dl className="co-m-pane__details">
-            <dt>{t('public~Node')}</dt>
-            <dd>
-              <NodeLink name={pod.spec.nodeName} />
-            </dd>
-            <dt>{t('public~Pod IP')}</dt>
-            <dd>{pod.status.podIP || '-'}</dd>
-          </dl>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Node')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <NodeLink name={pod.spec.nodeName} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Pod IP')}</DescriptionListTerm>
+              <DescriptionListDescription>{pod.status.podIP || '-'}</DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
         </div>
       </div>
 

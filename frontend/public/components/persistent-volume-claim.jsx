@@ -42,6 +42,12 @@ import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
 import deletePVCModal from './modals/delete-pvc-modal';
 import i18next from 'i18next';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const { ModifyLabels, ModifyAnnotations, Edit, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
 const menuActions = [
@@ -237,59 +243,77 @@ const Details_ = ({ flags, obj: pvc }) => {
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
-              <dt>{t('public~Label selector')}</dt>
-              <dd data-test-id="pvc-name">
-                <Selector selector={labelSelector} kind="PersistentVolume" />
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Label selector')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-name">
+                  <Selector selector={labelSelector} kind="PersistentVolume" />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
-            <dl>
-              <dt>{t('public~Status')}</dt>
-              <dd data-test-id="pvc-status">
-                <PVCStatus pvc={pvc} />
-              </dd>
-              <dt>{t('public~Requested capacity')}</dt>
-              <dd data-test="pvc-requested-capacity">
-                {humanizeBinaryBytes(totalRequestMetric).string}
-              </dd>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-status">
+                  <PVCStatus pvc={pvc} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Requested capacity')}</DescriptionListTerm>
+                <DescriptionListDescription data-test="pvc-requested-capacity">
+                  {humanizeBinaryBytes(totalRequestMetric).string}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               {storage && (
-                <>
-                  <dt>{t('public~Capacity')}</dt>
-                  <dd data-test-id="pvc-capacity">{totalCapacity.string}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Capacity')}</DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="pvc-capacity">
+                    {totalCapacity.string}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {usedMetrics && _.isEmpty(loadError) && !loading && (
-                <>
-                  <dt>{t('public~Used')}</dt>
-                  <dd>{humanizeBinaryBytes(usedMetrics).string}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Used')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {humanizeBinaryBytes(usedMetrics).string}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {!_.isEmpty(accessModes) && (
-                <>
-                  <dt>{t('public~Access modes')}</dt>
-                  <dd data-test-id="pvc-access-mode">{accessModes.join(', ')}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Access modes')}</DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="pvc-access-mode">
+                    {accessModes.join(', ')}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-              <dt>{t('public~Volume mode')}</dt>
-              <dd data-test-id="pvc-volume-mode">{volumeMode || 'Filesystem'}</dd>
-              <dt>{t('public~StorageClasses')}</dt>
-              <dd data-test-id="pvc-storageclass">
-                {storageClassName ? (
-                  <ResourceLink kind="StorageClass" name={storageClassName} />
-                ) : (
-                  '-'
-                )}
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Volume mode')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-volume-mode">
+                  {volumeMode || 'Filesystem'}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~StorageClasses')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-storageclass">
+                  {storageClassName ? (
+                    <ResourceLink kind="StorageClass" name={storageClassName} />
+                  ) : (
+                    '-'
+                  )}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               {volumeName && canListPV && (
-                <>
-                  <dt>{t('public~PersistentVolumes')}</dt>
-                  <dd data-test-id="persistent-volume">
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~PersistentVolumes')}</DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="persistent-volume">
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
-                  </dd>
-                </>
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

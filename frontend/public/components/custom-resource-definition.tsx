@@ -48,6 +48,12 @@ import {
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -173,16 +179,22 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
             <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
           </div>
           <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt>{t('public~Established')}</dt>
-              <dd>
-                <Established crd={crd} />
-              </dd>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Established')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Established crd={crd} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               <DetailsItem label={t('public~Group')} obj={crd} path="spec.group" />
-              <dt>{t('public~Latest version')}</dt>
-              <dd>{getLatestVersionForCRD(crd)}</dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Latest version')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {getLatestVersionForCRD(crd)}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               <DetailsItem label={t('public~Scope')} obj={crd} path="spec.scope" />
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

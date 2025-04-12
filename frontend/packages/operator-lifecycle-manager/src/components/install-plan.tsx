@@ -1,5 +1,16 @@
 import * as React from 'react';
-import { Alert, Button, Hint, HintTitle, HintBody, HintFooter } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Hint,
+  HintTitle,
+  HintBody,
+  HintFooter,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+} from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
@@ -341,41 +352,47 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
             <ResourceSummary resource={obj} showAnnotations={false} />
           </div>
           <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt>{t('olm~Status')}</dt>
-              <dd>
-                <Status status={obj.status?.phase ?? t('olm~Unknown')} />
-              </dd>
-              <dt>{t('olm~Components')}</dt>
-              {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
-                <dd key={csvName}>
-                  {obj.status.phase === 'Complete' ? (
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Status status={obj.status?.phase ?? t('olm~Unknown')} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Components')}</DescriptionListTerm>
+                {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
+                  <DescriptionListDescription key={csvName}>
+                    {obj.status.phase === 'Complete' ? (
+                      <ResourceLink
+                        kind={referenceForModel(ClusterServiceVersionModel)}
+                        name={csvName}
+                        namespace={obj.metadata.namespace}
+                        title={csvName}
+                      />
+                    ) : (
+                      <>
+                        <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
+                        {csvName}
+                      </>
+                    )}
+                  </DescriptionListDescription>
+                ))}
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~CatalogSources')}</DescriptionListTerm>
+                {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
+                  <DescriptionListDescription key={`${sourceNamespace}-${sourceName}`}>
                     <ResourceLink
-                      kind={referenceForModel(ClusterServiceVersionModel)}
-                      name={csvName}
-                      namespace={obj.metadata.namespace}
-                      title={csvName}
+                      kind={referenceForModel(CatalogSourceModel)}
+                      name={sourceName}
+                      namespace={sourceNamespace}
+                      title={sourceName}
                     />
-                  ) : (
-                    <>
-                      <ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />
-                      {csvName}
-                    </>
-                  )}
-                </dd>
-              ))}
-              <dt>{t('olm~CatalogSources')}</dt>
-              {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
-                <dd key={`${sourceNamespace}-${sourceName}`}>
-                  <ResourceLink
-                    kind={referenceForModel(CatalogSourceModel)}
-                    name={sourceName}
-                    namespace={sourceNamespace}
-                    title={sourceName}
-                  />
-                </dd>
-              ))}
-            </dl>
+                  </DescriptionListDescription>
+                ))}
+              </DescriptionListGroup>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>
