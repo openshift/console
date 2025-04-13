@@ -16,16 +16,8 @@
   }
 }
 
-.co-action-buttons__btn {
-  margin-left: 10px;
-  @media (max-width: $screen-xs) {
-    margin-bottom: 10px;
-  }
-}
-
-.co-m-nav-title {
-  // TODO: This should be upstreamed to PF
+.co-page-heading {
   .pf-v6-c-page__main-section {
-    gap: 0;
+    --pf-v6-c-page__main-section--RowGap: var(--pf-t--global--spacer--md);
   }
 }

@@ -352,6 +352,7 @@ export type ListPageHeaderProps = {
   badge?: React.ReactNode;
   /** Actions rendered in the header */
   children?: React.ReactNode;
+  /** The favourites button will be hidden by default if no title is set. */
   hideFavoriteButton?: boolean;
 };
 

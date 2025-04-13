@@ -326,13 +326,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
           helpText={helpText}
           hideFavoriteButton={!title}
           title={title}
-          primaryAction={
-            createLink && (
-              <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
-                {createLink}
-              </div>
-            )
-          }
+          primaryAction={createLink && createLink}
         />
       )}
       <PaneBody>

@@ -57,7 +57,6 @@ export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) 
         return (
           <ActionListItem>
             <Button
-              className="co-action-buttons__btn"
               variant="primary"
               onClick={actionButton.callback}
               key={i}
@@ -121,27 +120,32 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   return (
     <div
       data-test={dataTestId ?? 'page-heading'}
-      className={classNames('co-m-nav-title', className)}
+      className={classNames('co-page-heading', className)}
     >
       <PageHeader
+        breadcrumbs={
+          showBreadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
+        }
         title={
           OverrideTitle ? (
             <OverrideTitle obj={data} />
           ) : (
-            <div className="co-m-pane__heading co-m-pane__name co-resource-item">
-              {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-              <span data-test-id="resource-title" className="co-resource-item__resource-name">
-                {resourceTitle}
-                {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
-                  <ManagedByOperatorLink obj={data} />
+            (kind || resourceTitle || resourceStatus) && (
+              <div className="co-m-pane__heading co-m-pane__name co-resource-item">
+                {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
+                <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                  {resourceTitle}
+                  {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
+                    <ManagedByOperatorLink obj={data} />
+                  )}
+                </span>
+                {resourceStatus && (
+                  <ResourceStatus additionalClassNames="hidden-xs">
+                    <Status status={resourceStatus} />
+                  </ResourceStatus>
                 )}
-              </span>
-              {resourceStatus && (
-                <ResourceStatus additionalClassNames="hidden-xs">
-                  <Status status={resourceStatus} />
-                </ResourceStatus>
-              )}
-            </div>
+              </div>
+            )
           )
         }
         actionMenu={
@@ -182,9 +186,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               </ActionListGroup>
             </ActionList>
           )
-        }
-        breadcrumbs={
-          showBreadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
         }
         subtitle={helpText}
         icon={icon}
