@@ -8,18 +8,6 @@ import {
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 
-// Mock getRootNode
-Object.defineProperty(Element.prototype, 'getRootNode', {
-  value: function () {
-    let rootNode = this;
-    while (rootNode.parentNode) {
-      rootNode = rootNode.parentNode;
-    }
-    return rootNode;
-  },
-  configurable: true,
-});
-
 describe(BreadCrumbs.displayName, () => {
   let breadcrumbs: BreadCrumbsProps['breadcrumbs'];
 
