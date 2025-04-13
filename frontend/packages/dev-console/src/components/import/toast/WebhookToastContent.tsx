@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { resourcePathFromModel } from '@console/internal/components/utils';
+import { ExternalLink, resourcePathFromModel } from '@console/internal/components/utils';
 import { RepositoryModel } from '@console/pipelines-plugin/src/models';
 import { GitData, GitReadableTypes } from '../import-types';
 
@@ -21,18 +21,11 @@ const WebhookToastContent: React.FC<WebhookToastContentProps> = ({
     <>
       <Trans t={t} ns="devconsole" values={{ translatedGitType }}>
         Copy the <b>Webhook URL</b> from the{' '}
-        <a
-          href={resourcePathFromModel(RepositoryModel, repositoryName, projectName)}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <ExternalLink href={resourcePathFromModel(RepositoryModel, repositoryName, projectName)}>
           Repository Page
-        </a>{' '}
+        </ExternalLink>{' '}
         and attach it to the{' '}
-        <a href={git.url} target="_blank" rel="noopener noreferrer">
-          {{ translatedGitType }} repository
-        </a>{' '}
-        manually.
+        <ExternalLink href={git.url}>{{ translatedGitType }} repository</ExternalLink> manually.
       </Trans>
     </>
   );
