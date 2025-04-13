@@ -128,7 +128,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           OverrideTitle ? (
             <OverrideTitle obj={data} />
           ) : (
-            <div className="co-m-pane__name co-resource-item">
+            <div className="co-m-pane__heading co-m-pane__name co-resource-item">
               {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
               <span data-test-id="resource-title" className="co-resource-item__resource-name">
                 {resourceTitle}
