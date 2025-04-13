@@ -9,6 +9,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Button,
+  PageBreadcrumb,
   Title,
 } from '@patternfly/react-core';
 import { PageHeader, PageHeaderLinkProps } from '@patternfly/react-component-groups';
@@ -57,7 +58,6 @@ export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) 
         return (
           <ActionListItem>
             <Button
-              className="co-action-buttons__btn"
               variant="primary"
               onClick={actionButton.callback}
               key={i}
@@ -123,6 +123,14 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       data-test={dataTestId ?? 'page-heading'}
       className={classNames('co-m-nav-title', className)}
     >
+      {
+        // bug in PF component group causes extra gap when using the breadcrumbs prop
+        showBreadcrumbs && (
+          <PageBreadcrumb>
+            <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
+          </PageBreadcrumb>
+        )
+      }
       <PageHeader
         title={
           OverrideTitle ? (
@@ -182,9 +190,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               </ActionListGroup>
             </ActionList>
           )
-        }
-        breadcrumbs={
-          showBreadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
         }
         subtitle={helpText}
         icon={icon}
