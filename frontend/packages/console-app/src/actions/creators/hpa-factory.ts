@@ -49,7 +49,7 @@ export const HpaActionFactory: ResourceActionFactory = {
   DeleteHorizontalPodAutoScaler: (
     kind: K8sKind,
     obj: K8sResourceCommon,
-    relatedHPA: HorizontalPodAutoscalerKind,
+    opts: { relatedResource: HorizontalPodAutoscalerKind },
   ) => ({
     id: 'delete-hpa',
     label: i18next.t('console-app~Remove HorizontalPodAutoscaler'),
@@ -57,7 +57,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     cta: () => {
       deleteHPAModal({
         workload: obj,
-        hpa: relatedHPA,
+        hpa: opts.relatedResource,
       });
     },
     accessReview: {
@@ -78,7 +78,7 @@ export const getHpaActions = (
 
   return [
     HpaActionFactory.EditHorizontalPodAutoScaler(kind, obj),
-    HpaActionFactory.DeleteHorizontalPodAutoScaler(kind, obj, relatedHPAs[0]),
+    HpaActionFactory.DeleteHorizontalPodAutoScaler(kind, obj, { relatedResource: relatedHPAs[0] }),
   ];
 };
 
