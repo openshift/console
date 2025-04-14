@@ -182,6 +182,8 @@ This section documents notable changes in the Console provided shared modules ac
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
 - Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve
   correct styling.
+  Removed styling for generic HTML description list elements (e.g., `<dl>`, `<dt>`, `<dd>`). Use PatternFly
+  components to achieve correct styling.
 - Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
   instead.
 - Removed `co-m-page__body` styling. Use [PatternFly Flex](https://www.patternfly.org/layouts/flex) instead.
