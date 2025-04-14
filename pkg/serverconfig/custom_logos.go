@@ -38,7 +38,7 @@ func ParseCustomLogoType(s string) (c operatorv1.LogoType, err error) {
 	return clt, nil
 }
 
-func CustomLogosHandler(logoType operatorv1.LogoType, w http.ResponseWriter, r *http.Request, logoFiles LogosKeyValue) {
+func CustomLogosHandler(w http.ResponseWriter, r *http.Request, mastheadFiles LogosKeyValue, faviconFiles LogosKeyValue) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
@@ -69,11 +69,19 @@ func CustomLogosHandler(logoType operatorv1.LogoType, w http.ResponseWriter, r *
 	}
 
 	// logo is a public content, revalidate each new request before releasing cached files
-	w.Header().Set("Cache-Control", "no-cache, must-revalidate")
+	w.Header().Set("Cache-Control", "no-cache, no-store")
 
 	// Filter the logos based on the specific type and theme
-	for theme, file := range logoFiles {
-		if queryType == logoType {
+	if queryType == operatorv1.LogoTypeMasthead {
+		for theme, file := range mastheadFiles {
+			if theme == queryTheme {
+				http.ServeFile(w, r, file)
+				return
+			}
+		}
+	}
+	if queryType == operatorv1.LogoTypeFavicon {
+		for theme, file := range faviconFiles {
 			if theme == queryTheme {
 				http.ServeFile(w, r, file)
 				return

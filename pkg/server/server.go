@@ -313,7 +313,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	if s.CustomLogoFiles != nil {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
-			serverconfig.CustomLogosHandler(operatorv1.LogoTypeMasthead, w, r, s.CustomLogoFiles)
+			serverconfig.CustomLogosHandler(w, r, s.CustomLogoFiles, s.CustomFaviconFiles)
 		})
 	}
 
