@@ -168,6 +168,7 @@ This section documents notable changes in the Console provided shared modules ac
 
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
+- VirtualizedTable, ListPageFilter, and useListPageFilter are deprecated and will be removed in the future. PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) extension should be used instead. See this [proof of concept](https://github.com/openshift/console/pull/14897) for an example.
 
 ##### CSS styling
 

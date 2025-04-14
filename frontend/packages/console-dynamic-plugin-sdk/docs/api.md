@@ -13,66 +13,66 @@
 11.  [useAccessReview](#useaccessreview)
 12.  [useResolvedExtensions](#useresolvedextensions)
 13.  [HorizontalNav](#horizontalnav)
-14.  [VirtualizedTable](#virtualizedtable)
-15.  [TableData](#tabledata)
-16.  [useActiveColumns](#useactivecolumns)
-17.  [ListPageHeader](#listpageheader)
-18.  [ListPageCreate](#listpagecreate)
-19.  [ListPageCreateLink](#listpagecreatelink)
-20.  [ListPageCreateButton](#listpagecreatebutton)
-21.  [ListPageCreateDropdown](#listpagecreatedropdown)
-22.  [ListPageFilter](#listpagefilter)
-23.  [useListPageFilter](#uselistpagefilter)
-24.  [ResourceLink](#resourcelink)
-25.  [ResourceIcon](#resourceicon)
-26.  [useK8sModel](#usek8smodel)
-27.  [useK8sModels](#usek8smodels)
-28.  [useK8sWatchResource](#usek8swatchresource)
-29.  [useK8sWatchResources](#usek8swatchresources)
-30.  [consoleFetch](#consolefetch)
-31.  [consoleFetchJSON](#consolefetchjson)
-32.  [consoleFetchText](#consolefetchtext)
-33.  [getConsoleRequestHeaders](#getconsolerequestheaders)
-34.  [k8sGetResource](#k8sgetresource)
-35.  [k8sCreateResource](#k8screateresource)
-36.  [k8sUpdateResource](#k8supdateresource)
-37.  [k8sPatchResource](#k8spatchresource)
-38.  [k8sDeleteResource](#k8sdeleteresource)
-39.  [k8sListResource](#k8slistresource)
-40.  [k8sListResourceItems](#k8slistresourceitems)
-41.  [getAPIVersionForModel](#getapiversionformodel)
-42.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
-43.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
-44.  [StatusPopupSection](#statuspopupsection)
-45.  [StatusPopupItem](#statuspopupitem)
-46.  [Overview](#overview)
-47.  [OverviewGrid](#overviewgrid)
-48.  [InventoryItem](#inventoryitem)
-49.  [InventoryItemTitle](#inventoryitemtitle)
-50.  [InventoryItemBody](#inventoryitembody)
-51.  [InventoryItemStatus](#inventoryitemstatus)
-52.  [InventoryItemLoading](#inventoryitemloading)
-53.  [useFlag](#useflag)
-54.  [CodeEditor](#codeeditor)
-55.  [ResourceYAMLEditor](#resourceyamleditor)
-56.  [ResourceEventStream](#resourceeventstream)
-57.  [DocumentTitle](#documenttitle)
-58.  [usePrometheusPoll](#useprometheuspoll)
-59.  [Timestamp](#timestamp)
-60.  [useModal](#usemodal)
-61.  [ActionServiceProvider](#actionserviceprovider)
-62.  [NamespaceBar](#namespacebar)
-63.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
-64.  [QueryBrowser](#querybrowser)
-65.  [useAnnotationsModal](#useannotationsmodal)
-66.  [useDeleteModal](#usedeletemodal)
-67.  [useLabelsModal](#uselabelsmodal)
-68.  [useActiveNamespace](#useactivenamespace)
-69.  [useUserSettings](#useusersettings)
-70.  [useQuickStartContext](#usequickstartcontext)
-71. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-72. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-73. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+14.  [TableData](#tabledata)
+15.  [useActiveColumns](#useactivecolumns)
+16.  [ListPageHeader](#listpageheader)
+17.  [ListPageCreate](#listpagecreate)
+18.  [ListPageCreateLink](#listpagecreatelink)
+19.  [ListPageCreateButton](#listpagecreatebutton)
+20.  [ListPageCreateDropdown](#listpagecreatedropdown)
+21.  [ResourceLink](#resourcelink)
+22.  [ResourceIcon](#resourceicon)
+23.  [useK8sModel](#usek8smodel)
+24.  [useK8sModels](#usek8smodels)
+25.  [useK8sWatchResource](#usek8swatchresource)
+26.  [useK8sWatchResources](#usek8swatchresources)
+27.  [consoleFetch](#consolefetch)
+28.  [consoleFetchJSON](#consolefetchjson)
+29.  [consoleFetchText](#consolefetchtext)
+30.  [getConsoleRequestHeaders](#getconsolerequestheaders)
+31.  [k8sGetResource](#k8sgetresource)
+32.  [k8sCreateResource](#k8screateresource)
+33.  [k8sUpdateResource](#k8supdateresource)
+34.  [k8sPatchResource](#k8spatchresource)
+35.  [k8sDeleteResource](#k8sdeleteresource)
+36.  [k8sListResource](#k8slistresource)
+37.  [k8sListResourceItems](#k8slistresourceitems)
+38.  [getAPIVersionForModel](#getapiversionformodel)
+39.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
+40.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
+41.  [StatusPopupSection](#statuspopupsection)
+42.  [StatusPopupItem](#statuspopupitem)
+43.  [Overview](#overview)
+44.  [OverviewGrid](#overviewgrid)
+45.  [InventoryItem](#inventoryitem)
+46.  [InventoryItemTitle](#inventoryitemtitle)
+47.  [InventoryItemBody](#inventoryitembody)
+48.  [InventoryItemStatus](#inventoryitemstatus)
+49.  [InventoryItemLoading](#inventoryitemloading)
+50.  [useFlag](#useflag)
+51.  [CodeEditor](#codeeditor)
+52.  [ResourceYAMLEditor](#resourceyamleditor)
+53.  [ResourceEventStream](#resourceeventstream)
+54.  [DocumentTitle](#documenttitle)
+55.  [usePrometheusPoll](#useprometheuspoll)
+56.  [Timestamp](#timestamp)
+57.  [useModal](#usemodal)
+58.  [ActionServiceProvider](#actionserviceprovider)
+59.  [NamespaceBar](#namespacebar)
+60.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
+61.  [QueryBrowser](#querybrowser)
+62.  [useAnnotationsModal](#useannotationsmodal)
+63.  [useDeleteModal](#usedeletemodal)
+64.  [useLabelsModal](#uselabelsmodal)
+65.  [useActiveNamespace](#useactivenamespace)
+66.  [useUserSettings](#useusersettings)
+67.  [useQuickStartContext](#usequickstartcontext)
+68. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+69. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+70. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+71. [DEPRECATED] [VirtualizedTable](#virtualizedtable)
+72. [DEPRECATED] [ListPageFilter](#listpagefilter)
+73. [DEPRECATED] [useListPageFilter](#uselistpagefilter)
 74. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
@@ -495,60 +495,6 @@ const HomePage: React.FC = (props) => {
 
 ---
 
-## `VirtualizedTable`
-
-### Summary 
-
-A component for making virtualized tables
-
-
-
-### Example
-
-
-```ts
-const MachineList: React.FC<MachineListProps> = (props) => {
-  return (
-    <VirtualizedTable<MachineKind>
-     {...props}
-     aria-label='Machines'
-     columns={getMachineColumns}
-     Row={getMachineTableRow}
-    />
-  );
-}
-```
-
-
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `data` | data for table |
-| `loaded` | flag indicating data is loaded |
-| `loadError` | error object if issue loading data |
-| `columns` | column setup |
-| `Row` | row setup |
-| `unfilteredData` | original data without filter |
-| `NoDataEmptyMsg` | (optional) no data empty message component |
-| `EmptyMsg` | (optional) empty message component |
-| `scrollNode` | (optional) function to handle scroll |
-| `label` | (optional) label for table |
-| `ariaLabel` | (optional) aria label |
-| `gridBreakPoint` | sizing of how to break up grid for responsiveness |
-| `onSelect` | (optional) function for handling select of table |
-| `rowData` | (optional) data specific to row |
-| `sortColumnIndex` | (optional) The index of the column to sort. The default is `0` |
-| `sortDirection` | (optional) The direction of the sort. The default is `SortByDirection.asc` |
-| `onRowsRendered` | (optional) Callback invoked with information about the slice of rows that were just rendered. |
-
-
-
----
-
 ## `TableData`
 
 ### Summary 
@@ -830,115 +776,6 @@ const exampleList: React.FC<MyProps> = () => {
 | `createAccessReview` | (optional) object with namespace and kind used to determine access |
 | `children` | (optional) children for the dropdown toggle |
 
-
-
----
-
-## `ListPageFilter`
-
-### Summary 
-
-Component that generates filter for list page.
-
-
-
-### Example
-
-
-```tsx
-  // See implementation for more details on RowFilter and FilterValue types
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(
-    data,
-    [...rowFilters, ...searchFilters],
-    staticFilters,
-  );
-  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
-  return (
-    <>
-      <ListPageHeader />
-      <ListPagBody>
-        <ListPageFilter data={staticData} onFilterChange={onFilterChange} rowFilters={rowFilters} rowSearchFilters={searchFilters} />
-        <List data={filteredData} />
-      </ListPageBody>
-    </>
-  )
-```
-
-
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `data` | An array of data points |
-| `loaded` | indicates that data has loaded |
-| `onFilterChange` | callback function for when filter is updated |
-| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
-| `labelFilter` | (optional) a unique name key for label filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
-| `labelPath` | (optional) the path to labels to filter from |
-| `nameFilterTitle` | (optional) title for name filter |
-| `nameFilterPlaceholder` | (optional) placeholder for name filter |
-| `labelFilterPlaceholder` | (optional) placeholder for label filter |
-| `hideLabelFilter` | (optional) only shows the name filter instead of both name and label filter |
-| `hideNameLabelFilter` | (optional) hides both name and label filter |
-| `columnLayout` | (optional) column layout object |
-| `hideColumnManagement` | (optional) flag to hide the column management |
-| `nameFilter` | (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
-| `rowSearchFilters` | (optional) An array of RowSearchFilters elements that define search text filters added on top of Name and Label filters |
-
-
-
----
-
-## `useListPageFilter`
-
-### Summary 
-
-A hook that manages filter state for the ListPageFilter component.
-
-
-
-### Example
-
-
-```tsx
-  // See implementation for more details on RowFilter and FilterValue types
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(
-    data,
-    rowFilters,
-    staticFilters,
-  );
-  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
-  return (
-    <>
-      <ListPageHeader .../>
-      <ListPagBody>
-        <ListPageFilter data={staticData} onFilterChange={onFilterChange} />
-        <List data={filteredData} />
-      </ListPageBody>
-    </>
-  )
-```
-
-
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `data` | An array of data points |
-| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
-| `staticFilters` | (optional) An array of FilterValue elements that are statically applied to the data |
-
-
-
-### Returns
-
-A tuple containing the data filtered by all static filteres, the data filtered by all static and row filters, and a callback that updates rowFilters
 
 
 ---
@@ -2582,6 +2419,169 @@ The isAllowed boolean value.
 ### Returns
 
 An array with a pair of state value and its set function.
+
+
+---
+
+## `VirtualizedTable`
+
+### Summary [DEPRECATED]
+
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>A component for making virtualized tables
+
+
+
+### Example
+
+
+```ts
+const MachineList: React.FC<MachineListProps> = (props) => {
+  return (
+    <VirtualizedTable<MachineKind>
+     {...props}
+     aria-label='Machines'
+     columns={getMachineColumns}
+     Row={getMachineTableRow}
+    />
+  );
+}
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `data` | data for table |
+| `loaded` | flag indicating data is loaded |
+| `loadError` | error object if issue loading data |
+| `columns` | column setup |
+| `Row` | row setup |
+| `unfilteredData` | original data without filter |
+| `NoDataEmptyMsg` | (optional) no data empty message component |
+| `EmptyMsg` | (optional) empty message component |
+| `scrollNode` | (optional) function to handle scroll |
+| `label` | (optional) label for table |
+| `ariaLabel` | (optional) aria label |
+| `gridBreakPoint` | sizing of how to break up grid for responsiveness |
+| `onSelect` | (optional) function for handling select of table |
+| `rowData` | (optional) data specific to row |
+| `sortColumnIndex` | (optional) The index of the column to sort. The default is `0` |
+| `sortDirection` | (optional) The direction of the sort. The default is `SortByDirection.asc` |
+| `onRowsRendered` | (optional) Callback invoked with information about the slice of rows that were just rendered. |
+
+
+
+---
+
+## `ListPageFilter`
+
+### Summary [DEPRECATED]
+
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>Component that generates filter for list page.
+
+
+
+### Example
+
+
+```tsx
+  // See implementation for more details on RowFilter and FilterValue types
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(
+    data,
+    [...rowFilters, ...searchFilters],
+    staticFilters,
+  );
+  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
+  return (
+    <>
+      <ListPageHeader />
+      <ListPagBody>
+        <ListPageFilter data={staticData} onFilterChange={onFilterChange} rowFilters={rowFilters} rowSearchFilters={searchFilters} />
+        <List data={filteredData} />
+      </ListPageBody>
+    </>
+  )
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `data` | An array of data points |
+| `loaded` | indicates that data has loaded |
+| `onFilterChange` | callback function for when filter is updated |
+| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
+| `labelFilter` | (optional) a unique name key for label filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
+| `labelPath` | (optional) the path to labels to filter from |
+| `nameFilterTitle` | (optional) title for name filter |
+| `nameFilterPlaceholder` | (optional) placeholder for name filter |
+| `labelFilterPlaceholder` | (optional) placeholder for label filter |
+| `hideLabelFilter` | (optional) only shows the name filter instead of both name and label filter |
+| `hideNameLabelFilter` | (optional) hides both name and label filter |
+| `columnLayout` | (optional) column layout object |
+| `hideColumnManagement` | (optional) flag to hide the column management |
+| `nameFilter` | (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
+| `rowSearchFilters` | (optional) An array of RowSearchFilters elements that define search text filters added on top of Name and Label filters |
+
+
+
+---
+
+## `useListPageFilter`
+
+### Summary [DEPRECATED]
+
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>A hook that manages filter state for the ListPageFilter component.
+
+
+
+### Example
+
+
+```tsx
+  // See implementation for more details on RowFilter and FilterValue types
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(
+    data,
+    rowFilters,
+    staticFilters,
+  );
+  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
+  return (
+    <>
+      <ListPageHeader .../>
+      <ListPagBody>
+        <ListPageFilter data={staticData} onFilterChange={onFilterChange} />
+        <List data={filteredData} />
+      </ListPageBody>
+    </>
+  )
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `data` | An array of data points |
+| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
+| `staticFilters` | (optional) An array of FilterValue elements that are statically applied to the data |
+
+
+
+### Returns
+
+A tuple containing the data filtered by all static filteres, the data filtered by all static and row filters, and a callback that updates rowFilters
 
 
 ---
