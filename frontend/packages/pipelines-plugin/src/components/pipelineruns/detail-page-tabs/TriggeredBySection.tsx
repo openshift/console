@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -41,10 +47,12 @@ const TriggeredBySection: React.FC<TriggeredByProps> = (props) => {
   }
 
   return (
-    <dl>
-      <dt>{t('pipelines-plugin~Triggered by')}:</dt>
-      <dd>{value}</dd>
-    </dl>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Triggered by')}:</DescriptionListTerm>
+        <DescriptionListDescription>{value}</DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

@@ -8,7 +8,6 @@
 
 // Mixins
 @import 'style/mixin/break-word';
-@import 'style/mixin/popover-button';
 @import 'style/mixin/prefix';
 @import 'style/mixin/truncate';
 @import 'style/mixin/line-clamp';
@@ -95,7 +94,6 @@
 @import 'components/conditions';
 @import 'components/persistent-volume-claim';
 @import 'components/factory/Table/virtualized-table';
-@import 'components/utils/details-item';
 @import 'components/utils/resource-metrics';
 @import 'components/configmaps/create-configmap';
 

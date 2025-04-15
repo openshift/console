@@ -36,6 +36,7 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { DescriptionList } from '@patternfly/react-core';
 
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
@@ -59,7 +60,7 @@ const tableColumnClasses = [
 export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }) => {
   const { t } = useTranslation();
   return (
-    <dl className="co-m-pane__details">
+    <DescriptionList>
       <DetailsItem
         label={t('public~Current count')}
         obj={ds}
@@ -71,7 +72,7 @@ export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }
         path="status.desiredNumberScheduled"
       />
       <PodDisruptionBudgetField obj={ds} />
-    </dl>
+    </DescriptionList>
   );
 };
 

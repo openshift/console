@@ -38,6 +38,12 @@ import {
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
   // t('public~Edit parallelism')
@@ -139,13 +145,17 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
           </div>
           <div className="col-md-6">
             <SectionHeading text={t('public~Job status')} />
-            <dl className="co-m-pane__details">
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                <Status
-                  status={job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null}
-                />
-              </dd>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Status
+                    status={
+                      job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null
+                    }
+                  />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               <DetailsItem label={t('public~Start time')} obj={job} path="status.startTime">
                 <Timestamp timestamp={job.status.startTime} />
               </DetailsItem>
@@ -175,7 +185,7 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
                 defaultValue="0"
               />
               <PodDisruptionBudgetField obj={job} />
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

@@ -174,9 +174,14 @@ This section documents notable changes in the Console provided shared modules ac
 - Upgraded `react-router-dom-v5-compat` to version `npm:react-router-dom@^6.30.x`. This change is API-
   compatible with the previous version of `react-router-dom-v5-compat`. Plugins that need to support
   versions of OpenShift starting from `4.14.x` can continue to use this deprecated shared module as is.
-- Upgraded `monaco-editor` to version `0.51.0`.
 
 ##### CSS styling
+
+- Support for PatternFly 5.x within Console is deprecated and will be removed in the future.
+
+> [!WARNING]
+> Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
+> as a courtesy for plugins which use these unsupported CSS classes.
 
 - Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
   from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
@@ -191,6 +196,8 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed `co-m-nav-title` spacing styling. Use
   [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
 - Removed `co-button-help-icon`, `co-inline`, `co-resource-list*`, `co-toolbar*` styling.
+- Removed `co-m-pane__details` and `details-item` styling. Use
+  [PatternFly DescriptionList](https://www.patternfly.org/components/description-list) instead.
 
 ### PatternFly 5+ dynamic modules
 

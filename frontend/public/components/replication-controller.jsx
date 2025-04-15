@@ -31,6 +31,12 @@ import {
 import { referenceFor, referenceForModel } from '../module/k8s';
 import { VolumesTable } from './volumes-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const EnvironmentPage = (props) => (
   <AsyncComponent
@@ -79,27 +85,27 @@ export const ReplicationControllersDetailsPage = (props) => {
                 showTolerations
               >
                 {revision && (
-                  <>
-                    <dt>{t('public~Deployment revision')}</dt>
-                    <dd>{revision}</dd>
-                  </>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~Deployment revision')}</DescriptionListTerm>
+                    <DescriptionListDescription>{revision}</DescriptionListDescription>
+                  </DescriptionListGroup>
                 )}
               </ResourceSummary>
             </div>
             <div className="col-md-6">
-              <dl className="co-m-pane__details">
+              <DescriptionList>
                 {phase && (
-                  <>
-                    <dt>{t('public~Phase')}</dt>
-                    <dd>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~Phase')}</DescriptionListTerm>
+                    <DescriptionListDescription>
                       <Status status={phase} />
-                    </dd>
-                  </>
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
                 )}
                 <ResourcePodCount resource={replicationController} />
                 <RuntimeClass obj={replicationController} />
                 <PodDisruptionBudgetField obj={replicationController} />
-              </dl>
+              </DescriptionList>
             </div>
           </div>
         </PaneBody>

@@ -14,6 +14,12 @@ import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { sortable } from '@patternfly/react-table';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -153,31 +159,75 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
           <div className="col-md-6 col-sm-12">
             <SectionHeading text={t('public~ImageStreamTag details')} />
             <ResourceSummary resource={imageStreamTag}>
-              {labels.name && <dt>{t('public~Image name')}</dt>}
-              {labels.name && <dd>{labels.name}</dd>}
-              {labels.summary && <dt>{t('public~Summary')}</dt>}
-              {labels.summary && <dd>{labels.summary}</dd>}
-              {humanizedSize && <dt>{t('public~Size')}</dt>}
-              {humanizedSize && <dd>{humanizedSize}</dd>}
+              {labels.name && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Image name')}</DescriptionListTerm>
+                  <DescriptionListDescription>{labels.name}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {labels.summary && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Summary')}</DescriptionListTerm>
+                  <DescriptionListDescription>{labels.summary}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {humanizedSize && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Size')}</DescriptionListTerm>
+                  <DescriptionListDescription>{humanizedSize}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} tag={tagName} />
           </div>
           <div className="col-md-6 col-sm-12">
             <SectionHeading text={t('public~Configuration')} />
-            <dl className="co-m-pane__details">
-              {entrypoint && <dt>{t('public~Entrypoint')}</dt>}
-              {entrypoint && <dd className="co-break-word">{entrypoint}</dd>}
-              {cmd && <dt>{t('public~Command')}</dt>}
-              {cmd && <dd className="co-break-word">{cmd}</dd>}
-              {config.WorkingDir && <dt>{t('public~Working dir')}</dt>}
-              {config.WorkingDir && <dd className="co-break-all">{config.WorkingDir}</dd>}
-              {exposedPorts && <dt>{t('public~Exposed ports')}</dt>}
-              {exposedPorts && <dd className="co-break-word">{exposedPorts}</dd>}
-              {config.User && <dt>{t('public~User')}</dt>}
-              {config.User && <dd>{config.User}</dd>}
-              {architecture && <dt>{t('public~Architecture')}</dt>}
-              {architecture && <dd>{architecture}</dd>}
-            </dl>
+            <DescriptionList>
+              {entrypoint && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Entrypoint')}</DescriptionListTerm>
+                  <DescriptionListDescription className="co-break-word">
+                    {entrypoint}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {cmd && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Command')}</DescriptionListTerm>{' '}
+                  <DescriptionListDescription className="co-break-word">
+                    {cmd}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {config.WorkingDir && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Working dir')}</DescriptionListTerm>{' '}
+                  <DescriptionListDescription className="co-break-all">
+                    {config.WorkingDir}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {exposedPorts && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Exposed ports')}</DescriptionListTerm>
+                  <DescriptionListDescription className="co-break-word">
+                    {exposedPorts}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {config.User && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~User')}</DescriptionListTerm>ser &&{' '}
+                  <DescriptionListDescription>{config.User}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {architecture && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Architecture')}</DescriptionListTerm>
+                  <DescriptionListDescription>{architecture}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </DescriptionList>
           </div>
         </div>
       </PaneBodyGroup>

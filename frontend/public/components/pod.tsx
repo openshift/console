@@ -19,6 +19,10 @@ import {
   CardTitle,
   Content,
   ContentVariants,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
 } from '@patternfly/react-core';
 import {
   Status,
@@ -807,11 +811,13 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
   const moreThanOnePodIPs = pod.status?.podIPs?.length > 1;
   const moreThanOneHostIPs = pod.status?.hostIPs?.length > 1;
   return (
-    <dl className="co-m-pane__details">
-      <dt>{t('public~Status')}</dt>
-      <dd>
-        <PodStatus pod={pod} />
-      </dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <PodStatus pod={pod} />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
       <DetailsItem label={t('public~Restart policy')} obj={pod} path="spec.restartPolicy">
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
@@ -862,7 +868,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
       <DetailsItem label={t('public~Receiving Traffic')} obj={pod}>
         <PodTraffic podName={pod.metadata.name} namespace={pod.metadata.namespace} />
       </DetailsItem>
-    </dl>
+    </DescriptionList>
   );
 };
 PodDetailsList.displayName = 'PodDetailsList';

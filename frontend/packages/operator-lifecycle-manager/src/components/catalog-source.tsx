@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, DescriptionList } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import * as _ from 'lodash';
@@ -156,7 +156,7 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
           <ResourceSummary resource={catalogSource} />
         </div>
         <div className="col-sm-6 col-xs-12">
-          <PaneBody>
+          <DescriptionList>
             <DetailsItem
               editAsGroup
               label={t('public~Status')}
@@ -201,7 +201,7 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
             >
               {operatorCount}
             </DetailsItem>
-          </PaneBody>
+          </DescriptionList>
         </div>
       </div>
     </PaneBody>

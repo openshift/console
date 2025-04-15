@@ -22,10 +22,6 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
   width: 12px;
 }
 
-.co-breadcrumb {
-  padding-bottom: var(--pf-t--global--spacer--sm);
-}
-
 .co-divider {
   margin-bottom: var(--pf-t--global--spacer--lg);
   margin-top: var(--pf-t--global--spacer--lg);
@@ -96,16 +92,8 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
   overflow: auto;
 }
 
-.co-m-pane__details {
-  // TODO: refactor so <dl>s have margin-bottom by default
-  min-width: 0; // enable break-word
-  white-space: normal; // override inheritence from co-detail-table
-  .co-detail-table__row & {
-    margin-bottom: 0;
-  }
-  dd {
-    @include co-break-word;
-  }
+.co-m-pane__dropdown {
+  margin-bottom: 20px;
 }
 
 .co-m-pane__explanation {

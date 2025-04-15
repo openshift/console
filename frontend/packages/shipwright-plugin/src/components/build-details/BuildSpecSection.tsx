@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
+import { ClipboardCopy, ClipboardCopyVariant, DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import {
@@ -49,7 +49,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
     : buildSpec?.paramValues?.find((param) => param?.name === 'builder-image')?.value;
 
   return (
-    <dl>
+    <DescriptionList>
       {buildSpec.strategy ? (
         <DetailsItem label={t('shipwright-plugin~Strategy')} obj={obj} path={`${path}.strategy`}>
           {buildSpec.strategy.kind === 'ClusterBuildStrategy' ? (
@@ -178,7 +178,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           />
         </DetailsItem>
       ) : null}
-    </dl>
+    </DescriptionList>
   );
 };
 

@@ -41,6 +41,12 @@ import {
   ClusterResourceQuotaModel,
 } from '../models';
 import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -222,7 +228,7 @@ export const QuotaScopesInline = ({ scopes }) => {
   return <span>({scopes.join(', ')})</span>;
 };
 
-export const QuotaScopesList = ({ scopes }) => {
+const QuotaScopesList = ({ scopes }) => {
   const { t } = useTranslation();
   const quotaScopes = {
     Terminating: {
@@ -249,14 +255,14 @@ export const QuotaScopesList = ({ scopes }) => {
   return scopes.map((scope) => {
     const scopeObj = _.get(quotaScopes, scope);
     return scopeObj ? (
-      <dd key={scope}>
+      <DescriptionListDescription key={scope}>
         <div className="co-resource-quota-scope__label">{scope}</div>
         <div className="co-resource-quota-scope__description">{scopeObj.description}</div>
-      </dd>
+      </DescriptionListDescription>
     ) : (
-      <dd key={scope} className="co-resource-quota-scope__label">
+      <DescriptionListDescription key={scope} className="co-resource-quota-scope__label">
         {scope}
-      </dd>
+      </DescriptionListDescription>
     );
   });
 };
@@ -342,10 +348,12 @@ const Details = ({ obj: rq }) => {
           </div>
           {scopes && (
             <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Scopes')}</dt>
-                <QuotaScopesList scopes={scopes} />
-              </dl>
+              <DescriptionList>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Scopes')}</DescriptionListTerm>
+                  <QuotaScopesList scopes={scopes} />
+                </DescriptionListGroup>
+              </DescriptionList>
             </div>
           )}
         </div>

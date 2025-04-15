@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Progress, ProgressSize, Alert, ExpandableSection, Button } from '@patternfly/react-core';
+import {
+  Progress,
+  ProgressSize,
+  Alert,
+  ExpandableSection,
+  Button,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -33,14 +43,18 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
           "metal3-plugin~Node is entering maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
         )}
       </p>
-      <dl>
-        <dt>{t('metal3-plugin~Maintenance reason:')}</dt>
-        <dd>{reason}</dd>
-        <dt>{t('metal3-plugin~Requested:')}</dt>
-        <dd>
-          <Timestamp timestamp={creationTimestamp} />
-        </dd>
-      </dl>
+      <DescriptionList>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('metal3-plugin~Maintenance reason:')}</DescriptionListTerm>
+          <DescriptionListDescription>{reason}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('metal3-plugin~Requested:')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Timestamp timestamp={creationTimestamp} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
       <br />
       {lastError && (
         <>

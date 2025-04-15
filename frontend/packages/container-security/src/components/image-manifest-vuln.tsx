@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateVariant, Tooltip } from '@patternfly/react-core';
+import { DescriptionList, EmptyState, EmptyStateVariant, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import classNames from 'classnames';
@@ -69,7 +69,7 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
             <ResourceSummary resource={props.obj} />
           </div>
           <div className="col-sm-6">
-            <dl className="co-m-pane__details">
+            <DescriptionList>
               <DetailsItem
                 label={t('container-security~Registry')}
                 obj={props.obj}
@@ -85,7 +85,7 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
                   <ExternalLink text={shortenHash(props.obj.spec.manifest)} href={queryURL} />
                 </DetailsItem>
               )}
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

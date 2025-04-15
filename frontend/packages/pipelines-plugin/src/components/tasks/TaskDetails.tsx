@@ -6,8 +6,6 @@ import { TaskModel } from '../../models';
 import { TaskKind } from '../../types';
 import WorkspaceDefinitionList from '../shared/workspaces/WorkspaceDefinitionList';
 
-import './TaskDetails.scss';
-
 export interface TaskDetailsProps {
   obj: TaskKind;
 }

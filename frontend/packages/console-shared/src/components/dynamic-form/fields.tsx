@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionToggle,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { FieldProps, UiSchema } from '@rjsf/core';
 import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
 import { retrieveSchema, getUiOptions } from '@rjsf/core/dist/cjs/utils';
@@ -111,36 +119,42 @@ export const ResourceRequirementsField: React.FC<FieldProps> = ({
       schema={schema}
       uiSchema={uiSchema}
     >
-      <dl id={idSchema.$id}>
-        <dt>{t('console-shared~Limits')}</dt>
-        <dd>
-          <ResourceRequirements
-            cpu={formData?.limits?.cpu || ''}
-            memory={formData?.limits?.memory || ''}
-            storage={formData?.limits?.['ephemeral-storage'] || ''}
-            onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
-            onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
-            onChangeStorage={(sto) =>
-              onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
-            }
-            path={`${idSchema.$id}.limits`}
-          />
-        </dd>
-        <dt>{t('console-shared~Requests')}</dt>
-        <dd>
-          <ResourceRequirements
-            cpu={formData?.requests?.cpu || ''}
-            memory={formData?.requests?.memory || ''}
-            storage={formData?.requests?.['ephemeral-storage'] || ''}
-            onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
-            onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))}
-            onChangeStorage={(sto) =>
-              onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
-            }
-            path={`${idSchema.$id}.requests`}
-          />
-        </dd>
-      </dl>
+      <DescriptionList id={idSchema.$id}>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-shared~Limits')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ResourceRequirements
+              cpu={formData?.limits?.cpu || ''}
+              memory={formData?.limits?.memory || ''}
+              storage={formData?.limits?.['ephemeral-storage'] || ''}
+              onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))}
+              onChangeMemory={(mem) => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))}
+              onChangeStorage={(sto) =>
+                onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))
+              }
+              path={`${idSchema.$id}.limits`}
+            />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('console-shared~Requests')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ResourceRequirements
+              cpu={formData?.requests?.cpu || ''}
+              memory={formData?.requests?.memory || ''}
+              storage={formData?.requests?.['ephemeral-storage'] || ''}
+              onChangeCPU={(cpu) => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))}
+              onChangeMemory={(mem) =>
+                onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))
+              }
+              onChangeStorage={(sto) =>
+                onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))
+              }
+              path={`${idSchema.$id}.requests`}
+            />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
     </FieldSet>
   );
 };

@@ -2,6 +2,9 @@ import * as React from 'react';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Alert,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
   Dropdown,
   DropdownItem,
   DropdownList,
@@ -84,10 +87,12 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
           <div className="col-md-6">
             <ResourceSummary resource={obj}>
               {tokenConfig && (
-                <>
-                  <dt>{t('console-app~Access token max age')}</dt>
-                  <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('console-app~Access token max age')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
             </ResourceSummary>
           </div>

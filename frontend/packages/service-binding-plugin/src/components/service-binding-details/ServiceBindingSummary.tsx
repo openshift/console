@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, DetailsItem, LabelList } from '@console/internal/components/utils';
 import { useModelFinder } from '@console/internal/module/k8s';
@@ -19,11 +25,13 @@ const ServiceBindingSummary: React.FC<ServiceBindingSummaryProps> = ({ serviceBi
   );
 
   return (
-    <dl>
-      <dt>{t('service-binding-plugin~Status')}</dt>
-      <dd>
-        <ServiceBindingStatus serviceBinding={serviceBinding} />
-      </dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('service-binding-plugin~Status')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <ServiceBindingStatus serviceBinding={serviceBinding} />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
 
       {serviceBinding.spec?.application?.labelSelector ? (
         <DetailsItem
@@ -63,7 +71,7 @@ const ServiceBindingSummary: React.FC<ServiceBindingSummaryProps> = ({ serviceBi
             ))
           : '-'}
       </DetailsItem>
-    </dl>
+    </DescriptionList>
   );
 };
 

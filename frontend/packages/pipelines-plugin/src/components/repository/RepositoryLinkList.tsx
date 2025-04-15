@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -38,39 +44,43 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
   if (!repoName) return null;
 
   return (
-    <dl>
-      <dt>{t('pipelines-plugin~Repository')}</dt>
-      <dd>
-        <div>
-          <ResourceIcon kind={referenceForModel(RepositoryModel)} />
-          <Link
-            data-test="pl-repository-link"
-            to={`${resourcePath(
-              referenceForModel(RepositoryModel),
-              repoName,
-              pipelineRun.metadata.namespace,
-            )}/Runs`}
-            className="co-resource-item__resource-name"
-          >
-            {repoName}
-          </Link>
-        </div>
-        {repoURL && (
-          <ExternalLink href={repoURL}>
-            {getGitProviderIcon(repoURL)} {repoURL}
-          </ExternalLink>
-        )}
-      </dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Repository')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <div>
+            <ResourceIcon kind={referenceForModel(RepositoryModel)} />
+            <Link
+              data-test="pl-repository-link"
+              to={`${resourcePath(
+                referenceForModel(RepositoryModel),
+                repoName,
+                pipelineRun.metadata.namespace,
+              )}/Runs`}
+              className="co-resource-item__resource-name"
+            >
+              {repoName}
+            </Link>
+          </div>
+          {repoURL && (
+            <ExternalLink href={repoURL}>
+              {getGitProviderIcon(repoURL)} {repoURL}
+            </ExternalLink>
+          )}
+        </DescriptionListDescription>
+      </DescriptionListGroup>
       {branchName && (
-        <>
-          <dt>{t(getLabelValue(branchName))}</dt>
-          <dd data-test="pl-repository-branch">{sanitizeBranchName(branchName)}</dd>
-        </>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t(getLabelValue(branchName))}</DescriptionListTerm>
+          <DescriptionListDescription data-test="pl-repository-branch">
+            {sanitizeBranchName(branchName)}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
       {plrLabels?.[RepositoryLabels[RepositoryFields.SHA]] && (
-        <>
-          <dt>{t('pipelines-plugin~Commit id')}</dt>
-          <dd>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('pipelines-plugin~Commit id')}</DescriptionListTerm>
+          <DescriptionListDescription>
             {shaURL ? (
               <ExternalLink href={shaURL} data-test="pl-sha-url">
                 {truncateMiddle(plrLabels[RepositoryLabels[RepositoryFields.SHA]], {
@@ -85,18 +95,18 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({ pipelineRun }) 
                 data-test="pl-commit-id"
               />
             )}
-          </dd>
-        </>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
       {plrLabels?.[RepositoryLabels[RepositoryFields.EVENT_TYPE]] && (
-        <>
-          <dt>{t('pipelines-plugin~Event type')}</dt>
-          <dd data-test="pl-event-type">
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('pipelines-plugin~Event type')}</DescriptionListTerm>
+          <DescriptionListDescription data-test="pl-event-type">
             {plrLabels[RepositoryLabels[RepositoryFields.EVENT_TYPE]]}
-          </dd>
-        </>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
-    </dl>
+    </DescriptionList>
   );
 };
 

@@ -50,9 +50,10 @@ const UploadJarPage: React.FunctionComponent = () => {
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <DocumentTitle>{t('devconsole~Upload JAR file')}</DocumentTitle>
-      <PageHeading title={t('devconsole~Upload JAR file')}>
-        {t('devconsole~Upload a JAR file from your local desktop to OpenShift')}
-      </PageHeading>
+      <PageHeading
+        title={t('devconsole~Upload JAR file')}
+        helpText={t('devconsole~Upload a JAR file from your local desktop to OpenShift')}
+      />
       <QueryFocusApplication>
         {(desiredApplication) => (
           <UploadJar

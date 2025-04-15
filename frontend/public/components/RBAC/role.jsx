@@ -24,6 +24,12 @@ import {
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -107,26 +113,30 @@ class Details extends React.Component {
           <SectionHeading text={t('public~Role details')} />
           <div className="row">
             <div className="col-xs-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Role name')}</dt>
-                <dd>{name}</dd>
+              <DescriptionList>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Role name')}</DescriptionListTerm>
+                  <DescriptionListDescription>{name}</DescriptionListDescription>
+                </DescriptionListGroup>
                 {namespace && (
-                  <div>
-                    <dt>{t('public~Namespace')}</dt>
-                    <dd>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~Namespace')}</DescriptionListTerm>
+                    <DescriptionListDescription>
                       <ResourceLink kind="Namespace" name={namespace} />
-                    </dd>
-                  </div>
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
                 )}
-              </dl>
+              </DescriptionList>
             </div>
             <div className="col-xs-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Created at')}</dt>
-                <dd>
-                  <Timestamp timestamp={creationTimestamp} />
-                </dd>
-              </dl>
+              <DescriptionList>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Created at')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    <Timestamp timestamp={creationTimestamp} />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              </DescriptionList>
             </div>
           </div>
         </PaneBody>

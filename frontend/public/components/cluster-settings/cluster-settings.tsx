@@ -16,6 +16,10 @@ import {
   ProgressVariant,
   Content,
   ContentVariants,
+  DescriptionList,
+  DescriptionListTerm,
+  DescriptionListDescription,
+  DescriptionListGroup,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -112,6 +116,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 
@@ -281,9 +286,9 @@ export const ChannelDocLink: React.FC<{}> = () => {
 const ChannelHeader: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
-    <>
-      {t('public~Channel')}
-      <FieldLevelHelp>
+    <DescriptionListTermHelp
+      text={t('public~Channel')}
+      textHelp={
         <Content>
           <Content component={ContentVariants.p}>
             {t(
@@ -296,8 +301,8 @@ const ChannelHeader: React.FC<{}> = () => {
             </Content>
           )}
         </Content>
-      </FieldLevelHelp>
-    </>
+      }
+    />
   );
 };
 
@@ -931,32 +936,36 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
           <div className="co-cluster-settings">
             <div className="co-cluster-settings__row">
               <div className="co-cluster-settings__section co-cluster-settings__section--current">
-                <dl className="co-m-pane__details co-cluster-settings__details">
-                  <dt data-test="cv-current-version-header">
-                    <CurrentVersionHeader cv={cv} />
-                  </dt>
-                  <dd data-test="cv-current-version">
-                    <CurrentVersion cv={cv} />
-                  </dd>
-                </dl>
+                <DescriptionList className="co-cluster-settings__details">
+                  <DescriptionListGroup>
+                    <DescriptionListTerm data-test="cv-current-version-header">
+                      <CurrentVersionHeader cv={cv} />
+                    </DescriptionListTerm>
+                    <DescriptionListDescription data-test="cv-current-version">
+                      <CurrentVersion cv={cv} />
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
+                </DescriptionList>
               </div>
               <div className="co-cluster-settings__section">
                 <div className="co-cluster-settings__row">
-                  <dl className="co-m-pane__details co-cluster-settings__details co-cluster-settings__details--status">
-                    <dt>{t('public~Update status')}</dt>
-                    <dd>
-                      <UpdateStatus cv={cv} />
-                    </dd>
-                  </dl>
+                  <DescriptionList className="co-cluster-settings__details co-cluster-settings__details--status">
+                    <DescriptionListGroup>
+                      <DescriptionListTerm>{t('public~Update status')}</DescriptionListTerm>
+                      <DescriptionListDescription>
+                        <UpdateStatus cv={cv} />
+                      </DescriptionListDescription>
+                    </DescriptionListGroup>
+                  </DescriptionList>
                   <div className="co-cluster-settings__row">
-                    <dl className="co-m-pane__details co-cluster-settings__details">
-                      <dt>
+                    <DescriptionList className="co-cluster-settings__details">
+                      <DescriptionListGroup>
                         <ChannelHeader />
-                      </dt>
-                      <dd>
-                        <CurrentChannel cv={cv} canUpgrade={canUpgrade} />
-                      </dd>
-                    </dl>
+                        <DescriptionListDescription>
+                          <CurrentChannel cv={cv} canUpgrade={canUpgrade} />
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                    </DescriptionList>
                     <UpdateLink cv={cv} canUpgrade={canUpgrade} />
                   </div>
                 </div>
@@ -1010,61 +1019,75 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             </div>
           </div>
         </PaneBodyGroup>
-        <dl className="co-m-pane__details">
+        <DescriptionList>
           {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
-            <>
-              <dt>{t('public~Subscription')}</dt>
-              <dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Subscription')}</DescriptionListTerm>
+              <DescriptionListDescription>
                 <ExternalLink
                   text={t('public~OpenShift Cluster Manager')}
                   href={getOCMLink(clusterID)}
                 />
                 .
-              </dd>
-            </>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
           )}
           <ServiceLevel
             clusterID={clusterID}
             loading={
-              <>
-                <dt>{serviceLevelTitle}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{serviceLevelTitle}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <ServiceLevelLoading />
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             }
           >
-            <>
-              <dt>{serviceLevelTitle}</dt>
-              <dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{serviceLevelTitle}</DescriptionListTerm>
+              <DescriptionListDescription>
                 <ServiceLevelText clusterID={clusterID} />
-              </dd>
-            </>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
           </ServiceLevel>
-          <dt>{t('public~Cluster ID')}</dt>
-          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">
-            {clusterID}
-          </dd>
-          <dt>{t('public~Desired release image')}</dt>
-          <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-image">
-            {imageParts.length === 2 ? (
-              <>
-                <span className="text-muted">{imageParts[0]}@</span>
-                {imageParts[1]}
-              </>
-            ) : (
-              desiredImage || '-'
-            )}
-          </dd>
-          <dt>{t('public~Cluster version configuration')}</dt>
-          <dd>
-            <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Cluster ID')}</DescriptionListTerm>
+            <DescriptionListDescription
+              className="co-break-all co-select-to-copy"
+              data-test-id="cv-details-table-cid"
+            >
+              {clusterID}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Desired release image')}</DescriptionListTerm>
+            <DescriptionListDescription
+              className="co-break-all co-select-to-copy"
+              data-test-id="cv-details-table-image"
+            >
+              {imageParts.length === 2 ? (
+                <>
+                  <span className="text-muted">{imageParts[0]}@</span>
+                  {imageParts[1]}
+                </>
+              ) : (
+                desiredImage || '-'
+              )}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Cluster version configuration')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
+            </DescriptionListDescription>
+          </DescriptionListGroup>
           <UpstreamConfigDetailsItem resource={cv} />
           {autoscalers && canUpgrade && (
-            <>
-              <dt data-test="cv-autoscaler">{t('public~Cluster autoscaler')}</dt>
-              <dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm data-test="cv-autoscaler">
+                {t('public~Cluster autoscaler')}
+              </DescriptionListTerm>
+              <DescriptionListDescription>
                 {_.isEmpty(autoscalers) ? (
                   <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
                     <AddCircleOIcon className="co-icon-space-r" />
@@ -1080,10 +1103,10 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
                     </div>
                   ))
                 )}
-              </dd>
-            </>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
           )}
-        </dl>
+        </DescriptionList>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Update history')} />

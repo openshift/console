@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -29,27 +35,39 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease })
   } = obj;
 
   return (
-    <dl className="co-m-pane__details">
-      <dt>{t('helm-plugin~Status')}</dt>
-      <dd data-test="helm-release-status-details">
-        <Status
-          status={releaseStatus(helmRelease?.info?.status)}
-          title={HelmReleaseStatusLabels[helmRelease?.info?.status]}
-        />
-      </dd>
-      <dt>{t('helm-plugin~Chart name')}</dt>
-      <dd>{chartName}</dd>
-      <dt>{t('helm-plugin~Chart version')}</dt>
-      <dd>{chartVersion}</dd>
-      <dt>{t('helm-plugin~App version')}</dt>
-      <dd>{appVersion || '-'}</dd>
-      <dt>{t('helm-plugin~Revision')}</dt>
-      <dd>{revision}</dd>
-      <dt>{t('helm-plugin~Updated')}</dt>
-      <dd>
-        <Timestamp timestamp={updated} />
-      </dd>
-    </dl>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('helm-plugin~Status')}</DescriptionListTerm>
+        <DescriptionListDescription data-test="helm-release-status-details">
+          <Status
+            status={releaseStatus(helmRelease?.info?.status)}
+            title={HelmReleaseStatusLabels[helmRelease?.info?.status]}
+          />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('helm-plugin~Chart name')}</DescriptionListTerm>
+        <DescriptionListDescription>{chartName}</DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('helm-plugin~Chart version')}</DescriptionListTerm>
+        <DescriptionListDescription>{chartVersion}</DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('helm-plugin~App version')}</DescriptionListTerm>
+        <DescriptionListDescription>{appVersion || '-'}</DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('helm-plugin~Revision')}</DescriptionListTerm>
+        <DescriptionListDescription>{revision}</DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('helm-plugin~Updated')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <Timestamp timestamp={updated} />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

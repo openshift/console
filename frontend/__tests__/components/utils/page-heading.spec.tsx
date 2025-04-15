@@ -1,84 +1,108 @@
 import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
-
 import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import { configure, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import {
   PageHeading,
-  PageHeadingProps,
   BreadCrumbs,
   BreadCrumbsProps,
 } from '../../../public/components/utils/headings';
-import { ResourceIcon } from '../../../public/components/utils';
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { MemoryRouter } from 'react-router-dom-v5-compat';
+
+// Mock getRootNode
+Object.defineProperty(Element.prototype, 'getRootNode', {
+  value: function () {
+    let rootNode = this;
+    while (rootNode.parentNode) {
+      rootNode = rootNode.parentNode;
+    }
+    return rootNode;
+  },
+  configurable: true,
+});
 
 describe(BreadCrumbs.displayName, () => {
-  let wrapper: ShallowWrapper<BreadCrumbsProps>;
   let breadcrumbs: BreadCrumbsProps['breadcrumbs'];
 
   beforeEach(() => {
+    configure({ testIdAttribute: 'data-test' });
+
     breadcrumbs = [
       { name: 'pods', path: '/pods' },
-      { name: 'containers', path: '/pods' },
+      { name: 'containers', path: '/pods/containers' },
     ];
-    wrapper = shallow(<BreadCrumbs breadcrumbs={breadcrumbs} />);
   });
 
   it('renders each given breadcrumb', () => {
-    const links: ShallowWrapper<any> = wrapper.find(Link);
-    const nonLink: ShallowWrapper<any> = wrapper.findWhere(
-      (BreadcrumbItem) => BreadcrumbItem.props().isActive === true,
+    render(
+      <MemoryRouter>
+        <BreadCrumbs breadcrumbs={breadcrumbs} />
+      </MemoryRouter>,
     );
 
-    expect(links.length + nonLink.length).toEqual(breadcrumbs.length);
-
-    breadcrumbs.forEach((crumb, i) => {
-      if (i < links.length) {
-        expect(links.at(i).props().to).toEqual(crumb.path);
-        expect(links.at(i).childAt(0).text()).toEqual(crumb.name);
+    breadcrumbs.forEach((crumb) => {
+      if (crumb.path) {
+        const link = screen.getByRole('link', { name: crumb.name });
+        expect(link).toHaveAttribute('href', crumb.path);
       } else {
-        expect(nonLink.render().text()).toEqual(crumb.name);
+        expect(screen.getByText(crumb.name)).toBeInTheDocument();
       }
     });
   });
 });
 
 describe(PageHeading.displayName, () => {
-  let wrapper: ShallowWrapper<PageHeadingProps>;
-
   beforeEach(() => {
-    wrapper = shallow(<PageHeading.WrappedComponent obj={null} />);
+    configure({ testIdAttribute: 'data-test' });
   });
 
   it('renders resource icon if given `kind`', () => {
     const kind = 'Pod';
-    wrapper.setProps({ kind });
-    const icon = wrapper.find(ResourceIcon);
+    render(
+      <MemoryRouter>
+        <PageHeading.WrappedComponent obj={null} kind={kind} />
+      </MemoryRouter>,
+    );
 
-    expect(icon.exists()).toBe(true);
-    expect(icon.props().kind).toEqual(kind);
+    const icon = screen.getByTitle(kind);
+    expect(icon).toBeInTheDocument();
+    expect(screen.getByText(kind)).toBeInTheDocument();
   });
 
   it('renders custom title component if given', () => {
     const title = <span>My Custom Title</span>;
-    wrapper.setProps({ title });
+    render(
+      <MemoryRouter>
+        <PageHeading.WrappedComponent obj={null} title={title} />
+      </MemoryRouter>,
+    );
 
-    expect(wrapper.find(PrimaryHeading).contains(title)).toBe(true);
+    expect(screen.getByText('My Custom Title')).toBeInTheDocument();
   });
 
   it('renders breadcrumbs if given `breadcrumbsFor` function', () => {
     const breadcrumbs = [];
-    wrapper = wrapper.setProps({
-      breadcrumbsFor: () => breadcrumbs,
-      obj: { data: testResourceInstance, loaded: true, loadError: null },
-    });
+    render(
+      <MemoryRouter>
+        <PageHeading.WrappedComponent
+          obj={{ data: testResourceInstance, loaded: true, loadError: null }}
+          breadcrumbsFor={() => breadcrumbs}
+        />
+      </MemoryRouter>,
+    );
 
-    expect(wrapper.find(BreadCrumbs).exists()).toBe(true);
-    expect(wrapper.find(BreadCrumbs).props().breadcrumbs).toEqual(breadcrumbs);
+    expect(screen.getByTestId('page-heading-breadcrumbs')).toBeInTheDocument();
   });
 
   it('does not render breadcrumbs if object has not loaded', () => {
-    wrapper = wrapper.setProps({ breadcrumbsFor: () => [], obj: null });
+    render(
+      <MemoryRouter>
+        <PageHeading.WrappedComponent obj={null} breadcrumbsFor={() => []} />
+      </MemoryRouter>,
+    );
 
-    expect(wrapper.find(BreadCrumbs).exists()).toBe(false);
+    expect(screen.queryByTestId('page-heading-breadcrumbs')).not.toBeInTheDocument();
   });
 });

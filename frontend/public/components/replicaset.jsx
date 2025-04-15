@@ -34,6 +34,12 @@ import {
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 import { referenceFor, referenceForModel } from '../module/k8s';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const Details = ({ obj: replicaSet }) => {
   const revision = _.get(replicaSet, [
@@ -50,19 +56,19 @@ const Details = ({ obj: replicaSet }) => {
           <div className="col-md-6">
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
               {revision && (
-                <>
-                  <dt>{t('public~Deployment revision')}</dt>
-                  <dd>{revision}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Deployment revision')}</DescriptionListTerm>
+                  <DescriptionListDescription>{revision}</DescriptionListDescription>
+                </DescriptionListGroup>
               )}
             </ResourceSummary>
           </div>
           <div className="col-md-6">
-            <dl className="co-m-pane__details">
+            <DescriptionList>
               <ResourcePodCount resource={replicaSet} />
               <RuntimeClass obj={replicaSet} />
               <PodDisruptionBudgetField obj={replicaSet} />
-            </dl>
+            </DescriptionList>
           </div>
         </div>
       </PaneBody>

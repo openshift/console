@@ -20,6 +20,11 @@ jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),
 }));
 
+// jest mock useClusterVersion
+jest.mock('@console/shared/src/hooks/version', () => ({
+  useClusterVersion: jest.fn(),
+}));
+
 describe('HelmReleaseDetails', () => {
   beforeEach(() => {
     helmReleaseDetailsProps = {
