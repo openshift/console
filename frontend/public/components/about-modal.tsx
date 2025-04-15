@@ -166,14 +166,14 @@ export const AboutModal: React.FC<AboutModalProps> = (props) => {
   const customLogoUrl = useCustomLogoURL(MASTHEAD_TYPE);
 
   const customBranding = customLogoUrl || window.SERVER_FLAGS.customProductName;
-  const openShiftBranding = window.SERVER_FLAGS.branding !== 'okd' && !customBranding;
+  const openShiftBranding = window.SERVER_FLAGS.branding !== 'okd';
   return (
     <PfAboutModal
       isOpen={isOpen}
       onClose={closeAboutModal}
       productName={productName}
-      brandImageSrc={openShiftBranding ? redHatFedoraImg : customLogoUrl}
-      brandImageAlt={productName}
+      brandImageSrc={customLogoUrl || (openShiftBranding && redHatFedoraImg)}
+      brandImageAlt={(openShiftBranding || customLogoUrl) && productName}
       backgroundImageSrc={openShiftBranding && `/${redHatFedoraWatermarkImg}`}
       hasNoContentContainer
       aria-label="About modal"
