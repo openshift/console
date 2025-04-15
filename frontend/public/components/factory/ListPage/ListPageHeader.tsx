@@ -1,5 +1,4 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { PageHeading } from '../../utils';
 
@@ -13,20 +12,12 @@ const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
   <PageHeading
     title={title}
     badge={badge}
-    hideFavoriteButton={hideFavoriteButton}
+    hideFavoriteButton={hideFavoriteButton ?? !title}
     helpText={helpText}
-    primaryAction={
-      children && (
-        <div
-          className={classNames('co-operator-details__actions', {
-            'co-m-pane__createLink--no-title': !title,
-          })}
-        >
-          {children}
-        </div>
-      )
-    }
-  />
+    primaryAction={title ? children : undefined}
+  >
+    {title ? undefined : children}
+  </PageHeading>
 );
 
 export default ListPageHeader;
