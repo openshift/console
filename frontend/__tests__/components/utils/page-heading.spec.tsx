@@ -1,6 +1,3 @@
-import { Link } from 'react-router-dom';
-import { shallow, ShallowWrapper } from 'enzyme';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import { configure, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import {
