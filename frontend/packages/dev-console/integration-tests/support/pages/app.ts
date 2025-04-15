@@ -92,7 +92,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
       break;
     }
     case devNavigationMenu.Topology: {
-      cy.get(devNavigationMenuPO.topology).click();
+      cy.get(devNavigationMenuPO.topology).should('exist').click({ force: true });
       cy.url().should('include', 'topology');
       app.waitForLoad();
       cy.url().then(($url) => {

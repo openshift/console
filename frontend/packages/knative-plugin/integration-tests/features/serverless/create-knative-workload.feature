@@ -4,6 +4,7 @@ Feature: Create a workload of 'knative Service' type resource
 
         Background:
             Given user has created or selected namespace "aut-knative-workload"
+              And user is at Add page
 
 
         @regression
