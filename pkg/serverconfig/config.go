@@ -59,7 +59,10 @@ func (mkv *MultiKeyValue) Set(value string) error {
 	if err != nil {
 		return err
 	}
-	*mkv = parsedMap
+	// merge new pairs to older ones
+	for k, v := range parsedMap {
+		(*mkv)[k] = v
+	}
 	return nil
 }
 

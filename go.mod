@@ -2,6 +2,8 @@ module github.com/openshift/console
 
 go 1.23.0
 
+toolchain go1.24.1
+
 require (
 	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/coreos/go-oidc v2.2.1+incompatible
