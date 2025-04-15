@@ -4,7 +4,7 @@ Feature: Perform the actions on Pipelines page
 
         Background:
             Given user has created or selected namespace "aut-pipelines-nav"
-              And user is at pipelines page
+              And user is at pipelines page in developer view
 
         @regression @odc-7131
         Scenario: Remember last visited tab for the Pipeline page: P-12-TC01

@@ -15,6 +15,7 @@ import {
   navigateTo,
   app,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { devNavigationMenuPO } from '../../pageObjects';
 
 Given('user has logged in as a basic user', () => {
@@ -28,6 +29,7 @@ Given('user has logged in as a basic user', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   // Due to bug ODC-6231
   // cy.testA11y('Developer perspective with guide tour modal');
@@ -38,6 +40,7 @@ Given('user is at developer perspective', () => {
 });
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

@@ -3,8 +3,10 @@ import { addOptions, devNavigationMenu } from '../../constants';
 import { addPagePO, helmChartRepositoriesPO } from '../../pageObjects';
 import { addPage, createForm, navigateTo } from '../../pages';
 import { helmChartRepository } from '../../pages/add-flow/helm-chart-repository';
+import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

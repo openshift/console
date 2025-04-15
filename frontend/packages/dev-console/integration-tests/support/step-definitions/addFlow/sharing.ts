@@ -2,8 +2,10 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { addOptions, devNavigationMenu } from '../../constants';
 import { addPage, navigateTo } from '../../pages';
+import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

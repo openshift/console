@@ -12,8 +12,10 @@ import {
   topologyPage,
   verifyAddPage,
 } from '../../pages';
+import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
 });
 
@@ -22,6 +24,7 @@ Given('user has created or selected namespace {string}', (projectName: string) =
 });
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 
