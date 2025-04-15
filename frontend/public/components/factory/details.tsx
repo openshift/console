@@ -176,9 +176,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           OverrideTitle={props.OverrideTitle}
           helpText={props.helpText}
           helpAlert={props.helpAlert}
-        >
-          {props.children}
-        </PageHeading>
+        />
         <HorizontalNav
           obj={props.obj}
           pages={allPages}
@@ -218,7 +216,6 @@ export type DetailsPageProps = {
   badge?: React.ReactNode;
   OverrideTitle?: PageHeadingProps['OverrideTitle'];
   getResourceStatus?: (resource: K8sResourceKind) => string;
-  children?: React.ReactNode;
   customKind?: string;
   helpText?: PageHeadingProps['helpText'];
   helpAlert?: PageHeadingProps['helpAlert'];
