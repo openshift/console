@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, NavigateFunction } from 'react-router-dom';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
+import { HorizontalNav, PageHeading } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
@@ -11,9 +11,9 @@ import MonitoringEvents from './events/MonitoringEvents';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
-const handleNamespaceChange = (newNamespace: string): void => {
+const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
-    history.push(MONITORING_ALL_NS_PAGE_URI);
+    navigate(MONITORING_ALL_NS_PAGE_URI);
   }
 };
 

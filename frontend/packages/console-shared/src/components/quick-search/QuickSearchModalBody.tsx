@@ -108,7 +108,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       if (activeViewAllLink) {
         navigate(activeViewAllLink.to);
       } else if (selectedItem) {
-        handleCta(e, selectedItem, closeModal, fireTelemetryEvent);
+        handleCta(e, selectedItem, navigate, closeModal, fireTelemetryEvent);
       }
     },
     [closeModal, fireTelemetryEvent, selectedItem, viewAll, navigate],

@@ -11,7 +11,7 @@ import {
 import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ExternalLink, getQueryArgument } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
@@ -413,6 +413,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [detailsItem, setDetailsItem] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
@@ -668,7 +669,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                     className="co-catalog-page__overlay-action"
                     data-test-id="operator-uninstall-btn"
                     isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
+                    onClick={() => navigate(uninstallLink())}
                     variant="secondary"
                   >
                     {t('olm~Uninstall')}

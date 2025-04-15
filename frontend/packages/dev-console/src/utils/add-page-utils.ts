@@ -1,5 +1,4 @@
 import { AddAction, AddActionGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { AddGroup } from '../components/types';
 
@@ -33,11 +32,6 @@ export const getAddGroups = (
     initialActionGroups,
   );
   return populatedActionGroups.filter((group) => group.items.length);
-};
-
-export const navigateTo = (e: React.SyntheticEvent, url: string) => {
-  history.push(url);
-  e.preventDefault();
 };
 
 export const resolvedHref = (href: string, namespace: string): string =>

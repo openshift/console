@@ -2,13 +2,14 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { PromiseComponent, history } from '@console/internal/components/utils';
+import { PromiseComponent } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { InputField } from '../formik-fields';
 import { YellowExclamationTriangleIcon } from '../status';
@@ -81,12 +82,13 @@ class DeleteResourceModal extends PromiseComponent<
 > {
   private handleSubmit = (values, actions) => {
     const { onSubmit, close, redirect } = this.props;
+    const navigate = useNavigate();
     return (
       onSubmit &&
       this.handlePromise(onSubmit(values))
         .then(() => {
           close();
-          redirect && history.push(redirect);
+          redirect && navigate(redirect);
         })
         .catch((errorMessage) => {
           actions.setStatus({ submitError: errorMessage });

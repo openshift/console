@@ -186,7 +186,7 @@ func NewMetrics() *Metrics {
 		Namespace: "console",
 		Subsystem: "usage",
 		Name:      "total",
-		Help:      "Total number of events like \"page_views\" (loading index.html without history.push) and \"page_impressions\".",
+		Help:      "Total number of events like \"page_views\" (loading index.html without useNavigate) and \"page_impressions\".",
 	}, []string{"event", "perspective"})
 
 	events := []string{"page_view", "page_impression"}

@@ -4,7 +4,7 @@ import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-edi
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { To as LocationTo } from 'react-router-dom';
+import { To as LocationTo, NavigateFunction } from 'react-router-dom';
 import {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -684,7 +684,7 @@ export type TimestampProps = {
 };
 
 export type NamespaceBarProps = {
-  onNamespaceChange?: (namespace: string) => void;
+  onNamespaceChange?: (namespace: string, navigate: NavigateFunction) => void;
   isDisabled?: boolean;
   children?: React.ReactNode;
 };

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import { NotificationEntry, NotificationCategory, NotificationTypes } from '@console/patternfly';
 import {
   isNotLoadedDynamicPluginInfo,
@@ -11,8 +11,7 @@ import {
   DynamicPluginInfo,
 } from '@console/plugin-sdk';
 import * as UIActions from '@console/internal/actions/ui';
-import { history, resourcePath } from '@console/internal/components/utils';
-
+import { resourcePath } from '@console/internal/components/utils';
 import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
 
 import {
@@ -106,13 +105,16 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
 // FIXME (jon): AlertmanagerReceiversNotConfigured action should be defined as an extension in the
 // console-app package. Also, rather than build a map on every call of this function, we might want
 // to hook this into redux.
-export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction>[]) => {
+export const getAlertActions = (
+  actionsExtensions: ResolvedExtension<AlertAction>[],
+  navigate: NavigateFunction,
+) => {
   const alertActions = new Map<
     string,
     Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
   >().set('AlertmanagerReceiversNotConfigured', {
     text: i18next.t('public~Configure'),
-    action: () => history.push('/monitoring/alertmanagerconfig'),
+    action: () => navigate('/monitoring/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
     alertActions.set(properties.alert, {
@@ -214,6 +216,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();
+  const navigate = useNavigate();
   const alertIds = React.useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
   const [alertActionExtensions] = useResolvedExtensions<AlertAction>(
     React.useCallback(
@@ -226,9 +229,10 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     dispatch(UIActions.notificationDrawerToggleExpanded());
   };
 
-  const alertActionExtensionsMap = React.useMemo(() => getAlertActions(alertActionExtensions), [
-    alertActionExtensions,
-  ]);
+  const alertActionExtensionsMap = React.useMemo(
+    () => getAlertActions(alertActionExtensions, navigate),
+    [alertActionExtensions],
+  );
 
   const canUpgrade = useCanClusterUpgrade();
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(

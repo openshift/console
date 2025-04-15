@@ -19,14 +19,14 @@ import * as Immutable from 'immutable';
 import { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
   NumberSpinner,
-  history,
   SelectorInput,
+  history,
   ListDropdown,
   useScrollToTopOnMount,
   Dropdown,
@@ -507,6 +507,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
   const { t } = useTranslation();
   const params = useParams();
+  const navigate = useNavigate();
+
   const immutableFormData = Immutable.fromJS(formData);
   const handleFormDataUpdate = (path: string, value: any): void => {
     const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
@@ -674,7 +676,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         : immutableFormData.toJS(),
     )
       .then((res) => postFormCallback(res))
-      .then(() => next && history.push(next))
+      .then(() => next && navigate(next))
       .catch((err: Error) => setError(err.message || 'Unknown error.'));
   };
 

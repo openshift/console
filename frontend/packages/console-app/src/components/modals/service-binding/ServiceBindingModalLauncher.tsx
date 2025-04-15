@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { Perspective } from '@console/dynamic-plugin-sdk';
 import { createModalLauncher } from '@console/internal/components/factory/modal';
-import { history, getQueryArgument } from '@console/internal/components/utils';
+import { getQueryArgument } from '@console/internal/components/utils';
 import {
   K8sKind,
   k8sList,
@@ -38,10 +39,11 @@ const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  navigate: NavigateFunction,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
-  history.push(redirectURL);
+  navigate(redirectURL);
 };
 
 const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (props) => {
@@ -50,6 +52,7 @@ const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (pro
   const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useValuesForPerspectiveContext();
   const perspectiveExtensions = usePerspectives();
+  const navigate = useNavigate();
   const handleSubmit = async (values, actions) => {
     const bindings: K8sResourceKind[] = await k8sList(ServiceBindingModel, {
       ns: source.metadata.namespace,
@@ -69,7 +72,12 @@ const CreateServiceBindingModal: React.FC<CreateServiceBindingModalProps> = (pro
         props.close();
         fireTelemetryEvent('Service Binding Created');
         getQueryArgument('view') === null &&
-          handleRedirect(source.metadata.namespace, activePerspective, perspectiveExtensions);
+          handleRedirect(
+            source.metadata.namespace,
+            activePerspective,
+            perspectiveExtensions,
+            navigate,
+          );
       } catch (errorMessage) {
         actions.setStatus({ submitError: errorMessage.message });
       }

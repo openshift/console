@@ -4,12 +4,12 @@ import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { history, LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox, history } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -54,6 +54,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const [chartReadme, setChartReadme] = React.useState<string>('');
   const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
   const [chartError, setChartError] = React.useState<Error>(null);
+  const navigate = useNavigate();
 
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
@@ -199,7 +200,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
           redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;
         }
 
-        history.push(redirect);
+        navigate(redirect);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });

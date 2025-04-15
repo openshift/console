@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -75,6 +75,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
 const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
   const { t } = useTranslation();
   const launchModal = useModal();
+  const navigate = useNavigate();
   const [actionExtensions] = useResolvedExtensions<AlertAction>(
     React.useCallback(
       (e): e is AlertAction => isAlertAction(e) && e.properties.alert === alert.rule.name,
@@ -82,7 +83,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
     ),
   );
   const alertName = getAlertName(alert);
-  const actionObj = getAlertActions(actionExtensions).get(alert.rule.name);
+  const actionObj = getAlertActions(actionExtensions, navigate).get(alert.rule.name);
   const { text, action } = actionObj || {};
   return (
     <StatusItem

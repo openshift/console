@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { NavigateFunction } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { history, removeQueryArgument } from '@console/internal/components/utils';
+import { removeQueryArgument } from '@console/internal/components/utils';
 import { keywordCompare } from '../../catalog';
 
 export const quickSearch = (items: CatalogItem[], query: string) => {
@@ -10,6 +11,7 @@ export const quickSearch = (items: CatalogItem[], query: string) => {
 export const handleCta = async (
   e: React.SyntheticEvent,
   item: CatalogItem,
+  navigate: NavigateFunction,
   closeModal: () => void,
   fireTelemetryEvent: (event: string, properties?: {}) => void,
   callbackProps: { [key: string]: string } = {},
@@ -25,5 +27,5 @@ export const handleCta = async (
     closeModal();
     await callback(callbackProps);
     removeQueryArgument('catalogSearch');
-  } else history.push(href);
+  } else navigate(href);
 };
