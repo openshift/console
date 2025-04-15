@@ -1,15 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { NavBar } from '@console/internal/components/utils';
-import { Alert, Breadcrumb, BreadcrumbItem, PageBreadcrumb } from '@patternfly/react-core';
+import { NavBar, BasePageHeading } from '@console/internal/components/utils';
+import { Alert } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
-import NavTitle from '@console/shared/src/components/layout/NavTitle';
 import { K8sResourceKind } from '../../../module/k8s';
 import { AsyncComponent, Firehose, StatusBox } from '../../utils';
 import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alertmanager-utils';
@@ -72,13 +69,12 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
 
   return (
     <>
-      <NavTitle>
-        <p>
-          {t(
-            'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
-          )}
-        </p>
-      </NavTitle>
+      <BasePageHeading
+        hideFavoriteButton
+        helpText={t(
+          'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
+        )}
+      />
       <EditAlertmanagerYAML onSave={save} obj={alertmanagerYAML}>
         {errorMsg && (
           <Alert
@@ -128,25 +124,7 @@ const AlertmanagerYAML: React.FC<{}> = () => {
 
   return (
     <>
-      <PageBreadcrumb>
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <Link className="pf-v6-c-breadcrumb__link" to={breadcrumbs[0].path}>
-              {breadcrumbs[0].name}
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
-        </Breadcrumb>
-      </PageBreadcrumb>
-      <NavTitle className="co-m-nav-title--detail">
-        <PrimaryHeading>
-          <div className="co-m-pane__name co-resource-item">
-            <span className="co-resource-item__resource-name" data-test-id="resource-title">
-              {t('public~Alertmanager')}
-            </span>
-          </div>
-        </PrimaryHeading>
-      </NavTitle>
+      <BasePageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
       <NavBar
         pages={[
           {

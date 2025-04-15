@@ -6,6 +6,7 @@ import {
   TabTitleText,
   TabContent,
   TabContentProps,
+  PageSection,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -16,12 +17,11 @@ import {
   UserPreferenceItem,
   isUserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
-import { LoadingBox, history } from '@console/internal/components/utils';
+import { LoadingBox, BasePageHeading, history } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
 import {
   isModifiedEvent,
   orderExtensionBasedOnInsertBeforeAndAfter,
-  PageLayout,
   useQueryParams,
   Spotlight,
 } from '@console/shared';
@@ -127,12 +127,13 @@ const UserPreferencePage: React.FC = () => {
           ? t('console-app~User Preferences {{activeTab}}', { activeTab })
           : t('console-app~User Preferences')}
       </DocumentTitle>
-      <PageLayout
+      <BasePageHeading
         title={t('console-app~User Preferences')}
-        hint={t(
+        helpText={t(
           'console-app~Set your individual preferences for the console experience. Any changes will be autosaved.',
         )}
-      >
+      />
+      <PageSection>
         {userPreferenceItemResolved ? (
           <div className="co-user-preference-page-content">
             <div className="co-user-preference-page-content__tabs">
@@ -154,7 +155,7 @@ const UserPreferencePage: React.FC = () => {
         ) : (
           <LoadingBox />
         )}
-      </PageLayout>
+      </PageSection>
     </div>
   );
 };

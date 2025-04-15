@@ -9,7 +9,6 @@ import { safeLoad } from 'js-yaml';
 import classNames from 'classnames';
 
 import { APIError } from '@console/shared';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ButtonBar } from '../../utils/button-bar';
 import { Dropdown } from '../../utils/dropdown';
@@ -33,6 +32,7 @@ import * as WebhookForm from './webhook-receiver-form';
 import * as EmailForm from './email-receiver-form';
 import * as SlackForm from './slack-receiver-form';
 import { coFetchJSON } from '../../../co-fetch';
+import { BasePageHeading } from '@console/internal/components/utils/headings';
 
 /**
  * Converts deprecated route match and match_re:
@@ -366,14 +366,14 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   return (
     <>
       <DocumentTitle>{t('public~{{titleVerb}} Receiver', { titleVerb })}</DocumentTitle>
+      <BasePageHeading
+        title={t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
+          titleVerb,
+          receiverTypeLabel,
+          defaultString,
+        })}
+      />
       <PaneBody className="co-m-pane__form">
-        <PrimaryHeading className="pf-v6-u-mb-md">
-          {t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
-            titleVerb,
-            receiverTypeLabel,
-            defaultString,
-          })}
-        </PrimaryHeading>
         <form onSubmit={save}>
           {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
           {formValues.receiverName === 'Critical' && !formValues.receiverType && (

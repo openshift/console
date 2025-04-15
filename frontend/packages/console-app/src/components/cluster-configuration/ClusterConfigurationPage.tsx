@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { IconStatus, Status } from '@patternfly/react-component-groups/dist/dynamic/Status';
 import {
   Tabs,
   Tab,
@@ -8,14 +9,15 @@ import {
   TabContent,
   TabContentProps,
   TabTitleText,
+  PageSection,
 } from '@patternfly/react-core';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import { LoadingBox, history } from '@console/internal/components/utils';
-import { PageLayout, isModifiedEvent } from '@console/shared';
+import { LoadingBox, BasePageHeading, history } from '@console/internal/components/utils';
+import { isModifiedEvent } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
 import ClusterConfigurationForm from './ClusterConfigurationForm';
 import { getClusterConfigurationGroups } from './getClusterConfigurationGroups';
 import { ClusterConfigurationTabGroup } from './types';
@@ -98,12 +100,13 @@ const ClusterConfigurationPage: React.FC = () => {
   return (
     <div className="co-cluster-configuration-page">
       <DocumentTitle>{t('console-app~Cluster configuration')}</DocumentTitle>
-      <PageLayout
+      <BasePageHeading
         title={t('console-app~Cluster configuration')}
-        hint={t(
+        helpText={t(
           'console-app~Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.',
         )}
-      >
+      />
+      <PageSection>
         {!loaded ? (
           <LoadingBox />
         ) : clusterConfigurationTabs.length === 0 ? (
@@ -138,14 +141,16 @@ const ClusterConfigurationPage: React.FC = () => {
             {groupNotFound ? (
               /* Similar to a TabContent */
               <section className="co-cluster-configuration-page pf-v6-c-tab-content">
-                <PrimaryHeading>
-                  {t('console-app~{{section}} not found', { section: activeTabId })}
-                </PrimaryHeading>
+                <Status
+                  status={IconStatus.warning}
+                  icon={<ExclamationTriangleIcon />}
+                  label={t('console-app~{{section}} not found', { section: activeTabId })}
+                />
               </section>
             ) : null}
           </>
         )}
-      </PageLayout>
+      </PageSection>
     </div>
   );
 };

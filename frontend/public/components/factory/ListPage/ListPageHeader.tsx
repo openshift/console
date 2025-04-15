@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { PageHeading } from '../../utils';
+import { PageSection } from '@patternfly/react-core';
 
 const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
   helpText,
@@ -8,16 +9,17 @@ const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
   children,
   badge,
   hideFavoriteButton,
-}) => (
-  <PageHeading
-    title={title}
-    badge={badge}
-    hideFavoriteButton={hideFavoriteButton ?? !title}
-    helpText={helpText}
-    primaryAction={title ? children : undefined}
-  >
-    {title ? undefined : children}
-  </PageHeading>
-);
+}) =>
+  title ? (
+    <PageHeading
+      title={title}
+      badge={badge}
+      hideFavoriteButton={hideFavoriteButton}
+      helpText={helpText}
+      primaryAction={children}
+    />
+  ) : (
+    <PageSection hasBodyWrapper={false}>{children}</PageSection>
+  );
 
 export default ListPageHeader;

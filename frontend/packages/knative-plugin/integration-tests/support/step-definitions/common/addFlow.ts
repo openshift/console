@@ -60,7 +60,7 @@ When('user clicks Create button on Add page', () => {
 });
 
 Then('user will be redirected to Add page', () => {
-  cy.get('.ocs-page-layout__title').should('contain.text', pageTitle.Add);
+  cy.get('[data-test-id="resource-title"]').should('contain.text', pageTitle.Add);
 });
 
 When('user clicks Cancel button on Add page', () => {

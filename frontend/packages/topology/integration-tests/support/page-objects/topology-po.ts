@@ -1,7 +1,6 @@
 export const topologyPO = {
   switcher: 'button[data-test-id="topology-switcher-view"]',
   noWorkLoadsText: 'h2.co-hint-block__title',
-  title: 'h1.ocs-page-layout__title',
   search: '[data-test-id="item-filter"]',
   resetView: '[id="reset-view"]',
   clearFilter: '[class*="toolbar__item"]',

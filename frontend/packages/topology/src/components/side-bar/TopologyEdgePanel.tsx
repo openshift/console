@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu, SimpleTabNav } from '@console/internal/components/utils';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import { BasePageHeading } from '@console/internal/components/utils/headings';
 import { edgeActions } from '../../actions/edgeActions';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import TopologyEdgeResourcesPanel from './TopologyEdgeResourcesPanel';
@@ -33,16 +33,11 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
 
   return (
     <div className="overview__sidebar-pane resource-overview">
-      <div className="overview__sidebar-pane-head resource-overview__heading">
-        <PrimaryHeading>
-          <div className="co-m-pane__name co-resource-item">
-            {t(connectorTypeToTitleKey(edge.getType()))}
-          </div>
-          <div className="co-actions">
-            <ActionsMenu actions={edgeActions(edge, nodes)} />
-          </div>
-        </PrimaryHeading>
-      </div>
+      <BasePageHeading
+        title={t(connectorTypeToTitleKey(edge.getType()))}
+        primaryAction={<ActionsMenu actions={edgeActions(edge, nodes)} />}
+        hideFavoriteButton
+      />
       <SimpleTabNav
         withinSidebar
         tabs={[

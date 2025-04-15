@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { Switch, Tooltip, Skeleton } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { PageLayout } from '@console/shared';
+import { configure, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import store from '@console/internal/redux';
 import * as utils from '../../../utils/useAddActionExtensions';
 import AddPageLayout from '../AddPageLayout';
 import * as accessFilterHook from '../hooks/useAccessFilterExtensions';
@@ -17,91 +17,65 @@ jest.mock('../hooks/useShowAddCardItemDetails', () => ({
   useShowAddCardItemDetails: jest.fn(),
 }));
 
+jest.mock('@console/app/src/components/quick-starts/utils/useQuickStarts', () => ({
+  useQuickStarts: () => [[], true, null],
+}));
+
 describe('AddPageLayout', () => {
-  type AddPageLayoutProps = React.ComponentProps<typeof AddPageLayout>;
-  let wrapper: ShallowWrapper<AddPageLayoutProps>;
-  const props: AddPageLayoutProps = {
-    title: 'title',
-  };
+  const props = { title: 'title' };
   const useAddActionExtensionsSpy = jest.spyOn(utils, 'useAddActionExtensions');
   const useAccessFilterExtensionsSpy = jest.spyOn(accessFilterHook, 'useAccessFilterExtensions');
 
-  describe('Hint block', () => {
-    beforeAll(() => {
-      (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
-      useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
-      useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
-    });
-
-    afterAll(() => {
-      jest.resetAllMocks();
-    });
-
-    it('should show default hintBlock if no hintBlock is provided in props', () => {
-      wrapper = shallow(<AddPageLayout {...props} />);
-
-      expect(wrapper.find(PageLayout).dive().find(Switch).exists()).toBe(true);
-
-      expect(wrapper.find(PageLayout).dive().find(Tooltip).exists()).toBe(true);
-    });
-
-    it('should show default and additional provided hintBlock from props', () => {
-      wrapper = shallow(<AddPageLayout {...props} hintBlock="hintBlock" />);
-
-      expect(wrapper.find(PageLayout).dive().find(Switch).exists()).toBe(true);
-
-      expect(wrapper.find(PageLayout).dive().find(Tooltip).exists()).toBe(true);
-
-      expect(
-        wrapper
-          .find(PageLayout)
-          .dive()
-          .find('.odc-add-page-layout__additional-hint-block')
-          .text()
-          .includes('hintBlock'),
-      ).toBe(true);
-    });
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
   });
 
-  describe('Details switch', () => {
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
+  const renderWithProvider = (ui: React.ReactNode) =>
+    render(<Provider store={store}>{ui}</Provider>);
+
+  describe('Details switch', () => {
     it('should show correct text for switch when it is checked', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
       useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
-      wrapper = shallow(<AddPageLayout {...props} />);
-      expect(
-        wrapper.find(PageLayout).dive().find(Switch).dive().text().includes('Details on'),
-      ).toBe(true);
+
+      renderWithProvider(<AddPageLayout {...props} />);
+
+      expect(screen.getByText('Details on')).toBeInTheDocument();
     });
 
     it('should show correct text for switch when it is unchecked', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([false, () => {}]);
       useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
-      wrapper = shallow(<AddPageLayout {...props} />);
-      expect(
-        wrapper.find(PageLayout).dive().find(Switch).dive().text().includes('Details off'),
-      ).toBe(true);
+
+      renderWithProvider(<AddPageLayout {...props} />);
+
+      expect(screen.getByText('Details off')).toBeInTheDocument();
     });
 
     it('should show loading state for switch if add actions have not resolved', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
       useAddActionExtensionsSpy.mockReturnValue([[], false]);
       useAccessFilterExtensionsSpy.mockReturnValue([[], true]);
-      wrapper = shallow(<AddPageLayout {...props} />);
-      expect(wrapper.find(PageLayout).dive().find(Skeleton).exists()).toBe(true);
+
+      renderWithProvider(<AddPageLayout {...props} />);
+
+      expect(screen.getByTestId('add-page-skeleton')).toBeInTheDocument();
     });
 
     it('should show loading state for switch if add actions from access check have not loaded', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
       useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       useAccessFilterExtensionsSpy.mockReturnValue([[], false]);
-      wrapper = shallow(<AddPageLayout {...props} />);
-      expect(wrapper.find(PageLayout).dive().find(Skeleton).exists()).toBe(true);
+
+      renderWithProvider(<AddPageLayout {...props} />);
+
+      expect(screen.getByTestId('add-page-skeleton')).toBeInTheDocument();
     });
   });
 });

@@ -71,6 +71,54 @@ export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) 
   </>
 );
 
+/** A `PageHeading` without connections to the redux store. */
+export const BasePageHeading = ({
+  'data-test': dataTestId = 'page-heading',
+  badge,
+  breadcrumbs,
+  className,
+  helpAlert,
+  helpText,
+  icon,
+  hideFavoriteButton,
+  title,
+  primaryAction,
+  linkProps,
+}: BasePageHeadingProps) => {
+  const [perspective] = useActivePerspective();
+  const isAdminPerspective = perspective === 'admin';
+  const showFavoriteButton = isAdminPerspective && !hideFavoriteButton;
+
+  return (
+    <div data-test={dataTestId} className={classNames('co-page-heading', className)}>
+      <PageHeader
+        breadcrumbs={breadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs} />}
+        title={title}
+        actionMenu={
+          showFavoriteButton || primaryAction ? (
+            <ActionList className="co-actions" data-test-id="details-actions">
+              <ActionListGroup>
+                {showFavoriteButton && (
+                  <ActionListItem>
+                    <FavoriteButton />
+                  </ActionListItem>
+                )}
+                {primaryAction}
+              </ActionListGroup>
+            </ActionList>
+          ) : null
+        }
+        icon={icon}
+        label={badge}
+        linkProps={linkProps}
+        subtitle={helpText}
+      >
+        {helpAlert && helpAlert}
+      </PageHeader>
+    </div>
+  );
+};
+
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {
     'data-test': dataTestId,
@@ -78,7 +126,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     breadcrumbs,
     breadcrumbsFor,
     buttonActions,
-    children,
     className,
     customActionMenu,
     customData,
@@ -98,7 +145,6 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     titleFunc,
     primaryAction,
   } = props;
-  const [perspective] = useActivePerspective();
   const extraResources = _.reduce(
     props.resourceKeys,
     (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
@@ -114,88 +160,67 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     hasData &&
     !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
-  const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
-  const isAdminPerspective = perspective === 'admin';
 
   return (
-    <div
-      data-test={dataTestId ?? 'page-heading'}
-      className={classNames('co-page-heading', className)}
-    >
-      <PageHeader
-        breadcrumbs={
-          showBreadcrumbs && <BreadCrumbs breadcrumbs={breadcrumbs || breadcrumbsFor(data)} />
-        }
-        title={
-          OverrideTitle ? (
-            <OverrideTitle obj={data} />
-          ) : (
-            (kind || resourceTitle || resourceStatus) && (
-              <div className="co-m-pane__heading co-m-pane__name co-resource-item">
-                {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-                <span data-test-id="resource-title" className="co-resource-item__resource-name">
-                  {resourceTitle}
-                  {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
-                    <ManagedByOperatorLink obj={data} />
-                  )}
-                </span>
-                {resourceStatus && (
-                  <ResourceStatus additionalClassNames="hidden-xs">
-                    <Status status={resourceStatus} />
-                  </ResourceStatus>
+    <BasePageHeading
+      data-test={dataTestId}
+      badge={badge}
+      breadcrumbs={breadcrumbs || (!_.isEmpty(data) ? breadcrumbsFor(data) : null)}
+      className={className}
+      helpAlert={helpAlert}
+      helpText={helpText}
+      icon={icon}
+      hideFavoriteButton={hideFavoriteButton}
+      linkProps={linkProps}
+      title={
+        OverrideTitle ? (
+          <OverrideTitle obj={data} />
+        ) : (
+          (kind || resourceTitle || resourceStatus) && (
+            <div className="co-m-pane__heading co-m-pane__name co-resource-item">
+              {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
+              <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                {resourceTitle}
+                {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
+                  <ManagedByOperatorLink obj={data} />
                 )}
-              </div>
-            )
+              </span>
+              {resourceStatus && (
+                <ResourceStatus additionalClassNames="hidden-xs">
+                  <Status status={resourceStatus} />
+                </ResourceStatus>
+              )}
+            </div>
           )
-        }
-        actionMenu={
-          ((isAdminPerspective && !hideFavoriteButton) || showActions || primaryAction) && (
-            <ActionList className="co-actions" data-test-id="details-actions">
-              <ActionListGroup>
-                {isAdminPerspective && !hideFavoriteButton && (
-                  <ActionListItem>
-                    <FavoriteButton />
-                  </ActionListItem>
-                )}
+        )
+      }
+      primaryAction={
+        <>
+          {primaryAction}
+          {showActions && (
+            <>
+              {hasButtonActions && (
+                <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+              )}
 
-                {primaryAction}
+              {hasMenuActions && (
+                <ActionListItem>
+                  <ActionsMenu
+                    actions={
+                      _.isFunction(menuActions)
+                        ? menuActions(kindObj, data, extraResources, customData)
+                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                    }
+                  />
+                </ActionListItem>
+              )}
 
-                {showActions && (
-                  <>
-                    {hasButtonActions && (
-                      <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-                    )}
-
-                    {hasMenuActions && (
-                      <ActionListItem>
-                        <ActionsMenu
-                          actions={
-                            _.isFunction(menuActions)
-                              ? menuActions(kindObj, data, extraResources, customData)
-                              : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                          }
-                        />
-                      </ActionListItem>
-                    )}
-
-                    {_.isFunction(customActionMenu)
-                      ? customActionMenu(kindObj, data)
-                      : customActionMenu}
-                  </>
-                )}
-              </ActionListGroup>
-            </ActionList>
-          )
-        }
-        subtitle={helpText}
-        icon={icon}
-        label={badge}
-        linkProps={linkProps}
-      >
-        {helpAlert && helpAlert}
-        {children}
-      </PageHeader>
-    </div>
+              {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
+            </>
+          )}
+        </>
+      }
+    />
   );
 });
 
@@ -245,41 +270,47 @@ export type KebabOptionsCreator = (
   customData?: any,
 ) => KebabOption[];
 
-export type PageHeadingProps = {
+export type BasePageHeadingProps = {
   'data-test'?: string;
   /** A badge that is displayed next to the title of the heading */
   badge?: React.ReactNode;
+  /** Breadcrumbs to be displayed above the title */
   breadcrumbs?: { name: string; path: string }[];
-  breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
-  buttonActions?: any[];
-  children?: React.ReactChildren;
+  /** A class name that is placed around the PageHeader wrapper */
   className?: string;
-  /** Renders a custom action menu if the `obj` prop is passed with `data` */
-  customActionMenu?:
-    | React.ReactNode
-    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode);
-  customData?: any;
-  getResourceStatus?: (resource: K8sResourceKind) => string;
   /** An alert placed below the heading in the same PageSection. */
   helpAlert?: React.ReactNode;
   /** A subtitle placed below the title. */
   helpText?: React.ReactNode;
   /** An icon which is placed next to the title with a divider line */
   icon?: React.ReactNode;
-  /** Whether to hide the favorite button */
+  /** By default the favourites button is only shown when on the administrator perspective.
+   * This prop allows you to hide the button in the administrator perspective. */
   hideFavoriteButton?: boolean;
-  /** A component to override the title of the page */
-  OverrideTitle?: React.ComponentType<{ obj?: K8sResourceKind }>;
-  kind?: K8sResourceKindReference;
-  kindObj?: K8sKind;
-  /** Optional link below subtitle */
-  linkProps?: PageHeaderLinkProps;
-  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
-  obj?: FirehoseResult<K8sResourceKind>;
+  /** A title for the page. */
+  title?: string | JSX.Element;
   /** A primary action that is always rendered. */
   primaryAction?: React.ReactNode;
+  /** Optional link below subtitle */
+  linkProps?: PageHeaderLinkProps | { label: React.ReactElement };
+};
+
+export type PageHeadingProps = BasePageHeadingProps & {
+  breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
+  buttonActions?: any[];
+  /** Renders a custom action menu if the `obj` prop is passed with `data` */
+  customActionMenu?:
+    | React.ReactNode
+    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode);
+  customData?: any;
+  getResourceStatus?: (resource: K8sResourceKind) => string;
+  kind?: K8sResourceKindReference;
+  kindObj?: K8sKind;
+  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  obj?: FirehoseResult<K8sResourceKind>;
+  /** A component to override the title of the page */
+  OverrideTitle?: React.ComponentType<{ obj?: K8sResourceKind }>;
   resourceKeys?: string[];
-  title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
 };
 
