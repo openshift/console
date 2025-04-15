@@ -173,7 +173,7 @@ export const AboutModal: React.FC<AboutModalProps> = (props) => {
       onClose={closeAboutModal}
       productName={productName}
       brandImageSrc={openShiftBranding ? redHatFedoraImg : customLogoUrl}
-      brandImageAlt={openShiftBranding && productName}
+      brandImageAlt={productName}
       backgroundImageSrc={openShiftBranding && `/${redHatFedoraWatermarkImg}`}
       hasNoContentContainer
       aria-label="About modal"

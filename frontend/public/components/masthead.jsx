@@ -14,13 +14,33 @@ import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
-import { useCustomLogoURL, getBrandingDetails, MASTHEAD_TYPE } from './utils/branding';
+import {
+  FAVICON_TYPE,
+  getBrandingDetails,
+  MASTHEAD_TYPE,
+  useCustomLogoURL,
+} from './utils/branding';
 
 export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
   const { productName, staticLogo } = getBrandingDetails();
   const navigate = useNavigate();
-  const defaultRoute = '/';
+
   const customLogoUrl = useCustomLogoURL(MASTHEAD_TYPE);
+  const customFaviconUrl = useCustomLogoURL(FAVICON_TYPE);
+
+  React.useEffect(() => {
+    if (customFaviconUrl) {
+      let link = document.querySelector("link[rel='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = customFaviconUrl;
+    }
+  }, [customFaviconUrl]);
+
+  const defaultRoute = '/';
   const logoProps = {
     href: defaultRoute,
     // use onClick to prevent browser reload
