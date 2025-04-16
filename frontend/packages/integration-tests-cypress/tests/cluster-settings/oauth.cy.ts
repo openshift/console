@@ -27,7 +27,7 @@ describe('OAuth', () => {
   // TODO: Add tests for HTPasswd and Request Header identity providers.
   //       These IDPs require file upload.
 
-  it('creates a Basic Authentication IDP and shows the BasicAuth IDP on the OAuth settings page', () => {
+  it(`creates a 'basic-auth-${testName}'  Basic Authentication IDP and shows the BasicAuth IDP on the OAuth settings page`, () => {
     const idpName = `basic-auth-${testName}`;
     oauth.idpSetup(idpName, 'basicauth');
     cy.get('#url').type('https://example.com');
@@ -83,5 +83,12 @@ describe('OAuth', () => {
     cy.get('#client-secret').type('my-client-secret');
     cy.get('#issuer').type('https://example.com');
     oauth.idpSaveAndVerify(idpName, 'OpenID');
+  });
+
+  it(`removes the Basic Authentication IDP 'basic-auth-${testName}'  in the list on the OAuth settings page`, () => {
+    const idpName = `basic-auth-${testName}`;
+    cy.get(`[data-test-idp-kebab-for="${idpName}"]`).find('[data-test-id="kebab-button"]').click();
+    cy.get('[data-test-action="Remove identity provider"]').should('be.visible').click();
+    cy.get('[data-test="confirm-action"]').click();
   });
 });
