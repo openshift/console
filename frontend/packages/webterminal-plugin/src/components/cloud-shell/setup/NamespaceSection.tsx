@@ -7,6 +7,7 @@ import { ProjectModel } from '@console/internal/models';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { InputField, ResourceDropdownField, useFormikValidationFix, FLAGS } from '@console/shared';
 import { CREATE_NAMESPACE_KEY } from './cloud-shell-setup-utils';
+import './NamespaceSection.scss';
 
 type NamespaceSectionProps = WithFlagsProps;
 
@@ -74,12 +75,14 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
         )}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
-        <InputField
-          type={TextInputTypes.text}
-          required
-          name="newNamespace"
-          label={t('webterminal-plugin~Project name')}
-        />
+        <div className="wt-project-name">
+          <InputField
+            type={TextInputTypes.text}
+            required
+            name="newNamespace"
+            label={t('webterminal-plugin~Project name')}
+          />
+        </div>
       )}
     </>
   );
