@@ -171,7 +171,12 @@ export class PluginStore {
   }
 
   private updateExtensions() {
-    const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values());
+    const allowedDynamicPluginNames = Array.from(this.allowedDynamicPluginNames.values());
+    const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values()).sort((a, b) => {
+      const indexA = allowedDynamicPluginNames.indexOf(a.manifest.name);
+      const indexB = allowedDynamicPluginNames.indexOf(b.manifest.name);
+      return indexA - indexB;
+    });
 
     this.staticPluginExtensions = this.staticPlugins
       .filter((plugin) => !this.disabledStaticPluginNames.has(plugin.name))
