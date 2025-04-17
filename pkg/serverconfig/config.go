@@ -71,23 +71,26 @@ func (mkv *MultiKeyValue) Set(value string) error {
 // ... --custom-logo-files Dark=/path/to/dark-logo.svg, Light=/path/to/light-logo.svg
 type LogosKeyValue map[operatorv1.ThemeMode]string
 
-func (mkv *LogosKeyValue) String() string {
+func (lkv *LogosKeyValue) String() string {
 	keyValuePairs := []string{}
-	for k, v := range *mkv {
+	for k, v := range *lkv {
 		keyValuePairs = append(keyValuePairs, fmt.Sprintf("%s=%s", k, v))
 	}
 	sort.Strings(keyValuePairs)
 	return strings.Join(keyValuePairs, ", ")
 }
 
-func (mkv *LogosKeyValue) Set(value string) error {
+func (lkv *LogosKeyValue) Set(value string) error {
 	parsedMap, err := parseKeyValuePairs(value, func(key string) (operatorv1.ThemeMode, error) {
 		return ParseCustomLogoTheme(key)
 	})
 	if err != nil {
 		return err
 	}
-	*mkv = parsedMap
+	// merge new pairs to older ones
+	for k, v := range parsedMap {
+		(*lkv)[k] = v
+	}
 	return nil
 }
 

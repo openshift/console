@@ -198,7 +198,7 @@ func validateLogoFiles(value string) (LogosKeyValue, error) {
 	if value == "" {
 		return nil, nil
 	}
-	var customLogoFiles LogosKeyValue
+	customLogoFiles := LogosKeyValue{}
 	err := customLogoFiles.Set(value)
 	if err != nil {
 		return nil, err
