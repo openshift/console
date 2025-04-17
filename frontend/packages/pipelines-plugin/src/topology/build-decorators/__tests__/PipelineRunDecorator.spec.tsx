@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import * as rbacModule from '@console/internal/components/utils/rbac';
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import * as taskRunsUtils from '../../../components/taskruns/useTaskRuns';

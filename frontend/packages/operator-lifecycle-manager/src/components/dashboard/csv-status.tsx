@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { pluralize } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import {
   resourcePathFromModel,
   resourcePath,

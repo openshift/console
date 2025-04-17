@@ -1,8 +1,8 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom-v5-compat';
 import { Title } from '@patternfly/react-core';
 
 import { coFetchJSON } from '../../co-fetch';

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/dist/core/lib/utils/k8s/hooks';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel, ReplicationControllerModel } from '@console/internal/models';
 import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import {

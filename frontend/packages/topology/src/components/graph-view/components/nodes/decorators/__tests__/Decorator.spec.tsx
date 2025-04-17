@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import Decorator from '../Decorator';
 
 describe('Decorator', () => {

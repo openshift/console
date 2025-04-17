@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
+import { BrowserRouter } from 'react-router-dom';
 import { NamespaceModel } from '@console/internal/models';
 import { modelFor } from '@console/internal/module/k8s/k8s-models';
 import store from '@console/internal/redux';

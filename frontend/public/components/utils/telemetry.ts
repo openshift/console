@@ -1,4 +1,4 @@
-import { Location } from 'history';
+import { Location } from 'react-router-dom';
 import { getBrandingDetails } from './branding';
 
 /**
@@ -7,7 +7,7 @@ import { getBrandingDetails } from './branding';
  * At the moment it just removes usernames from
  * `/k8s/cluster/user.openshift.io~v1~User/a-user[...]`
  */
-export const withoutSensitiveInformations = (location: Location): Location => {
+export const withoutSensitiveInformations = (location: Location<any>): Location<any> => {
   let pathname = location.pathname;
   if (pathname.startsWith('/k8s/cluster/user.openshift.io~v1~User/')) {
     pathname = pathname.replace(/User\/[^/]+/, 'User/removed-username');

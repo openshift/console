@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ModalBody, ModalHeader } from '@patternfly/react-core';
+import { useNavigate } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
-  history,
 } from '@console/internal/components/utils';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import { CatalogType } from '../catalog';
@@ -46,6 +46,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
   const [items, setItems] = React.useState<number>(limitItemCount);
   const ref = React.useRef<HTMLInputElement>();
+  const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const listCatalogItems = limitItemCount > 0 ? catalogItems?.slice(0, items) : catalogItems;
 
@@ -105,12 +106,12 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       const { id } = document.activeElement;
       const activeViewAllLink = viewAll?.find((link) => link.catalogType === id);
       if (activeViewAllLink) {
-        history.push(activeViewAllLink.to);
+        navigate(activeViewAllLink.to);
       } else if (selectedItem) {
-        handleCta(e, selectedItem, closeModal, fireTelemetryEvent);
+        handleCta(e, selectedItem, navigate, closeModal, fireTelemetryEvent);
       }
     },
-    [closeModal, fireTelemetryEvent, selectedItem, viewAll],
+    [closeModal, fireTelemetryEvent, selectedItem, viewAll, navigate],
   );
 
   const selectPrevious = React.useCallback(() => {

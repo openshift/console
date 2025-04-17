@@ -131,7 +131,7 @@ const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
       <FormFooter
         isSubmitting={isSubmitting}
         handleReset={showUpdated && handleReset}
-        handleCancel={history.goBack}
+        handleCancel={() => history.go(-1)}
         submitLabel={isEditing ? t('metal3-plugin~Save') : t('metal3-plugin~Create')}
         errorMessage={status && status.submitError}
         disableSubmit={isSubmitting || !dirty || !_.isEmpty(errors)}

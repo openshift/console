@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { Table, TableProps } from '@console/internal/components/factory';
 import { ServerlessFunctionIcon } from '../../utils/icons';
 import ServiceHeader from '../services/ServiceHeader';

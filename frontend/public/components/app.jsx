@@ -5,8 +5,13 @@ import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
+import {
+  unstable_HistoryRouter as HistoryRouter,
+  Route,
+  Routes,
+  useParams,
+  useLocation,
+} from 'react-router-dom';
 import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON, appInternalFetch } from '../co-fetch';
@@ -30,6 +35,7 @@ import DetectPerspective from '@console/app/src/components/detect-perspective/De
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
+import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
@@ -318,25 +324,35 @@ render(<LoadingBox />, document.getElementById('app'));
 
 const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
-  // Treat the authentication error page as a standalone route. There is no need to render the rest
-  // of the app if we know authentication has failed.
+
+  const standaloneRoutes = React.useMemo(
+    () =>
+      _.flatten(
+        standaloneRouteExtensions.map(({ uid, properties: { path, exact, component } }) =>
+          mapExtensionToRoutes({
+            uid,
+            path,
+            exact,
+            getElement: () => <AsyncComponent loader={component} />,
+          }),
+        ),
+      ),
+    [standaloneRouteExtensions],
+  );
+
   return (
-    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <CompatRouter>
-        <Routes>
-          <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
-          {standaloneRouteExtensions.map((e) => (
-            <Route
-              key={e.uid}
-              element={<AsyncComponent loader={e.properties.component} />}
-              path={`${e.properties.path}${e.properties.exact ? '' : '/*'}`}
-            />
-          ))}
-          <Route path="/terminal/*" element={<CloudShellTab />} />
-          <Route path="/*" element={<AppWithExtensions />} />
-        </Routes>
-      </CompatRouter>
-    </Router>
+    <HistoryRouter history={history} basename={window.SERVER_FLAGS.basePath}>
+      <Routes>
+        {/*
+            Treat the authentication error page as a standalone route.
+            There is no need to render the rest of the app if we know authentication has failed.
+          */}
+        <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
+        {standaloneRoutes}
+        <Route path="/terminal/*" element={<CloudShellTab />} />
+        <Route path="/*" element={<AppWithExtensions />} />
+      </Routes>
+    </HistoryRouter>
   );
 };
 
@@ -348,6 +364,7 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   // notify of identity change
   const user = useSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
+  const location = useLocation();
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -367,31 +384,19 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
   // Also because some pages update the URL as the user enters a search term.
-  const fireUrlChangeEvent = useDebounceCallback((location) => {
+  const fireUrlChangeEvent = useDebounceCallback((newLocation) => {
     fireTelemetryEvent('page', {
       perspective,
       title: getTelemetryTitle(),
-      ...withoutSensitiveInformations(location),
+      ...withoutSensitiveInformations(newLocation),
     });
   }, debounceTime);
   React.useEffect(() => {
     if (!titleOnLoad) {
       return;
     }
-    fireUrlChangeEvent(history.location);
-    let { pathname, search } = history.location;
-    const unlisten = history.listen((location) => {
-      const { pathname: nextPathname, search: nextSearch } = history.location;
-      if (pathname !== nextPathname || search !== nextSearch) {
-        pathname = nextPathname;
-        search = nextSearch;
-        fireUrlChangeEvent(location);
-      }
-    });
-    return () => {
-      unlisten();
-    };
-  }, [perspective, fireUrlChangeEvent, titleOnLoad]);
+    fireUrlChangeEvent(location);
+  }, [perspective, fireUrlChangeEvent, titleOnLoad, location]);
 
   return null;
 });

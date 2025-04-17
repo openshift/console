@@ -17,7 +17,7 @@ import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {
@@ -37,7 +37,6 @@ import {
   ResourceIcon,
   navFactory,
   ResourceSummary,
-  history,
   useAccessReview,
 } from '@console/internal/components/utils';
 import { authSvc } from '@console/internal/module/auth';
@@ -409,6 +408,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   hideApprovalBlock,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [needsApproval, setNeedsApproval] = React.useState(
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false,
   );
@@ -466,7 +466,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
                     variant="secondary"
                     isDisabled={false}
                     onClick={() =>
-                      history.push(
+                      navigate(
                         `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
                           SubscriptionModel,
                         )}/${subscription.name}?showDelete=true`,

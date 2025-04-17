@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'react-router-dom-v5-compat';
+import { Route, RouteProps } from 'react-router-dom';
 import {
   useActivePerspective,
   RoutePage as DynamicRoutePageExtension,
@@ -67,67 +67,62 @@ const RoutePage: React.FCC<RoutePageProps> = ({
   );
 };
 
+export const mapExtensionToRoutes = (data: {
+  uid: string;
+  path: string | string[];
+  getElement: (currentPath: string) => RouteProps['element'];
+  exact?: boolean;
+}) => {
+  const { uid, path, getElement, exact } = data;
+  const routePaths = Array.isArray(path) ? path : [path];
+
+  return routePaths.map((currentPath) => (
+    <Route
+      key={`${uid}/${currentPath}`}
+      path={`${currentPath}${exact ? '' : '/*'}`}
+      element={getElement(currentPath)}
+    />
+  ));
+};
+
 export const usePluginRoutes: UsePluginRoutes = () => {
   const staticExtensions = useExtensions<StaticRoutePageExtension>(isStaticRoutePageExtension);
   const dynamicExtensions = useExtensions<DynamicRoutePageExtension>(isDynamicRoutePageExtension);
   const [activePerspective, setActivePerspective] = useActivePerspective();
-  const getRoutesForExtension = React.useCallback(
-    (extension: LoadedRoutePageExtension): React.ReactElement[] => {
-      if (Array.isArray(extension.properties.path)) {
-        return extension.properties.path.map((path) => (
-          <Route
-            {...extension.properties}
-            path={`${path}${extension.properties.exact ? '' : '/*'}`}
-            key={path}
-            element={
-              <RoutePage
-                extension={extension}
-                path={path}
-                activePerspective={activePerspective}
-                setActivePerspective={setActivePerspective}
-              />
-            }
-          />
-        ));
-      }
-      return [
-        <Route
-          {...extension.properties}
-          path={`${extension.properties.path}${extension.properties.exact ? '' : '/*'}`}
-          key={extension.properties.path}
-          element={
-            <RoutePage
-              extension={extension}
-              path={extension.properties.path}
-              activePerspective={activePerspective}
-              setActivePerspective={setActivePerspective}
-            />
-          }
-        />,
-      ];
-    },
-    [activePerspective, setActivePerspective],
-  );
 
   return React.useMemo(
     () =>
       [...staticExtensions, ...dynamicExtensions].reduce(
         ([activeAcc, inactiveAcc], extension) => {
           const active = isRoutePageExtensionActive(extension, activePerspective);
-          const routes = getRoutesForExtension(extension);
+
+          const routes = mapExtensionToRoutes({
+            uid: extension.uid,
+            path: extension.properties.path,
+            exact: extension.properties.exact,
+            getElement: (currentPath) => (
+              <RoutePage
+                extension={extension}
+                path={currentPath}
+                activePerspective={activePerspective}
+                setActivePerspective={setActivePerspective}
+              />
+            ),
+          });
+
           return active
             ? [[...activeAcc, ...routes], inactiveAcc]
             : [activeAcc, [...inactiveAcc, ...routes]];
         },
         [[], []],
       ),
-    [staticExtensions, dynamicExtensions, getRoutesForExtension, activePerspective],
+    [staticExtensions, dynamicExtensions, activePerspective, setActivePerspective],
   );
 };
 
-type RoutePageExtension = StaticRoutePageExtension | DynamicRoutePageExtension;
-
-type LoadedRoutePageExtension = LoadedExtension<RoutePageExtension>;
+type LoadedRoutePageExtension = LoadedExtension<
+  StaticRoutePageExtension | DynamicRoutePageExtension
+>;
 
 type SetActivePerspective = (perspective: string, next: string) => void;
 

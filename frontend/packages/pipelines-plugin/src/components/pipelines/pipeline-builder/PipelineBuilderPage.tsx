@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik, FormikBag } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import { history } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate, referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -24,6 +24,7 @@ type PipelineBuilderPageProps = {
 
 const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { ns } = useParams();
   const { existingPipeline } = props;
 
@@ -70,7 +71,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
 
     return resourceCall
       .then(() => {
-        history.push(`/k8s/ns/${ns}/${referenceForModel(pipelineModel)}/${pipeline.metadata.name}`);
+        navigate(`/k8s/ns/${ns}/${referenceForModel(pipelineModel)}/${pipeline.metadata.name}`);
       })
       .catch((e) => {
         actions.setStatus({ submitError: e.message });
@@ -83,7 +84,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema()}
       >
         {(formikProps) => (

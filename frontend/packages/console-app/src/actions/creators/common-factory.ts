@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import { NavigateFunction } from 'react-router-dom';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   annotationsModalLauncher,
@@ -14,8 +15,11 @@ import { referenceForModel, K8sKind, K8sResourceKind } from '@console/internal/m
 export type ResourceActionCreator = (
   kind: K8sKind,
   obj: K8sResourceKind,
-  relatedResource?: K8sResourceKind,
-  message?: JSX.Element,
+  opts?: {
+    relatedResource?: K8sResourceKind;
+    message?: JSX.Element;
+    navigate?: NavigateFunction;
+  },
 ) => Action;
 
 export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
@@ -24,8 +28,9 @@ export const CommonActionFactory: ResourceActionFactory = {
   Delete: (
     kind: K8sKind,
     obj: K8sResourceKind,
-    relatedResource?: K8sResourceKind,
-    message?: JSX.Element,
+    opts: {
+      message: JSX.Element;
+    },
   ): Action => ({
     id: `delete-resource`,
     label: i18next.t('console-app~Delete {{kind}}', { kind: kind.kind }),
@@ -33,7 +38,7 @@ export const CommonActionFactory: ResourceActionFactory = {
       deleteModal({
         kind,
         resource: obj,
-        message,
+        message: opts.message,
       }),
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
@@ -122,6 +127,6 @@ export const getCommonResourceActions = (
     CommonActionFactory.ModifyLabels(kind, obj),
     CommonActionFactory.ModifyAnnotations(kind, obj),
     CommonActionFactory.Edit(kind, obj),
-    CommonActionFactory.Delete(kind, obj, undefined, message),
+    CommonActionFactory.Delete(kind, obj, { message }),
   ];
 };

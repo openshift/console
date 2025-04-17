@@ -2,7 +2,7 @@ import * as React from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { ServiceBindingDeprecationAlertForModals } from '@console/service-binding-plugin/src/components/service-binding-utils/ServiceBindingAlerts';
 import { Modal } from '../../modal';
