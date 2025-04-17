@@ -113,9 +113,9 @@ func main() {
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
 
 	customLogoFlags := serverconfig.LogosKeyValue{}
-	fs.Var(&customLogoFlags, "custom-logo-files", "List of custom product images used for console branding. Each entry consist of theme type (Dark | Light | Default) as a key and path to image file as value.")
+	fs.Var(&customLogoFlags, "custom-logo-files", "List of custom product images used for console branding. Each entry consist of theme type (Dark | Light ) as a key and path to image file as value.")
 	customFaviconFlags := serverconfig.LogosKeyValue{}
-	fs.Var(&customFaviconFlags, "custom-favicon-files", "List of custom product images used for console branding. Each entry consist of theme type (Dark | Light | Default) as a key and path to image file as value.")
+	fs.Var(&customFaviconFlags, "custom-favicon-files", "List of custom favicon images used for console branding. Each entry consist of theme type (Dark | Light ) as a key and path to image file as value.")
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 
