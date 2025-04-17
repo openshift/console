@@ -105,7 +105,8 @@ type jsGlobals struct {
 	ContentSecurityPolicy           string                     `json:"contentSecurityPolicy"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
 	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
-	CustomFavicons                  serverconfig.LogosKeyValue `json:"customFavicons"`
+	CustomFaviconsConfigured        bool                       `json:"customFaviconsConfigured"`
+	CustomLogosConfigured           bool                       `json:"customLogosConfigured"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
 	CustomProductName               string                     `json:"customProductName"`
 	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
@@ -727,7 +728,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		ConsoleVersion:            version.Version,
 		ControlPlaneTopology:      s.ControlPlaneTopology,
 		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
-		CustomFavicons:            s.CustomFaviconFiles,
+		CustomFaviconsConfigured:  !s.CustomFaviconFiles.IsEmpty(),
+		CustomLogosConfigured:     !s.CustomLogoFiles.IsEmpty(),
 		CustomProductName:         s.CustomProductName,
 		DevCatalogCategories:      s.DevCatalogCategories,
 		DevCatalogTypes:           s.DevCatalogTypes,
@@ -772,7 +774,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 
-	if s.CustomLogoFiles != nil {
+	// set the customLogoURL server flag only when there is a customLogo or customFavicon configuration
+	if !s.CustomLogoFiles.IsEmpty() || !s.CustomFaviconFiles.IsEmpty() {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
 	}
 

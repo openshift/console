@@ -94,6 +94,10 @@ func (lkv *LogosKeyValue) Set(value string) error {
 	return nil
 }
 
+func (lkv *LogosKeyValue) IsEmpty() bool {
+	return len(*lkv) == 0
+}
+
 // Parse configuration from
 // 1. Config file
 // 2. Environment variables (overrides config file)
