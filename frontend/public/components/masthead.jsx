@@ -25,8 +25,8 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
   const { productName, staticLogo } = getBrandingDetails();
   const navigate = useNavigate();
 
-  const customLogoUrl = useCustomLogoURL(MASTHEAD_TYPE);
-  const customFaviconUrl = useCustomLogoURL(FAVICON_TYPE);
+  const { logoUrl: customMastheadUrl, loading } = useCustomLogoURL(MASTHEAD_TYPE);
+  const { logoUrl: customFaviconUrl } = useCustomLogoURL(FAVICON_TYPE);
 
   React.useEffect(() => {
     if (customFaviconUrl) {
@@ -65,10 +65,10 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
             data-test="masthead-logo"
             {...logoProps}
           >
-            {customLogoUrl ? (
-              <Brand src={customLogoUrl} alt={productName} />
+            {customMastheadUrl ? (
+              <Brand src={customMastheadUrl} alt={productName} />
             ) : (
-              <ReactSVG src={staticLogo} aria-hidden className="pf-v6-c-brand" />
+              !loading && <ReactSVG src={staticLogo} aria-hidden className="pf-v6-c-brand" />
             )}
           </MastheadLogo>
         </MastheadBrand>

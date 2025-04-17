@@ -163,7 +163,7 @@ export const AboutModal: React.FC<AboutModalProps> = (props) => {
   const { isOpen, closeAboutModal } = props;
   const { t } = useTranslation();
   const { productName } = getBrandingDetails();
-  const customLogoUrl = useCustomLogoURL(MASTHEAD_TYPE);
+  const { logoUrl: customLogoUrl } = useCustomLogoURL(MASTHEAD_TYPE);
 
   const customBranding = customLogoUrl || window.SERVER_FLAGS.customProductName;
   const openShiftBranding = window.SERVER_FLAGS.branding !== 'okd';

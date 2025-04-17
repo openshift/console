@@ -54,17 +54,28 @@ export const getBrandingDetails = () => {
   return { staticLogo, productName };
 };
 
-// when user specifies logo with customLogoFile instead of customLogoFiles the URL
-// query parameters will be ignored and the single specified logo will always be provided
-export const useCustomLogoURL = (type: CUSTOM_LOGO): string => {
+/** Fetches given custom logo and returns its blob URL.
+ * Fetches the bridge's custom logo endpoint with query parameters that specify the type
+ * and the theme of the requested custom logo.
+ * The hook listens for theme changes to provide correct custom logo for given theme.
+ * results into redux, adjusts the API polling frequency based on the poll success.
+ * @param type - The type of the custom logo to query.
+ * @returns Returns logoURL blob URL and the loading state of the API request.
+ */
+export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading: Boolean } => {
   const [logoUrl, setLogoUrl] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
   const theme = React.useContext(ThemeContext);
 
   React.useEffect(() => {
-    // return when customLogos have not been configured
-    if (!window.SERVER_FLAGS.customLogoURL) {
+    // return when requested custom logo type is not configured
+    if (
+      (type === MASTHEAD_TYPE && !window.SERVER_FLAGS.customLogosConfigured) ||
+      (type === FAVICON_TYPE && !window.SERVER_FLAGS.customFaviconsConfigured)
+    ) {
       return;
     }
+    setLoading(true);
     let reqTheme;
     const fetchData = async () => {
       if (type === FAVICON_TYPE) {
@@ -90,6 +101,7 @@ export const useCustomLogoURL = (type: CUSTOM_LOGO): string => {
       if (response.ok) {
         const blob = await response.blob();
         setLogoUrl(URL.createObjectURL(blob));
+        setLoading(false);
       } else if (response.status === 404) {
         return;
       } else {
@@ -102,5 +114,5 @@ export const useCustomLogoURL = (type: CUSTOM_LOGO): string => {
     });
   }, [theme, type]);
 
-  return logoUrl;
+  return { logoUrl, loading };
 };
