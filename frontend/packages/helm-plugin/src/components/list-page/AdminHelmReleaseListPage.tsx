@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { EmptyBox, PageHeading } from '@console/internal/components/utils';
 import { FLAGS, useFlag } from '@console/shared';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import HelmReleaseList from './HelmReleaseList';
 
 type PageContentsProps = {
@@ -19,15 +20,19 @@ const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   return namespace || canListNS ? (
     <>
-      <PageHeading title={t('helm-plugin~Helm Releases')} navTitleAsRow>
-        <div>
-          <Link to={`/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`}>
-            <Button variant="primary" id="yaml-create" data-test="item-create">
-              {t('helm-plugin~Create Helm Release')}
-            </Button>
-          </Link>
-        </div>
-      </PageHeading>
+      <PageHeading
+        title={t('helm-plugin~Helm Releases')}
+        primaryAction={
+          <Button
+            variant="primary"
+            id="yaml-create"
+            data-test="item-create"
+            component={LinkTo(`/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`)}
+          >
+            {t('helm-plugin~Create Helm Release')}
+          </Button>
+        }
+      />
       <HelmReleaseList />
     </>
   ) : (

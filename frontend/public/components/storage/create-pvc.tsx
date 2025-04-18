@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -9,6 +9,7 @@ import { isObjectSC } from '@console/shared/src/utils';
 import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
   AsyncComponent,
@@ -268,16 +269,12 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
-        link={
-          <Link
-            to={`/k8s/ns/${namespace}/persistentvolumeclaims/~new`}
-            id="yaml-link"
-            data-test="yaml-link"
-            replace
-          >
-            {t('public~Edit YAML')}
-          </Link>
-        }
+        linkProps={{
+          component: LinkTo(`/k8s/ns/${namespace}/persistentvolumeclaims/~new`, { replace: true }),
+          id: 'yaml-link',
+          'data-test': 'yaml-link',
+          label: t('public~Edit YAML'),
+        }}
       />
       <PaneBody>
         <div className="co-m-pane__form">

@@ -315,20 +315,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   return (
     <>
-      {/* Badge rendered from PageHeading only when title is present */}
-      <PageHeading
-        title={title}
-        badge={title ? badge : null}
-        navTitleAsRow={!!createLink}
-        helpText={helpText}
-      >
-        {createLink && (
-          <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
-            {createLink}
-          </div>
-        )}
-        {!title && badge && <div>{badge}</div>}
-      </PageHeading>
+      <PageHeading title={title} badge={badge} helpText={helpText} primaryAction={createLink} />
       <PaneBody>
         {inject(props.children, {
           resources,

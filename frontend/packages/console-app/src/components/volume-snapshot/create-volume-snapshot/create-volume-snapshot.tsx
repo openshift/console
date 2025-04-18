@@ -13,7 +13,7 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom-v5-compat';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeOptions,
@@ -58,6 +58,7 @@ import {
 import { getName, getNamespace, getAnnotations } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -252,18 +253,15 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
         <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
           title={<div className="co-m-pane__name">{title}</div>}
-          link={
-            <Link
-              to={`/k8s/ns/${namespace || 'default'}/${referenceForModel(
-                VolumeSnapshotModel,
-              )}/~new`}
-              id="yaml-link"
-              data-test="yaml-link"
-              replace
-            >
-              {t('console-app~Edit YAML')}
-            </Link>
-          }
+          linkProps={{
+            component: LinkTo(
+              `/k8s/ns/${namespace || 'default'}/${referenceForModel(VolumeSnapshotModel)}/~new`,
+              { replace: true },
+            ),
+            id: 'yaml-link',
+            'data-test': 'yaml-link',
+            label: t('console-app~Edit YAML'),
+          }}
         />
         <PaneBody>
           <form onSubmit={create}>

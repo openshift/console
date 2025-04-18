@@ -70,32 +70,38 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
 
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
-      <PageHeading title={title} badge={badge} navTitleAsRow>
-        {secondaryButtonAction && (
-          <ActionListItem>
-            <Button
-              type="button"
-              variant="secondary"
-              data-test="secondary-action"
-              component={(props) => <Link {...props} to={secondaryButtonAction.href} />}
-            >
-              {secondaryButtonAction.label}
-            </Button>
-          </ActionListItem>
-        )}
-        <ActionListItem>
-          {items && (
-            <Dropdown
-              buttonClassName="pf-m-primary"
-              menuClassName="prevent-overflow"
-              title={t('console-shared~Create')}
-              noSelection
-              items={items}
-              onChange={onSelectCreateAction}
-            />
-          )}
-        </ActionListItem>
-      </PageHeading>
+      <PageHeading
+        title={title}
+        badge={badge}
+        primaryAction={
+          <>
+            {secondaryButtonAction && (
+              <ActionListItem>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  data-test="secondary-action"
+                  component={(props) => <Link {...props} to={secondaryButtonAction.href} />}
+                >
+                  {secondaryButtonAction.label}
+                </Button>
+              </ActionListItem>
+            )}
+            <ActionListItem>
+              {items && (
+                <Dropdown
+                  buttonClassName="pf-m-primary"
+                  menuClassName="prevent-overflow"
+                  title={t('console-shared~Create')}
+                  noSelection
+                  items={items}
+                  onChange={onSelectCreateAction}
+                />
+              )}
+            </ActionListItem>
+          </>
+        }
+      />
       <HorizontalNav pages={pages} noStatusBox />
     </PageTitleContext.Provider>
   );
