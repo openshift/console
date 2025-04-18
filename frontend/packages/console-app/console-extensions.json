@@ -539,8 +539,8 @@
             "value": "systemDefault",
             "label": "%console-app~System default%"
           },
-          { "value": "light", "label": "%console-app~Light%" },
-          { "value": "dark", "label": "%console-app~Dark%" }
+          { "value": "Light", "label": "%console-app~Light%" },
+          { "value": "Dark", "label": "%console-app~Dark%" }
         ]
       }
     }

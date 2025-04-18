@@ -22,6 +22,8 @@ declare interface Window {
     branding: string;
     consoleVersion: string;
     customLogoURL: string;
+    customLogosConfigured: boolean;
+    customFaviconsConfigured: boolean;
     customProductName: string;
     documentationBaseURL: string;
     kubeAPIServerURL: string;

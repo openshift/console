@@ -116,6 +116,7 @@ type Customization struct {
 	ProjectAccess ProjectAccess           `yaml:"projectAccess,omitempty"`
 	Perspectives  []Perspective           `yaml:"perspectives,omitempty"`
 	Capabilities  []operatorv1.Capability `yaml:"capabilities,omitempty"`
+	Logos         []operatorv1.Logo       `yaml:"logos,omitempty"`
 }
 
 // QuickStarts contains options for ConsoleQuickStarts resource
