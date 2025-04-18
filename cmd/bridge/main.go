@@ -132,6 +132,7 @@ func main() {
 
 	consolePluginsFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
+	fPluginsOrder := fs.String("plugins-order", "", "List of plugin names which determines the order in which plugin extensions will be resolved.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
 	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
 
@@ -235,6 +236,20 @@ func main() {
 		}
 	}
 
+	pluginsOrder := []string{}
+	if *fPluginsOrder != "" {
+		for _, str := range strings.Split(*fPluginsOrder, ",") {
+			str = strings.TrimSpace(str)
+			if str == "" {
+				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must contain names of plugins separated by comma"))
+			}
+			if consolePluginsFlags[str] == "" {
+				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must only contain currently enabled plugins"))
+			}
+			pluginsOrder = append(pluginsOrder, str)
+		}
+	}
+
 	nodeArchitectures := []string{}
 	if *fNodeArchitectures != "" {
 		for _, str := range strings.Split(*fNodeArchitectures, ",") {
@@ -301,6 +316,7 @@ func main() {
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 		Capabilities:                 capabilities,
+		PluginsOrder:                 pluginsOrder,
 	}
 
 	completedAuthnOptions, err := authOptions.Complete()
