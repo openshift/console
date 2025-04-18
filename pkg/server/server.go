@@ -201,6 +201,7 @@ type Server struct {
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
 	UserSettingsLocation                string
 	AuthMetrics                         *auth.Metrics
+	PluginsOrder                        []string
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -703,11 +704,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
 	}
 
-	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
-	for plugin := range s.EnabledConsolePlugins {
-		plugins = append(plugins, plugin)
-	}
-
 	jsg := &jsGlobals{
 		AuthDisabled:              s.Authenticator.IsStatic(),
 		ConsoleVersion:            version.Version,
@@ -736,7 +732,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		DevCatalogCategories:      s.DevCatalogCategories,
 		DevCatalogTypes:           s.DevCatalogTypes,
 		UserSettingsLocation:      s.UserSettingsLocation,
-		ConsolePlugins:            plugins,
+		ConsolePlugins:            s.PluginsOrder,
 		I18nNamespaces:            s.I18nNamespaces,
 		QuickStarts:               s.QuickStarts,
 		AddPage:                   s.AddPage,
