@@ -7,6 +7,8 @@ import { ClipboardCopyButton } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
+export { default as ExternalLink } from '@console/shared/src/components/links/ExternalLink'; // TODO Remove re-export
+
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
 // long. This pattern checks the pattern but not the length.
@@ -66,28 +68,6 @@ export const getURLSearchParams = () => {
 
   return all;
 };
-
-export const ExternalLink: React.FC<ExternalLinkProps> = ({
-  children,
-  href,
-  text,
-  additionalClassName = '',
-  dataTestID,
-  stopPropagation,
-  ...props
-}) => (
-  <a
-    {...props}
-    className={classNames('co-external-link', additionalClassName, props?.className)}
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    data-test-id={dataTestID}
-    {...(stopPropagation ? { onClick: (e) => e.stopPropagation() } : {})}
-  >
-    {children || text}
-  </a>
-);
 
 // Opens link with copy-to-clipboard
 
@@ -159,14 +139,6 @@ export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ child
   <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
-
-type ExternalLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  href: string;
-  text?: React.ReactNode;
-  additionalClassName?: string;
-  dataTestID?: string;
-  stopPropagation?: boolean;
-};
 
 type ExternalLinkWithCopyProps = {
   link: string;
