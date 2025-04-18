@@ -125,9 +125,12 @@ func main() {
 	consolePluginsFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
-	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
+
+	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example: --i18n-namespaces=plugin__acm,plugin__kubevirt")
 	fContentSecurityPolicyEnabled := fs.Bool("content-security-policy-enabled", false, "Flag to indicate if Content Secrity Policy features should be enabled.")
-	fContentSecurityPolicy := fs.String("content-security-policy", "", "Content security policy for the console. (JSON as string)")
+
+	consoleCSPFlags := serverconfig.MultiKeyValue{}
+	fs.Var(&consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value. Example: --content-security-policy script-src=\"https://example.com\" --content-security-policy font-src=\"https://example2.com https://example3.com\"")
 
 	telemetryFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
@@ -144,8 +147,8 @@ func main() {
 	fCapabilities := fs.String("capabilities", "", "Allow enabling/disabling of capabilities in the console. (JSON as string)")
 	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control-plane nodes (External | HighlyAvailable | HighlyAvailableArbiter | DualReplica | SingleReplica)")
 	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
-	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
-	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
+	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example: --node-architecture=amd64,arm64")
+	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example: --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
 
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
@@ -283,8 +286,8 @@ func main() {
 		EnabledConsolePlugins:        consolePluginsFlags,
 		I18nNamespaces:               i18nNamespaces,
 		PluginProxy:                  *fPluginProxy,
-		ContentSecurityPolicy:        *fContentSecurityPolicy,
 		ContentSecurityPolicyEnabled: *fContentSecurityPolicyEnabled,
+		ContentSecurityPolicy:        consoleCSPFlags,
 		QuickStarts:                  *fQuickStarts,
 		AddPage:                      *fAddPage,
 		ProjectAccessClusterRoles:    *fProjectAccessClusterRoles,
