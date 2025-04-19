@@ -108,7 +108,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
       )}
       {type === AffinityRuleType.Preferred && (
         <div className="co-affinity-term__weight-input">
-          <label className="control-label co-required" htmlFor={`preference-${key}`}>
+          <label className="co-required" htmlFor={`preference-${key}`}>
             {t('olm~Weight')}
           </label>
           <span className="pf-v6-c-form-control">
@@ -315,7 +315,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
       <div className="co-affinity-term__topology">
         {type === AffinityRuleType.Preferred && (
           <div className="co-affinity-term__weight-input">
-            <label className="control-label co-required" htmlFor={`preference-${key}`}>
+            <label className="co-required" htmlFor={`preference-${key}`}>
               {t('olm~Weight')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -324,7 +324,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
           </div>
         )}
         <div className="co-affinity-term__topology-input">
-          <label className="control-label co-required" htmlFor={`topology-${key}`}>
+          <label className="co-required" htmlFor={`topology-${key}`}>
             {t('olm~Topology key')}
           </label>
           <span className="pf-v6-c-form-control">

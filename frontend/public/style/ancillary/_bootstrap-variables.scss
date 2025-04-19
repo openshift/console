@@ -4,54 +4,42 @@
 
 //== Typography
 
-$font-size-base:          14px !default;
-$font-size-large:         ceil(($font-size-base * 1.25)) !default; // ~18px
-$font-size-small:         ceil(($font-size-base * .85)) !default; // ~12px
+$font-size-base: 14px !default;
+$font-size-small: ceil(($font-size-base * 0.85)) !default; // ~12px
 
 //** Unit-less `line-height` for use in components like buttons.
-$line-height-base:        1.428571429 !default; // 20/14
+$line-height-base: 1.428571429 !default; // 20/14
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
-$line-height-computed:    floor(($font-size-base * $line-height-base)) !default; // ~20px
-
-//== Components
-
-$line-height-large:         1.3333333 !default; // extra decimals for Win 8.1 Chrome
-$line-height-small:         1.5 !default;
-
-//== Forms
-
-//** `.form-group` margin
-$form-group-margin-bottom:       15px !default;
+$line-height-computed: floor(($font-size-base * $line-height-base)) !default; // ~20px
 
 //-- Z-index master list
-$zindex-navbar:            1000 !default;
-$zindex-navbar-fixed:      1030 !default;
-$zindex-modal:             1050 !default;
+$zindex-navbar-fixed: 1030 !default;
+$zindex-modal: 1050 !default;
 
 //== Media queries breakpoints
 
 // Extra small screen / phone
 //** Deprecated `$screen-xs` as of v3.0.1
-$screen-xs:                  480px !default;
+$screen-xs: 480px !default;
 //** Deprecated `$screen-xs-min` as of v3.2.0
-$screen-xs-min:              $screen-xs !default;
+$screen-xs-min: $screen-xs !default;
 
 // Small screen / tablet
 //** Deprecated `$screen-sm` as of v3.0.1
-$screen-sm:                  768px !default;
-$screen-sm-min:              $screen-sm !default;
+$screen-sm: 768px !default;
+$screen-sm-min: $screen-sm !default;
 
 // Medium screen / desktop
 //** Deprecated `$screen-md` as of v3.0.1
-$screen-md:                  992px !default;
-$screen-md-min:              $screen-md !default;
+$screen-md: 992px !default;
+$screen-md-min: $screen-md !default;
 
 // Large screen / wide desktop
 //** Deprecated `$screen-lg` as of v3.0.1
-$screen-lg:                  1200px !default;
-$screen-lg-min:              $screen-lg !default;
+$screen-lg: 1200px !default;
+$screen-lg-min: $screen-lg !default;
 
 // So media queries don't overlap when required, provide a maximum
-$screen-xs-max:              ($screen-sm-min - 1) !default;
-$screen-sm-max:              ($screen-md-min - 1) !default;
-$screen-md-max:              ($screen-lg-min - 1) !default;
+$screen-xs-max: ($screen-sm-min - 1) !default;
+$screen-sm-max: ($screen-md-min - 1) !default;
+$screen-md-max: ($screen-lg-min - 1) !default;

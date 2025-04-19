@@ -22,7 +22,7 @@ const JobOverviewItem: React.FC<JobOverviewItemProps> = ({ job }) => {
   const { podData, loaded, loadError } = usePodsWatcher(job, 'Job', namespace);
 
   return loaded && !loadError ? (
-    <li className="list-group-item container-fluid">
+    <li className="list-group-item">
       <div className="job-overview__item">
         <ResourceLink kind={kind} name={name} namespace={namespace} />
         <Link to={podsLink} className="job-overview__pod-donut-sm">
@@ -81,7 +81,7 @@ export const JobsOverview: React.FC<JobsOverviewProps> = ({
         )}
       </SidebarSectionHeading>
       {!(jobs?.length > 0) ? (
-        <span className="text-muted">{emptyMessage}</span>
+        <span className="pf-v6-u-text-color-subtle">{emptyMessage}</span>
       ) : (
         <JobsOverviewList jobs={jobs.slice(0, MAX_JOBS)} />
       )}

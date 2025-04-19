@@ -49,7 +49,9 @@ export const DetailsCard: React.FC = () => {
             {getName(obj)}
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('public~Requester')}>
-            {getRequester(obj) || <span className="text-muted">{t('public~No requester')}</span>}
+            {getRequester(obj) || (
+              <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>
+            )}
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('public~Labels')}>
             <div className="co-project-dashboard__details-labels">
@@ -64,7 +66,7 @@ export const DetailsCard: React.FC = () => {
           <OverviewDetailItem isLoading={!obj} title={t('public~Description')}>
             <span
               className={cx({
-                'text-muted': !description,
+                'pf-v6-u-text-color-subtle': !description,
                 'co-project-dashboard-details-card__description': description,
               })}
             >

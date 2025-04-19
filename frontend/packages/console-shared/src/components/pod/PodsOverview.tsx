@@ -111,7 +111,7 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
   } = pod;
   const { t } = useTranslation();
   return (
-    <li className="list-group-item container-fluid">
+    <li className="list-group-item">
       <div className="row">
         <span className="col-xs-5">
           <ResourceLink kind={kind} name={name} namespace={namespace} />
@@ -274,7 +274,9 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
       </SidebarSectionHeading>
       {buildConfigData?.loaded && !buildConfigData?.loadError && podAlert}
       {_.isEmpty(filteredPods) ? (
-        <span className="text-muted">{loaded || !!loadError ? emptyMessage : <LoadingBox />}</span>
+        <span className="pf-v6-u-text-color-subtle">
+          {loaded || !!loadError ? emptyMessage : <LoadingBox />}
+        </span>
       ) : (
         <PodsOverviewList pods={_.take(filteredPods, podsShown)} />
       )}

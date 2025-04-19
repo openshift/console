@@ -126,7 +126,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
               {title}
             </Title>
             {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
-              <div className="text-secondary">{t('console-shared~Not available')}</div>
+              <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
             ) : (
               <div className="co-utilization-card__item-description">{currentValue}</div>
             )}
@@ -265,7 +265,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             </FlexItem>
             <FlexItem>
               {error || (!isLoading && !utilizationData?.length) ? (
-                <div className="text-secondary">{t('console-shared~Not available')}</div>
+                <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
               ) : (
                 <div>
                   {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}

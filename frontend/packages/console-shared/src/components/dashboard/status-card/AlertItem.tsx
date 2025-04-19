@@ -50,7 +50,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
           {name && <span className="co-status-card__alert-item-header">{name}</span>}
           {timestamp && (
             <div
-              className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary"
+              className="co-health-card__alert-item-timestamp co-status-card__health-item-text pf-v6-u-text-color-subtle"
               data-test="timestamp"
             >
               <Timestamp simple timestamp={timestamp} />

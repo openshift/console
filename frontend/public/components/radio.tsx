@@ -23,7 +23,7 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
         />
         {props.title} {props.subTitle && <span className="co-no-bold">{props.subTitle}</span>}
       </label>
-      {props.desc && <p className="co-m-radio-desc text-muted">{props.desc}</p>}
+      {props.desc && <p className="co-m-radio-desc pf-v6-u-text-color-subtle">{props.desc}</p>}
       {props.children}
     </>
   );

@@ -408,7 +408,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
               'public~Debug in terminal is not currently available for windows containers.',
             )}
           >
-            <span className="text-muted">{label}</span>
+            <span className="pf-v6-u-text-color-subtle">{label}</span>
           </Tooltip>
         )}
       </Flex>

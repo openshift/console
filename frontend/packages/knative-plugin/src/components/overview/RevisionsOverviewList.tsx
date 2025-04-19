@@ -81,7 +81,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
         </SidebarSectionHeading>
       )}
       {_.isEmpty(revisions) ? (
-        <span className="text-muted">
+        <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No Revisions found for this resource.')}
         </span>
       ) : (

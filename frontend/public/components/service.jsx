@@ -137,7 +137,7 @@ const ServiceAddress = ({ s }) => {
           <p className="ip-desc">{desc}</p>
         </div>
         <div className="col-xs-6">
-          {note && <span className="text-muted">{note}</span>}
+          {note && <span className="pf-v6-u-text-color-subtle">{note}</span>}
           {ips.join(', ')}
         </div>
       </div>

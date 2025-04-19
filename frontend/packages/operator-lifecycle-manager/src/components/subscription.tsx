@@ -134,7 +134,7 @@ export const SourceMissingStatus: React.FC = () => {
   return (
     <>
       <WarningStatus title={t('olm~Cannot update')} />
-      <span className="text-muted">{t('olm~CatalogSource not found')}</span>
+      <span className="pf-v6-u-text-color-subtle">{t('olm~CatalogSource not found')}</span>
     </>
   );
 };
@@ -144,7 +144,7 @@ export const SourceUnhealthyStatus: React.FC = () => {
   return (
     <>
       <WarningStatus title={t('olm~Cannot update')} />
-      <span className="text-muted">{t('olm~CatalogSource unhealthy')}</span>
+      <span className="pf-v6-u-text-color-subtle">{t('olm~CatalogSource unhealthy')}</span>
     </>
   );
 };
@@ -203,7 +203,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
       );
     default:
       return (
-        <span className={!subscription?.status?.state ? 'text-muted' : ''}>
+        <span className={!subscription?.status?.state ? 'pf-v6-u-text-color-subtle' : ''}>
           {subscription?.status?.state || t('olm~Unknown failure')}
         </span>
       );

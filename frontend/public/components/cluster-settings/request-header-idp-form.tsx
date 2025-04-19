@@ -142,9 +142,7 @@ export const AddRequestHeaderPage = () => {
           </Title>
           <p className="co-m-pane__explanation">{t('public~At least one URL must be provided.')}</p>
           <div className="form-group">
-            <label className="control-label" htmlFor="challenge-url">
-              {t('public~Challenge URL')}
-            </label>
+            <label htmlFor="challenge-url">{t('public~Challenge URL')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
@@ -161,9 +159,7 @@ export const AddRequestHeaderPage = () => {
             </div>
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="login-url">
-              {t('public~Login URL')}
-            </label>
+            <label htmlFor="login-url">{t('public~Login URL')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"

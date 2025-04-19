@@ -27,7 +27,7 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
           {status?.url?.length > 0 && (
             <>
-              <span className="text-muted">{t('knative-plugin~Location:')} </span>
+              <span className="pf-v6-u-text-color-subtle">{t('knative-plugin~Location:')} </span>
               {isPrivateKSVC ? (
                 <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied">
                   {status.url}

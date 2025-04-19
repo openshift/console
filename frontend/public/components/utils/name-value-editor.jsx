@@ -311,10 +311,10 @@ const EnvFromEditor_ = withDragDropContext(
         <>
           <div className="row pairs-list__heading">
             {!readOnly && <div className="col-xs-1 co-empty__header" />}
-            <div className="col-xs-5 text-secondary">
+            <div className="col-xs-5 pf-v6-u-text-color-subtle">
               {firstTitle || t('public~ConfigMap/Secret')}
             </div>
-            <div className="col-xs-5 text-secondary">
+            <div className="col-xs-5 pf-v6-u-text-color-subtle">
               {secondTitle || t('public~Prefix (optional)')}
             </div>
             <div className="col-xs-1 co-empty__header" />

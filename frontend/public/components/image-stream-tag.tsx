@@ -234,7 +234,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
       <PaneBodyGroup>
         <SectionHeading text={t('public~Image labels')} />
         {_.isEmpty(sortedLabels) ? (
-          <span className="text-muted">{t('public~No labels')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('public~No labels')}</span>
         ) : (
           <div className="co-table-container">
             <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
@@ -259,7 +259,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
       <PaneBodyGroup>
         <SectionHeading text={t('public~Environment variables')} />
         {_.isEmpty(config.Env) ? (
-          <span className="text-muted">{t('public~No environment variables')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('public~No environment variables')}</span>
         ) : (
           <div className="co-table-container">
             <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">

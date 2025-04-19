@@ -183,7 +183,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
             <div className="co-sysevent__count-and-actions">
               {count > 1 && firstTime && (
                 <Trans ns="public">
-                  <small className="co-sysevent__count text-secondary">
+                  <small className="co-sysevent__count pf-v6-u-text-color-subtle">
                     {{ eventCount: count }} times in the last{' '}
                     <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
                   </small>
@@ -191,7 +191,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
               )}
               {count > 1 && !firstTime && (
                 <Trans ns="public">
-                  <small className="co-sysevent__count text-secondary">
+                  <small className="co-sysevent__count pf-v6-u-text-color-subtle">
                     {{ eventCount: count }} times
                   </small>
                 </Trans>
@@ -504,7 +504,10 @@ const EventStream = ({
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">{statusBtnTxt}</div>
-          <div className="co-sysevent-stream__totals text-secondary" data-test="event-totals">
+          <div
+            className="co-sysevent-stream__totals pf-v6-u-text-color-subtle"
+            data-test="event-totals"
+          >
             {messageCount}
           </div>
         </div>

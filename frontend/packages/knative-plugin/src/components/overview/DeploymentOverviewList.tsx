@@ -28,7 +28,7 @@ const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ resourc
           </li>
         </ul>
       ) : (
-        <span className="text-muted">
+        <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No Deployment found for this resource.')}
         </span>
       )}

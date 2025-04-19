@@ -23,7 +23,7 @@ export const InventoryItemBody: React.FC<InventoryItemBodyProps> = ({ error, chi
   return (
     <div className="co-inventory-card__item-status">
       {error ? (
-        <div className="co-dashboard-text--small text-secondary">
+        <div className="co-dashboard-text--small pf-v6-u-text-color-subtle">
           {t('console-shared~Not available')}
         </div>
       ) : (

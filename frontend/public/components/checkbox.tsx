@@ -3,7 +3,7 @@ import * as React from 'react';
 export const Checkbox: React.SFC<CheckboxProps> = ({ name, label, checked, onChange }) => (
   <div className="form-group">
     <div className="checkbox">
-      <label className="control-label">
+      <label>
         <input
           data-test={`${label}__checkbox`}
           className="form-checkbox"

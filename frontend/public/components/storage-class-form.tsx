@@ -459,10 +459,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
 
       const children = parameter.values ? (
         <>
-          <label
-            className={classNames('control-label', { 'co-required': paramIsRequired(key) })}
-            htmlFor={paramId}
-          >
+          <label className={classNames({ 'co-required': paramIsRequired(key) })} htmlFor={paramId}>
             {_.get(parameter, 'name', key)}
           </label>
           <Dropdown
@@ -497,7 +494,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           ) : (
             <>
               <label
-                className={classNames('control-label', {
+                className={classNames({
                   'co-required': paramIsRequired(key),
                 })}
                 htmlFor={paramId}
@@ -587,7 +584,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       <PaneBody>
         <form data-test-id="storage-class-form">
           <div className={classNames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
-            <label className="control-label co-required" htmlFor="storage-class-name">
+            <label className="co-required" htmlFor="storage-class-name">
               {t('public~Name')}
             </label>
             <span className="pf-v6-c-form-control">

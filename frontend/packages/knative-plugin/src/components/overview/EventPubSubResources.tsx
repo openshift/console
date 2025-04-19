@@ -51,7 +51,7 @@ export const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProp
           ))}
         </ul>
       ) : (
-        <span className="text-muted">
+        <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No {{title}} found for this resource.', { title })}
         </span>
       )}

@@ -4,7 +4,7 @@ export const SendResolvedAlertsCheckbox = ({ formField, formValues, dispatchForm
   const { t } = useTranslation();
   return (
     <div className="checkbox">
-      <label className="control-label" htmlFor={formField}>
+      <label htmlFor={formField}>
         <input
           type="checkbox"
           id={formField}

@@ -1004,7 +1004,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   />
                 </fieldset>
               </div>
-              <div className="form-group form-group--doubled-bottom-margin">
+              <div className="form-group pf-v6-u-mb-xl">
                 <fieldset>
                   <label className="co-required">{t('olm~Version')}</label>
                   <OperatorVersionSelect
@@ -1032,7 +1032,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     subTitle={t('olm~(default)')}
                   >
                     <div className="co-m-radio-desc">
-                      <p className="text-muted">
+                      <p className="pf-v6-u-text-color-subtle">
                         {descFor(InstallModeType.InstallModeTypeAllNamespaces)}
                       </p>
                     </div>
@@ -1051,14 +1051,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     title={t('olm~A specific namespace on the cluster')}
                   >
                     <div className="co-m-radio-desc">
-                      <p className="text-muted">
+                      <p className="pf-v6-u-text-color-subtle">
                         {descFor(InstallModeType.InstallModeTypeOwnNamespace)}
                       </p>
                     </div>
                   </RadioInput>
                 </fieldset>
               </div>
-              <div className="form-group form-group--doubled-bottom-margin">
+              <div className="form-group pf-v6-u-mb-xl">
                 <label className="co-required" htmlFor="dropdown-selectbox">
                   {t('olm~Installed Namespace')}
                 </label>
@@ -1173,7 +1173,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             </Title>
             <div className="co-crd-card-row">
               {!providedAPIs.length ? (
-                <span className="text-muted">
+                <span className="pf-v6-u-text-color-subtle">
                   {t('olm~No Kubernetes APIs are provided by this Operator.')}
                 </span>
               ) : (

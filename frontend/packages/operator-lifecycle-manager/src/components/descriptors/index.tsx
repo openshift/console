@@ -89,7 +89,7 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
             </DescriptionList>
           ))
         ) : (
-          <span className="text-muted">{t('public~None')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
         )}
       </DetailsItem>
     </div>

@@ -387,7 +387,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
               'has-error': receiverNameAlreadyExist,
             })}
           >
-            <label className="control-label co-required">{t('public~Receiver name')}</label>
+            <label className="co-required">{t('public~Receiver name')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -413,7 +413,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
             )}
           </div>
           <div className="form-group">
-            <label className="control-label co-required">{t('public~Receiver type')}</label>
+            <label className="co-required">{t('public~Receiver type')}</label>
             <Dropdown
               title="Select receiver type..."
               name="receiverType"
