@@ -1,7 +1,0 @@
-{
-  "name": "@console/patternfly",
-  "version": "0.0.0-fixed",
-  "description": "Components ready for possible export to patternfly react-core repo.",
-  "private": true,
-  "main": "src/index.ts"
-}
