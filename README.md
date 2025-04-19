@@ -86,6 +86,12 @@ oc apply -f examples/secret.yaml
 oc extract secret/off-cluster-token -n openshift-console --to ./examples --confirm
 ```
 
+If you have ran `source ./contrib/oc-environment.sh` before then unset all env vars
+
+```
+unset BRIDGE_USER_AUTH BRIDGE_K8S_MODE BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS BRIDGE_K8S_AUTH_BEARER_TOKEN
+```
+
 Finally run the console and visit [localhost:9000](http://localhost:9000):
 
 ```
@@ -93,20 +99,25 @@ Finally run the console and visit [localhost:9000](http://localhost:9000):
 ```
 
 #### Enabling Monitoring Locally
+
 In order to enable the monitoring UI and see the "Observe" navigation item while running locally, you'll need to run the OpenShift Monitoring dynamic plugin alongside Bridge. To do so, follow these steps:
 
 1. Clone the monitoring-plugin repo: https://github.com/openshift/monitoring-plugin
 2. `cd` to the monitoring-plugin root dir
 3. Run
-  ```
-  make install && make start-frontend
-  ```
+
+```
+make install && make start-frontend
+```
+
 4. Run Bridge in another terminal following the steps above, but set the following environment variable before starting Bridge:
-  ```
-  export BRIDGE_PLUGINS="monitoring-plugin=http://localhost:9001"
-  ```
+
+```
+export BRIDGE_PLUGINS="monitoring-plugin=http://localhost:9001"
+```
 
 #### Updating `tectonic-console-builder` image
+
 Updating `tectonic-console-builder` image is needed whenever there is a change in the build-time dependencies and/or go versions.
 
 In order to update the `tectonic-console-builder` to a new version i.e. v27, follow these steps:
@@ -115,11 +126,11 @@ In order to update the `tectonic-console-builder` to a new version i.e. v27, fol
    - .ci-operator.yaml
    - Dockerfile.dev
    - Dockerfile.plugins.demo
-   For example, `tectonic-console-builder:27`
+     - For example, `tectonic-console-builder:27`
 2. Update the dependencies in Dockerfile.builder file i.e. v18.0.0.
 3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
    Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
-   To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo.
+   - To update the image on quay.io, you need edit permission to the quay.io/coreos/ tectonic-console-builder repo.
 4. Lastly, update the mapping of `tectonic-console-builder` image tag in
    [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository.
    Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle.
@@ -135,7 +146,7 @@ To login to the cluster's API server, you can use the following command:
 oc login -u kubeadmin -p $(cat ~/.crc/machines/crc/kubeadmin-password) https://api.crc.testing:6443
 ```
 
-&hellip; or, alternatively, use the CRC daemon UI (*Copy OC Login Command --> kubeadmin*) to get the cluster-specific command.
+- &hellip; or, alternatively, use the CRC daemon UI (_Copy OC Login Command --> kubeadmin_) to get the cluster-specific command.
 
 Finally, prepare the environment, and run the console:
 
@@ -213,7 +224,7 @@ yarn run dev
 
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>. If you need to increase your watchers, it's common to see multiple errors beginning with `Error from chokidar`.
 
-Note:  ensure `yarn run dev` has finished its initial build before visiting http://localhost:9000, otherwise `./bin/bridge` will stop running.
+- Note: ensure `yarn run dev` has finished its initial build before visiting http://localhost:9000, otherwise `./bin/bridge` will stop running.
 
 ### Unit Tests
 
@@ -265,7 +276,7 @@ yarn run test-cypress-console
 
 This will launch the Cypress Test Runner UI in the `console` package, where you can run one or all Cypress tests.
 
-**Important:**  when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
+- **Important:** when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
 
 #### Execute Cypress in different packages
 
@@ -439,11 +450,13 @@ After building, the server can be run directly with:
 ```
 ./bin/downloads --config-path=cmd/downloads/config/defaultArtifactsConfig.yaml
 ```
+
 Alternatively, you can use the provided Dockerfile.downloads to build an image containing the server. Use the following command to build the Docker image:
 
 ```
 docker build -f Dockerfile.downloads -t downloadsserver:latest .
 ```
+
 Note: If you are running on macOS, you might need to pass the `--platform linux/amd64` flag to the Docker build command. The origin-cli-artifacts image is not supported on macOS.
 
 To launch the server using the built image, you can run:
@@ -462,9 +475,10 @@ spamming the telemetry service with repetitive data. Identical violations will n
 reported more than once a day.
 
 ## Frontend Packages
+
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)
-[[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)
-[[Console Extensions]](./frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md)
+- [[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)
+- [[Console Extensions]](./frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md)
 
 - [console-plugin-shared](./frontend/packages/console-plugin-shared/README.md)
 
@@ -477,5 +491,5 @@ reported more than once a day.
 - [knative-plugin](./frontend/packages/knative-plugin/README.md)
 
 - operator-lifecycle-manager
-[[Descriptors README]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/README.md)
-[[Descriptors API Reference]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md)
+- [[Descriptors README]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/README.md)
+- [[Descriptors API Reference]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md)
