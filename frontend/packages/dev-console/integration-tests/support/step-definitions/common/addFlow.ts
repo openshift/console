@@ -22,8 +22,10 @@ import {
   createGitWorkloadIfNotExistsOnTopologyPage,
   verifyAndInstallGitopsPrimerOperator,
 } from '../../pages';
+import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

@@ -18,6 +18,7 @@ import {
   perspective,
   createForm,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { helmPage, helmDetailsPage } from '../../pages';
 
@@ -30,6 +31,7 @@ const deleteChartRepositoryFromDetailsPage = (name: string, type: string) => {
 };
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
 });
 
