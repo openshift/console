@@ -20,7 +20,7 @@ const StepFooter: React.FC<StepFooterProps> = ({
 }) => (
   <Flex>
     {children && <FlexItem>{children}</FlexItem>}
-    <FlexItem align={{ default: 'alignRight' }}>
+    <FlexItem>
       <Button
         variant="secondary"
         id="tour-step-footer-secondary"
