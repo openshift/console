@@ -152,11 +152,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       )}
       <NavTitle
         data-test-id={dataTestId}
-        className={classNames(
-          { 'co-m-nav-title--breadcrumbs': showBreadcrumbs },
-          { 'co-m-nav-title--row': navTitleAsRow },
-          className,
-        )}
+        className={classNames({ 'co-m-nav-title--row': navTitleAsRow }, className)}
         style={style}
       >
         {showHeading && (
