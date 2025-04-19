@@ -30,6 +30,7 @@ const ConfigMapTableRow = ({ obj: configMap }) => {
           kind="ConfigMap"
           name={configMap.metadata.name}
           namespace={configMap.metadata.namespace}
+          metadata={configMap.metadata}
         />
       </TableData>
       <TableData
