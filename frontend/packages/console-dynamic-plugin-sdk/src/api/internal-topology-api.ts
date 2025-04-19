@@ -23,6 +23,7 @@ import {
   BaseNodeProps,
   WithContextMenu,
   WithCreateConnector,
+  OdcBaseNodeConstructor,
 } from '../extensions/topology-types';
 
 export const CpuCellComponent: React.FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
@@ -93,3 +94,6 @@ export const withContextMenu: WithContextMenu = require('@console/topology/src/c
 
 export const withCreateConnector: WithCreateConnector = require('@console/topology/src/behavior')
   .withCreateConnector;
+
+export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements')
+  .OdcBaseNode;
