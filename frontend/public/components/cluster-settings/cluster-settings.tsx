@@ -1067,7 +1067,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             >
               {imageParts.length === 2 ? (
                 <>
-                  <span className="text-muted">{imageParts[0]}@</span>
+                  <span className="pf-v6-u-text-color-subtle">{imageParts[0]}@</span>
                   {imageParts[1]}
                 </>
               ) : (

@@ -46,7 +46,7 @@ describe('Status descriptor details items', () => {
 
   it('renders status value as text if no matching capability component', () => {
     expect(wrapper.find('dt').text()).toEqual(descriptor.displayName);
-    expect(wrapper.find('dd .text-muted').text()).toEqual('None');
+    expect(wrapper.find('dd .pf-v6-u-text-color-subtle').text()).toEqual('None');
   });
 
   it('renders a link status', () => {

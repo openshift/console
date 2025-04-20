@@ -344,7 +344,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
       <div className="col-md-5 col-md-pull-7">
         <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="namespace">
+            <label className="co-required" htmlFor="namespace">
               {t('public~Namespace')}
             </label>
             <NsDropdown selectedKey={namespace} onChange={(v) => setNamespace(v)} id="namespace" />

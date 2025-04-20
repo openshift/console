@@ -64,9 +64,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
       <ModalBody>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
-            <label htmlFor="group-by" className="control-label">
-              {t('public~Group by')}
-            </label>
+            <label htmlFor="group-by">{t('public~Group by')}</label>
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
@@ -87,9 +85,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
-            <label htmlFor="group-wait" className="control-label">
-              {t('public~Group wait')}
-            </label>
+            <label htmlFor="group-wait">{t('public~Group wait')}</label>
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
@@ -110,9 +106,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
-            <label htmlFor="group-interval" className="control-label">
-              {t('public~Group interval')}
-            </label>
+            <label htmlFor="group-interval">{t('public~Group interval')}</label>
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">
@@ -133,9 +127,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
-            <label htmlFor="repeat-interval" className="control-label">
-              {t('public~Repeat interval')}
-            </label>
+            <label htmlFor="repeat-interval">{t('public~Repeat interval')}</label>
           </div>
           <div className="co-m-form-col col-sm-12">
             <div className="form-inline">

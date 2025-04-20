@@ -100,7 +100,7 @@ ConfigMapData.displayName = 'ConfigMapData';
 export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true, id }) => {
   const { t } = useTranslation();
   if (!value) {
-    return <span className="text-muted">{t('public~No value')}</span>;
+    return <span className="pf-v6-u-text-color-subtle">{t('public~No value')}</span>;
   }
 
   const decodedValue = encoded ? Base64.decode(value) : value;

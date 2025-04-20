@@ -116,7 +116,7 @@ export const AddGooglePage = () => {
         <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
+            <label className="co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -130,7 +130,7 @@ export const AddGooglePage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
+            <label className="co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -144,7 +144,7 @@ export const AddGooglePage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="hosted-domain">
+            <label className="co-required" htmlFor="hosted-domain">
               {t('public~Hosted domain')}
             </label>
             <span className="pf-v6-c-form-control">

@@ -143,7 +143,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           </Content>
         )}
         <div className="form-group">
-          <label htmlFor="input-name" className="control-label co-required">
+          <label htmlFor="input-name" className="co-required">
             {t('console-shared~Name')}
           </label>{' '}
           <FieldLevelHelp>
@@ -173,9 +173,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="input-display-name" className="control-label">
-            {t('console-shared~Display name')}
-          </label>
+          <label htmlFor="input-display-name">{t('console-shared~Display name')}</label>
           <div className="modal-body__field">
             <span className="pf-v6-c-form-control">
               <input
@@ -189,9 +187,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="input-description" className="control-label">
-            {t('console-shared~Description')}
-          </label>
+          <label htmlFor="input-description">{t('console-shared~Description')}</label>
           <div className="modal-body__field">
             <span className="pf-v6-c-form-control pf-m-resize-vertical">
               <textarea

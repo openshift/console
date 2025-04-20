@@ -1388,7 +1388,7 @@ Component that shows the status in a popup window. Can be used when building `co
     firstColumn={
       <>
         <span>{title}</span>
-        <span className="text-secondary">
+        <span className="pf-v6-u-text-color-subtle">
           My Example Item
         </span>
       </>

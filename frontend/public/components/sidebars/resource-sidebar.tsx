@@ -35,7 +35,7 @@ const ResourceSidebarWrapper: React.FC<{
       <PaneBody className="co-p-has-sidebar__sidebar-body">
         <Flex flexWrap={{ default: 'nowrap' }}>
           <FlexItem grow={{ default: 'grow' }}>
-            <Title headingLevel="h2" className="pf-v6-u-text-break-word text-capitalize">
+            <Title headingLevel="h2" className="pf-v6-u-text-break-word">
               {label}
             </Title>
           </FlexItem>
