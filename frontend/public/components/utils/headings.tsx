@@ -112,6 +112,7 @@ export const BasePageHeading = ({
         label={badge}
         linkProps={linkProps}
         subtitle={helpText}
+        headingClassname=""
       >
         {helpAlert && helpAlert}
       </PageHeader>

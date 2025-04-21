@@ -1773,10 +1773,10 @@
     react-dropzone "14.3.5"
     tslib "^2.8.1"
 
-"@patternfly/react-component-groups@6.2.0-prerelease.9":
-  version "6.2.0-prerelease.9"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-component-groups/-/react-component-groups-6.2.0-prerelease.9.tgz#a06869756f45ecd373bac66bf1200910674649e2"
-  integrity sha512-vl1WBCg3G8p96oHl8MJQsWlFs5TjrLROkPxWNZ52tflDOVz5Q/gXN5PmTRvVNYVtQbuWPotPe0bHzvsR/V8vnA==
+"@patternfly/react-component-groups@6.2.1":
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-component-groups/-/react-component-groups-6.2.1.tgz#2b4d184d128426c9b72366c0da4fa5c488febd06"
+  integrity sha512-bPiPoVOR+mS3xdMpAv/xkbT9+PVvNhfE22JdUG2pfmWXXTP7BsmFgRo4mouSDqqDTdXz+ZDYKRkxGR5FpKMJyQ==
   dependencies:
     "@patternfly/react-core" "^6.0.0"
     "@patternfly/react-icons" "^6.0.0"
