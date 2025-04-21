@@ -796,6 +796,15 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
                   kind: referenceForModel(ClusterServiceVersionModel),
                   namespace: GLOBAL_COPIED_CSV_NAMESPACE,
                   prop: 'globalClusterServiceVersions',
+                  selector: {
+                    matchExpressions: [
+                      {
+                        key: 'olm.copiedFrom',
+                        operator: 'NotEquals',
+                        values: [props.namespace],
+                      },
+                    ],
+                  },
                 },
               ]
             : []),
