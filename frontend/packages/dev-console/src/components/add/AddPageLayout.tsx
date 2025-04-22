@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { GettingStartedSection } from '@console/internal/components/dashboard/project-dashboard/getting-started/GettingStartedSection';
 import { getQueryArgument, BasePageHeading } from '@console/internal/components/utils';
-import { useExtensions } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { useActiveNamespace } from '@console/shared';
 import TopologyQuickSearch from '@console/topology/src/components/quick-search/TopologyQuickSearch';
 import TopologyQuickSearchButton from '@console/topology/src/components/quick-search/TopologyQuickSearchButton';
@@ -103,8 +103,9 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title }) => {
 
   return (
     <div className="odc-add-page-layout ocs-quick-search-modal__no-backdrop" data-test="add-page">
-      <BasePageHeading title={title} helpText={<HelpText />} />
+      <BasePageHeading title={title} />
       <PageSection>
+        <HelpText />
         <GettingStartedSection userSettingKey="devconsole.addPage.gettingStarted" />
         <AddCardSection
           addActionExtensions={filteredAddActionExtensions}

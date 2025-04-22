@@ -226,7 +226,7 @@ export const eventingPO = {
     noApp: '[id="#UNASSIGNED_APP#-link"]',
     appName: '[data-test-id="application-form-app-name"]',
     eventSourceLink: '[data-type="event-source-link"]',
-    headingTitle: '.resource-overview__heading',
+    headingTitle: '.resource-overview [data-test-id="resource-title"]',
     listItem: '.list-group-item',
   },
   eventSource: {

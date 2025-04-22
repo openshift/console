@@ -90,7 +90,7 @@ export const topologyPO = {
     podScaleUP: '[aria-label="Increase the Pod count"]',
     podScaleDown: '[aria-label="Decrease the Pod count"]',
     podText: 'text.pod-ring__center-text',
-    applicationGroupingsTitle: '.overview__sidebar-pane-head.resource-overview__heading',
+    applicationGroupingsTitle: '.overview__sidebar-pane-head data-test-id="resource-title"]',
     applicationGroupingsSidepane: 'overview__sidebar-pane resource-overview',
     resourcesTabApplicationGroupings: '.pf-v6-c-tabs__item',
     pipelineRunsDetails: '.sidebar__section-heading',

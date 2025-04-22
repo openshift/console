@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
+import { Button, PageSection, TextInput, TextInputProps } from '@patternfly/react-core';
 import classNames from 'classnames';
 // eslint-disable-next-line no-restricted-imports
 import * as _ from 'lodash-es';
@@ -315,7 +315,16 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   return (
     <>
-      <PageHeading title={title} badge={badge} helpText={helpText} primaryAction={createLink} />
+      {/* Badge rendered from PageHeading only when title is present */}
+      {title && (
+        <PageHeading title={title} badge={badge} helpText={helpText} primaryAction={createLink} />
+      )}
+      {!title && (
+        <PageSection>
+          {createLink}
+          {badge && <div>{badge}</div>}
+        </PageSection>
+      )}
       <PaneBody>
         {inject(props.children, {
           resources,

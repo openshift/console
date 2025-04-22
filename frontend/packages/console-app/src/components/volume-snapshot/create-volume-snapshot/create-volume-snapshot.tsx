@@ -252,7 +252,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       <div className="co-m-pane__form">
         <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
-          title={<div className="co-m-pane__name">{title}</div>}
+          title={title}
           linkProps={{
             component: LinkTo(
               `/k8s/ns/${namespace || 'default'}/${referenceForModel(VolumeSnapshotModel)}/~new`,

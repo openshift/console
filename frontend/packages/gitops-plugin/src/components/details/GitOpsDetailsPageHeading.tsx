@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import { BasePageHeading } from '@console/internal/components/utils/headings';
-import './GitOpsDetailsPageHeading.scss';
 
 interface GitOpsDetailsPageHeadingProps {
   url: string;

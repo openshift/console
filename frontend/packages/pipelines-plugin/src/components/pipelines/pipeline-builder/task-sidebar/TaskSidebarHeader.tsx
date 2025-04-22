@@ -6,8 +6,6 @@ import { TaskKind } from '../../../../types';
 import PipelineResourceRef from '../../../shared/common/PipelineResourceRef';
 import TaskSidebarShortcuts from './TaskSidebarShortcuts';
 
-import './TaskSidebarHeader.scss';
-
 type TaskSidebarHeaderProps = {
   removeThisTask: () => void;
   taskResource: TaskKind;

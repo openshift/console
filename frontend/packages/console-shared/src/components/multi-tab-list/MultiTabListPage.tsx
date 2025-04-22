@@ -87,8 +87,8 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
                 </Button>
               </ActionListItem>
             )}
-            <ActionListItem>
-              {items && (
+            {items && (
+              <ActionListItem>
                 <Dropdown
                   buttonClassName="pf-m-primary"
                   menuClassName="prevent-overflow"
@@ -97,8 +97,8 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
                   items={items}
                   onChange={onSelectCreateAction}
                 />
-              )}
-            </ActionListItem>
+              </ActionListItem>
+            )}
           </>
         }
       />
