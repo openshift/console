@@ -2,6 +2,11 @@
 
 $masthead-logo-max-height: 60px;
 
+// Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
+.catalog-tile-pf-title {
+  @include co-break-word;
+}
+
 .co-catalog-tile {
   .catalog-tile-pf-icon {
     font-size: unset !important;
