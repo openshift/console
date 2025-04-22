@@ -76,8 +76,9 @@ describe('Favorites', () => {
       cy.visit(page);
       cy.get('[data-test="favorite-button"]').first().click({ force: true });
       cy.get('[role="dialog"]').contains('Add to favorites');
-      cy.contains('button', 'Save').click({ force: true });
-
+      cy.get('#confirm-favorite-form-name')
+        .clear({ force: true })
+        .type(`test-favorite-${index}{enter}`, { force: true });
       if (index < pages.length - 1) {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1000);
