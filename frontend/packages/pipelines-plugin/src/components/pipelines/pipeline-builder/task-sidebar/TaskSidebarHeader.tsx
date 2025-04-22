@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu } from '@console/internal/components/utils';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { TaskKind } from '../../../../types';
 import PipelineResourceRef from '../../../shared/common/PipelineResourceRef';
 import TaskSidebarShortcuts from './TaskSidebarShortcuts';
@@ -15,7 +15,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({ removeThisTask, t
   const { t } = useTranslation();
 
   return (
-    <BasePageHeading
+    <PageHeading
       hideFavoriteButton
       title={
         <PipelineResourceRef

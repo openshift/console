@@ -17,7 +17,7 @@ import {
   UserPreferenceItem,
   isUserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
-import { LoadingBox, BasePageHeading, history } from '@console/internal/components/utils';
+import { LoadingBox, history } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
 import {
   isModifiedEvent,
@@ -26,6 +26,7 @@ import {
   Spotlight,
 } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { USER_PREFERENCES_BASE_URL } from './const';
 import {
   UserPreferenceTabGroup,
@@ -127,7 +128,7 @@ const UserPreferencePage: React.FC = () => {
           ? t('console-app~User Preferences {{activeTab}}', { activeTab })
           : t('console-app~User Preferences')}
       </DocumentTitle>
-      <BasePageHeading
+      <PageHeading
         title={t('console-app~User Preferences')}
         helpText={t(
           'console-app~Set your individual preferences for the console experience. Any changes will be autosaved.',

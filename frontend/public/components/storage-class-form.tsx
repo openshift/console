@@ -19,6 +19,7 @@ import {
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   AsyncComponent,
   ButtonBar,
@@ -27,7 +28,6 @@ import {
   Firehose,
   FirehoseResult,
   NameValueEditorPair,
-  PageHeading,
   resourceObjPath,
 } from './utils';
 

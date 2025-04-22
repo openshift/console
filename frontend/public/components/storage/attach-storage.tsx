@@ -7,7 +7,7 @@ import { useExtensions } from '@console/plugin-sdk';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, ResourceLink, LoadingBox } from '../utils';
@@ -62,7 +62,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
   ) : (
     <PaneBody>
       <DocumentTitle>{t('public~Add Storage')}</DocumentTitle>
-      <BasePageHeading title={t('public~Add Storage')} />
+      <PageHeading title={t('public~Add Storage')} />
       <div className="co-storage-heading__wrapper">
         <Trans t={t} ns="public">
           <div className="co-m-pane__explanation co-storage-heading__subtitle">

@@ -6,8 +6,8 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import QueryFocusApplication from '@console/dev-console/src/components/QueryFocusApplication';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
-import { PageHeading } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import AddBroker from './brokers/AddBroker';
 
 const EventingBrokerPage: React.FC = () => {

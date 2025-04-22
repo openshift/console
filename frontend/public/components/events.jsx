@@ -32,11 +32,11 @@ import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   Dropdown,
   Loading,
   ConsoleEmptyState,
-  PageHeading,
   ResourceIcon,
   ResourceLink,
   resourcePathFromModel,

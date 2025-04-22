@@ -36,9 +36,9 @@ import {
   makeQuery,
   makeReduxID,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
-import { PageHeading } from '../utils/headings';
 import { RequireCreatePermission } from '../utils/rbac';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import ListPageHeader from './ListPage/ListPageHeader';
 
 type CreateProps = {
   action?: string;
@@ -319,16 +319,9 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   return (
     <>
-      {(createLink || title || badge || helpText || helpAlert) && (
-        <PageHeading
-          badge={badge}
-          helpAlert={helpAlert}
-          helpText={helpText}
-          hideFavoriteButton={!title}
-          title={title}
-          primaryAction={createLink && createLink}
-        />
-      )}
+      <ListPageHeader title={title} badge={badge} helpText={helpText} helpAlert={helpAlert}>
+        {createLink}
+      </ListPageHeader>
       <PaneBody>
         {inject(props.children, {
           resources,

@@ -9,10 +9,11 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { ExternalLink, ResourceLink, PageHeading } from '@console/internal/components/utils';
+import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 

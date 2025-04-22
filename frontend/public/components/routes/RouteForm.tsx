@@ -15,7 +15,7 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { CreateRoute } from './create-route';
 import { convertEditFormToRoute, convertRouteToEditForm } from './utils';
-import { PageHeading } from '../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 type RouteFormProps = {
   handleCancel: () => void;

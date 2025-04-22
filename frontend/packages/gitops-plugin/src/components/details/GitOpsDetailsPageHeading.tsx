@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 interface GitOpsDetailsPageHeadingProps {
   url: string;
@@ -28,20 +28,22 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
     },
   ];
 
+  const PageHeadingLabel = (
+    <>
+      ({routeDecoratorIcon(manifestURL, 12, t)}&nbsp;
+      {manifestURL}&nbsp; )
+    </>
+  );
+
   return (
-    <BasePageHeading
+    <PageHeading
       breadcrumbs={breadcrumbs}
       title={appName}
       badge={badge}
       linkProps={{
         isExternal: true,
         href: manifestURL,
-        label: (
-          <>
-            ({routeDecoratorIcon(manifestURL, 12, t)}&nbsp;
-            {manifestURL}&nbsp; )
-          </>
-        ),
+        label: PageHeadingLabel,
       }}
     />
   );

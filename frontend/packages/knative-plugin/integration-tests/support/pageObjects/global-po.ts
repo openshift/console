@@ -199,7 +199,7 @@ export const eventingPO = {
     amqStreams: '[data-test-operator-row="Red Hat Integration - AMQ Streams"]',
     kafkaLink: '[data-test-id="horizontal-link-Kafka"]',
     createItem: '[data-test="item-create"]',
-    resourceTitle: '[data-test-id="resource-title"]',
+    resourceTitle: '[data-test="page-heading"] h1',
     createForm: '[data-test="create-dynamic-form"]',
     filter: '[data-test="name-filter-input"]',
     status: '[data-test="status-text"]',
@@ -226,7 +226,7 @@ export const eventingPO = {
     noApp: '[id="#UNASSIGNED_APP#-link"]',
     appName: '[data-test-id="application-form-app-name"]',
     eventSourceLink: '[data-type="event-source-link"]',
-    headingTitle: '.resource-overview [data-test-id="resource-title"]',
+    headingTitle: '.resource-overview [data-test="page-heading"] h1',
     listItem: '.list-group-item',
   },
   eventSource: {

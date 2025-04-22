@@ -29,7 +29,11 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { Firehose } from '../utils/firehose';
 import { HorizontalNav, Page, PageComponentProps } from '../utils/horizontal-nav';
-import { PageHeading, PageHeadingProps, KebabOptionsCreator } from '../utils/headings';
+import {
+  ConnectedPageHeading,
+  ConnectedPageHeadingProps,
+  KebabOptionsCreator,
+} from '../utils/headings';
 import { FirehoseResource } from '../utils/types';
 import { AsyncComponent } from '../utils/async';
 import { KebabAction } from '../utils/kebab';
@@ -155,7 +159,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
       <Firehose
         resources={[...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])]}
       >
-        <PageHeading
+        <ConnectedPageHeading
           obj={props.obj}
           title={props.title || props.name}
           titleFunc={props.titleFunc}
@@ -199,8 +203,8 @@ export type DetailsPageProps = {
   menuActions?: KebabAction[] | KebabOptionsCreator;
   buttonActions?: any[];
   createRedirect?: boolean;
-  customActionMenu?: PageHeadingProps['customActionMenu'];
-  icon?: PageHeadingProps['icon'];
+  customActionMenu?: ConnectedPageHeadingProps['customActionMenu'];
+  icon?: ConnectedPageHeadingProps['icon'];
   pages?: Page[];
   pagesFor?: (obj: K8sResourceKind) => Page[];
   kind: K8sResourceKindReference;
@@ -214,11 +218,11 @@ export type DetailsPageProps = {
   ) => ({ name: string; path: string } | { name: string; path: Location })[];
   customData?: any;
   badge?: React.ReactNode;
-  OverrideTitle?: PageHeadingProps['OverrideTitle'];
+  OverrideTitle?: ConnectedPageHeadingProps['OverrideTitle'];
   getResourceStatus?: (resource: K8sResourceKind) => string;
   customKind?: string;
-  helpText?: PageHeadingProps['helpText'];
-  helpAlert?: PageHeadingProps['helpAlert'];
+  helpText?: ConnectedPageHeadingProps['helpText'];
+  helpAlert?: ConnectedPageHeadingProps['helpAlert'];
 };
 
 DetailsPage.displayName = 'DetailsPage';

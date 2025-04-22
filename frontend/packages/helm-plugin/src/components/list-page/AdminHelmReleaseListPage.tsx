@@ -6,8 +6,9 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { EmptyBox, PageHeading } from '@console/internal/components/utils';
+import { EmptyBox } from '@console/internal/components/utils';
 import { FLAGS, useFlag } from '@console/shared';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import HelmReleaseList from './HelmReleaseList';
 

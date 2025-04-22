@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu, SimpleTabNav } from '@console/internal/components/utils';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { edgeActions } from '../../actions/edgeActions';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import TopologyEdgeResourcesPanel from './TopologyEdgeResourcesPanel';
@@ -33,7 +33,7 @@ const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
 
   return (
     <div className="overview__sidebar-pane resource-overview">
-      <BasePageHeading
+      <PageHeading
         title={t(connectorTypeToTitleKey(edge.getType()))}
         primaryAction={<ActionsMenu actions={edgeActions(edge, nodes)} />}
         hideFavoriteButton

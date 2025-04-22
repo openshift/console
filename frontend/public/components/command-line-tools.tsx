@@ -7,7 +7,8 @@ import { Button, Divider } from '@patternfly/react-core';
 import { FLAGS, useCopyLoginCommands } from '@console/shared';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { ExternalLink, Firehose, FirehoseResult, BasePageHeading } from './utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { ExternalLink, Firehose, FirehoseResult } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -58,11 +59,10 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   return (
     <>
       <DocumentTitle>{t('public~Command Line Tools')}</DocumentTitle>
-      <BasePageHeading title={t('public~Command Line Tools')} />
+      <PageHeading title={t('public~Command Line Tools')} />
       <PaneBody>
         {showCopyLoginCommand && (
           <>
-            <Divider className="co-divider" />
             {requestTokenURL ? (
               <ExternalLink href={requestTokenURL} text={t('public~Copy login command')} />
             ) : (
@@ -70,6 +70,7 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
                 {t('public~Copy login command')}
               </Button>
             )}
+            <Divider className="co-divider" />
           </>
         )}
         {additionalCommandLineTools}

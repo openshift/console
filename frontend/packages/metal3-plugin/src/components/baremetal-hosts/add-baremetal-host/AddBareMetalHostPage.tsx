@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import AddBareMetalHost from './AddBareMetalHost';
 
@@ -19,7 +19,7 @@ const AddBareMetalHostPage: React.FunctionComponent = () => {
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
-      <BasePageHeading
+      <PageHeading
         title={title}
         helpText={t(
           'metal3-plugin~Expand the hardware inventory by registering a new Bare Metal Host.',

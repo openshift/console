@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
 import { DeploymentConfigModel } from '@console/internal/models';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import TopologyActions from '../../../actions/TopologyActions';
 import { useDetailsResourceLink } from '../providers/useDetailsResourceLink';
 import SideBarAlerts from './SideBarAlerts';
@@ -14,7 +14,7 @@ const SideBarHeading: React.FC<{ element: GraphElement }> = ({ element }) => {
   const resourceKind = element.getData()?.resource?.kind;
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
-      <BasePageHeading
+      <PageHeading
         hideFavoriteButton
         title={<>{resourceLink ?? resourceLabel}</>}
         primaryAction={<TopologyActions element={element} />}

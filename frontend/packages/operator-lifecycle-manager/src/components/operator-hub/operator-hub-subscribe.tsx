@@ -23,7 +23,6 @@ import {
   isManaged,
   ConsoleEmptyState,
   NsDropdown,
-  PageHeading,
   ResourceIcon,
   resourcePathFromModel,
   StatusBox,
@@ -51,6 +50,7 @@ import {
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';

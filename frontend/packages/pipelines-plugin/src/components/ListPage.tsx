@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import { Button, PageSection, TextInput, TextInputProps } from '@patternfly/react-core';
+import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import classNames from 'classnames';
 // eslint-disable-next-line no-restricted-imports
 import * as _ from 'lodash-es';
@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { ListPageHeader } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { storagePrefix } from '@console/internal/components/row-filter';
@@ -21,7 +22,6 @@ import {
   kindObj,
   makeQuery,
   makeReduxID,
-  PageHeading,
   RequireCreatePermission,
 } from '@console/internal/components/utils';
 import {
@@ -315,16 +315,9 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   return (
     <>
-      {/* Badge rendered from PageHeading only when title is present */}
-      {title && (
-        <PageHeading title={title} badge={badge} helpText={helpText} primaryAction={createLink} />
-      )}
-      {!title && (
-        <PageSection>
-          {createLink}
-          {badge && <div>{badge}</div>}
-        </PageSection>
-      )}
+      <ListPageHeader title={title} badge={badge} helpText={helpText}>
+        {createLink}
+      </ListPageHeader>
       <PaneBody>
         {inject(props.children, {
           resources,

@@ -10,9 +10,9 @@ import CreateProjectListPage, {
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ListPage } from '@console/internal/components/factory';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { PageHeading } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
 import { CreateActionDropdown } from './CreateActionDropdown';

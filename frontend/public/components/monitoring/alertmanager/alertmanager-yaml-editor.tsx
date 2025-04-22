@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { NavBar, BasePageHeading } from '@console/internal/components/utils';
-import { Alert } from '@patternfly/react-core';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { NavBar } from '@console/internal/components/utils';
+import { Alert, Content, ContentVariants, PageSection } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
@@ -69,12 +70,13 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
 
   return (
     <>
-      <BasePageHeading
-        hideFavoriteButton
-        helpText={t(
-          'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
-        )}
-      />
+      <PageSection hasBodyWrapper={false} className="pf-v6-u-pb-0">
+        <Content component={ContentVariants.p}>
+          {t(
+            'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
+          )}
+        </Content>
+      </PageSection>
       <EditAlertmanagerYAML onSave={save} obj={alertmanagerYAML}>
         {errorMsg && (
           <Alert
@@ -124,7 +126,7 @@ const AlertmanagerYAML: React.FC<{}> = () => {
 
   return (
     <>
-      <BasePageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
+      <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
       <NavBar
         pages={[
           {

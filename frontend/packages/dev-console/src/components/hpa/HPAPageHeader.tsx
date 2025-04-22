@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { BasePageHeading, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 type HPAPageHeaderProps = {
   kind: string;
@@ -22,7 +23,7 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <BasePageHeading
+    <PageHeading
       title={title}
       helpAlert={
         validSupportedType ? (

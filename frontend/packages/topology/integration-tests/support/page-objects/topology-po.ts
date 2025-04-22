@@ -283,7 +283,7 @@ export const topologyPO = {
     pageTitle: '[data-test="page-title"]',
     submitBtn: '[data-test-id="submit-button"]',
     samplePage: '#Samples',
-    resourseTitle: '[data-test-id="resource-title"]',
+    resourseTitle: '[data-test="page-heading"] h1',
     appformName: '[data-test-id="application-form-app-name"]',
     djangoPostgreSQL: '[data-test="item-name-Django + PostgreSQL-Templates"]',
     NETSample: '[data-test="item-name-.NET-Builder Images"]',

@@ -29,7 +29,7 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
   modal.shouldBeClosed();
   // TODO, switch to 'listPage.titleShouldHaveText(name)', when we switch to new test id
   if (devConsole === false) {
-    cy.byLegacyTestID('resource-title').should('have.text', name);
+    cy.get('[data-test="page-heading"] h1').should('have.text', name);
   }
 });
 

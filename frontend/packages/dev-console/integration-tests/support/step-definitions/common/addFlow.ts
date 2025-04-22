@@ -87,7 +87,7 @@ When('user clicks Create button on Add page', () => {
 
 Then('user will be redirected to Add page', () => {
   // detailsPage.titleShouldContain(pageTitle.Add);
-  cy.get('[data-test-id="resource-title"]').should('contain.text', pageTitle.Add);
+  cy.get('[data-test="page-heading"] h1').should('contain.text', pageTitle.Add);
 });
 
 When('user clicks Cancel button on Add page', () => {

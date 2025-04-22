@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { PageHeading } from '../../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageSection } from '@patternfly/react-core';
 
 const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
@@ -9,6 +9,7 @@ const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
   children,
   badge,
   hideFavoriteButton,
+  helpAlert,
 }) =>
   title ? (
     <PageHeading
@@ -17,9 +18,15 @@ const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
       hideFavoriteButton={hideFavoriteButton}
       helpText={helpText}
       primaryAction={children}
+      helpAlert={helpAlert}
     />
   ) : (
-    <PageSection hasBodyWrapper={false}>{children}</PageSection>
+    // Badge rendered from PageHeading only when title is present
+    <PageSection hasBodyWrapper={false}>
+      {children}
+      {badge && <div>{badge}</div>}
+      {helpAlert}
+    </PageSection>
   );
 
 export default ListPageHeader;

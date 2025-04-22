@@ -1,12 +1,8 @@
+@use '../../../../../public/style/vars';
+
 .co-actions {
-  align-items: flex-end;
-  display: flex;
-  font-family: var(--pf-t--global--font--family--body);
-  flex-shrink: 0;
-  @media (max-width: $screen-xs) {
-    align-self: flex-start;
-    flex-direction: column;
-  }
+  // ensure all actions are of the same height regardless of content
+  min-height: vars.$co-button-height;
 
   > .pf-v6-c-action-list__group {
     // remove extra spacing when a component is rendered but has no children

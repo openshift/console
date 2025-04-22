@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageHeading } from '@console/internal/components/utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import HelmReleaseList from './HelmReleaseList';
 
 const HelmReleaseListPage: React.FC = () => {

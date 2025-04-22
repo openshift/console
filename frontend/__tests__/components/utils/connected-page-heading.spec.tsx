@@ -1,44 +1,10 @@
 import { configure, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import {
-  PageHeading,
-  BreadCrumbs,
-  BreadCrumbsProps,
-} from '../../../public/components/utils/headings';
+import { ConnectedPageHeading } from '../../../public/components/utils/headings';
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 
-describe(BreadCrumbs.displayName, () => {
-  let breadcrumbs: BreadCrumbsProps['breadcrumbs'];
-
-  beforeEach(() => {
-    configure({ testIdAttribute: 'data-test' });
-
-    breadcrumbs = [
-      { name: 'pods', path: '/pods' },
-      { name: 'containers', path: '/pods/containers' },
-    ];
-  });
-
-  it('renders each given breadcrumb', () => {
-    render(
-      <MemoryRouter>
-        <BreadCrumbs breadcrumbs={breadcrumbs} />
-      </MemoryRouter>,
-    );
-
-    breadcrumbs.forEach((crumb) => {
-      if (crumb.path) {
-        const link = screen.getByRole('link', { name: crumb.name });
-        expect(link).toHaveAttribute('href', crumb.path);
-      } else {
-        expect(screen.getByText(crumb.name)).toBeInTheDocument();
-      }
-    });
-  });
-});
-
-describe(PageHeading.displayName, () => {
+describe(ConnectedPageHeading.displayName, () => {
   beforeEach(() => {
     configure({ testIdAttribute: 'data-test' });
   });
@@ -47,7 +13,7 @@ describe(PageHeading.displayName, () => {
     const kind = 'Pod';
     render(
       <MemoryRouter>
-        <PageHeading.WrappedComponent obj={null} kind={kind} />
+        <ConnectedPageHeading.WrappedComponent obj={null} kind={kind} />
       </MemoryRouter>,
     );
 
@@ -60,7 +26,7 @@ describe(PageHeading.displayName, () => {
     const title = <span>My Custom Title</span>;
     render(
       <MemoryRouter>
-        <PageHeading.WrappedComponent obj={null} title={title} />
+        <ConnectedPageHeading.WrappedComponent obj={null} title={title} />
       </MemoryRouter>,
     );
 
@@ -71,7 +37,7 @@ describe(PageHeading.displayName, () => {
     const breadcrumbs = [];
     render(
       <MemoryRouter>
-        <PageHeading.WrappedComponent
+        <ConnectedPageHeading.WrappedComponent
           obj={{ data: testResourceInstance, loaded: true, loadError: null }}
           breadcrumbsFor={() => breadcrumbs}
         />
@@ -84,7 +50,7 @@ describe(PageHeading.displayName, () => {
   it('does not render breadcrumbs if object has not loaded', () => {
     render(
       <MemoryRouter>
-        <PageHeading.WrappedComponent obj={null} breadcrumbsFor={() => []} />
+        <ConnectedPageHeading.WrappedComponent obj={null} breadcrumbsFor={() => []} />
       </MemoryRouter>,
     );
 

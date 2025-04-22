@@ -99,7 +99,6 @@ import {
   getDocumentationURL,
   HorizontalNav,
   isManaged,
-  PageHeading,
   ReleaseNotesLink,
   ResourceLink,
   resourcePathFromModel,
@@ -115,6 +114,7 @@ import {
   useCanClusterUpgrade,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { useFlag } from '@console/shared/src/hooks/flag';

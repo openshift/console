@@ -7,7 +7,6 @@ import {
   DOC_URL_RED_HAT_MARKETPLACE,
   ExternalLink,
   Firehose,
-  PageHeading,
   skeletonCatalog,
   StatusBox,
 } from '@console/internal/components/utils';
@@ -22,6 +21,7 @@ import { isCatalogTypeEnabled, useIsSoftwareCatalogEnabled } from '@console/shar
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import { iconFor } from '..';
 import {

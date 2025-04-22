@@ -11,13 +11,8 @@ import { VolumeModeSelector } from '@console/app/src/components/volume-modes/vol
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
-import {
-  AsyncComponent,
-  ButtonBar,
-  RequestSizeInput,
-  resourceObjPath,
-  PageHeading,
-} from '../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { AsyncComponent, ButtonBar, RequestSizeInput, resourceObjPath } from '../utils';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';

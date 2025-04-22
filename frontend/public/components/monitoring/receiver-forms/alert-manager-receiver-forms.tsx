@@ -32,7 +32,7 @@ import * as WebhookForm from './webhook-receiver-form';
 import * as EmailForm from './email-receiver-form';
 import * as SlackForm from './slack-receiver-form';
 import { coFetchJSON } from '../../../co-fetch';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 /**
  * Converts deprecated route match and match_re:
@@ -366,7 +366,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   return (
     <>
       <DocumentTitle>{t('public~{{titleVerb}} Receiver', { titleVerb })}</DocumentTitle>
-      <BasePageHeading
+      <PageHeading
         title={t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
           titleVerb,
           receiverTypeLabel,

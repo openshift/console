@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BasePageHeading } from '@console/internal/components/utils/headings';
 import { TechPreviewBadge } from '@console/shared';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 
 const PipelineBuilderHeader: React.FC<{ namespace: string }> = ({ namespace }) => {
@@ -9,7 +9,7 @@ const PipelineBuilderHeader: React.FC<{ namespace: string }> = ({ namespace }) =
   const badge = usePipelineTechPreviewBadge(namespace);
 
   return (
-    <BasePageHeading
+    <PageHeading
       title={t('pipelines-plugin~Pipeline builder')}
       badge={badge && <TechPreviewBadge />}
       hideFavoriteButton

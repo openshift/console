@@ -38,8 +38,8 @@ import {
   ResourceIcon,
   setQueryArgument,
   AsyncComponent,
-  BasePageHeading,
 } from './utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import confirmNavUnpinModal from '@console/app/src/components/nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
@@ -224,8 +224,8 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   return (
     <>
-      <DocumentTitle>{t('public~Search')}</DocumentTitle>{' '}
-      <BasePageHeading title={t('public~Search')} />
+      <DocumentTitle>{t('public~Search')}</DocumentTitle>
+      <PageHeading title={t('public~Search')} />
       <PageSection hasBodyWrapper={false}>
         <Toolbar
           id="search-toolbar"

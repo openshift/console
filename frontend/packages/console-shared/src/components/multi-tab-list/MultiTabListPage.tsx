@@ -2,14 +2,9 @@ import * as React from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
-import {
-  history,
-  PageHeading,
-  HorizontalNav,
-  Page,
-  Dropdown,
-} from '@console/internal/components/utils';
+import { history, HorizontalNav, Page, Dropdown } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '../pagetitle/PageTitleContext';
 import { MenuActions, MenuAction, SecondaryButtonAction } from './multi-tab-list-page-types';
 

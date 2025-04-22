@@ -8,7 +8,7 @@ import { nav } from '../../../views/nav';
 import { secrets } from '../../../views/secret';
 
 const populateSecretForm = (name: string, key: string, fileName: string) => {
-  cy.get('.co-m-pane__heading').contains('Create key/value secret');
+  cy.get('[data-test="page-heading"] h1').contains('Create key/value secret');
   cy.byTestID('secret-name').should('exist');
   cy.byLegacyTestID('file-input-textarea').should('exist');
   secrets.enterSecretName(name);
@@ -18,7 +18,7 @@ const populateSecretForm = (name: string, key: string, fileName: string) => {
 
 const modifySecretForm = (key: string) => {
   detailsPage.clickPageActionFromDropdown('Edit Secret');
-  cy.get('.co-m-pane__heading').contains('Edit key/value secret');
+  cy.get('[data-test="page-heading"] h1').contains('Edit key/value secret');
   cy.byTestID('secret-key').clear().type(key);
 };
 
