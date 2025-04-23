@@ -6,8 +6,8 @@ export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
 const THEME_DARK_CLASS = 'pf-v6-theme-dark';
 const THEME_DARK_CLASS_LEGACY = 'pf-v5-theme-dark'; // legacy class name needed to support PF5
-export const THEME_DARK = 'Dark';
-export const THEME_LIGHT = 'Light';
+export const THEME_DARK = 'dark';
+export const THEME_LIGHT = 'light';
 export const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
 
 type PROCESSED_THEME = typeof THEME_DARK | typeof THEME_LIGHT;

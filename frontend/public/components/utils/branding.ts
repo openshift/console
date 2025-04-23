@@ -11,6 +11,7 @@ import openshiftLogoImg from '../../imgs/openshift-logo.svg';
 import onlineLogoImg from '../../imgs/openshift-online-logo.svg';
 import dedicatedLogoImg from '../../imgs/openshift-dedicated-logo.svg';
 import rosaLogoImg from '../../imgs/openshift-service-on-aws-logo.svg';
+import { capitalize } from 'lodash';
 
 type CUSTOM_LOGO = typeof FAVICON_TYPE | typeof MASTHEAD_TYPE;
 export const FAVICON_TYPE = 'Favicon';
@@ -96,7 +97,9 @@ export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading:
           },
         );
       }
-      const fetchURL = `${window.SERVER_FLAGS.basePath}custom-logo?type=${type}&theme=${reqTheme}`;
+      const fetchURL = `${window.SERVER_FLAGS.basePath}custom-logo?type=${type}&theme=${capitalize(
+        reqTheme,
+      )}`;
       const response = await fetch(fetchURL);
       if (response.ok) {
         const blob = await response.blob();
