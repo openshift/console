@@ -8,7 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
 import { ButtonBar } from '../../utils/button-bar';
-import { PageHeading } from '../../utils/headings';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { resourceObjPath } from '../../utils/resource-link';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../factory/modal';
 import { SecretModel } from '../../../models';

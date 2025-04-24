@@ -15,11 +15,11 @@ import {
   ButtonBar,
   history,
   NsDropdown,
-  PageHeading,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { CatalogSourceModel } from '../models';
 

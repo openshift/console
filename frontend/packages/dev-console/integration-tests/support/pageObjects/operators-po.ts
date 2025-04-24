@@ -54,7 +54,7 @@ export const operatorsPO = {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
   },
   installOperators: {
-    title: 'h1.co-m-pane__heading',
+    title: '[data-test="page-heading"] h1',
     operatorsNameRow: 'div[aria-label="Installed Operators"] td:nth-child(1) h1',
     noOperatorsFound: '[data-test="console-empty-state-title"]',
     noOperatorsDetails: '[data-test="console-empty-state-body"]',

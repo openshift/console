@@ -13,7 +13,7 @@ const configmapName = 'example';
 
 const createExampleConfigMapInstance = () => {
   nav.sidenav.clickNavLink(['Workloads', 'ConfigMaps']);
-  cy.byLegacyTestID('resource-title').should('have.text', 'ConfigMaps');
+  cy.get('[data-test="page-heading"] h1').should('have.text', 'ConfigMaps');
   projectDropdown.selectProject(testName);
   projectDropdown.shouldContain(testName);
   listPage.clickCreateYAMLbutton();

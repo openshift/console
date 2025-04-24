@@ -347,10 +347,22 @@ export type UseActiveColumns = <D = any>({
 }) => [TableColumn<D>[], boolean];
 
 export type ListPageHeaderProps = {
-  title: string;
-  helpText?: React.ReactNode;
+  /** A badge that is displayed next to the title of the heading */
   badge?: React.ReactNode;
+  /** A primary action that is always rendered. */
+  children?: React.ReactNode;
+  /** An alert placed below the heading in the same PageSection. */
+  helpAlert?: React.ReactNode;
+  /** A subtitle placed below the title. */
+  helpText?: React.ReactNode;
+  /**
+   * The "Add to favourites" button is shown by default while in the admin perspective.
+   * This prop allows you to hide the button. It should be hidden when `ListPageHeader`
+   * is not the primary page header to avoid having multiple favourites buttons.
+   */
   hideFavoriteButton?: boolean;
+  /** The heading title. If no title is set, only the `children`, `badge`, and `helpAlert` props will be rendered */
+  title: string;
 };
 
 export type CreateWithPermissionsProps = {

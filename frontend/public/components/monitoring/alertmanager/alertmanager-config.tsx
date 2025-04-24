@@ -3,12 +3,11 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { NavBar } from '@console/internal/components/utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
-  Breadcrumb,
-  BreadcrumbItem,
   Button,
   DescriptionList,
   DescriptionListDescription,
@@ -19,7 +18,6 @@ import {
   EmptyStateVariant,
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
-  PageBreadcrumb,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
@@ -28,8 +26,6 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
-import NavTitle from '@console/shared/src/components/layout/NavTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
@@ -551,25 +547,7 @@ export const AlertmanagerConfig: React.FC = () => {
 
   return (
     <>
-      <PageBreadcrumb>
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <Link className="pf-v6-c-breadcrumb__link" to={breadcrumbs[0].path}>
-              {breadcrumbs[0].name}
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
-        </Breadcrumb>
-      </PageBreadcrumb>
-      <NavTitle className="co-m-nav-title--detail">
-        <PrimaryHeading>
-          <div className="co-m-pane__name co-resource-item">
-            <span className="co-resource-item__resource-name" data-test-id="resource-title">
-              {t('public~Alertmanager')}
-            </span>
-          </div>
-        </PrimaryHeading>
-      </NavTitle>
+      <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
       <NavBar
         pages={[
           {

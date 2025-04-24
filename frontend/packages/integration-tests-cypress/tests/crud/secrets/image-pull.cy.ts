@@ -74,7 +74,7 @@ describe('Image pull secrets', () => {
     };
 
     cy.log('Create secret');
-    cy.get('.co-m-pane__heading').contains(heading);
+    cy.get('[data-test="page-heading"] h1').contains(heading);
     secrets.enterSecretName(credentialsImageSecretName);
     secrets.clickAddCredentialsButton();
     cy.get('[data-test-id="create-image-secret-form"]').each(($el, index) => {
@@ -126,7 +126,7 @@ describe('Image pull secrets', () => {
     };
 
     cy.log('Create secret');
-    cy.get('.co-m-pane__heading').contains(heading);
+    cy.get('[data-test="page-heading"] h1').contains(heading);
     secrets.enterSecretName(uploadConfigFileImageSecretName);
     cy.byLegacyTestID('dropdown-button').click();
     cy.byTestDropDownMenu('config-file').click();

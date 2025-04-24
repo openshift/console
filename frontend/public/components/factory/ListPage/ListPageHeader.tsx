@@ -1,36 +1,32 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { PageHeading } from '../../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { PageSection } from '@patternfly/react-core';
 
-const ListPageHeader: React.FC<ListPageHeaderProps> = ({
+const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
   helpText,
   title,
   children,
   badge,
   hideFavoriteButton,
-}) => (
-  <>
-    {/* Badge rendered from PageHeading only when title is present */}
+  helpAlert,
+}) =>
+  title ? (
     <PageHeading
       title={title}
-      badge={title ? badge : null}
-      navTitleAsRow
+      badge={badge}
       hideFavoriteButton={hideFavoriteButton}
       helpText={helpText}
-    >
-      {children && (
-        <div
-          className={classNames('co-operator-details__actions', {
-            'co-m-pane__createLink--no-title': !title,
-          })}
-        >
-          {children}
-        </div>
-      )}
-      {!title && badge && <div>{badge}</div>}
-    </PageHeading>
-  </>
-);
+      primaryAction={children}
+      helpAlert={helpAlert}
+    />
+  ) : (
+    // Badge rendered from PageHeading only when title is present
+    <PageSection hasBodyWrapper={false}>
+      {children}
+      {badge && <div>{badge}</div>}
+      {helpAlert}
+    </PageSection>
+  );
 
 export default ListPageHeader;

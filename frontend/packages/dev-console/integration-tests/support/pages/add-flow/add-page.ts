@@ -133,7 +133,7 @@ export const addPage = {
       case addOptions.CreateServerlessFunction:
         cy.byTestID('item create-serverless-function').click();
         app.waitForLoad();
-        cy.get('[data-test-id="resource-title"]').should(
+        cy.get('[data-test="page-heading"] h1').should(
           'have.text',
           pageTitle.CreateServerlessFunction,
         );

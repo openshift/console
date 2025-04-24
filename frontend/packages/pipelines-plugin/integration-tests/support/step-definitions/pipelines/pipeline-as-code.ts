@@ -264,7 +264,7 @@ When('user clicks Last Run value of repository {string}', (repoName) => {
 
 Then('Details tab is displayed with fields Repository, Branch, Commit id and Event type', () => {
   pipelineRunDetailsPage.verifyDetailsFields();
-  cy.byLegacyTestID('resource-title').scrollIntoView();
+  cy.get('[data-test="page-heading"] h1').scrollIntoView();
 });
 
 Then(

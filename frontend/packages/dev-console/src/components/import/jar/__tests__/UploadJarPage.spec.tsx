@@ -1,7 +1,8 @@
 import { shallow } from 'enzyme';
 import * as Router from 'react-router-dom-v5-compat';
-import { LoadingBox, PageHeading } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import UploadJarPage from '../UploadJarPage';
 
 const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;

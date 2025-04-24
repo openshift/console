@@ -170,10 +170,12 @@ export const useActiveColumns: UseActiveColumns = require('@console/internal/com
 
 /**
  * Component for generating a page header
- * @param {string} title - heading title
- * @param {ReactNode} [helpText] -  (optional) help section as react node
- * @param {ReactNode} [badge] -  (optional) badge icon as react node
- * @param {boolean} [hideFavoriteButton] - (Optional) If true, hides the Favorite button. By default, the Favorite button is displayed, allowing users to add a page as a favorite. Generally, you should use `hideFavoriteButton` when `ListPageHeader` is not the primary page header to avoid duplicate favorite buttons on the page.
+ * @param {string} title - The heading title. If no title is set, only the `children`, `badge`, and `helpAlert` props will be rendered.
+ * @param {ReactNode} [badge] -  (optional) A badge that is displayed next to the title of the heading
+ * @param {ReactNode} [helpAlert] -  (optional) An alert placed below the heading in the same PageSection.
+ * @param {ReactNode} [helpText] -  (optional) A subtitle placed below the title.
+ * @param {boolean} [hideFavoriteButton] - (optional) The "Add to favourites" button is shown by default while in the admin perspective. This prop allows you to hide the button. It should be hidden when `ListPageHeader` is not the primary page header to avoid having multiple favourites buttons.
+ * @param {ReactNode} [children] -  (optional) A primary action that is always rendered.
  * @example
  * ```ts
  * const exampleList: React.FC = () => {

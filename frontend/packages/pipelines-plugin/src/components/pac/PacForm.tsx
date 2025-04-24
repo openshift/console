@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { history, LoadingBox, PageHeading } from '@console/internal/components/utils';
+import { history, LoadingBox } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PAC_GH_APP_NAME } from './const';
 import { usePacGHManifest } from './hooks/usePacGHManifest';
 import { pacValidationSchema } from './pac-validation-schema';

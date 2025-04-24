@@ -19,13 +19,13 @@ describe('Visiting other routes', () => {
     {
       path: '/',
       waitFor: () => {
-        cy.byLegacyTestID('resource-title').should('exist');
+        cy.get('[data-test="page-heading"] h1').should('exist');
         cy.byTestID('skeleton-chart').should('not.exist');
       },
     },
     {
       path: '/k8s/cluster/clusterroles/view',
-      waitFor: () => cy.byLegacyTestID('resource-title').should('exist'),
+      waitFor: () => cy.get('[data-test="page-heading"] h1').should('exist'),
     },
     {
       path: '/k8s/cluster/nodes',

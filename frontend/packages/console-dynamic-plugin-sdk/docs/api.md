@@ -613,10 +613,12 @@ const exampleList: React.FC = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `title` | heading title |
-| `helpText` | (optional) help section as react node |
-| `badge` | (optional) badge icon as react node |
-| `hideFavoriteButton` | (Optional) If true, hides the Favorite button. By default, the Favorite button is displayed, allowing users to add a page as a favorite. Generally, you should use `hideFavoriteButton` when `ListPageHeader` is not the primary page header to avoid duplicate favorite buttons on the page. |
+| `title` | The heading title. If no title is set, only the `children`, `badge`, and `helpAlert` props will be rendered. |
+| `badge` | (optional) A badge that is displayed next to the title of the heading |
+| `helpAlert` | (optional) An alert placed below the heading in the same PageSection. |
+| `helpText` | (optional) A subtitle placed below the title. |
+| `hideFavoriteButton` | (optional) The "Add to favourites" button is shown by default while in the admin perspective. This prop allows you to hide the button. It should be hidden when `ListPageHeader` is not the primary page header to avoid having multiple favourites buttons. |
+| `children` | (optional) A primary action that is always rendered. |
 
 
 

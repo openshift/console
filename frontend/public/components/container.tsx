@@ -38,7 +38,7 @@ import {
   HorizontalNav,
   ConsoleEmptyState,
   NodeLink,
-  PageHeading,
+  ConnectedPageHeading,
   resourcePath,
   ResourceLink,
   ScrollToTopOnMount,
@@ -509,7 +509,7 @@ export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
 
   return (
     <>
-      <PageHeading
+      <ConnectedPageHeading
         title={params.name}
         kind="Container"
         getResourceStatus={() => containerStateValue}
