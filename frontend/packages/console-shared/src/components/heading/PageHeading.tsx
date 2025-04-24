@@ -67,7 +67,6 @@ export const PageHeading = ({
       <PageHeader
         breadcrumbs={breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} />}
         title={title}
-        headingClassname={helpText ? 'pf-v6-u-mb-sm' : ''} // TODO: upstream this to PF
         actionMenu={
           <ActionList className="co-actions" data-test-id="details-actions">
             {showFavoriteButton || primaryAction ? (
