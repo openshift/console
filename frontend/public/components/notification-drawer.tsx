@@ -463,10 +463,9 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 };
 
 export type NotificationDrawerProps = {
-  toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;
   onDrawerChange: () => void;
-  drawerRef: React.Ref<typeof PfNotificationDrawer>;
+  drawerRef: React.Ref<HTMLElement>;
 };
 
 type AlertErrorProps = {

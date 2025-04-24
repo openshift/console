@@ -18,7 +18,7 @@ export const FAVICON_TYPE = 'Favicon';
 export const MASTHEAD_TYPE = 'Masthead';
 
 export const getBrandingDetails = () => {
-  let staticLogo, productName;
+  let staticLogo: string, productName: string;
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch (window.SERVER_FLAGS.branding) {
     case 'openshift':
