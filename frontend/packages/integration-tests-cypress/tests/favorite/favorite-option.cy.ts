@@ -32,8 +32,12 @@ describe('Favorites', () => {
     cy.visit('/');
     cy.get('[data-test="favorite-button"]').click({ force: true });
     cy.get('[role="dialog"]').contains('Add to favorites');
+    cy.get('#confirm-favorite-form-name').should('have.value', 'Overview');
+    cy.get('#confirm-favorite-form-name')
+      .clear({ force: true })
+      .type('test-favorite', { force: true });
     cy.contains('button', 'Save').click({ force: true });
-    nav.sidenav.shouldHaveNavSection(['Operators', 'dashboards']);
+    nav.sidenav.shouldHaveNavSection(['Favorites', 'test-favorite']);
   });
 
   it('Should remove a favorite', () => {
@@ -48,7 +52,7 @@ describe('Favorites', () => {
     cy.get('[data-test="favorite-button"]').click({ force: true });
     cy.get('[role="dialog"]').contains('Add to favorites');
     cy.contains('button', 'Save').click({ force: true });
-    nav.sidenav.shouldHaveNavSection(['Operators', 'dashboards']);
+    nav.sidenav.shouldHaveNavSection(['Favorites', 'Overview']);
     cy.get('[data-test="remove-favorite-button"]').click({ force: true });
     nav.sidenav.clickNavLink(['Favorites']);
     cy.byTestID('no-favorites-message').should('be.visible');

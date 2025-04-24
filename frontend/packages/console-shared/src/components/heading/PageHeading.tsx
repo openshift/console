@@ -74,7 +74,7 @@ export const PageHeading = ({
               <ActionListGroup>
                 {showFavoriteButton && (
                   <ActionListItem>
-                    <FavoriteButton />
+                    <FavoriteButton defaultName={typeof title === 'string' ? title : undefined} />
                   </ActionListItem>
                 )}
                 {primaryAction}

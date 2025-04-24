@@ -12,7 +12,6 @@ import {
 import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { connectToModel } from '@console/internal/kinds';
 import { Modal, RedExclamationCircleIcon, useUserSettingsCompatibility } from '@console/shared';
 import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
 
@@ -25,7 +24,12 @@ export const FAVORITES_CONFIG_MAP_KEY = 'console.favorites';
 export const FAVORITES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/favorites`;
 const MAX_FAVORITE_COUNT = 10;
 
-export const FavoriteButton = connectToModel(() => {
+type FavoriteButtonProps = {
+  /** The default name to put in the input field */
+  defaultName?: string;
+};
+
+export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
   const { t } = useTranslation('console-app');
   const [isStarred, setIsStarred] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -60,8 +64,9 @@ export const FavoriteButton = connectToModel(() => {
       const currentUrlSplit = currentUrlPath.includes('~')
         ? currentUrlPath.split('~')
         : currentUrlPath.split('/');
-      const [defaultName] = currentUrlSplit.slice(-1);
-      const sanitizedDefaultName = defaultName.split('?')[0].replace(/[^a-zA-Z0-9- ]/g, '-');
+      const sanitizedDefaultName = (
+        defaultName ?? currentUrlSplit.slice(-1)[0].split('?')[0]
+      ).replace(/[^a-zA-Z0-9- ]/g, '-');
       setName(sanitizedDefaultName);
       setIsModalOpen(true);
     }
@@ -146,7 +151,12 @@ export const FavoriteButton = connectToModel(() => {
           isOpen={isModalOpen}
           onClose={handleModalClose}
           actions={[
-            <Button key="confirm" variant="primary" onClick={handleConfirmStar}>
+            <Button
+              key="confirm"
+              variant="primary"
+              onClick={handleConfirmStar}
+              form="confirm-favorite"
+            >
               {t('Save')}
             </Button>,
             <Button key="cancel" variant="link" onClick={handleModalClose}>
@@ -155,10 +165,10 @@ export const FavoriteButton = connectToModel(() => {
           ]}
           variant={ModalVariant.small}
         >
-          <Form>
+          <Form id="confirm-favorite-form" onSubmit={handleConfirmStar}>
             <FormGroup label={t('Name')} isRequired fieldId="input-name">
               <TextInput
-                id="input-name"
+                id="confirm-favorite-form-name"
                 data-test="input-name"
                 name="name"
                 type="text"
@@ -166,11 +176,6 @@ export const FavoriteButton = connectToModel(() => {
                 value={name || ''}
                 autoFocus
                 required
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                  }
-                }}
               />
               {error && (
                 <FormHelperText>
@@ -187,4 +192,4 @@ export const FavoriteButton = connectToModel(() => {
       )}
     </div>
   );
-});
+};
