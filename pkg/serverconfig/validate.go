@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	configv1 "github.com/openshift/api/config/v1"
@@ -34,6 +35,14 @@ func Validate(fs *flag.FlagSet) error {
 	}
 
 	if _, err := validatePerspectives(fs.Lookup("perspectives").Value.String()); err != nil {
+		return err
+	}
+
+	if _, err := validateLogoFiles(fs.Lookup("custom-logo-files").Value.String()); err != nil {
+		return err
+	}
+
+	if _, err := validateLogoFiles(fs.Lookup("custom-favicon-files").Value.String()); err != nil {
 		return err
 	}
 
@@ -183,4 +192,24 @@ func validatePerspectives(value string) ([]Perspective, error) {
 	}
 
 	return perspectives, nil
+}
+
+func validateLogoFiles(value string) (LogosKeyValue, error) {
+	if value == "" {
+		return nil, nil
+	}
+	customLogoFiles := LogosKeyValue{}
+	err := customLogoFiles.Set(value)
+	if err != nil {
+		return nil, err
+	}
+	// validate files
+	for _, file := range customLogoFiles {
+		if _, err := os.Stat(file); err != nil {
+			return nil, err
+		}
+
+	}
+
+	return customLogoFiles, nil
 }

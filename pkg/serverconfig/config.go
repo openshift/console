@@ -15,11 +15,33 @@ import (
 	"k8s.io/klog/v2"
 
 	consolev1 "github.com/openshift/api/console/v1"
+	operatorv1 "github.com/openshift/api/operator/v1"
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
-// ... --plugins plugin-name=plugin-endpoint plugin-name2=plugin-endpoint2
+// ... --plugins plugin-name=plugin-endpoint, plugin-name2=plugin-endpoint2
 type MultiKeyValue map[string]string
+
+func parseKeyValuePairs[T comparable](value string, parseKey func(string) (T, error)) (map[T]string, error) {
+	result := make(map[T]string)
+	keyValuePairs := strings.Split(value, ",")
+	for _, keyValuePair := range keyValuePairs {
+		keyValuePair = strings.TrimSpace(keyValuePair)
+		if len(keyValuePair) == 0 {
+			continue
+		}
+		splitted := strings.SplitN(keyValuePair, "=", 2)
+		if len(splitted) != 2 {
+			return nil, fmt.Errorf("invalid key-value pair syntax: %q, expected format: key=value", keyValuePair)
+		}
+		parsedKey, err := parseKey(splitted[0])
+		if err != nil {
+			return nil, err
+		}
+		result[parsedKey] = splitted[1]
+	}
+	return result, nil
+}
 
 func (mkv *MultiKeyValue) String() string {
 	keyValuePairs := []string{}
@@ -31,19 +53,49 @@ func (mkv *MultiKeyValue) String() string {
 }
 
 func (mkv *MultiKeyValue) Set(value string) error {
-	keyValuePairs := strings.Split(value, ",")
-	for _, keyValuePair := range keyValuePairs {
-		keyValuePair = strings.TrimSpace(keyValuePair)
-		if len(keyValuePair) == 0 {
-			continue
-		}
-		splitted := strings.SplitN(keyValuePair, "=", 2)
-		if len(splitted) != 2 {
-			return fmt.Errorf("invalid key value pair %s", keyValuePair)
-		}
-		(*mkv)[splitted[0]] = splitted[1]
+	parsedMap, err := parseKeyValuePairs(value, func(key string) (string, error) {
+		return key, nil
+	})
+	if err != nil {
+		return err
+	}
+	// merge new pairs to older ones
+	for k, v := range parsedMap {
+		(*mkv)[k] = v
 	}
 	return nil
+}
+
+// LogosKeyValue is used for configuring entries of custom logos, where keys are
+// themes (Light | Dark) and values are paths to the image files eg.:
+// ... --custom-logo-files Dark=/path/to/dark-logo.svg, Light=/path/to/light-logo.svg
+type LogosKeyValue map[operatorv1.ThemeMode]string
+
+func (lkv *LogosKeyValue) String() string {
+	keyValuePairs := []string{}
+	for k, v := range *lkv {
+		keyValuePairs = append(keyValuePairs, fmt.Sprintf("%s=%s", k, v))
+	}
+	sort.Strings(keyValuePairs)
+	return strings.Join(keyValuePairs, ", ")
+}
+
+func (lkv *LogosKeyValue) Set(value string) error {
+	parsedMap, err := parseKeyValuePairs(value, func(key string) (operatorv1.ThemeMode, error) {
+		return ParseCustomLogoTheme(key)
+	})
+	if err != nil {
+		return err
+	}
+	// merge new pairs to older ones
+	for k, v := range parsedMap {
+		(*lkv)[k] = v
+	}
+	return nil
+}
+
+func (lkv *LogosKeyValue) IsEmpty() bool {
+	return len(*lkv) == 0
 }
 
 // Parse configuration from
@@ -276,10 +328,6 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		fs.Set("custom-product-name", customization.CustomProductName)
 	}
 
-	if customization.CustomLogoFile != "" {
-		fs.Set("custom-logo-file", customization.CustomLogoFile)
-	}
-
 	if customization.DeveloperCatalog.Categories != nil {
 		categories, err := json.Marshal(customization.DeveloperCatalog.Categories)
 		if err == nil {
@@ -320,6 +368,24 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 			klog.Fatalf("Could not marshal ConsoleConfig customization.projectAccess field: %v", err)
 		} else {
 			fs.Set("project-access-cluster-roles", string(projectAccessClusterRoles))
+		}
+	}
+
+	if len(customization.Logos) > 0 {
+		faviconFlag := fs.Lookup("custom-favicon-files")
+		logoFlag := fs.Lookup("custom-logo-files")
+
+		faviconFlags, _ := faviconFlag.Value.(*LogosKeyValue)
+		logoFlags, _ := logoFlag.Value.(*LogosKeyValue)
+		for _, logo := range customization.Logos {
+			for _, theme := range logo.Themes {
+				if logo.Type == operatorv1.LogoTypeFavicon {
+					(*faviconFlags)[theme.Mode] = fmt.Sprintf("/var/logo/%s/%s", theme.Source.ConfigMap.Name, theme.Source.ConfigMap.Key)
+				}
+				if logo.Type == operatorv1.LogoTypeMasthead {
+					(*logoFlags)[theme.Mode] = fmt.Sprintf("/var/logo/%s/%s", theme.Source.ConfigMap.Name, theme.Source.ConfigMap.Key)
+				}
+			}
 		}
 	}
 

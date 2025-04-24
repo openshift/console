@@ -14,11 +14,32 @@ import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
-import { getBrandingDetails } from './utils/branding';
+import {
+  FAVICON_TYPE,
+  getBrandingDetails,
+  MASTHEAD_TYPE,
+  useCustomLogoURL,
+} from './utils/branding';
 
 export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
-  const details = getBrandingDetails();
+  const { productName, staticLogo } = getBrandingDetails();
   const navigate = useNavigate();
+
+  const { logoUrl: customMastheadUrl, loading } = useCustomLogoURL(MASTHEAD_TYPE);
+  const { logoUrl: customFaviconUrl } = useCustomLogoURL(FAVICON_TYPE);
+
+  React.useEffect(() => {
+    if (customFaviconUrl) {
+      let link = document.querySelector("link[rel='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = customFaviconUrl;
+    }
+  }, [customFaviconUrl]);
+
   const defaultRoute = '/';
   const logoProps = {
     href: defaultRoute,
@@ -40,14 +61,14 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
         <MastheadBrand>
           <MastheadLogo
             component="a"
-            aria-label={window.SERVER_FLAGS.customLogoURL ? undefined : details.productName}
+            aria-label={productName}
             data-test="masthead-logo"
             {...logoProps}
           >
-            {window.SERVER_FLAGS.customLogoURL ? (
-              <Brand src={details.logoImg} alt={details.productName} />
+            {customMastheadUrl ? (
+              <Brand src={customMastheadUrl} alt={productName} />
             ) : (
-              <ReactSVG src={details.logoImg} aria-hidden className="pf-v6-c-brand" />
+              !loading && <ReactSVG src={staticLogo} aria-hidden className="pf-v6-c-brand" />
             )}
           </MastheadLogo>
         </MastheadBrand>

@@ -2,9 +2,11 @@ package serverconfig
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
+	operatorv1 "github.com/openshift/api/operator/v1"
 	v1 "k8s.io/api/authorization/v1"
 )
 
@@ -287,5 +289,42 @@ func TestMissingConfigurationForAccessReviewProperty(t *testing.T) {
 	expectedMsg := "Perspective accessReview for id perspective1 must be configured for state AccessReview."
 	if actualMsg != expectedMsg {
 		t.Errorf("Unexpected error: actual\n%s\n, expected\n%s", actualMsg, expectedMsg)
+	}
+}
+
+func TestValidEntriesForCustomLogos(t *testing.T) {
+	cliData := `Dark=testdata/masthead/okd-logo-dark.svg, Light=testdata/masthead/okd-logo-light.svg`
+
+	actualLogoFiles, err := validateLogoFiles(cliData)
+	if err != nil {
+		t.Error("Unexpected error when parsing data.", err)
+	}
+	expectedLogos := LogosKeyValue{
+		operatorv1.ThemeModeLight: "testdata/masthead/okd-logo-light.svg",
+		operatorv1.ThemeModeDark:  "testdata/masthead/okd-logo-dark.svg",
+	}
+
+	if !reflect.DeepEqual(actualLogoFiles, expectedLogos) {
+		t.Errorf("Unexpected value: actual \n%v\n, expected \n%v\n", actualLogoFiles, expectedLogos)
+	}
+}
+
+func TestUnknownPropertiesForCustomLogos(t *testing.T) {
+	unknownTheme := "unknownTheme"
+	unknownFile := "unknownFile"
+
+	jsonUnknownLogoType := fmt.Sprintf(`%s=testdata/masthead/okd-logo-dark.svg, %s=testdata/masthead/okd-logo-light.svg`, unknownTheme, operatorv1.ThemeModeLight)
+	jsonUnknownLogoFile := fmt.Sprintf(`%s=%s, %s=testdata/masthead/okd-logo-light.svg`, operatorv1.ThemeModeDark, unknownFile, operatorv1.ThemeModeLight)
+	_, err := validateLogoFiles(jsonUnknownLogoType)
+	actualMsg := err.Error()
+	expectedUnknownLogoTypeErr := fmt.Sprintf("unknown custom logo theme: \"%s\". Must be one of [%s, %s]", unknownTheme, operatorv1.ThemeModeDark, operatorv1.ThemeModeLight)
+	if actualMsg != expectedUnknownLogoTypeErr {
+		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg, expectedUnknownLogoTypeErr)
+	}
+	_, err2 := validateLogoFiles(jsonUnknownLogoFile)
+	expectedUnknownLogoThemeErr := fmt.Sprintf("stat %s: no such file or directory", unknownFile)
+	actualMsg2 := err2.Error()
+	if actualMsg2 != expectedUnknownLogoThemeErr {
+		t.Errorf("Unexpected error: actual \n%v\n. expected \n%v\n", actualMsg2, expectedUnknownLogoThemeErr)
 	}
 }
