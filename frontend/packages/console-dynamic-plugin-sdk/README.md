@@ -123,6 +123,7 @@ The following shared modules are provided by Console, without plugins providing 
 
 - `@openshift-console/dynamic-plugin-sdk`
 - `@openshift-console/dynamic-plugin-sdk-internal`
+- `@patternfly/react-topology`
 - `react`
 - `react-i18next`
 - `react-redux`
@@ -132,7 +133,7 @@ The following shared modules are provided by Console, without plugins providing 
 - `redux`
 - `redux-thunk`
 
-For backwards compatibility, Console also provides the following PatternFly **4.x** shared modules:
+For backwards compatibility, Console 4.18 and earlier also provide the following PatternFly **4.x** shared modules:
 
 - `@patternfly/react-core`
 - `@patternfly/react-table`
@@ -164,6 +165,11 @@ This section documents notable changes in the Console provided shared modules ac
 - All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
   Plugins should upgrade to React Router v6 via `react-router-dom-v5-compat` module.
 
+#### Console 4.18.x
+
+- Added `@patternfly/react-topology` to Console provided shared modules. This allows dynamic plugins
+  to use PatternFly 5 topology components with consistent context and styling.
+ 
 ### PatternFly 5+ dynamic modules
 
 Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic
