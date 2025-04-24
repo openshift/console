@@ -504,6 +504,7 @@
   "No new Pods or workloads will be placed on this Node until it's marked as schedulable.": "No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
   "Identity providers": "Identity providers",
   "Mapping method": "Mapping method",
+  "Remove identity provider": "Remove identity provider",
   "Basic Authentication": "Basic Authentication",
   "GitHub": "GitHub",
   "GitLab": "GitLab",

@@ -55,7 +55,7 @@ import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback-dark.svg';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from './QuickCreate';
-import { ThemeContext } from './ThemeProvider';
+import { ThemeContext, THEME_DARK } from './ThemeProvider';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
@@ -94,7 +94,7 @@ const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
       onOpenSupportCase={reportBugLink.href}
       feedbackLocale={feedbackLocales}
       onJoinMailingList="https://console.redhat.com/self-managed-research-form?source=openshift"
-      feedbackImg={theme === 'dark' ? darkFeedbackImage : feedbackImage}
+      feedbackImg={theme === THEME_DARK ? darkFeedbackImage : feedbackImage}
       isOpen={isOpen}
       onClose={onClose}
     />

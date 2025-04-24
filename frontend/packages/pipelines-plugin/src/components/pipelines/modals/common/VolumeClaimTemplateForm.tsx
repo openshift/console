@@ -146,7 +146,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
           />
         </div>
         <div className="odc-VolumeClaimTemplateForm--section">
-          <label className="control-label co-required" htmlFor="request-size-input">
+          <label className="co-required" htmlFor="request-size-input">
             {t('pipelines-plugin~Size')}
           </label>
           <RequestSizeInput
@@ -167,9 +167,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
           )}
         </div>
         <div className="odc-VolumeClaimTemplateForm--section">
-          <label className="control-label" htmlFor="volume-mode">
-            {t('pipelines-plugin~Volume Mode')}
-          </label>
+          <label htmlFor="volume-mode">{t('pipelines-plugin~Volume Mode')}</label>
           <FormGroup fieldId="volumeMode" data-test-id="volumeModeRadio">
             {getVolumeModeRadios().map((radio) => (
               <RadioInput

@@ -65,9 +65,9 @@ const OperatorHubItemCustomizedHint: React.FC<OperatorHubItemCustomizedHintProps
   );
 };
 
-const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabilityLevel }) => {
+export const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capability }) => {
   const { t } = useTranslation();
-  const capabilityLevelIndex = levels.indexOf(selectedChannelCapabilityLevel);
+  const capabilityLevelIndex = levels.indexOf(capability);
 
   return (
     <ul className="properties-side-panel-pf-property-value__capability-levels">
@@ -96,7 +96,7 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ selectedChannelCapabi
 };
 
 type CapabilityLevelProps = {
-  selectedChannelCapabilityLevel: string;
+  capability: string;
 };
 
 const InstalledHint: React.FC<OperatorHubItemDetailsHintProps> = ({
@@ -345,7 +345,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             label={t('olm~Capability level')}
             value={
               selectedChannelCapabilityLevel ? (
-                <CapabilityLevel selectedChannelCapabilityLevel={selectedChannelCapabilityLevel} />
+                <CapabilityLevel capability={selectedChannelCapabilityLevel} />
               ) : (
                 notAvailable
               )

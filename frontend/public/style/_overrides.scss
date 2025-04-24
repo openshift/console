@@ -2,11 +2,6 @@
 
 $masthead-logo-max-height: 60px;
 
-// Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
-.catalog-tile-pf-title {
-  @include co-break-word;
-}
-
 .co-catalog-tile {
   .catalog-tile-pf-icon {
     font-size: unset !important;
@@ -104,10 +99,6 @@ $masthead-logo-max-height: 60px;
     height: var(--co-button-icon-size);
     width: var(--co-button-icon-size);
   }
-}
-
-.help-block {
-  margin-bottom: 0;
 }
 
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
@@ -278,10 +269,6 @@ button.pf-v6-c-dropdown__menu-item.pf-m-disabled {
 
 #modal-container .pf-v6-c-backdrop {
   position: absolute !important;
-}
-
-.form-group--doubled-bottom-margin {
-  margin-bottom: ($form-group-margin-bottom * 2);
 }
 
 // Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-v6-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}

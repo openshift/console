@@ -552,7 +552,7 @@ export const AlertmanagerConfig: React.FC = () => {
   return (
     <>
       <PageBreadcrumb>
-        <Breadcrumb className="monitoring-breadcrumbs">
+        <Breadcrumb>
           <BreadcrumbItem>
             <Link className="pf-v6-c-breadcrumb__link" to={breadcrumbs[0].path}>
               {breadcrumbs[0].name}
@@ -561,7 +561,7 @@ export const AlertmanagerConfig: React.FC = () => {
           <BreadcrumbItem isActive>{breadcrumbs[1].name}</BreadcrumbItem>
         </Breadcrumb>
       </PageBreadcrumb>
-      <NavTitle className="co-m-nav-title--detail co-m-nav-title--breadcrumbs">
+      <NavTitle className="co-m-nav-title--detail">
         <PrimaryHeading>
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">

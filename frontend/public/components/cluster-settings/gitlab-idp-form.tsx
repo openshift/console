@@ -155,7 +155,7 @@ export const AddGitLabPage = () => {
         <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
+            <label className="co-required" htmlFor="url">
               {t('public~URL')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -173,7 +173,7 @@ export const AddGitLabPage = () => {
             </p>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
+            <label className="co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -187,7 +187,7 @@ export const AddGitLabPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
+            <label className="co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
             <span className="pf-v6-c-form-control">

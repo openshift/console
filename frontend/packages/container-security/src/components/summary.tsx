@@ -143,7 +143,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                   <span className="co-status-popup__text--bold">
                     {t('container-security~Fixable Container Images')}
                   </span>
-                  <span className="text-secondary">
+                  <span className="pf-v6-u-text-color-subtle">
                     &nbsp;
                     {t('container-security~{{vulnImageCount, number}} total', {
                       vulnImageCount: fixableVulns.size,
@@ -184,11 +184,11 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                           )}
                     </Link>
                   </span>
-                  <div className="text-secondary">
+                  <div className="pf-v6-u-text-color-subtle">
                     {quayURLFor(v) ? (
                       <ExternalLink href={quayURLFor(v)} text={getVulnerabilityCountText(v)} />
                     ) : (
-                      <span className="small text-muted">-</span>
+                      <span className="small pf-v6-u-text-color-subtle">-</span>
                     )}
                   </div>
                 </div>
@@ -209,7 +209,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
         </>
       ) : (
         <StackItem>
-          <span className="text-secondary">
+          <span className="pf-v6-u-text-color-subtle">
             {t('container-security~No vulnerabilities detected.')}
           </span>
         </StackItem>

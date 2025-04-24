@@ -211,7 +211,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
           )}
         </FormGroup>
         <div className="co-clone-pvc-modal__details">
-          <p className="text-muted">{t('console-app~PVC details')}</p>
+          <p className="pf-v6-u-text-color-subtle">{t('console-app~PVC details')}</p>
           <div className="co-clone-pvc-modal__details-section">
             <div>
               <div>

@@ -685,16 +685,14 @@ export const TileViewPage = (props) => {
   };
 
   const renderTabs = (category, selected) => {
-    const { id, label, subcategories, numItems } = category;
+    const { id, label, subcategories } = category;
     const active = id === selected;
     const shown = id === 'all';
 
-    const tabClasses = `text-capitalize${!numItems ? ' co-catalog-tab__empty' : ''}`;
     return (
       <VerticalTabsTab
         key={id}
         active={active}
-        className={tabClasses}
         hasActiveDescendant={hasActiveDescendant(selected, category)}
         shown={shown}
         data-test={id}

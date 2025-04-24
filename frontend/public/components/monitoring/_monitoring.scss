@@ -85,10 +85,6 @@
   }
 }
 
-.monitoring-breadcrumbs {
-  padding-bottom: var(--pf-t--global--spacer--sm);
-}
-
 .monitoring-dashboards__card {
   height: calc(100% - 20px);
   margin: 0 0 20px 0;
@@ -582,7 +578,8 @@ $monitoring-line-height: 18px;
 }
 
 .query-browser__wrapper {
-  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+  border: var(--pf-t--global--border--width--regular) solid
+    var(--pf-t--global--border--color--default);
   margin: 0 0 20px 0;
   overflow: visible;
   padding: 10px;

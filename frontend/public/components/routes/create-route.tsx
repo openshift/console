@@ -451,7 +451,7 @@ class CreateRouteWithTranslation extends React.Component<
           </div>
         </div>
         <div className="form-group co-create-route__security">
-          <label className="control-label">{t('public~Security')}</label>
+          <label>{t('public~Security')}</label>
           <div className="checkbox">
             <label>
               <input

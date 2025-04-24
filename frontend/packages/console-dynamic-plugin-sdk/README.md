@@ -168,6 +168,9 @@ This section documents notable changes in the Console provided shared modules ac
 
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
+- VirtualizedTable, ListPageFilter, and useListPageFilter are deprecated and will be removed in the future.
+  PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) extension should be used
+  instead. See this [proof of concept](https://github.com/openshift/console/pull/14897) for an example.
 - Upgraded `react-router` and `react-router-dom` shared modules to v6. Plugins using these modules must
   ensure that their dependencies are up to date.
 - Shared module `react-router-dom-v5-compat` is deprecated and will be removed in the future.
@@ -188,6 +191,8 @@ This section documents notable changes in the Console provided shared modules ac
   removed in the future. Plugins should provide their own CSS to spin icons if needed.
 - Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve
   correct styling.
+  Removed styling for generic HTML description list elements (e.g., `<dl>`, `<dt>`, `<dd>`). Use PatternFly
+  components to achieve correct styling.
 - Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
   instead.
 - Removed `co-m-page__body` styling. Use [PatternFly Flex](https://www.patternfly.org/layouts/flex) instead.
@@ -196,6 +201,7 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed `co-m-nav-title` spacing styling. Use
   [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
 - Removed `co-button-help-icon`, `co-inline`, `co-resource-list*`, `co-toolbar*` styling.
+- Removed Bootstrap `table`, `text-muted`, `text-secondary` styling.
 - Removed `co-m-pane__details` and `details-item` styling. Use
   [PatternFly DescriptionList](https://www.patternfly.org/components/description-list) instead.
 

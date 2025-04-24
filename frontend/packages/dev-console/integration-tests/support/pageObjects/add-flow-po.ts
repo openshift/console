@@ -157,7 +157,7 @@ export const catalogPO = {
   filterInfoTipContent: '[id*=popover]',
   filterCheckBox: '[type="checkbox"]',
   chartRepositoryGroup: '[data-test-group-name="chartRepositoryTitle"]',
-  catalogTypeLink: 'li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty',
+  catalogTypeLink: 'li.vertical-tabs-pf-tab.shown',
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
     helmCharts: '[data-test="tab HelmChart"]',

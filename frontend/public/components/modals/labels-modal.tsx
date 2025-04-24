@@ -98,7 +98,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
-            <label htmlFor="tags-input" className="control-label">
+            <label htmlFor="tags-input">
               {descriptionKey
                 ? t('{{description}} for', { description: t(descriptionKey) })
                 : t('public~Labels for')}{' '}

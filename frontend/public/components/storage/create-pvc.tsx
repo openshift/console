@@ -153,7 +153,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           filter={onlyPvcSCs}
         />
       </div>
-      <label className="control-label co-required" htmlFor="pvc-name">
+      <label className="co-required" htmlFor="pvc-name">
         {t('public~PersistentVolumeClaim name')}
       </label>
       <div className="form-group">
@@ -184,7 +184,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           ignoreReadOnly
         />
       </div>
-      <label className="control-label co-required" htmlFor="request-size-input">
+      <label className="co-required" htmlFor="request-size-input">
         {t('public~Size')}
       </label>
       <RequestSizeInput

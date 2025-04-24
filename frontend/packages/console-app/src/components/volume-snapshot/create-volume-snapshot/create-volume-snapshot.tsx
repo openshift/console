@@ -275,7 +275,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
             ) : (
               /* eslint-disable jsx-a11y/label-has-associated-control */
               <>
-                <label className="control-label co-required" html-for="claimName">
+                <label className="co-required" html-for="claimName">
                   {t('console-app~PersistentVolumeClaim')}
                 </label>
                 <PVCDropdown
@@ -291,7 +291,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               </>
             )}
             <div className="form-group co-volume-snapshot__form">
-              <label className="control-label co-required" htmlFor="snapshot-name">
+              <label className="co-required" htmlFor="snapshot-name">
                 {t('console-app~Name')}
               </label>
               <span className="pf-v6-c-form-control">
@@ -307,7 +307,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
             </div>
             {pvcObj && (
               <div className="form-group co-volume-snapshot__form">
-                <label className="control-label co-required" htmlFor="snapshot-class">
+                <label className="co-required" htmlFor="snapshot-class">
                   {t('console-app~Snapshot Class')}
                 </label>
                 {vscErr || scObjListErr ? (

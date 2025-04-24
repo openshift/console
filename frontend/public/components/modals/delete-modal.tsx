@@ -105,7 +105,7 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
           )}
           {_.has(kind, 'propagationPolicy') && (
             <div className="checkbox">
-              <label className="control-label">
+              <label>
                 <input
                   type="checkbox"
                   onChange={() => setIsChecked(!isChecked)}
@@ -117,7 +117,7 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
           )}
           {props.deleteAllResources && (
             <div className="checkbox">
-              <label className="control-label">
+              <label>
                 <input
                   type="checkbox"
                   onChange={() => setIsDeleteOtherResourcesChecked(!isDeleteOtherResourcesChecked)}

@@ -326,7 +326,9 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         columnID={namespaceColumnInfo.displayName.id}
       >
         <span className="co-break-word co-line-clamp">
-          {getDisplayName(ns) || <span className="text-muted">{t('public~No display name')}</span>}
+          {getDisplayName(ns) || (
+            <span className="pf-v6-u-text-color-subtle">{t('public~No display name')}</span>
+          )}
         </span>
       </TableData>
       <TableData
@@ -341,7 +343,7 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         columns={columns}
         columnID={namespaceColumnInfo.requester.id}
       >
-        {requester || <span className="text-muted">{t('public~No requester')}</span>}
+        {requester || <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>}
       </TableData>
       <TableData
         className={namespaceColumnInfo.memory.classes}
@@ -370,7 +372,9 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         columnID={namespaceColumnInfo.description.id}
       >
         <span className="co-break-word co-line-clamp">
-          {description || <span className="text-muted">{t('public~No description')}</span>}
+          {description || (
+            <span className="pf-v6-u-text-color-subtle">{t('public~No description')}</span>
+          )}
         </span>
       </TableData>
       <TableData
@@ -658,7 +662,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
       >
         <span className="co-break-word co-line-clamp">
           {getDisplayName(project) || (
-            <span className="text-muted">{t('public~No display name')}</span>
+            <span className="pf-v6-u-text-color-subtle">{t('public~No display name')}</span>
           )}
         </span>
       </TableData>
@@ -674,7 +678,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
         columns={columns}
         columnID={namespaceColumnInfo.requester.id}
       >
-        {requester || <span className="text-muted">{t('public~No requester')}</span>}
+        {requester || <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>}
       </TableData>
       {showMetrics && (
         <>
@@ -709,7 +713,9 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
             columnID={namespaceColumnInfo.description.id}
           >
             <span className="co-break-word co-line-clamp">
-              {description || <span className="text-muted">{t('public~No description')}</span>}
+              {description || (
+                <span className="pf-v6-u-text-color-subtle">{t('public~No description')}</span>
+              )}
             </span>
           </TableData>
           <TableData
@@ -1027,7 +1033,7 @@ export const NamespaceSummary = ({ ns }) => {
             <DescriptionListDescription>
               <p
                 className={classNames({
-                  'text-muted': !description,
+                  'pf-v6-u-text-color-subtle': !description,
                   'co-pre-wrap': description,
                   'co-namespace-summary__description': description,
                 })}

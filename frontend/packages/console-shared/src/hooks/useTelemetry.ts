@@ -19,6 +19,7 @@ interface ClusterProperties {
   clusterType?: string;
   consoleVersion?: string;
   organizationId?: string;
+  accountMail?: string;
 }
 
 export const getClusterProperties = () => {
@@ -35,6 +36,7 @@ export const getClusterProperties = () => {
   clusterProperties.consoleVersion =
     window.SERVER_FLAGS?.releaseVersion || window.SERVER_FLAGS?.consoleVersion;
   clusterProperties.organizationId = window.SERVER_FLAGS?.telemetry?.ORGANIZATION_ID;
+  clusterProperties.accountMail = window.SERVER_FLAGS?.telemetry?.ACCOUNT_MAIL;
   return clusterProperties;
 };
 

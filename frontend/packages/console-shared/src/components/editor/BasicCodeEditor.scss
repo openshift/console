@@ -1,7 +1,11 @@
+.co-code-editor .monaco-editor label {
+  font-weight: unset; // our _bootstrap-residual.scss
+}
+
 // match the token in theme.ts. it already matches for light theme
 .pf-v6-theme-dark {
   .co-code-editor:not(.pf-m-read-only) {
-      --pf-v6-c-code-editor__main--BackgroundColor: var(--pf-t--color--gray--90);
-      --pf-v6-c-code-editor__tab--BackgroundColor: var(--pf-t--color--gray--90);
+    --pf-v6-c-code-editor__main--BackgroundColor: var(--pf-t--color--gray--90);
+    --pf-v6-c-code-editor__tab--BackgroundColor: var(--pf-t--color--gray--90);
   }
 }

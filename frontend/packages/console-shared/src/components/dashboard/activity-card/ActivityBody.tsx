@@ -24,7 +24,7 @@ export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => {
   return (
     <div className="co-activity-item__ongoing" data-test="activity">
       {timestamp && (
-        <span className="text-secondary">
+        <span className="pf-v6-u-text-color-subtle">
           {t('console-shared~Started')}{' '}
           <span data-test="timestamp">
             <Timestamp simple timestamp={timestamp.toString()} />
@@ -95,7 +95,9 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
   if (sortedEvents.length === 0) {
     return (
       <Activity>
-        <div className="text-secondary">{t('console-shared~There are no recent events.')}</div>
+        <div className="pf-v6-u-text-color-subtle">
+          {t('console-shared~There are no recent events.')}
+        </div>
       </Activity>
     );
   }
@@ -204,7 +206,9 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       allActivities
     ) : (
       <Activity>
-        <div className="text-secondary">{t('console-shared~There are no ongoing activities.')}</div>
+        <div className="pf-v6-u-text-color-subtle">
+          {t('console-shared~There are no ongoing activities.')}
+        </div>
       </Activity>
     );
   }

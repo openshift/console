@@ -37,7 +37,9 @@ const BuildRunItem: React.FC<BuildRunItemProps> = ({ buildRun }) => {
             {lastUpdated && (
               <>
                 {' '}
-                <span className="so-build-run-item__time text-muted">({fromNow(lastUpdated)})</span>
+                <span className="so-build-run-item__time pf-v6-u-text-color-subtle">
+                  ({fromNow(lastUpdated)})
+                </span>
               </>
             )}
           </div>

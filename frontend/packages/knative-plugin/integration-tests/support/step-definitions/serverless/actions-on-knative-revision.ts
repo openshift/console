@@ -1,10 +1,12 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour, guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   addOptions,
   devNavigationMenu,
   nodeActions,
+  pageTitle,
 } from '@console/dev-console/integration-tests/support/constants';
 import { formPO, topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -26,6 +28,14 @@ let numOfAnnotationsBeforeAdd: number;
 
 Given('user is at Import from Git page', () => {
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
+});
+
+When('user selects Import from Git from quick create', () => {
+  cy.get('[data-test="quick-create-dropdown"]').click();
+  cy.get('[data-test="qc-import-from-git"] [role="menuitem"]')
+    .should('be.visible')
+    .click({ force: true });
+  detailsPage.titleShouldContain(pageTitle.Git);
 });
 
 Given(

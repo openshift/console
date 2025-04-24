@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { ResolvedExtension, CatalogItemType } from '@console/dynamic-plugin-sdk';
-import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk/src/extensions';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   PageHeading,
   skeletonCatalog,
@@ -33,7 +33,7 @@ type CatalogControllerProps = CatalogService & {
   enableDetailsPanel?: boolean;
   hideSidebar?: boolean;
   title: string;
-  description: string;
+  description: string | React.ReactElement;
   categories?: CatalogCategory[];
 };
 
@@ -72,15 +72,12 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   };
 
   const filterGroups: string[] = React.useMemo(() => {
-    return (
-      typeExtension?.properties.filters?.map((filter: CatalogItemAttribute) => filter.attribute) ??
-      []
-    );
+    return typeExtension?.properties.filters?.map((filter) => filter.attribute) ?? [];
   }, [typeExtension]);
 
   const filterGroupMap: CatalogFilterGroupMap = React.useMemo(() => {
     return (
-      typeExtension?.properties.filters?.reduce((map, filter: CatalogItemAttribute) => {
+      typeExtension?.properties.filters?.reduce((map, filter) => {
         map[filter.attribute] = filter;
         return map;
       }, {}) ?? {}
@@ -89,7 +86,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   const groupings: CatalogStringMap = React.useMemo(() => {
     return (
-      typeExtension?.properties.groupings?.reduce((map, group: CatalogItemAttribute) => {
+      typeExtension?.properties.groupings?.reduce((map, group) => {
         map[group.attribute] = group.label;
         return map;
       }, {}) ?? {}

@@ -26,11 +26,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
   return (
     <div data-test-id="slack-receiver-form">
       <div className="form-group">
-        <label
-          data-test-id="api-url-label"
-          className="control-label co-required"
-          htmlFor="slack-api-url"
-        >
+        <label data-test-id="api-url-label" className="co-required" htmlFor="slack-api-url">
           {t('public~Slack API URL')}
         </label>
         <div className="row">
@@ -69,7 +65,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label co-required" htmlFor="slack-channel">
+        <label className="co-required" htmlFor="slack-channel">
           {t('public~Channel')}
         </label>
         <span className="pf-v6-c-form-control">
@@ -106,7 +102,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               />
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="slack-icon-type">
+              <label htmlFor="slack-icon-type">
                 {t('public~Icon')} &nbsp;
                 <RadioInput
                   title={t('public~URL')}
@@ -191,9 +187,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               )}
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="slack-username">
-                {t('public~Username')}
-              </label>
+              <label htmlFor="slack-username">{t('public~Username')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -215,7 +209,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             </div>
             <div className="form-group">
               <div className="checkbox">
-                <label className="control-label" htmlFor="slack-link-names">
+                <label htmlFor="slack-link-names">
                   <input
                     type="checkbox"
                     id="slack-link-names"
@@ -237,9 +231,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="slack-title">
-                {t('public~Title')}
-              </label>
+              <label htmlFor="slack-title">{t('public~Title')}</label>
               <TextArea
                 id="slack-title"
                 aria-describedby="slack-title-help"
@@ -256,9 +248,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="slack-text">
-                {t('public~Text')}
-              </label>
+              <label htmlFor="slack-text">{t('public~Text')}</label>
               <TextArea
                 id="slack-text"
                 aria-describedby="slack-text-help"

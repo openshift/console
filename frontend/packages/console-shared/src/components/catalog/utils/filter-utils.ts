@@ -81,16 +81,25 @@ export const determineAvailableFilters = (
   filterGroups: string[],
 ): CatalogFilters => {
   const filters = _.cloneDeep(initialFilters);
-
   _.each(filterGroups, (field) => {
     _.each(items, (item) => {
       const value = item[field] || item.attributes?.[field];
       if (value) {
-        _.set(filters, [field, value], {
-          label: value,
-          value,
-          active: false,
-        });
+        if (Array.isArray(value)) {
+          _.each(value, (v) => {
+            _.set(filters, [field, v], {
+              label: v,
+              value: v,
+              active: false,
+            });
+          });
+        } else {
+          _.set(filters, [field, value], {
+            label: value,
+            value,
+            active: false,
+          });
+        }
       }
     });
   });

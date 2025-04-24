@@ -24,9 +24,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
   return (
     <div data-test-id="pagerduty-receiver-form">
       <div className="form-group">
-        <label className="control-label" htmlFor="integration-type-events">
-          {t('public~Integration type')}
-        </label>
+        <label htmlFor="integration-type-events">{t('public~Integration type')}</label>
         <div>
           <RadioInput
             title={t('public~Events API v2')}
@@ -60,11 +58,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         </div>
       </div>
       <div className="form-group">
-        <label
-          data-test-id="pagerduty-key-label"
-          className="control-label co-required"
-          htmlFor="integration-key"
-        >
+        <label data-test-id="pagerduty-key-label" className="co-required" htmlFor="integration-key">
           {formValues.pagerdutyIntegrationKeyType === 'events'
             ? t('public~Routing key')
             : t('public~Service key')}
@@ -89,11 +83,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         </div>
       </div>
       <div className="form-group">
-        <label
-          data-test-id="pagerduty-url-label"
-          className="control-label co-required"
-          htmlFor="pagerduty-url"
-        >
+        <label data-test-id="pagerduty-url-label" className="co-required" htmlFor="pagerduty-url">
           {t('public~PagerDuty URL')}
         </label>
         <div className="row">
@@ -147,9 +137,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {t('public~Client details')}
             </Title>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-client">
-                {t('public~Client')}
-              </label>
+              <label htmlFor="pagerduty-client">{t('public~Client')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -170,9 +158,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-client-url">
-                {t('public~Client URL')}
-              </label>
+              <label htmlFor="pagerduty-client-url">{t('public~Client URL')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -196,9 +182,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {t('public~Incident details')}
             </Title>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-description">
-                {t('public~Description')}
-              </label>
+              <label htmlFor="pagerduty-description">{t('public~Description')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -219,9 +203,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-severity">
-                {t('public~Severity')}
-              </label>
+              <label htmlFor="pagerduty-severity">{t('public~Severity')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"

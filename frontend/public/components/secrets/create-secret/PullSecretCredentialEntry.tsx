@@ -43,7 +43,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
   return (
     <PaneBodyGroup data-test-id="create-image-secret-form">
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${id}-address`}>
+        <label className="co-required" htmlFor={`${id}-address`}>
           {t('public~Registry server address')}
         </label>
         <div>
@@ -66,7 +66,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         </p>
       </div>
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${id}-username`}>
+        <label className="co-required" htmlFor={`${id}-username`}>
           {t('public~Username')}
         </label>
         <div>
@@ -85,7 +85,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${id}-password`}>
+        <label className="co-required" htmlFor={`${id}-password`}>
           {t('public~Password')}
         </label>
         <div>
@@ -104,9 +104,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label" htmlFor={`${id}-email`}>
-          {t('public~Email')}
-        </label>
+        <label htmlFor={`${id}-email`}>{t('public~Email')}</label>
         <div>
           <span className="pf-v6-c-form-control">
             <input

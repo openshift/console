@@ -32,7 +32,7 @@ const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
-	catalogdHost = "catalogd-catalogserver.openshift-catalogd.svc:443"
+	catalogdHost = "catalogd-service.openshift-catalogd.svc:443"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
@@ -111,7 +111,11 @@ func main() {
 
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
-	fCustomLogoFile := fs.String("custom-logo-file", "", "Custom product image for console branding.")
+
+	customLogoFlags := serverconfig.LogosKeyValue{}
+	fs.Var(&customLogoFlags, "custom-logo-files", "List of custom product images used for console branding. Each entry consist of theme type (Dark | Light ) as a key and path to image file as value.")
+	customFaviconFlags := serverconfig.LogosKeyValue{}
+	fs.Var(&customFaviconFlags, "custom-favicon-files", "List of custom favicon images used for console branding. Each entry consist of theme type (Dark | Light ) as a key and path to image file as value.")
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 
@@ -207,12 +211,6 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("branding", "value must be one of okd, openshift, ocp, online, dedicated, azure, or rosa"))
 	}
 
-	if *fCustomLogoFile != "" {
-		if _, err := os.Stat(*fCustomLogoFile); err != nil {
-			klog.Fatalf("could not read logo file: %v", err)
-		}
-	}
-
 	if len(consolePluginsFlags) > 0 {
 		klog.Infoln("The following console plugins are enabled:")
 		for pluginName := range consolePluginsFlags {
@@ -266,7 +264,8 @@ func main() {
 		BaseURL:                      baseURL,
 		Branding:                     branding,
 		CustomProductName:            *fCustomProductName,
-		CustomLogoFile:               *fCustomLogoFile,
+		CustomLogoFiles:              customLogoFlags,
+		CustomFaviconFiles:           customFaviconFlags,
 		ControlPlaneTopology:         *fControlPlaneTopology,
 		StatuspageID:                 *fStatuspageID,
 		DocumentationBaseURL:         documentationBaseURL,

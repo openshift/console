@@ -123,7 +123,7 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
           />
         )}
         {from && !referencesTag && <>{from.name}</>}
-        {!from && <span className="text-muted">{t('public~pushed image')}</span>}
+        {!from && <span className="pf-v6-u-text-color-subtle">{t('public~pushed image')}</span>}
       </Td>
       <Td modifier="breakWord" visibility={['hidden', 'visibleOnSm']}>
         {!imageStreamStatus && dockerRepositoryCheck && (
@@ -274,7 +274,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
       <PaneBody>
         <SectionHeading text={t('public~Tags')} />
         {_.isEmpty(imageStream.status.tags) ? (
-          <span className="text-muted">{t('public~No tags')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('public~No tags')}</span>
         ) : (
           <PfTable gridBreakPoint="">
             <Thead>

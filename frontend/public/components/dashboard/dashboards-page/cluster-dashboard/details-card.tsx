@@ -87,7 +87,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       return lastVersion ? (
         <span className="co-select-to-copy">{lastVersion}</span>
       ) : (
-        <span className="text-secondary">{t('public~Not available')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('public~Not available')}</span>
       );
   }
 };

@@ -181,7 +181,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
     >
       <form onSubmit={submit} name="form" className="modal-content">
         <div className="form-group">
-          <label htmlFor="input-name" className="control-label co-required">
+          <label htmlFor="input-name" className="co-required">
             {t('console-shared~Name')}
           </label>
           <FieldLevelHelp>
@@ -211,9 +211,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="tags-input" className="control-label">
-            {t('console-shared~Labels')}
-          </label>
+          <label htmlFor="tags-input">{t('console-shared~Labels')}</label>
           <div className="modal-body__field">
             <SelectorInput
               labelClassName="co-m-namespace"
@@ -223,9 +221,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="network-policy" className="control-label">
-            {t('console-shared~Default network policy')}
-          </label>
+          <label htmlFor="network-policy">{t('console-shared~Default network policy')}</label>
           <div className="modal-body__field ">
             <Select
               id="dropdown-selectbox"

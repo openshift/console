@@ -31,7 +31,7 @@ export const OverviewDetailItem: React.FC<OverviewDetailItemProps> = ({
   let status: React.ReactNode;
 
   if (error) {
-    status = <span className="text-secondary">{error}</span>;
+    status = <span className="pf-v6-u-text-color-subtle">{error}</span>;
   } else if (isLoading) {
     status = <div className="skeleton-text" />;
   } else {

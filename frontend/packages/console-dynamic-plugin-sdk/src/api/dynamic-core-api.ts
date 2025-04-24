@@ -83,6 +83,7 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/int
   .HorizontalNavFacade;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
  * A component for making virtualized tables
  * @param {D} data - data for table
  * @param {boolean} loaded - flag indicating data is loaded
@@ -274,6 +275,7 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = req
   .ListPageCreateDropdown;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
  * Component that generates filter for list page.
  * @param {D} data - An array of data points
  * @param {boolean} loaded - indicates that data has loaded
@@ -314,6 +316,7 @@ export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/i
   .default;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
  * A hook that manages filter state for the ListPageFilter component.
  * @param data - An array of data points
  * @param rowFilters - (optional) An array of RowFilter elements that define the available filter options
@@ -419,7 +422,7 @@ export {
  *     firstColumn={
  *       <>
  *         <span>{title}</span>
- *         <span className="text-secondary">
+ *         <span className="pf-v6-u-text-color-subtle">
  *           My Example Item
  *         </span>
  *       </>
@@ -711,8 +714,8 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
  * @param {TimestampProps['omitSuffix']} omitSuffix - formats the date ommiting the suffix.
  * @param {TimestampProps['className']} className - additional class name for the component.
  */
-export const Timestamp: React.FC<TimestampProps> = require('@console/internal/components/utils/timestamp')
-  .Timestamp;
+export const Timestamp: React.FC<TimestampProps> = require('@console/shared/src/components/datetime/Timestamp')
+  .default;
 
 export { useModal } from '../app/modal-support/useModal';
 

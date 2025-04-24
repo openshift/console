@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   CloudCredentialKind,
   InfrastructureKind,
@@ -6,15 +7,28 @@ import {
   ObjectMetadata,
 } from '@console/internal/module/k8s';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
-import { DefaultCatalogSource, PackageSource } from '../../const';
+import { DefaultCatalogSource, DefaultClusterCatalog, PackageSource } from '../../const';
 import { PackageManifestKind } from '../../types';
-import { InfrastructureFeature, OLMAnnotation, ValidSubscriptionValue } from './index';
+import {
+  CapabilityLevel,
+  InfrastructureFeature,
+  InstalledState,
+  OLMAnnotation,
+  ValidSubscriptionValue,
+} from './index';
 
 export const defaultPackageSourceMap = {
   [DefaultCatalogSource.RedHatOperators]: PackageSource.RedHatOperators,
   [DefaultCatalogSource.RedHatMarketPlace]: PackageSource.RedHatMarketplace,
   [DefaultCatalogSource.CertifiedOperators]: PackageSource.CertifiedOperators,
   [DefaultCatalogSource.CommunityOperators]: PackageSource.CommunityOperators,
+};
+
+export const defaultClusterCatalogSourceMap = {
+  [DefaultClusterCatalog.OpenShiftRedHatOperators]: PackageSource.RedHatOperators,
+  [DefaultClusterCatalog.OpenShiftRedHatMarketPlace]: PackageSource.RedHatMarketplace,
+  [DefaultClusterCatalog.OpenShiftCertifiedOperators]: PackageSource.CertifiedOperators,
+  [DefaultClusterCatalog.OpenShiftCommunityOperators]: PackageSource.CommunityOperators,
 };
 
 export const getPackageSource = (packageManifest: PackageManifestKind): PackageSource => {
@@ -94,8 +108,6 @@ export const infrastructureFeatureMap = {
   [OLMAnnotation.TokenAuthAzure]: InfrastructureFeature.TokenAuth,
   [OLMAnnotation.TokenAuthGCP]: InfrastructureFeature.TokenAuthGCP,
 };
-export const normalizeInfrastructureFeature = (feature: string): InfrastructureFeature =>
-  infrastructureFeatureMap[feature] ?? feature;
 
 // TODO Replace with JSONSchema validation
 export const isArrayOfStrings = (value: any): value is string[] =>
@@ -144,48 +156,49 @@ const parseValidSubscriptionAnnotation: AnnotationParser<string[]> = (annotation
     ...options,
   }) ?? [];
 
+export const validSubscriptionReducer = (validSubscriptions: string[]): [string[], string[]] => {
+  if (!validSubscriptions) {
+    return [[], []];
+  }
+  const validSubscriptionMap = validSubscriptions?.reduce<{ [key: string]: string[] }>(
+    (acc, value) => {
+      switch (value) {
+        case ValidSubscriptionValue.OpenShiftContainerPlatform:
+        case ValidSubscriptionValue.OpenShiftPlatformPlus:
+          return {
+            ...acc,
+            [value]: [value],
+          };
+        case ValidSubscriptionValue.OpenShiftKubernetesEngine:
+        case ValidSubscriptionValue.OpenShiftVirtualizationEngine:
+          return {
+            ...acc,
+            [ValidSubscriptionValue.OpenShiftKubernetesEngine]: [
+              ValidSubscriptionValue.OpenShiftKubernetesEngine,
+            ],
+            [ValidSubscriptionValue.OpenShiftVirtualizationEngine]: [
+              ValidSubscriptionValue.OpenShiftVirtualizationEngine,
+            ],
+          };
+        default:
+          return {
+            ...acc,
+            [ValidSubscriptionValue.RequiresSeparateSubscription]: [
+              ...(acc?.[ValidSubscriptionValue.RequiresSeparateSubscription] ?? []),
+              value,
+            ],
+          };
+      }
+    },
+    {},
+  );
+  return [_.flatten(Object.values(validSubscriptionMap)), Object.keys(validSubscriptionMap)];
+};
+
 export const getValidSubscription: AnnotationParser<[string[], string[]]> = (
   annotations,
   options,
-) => {
-  const validSubscriptionMap = parseValidSubscriptionAnnotation(annotations, options).reduce<{
-    [key: string]: string[];
-  }>((acc, value) => {
-    switch (value) {
-      case ValidSubscriptionValue.OpenShiftContainerPlatform:
-      case ValidSubscriptionValue.OpenShiftPlatformPlus:
-        return {
-          ...acc,
-          [value]: [value],
-        };
-      case ValidSubscriptionValue.OpenShiftKubernetesEngine:
-      case ValidSubscriptionValue.OpenShiftVirtualizationEngine:
-        return {
-          ...acc,
-          [ValidSubscriptionValue.OpenShiftKubernetesEngine]: [
-            ValidSubscriptionValue.OpenShiftKubernetesEngine,
-          ],
-          [ValidSubscriptionValue.OpenShiftVirtualizationEngine]: [
-            ValidSubscriptionValue.OpenShiftVirtualizationEngine,
-          ],
-        };
-      default:
-        return {
-          ...acc,
-          [ValidSubscriptionValue.RequiresSeparateSubscription]: [
-            ...(acc?.[ValidSubscriptionValue.RequiresSeparateSubscription] ?? []),
-            value,
-          ],
-        };
-    }
-  }, {});
-
-  const validSubscriptions = Object.values(validSubscriptionMap).reduce(
-    (acc, subscriptions) => [...acc, ...subscriptions],
-    [],
-  );
-  return [validSubscriptions, Object.keys(validSubscriptionMap)];
-};
+) => validSubscriptionReducer(parseValidSubscriptionAnnotation(annotations, options));
 
 const parseInfrastructureFeaturesAnnotation: AnnotationParser<string[]> = (annotations, options) =>
   parseJSONAnnotation<InfrastructureFeature[]>(annotations, OLMAnnotation.InfrastructureFeatures, {
@@ -207,7 +220,7 @@ export const getInfrastructureFeatures: AnnotationParser<
     clusterIsAWSSTS && annotations[OLMAnnotation.TokenAuthAWS] !== 'false';
   return [...parsedInfrastructureFeatures, ...Object.keys(annotations ?? {})].reduce(
     (supportedFeatures, key) => {
-      const feature = normalizeInfrastructureFeature(key);
+      const feature = infrastructureFeatureMap[key];
 
       if (!feature) {
         return supportedFeatures;
@@ -252,6 +265,87 @@ export const getInfrastructureFeatures: AnnotationParser<
     },
     [],
   );
+};
+
+export const providerSort = (provider: string): string => {
+  if (provider.toLowerCase() === 'red hat') {
+    return '';
+  }
+  return provider;
+};
+
+export const sourceSort = (source: string): number => {
+  switch (source) {
+    case PackageSource.RedHatOperators:
+      return 0;
+    case PackageSource.CertifiedOperators:
+      return 1;
+    case PackageSource.CommunityOperators:
+      return 2;
+    case PackageSource.RedHatMarketplace:
+      return 3;
+    default:
+      return 4;
+  }
+};
+
+export const installedStateSort = (provider: string): number => {
+  switch (provider) {
+    case InstalledState.Installed:
+      return 0;
+    case InstalledState.NotInstalled:
+      return 1;
+    default:
+      return 3;
+  }
+};
+
+export const capabilityLevelSort = (capability: string): number => {
+  switch (capability) {
+    case CapabilityLevel.BasicInstall:
+      return 0;
+    case CapabilityLevel.SeamlessUpgrades:
+      return 1;
+    case CapabilityLevel.FullLifecycle:
+      return 2;
+    case CapabilityLevel.DeepInsights:
+      return 3;
+    default:
+      return 5;
+  }
+};
+
+export const infraFeaturesSort = (infrastructure: string): number => {
+  switch (infrastructure) {
+    case InfrastructureFeature.Disconnected:
+      return 0;
+    case InfrastructureFeature.ProxyAware:
+      return 1;
+    case InfrastructureFeature.FIPSMode:
+      return 2;
+    case InfrastructureFeature.TokenAuth:
+      return 3;
+    case InfrastructureFeature.TLSProfiles:
+      return 4;
+    default:
+      return 5;
+  }
+};
+
+export const validSubscriptionSort = (validSubscription: string): number => {
+  switch (validSubscription) {
+    case ValidSubscriptionValue.OpenShiftKubernetesEngine:
+    case ValidSubscriptionValue.OpenShiftVirtualizationEngine:
+      return 0;
+    case ValidSubscriptionValue.OpenShiftContainerPlatform:
+      return 1;
+    case ValidSubscriptionValue.OpenShiftPlatformPlus:
+      return 2;
+    case ValidSubscriptionValue.RequiresSeparateSubscription:
+      return 3;
+    default:
+      return 4;
+  }
 };
 
 type AnnotationParserOptions = {

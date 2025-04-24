@@ -13,10 +13,6 @@
   .monaco-editor {
     position: absolute; // part of the fix for ResizeObserver issue
 
-    // revert custom overrides
-    .label-name { text-decoration: none; }
-    label { font-weight: unset; }
-
     .monaco-hover-content .markdown-hover {
       // matches tooltip styling seen back in OpenShift 4.18
       max-width: 500px;

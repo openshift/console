@@ -127,7 +127,7 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
   ) : (
     <span className="co-break-word">
       {first}
-      <span className="text-muted">.{rest.join('.')}</span>
+      <span className="pf-v6-u-text-color-subtle">.{rest.join('.')}</span>
     </span>
   );
 };
@@ -483,7 +483,7 @@ const Subject: React.FC<{ value: string }> = ({ value }) => {
   const [first, ...rest] = value.split(':');
   return first === 'system' && !_.isEmpty(rest) ? (
     <>
-      <span className="text-muted">{first}:</span>
+      <span className="pf-v6-u-text-color-subtle">{first}:</span>
       {rest.join(':')}
     </>
   ) : (

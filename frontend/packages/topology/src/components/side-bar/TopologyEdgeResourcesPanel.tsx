@@ -47,7 +47,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
           const sinkUri = spec?.sinkUri;
 
           return (
-            <li className="list-group-item  container-fluid" key={uid}>
+            <li className="list-group-item" key={uid}>
               {!sinkUri ? (
                 <ResourceLink
                   kind={referenceFor(resource)}
@@ -71,7 +71,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
         <>
           <SidebarSectionHeading text={t('topology~Secret')} />
           <ul className="list-group">
-            <li className="list-group-item  container-fluid" key={data.sbr.status.secret}>
+            <li className="list-group-item" key={data.sbr.status.secret}>
               <ResourceLink
                 kind={referenceForModel(SecretModel)}
                 name={data.sbr.status.secret}
