@@ -44,7 +44,7 @@ export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) 
 );
 
 /**
- * A `PageHeading` with additional features: see additional props for more
+ * A `PageHeading` which connects to a model and displays the resource name, status, and actions.
  */
 export const ConnectedPageHeading = connectToModel(
   ({
@@ -70,7 +70,6 @@ export const ConnectedPageHeading = connectToModel(
     OverrideTitle,
     title,
     titleFunc,
-    primaryAction,
     ...props
   }: ConnectedPageHeadingProps) => {
     const data = _.get(obj, 'data');
@@ -125,32 +124,27 @@ export const ConnectedPageHeading = connectToModel(
           )
         }
         primaryAction={
-          <>
-            {primaryAction}
-            {showActions && (
-              <>
-                {hasButtonActions && (
-                  <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-                )}
+          showActions && (
+            <>
+              {hasButtonActions && (
+                <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+              )}
 
-                {hasMenuActions && (
-                  <ActionListItem>
-                    <ActionsMenu
-                      actions={
-                        _.isFunction(menuActions)
-                          ? menuActions(kindObj, data, extraResources, customData)
-                          : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                      }
-                    />
-                  </ActionListItem>
-                )}
+              {hasMenuActions && (
+                <ActionListItem>
+                  <ActionsMenu
+                    actions={
+                      _.isFunction(menuActions)
+                        ? menuActions(kindObj, data, extraResources, customData)
+                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                    }
+                  />
+                </ActionListItem>
+              )}
 
-                {_.isFunction(customActionMenu)
-                  ? customActionMenu(kindObj, data)
-                  : customActionMenu}
-              </>
-            )}
-          </>
+              {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
+            </>
+          )
         }
       />
     );
@@ -199,7 +193,7 @@ export type KebabOptionsCreator = (
   customData?: any,
 ) => KebabOption[];
 
-export type ConnectedPageHeadingProps = PageHeadingProps & {
+export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> & {
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];
   buttonActions?: any[];
   /** Renders a custom action menu if the `obj` prop is passed with `data` */
