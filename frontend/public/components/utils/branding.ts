@@ -106,6 +106,8 @@ export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading:
         setLogoUrl(URL.createObjectURL(blob));
         setLoading(false);
       } else if (response.status === 404) {
+        setLogoUrl('');
+        setLoading(false);
         return;
       } else {
         throw new Error(`Failed to fetch ${fetchURL}: ${response.statusText}`);
