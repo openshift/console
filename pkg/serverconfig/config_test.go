@@ -289,6 +289,21 @@ func TestSetFlagsFromConfig(t *testing.T) {
 			},
 			expectedError: nil,
 		},
+		{
+			name: "Should apply CSP configuration",
+			config: Config{
+				APIVersion: "console.openshift.io/v1",
+				Kind:       "ConsoleConfig",
+				ContentSecurityPolicy: MultiKeyValue{
+					"FontSrc":   "value2 value3",
+					"ScriptSrc": "value1",
+				},
+			},
+			expectedFlagValues: map[string]string{
+				"content-security-policy": "font-src=value2 value3, script-src=value1",
+			},
+			expectedError: nil,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -296,6 +311,7 @@ func TestSetFlagsFromConfig(t *testing.T) {
 			fs.String("config", "", "")
 			fs.Var(&MultiKeyValue{}, "plugins", "")
 			fs.Var(&MultiKeyValue{}, "telemetry", "")
+			fs.Var(&MultiKeyValue{}, "content-security-policy", "")
 
 			actualError := SetFlagsFromConfig(fs, &test.config)
 			actual := make(map[string]string)
