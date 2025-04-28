@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"k8s.io/client-go/rest"
 )
 
 // mockOpenShiftProvider is test OpenShift provider that only supports discovery
@@ -50,6 +52,7 @@ func TestNewAuthenticator(t *testing.T) {
 		SuccessURL:    sucURL,
 		CookiePath:    "/",
 		SecureCookies: true,
+		K8sConfig:     &rest.Config{},
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -97,6 +100,7 @@ func TestNewOpenShiftAuthenticator(t *testing.T) {
 		SuccessURL:    sucURL,
 		CookiePath:    "/",
 		SecureCookies: true,
+		K8sConfig:     &rest.Config{},
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -137,6 +141,7 @@ func TestRedirectAuthError(t *testing.T) {
 		SuccessURL:    sucURL,
 		CookiePath:    "/",
 		SecureCookies: true,
+		K8sConfig:     &rest.Config{},
 	}
 
 	ccfg, err := cfg.Complete()
