@@ -12,6 +12,20 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 )
 
+var insecureClient = &http.Client{
+	Transport: &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+	},
+}
+var secureClient = &http.Client{
+	Transport: &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+	},
+}
+
 func Handler(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	path := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 
@@ -48,9 +62,9 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 
 	var serviceRequest *http.Request
 	if request.Body == "" {
-		serviceRequest, err = http.NewRequest(request.Method, request.Url, nil)
+		serviceRequest, err = http.NewRequestWithContext(r.Context(), request.Method, request.Url, nil)
 	} else {
-		serviceRequest, err = http.NewRequest(request.Method, request.Url, strings.NewReader(request.Body))
+		serviceRequest, err = http.NewRequestWithContext(r.Context(), request.Method, request.Url, strings.NewReader(request.Body))
 	}
 
 	if err != nil {
@@ -75,23 +89,10 @@ func serve(r *http.Request, user *auth.User) (ProxyResponse, error) {
 	}
 	serviceRequest.URL.RawQuery = query.Encode()
 
-	var serviceTransport *http.Transport
+	serviceClient := secureClient
 	if request.AllowInsecure {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-	} else {
-		serviceTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-		}
+		serviceClient = insecureClient
 	}
-	serviceClient := &http.Client{
-		Transport: serviceTransport,
-	}
-
 	serviceResponse, err := serviceClient.Do(serviceRequest)
 	if err != nil {
 		return ProxyResponse{}, fmt.Errorf("Failed to send request: %v", err)
