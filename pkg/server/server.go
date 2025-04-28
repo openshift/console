@@ -161,8 +161,8 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
-	ContentSecurityPolicy               string
 	ContentSecurityPolicyEnabled        bool
+	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
@@ -586,7 +586,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			ConsoleCommit:         os.Getenv("SOURCE_GIT_COMMIT"),
 			Plugins:               pluginsHandler.GetPluginsList(),
 			Capabilities:          s.Capabilities,
-			ContentSecurityPolicy: s.ContentSecurityPolicy,
+			ContentSecurityPolicy: s.ContentSecurityPolicy.String(),
 		})
 	}))
 
