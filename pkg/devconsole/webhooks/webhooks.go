@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,8 +14,14 @@ import (
 	"github.com/openshift/console/pkg/devconsole/common"
 )
 
-func makeHTTPRequest(url string, headers http.Header, body []byte, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
-	serviceRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
+var client *http.Client = &http.Client{
+	Transport: &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+	},
+}
+
+func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body []byte, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
+	serviceRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
@@ -28,15 +35,7 @@ func makeHTTPRequest(url string, headers http.Header, body []byte, proxyHeaderDe
 		}
 	}
 
-	serviceTransport := &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-	}
-
-	serviceClient := &http.Client{
-		Transport: serviceTransport,
-	}
-
-	serviceResponse, err := serviceClient.Do(serviceRequest)
+	serviceResponse, err := client.Do(serviceRequest)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to send request: %v", err)
 	}
@@ -72,7 +71,7 @@ func CreateGithubWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList [
 		url.PathEscape(request.RepoName),
 	)
 
-	return makeHTTPRequest(GH_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
+	return makeHTTPRequest(r.Context(), GH_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
 
 }
 
@@ -95,7 +94,7 @@ func CreateGitlabWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList [
 		url.PathEscape(request.ProjectID),
 	)
 
-	return makeHTTPRequest(GL_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
+	return makeHTTPRequest(r.Context(), GL_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
 }
 
 func CreateBitbucketWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
@@ -127,5 +126,5 @@ func CreateBitbucketWebhook(r *http.Request, user *auth.User, proxyHeaderDenyLis
 		)
 	}
 
-	return makeHTTPRequest(BB_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
+	return makeHTTPRequest(r.Context(), BB_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
 }
