@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PageSection, Skeleton, Switch, Tooltip } from '@patternfly/react-core';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { GettingStartedSection } from '@console/internal/components/dashboard/project-dashboard/getting-started/GettingStartedSection';
@@ -53,17 +53,20 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title }) => {
   const addActionAccessCheckFailed: boolean =
     !allAddActionsDisabled && extensionsLoaded && filteredAddActionExtensions?.length === 0;
 
-  const HelpText = () => (
+  const HelpText = (
     <div className="odc-add-page-layout__hint-block">
       <div className="odc-add-page-layout__hint-block__text">
-        <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
+        <TopologyQuickSearchButton
+          onClick={() => setIsQuickSearchOpen(true)}
+          tooltipPosition="top"
+        />
       </div>
       <div className="odc-add-page-layout__hint-block__actions">
         <div className="odc-add-page-layout__resource-quota-message-block">
           <ResourceQuotaAlert namespace={activeNamespace} />
         </div>
         <div
-          className={cx('odc-add-page-layout__hint-block__details-switch', {
+          className={classnames('odc-add-page-layout__hint-block__details-switch', {
             'odc-add-page-layout__hint-block__details-switch__loading-state': !extensionsLoaded,
           })}
           data-test="details-switch"
@@ -106,7 +109,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title }) => {
     <div className="odc-add-page-layout ocs-quick-search-modal__no-backdrop" data-test="add-page">
       <PageHeading title={title} />
       <PageSection>
-        <HelpText />
+        {HelpText}
         <GettingStartedSection userSettingKey="devconsole.addPage.gettingStarted" />
         <AddCardSection
           addActionExtensions={filteredAddActionExtensions}
