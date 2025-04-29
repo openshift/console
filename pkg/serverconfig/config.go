@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -425,7 +424,6 @@ func addContentSecurityPolicy(fs *flag.FlagSet, csp MultiKeyValue) {
 		directiveName := getDirectiveName(cspDirectiveName)
 		if directiveName == "" {
 			klog.Fatalf("invalid CSP directive: %s", cspDirectiveName)
-			os.Exit(1)
 		}
 
 		fs.Set("content-security-policy", fmt.Sprintf("%s=%s", directiveName, cspDirectiveValue))
