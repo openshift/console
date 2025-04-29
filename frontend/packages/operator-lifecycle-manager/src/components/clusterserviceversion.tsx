@@ -11,6 +11,8 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -1159,8 +1161,8 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~ClusterServiceVersion details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={props.obj}>
               <DescriptionListGroup>
                 <DescriptionListTermHelp
@@ -1175,67 +1177,69 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-          <DescriptionList className="col-sm-6">
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Status status={status ? status.phase : t('olm~Unknown')} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Status reason')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {status ? status.message : t('olm~Unknown')}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            {!_.isEmpty(spec.install.spec?.deployments) && (
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Operator Deployments')}</DescriptionListTerm>
-                {spec.install.spec.deployments.map(({ name }) => (
-                  <DescriptionListDescription key={name}>
-                    <ResourceLink
-                      name={name}
-                      kind="Deployment"
-                      namespace={operatorNamespaceFor(props.obj)}
-                    />
-                  </DescriptionListDescription>
-                ))}
+                <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Status status={status ? status.phase : t('olm~Unknown')} />
+                </DescriptionListDescription>
               </DescriptionListGroup>
-            )}
-            {!_.isEmpty(permissions) && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Operator ServiceAccounts')}</DescriptionListTerm>
-                {permissions.map(({ serviceAccountName }) => (
-                  <DescriptionListDescription
-                    key={serviceAccountName}
-                    data-service-account-name={serviceAccountName}
-                  >
-                    <ResourceLink
-                      name={serviceAccountName}
-                      kind="ServiceAccount"
-                      namespace={operatorNamespaceFor(props.obj)}
-                    />
-                  </DescriptionListDescription>
-                ))}
+                <DescriptionListTerm>{t('olm~Status reason')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {status ? status.message : t('olm~Unknown')}
+                </DescriptionListDescription>
               </DescriptionListGroup>
-            )}
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~OperatorGroup')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {operatorGroupFor(props.obj) ? (
-                  <ResourceLink
-                    name={operatorGroupFor(props.obj)}
-                    namespace={operatorNamespaceFor(props.obj)}
-                    kind={referenceForModel(OperatorGroupModel)}
-                  />
-                ) : (
-                  '-'
-                )}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          </DescriptionList>
-        </div>
+              {!_.isEmpty(spec.install.spec?.deployments) && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('olm~Operator Deployments')}</DescriptionListTerm>
+                  {spec.install.spec.deployments.map(({ name }) => (
+                    <DescriptionListDescription key={name}>
+                      <ResourceLink
+                        name={name}
+                        kind="Deployment"
+                        namespace={operatorNamespaceFor(props.obj)}
+                      />
+                    </DescriptionListDescription>
+                  ))}
+                </DescriptionListGroup>
+              )}
+              {!_.isEmpty(permissions) && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('olm~Operator ServiceAccounts')}</DescriptionListTerm>
+                  {permissions.map(({ serviceAccountName }) => (
+                    <DescriptionListDescription
+                      key={serviceAccountName}
+                      data-service-account-name={serviceAccountName}
+                    >
+                      <ResourceLink
+                        name={serviceAccountName}
+                        kind="ServiceAccount"
+                        namespace={operatorNamespaceFor(props.obj)}
+                      />
+                    </DescriptionListDescription>
+                  ))}
+                </DescriptionListGroup>
+              )}
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~OperatorGroup')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {operatorGroupFor(props.obj) ? (
+                    <ResourceLink
+                      name={operatorGroupFor(props.obj)}
+                      namespace={operatorNamespaceFor(props.obj)}
+                      kind={referenceForModel(OperatorGroupModel)}
+                    />
+                  ) : (
+                    '-'
+                  )}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />

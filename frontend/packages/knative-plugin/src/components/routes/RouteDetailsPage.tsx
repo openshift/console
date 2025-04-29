@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClipboardCopy, DescriptionList } from '@patternfly/react-core';
+import { ClipboardCopy, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -33,11 +33,11 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Route details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={route} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DetailsItem
                 label={t('knative-plugin~Location')}
@@ -58,8 +58,8 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                 )}
               </DetailsItem>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Conditions')} />

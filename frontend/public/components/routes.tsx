@@ -8,6 +8,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
   Popover,
 } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -423,8 +425,8 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~Route details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={route}>
               <DetailsItem label={t('public~Service')} obj={route} path="spec.to.name">
                 <ResourceLink
@@ -440,8 +442,8 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                 path="spec.port.targetPort"
               />
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Location')}</DescriptionListTerm>
@@ -473,8 +475,8 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                 </DetailsItem>
               )}
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~TLS settings')} />

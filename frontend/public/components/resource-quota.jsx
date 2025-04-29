@@ -46,6 +46,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
@@ -315,8 +317,8 @@ const Details = ({ obj: rq }) => {
       <PaneBody>
         <SectionHeading text={text} />
         {charts}
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={rq}>
               {canListCRQ && (
                 <DetailsItem
@@ -345,18 +347,18 @@ const Details = ({ obj: rq }) => {
                 <Selector selector={rq.spec?.selector?.annotations} namespace={namespace} />
               </DetailsItem>
             </ResourceSummary>
-          </div>
+          </GridItem>
           {scopes && (
-            <div className="col-sm-6">
+            <GridItem sm={6}>
               <DescriptionList>
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~Scopes')}</DescriptionListTerm>
                   <QuotaScopesList scopes={scopes} />
                 </DescriptionListGroup>
               </DescriptionList>
-            </div>
+            </GridItem>
           )}
-        </div>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={text} style={{ display: 'block', marginBottom: '20px' }}>

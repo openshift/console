@@ -912,14 +912,14 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       <ScrollToTopOnMount />
       <PaneBody>
         <SectionHeading text={t('public~Pod details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <PodResourceSummary pod={pod} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <PodDetailsList pod={pod} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       {pod.spec.initContainers && (
         <PaneBody>

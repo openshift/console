@@ -54,6 +54,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
@@ -165,8 +167,8 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
         <SectionHeading text={t('public~Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingSet key={deployment.metadata.uid} obj={deployment} path="/spec/replicas" />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
@@ -180,11 +182,11 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DeploymentDetailsList deployment={deployment} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Containers')} />

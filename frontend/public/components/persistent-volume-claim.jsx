@@ -47,6 +47,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { ModifyLabels, ModifyAnnotations, Edit, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
@@ -240,8 +242,8 @@ const Details_ = ({ flags, obj: pvc }) => {
             />
           </div>
         )}
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={pvc}>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Label selector')}</DescriptionListTerm>
@@ -250,8 +252,8 @@ const Details_ = ({ flags, obj: pvc }) => {
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
@@ -314,8 +316,8 @@ const Details_ = ({ flags, obj: pvc }) => {
                 </DescriptionListGroup>
               )}
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem, Content, ContentVariants } from '@patternfly/react-core';
+import { Flex, FlexItem, Content, ContentVariants, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
@@ -21,11 +21,11 @@ const BuildRunDetailsTab: React.FC<BuildRunDetailsTabProps> = ({ obj: buildRun }
       <PaneBody>
         <SectionHeading text={t('shipwright-plugin~BuildRun details')} />
 
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={buildRun} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <Flex direction={{ default: 'column' }}>
               <FlexItem>
                 <BuildRunSection buildRun={buildRun} />
@@ -52,8 +52,8 @@ const BuildRunDetailsTab: React.FC<BuildRunDetailsTabProps> = ({ obj: buildRun }
                 />
               </FlexItem>
             </Flex>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
 
       {buildRun.status?.conditions?.length ? (

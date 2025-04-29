@@ -7,6 +7,7 @@ import { SectionHeading, ExpandCollapse } from '../../utils';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
 import { FormProps } from './receiver-form-props';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const SMTP_GLOBAL_FIELDS = [
   'smtp_from',
@@ -54,11 +55,11 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
       </div>
       <div className="form-group">
         <div className="co-m-pane__body--section-heading">
-          <div className="row">
-            <div className="col-sm-6">
+          <Grid hasGutter>
+            <GridItem sm={6}>
               <SectionHeading text={t('public~SMTP configuration')} />
-            </div>
-            <div className="col-sm-6">
+            </GridItem>
+            <GridItem sm={6}>
               <SaveAsDefaultCheckbox
                 formField="emailSaveAsDefault"
                 disabled={disableSaveAsDefault}
@@ -69,8 +70,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   'public~Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
                 )}
               />
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
           <div className="form-group">
             <label className="co-required" htmlFor="email-from">
               {t('public~From address')}
@@ -94,8 +95,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {t('public~The email address to send notifications from.')}
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-6">
+          <Grid hasGutter>
+            <GridItem sm={6}>
               <div className="form-group">
                 <label className="co-required" htmlFor="email-smarthost">
                   {t('public~SMTP smarthost')}
@@ -119,8 +120,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~Smarthost used for sending emails, including port number.')}
                 </div>
               </div>
-            </div>
-            <div className="col-sm-6">
+            </GridItem>
+            <GridItem sm={6}>
               <div className="form-group">
                 <label className="co-required" htmlFor="email-hello">
                   {t('public~SMTP hello')}
@@ -144,10 +145,10 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   {t('public~The hostname to identify to the SMTP server.')}
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-6">
+            </GridItem>
+          </Grid>
+          <Grid hasGutter>
+            <GridItem sm={6}>
               <div className="form-group">
                 <label htmlFor="email-auth-username">{t('public~Auth username')}</label>
                 <span className="pf-v6-c-form-control">
@@ -165,8 +166,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   />
                 </span>
               </div>
-            </div>
-            <div className="col-sm-6">
+            </GridItem>
+            <GridItem sm={6}>
               <div className="form-group">
                 <label htmlFor="email-auth-password">
                   {t('public~Auth password (using LOGIN and PLAIN)')}
@@ -186,10 +187,10 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   />
                 </span>
               </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-6">
+            </GridItem>
+          </Grid>
+          <Grid hasGutter>
+            <GridItem sm={6}>
               <div className="form-group">
                 <label htmlFor="email-auth-identity">
                   {t('public~Auth identity (using PLAIN)')}
@@ -209,8 +210,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   />
                 </span>
               </div>
-            </div>
-            <div className="col-sm-6">
+            </GridItem>
+            <GridItem sm={6}>
               <div className="form-group">
                 <label htmlFor="email-auth-secret">{t('public~Auth secret (CRAM-MDS)')}</label>
                 <span className="pf-v6-c-form-control">
@@ -228,8 +229,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   />
                 </span>
               </div>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
           <div className="checkbox">
             <label htmlFor="email-require-tls">
               <input

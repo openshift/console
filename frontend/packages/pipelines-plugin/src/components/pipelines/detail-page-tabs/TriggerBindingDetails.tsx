@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -22,18 +23,18 @@ const TriggerBindingDetails: React.FC<TriggerBindingDetailsProps> = ({ obj: trig
           triggerBindingLabel: t(getResourceModelFromBindingKind(triggerBinding.kind).labelKey),
         })}
       />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={triggerBinding} />
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <ResourceLinkList
             namespace={triggerBinding.metadata.namespace}
             model={EventListenerModel}
             links={eventListeners}
           />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

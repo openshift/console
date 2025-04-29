@@ -4,6 +4,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -29,11 +31,11 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Trigger details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={trigger} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             {filterData.length > 0 && (
               <div className="kn-resource-link-list kn-resource-link-list--addSpaceBelow">
                 <DescriptionList>
@@ -62,8 +64,8 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
                 kind={referenceFor(trigger.spec.subscriber.ref)}
               />
             )}
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       {_.isArray(trigger?.status?.conditions) && (
         <PaneBody>

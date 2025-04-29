@@ -47,6 +47,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared';
 import { displayDurationInWords } from './utils/build-utils';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 const BuildsReference: K8sResourceKindReference = 'Build';
@@ -113,14 +114,14 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: 
       <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
         <SectionHeading text={t('public~BuildConfig details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={buildConfig} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <BuildStrategy resource={buildConfig} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <WebhookTriggers resource={buildConfig} />
       <BuildHooks resource={buildConfig} />

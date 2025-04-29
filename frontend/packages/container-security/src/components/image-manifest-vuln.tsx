@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { DescriptionList, EmptyState, EmptyStateVariant, Tooltip } from '@patternfly/react-core';
+import {
+  DescriptionList,
+  EmptyState,
+  EmptyStateVariant,
+  Grid,
+  GridItem,
+  Tooltip,
+} from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import classNames from 'classnames';
@@ -64,11 +71,11 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
         <ImageVulnerabilityToggleGroup obj={props.obj} />
       </PaneBody>
       <PaneBody>
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={props.obj} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DetailsItem
                 label={t('container-security~Registry')}
@@ -86,8 +93,8 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
                 </DetailsItem>
               )}
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <div className="cs-imagevulnerabilitieslist__wrapper">
         <ImageVulnerabilitiesList {...props} />

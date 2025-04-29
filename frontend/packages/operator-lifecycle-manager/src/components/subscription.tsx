@@ -11,6 +11,8 @@ import {
   Popover,
   Split,
   SplitItem,
+  GridItem,
+  Grid,
 } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -485,11 +487,11 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             subscriptions={subscriptions}
           />
         </PaneBodyGroup>
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj} showAnnotations={false} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('olm~Installed version')}</DescriptionListTerm>
@@ -547,8 +549,8 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />

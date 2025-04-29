@@ -21,6 +21,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
@@ -100,16 +102,16 @@ const Details = ({ obj: pv }) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~PersistentVolume details')} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={pv}>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Reclaim policy')}</DescriptionListTerm>
               <DescriptionListDescription>{reclaimPolicy}</DescriptionListDescription>
             </DescriptionListGroup>
           </ResourceSummary>
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
@@ -160,8 +162,8 @@ const Details = ({ obj: pv }) => {
               </DescriptionListGroup>
             )}
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

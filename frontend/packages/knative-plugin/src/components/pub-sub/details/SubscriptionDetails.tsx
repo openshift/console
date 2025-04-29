@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
@@ -17,11 +18,11 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
     <>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Subscription details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={subscription} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             {subscription.spec?.channel?.kind && (
               <DynamicResourceLink
                 title={t('knative-plugin~Channel')}
@@ -38,8 +39,8 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
                 kind={referenceFor(subscription.spec.subscriber.ref)}
               />
             )}
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       {_.isArray(subscription?.status?.conditions) && (
         <PaneBody>

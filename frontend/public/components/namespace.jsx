@@ -12,6 +12,8 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   Tooltip,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
@@ -1016,8 +1018,8 @@ export const NamespaceSummary = ({ ns }) => {
   });
 
   return (
-    <div className="row">
-      <div className="col-sm-6 col-xs-12">
+    <Grid hasGutter>
+      <GridItem sm={6}>
         {/* Labels aren't editable on kind Project, only Namespace. */}
         <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
           <DescriptionListGroup>
@@ -1051,8 +1053,8 @@ export const NamespaceSummary = ({ ns }) => {
             </DescriptionListGroup>
           )}
         </ResourceSummary>
-      </div>
-      <div className="col-sm-6 col-xs-12">
+      </GridItem>
+      <GridItem sm={6}>
         <DescriptionList>
           <DetailsItem label={t('public~Status')} obj={ns} path="status.phase">
             <Status status={ns.status?.phase} />
@@ -1075,8 +1077,8 @@ export const NamespaceSummary = ({ ns }) => {
             </DescriptionListGroup>
           )}
         </DescriptionList>
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   );
 };
 
