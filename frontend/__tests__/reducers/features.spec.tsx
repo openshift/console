@@ -48,6 +48,7 @@ describe('featureReducer', () => {
         CONSOLE_NOTIFICATION: undefined,
         CONSOLE_EXTERNAL_LOG_LINK: undefined,
         CONSOLE_YAML_SAMPLE: undefined,
+        DEVCONSOLE_PROXY: true,
       }),
     );
   });
