@@ -103,7 +103,7 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 		case connectSrc:
 			connectSrcDirective = append(connectSrcDirective, sources)
 		default:
-			klog.Infof("ignored invalid CSP directive: %v", directive)
+			klog.Fatalf("invalid CSP directive: %s", directive)
 		}
 	}
 
