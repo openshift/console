@@ -50,6 +50,7 @@ describe('featureReducer', () => {
         CONSOLE_EXTERNAL_LOG_LINK: undefined,
         CONSOLE_YAML_SAMPLE: undefined,
         CONSOLE_QUICKSTART: undefined,
+        DEVCONSOLE_PROXY: true,
       }),
     );
   });
