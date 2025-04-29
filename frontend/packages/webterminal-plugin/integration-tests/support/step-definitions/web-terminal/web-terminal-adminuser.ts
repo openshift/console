@@ -51,7 +51,10 @@ When('user clicks on the Web Terminal icon on the Masthead', () => {
 });
 
 When('user clicks advanced option for Timeout', () => {
-  cy.get('[role="tabpanel"] button').contains('Timeout').should('be.visible').click();
+  cy.get('[data-test="multi-tab-terminal-tab-0"] button')
+    .contains('Timeout')
+    .should('be.visible')
+    .click();
 });
 
 When('user sets timeout to {string} Minute', (time: string) => {

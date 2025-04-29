@@ -80,7 +80,7 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
       {terminalTabs.map((terminalNumber, tabIndex) => (
         <Tab
           className="co-multi-tabbed-terminal__tab"
-          data-test="multi-tab-terminal-tab"
+          data-test={`multi-tab-terminal-tab-${tabIndex}`}
           eventKey={terminalNumber}
           key={terminalNumber}
           title={
