@@ -292,11 +292,9 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 
   const hasCriticalAlerts = criticalAlerts.length > 0;
   const hasNonCriticalAlerts = nonCriticalAlerts.length > 0;
-  const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(hasCriticalAlerts);
-  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState<boolean>(
-    true,
-  );
-  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(true);
+  const [isAlertExpanded, toggleAlertExpanded] = React.useState(hasCriticalAlerts);
+  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState(true);
+  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState(true);
   React.useEffect(() => {
     if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
@@ -304,7 +302,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     if (hasNonCriticalAlerts && isDrawerExpanded) {
       toggleNonCriticalAlertExpanded(true);
     }
-  }, [hasCriticalAlerts, hasNonCriticalAlerts, isAlertExpanded, isDrawerExpanded]);
+  }, [hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded]);
 
   React.useEffect(() => {
     onDrawerChange();
