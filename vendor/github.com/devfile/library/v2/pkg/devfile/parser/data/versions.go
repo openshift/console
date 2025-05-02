@@ -24,6 +24,7 @@ import (
 	v220 "github.com/devfile/library/v2/pkg/devfile/parser/data/v2/2.2.0"
 	v221 "github.com/devfile/library/v2/pkg/devfile/parser/data/v2/2.2.1"
 	v222 "github.com/devfile/library/v2/pkg/devfile/parser/data/v2/2.2.2"
+	v230 "github.com/devfile/library/v2/pkg/devfile/parser/data/v2/2.3.0"
 )
 
 // SupportedApiVersions stores the supported devfile API versions
@@ -36,6 +37,7 @@ const (
 	APISchemaVersion220 supportedApiVersion = "2.2.0"
 	APISchemaVersion221 supportedApiVersion = "2.2.1"
 	APISchemaVersion222 supportedApiVersion = "2.2.2"
+	APISchemaVersion230 supportedApiVersion = "2.3.0"
 	APIVersionAlpha2    supportedApiVersion = "v1alpha2"
 )
 
@@ -52,6 +54,7 @@ func init() {
 	apiVersionToDevfileStruct[APISchemaVersion220] = reflect.TypeOf(v2.DevfileV2{})
 	apiVersionToDevfileStruct[APISchemaVersion221] = reflect.TypeOf(v2.DevfileV2{})
 	apiVersionToDevfileStruct[APISchemaVersion222] = reflect.TypeOf(v2.DevfileV2{})
+	apiVersionToDevfileStruct[APISchemaVersion230] = reflect.TypeOf(v2.DevfileV2{})
 	apiVersionToDevfileStruct[APIVersionAlpha2] = reflect.TypeOf(v2.DevfileV2{})
 }
 
@@ -66,6 +69,7 @@ func init() {
 	devfileApiVersionToJSONSchema[APISchemaVersion220] = v220.JsonSchema220
 	devfileApiVersionToJSONSchema[APISchemaVersion221] = v221.JsonSchema221
 	devfileApiVersionToJSONSchema[APISchemaVersion222] = v222.JsonSchema222
+	devfileApiVersionToJSONSchema[APISchemaVersion230] = v230.JsonSchema230
 	// should use hightest v2 schema version since it is expected to be backward compatible with the same api version
-	devfileApiVersionToJSONSchema[APIVersionAlpha2] = v222.JsonSchema222
+	devfileApiVersionToJSONSchema[APIVersionAlpha2] = v230.JsonSchema230
 }
