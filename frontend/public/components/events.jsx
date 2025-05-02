@@ -5,7 +5,15 @@ import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { Label, LabelGroup, Button, ButtonSize, ButtonVariant } from '@patternfly/react-core';
+import {
+  Label,
+  LabelGroup,
+  Button,
+  ButtonSize,
+  ButtonVariant,
+  PageSection,
+  Flex,
+} from '@patternfly/react-core';
 
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -24,11 +32,11 @@ import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   Dropdown,
   Loading,
   ConsoleEmptyState,
-  PageHeading,
   ResourceIcon,
   ResourceLink,
   resourcePathFromModel,
@@ -253,16 +261,15 @@ export const EventsList = (props) => {
 
   return (
     <>
-      <PageHeading title={props.title}>
-        <div className="co-search-group">
+      <PageHeading title={props.title} />
+      <PageSection>
+        <Flex>
           <ResourceListDropdown
             onChange={toggleSelected}
             selected={Array.from(selected)}
             clearSelection={clearSelection}
-            className="co-search-group__resource"
           />
           <Dropdown
-            className="co-search-group__resource"
             items={eventTypes}
             onChange={(v) => setType(v)}
             selectedKey={type}
@@ -273,30 +280,29 @@ export const EventsList = (props) => {
             label={t('public~Events by name or message')}
             onChange={(_event, val) => setTextFilter(val || '')}
           />
-        </div>
+        </Flex>
         {selected.size > 0 && (
-          <div className="form-group">
-            <LabelGroup
-              key="resources-category"
-              categoryName={t('public~Resource')}
-              defaultIsOpen={false}
-              collapsedText={t('public~{{numRemaining}} more', { numRemaining: '${remaining}' })}
-              expandedText={t('public~Show less')}
-              isClosable
-              onClick={clearSelection}
-            >
-              {[...selected].map((chip) => {
-                return (
-                  <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
-                    <ResourceIcon kind={chip} />
-                    {kindForReference(chip)}
-                  </Label>
-                );
-              })}
-            </LabelGroup>
-          </div>
+          <LabelGroup
+            key="resources-category"
+            categoryName={t('public~Resource')}
+            defaultIsOpen={false}
+            collapsedText={t('public~{{numRemaining}} more', { numRemaining: '${remaining}' })}
+            expandedText={t('public~Show less')}
+            isClosable
+            onClick={clearSelection}
+            className="pf-v6-u-mt-md"
+          >
+            {[...selected].map((chip) => {
+              return (
+                <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
+                  <ResourceIcon kind={chip} />
+                  {kindForReference(chip)}
+                </Label>
+              );
+            })}
+          </LabelGroup>
         )}
-      </PageHeading>
+      </PageSection>
       <EventStream
         {...props}
         namespace={ns}

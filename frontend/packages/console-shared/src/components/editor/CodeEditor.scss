@@ -1,4 +1,4 @@
-@import '../../../../../public/style/vars';
+@use '../../../../../public/style/vars';
 
 .ocs-yaml-editor {
   // ensure editor stays fills the parent container while remaining in bounds
@@ -26,7 +26,7 @@
   }
 
   // hide CodeEditor toolbar on mobile
-  @media (max-width: $screen-sm-max) {
+  @media (max-width: vars.$screen-sm-max) {
     .pf-v6-c-code-editor__header {
       display: none;
 
@@ -38,12 +38,8 @@
 
   .pf-v6-c-code-editor__controls {
     align-items: center;
-    // the height+padding of a PatternFly standard button.
-    // ensures that all toolbars are of the same height regardless of content
-    min-height: calc(
-      var(--pf-t--global--font--size--body--default) * var(--pf-t--global--font--line-height--body) +
-      var(--pf-t--global--spacer--control--vertical--default) * 2
-    );
+    // ensure all toolbars are of the same height regardless of content
+    min-height: vars.$co-button-height;
     width: 100%;
   }
 }

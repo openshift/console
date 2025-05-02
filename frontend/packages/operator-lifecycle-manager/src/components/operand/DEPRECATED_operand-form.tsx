@@ -737,7 +737,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       const memoryRequestsPath = `requests.memory`;
       const storageRequestsPath = 'requests.ephemeral-storage';
       return (
-        <DescriptionList className="pf-v6-ml-md">
+        <DescriptionList className="pf-v6-u-ml-md">
           <DescriptionListGroup>
             <DescriptionListTerm>{t('olm~Limits')}</DescriptionListTerm>
             <DescriptionListDescription>

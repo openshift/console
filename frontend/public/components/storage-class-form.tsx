@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
@@ -18,6 +18,8 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   AsyncComponent,
   ButtonBar,
@@ -26,7 +28,6 @@ import {
   Firehose,
   FirehoseResult,
   NameValueEditorPair,
-  PageHeading,
   resourceObjPath,
 } from './utils';
 
@@ -575,11 +576,12 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     <div className="co-m-pane__form">
       <PageHeading
         title={t('public~StorageClass')}
-        link={
-          <Link to="/k8s/cluster/storageclasses/~new" id="yaml-link" data-test="yaml-link" replace>
-            {t('public~Edit YAML')}
-          </Link>
-        }
+        linkProps={{
+          component: LinkTo(`/k8s/cluster/storageclasses/~new`, { replace: true }),
+          id: 'yaml-link',
+          'data-test': 'yaml-link',
+          label: t('public~Edit YAML'),
+        }}
       />
       <PaneBody>
         <form data-test-id="storage-class-form">

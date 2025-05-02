@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { PageHeading } from '@console/internal/components/utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import CatalogController from '../CatalogController';
 

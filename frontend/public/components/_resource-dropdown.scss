@@ -1,12 +1,3 @@
-.co-search-group {
-  display: flex;
-  flex-direction: column;
-  margin: var(--pf-t--global--spacer--lg) 0 0;
-  @media (min-width: $screen-xs-min) {
-    flex-direction: row;
-  }
-}
-
 .co-search-group__filter {
   flex: 1 0 auto;
 }
@@ -42,11 +33,6 @@
   .co-search-group__pin-toggle__icon {
     margin-right: var(--pf-t--global--spacer--xs);
   }
-}
-
-.co-search-group__resource {
-  margin: 0 15px 15px 0;
-  width: auto !important;
 }
 
 .span--icon__right-margin {

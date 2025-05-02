@@ -32,7 +32,8 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
-import { checkAccess, Firehose, Loading, LoadingBox, PageHeading, resourceObjPath } from './utils';
+import { checkAccess, Firehose, Loading, LoadingBox, resourceObjPath } from './utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   referenceForModel,
   k8sCreate,

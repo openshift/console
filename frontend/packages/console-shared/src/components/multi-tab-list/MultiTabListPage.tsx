@@ -2,8 +2,9 @@ import * as React from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { PageHeading, HorizontalNav, Page, Dropdown } from '@console/internal/components/utils';
+import { HorizontalNav, Page, Dropdown } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '../pagetitle/PageTitleContext';
 import { MenuActions, MenuAction, SecondaryButtonAction } from './multi-tab-list-page-types';
 
@@ -65,32 +66,38 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
 
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
-      <PageHeading title={title} badge={badge} navTitleAsRow>
-        {secondaryButtonAction && (
-          <ActionListItem>
-            <Button
-              type="button"
-              variant="secondary"
-              data-test="secondary-action"
-              component={(props) => <Link {...props} to={secondaryButtonAction.href} />}
-            >
-              {secondaryButtonAction.label}
-            </Button>
-          </ActionListItem>
-        )}
-        <ActionListItem>
-          {items && (
-            <Dropdown
-              buttonClassName="pf-m-primary"
-              menuClassName="prevent-overflow"
-              title={t('console-shared~Create')}
-              noSelection
-              items={items}
-              onChange={onSelectCreateAction}
-            />
-          )}
-        </ActionListItem>
-      </PageHeading>
+      <PageHeading
+        title={title}
+        badge={badge}
+        primaryAction={
+          <>
+            {secondaryButtonAction && (
+              <ActionListItem>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  data-test="secondary-action"
+                  component={(props) => <Link {...props} to={secondaryButtonAction.href} />}
+                >
+                  {secondaryButtonAction.label}
+                </Button>
+              </ActionListItem>
+            )}
+            {items && (
+              <ActionListItem>
+                <Dropdown
+                  buttonClassName="pf-m-primary"
+                  menuClassName="prevent-overflow"
+                  title={t('console-shared~Create')}
+                  noSelection
+                  items={items}
+                  onChange={onSelectCreateAction}
+                />
+              </ActionListItem>
+            )}
+          </>
+        }
+      />
       <HorizontalNav pages={pages} noStatusBox />
     </PageTitleContext.Provider>
   );

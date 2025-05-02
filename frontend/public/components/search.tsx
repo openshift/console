@@ -11,7 +11,6 @@ import {
   Button,
   ButtonVariant,
   PageSection,
-  Content,
   Toolbar,
   ToolbarLabel,
   ToolbarContent,
@@ -40,6 +39,7 @@ import {
   setQueryArgument,
   AsyncComponent,
 } from './utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import confirmNavUnpinModal from '@console/app/src/components/nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
@@ -224,9 +224,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   return (
     <>
-      <DocumentTitle>{t('public~Search')}</DocumentTitle>{' '}
+      <DocumentTitle>{t('public~Search')}</DocumentTitle>
+      <PageHeading title={t('public~Search')} />
       <PageSection hasBodyWrapper={false}>
-        <Content component="h1">{t('public~Search')}</Content>
         <Toolbar
           id="search-toolbar"
           clearAllFilters={clearAll}
@@ -282,8 +282,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             </ToolbarItem>
           </ToolbarContent>
         </Toolbar>
-      </PageSection>
-      <PageSection hasBodyWrapper={false}>
         <Accordion asDefinitionList={false}>
           {[...selectedItems].map((resource) => {
             const isCollapsed = collapsedKinds.has(resource);

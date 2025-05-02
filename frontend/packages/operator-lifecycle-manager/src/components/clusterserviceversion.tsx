@@ -108,7 +108,11 @@ import { isCatalogSourceTrusted, upgradeRequiresApproval } from '../utils';
 import { isCopiedCSV, isStandaloneCSV } from '../utils/clusterserviceversions';
 import { useClusterServiceVersion } from '../utils/useClusterServiceVersion';
 import { useClusterServiceVersionPath } from '../utils/useClusterServiceVersionPath';
-import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
+import {
+  ClusterServiceVersionHeaderIcon,
+  ClusterServiceVersionHeaderTitle,
+  ClusterServiceVersionLogo,
+} from './cluster-service-version-logo';
 import {
   DeprecatedOperatorWarningBadge,
   DeprecatedOperatorWarningAlert,
@@ -1370,10 +1374,10 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
           ...(canListClusterScopeInstallPlans ? {} : { namespace }),
         },
       ]}
-      icon={({ obj }) => (
-        <ClusterServiceVersionLogo
+      icon={<ClusterServiceVersionHeaderIcon icon={csv?.spec?.icon?.[0]} />}
+      OverrideTitle={({ obj }) => (
+        <ClusterServiceVersionHeaderTitle
           displayName={obj?.spec?.displayName}
-          icon={obj?.spec?.icon?.[0]}
           provider={obj?.spec?.provider}
           version={obj?.spec?.version}
           deprecation={deprecatedPackage.deprecation}

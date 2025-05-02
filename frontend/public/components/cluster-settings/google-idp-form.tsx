@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
-import { ButtonBar, PageHeading } from '../utils';
+import { ButtonBar } from '../utils';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 

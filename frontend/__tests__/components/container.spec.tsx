@@ -11,8 +11,8 @@ import {
   Firehose,
   HorizontalNav,
   LoadingBox,
-  PageHeading,
-  PageHeadingProps,
+  ConnectedPageHeading,
+  ConnectedPageHeadingProps,
 } from '@console/internal/components/utils';
 import { testPodInstance } from '../../__mocks__/k8sResourcesMocks';
 import { Status } from '@console/shared';
@@ -53,13 +53,13 @@ describe(ContainersDetailsPage.displayName, () => {
 describe(ContainerDetails.displayName, () => {
   const obj = { data: { ...testPodInstance } };
 
-  it('renders a `PageHeading` and a `ContainerDetails` with the same state', async () => {
+  it('renders a `ConnectedPageHeading` and a `ContainerDetails` with the same state', async () => {
     jest
       .spyOn(ReactRouter, 'useParams')
       .mockReturnValue({ podName: 'test-name', ns: 'default', name: 'crash-app' });
 
     jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
-    // Full mount needed to get the children of the PageHeading within the ContainerDetails without warning
+    // Full mount needed to get the children of the ConnectedPageHeading within the ContainerDetails without warning
     let containerDetails: ReactWrapper;
     await act(async () => {
       containerDetails = mount(<ContainerDetails obj={obj} loaded={true} />, {
@@ -72,7 +72,7 @@ describe(ContainerDetails.displayName, () => {
     });
 
     const pageHeadingStatusProps = containerDetails
-      .find<PageHeadingProps>(PageHeading)
+      .find<ConnectedPageHeadingProps>(ConnectedPageHeading)
       .children()
       .find<StatusProps>(Status)
       .props();

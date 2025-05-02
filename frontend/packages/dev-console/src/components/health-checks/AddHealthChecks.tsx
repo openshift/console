@@ -10,13 +10,13 @@ import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
-  PageHeading,
   ResourceLink,
 } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
 import { useViewOnlyAccess, HealthCheckContext } from './health-checks-utils';

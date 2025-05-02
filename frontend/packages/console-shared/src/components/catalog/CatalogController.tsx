@@ -5,13 +5,13 @@ import { useLocation } from 'react-router-dom';
 import { ResolvedExtension, CatalogItemType } from '@console/dynamic-plugin-sdk';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
-  PageHeading,
   skeletonCatalog,
   StatusBox,
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useQueryParams } from '../../hooks';
 import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';

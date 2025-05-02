@@ -34,7 +34,7 @@ describe('Source secrets', () => {
 
   it(`Creates, edits, and deletes a basic source secret`, () => {
     cy.log('Create secret');
-    cy.get('.co-m-pane__heading').contains('Create source secret');
+    cy.get('[data-test="page-heading"] h1').contains('Create source secret');
     secrets.enterSecretName(basicSourceSecretName);
     cy.byTestID('secret-username').type(basicSourceSecretUsername);
     cy.byTestID('secret-password').type(basicSourceSecretPassword);
@@ -68,7 +68,7 @@ describe('Source secrets', () => {
 
   it(`Creates, edits, and deletes a SSH source secret`, () => {
     cy.log('Create secret');
-    cy.get('.co-m-pane__heading').contains('Create source secret');
+    cy.get('[data-test="page-heading"] h1').contains('Create source secret');
     secrets.enterSecretName(sshSourceSecretName);
     cy.byLegacyTestID('dropdown-button').click();
     cy.byTestDropDownMenu('kubernetes.io/ssh-auth').click();

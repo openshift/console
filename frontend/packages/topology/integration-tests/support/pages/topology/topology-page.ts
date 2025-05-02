@@ -51,9 +51,6 @@ export const topologyPage = {
     cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
     cy.get('[data-surface="true"]').should('exist');
   },
-  verifyTitle: () => {
-    cy.get(topologyPO.title).should('have.text', 'Topology');
-  },
   verifyTopologyPage: (retries: number = 3) => {
     app.waitForDocumentLoad();
     if (retries === 0) {

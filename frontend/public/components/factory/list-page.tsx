@@ -3,9 +3,10 @@ import * as _ from 'lodash-es';
 import classNames from 'classnames';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
 import { KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
@@ -35,9 +36,9 @@ import {
   makeQuery,
   makeReduxID,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
-import { PageHeading } from '../utils/headings';
 import { RequireCreatePermission } from '../utils/rbac';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import ListPageHeader from './ListPage/ListPageHeader';
 
 type CreateProps = {
   action?: string;
@@ -275,34 +276,33 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
   if (canCreate) {
     if (createProps.to) {
       createLink = (
-        <Link to={createProps.to}>
-          <Button variant="primary" id="yaml-create" data-test="item-create">
-            {createButtonText}
-          </Button>
-        </Link>
+        <Button
+          variant="primary"
+          id="yaml-create"
+          data-test="item-create"
+          component={LinkTo(createProps.to)}
+        >
+          {createButtonText}
+        </Button>
       );
     } else if (createProps.items) {
       createLink = (
-        <div>
-          <Dropdown
-            buttonClassName="pf-m-primary"
-            id="item-create"
-            dataTest="item-create"
-            menuClassName={classNames({ 'prevent-overflow': title })}
-            title={createButtonText}
-            noSelection
-            items={createProps.items}
-            onChange={runOrNavigate}
-          />
-        </div>
+        <Dropdown
+          buttonClassName="pf-m-primary"
+          id="item-create"
+          dataTest="item-create"
+          menuClassName={classNames({ 'prevent-overflow': title })}
+          title={createButtonText}
+          noSelection
+          items={createProps.items}
+          onChange={runOrNavigate}
+        />
       );
     } else {
       createLink = (
-        <div>
-          <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
-            {createButtonText}
-          </Button>
-        </div>
+        <Button variant="primary" id="yaml-create" data-test="item-create" {...createProps}>
+          {createButtonText}
+        </Button>
       );
     }
     if (!_.isEmpty(createAccessReview)) {
@@ -319,21 +319,9 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   return (
     <>
-      {/* Badge rendered from PageHeading only when title is present */}
-      <PageHeading
-        title={title}
-        badge={title ? badge : null}
-        navTitleAsRow={!!createLink}
-        helpText={helpText}
-        helpAlert={helpAlert}
-      >
-        {createLink && (
-          <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
-            {createLink}
-          </div>
-        )}
-        {!title && badge && <div>{badge}</div>}
-      </PageHeading>
+      <ListPageHeader title={title} badge={badge} helpText={helpText} helpAlert={helpAlert}>
+        {createLink}
+      </ListPageHeader>
       <PaneBody>
         {inject(props.children, {
           resources,

@@ -2,18 +2,14 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  FirehoseResource,
-  LoadingBox,
-  history,
-  PageHeading,
-} from '@console/internal/components/utils';
+import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import {
   normalizeBuilderImages,

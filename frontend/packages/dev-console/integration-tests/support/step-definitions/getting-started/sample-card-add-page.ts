@@ -30,7 +30,7 @@ When('user clicks on the {string} link', () => {
 });
 
 When('user is redirected to Samples Page', () => {
-  cy.byLegacyTestID('resource-title').contains('Sample');
+  cy.get('[data-test="page-heading"] h1').contains('Sample');
 });
 
 When('user clicks on the Samples card', () => {

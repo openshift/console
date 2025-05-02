@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import * as Router from 'react-router-dom';
-import { PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import NamespacedPage from '../../NamespacedPage';
 import ProjectAccess from '../ProjectAccess';
 import ProjectAccessPage from '../ProjectAccessPage';

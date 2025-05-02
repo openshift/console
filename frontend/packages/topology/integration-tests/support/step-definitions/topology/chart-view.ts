@@ -441,7 +441,7 @@ When('user clicks on Create button in import YAML', () => {
 
 When('user sees {string} Title on Service binding details page', (title: string) => {
   app.waitForLoad();
-  cy.get('[data-test-id="resource-title"]').should('have.text', title);
+  cy.get('[data-test="page-heading"] h1').should('have.text', title);
 });
 
 Then(

@@ -11,11 +11,11 @@ import {
   history,
   isManaged,
   LoadingBox,
-  PageHeading,
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
   getNewRoles,

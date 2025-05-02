@@ -13,7 +13,7 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeOptions,
@@ -31,7 +31,6 @@ import {
   convertToBaseValue,
   humanizeBinaryBytes,
   getURLSearchParams,
-  PageHeading,
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -56,7 +55,9 @@ import {
 } from '@console/internal/module/k8s';
 import { getName, getNamespace, getAnnotations } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -250,19 +251,16 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       <div className="co-m-pane__form">
         <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
-          title={<div className="co-m-pane__name">{title}</div>}
-          link={
-            <Link
-              to={`/k8s/ns/${namespace || 'default'}/${referenceForModel(
-                VolumeSnapshotModel,
-              )}/~new`}
-              id="yaml-link"
-              data-test="yaml-link"
-              replace
-            >
-              {t('console-app~Edit YAML')}
-            </Link>
-          }
+          title={title}
+          linkProps={{
+            component: LinkTo(
+              `/k8s/ns/${namespace || 'default'}/${referenceForModel(VolumeSnapshotModel)}/~new`,
+              { replace: true },
+            ),
+            id: 'yaml-link',
+            'data-test': 'yaml-link',
+            label: t('console-app~Edit YAML'),
+          }}
         />
         <PaneBody>
           <form onSubmit={create}>

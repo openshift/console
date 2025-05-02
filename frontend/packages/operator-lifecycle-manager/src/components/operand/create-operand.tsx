@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
-  PageHeading,
   StatusBox,
   resourcePathFromModel,
   AsyncComponent,
@@ -27,6 +26,7 @@ import {
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';

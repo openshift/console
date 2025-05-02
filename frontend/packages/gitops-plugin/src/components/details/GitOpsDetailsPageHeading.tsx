@@ -1,11 +1,7 @@
 import * as React from 'react';
-import { PageBreadcrumb } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import { BreadCrumbs, ExternalLink } from '@console/internal/components/utils';
-import './GitOpsDetailsPageHeading.scss';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
-import NavTitle from '@console/shared/src/components/layout/NavTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 interface GitOpsDetailsPageHeadingProps {
   url: string;
@@ -32,27 +28,24 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
     },
   ];
 
-  return (
+  const PageHeadingLabel = (
     <>
-      <PageBreadcrumb>
-        <BreadCrumbs breadcrumbs={breadcrumbs} />
-      </PageBreadcrumb>
-      <NavTitle className="gop-gitops-details-page-heading co-m-nav-title--breadcrumbs">
-        <PrimaryHeading className="pf-v6-u-mr-sm">
-          <div className="co-m-pane__name co-resource-item">
-            <span className="co-resource-item__resource-name">{appName}</span>
-          </div>
-          {badge && <span className="co-m-pane__heading-badge">{badge}</span>}
-        </PrimaryHeading>
-        <ExternalLink
-          href={manifestURL}
-          additionalClassName={'co-break-all gop-gitops-details-page-title'}
-        >
-          {routeDecoratorIcon(manifestURL, 12, t)}&nbsp;
-          {manifestURL}&nbsp;
-        </ExternalLink>
-      </NavTitle>
+      ({routeDecoratorIcon(manifestURL, 12, t)}&nbsp;
+      {manifestURL}&nbsp; )
     </>
+  );
+
+  return (
+    <PageHeading
+      breadcrumbs={breadcrumbs}
+      title={appName}
+      badge={badge}
+      linkProps={{
+        isExternal: true,
+        href: manifestURL,
+        label: PageHeadingLabel,
+      }}
+    />
   );
 };
 

@@ -1,5 +1,5 @@
 .co-code-editor .monaco-editor label {
-  font-weight: unset; // our _bootstrap-residual.scss
+  font-weight: unset; // revert _bootstrap-residual.scss override
 }
 
 // match the token in theme.ts. it already matches for light theme

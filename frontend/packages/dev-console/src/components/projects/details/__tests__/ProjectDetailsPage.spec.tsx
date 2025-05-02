@@ -2,8 +2,8 @@ import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom';
 import { DetailsPage } from '@console/internal/components/factory';
-import { BreadCrumbs } from '@console/internal/components/utils';
 import * as rbacModule from '@console/internal/components/utils/rbac';
+import { Breadcrumbs } from '@console/shared/src/components/breadcrumbs/Breadcrumbs';
 import CreateProjectListPage from '../../CreateProjectListPage';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
@@ -42,7 +42,7 @@ describe('ProjectDetailsPage', () => {
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'test-project' });
     // Currently rendering the breadcrumbs will buck-up against the redirects and not work as expected
     const component = shallow(<ProjectDetailsPage />);
-    expect(component.find(BreadCrumbs).exists()).not.toBe(true);
+    expect(component.find(Breadcrumbs).exists()).not.toBe(true);
   });
 
   it('should not render the Project Access tab if user has no access to role bindings', () => {

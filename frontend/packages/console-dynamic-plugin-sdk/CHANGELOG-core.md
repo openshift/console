@@ -127,10 +127,10 @@ in [Console dynamic plugins README](./README.md).
 [#14156]: https://github.com/openshift/console/pull/14156
 [#14421]: https://github.com/openshift/console/pull/14421
 [#14447]: https://github.com/openshift/console/pull/14447
-[#14463]: https://github.com/openshift/console/pull/14663
 [#14487]: https://github.com/openshift/console/pull/14487
 [#14575]: https://github.com/openshift/console/pull/14575
 [#14615]: https://github.com/openshift/console/pull/14615
 [#14620]: https://github.com/openshift/console/pull/14620
+[#14663]: https://github.com/openshift/console/pull/14663
 [#14864]: https://github.com/openshift/console/pull/14864
 [#14876]: https://github.com/openshift/console/pull/14876

@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { ListPageHeader } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { storagePrefix } from '@console/internal/components/row-filter';
@@ -21,7 +22,6 @@ import {
   kindObj,
   makeQuery,
   makeReduxID,
-  PageHeading,
   RequireCreatePermission,
 } from '@console/internal/components/utils';
 import {
@@ -315,20 +315,9 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   return (
     <>
-      {/* Badge rendered from PageHeading only when title is present */}
-      <PageHeading
-        title={title}
-        badge={title ? badge : null}
-        navTitleAsRow={!!createLink}
-        helpText={helpText}
-      >
-        {createLink && (
-          <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
-            {createLink}
-          </div>
-        )}
-        {!title && badge && <div>{badge}</div>}
-      </PageHeading>
+      <ListPageHeader title={title} badge={badge} helpText={helpText}>
+        {createLink}
+      </ListPageHeader>
       <PaneBody>
         {inject(props.children, {
           resources,

@@ -116,7 +116,7 @@
     immutable "3.x"
     lodash "^4.17.21"
     react "^17.0.1"
-    react-i18next "^11.7.3"
+    react-i18next "^11.12.0"
     react-redux "7.2.9"
     react-router "^6.30.x"
     react-router-dom "^6.30.x"
@@ -143,44 +143,44 @@
     semver "^7.3.7"
     yup "^0.32.11"
 
-"@patternfly/react-core@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-6.2.1.tgz#f3070f7dcb4a7127e9cab0e0d50dcfe8020a41f2"
-  integrity sha512-Yyw2WmM48bmKU7/AKPokUUmdbgUtNDndZbpTDvjJvhvQMiX1qbcXNFm8Y6y1F4+ZACP+FK9+b3PWykV/rWXHLQ==
+"@patternfly/react-core@^6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-6.2.2.tgz#8965a727b64506366bdf4682bf86b9c2c7fc0fb3"
+  integrity sha512-JUrZ57JQ4bkmed1kxaciXb0ZpIVYyCHc2HjtzoKQ5UNRlx204zR2isATSHjdw2GFcWvwpkC5/fU2BR+oT3opbg==
   dependencies:
-    "@patternfly/react-icons" "^6.2.1"
-    "@patternfly/react-styles" "^6.2.1"
-    "@patternfly/react-tokens" "^6.2.1"
+    "@patternfly/react-icons" "^6.2.2"
+    "@patternfly/react-styles" "^6.2.2"
+    "@patternfly/react-tokens" "^6.2.2"
     focus-trap "7.6.4"
     react-dropzone "^14.3.5"
     tslib "^2.8.1"
 
-"@patternfly/react-icons@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-6.2.1.tgz#e3c68a54e5ccec1f8ca3c7c7f9bd8cb3a2834d90"
-  integrity sha512-0JcaSjRXZat2rPmXtGq6xHjTRRXZWTZTfmy6oPbXZjHNbW8L+qsRICA3VXxP3lWszMR6koV+rySUVt7tHXUUNw==
+"@patternfly/react-icons@^6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-6.2.2.tgz#6b19359df7618ea4ec6aa6da3af2a9a287666f23"
+  integrity sha512-XkBwzuV/uiolX+T6QgB3RIqphM1m+vAZjAe3McYtyY22j1rsOdlWDE4RtRrJ1q7EoIZwyZHj0h8T9vMfUsLn4Q==
 
-"@patternfly/react-styles@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-6.2.1.tgz#02cb3a8e6ea512556cd957d5e782b8ef1c39fc48"
-  integrity sha512-3pM7dTak1tsbM9GhSMVywZUYaEr4vpowSGvCJoIUIqfUvDI5ab1pWWFlxIPfB60Q8Hym86xdy56gGe+d3SGBUQ==
+"@patternfly/react-styles@^6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-6.2.2.tgz#ff6d31266ba03df9be8095f189d1399a8cc3b66d"
+  integrity sha512-rncRDq66H8VnLyb9DrHHlZtPddlpNL9+W0XuQC0L7F6p78hOwSZmoGTW2Vq8/wJplDj8h/61qRpfRF9VEYPW0g==
 
-"@patternfly/react-table@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-6.2.1.tgz#4c62db2b79e13fda83c042598d79239f43cc499e"
-  integrity sha512-cgmlOMQgbh+3hP3wcJFWQGqoH9GSKHi7KsbTbpgxsVjgbjUvo6Xc3QsEbSemcrsFxZiAnfdScPVN9wB17UgSWg==
+"@patternfly/react-table@^6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-6.2.2.tgz#9ca4f1b4e5558cafd712c66a599b097a475acb30"
+  integrity sha512-7CxVKhnpA+f8dLJ0hVvzZOe4Djx/nE+w70ipeAHf4Yi5JwfDWmbK97YvjYPfamp/bsXTLtPcK2n4AoY5DQX6Pg==
   dependencies:
-    "@patternfly/react-core" "^6.2.1"
-    "@patternfly/react-icons" "^6.2.1"
-    "@patternfly/react-styles" "^6.2.1"
-    "@patternfly/react-tokens" "^6.2.1"
+    "@patternfly/react-core" "^6.2.2"
+    "@patternfly/react-icons" "^6.2.2"
+    "@patternfly/react-styles" "^6.2.2"
+    "@patternfly/react-tokens" "^6.2.2"
     lodash "^4.17.21"
     tslib "^2.8.1"
 
-"@patternfly/react-tokens@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-6.2.1.tgz#4d35bccc4ce0dfd5e86eb7ab8800a661c4e9f6b1"
-  integrity sha512-5u36MIyPulsOK858pwa/WD2RpTwpbHTdmsF75ozljrfpKi5TLfknZXYb3tDpdzujTDX79bcw8WriqrNV8U6ykw==
+"@patternfly/react-tokens@^6.2.2":
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-6.2.2.tgz#4ab12cf77fab60a730f52aed2433dbf892d47509"
+  integrity sha512-2GRWDPBTrcTlGNFc5NPJjrjEVU90RpgcGX/CIe2MplLgM32tpVIkeUtqIoJPLRk5GrbhyFuHJYRU+O93gU4o3Q==
 
 "@remix-run/router@1.23.0":
   version "1.23.0"
@@ -2965,9 +2965,10 @@ react-dropzone@^14.3.5:
     file-selector "^2.1.0"
     prop-types "^15.8.1"
 
-react-i18next@^11.7.3:
-  version "11.12.0"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.12.0.tgz#2a053321b9b7a876d5baa7af55a12d986117bffc"
+react-i18next@^11.12.0, react-i18next@^11.7.3:
+  version "11.18.6"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.6.tgz#e159c2960c718c1314f1e8fcaa282d1c8b167887"
+  integrity sha512-yHb2F9BiT0lqoQDt8loZ5gWP331GwctHz9tYQ8A2EIEUu+CcEdjBLQWli1USG3RdWQt3W+jqQLg/d4rrQR96LA==
   dependencies:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
