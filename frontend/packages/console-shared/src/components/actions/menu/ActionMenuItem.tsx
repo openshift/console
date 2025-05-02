@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Action, ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
 import { useAccessReview } from '@console/internal/components/utils';
 
 export type ActionMenuItemProps = {
@@ -23,16 +24,22 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   isAllowed,
   component,
 }) => {
-  const { label, icon, disabled, cta } = action;
+  const { label, icon, disabled, cta, modalInfo } = action;
   const navigate = useNavigate();
   const { href, external } = cta as { href: string; external?: boolean };
   const isDisabled = !isAllowed || disabled;
   const classes = classNames({ 'pf-m-disabled': isDisabled });
+  const launcher = useModal();
 
   const handleClick = React.useCallback(
     (event) => {
       event.preventDefault();
-      if (_.isFunction(cta)) {
+      // TODO - refine after consolidating the Action type
+      if (modalInfo) {
+        launcher(modalInfo.component, {
+          ...modalInfo.props,
+        });
+      } else if (_.isFunction(cta)) {
         cta();
       } else if (_.isObject(cta)) {
         if (!cta.external) {
@@ -42,7 +49,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
       onClick && onClick();
       event.stopPropagation();
     },
-    [cta, onClick, navigate],
+    [cta, modalInfo, onClick, launcher, navigate],
   );
 
   const handleKeyDown = (event) => {

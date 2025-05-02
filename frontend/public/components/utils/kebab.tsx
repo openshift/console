@@ -18,12 +18,13 @@ import {
   ProjectHelmChartRepositoryModel,
 } from '@console/helm-plugin/src/models';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
+import { ModalInfo } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import {
   annotationsModalLauncher,
   configureReplicaCountModal,
   taintsModal,
   tolerationsModal,
-  labelsModalLauncher,
   podSelectorModal,
   deleteModal,
   expandPVCModal,
@@ -50,6 +51,7 @@ import {
   RouteModel,
   VolumeSnapshotModel,
 } from '../../models';
+import { LabelsProviderModal } from '../modals/labels-modal';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -97,7 +99,8 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
 }) => {
   const { t } = useTranslation();
   const ref = React.useRef(null);
-  const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
+  const disabled =
+    !isAllowed || option.isDisabled || (!option.href && !option.callback && !option.modalInfo);
   React.useEffect(() => {
     const parentNode = ref.current.parentNode; // <li />
     disabled
@@ -335,12 +338,10 @@ const kebabFactory: KebabFactory = {
   ModifyLabels: (kind, obj) => ({
     // t('public~Edit labels')
     labelKey: 'public~Edit labels',
-    callback: () =>
-      labelsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
+    modalInfo: {
+      component: LabelsProviderModal,
+      props: { kind, resource: obj },
+    },
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyPodSelector: (kind, obj) => ({
@@ -499,21 +500,29 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 export const Kebab: KebabComponent = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const launcher = useModal();
   const { options, isDisabled, terminatingTooltip } = props;
   const dropdownElement = React.useRef<HTMLButtonElement>();
   const divElement = React.useRef<HTMLDivElement>();
   const [active, setActive] = React.useState(false);
 
-  const onClick = (event, option: KebabOption) => {
-    event.preventDefault();
-    if (option.callback) {
-      option.callback();
-    }
-    hide();
-    if (option.href) {
-      navigate(option.href);
-    }
-  };
+  const onClick = React.useCallback(
+    (event, option: KebabOption) => {
+      event.preventDefault();
+      if (option.modalInfo) {
+        launcher(option.modalInfo.component, {
+          ...option.modalInfo.props,
+        });
+      } else if (option.callback) {
+        option.callback();
+      }
+      hide();
+      if (option.href) {
+        navigate(option.href);
+      }
+    },
+    [launcher, navigate],
+  );
 
   const hide = () => {
     dropdownElement.current && dropdownElement.current.focus();
@@ -616,6 +625,7 @@ export type KebabOption = {
   labelKind?: { [key: string]: string | string[] };
   href?: string;
   callback?: () => any;
+  modalInfo?: ModalInfo;
   accessReview?: AccessReviewResourceAttributes;
   isDisabled?: boolean;
   tooltip?: string;
