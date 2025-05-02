@@ -845,10 +845,10 @@ export const MachineConfigPoolsArePausedAlert: React.FC<MachineConfigPoolsArePau
     name: NodeTypes.worker,
   });
   const pausedMCPs = machineConfigPools
-    .filter((mcp) => !isMCPMaster(mcp))
-    .filter((mcp) => isMCPPaused(mcp));
+    ?.filter((mcp) => !isMCPMaster(mcp))
+    ?.filter((mcp) => isMCPPaused(mcp));
   return clusterIsUpToDateOrUpdateAvailable(getClusterUpdateStatus(clusterVersion)) &&
-    pausedMCPs.length > 0 ? (
+    pausedMCPs?.length > 0 ? (
     <Alert
       isInline
       title={t('public~{{resource}} updates are paused.', {
