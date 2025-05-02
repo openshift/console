@@ -99,7 +99,7 @@ func ObjectsAndPropertiesFromBundle(b *Bundle) ([]string, []property.Property, e
 		if err != nil {
 			return nil, nil, fmt.Errorf("marshal object %s/%s (%s) to json: %v", obj.GetName(), obj.GetNamespace(), obj.GroupVersionKind(), err)
 		}
-		props = append(props, property.MustBuildBundleObjectData(objData))
+		props = append(props, property.MustBuildBundleObject(objData))
 		objects = append(objects, string(objData))
 	}
 
