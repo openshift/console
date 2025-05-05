@@ -107,6 +107,7 @@ export const checkAccess = (
 export const useAccessReview = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?: ImpersonateKind,
+  noCheckForEmptyGroupAndResource?: boolean,
 ): [boolean, boolean] => {
   const [loading, setLoading] = useSafetyFirst(true);
   const [isAllowed, setAllowed] = useSafetyFirst(false);
@@ -121,7 +122,13 @@ export const useAccessReview = (
     namespace = '',
   } = resourceAttributes;
   const impersonateKey = getImpersonateKey(impersonate);
+  const skipCheck = noCheckForEmptyGroupAndResource && !group && !resource;
   React.useEffect(() => {
+    if (skipCheck) {
+      setAllowed(false);
+      setLoading(false);
+      return;
+    }
     checkAccessInternal(group, resource, subresource, verb, name, namespace, impersonateKey)
       .then((result: SelfSubjectAccessReviewKind) => {
         setAllowed(result.status.allowed);
@@ -136,7 +143,18 @@ export const useAccessReview = (
         setAllowed(true);
         setLoading(false);
       });
-  }, [setLoading, setAllowed, group, resource, subresource, verb, name, namespace, impersonateKey]);
+  }, [
+    setLoading,
+    setAllowed,
+    group,
+    resource,
+    subresource,
+    verb,
+    name,
+    namespace,
+    impersonateKey,
+    skipCheck,
+  ]);
 
   return [isAllowed, loading];
 };
