@@ -149,6 +149,19 @@ export const getInitializationResource: AnnotationParser<K8sResourceKind> = (
     validate: isK8sResource,
     ...options,
   });
+export const getInitializationLink: AnnotationParser<URL> = (annotations, options) => {
+  const url = annotations?.[OLMAnnotation.InitializationLink];
+  if (!url) {
+    return null;
+  }
+
+  try {
+    return new URL(url);
+  } catch (e) {
+    options?.onError(e.toString());
+    return null;
+  }
+};
 
 const parseValidSubscriptionAnnotation: AnnotationParser<string[]> = (annotations, options) =>
   parseJSONAnnotation<string[]>(annotations, OLMAnnotation.ValidSubscription, {
