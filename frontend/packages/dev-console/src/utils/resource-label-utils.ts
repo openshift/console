@@ -75,7 +75,7 @@ export const getTriggerAnnotation = (
     {
       from: { kind: 'ImageStreamTag', name: `${imageName}:${imageTag}`, namespace: imageNamespace },
       fieldPath: `spec.template.spec.containers[?(@.name=="${containerName}")].image`,
-      paused: `${!imageTrigger}`,
+      paused: !imageTrigger,
     },
   ]),
 });
