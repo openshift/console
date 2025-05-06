@@ -13,7 +13,6 @@ import {
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getJobTypeAndCompletions,
-  K8sKind,
   JobKind,
   K8sResourceKind,
   referenceForModel,
@@ -21,12 +20,10 @@ import {
 } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import { configureJobParallelismModal } from './modals';
 import {
   ContainerTable,
   DetailsItem,
   Kebab,
-  KebabAction,
   LabelList,
   PodsComponent,
   ResourceLink,
@@ -45,28 +42,6 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 
-const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
-  // t('public~Edit parallelism')
-  labelKey: 'public~Edit parallelism',
-  callback: () =>
-    configureJobParallelismModal({
-      resourceKind: kind,
-      resource: obj,
-    }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'patch',
-  },
-});
-export const menuActions: KebabAction[] = [
-  ModifyJobParallelism,
-  ...Kebab.getExtensionsActionsForKind(JobModel),
-  ...Kebab.factory.common,
-];
-
 const kind = 'Job';
 
 const tableColumnClasses = [
@@ -84,6 +59,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
   const resourceKind = referenceFor(job);
   const context = { [resourceKind]: job };
   const { t } = useTranslation();
+
   return (
     <>
       <TableData className={tableColumnClasses[0]}>

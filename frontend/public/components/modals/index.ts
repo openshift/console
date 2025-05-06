@@ -14,11 +14,6 @@ export const configureReplicaCountModal = (props) =>
     m.configureReplicaCountModal(props),
   );
 
-export const configureJobParallelismModal = (props) =>
-  import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
-    m.configureJobParallelismModal(props),
-  );
-
 export const confirmModal = (props) =>
   import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
     m.confirmModal(props),
