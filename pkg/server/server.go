@@ -282,10 +282,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
+
+	tokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
+		return authHandler(withTokenReview(authenticator, h))
+	}
 	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
-	handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
+	handle(copyLoginEndpoint, tokenReviewHandler(s.handleCopyLogin))
 
 	handleFunc("/api/", notFoundHandler)
 
@@ -448,7 +452,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}),
 	))
 
-	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
+	handle("/api/console/monitoring-dashboard-config", tokenReviewHandler(s.handleMonitoringDashboardConfigmaps))
 	// Knative
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
 	knativeHandler := knative.NewKnativeHandler(
@@ -459,8 +463,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(knativeProxyEndpoint, authHandlerWithUser(knativeHandler.Handle))
 	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
-	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
-	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
+	handle("/api/console/knative-event-sources", tokenReviewHandler(s.handleKnativeEventSourceCRDs))
+	handle("/api/console/knative-channels", tokenReviewHandler(s.handleKnativeChannelCRDs))
 
 	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
@@ -506,7 +510,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(pluginAssetsEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginAssetsEndpoint),
-		authHandler(func(w http.ResponseWriter, r *http.Request) {
+		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 			pluginsHandler.HandlePluginAssets(w, r)
 		}),
 	))
@@ -544,7 +548,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}
 	}
 
-	handle(updatesEndpoint, authHandler(func(w http.ResponseWriter, r *http.Request) {
+	handle(updatesEndpoint, tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			w.Header().Set("Allow", "GET")
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
@@ -579,13 +583,13 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
-		authHandler(func(w http.ResponseWriter, r *http.Request) {
+		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 			promhttp.Handler().ServeHTTP(w, r)
 		}),
 	))
-	handleFunc("/metrics/usage", func(w http.ResponseWriter, r *http.Request) {
+	handleFunc("/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
-	})
+	}))
 
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
@@ -630,11 +634,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			authHandler(gitopsProxy.ServeHTTP),
-		))
+			tokenReviewHandler(gitopsProxy.ServeHTTP)),
+		)
 	}
 
-	handle("/api/console/version", authHandler(s.versionHandler))
+	handle("/api/console/version", tokenReviewHandler(s.versionHandler))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 

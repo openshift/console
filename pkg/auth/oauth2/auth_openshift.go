@@ -60,8 +60,8 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 		k8sClient:  k8sClient,
 	}
 
-	// TODO: repeat the discovery several times as in the auth.go logic
 	var err error
+	// TODO: repeat the discovery several times as in the auth.go logic
 	o.oauthEndpointCache, err = asynccache.NewAsyncCache[*oidcDiscovery](ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
@@ -187,7 +187,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie, err := r.Cookie(sessions.OpenshiftAccessTokenCookieName)
+	token, err := sessions.GetSessionTokenFromCookie(r)
 	if err != nil {
 		klog.V(4).Infof("the session cookie is not present: %v", err)
 		w.WriteHeader(http.StatusNoContent)
@@ -197,7 +197,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	configWithBearerToken := &rest.Config{
 		Host:        "https://" + k8sURL.Host,
 		Transport:   o.k8sClient.Transport,
-		BearerToken: cookie.Value,
+		BearerToken: token,
 		Timeout:     30 * time.Second,
 	}
 
@@ -207,7 +207,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "removing the session failed", http.StatusInternalServerError)
 		return
 	}
-	err = oauthClient.OAuthAccessTokens().Delete(ctx, tokenToObjectName(cookie.Value), metav1.DeleteOptions{})
+	err = oauthClient.OAuthAccessTokens().Delete(ctx, tokenToObjectName(token), metav1.DeleteOptions{})
 	if err != nil {
 		http.Error(w, "removing the session failed", http.StatusInternalServerError)
 		return
@@ -220,21 +220,14 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 func (o *openShiftAuth) LogoutRedirectURL() string {
 	return o.logoutRedirectOverride
 }
-
 func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*auth.User, error) {
-	// TODO: This doesn't do any validation of the cookie with the assumption that the
-	// API server will reject tokens it doesn't recognize. If we want to keep some backend
-	// state we should sign this cookie. If not there's not much we can do.
-	cookie, err := r.Cookie(sessions.OpenshiftAccessTokenCookieName)
+	token, err := sessions.GetSessionTokenFromCookie(r)
 	if err != nil {
-		return nil, err
-	}
-	if cookie.Value == "" {
-		return nil, fmt.Errorf("unauthenticated, no value for cookie %s", sessions.OpenshiftAccessTokenCookieName)
+		return nil, fmt.Errorf("failed to get session token: %v", err)
 	}
 
 	return &auth.User{
-		Token: cookie.Value,
+		Token: token,
 	}, nil
 }
 
