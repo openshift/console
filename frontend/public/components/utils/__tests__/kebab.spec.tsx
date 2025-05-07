@@ -18,21 +18,21 @@ describe('KebabItem', () => {
     const nothingOption = { ...mockOption, href: undefined };
     const trackOnClick = jest.fn();
     const renderItem = render(<KebabItem onClick={trackOnClick} option={nothingOption} />);
-    fireEvent.click(renderItem.getByRole('button'));
+    fireEvent.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(0);
   });
   it('should enable when option has href', () => {
     const hrefOption = { ...mockOption };
     const trackOnClick = jest.fn();
     const renderItem = render(<KebabItem onClick={trackOnClick} option={hrefOption} />);
-    fireEvent.click(renderItem.getByRole('button'));
+    fireEvent.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(1);
   });
   it('should enable when option has a callback', () => {
     const callbackOption = { ...mockOption, href: undefined, callback: () => {} };
     const trackOnClick = jest.fn();
     const renderItem = render(<KebabItem onClick={trackOnClick} option={callbackOption} />);
-    fireEvent.click(renderItem.getByRole('button'));
+    fireEvent.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(1);
   });
 });
@@ -55,7 +55,7 @@ describe('KebabItemAccessReview_', () => {
         impersonate={mockImpersonate}
       />,
     );
-    fireEvent.click(renderItem.getByRole('button'));
+    fireEvent.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(0);
   });
   it('should enable option when option.accessReview present and allowed', () => {
@@ -69,7 +69,7 @@ describe('KebabItemAccessReview_', () => {
         impersonate={mockImpersonate}
       />,
     );
-    fireEvent.click(renderItem.getByRole('button'));
+    fireEvent.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(1);
   });
 });
