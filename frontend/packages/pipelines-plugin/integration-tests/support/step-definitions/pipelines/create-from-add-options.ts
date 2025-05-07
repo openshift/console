@@ -16,11 +16,13 @@ import {
   createGitWorkload,
   dockerfilePage,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { pipelineActions } from '../../constants';
 import { pipelineRunDetailsPO } from '../../page-objects/pipelines-po';
 import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

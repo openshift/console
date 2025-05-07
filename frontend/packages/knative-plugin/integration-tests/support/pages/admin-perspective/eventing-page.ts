@@ -1,4 +1,4 @@
-import { operatorsPage } from '@console/dev-console/integration-tests/support/pages';
+import { operatorsPage, topologyPage } from '@console/dev-console/integration-tests/support/pages';
 import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 
 export const eventingSources = {
@@ -15,7 +15,8 @@ export const eventingSources = {
     cy.get(eventingPO.pingSource.resource).click();
     cy.get(eventingPO.pingSource.resourceItem).eq(0).click({ force: true });
     cy.get(eventingPO.pingSource.submit).click();
-    cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    // cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    topologyPage.verifyTopologyPage();
   },
   createApiServerSource: () => {
     operatorsPage.navigateToEventingPage();
@@ -30,7 +31,8 @@ export const eventingSources = {
     cy.get(eventingPO.apiServerSource.resource).click();
     cy.get(eventingPO.apiServerSource.resourceItem).eq(0).click({ force: true });
     cy.get(eventingPO.apiServerSource.submit).click();
-    cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    // cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    topologyPage.verifyTopologyPage();
   },
   createSinkBinding: () => {
     operatorsPage.navigateToEventingPage();
@@ -45,7 +47,8 @@ export const eventingSources = {
     cy.get(eventingPO.sinkBinding.resource).click();
     cy.get(eventingPO.sinkBinding.resourceItem).contains('openshift').click({ force: true });
     cy.get(eventingPO.sinkBinding.submit).click();
-    cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    // cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    topologyPage.verifyTopologyPage();
   },
   createContainerSource: () => {
     operatorsPage.navigateToEventingPage();
@@ -59,7 +62,8 @@ export const eventingSources = {
     cy.get(eventingPO.containerSource.resource).click();
     cy.get(eventingPO.containerSource.resourceItem).contains('openshift').click({ force: true });
     cy.get(eventingPO.containerSource.submit).click();
-    cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    // cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    topologyPage.verifyTopologyPage();
   },
 };
 
@@ -71,7 +75,8 @@ export const eventingChannel = {
     cy.get(eventingPO.channel.typeField).click();
     cy.get(eventingPO.channel.createDropDownDefaultChannel).click();
     cy.get(eventingPO.channel.submit).click();
-    cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    // cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    topologyPage.verifyTopologyPage();
   },
   createInMemoryChannel: () => {
     operatorsPage.navigateToEventingPage();
@@ -80,7 +85,8 @@ export const eventingChannel = {
     cy.get(eventingPO.channel.typeField).click();
     cy.get(eventingPO.channel.createDropDownInMemoryChannel).click();
     cy.get(eventingPO.channel.submit).click();
-    cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    // cy.get(eventingPO.pageDetails).should('include.text', 'Project details');
+    topologyPage.verifyTopologyPage();
   },
 };
 

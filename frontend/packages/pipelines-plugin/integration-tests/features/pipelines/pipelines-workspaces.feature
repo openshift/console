@@ -4,7 +4,7 @@ Feature: Workspaces
 
         Background:
             Given user has created or selected namespace "aut-pipelines"
-              And user is at pipelines page
+              And user is at pipelines page in developer view
 
 
         @smoke @broken-test
@@ -19,7 +19,7 @@ Feature: Workspaces
         @regression
         Scenario: Types of volume present in shared workspace: P-10-TC02
             Given user created pipeline with workspace using yaml "testData/pipelines-workspaces/s2i-build-and-deploy-pipeline-using-workspace.yaml"
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user selects "Start" option from kebab menu for pipeline "s2i-build-and-deploy-workspace"
               And user selects shared workspaces dropdown
              Then user is able to see different shared workspaces like Empty Directory, Config Map, Secret, PVC, VolumeClaimTemplate
@@ -48,7 +48,7 @@ Feature: Workspaces
         Scenario: Start the pipeline with Secret: P-10-TC05
             Given user created pipeline "test-secret-pipeline" with workspace
               And user created Secret using yaml "pipeline-secret.yaml"
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user selects "Start" option from kebab menu for pipeline "test-secret-pipeline"
               And user selects volume type "Secret" from workspaces dropdown
               And user selects "secret-password" from Secret dropdown
@@ -61,7 +61,7 @@ Feature: Workspaces
         Scenario: Start the pipeline with PVC: P-10-TC06
             Given user created pipeline "test-pvc-pipeline" with workspace
               And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user selects "Start" option from kebab menu for pipeline "test-pvc-pipeline"
               And user selects volume type "PersistentVolumeClaim" from workspaces dropdown
               And user selects "shared-task-storage" from PVC dropdown
