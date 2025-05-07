@@ -12,7 +12,8 @@ import { actionsDropdownMenu } from '../functions/common';
 export const pipelineRunDetailsPage = {
   verifyTitle: () => {
     cy.contains(pageTitle.PipelineRunDetails).should('exist');
-    cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
+    // Commenting out below line due to https://issues.redhat.com/browse/OCPBUGS-55423
+    // cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
   },
   waitForPipelineRunToComplete: () => {
     cy.get('.odc-pipeline-vis-task--icon-spin', { timeout: 120000 }).should('not.exist');
