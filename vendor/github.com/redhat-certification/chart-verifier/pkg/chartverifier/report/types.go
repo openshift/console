@@ -9,8 +9,8 @@ import (
 )
 
 type (
-	ReportFormat string
-	OutcomeType  string
+	ReportFormat = string
+	OutcomeType  = string
 )
 
 type ShaValue struct{}
