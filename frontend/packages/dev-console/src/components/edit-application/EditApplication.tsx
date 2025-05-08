@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
@@ -36,6 +37,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
+  const navigate = useNavigate();
   const uploadJarFormToastCallback = useUploadJarFormToast();
   const initialValues = getInitialValues(appResources, appName, namespace);
   const buildStrategy = _.get(initialValues, 'build.strategy', '');
@@ -90,7 +92,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     return updateResources(values)
       .then(() => {
         actions.setStatus({ submitError: '' });
-        handleRedirect(namespace, perspective, perspectiveExtensions);
+        handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -150,7 +152,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={validationSchema(t)}
     >
       {renderForm}

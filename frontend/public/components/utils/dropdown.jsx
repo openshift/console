@@ -4,14 +4,14 @@ import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useTranslation, withTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { Divider, Popper, Title } from '@patternfly/react-core';
 import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
-
+import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
 import { checkAccess } from './rbac';
 import { KebabItems } from './kebab';
 
@@ -683,7 +683,7 @@ const ActionsMenuDropdown = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [active, setActive] = React.useState(!!props.active);
-
+  const launcher = useModal();
   const dropdownElement = React.useRef();
 
   const show = () => {
@@ -740,19 +740,23 @@ const ActionsMenuDropdown = (props) => {
     }
   };
 
-  const onClick = (event, option) => {
-    event.preventDefault();
-
-    if (option.callback) {
-      option.callback();
-    }
-
-    if (option.href) {
-      navigate(option.href);
-    }
-
-    hide();
-  };
+  const onClick = React.useCallback(
+    (event, option) => {
+      event.preventDefault();
+      if (option.modalInfo) {
+        launcher(option.modalInfo.component, {
+          ...option.modalInfo.props,
+        });
+      } else if (option.callback) {
+        option.callback();
+      }
+      if (option.href) {
+        navigate(option.href);
+      }
+      hide();
+    },
+    [launcher, navigate],
+  );
 
   return (
     <div ref={dropdownElement}>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -14,8 +14,8 @@ import PacPage from '../PacPage';
 // eslint-disable-next-line no-var
 var mockNavigate = jest.fn();
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
   useNavigate: () => mockNavigate,

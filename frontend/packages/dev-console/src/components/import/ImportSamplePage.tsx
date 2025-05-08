@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
@@ -28,7 +28,7 @@ import ImportSampleForm from './ImportSampleForm';
 const ImportSamplePage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = useParams();
-
+  const navigate = useNavigate();
   const imageStreamResource: FirehoseResource = React.useMemo(
     () => ({
       kind: ImageStreamModel.kind,
@@ -117,7 +117,7 @@ const ImportSamplePage: React.FC = () => {
 
     return resourceActions
       .then(() => {
-        history.push(`/topology/ns/${namespace}`);
+        navigate(`/topology/ns/${namespace}`);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -131,7 +131,7 @@ const ImportSamplePage: React.FC = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema(t)}
       >
         {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
-import { history, HorizontalNav, Page, Dropdown } from '@console/internal/components/utils';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { HorizontalNav, Page, Dropdown } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '../pagetitle/PageTitleContext';
@@ -26,6 +26,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   telemetryPrefix,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { ns } = useParams();
   const onSelectCreateAction = (actionName: string): void => {
     const selectedMenuItem: MenuAction = menuActions[actionName];
@@ -39,7 +40,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
       url = selectedMenuItem.onSelection(actionName, selectedMenuItem, url);
     }
     if (url) {
-      history.push(url);
+      navigate(url);
     }
   };
 

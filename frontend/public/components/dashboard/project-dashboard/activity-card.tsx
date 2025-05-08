@@ -27,7 +27,7 @@ import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 
 const getEventsResource = (projectName: string): FirehoseResource => ({
   isList: true,

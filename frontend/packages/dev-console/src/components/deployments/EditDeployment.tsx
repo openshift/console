@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
@@ -25,6 +26,7 @@ export interface EditDeploymentProps {
 const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
   const { t } = useTranslation();
   const isNew = !name;
+  const navigate = useNavigate();
 
   const initialValues = React.useRef({
     editorType: EditorType.Form,
@@ -89,14 +91,14 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
             }),
           });
         }
-        history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
+        navigate(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
       })
       .catch((err) => {
         actions.setStatus({ submitSuccess: '', submitError: err.message });
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   return (
     <Formik

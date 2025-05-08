@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { history, Dropdown } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom';
+import { Dropdown } from '@console/internal/components/utils';
 import { MenuAction, MenuActions } from '@console/shared/src';
 
 type CreateActionDropdownProps = {
@@ -9,7 +10,7 @@ type CreateActionDropdownProps = {
 
 export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ namespace }) => {
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
   const menuActions: MenuActions = {
     importfromGit: {
       label: t('knative-plugin~Import from Git'),
@@ -41,7 +42,7 @@ export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ name
       url = selectedMenuItem.onSelection(actionName, selectedMenuItem, url);
     }
     if (url) {
-      history.push(url);
+      navigate(url);
     }
   };
 

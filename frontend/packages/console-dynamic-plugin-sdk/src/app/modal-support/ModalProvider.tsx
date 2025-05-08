@@ -5,6 +5,11 @@ type CloseModal = () => void;
 type UnknownProps = { [key: string]: unknown };
 export type ModalComponent<P = UnknownProps> = React.FC<P & { closeModal: CloseModal }>;
 
+export type ModalInfo<P = any> = {
+  component: ModalComponent<P>;
+  props: P;
+};
+
 export type LaunchModal = <P = UnknownProps>(component: ModalComponent<P>, extraProps: P) => void;
 
 type ModalContextValue = {

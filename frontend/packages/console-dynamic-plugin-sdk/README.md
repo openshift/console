@@ -141,7 +141,7 @@ The following shared modules are provided by Console, without plugins providing 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
 
-### Changes in shared modules
+### Changes in shared modules and plugin APIs
 
 This section documents notable changes in the Console provided shared modules across Console versions.
 
@@ -169,12 +169,23 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
 - VirtualizedTable, ListPageFilter, and useListPageFilter are deprecated and will be removed in the future.
+ 
   PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) extension should be used
+ 
   instead. See this [proof of concept](https://github.com/openshift/console/pull/14897) for an example.
 - `react-router-dom-v5-compat` module is deprecated and will aliased to `react-router-dom` v6 and
   `react-router-dom-v5-compat` will be removed in the future. Plugins should continue migration to the
   `react-router-dom-v5-compat` module until `react-router-dom` v6 is aliased to `react-router-dom` v6. See the
   [Official v5 to v6 Migration Guide](https://reactrouter.com/6.30.0/upgrading/v5) for details.
+
+#### Console 4.20.x
+
+- Upgraded `react-router` and `react-router-dom` shared modules to v6. Plugins using these modules must
+  ensure that their dependencies are up to date.
+- Shared module `react-router-dom-v5-compat` is deprecated and will be removed in the future.
+- Upgraded `react-router-dom-v5-compat` to version `npm:react-router-dom@^6.30.x`. This change is API-
+  compatible with the previous version of `react-router-dom-v5-compat`. Plugins that need to support
+  versions of OpenShift starting from `4.14.x` can continue to use this deprecated shared module as is.
 
 ##### CSS styling
 
@@ -569,11 +580,7 @@ configs or choose other options.
 
 The list of shared modules planned for deprecation:
 
-- Console provided React Router v5 shared modules
-  - `react-router`
-  - `react-router-dom`
-- Console provided React Router v6 compatibility module
-  - `react-router-dom-v5-compat`
+- `react-router-dom-v5-compat`
 
 ## i18n translations for messages
 

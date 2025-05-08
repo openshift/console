@@ -14,8 +14,8 @@ import {
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
-import { LoadingBox, history } from '@console/internal/components/utils';
+import { useNavigate, useParams } from 'react-router-dom';
+import { LoadingBox } from '@console/internal/components/utils';
 import { isModifiedEvent } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -30,6 +30,7 @@ import './ClusterConfigurationPage.scss';
 const ClusterConfigurationPage: React.FC = () => {
   const { t } = useTranslation();
   const params = useParams();
+  const navigate = useNavigate();
 
   const initialGroupId = params.group || 'general';
   const [activeTabId, setActiveTabId] = React.useState<string>(initialGroupId);
@@ -40,7 +41,7 @@ const ClusterConfigurationPage: React.FC = () => {
     event.preventDefault();
     setActiveTabId(newGroupId);
     const path = `/cluster-configuration/${newGroupId}`;
-    history.replace(path);
+    navigate(path);
   };
 
   const [

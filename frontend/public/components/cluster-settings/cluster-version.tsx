@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { useCanClusterUpgrade } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 

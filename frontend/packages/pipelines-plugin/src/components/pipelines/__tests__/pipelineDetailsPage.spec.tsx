@@ -3,7 +3,7 @@ import { act } from '@testing-library/react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { SemVer } from 'semver';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
@@ -49,8 +49,8 @@ jest.mock('@console/internal/components/utils/firehose', () => ({
   Firehose: ({ children }) => children,
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
   useNavigate: jest.fn(),

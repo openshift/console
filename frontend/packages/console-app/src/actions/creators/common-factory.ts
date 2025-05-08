@@ -1,21 +1,25 @@
 import i18next from 'i18next';
+import { NavigateFunction } from 'react-router-dom';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   annotationsModalLauncher,
   deleteModal,
-  labelsModalLauncher,
   configureReplicaCountModal,
   podSelectorModal,
   tolerationsModal,
 } from '@console/internal/components/modals';
+import { LabelsProviderModal } from '@console/internal/components/modals/labels-modal';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
 import { referenceForModel, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 export type ResourceActionCreator = (
   kind: K8sKind,
   obj: K8sResourceKind,
-  relatedResource?: K8sResourceKind,
-  message?: JSX.Element,
+  opts?: {
+    relatedResource?: K8sResourceKind;
+    message?: JSX.Element;
+    navigate?: NavigateFunction;
+  },
 ) => Action;
 
 export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
@@ -24,8 +28,9 @@ export const CommonActionFactory: ResourceActionFactory = {
   Delete: (
     kind: K8sKind,
     obj: K8sResourceKind,
-    relatedResource?: K8sResourceKind,
-    message?: JSX.Element,
+    opts: {
+      message: JSX.Element;
+    },
   ): Action => ({
     id: `delete-resource`,
     label: i18next.t('console-app~Delete {{kind}}', { kind: kind.kind }),
@@ -33,7 +38,7 @@ export const CommonActionFactory: ResourceActionFactory = {
       deleteModal({
         kind,
         resource: obj,
-        message,
+        message: opts.message,
       }),
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
@@ -49,12 +54,10 @@ export const CommonActionFactory: ResourceActionFactory = {
   ModifyLabels: (kind: K8sKind, obj: K8sResourceKind): Action => ({
     id: 'edit-labels',
     label: i18next.t('console-app~Edit labels'),
-    cta: () =>
-      labelsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
+    modalInfo: {
+      component: LabelsProviderModal,
+      props: { kind, resource: obj },
+    },
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyAnnotations: (kind: K8sKind, obj: K8sResourceKind): Action => ({
@@ -122,6 +125,6 @@ export const getCommonResourceActions = (
     CommonActionFactory.ModifyLabels(kind, obj),
     CommonActionFactory.ModifyAnnotations(kind, obj),
     CommonActionFactory.Edit(kind, obj),
-    CommonActionFactory.Delete(kind, obj, undefined, message),
+    CommonActionFactory.Delete(kind, obj, { message }),
   ];
 };

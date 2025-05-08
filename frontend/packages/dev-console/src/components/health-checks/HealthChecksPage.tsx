@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { FirehoseResource, Firehose } from '@console/internal/components/utils';
 import AddHealthChecksForm from './AddHealthChecksForm';
 

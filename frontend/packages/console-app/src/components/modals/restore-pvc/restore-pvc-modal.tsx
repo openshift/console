@@ -9,6 +9,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import {
   ModalBody,
@@ -27,7 +28,6 @@ import {
   HandlePromiseProps,
   ResourceIcon,
   withHandlePromise,
-  history,
   RequestSizeInput,
   Timestamp,
   resourcePathFromModel,
@@ -65,6 +65,7 @@ import './restore-pvc-modal.scss';
 const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
   ({ close, cancel, resource, errorMessage, inProgress, handlePromise }) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [restorePVCName, setPVCName] = React.useState(`${getName(resource) || 'pvc'}-restore`);
     const volumeSnapshotAnnotations = getAnnotations(resource);
     const snapshotBaseSize = convertToBaseValue(resource?.status?.restoreSize ?? '0');
@@ -130,7 +131,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
         k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, { ns: namespace }),
         (newPVC) => {
           close();
-          history.push(
+          navigate(
             resourcePathFromModel(PersistentVolumeClaimModel, newPVC.metadata.name, namespace),
           );
         },

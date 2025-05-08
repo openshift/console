@@ -9,7 +9,7 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import { CodeBlock, CodeBlockCode, Stack, StackItem } from '@patternfly/react-core';
 
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
   const { t } = useTranslation();
