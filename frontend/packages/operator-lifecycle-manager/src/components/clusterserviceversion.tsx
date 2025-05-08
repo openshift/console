@@ -1176,7 +1176,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
               </DescriptionListGroup>
             </ResourceSummary>
           </div>
-          <div className="col-sm-6">
+          <DescriptionList className="col-sm-6">
             <DescriptionListGroup>
               <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
               <DescriptionListDescription>
@@ -1234,7 +1234,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 )}
               </DescriptionListDescription>
             </DescriptionListGroup>
-          </div>
+          </DescriptionList>
         </div>
       </PaneBody>
       <PaneBody>
