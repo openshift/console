@@ -28,7 +28,7 @@ import {
   createEventSourceKafkaConnection,
   createSinkConnection,
 } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING } from '../../const';
+import { TYPE_CONNECTS_TO } from '../../const';
 import { createConnection } from '../../utils';
 
 type MoveConnectionModalProps = {
@@ -143,8 +143,6 @@ class MoveConnectionModal extends PromiseComponent<
     const { edge } = this.props;
     switch (edge.getType()) {
       case TYPE_CONNECTS_TO:
-        return createConnection(edge.getSource(), newTarget, edge.getTarget());
-      case TYPE_SERVICE_BINDING:
         return createConnection(edge.getSource(), newTarget, edge.getTarget());
       case TYPE_EVENT_SOURCE_LINK:
         return createSinkConnection(edge.getSource(), newTarget);

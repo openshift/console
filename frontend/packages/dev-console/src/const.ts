@@ -9,15 +9,11 @@ export enum QUERY_PROPERTIES {
 
 /** connects to action for resources */
 export const INCONTEXT_ACTIONS_CONNECTS_TO = 'connectsTo';
-/** connector action for service binding */
-export const INCONTEXT_ACTIONS_SERVICE_BINDING = 'serviceBinding';
 
 export enum CONNECTOR_INCONTEXT_ACTIONS {
   /** connects to action for resources */
   connectsTo = 'connectsTo',
 }
-
-export const SERVICE_BINDING_ENABLED = 'SERVICE_BINDING_ENABLED';
 
 export const SAMPLE_APPLICATION_GROUP = 'sample-app';
 
