@@ -15,7 +15,7 @@ import {
   TYPE_MANAGED_KAFKA_CONNECTION,
 } from '@console/knative-plugin/src/topology/const';
 import { moveConnectionModal } from '../components/modals/MoveConnectionModal';
-import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../const';
+import { TYPE_CONNECTS_TO, TYPE_TRAFFIC_CONNECTOR } from '../const';
 import { removeConnection } from '../utils';
 import { getResource } from '../utils/topology-utils';
 
@@ -57,8 +57,6 @@ const getAvailableTargetForEdge = (edge: Edge, nodes: Node[]) => {
       switch (edge.getType()) {
         case TYPE_CONNECTS_TO:
           return n.getType() !== TYPE_KNATIVE_REVISION && n.getType() !== TYPE_KNATIVE_SERVICE;
-        case TYPE_SERVICE_BINDING:
-          return false;
         case TYPE_EVENT_SOURCE_LINK:
           return n.getType() === TYPE_KNATIVE_SERVICE || n.getType() === TYPE_EVENT_PUB_SUB;
         case TYPE_REVISION_TRAFFIC:
