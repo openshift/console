@@ -26,7 +26,6 @@
   "​​**Event sinks** are resources that can receive incoming events from other resources.": "​​**Event sinks** are resources that can receive incoming events from other resources.",
   "Serving": "Serving",
   "Eventing": "Eventing",
-  "Create Service Binding": "Create Service Binding",
   "Subscriptions": "Subscriptions",
   "Triggers": "Triggers",
   "Configuration": "Configuration",
