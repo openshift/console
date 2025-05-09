@@ -10,7 +10,9 @@ import {
   SimpleList,
   Skeleton,
   SimpleListItem,
+  Icon,
 } from '@patternfly/react-core';
+import { ArrowRightIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -58,8 +60,6 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
       id: activePerspective,
     });
   };
-  const getLinkTitleClassNames = (external: boolean) =>
-    external ? 'co-external-link pf-v6-u-display-block' : 'co-goto-arrow';
 
   return (
     <Flex
@@ -91,7 +91,6 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                 <SimpleListItem
                   key={link.id}
                   component={link.href ? (link.external ? 'a' : (Link as any)) : 'button'}
-                  componentClassName={link.description ? '' : getLinkTitleClassNames(link.external)}
                   componentProps={
                     link.external
                       ? {
@@ -111,16 +110,17 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                     link.onClick?.(e);
                   }}
                 >
-                  {link.description ? (
-                    <>
-                      <Content component="p" className={getLinkTitleClassNames(link.external)}>
-                        {link.title}
-                      </Content>
+                  <>
+                    <Content component="p">
+                      {link.title}
+                      <Icon size="bodySm" className="pf-v6-u-ml-xs">
+                        {link.external ? <ExternalLinkAltIcon /> : <ArrowRightIcon />}
+                      </Icon>
+                    </Content>
+                    {link.description && (
                       <Content component={ContentVariants.small}>{link.description}</Content>
-                    </>
-                  ) : (
-                    link.title
-                  )}
+                    )}
+                  </>
                 </SimpleListItem>
               ),
             )}
