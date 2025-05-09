@@ -94,6 +94,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
             isExpanded={isOpen}
             data-test="quick-create-dropdown"
             data-tour-id="tour-quick-create-button"
+            data-quickstart-id="qs-masthead-import"
             icon={<PlusCircleIcon alt="" />}
           />
         </Tooltip>
