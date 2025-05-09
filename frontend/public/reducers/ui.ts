@@ -160,10 +160,6 @@ export default (state: UIState, action: UIAction): UIState => {
   return state;
 };
 
-export const createProjectMessageStateToProps = ({ UI }: RootState) => {
-  return { createProjectMessage: UI.get('createProjectMessage') as string };
-};
-
 export const userStateToProps = (state: RootState) => {
   return { user: getUser(state) };
 };

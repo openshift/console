@@ -768,14 +768,7 @@ const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActio
 
 const ProjectNotFoundMessage = () => {
   const { t } = useTranslation();
-  const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
-  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
-  const canCreate = canCreateNs || canCreateProject;
-  return (
-    <ConsoleEmptyState title={t('public~Welcome to OpenShift')}>
-      <OpenShiftGettingStarted canCreate={canCreate} />
-    </ConsoleEmptyState>
-  );
+  return <OpenShiftGettingStarted title={t('public~Welcome to OpenShift')} />;
 };
 
 const ProjectEmptyMessage = () => {
