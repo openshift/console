@@ -27,9 +27,8 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
   cy.testA11y('Create Project modal');
   modal.submit();
   modal.shouldBeClosed();
-  // TODO, switch to 'listPage.titleShouldHaveText(name)', when we switch to new test id
   if (devConsole === false) {
-    cy.get('[data-test="page-heading"] h1').should('have.text', name);
+    listPage.titleShouldHaveText(name);
   }
 });
 
