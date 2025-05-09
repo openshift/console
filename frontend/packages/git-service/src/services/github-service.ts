@@ -2,7 +2,7 @@ import * as Octokit from '@octokit/rest';
 import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { API_PROXY_URL, ProxyResponse } from '@console/shared/src/utils/proxy';
+import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -14,6 +14,27 @@ import {
 } from '../types';
 import { BaseService } from './base-service';
 
+type GHWebhookBody = {
+  name: string;
+  active: boolean;
+  config: {
+    url: string;
+    content_type: string;
+    insecure_ssl: string;
+    secret: string;
+  };
+  events: string[];
+};
+
+type GithubWebhookRequest = {
+  headers: Headers;
+  hostName: string;
+  owner: string;
+  repoName: string;
+  body: GHWebhookBody;
+};
+
+export const GITHUB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/github';
 export class GithubService extends BaseService {
   private readonly client: Octokit;
 
@@ -138,12 +159,12 @@ export class GithubService extends BaseService {
     sslVerification: boolean,
     webhookSecret: string,
   ): Promise<boolean> => {
-    const headers = {
-      Accept: ['application/vnd.github+json'],
-      Authorization: [`Bearer ${token}`],
-      'X-GitHub-Api-Version': ['2022-11-28'],
-    };
-    const body = {
+    const headers = new Headers({
+      Accept: 'application/vnd.github+json',
+      Authorization: `Bearer ${token}`,
+      'X-GitHub-Api-Version': '2022-11-28',
+    });
+    const body: GHWebhookBody = {
       name: 'web',
       active: true,
       config: {
@@ -158,13 +179,22 @@ export class GithubService extends BaseService {
       this.metadata.host === 'github.com'
         ? `https://api.github.com`
         : `https://${this.metadata.host}/api/v3`;
-    /* Using DevConsole Proxy to create webhook as Octokit is giving CORS error */
-    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
-      url: `${AddWebhookBaseURL}/repos/${this.metadata.owner}/${this.metadata.repoName}/hooks`,
-      method: 'POST',
+
+    const webhookRequestBody: GithubWebhookRequest = {
       headers,
-      body: JSON.stringify(body),
-    });
+      hostName: AddWebhookBaseURL,
+      owner: this.metadata.owner,
+      repoName: this.metadata.repoName,
+      body,
+    };
+
+    const webhookResponse: DevConsoleEndpointResponse = await consoleFetchJSON.post(
+      GITHUB_WEBHOOK_BACKEND_URL,
+      webhookRequestBody,
+    );
+    if (!webhookResponse.statusCode) {
+      throw new Error('Unexpected proxy response: Status code is missing!');
+    }
 
     return webhookResponse.statusCode === 201;
   };
