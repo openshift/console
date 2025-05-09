@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/fs"
-	"io/ioutil"
-	"path/filepath"
 	"reflect"
+
+	"github.com/operator-framework/api/pkg/operators/v1alpha1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type Property struct {
@@ -67,59 +67,24 @@ type GVKRequired struct {
 }
 
 type BundleObject struct {
-	File `json:",inline"`
+	Data []byte `json:"data"`
 }
 
-type File struct {
-	ref  string
-	data []byte
-}
-
-type fileJSON struct {
-	Ref  string `json:"ref,omitempty"`
-	Data []byte `json:"data,omitempty"`
-}
-
-func (f *File) UnmarshalJSON(data []byte) error {
-	var t fileJSON
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-	if len(t.Ref) > 0 && len(t.Data) > 0 {
-		return errors.New("fields 'ref' and 'data' are mutually exclusive")
-	}
-	f.ref = t.Ref
-	f.data = t.Data
-	return nil
-}
-
-func (f File) MarshalJSON() ([]byte, error) {
-	return json.Marshal(fileJSON{
-		Ref:  f.ref,
-		Data: f.data,
-	})
-}
-
-func (f File) IsRef() bool {
-	return len(f.ref) > 0
-}
-
-func (f File) GetRef() string {
-	return f.ref
-}
-
-func (f File) GetData(root fs.FS, cwd string) ([]byte, error) {
-	if !f.IsRef() {
-		return f.data, nil
-	}
-	if filepath.IsAbs(f.ref) {
-		return nil, fmt.Errorf("reference must be a relative path")
-	}
-	file, err := root.Open(filepath.Join(cwd, f.ref))
-	if err != nil {
-		return nil, err
-	}
-	return ioutil.ReadAll(file)
+type CSVMetadata struct {
+	Annotations               map[string]string                  `json:"annotations,omitempty"`
+	APIServiceDefinitions     v1alpha1.APIServiceDefinitions     `json:"apiServiceDefinitions,omitempty"`
+	CustomResourceDefinitions v1alpha1.CustomResourceDefinitions `json:"crdDescriptions,omitempty"`
+	Description               string                             `json:"description,omitempty"`
+	DisplayName               string                             `json:"displayName,omitempty"`
+	InstallModes              []v1alpha1.InstallMode             `json:"installModes,omitempty"`
+	Keywords                  []string                           `json:"keywords,omitempty"`
+	Labels                    map[string]string                  `json:"labels,omitempty"`
+	Links                     []v1alpha1.AppLink                 `json:"links,omitempty"`
+	Maintainers               []v1alpha1.Maintainer              `json:"maintainers,omitempty"`
+	Maturity                  string                             `json:"maturity,omitempty"`
+	MinKubeVersion            string                             `json:"minKubeVersion,omitempty"`
+	NativeAPIs                []metav1.GroupVersionKind          `json:"nativeAPIs,omitempty"`
+	Provider                  v1alpha1.AppLink                   `json:"provider,omitempty"`
 }
 
 type Properties struct {
@@ -129,6 +94,7 @@ type Properties struct {
 	GVKsRequired     []GVKRequired     `hash:"set"`
 	BundleObjects    []BundleObject    `hash:"set"`
 	Channels         []Channel         `hash:"set"`
+	CSVMetadatas     []CSVMetadata     `hash:"set"`
 
 	Others []Property `hash:"set"`
 }
@@ -139,6 +105,8 @@ const (
 	TypeGVK             = "olm.gvk"
 	TypeGVKRequired     = "olm.gvk.required"
 	TypeBundleObject    = "olm.bundle.object"
+	TypeCSVMetadata     = "olm.csv.metadata"
+	TypeConstraint      = "olm.constraint"
 	TypeChannel         = "olm.channel"
 )
 
@@ -176,6 +144,12 @@ func Parse(in []Property) (*Properties, error) {
 				return nil, ParseError{Idx: i, Typ: prop.Type, Err: err}
 			}
 			out.BundleObjects = append(out.BundleObjects, p)
+		case TypeCSVMetadata:
+			var p CSVMetadata
+			if err := json.Unmarshal(prop.Value, &p); err != nil {
+				return nil, ParseError{Idx: i, Typ: prop.Type, Err: err}
+			}
+			out.CSVMetadatas = append(out.CSVMetadatas, p)
 		// NOTICE: The Channel properties are for internal use only.
 		//   DO NOT use it for any public-facing functionalities.
 		//   This API is in alpha stage and it is subject to change.
@@ -280,11 +254,27 @@ func MustBuildGVK(group, version, kind string) Property {
 func MustBuildGVKRequired(group, version, kind string) Property {
 	return MustBuild(&GVKRequired{group, kind, version})
 }
-func MustBuildBundleObjectRef(ref string) Property {
-	return MustBuild(&BundleObject{File: File{ref: ref}})
+func MustBuildBundleObject(data []byte) Property {
+	return MustBuild(&BundleObject{Data: data})
 }
-func MustBuildBundleObjectData(data []byte) Property {
-	return MustBuild(&BundleObject{File: File{data: data}})
+
+func MustBuildCSVMetadata(csv v1alpha1.ClusterServiceVersion) Property {
+	return MustBuild(&CSVMetadata{
+		Annotations:               csv.GetAnnotations(),
+		APIServiceDefinitions:     csv.Spec.APIServiceDefinitions,
+		CustomResourceDefinitions: csv.Spec.CustomResourceDefinitions,
+		Description:               csv.Spec.Description,
+		DisplayName:               csv.Spec.DisplayName,
+		InstallModes:              csv.Spec.InstallModes,
+		Keywords:                  csv.Spec.Keywords,
+		Labels:                    csv.GetLabels(),
+		Links:                     csv.Spec.Links,
+		Maintainers:               csv.Spec.Maintainers,
+		Maturity:                  csv.Spec.Maturity,
+		MinKubeVersion:            csv.Spec.MinKubeVersion,
+		NativeAPIs:                csv.Spec.NativeAPIs,
+		Provider:                  csv.Spec.Provider,
+	})
 }
 
 // NOTICE: The Channel properties are for internal use only.
