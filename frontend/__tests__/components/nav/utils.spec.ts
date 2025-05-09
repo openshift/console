@@ -1,4 +1,8 @@
-import { getSortedNavExtensions, sortExtensionItems } from '@console/app/src/components/nav/utils';
+import {
+  getSortedNavExtensions,
+  navItemHrefIsActive,
+  sortExtensionItems,
+} from '@console/app/src/components/nav/utils';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { NavExtension } from '@console/dynamic-plugin-sdk/src';
 
@@ -159,5 +163,14 @@ describe('perspective-nav insertPositionedItems', () => {
     expect(indexOfId('test3', sortedItems)).toBeGreaterThan(indexOfId('test5', sortedItems));
     // test7 depends on test1
     expect(indexOfId('test7', sortedItems)).toBeGreaterThan(indexOfId('test1', sortedItems));
+  });
+
+  describe('navItemHrefIsActive', () => {
+    it('should be true for exact matches', () => {
+      expect(navItemHrefIsActive('/example/foobar', '/example/foobar')).toBeTruthy();
+    });
+    it('should not match nested paths', () => {
+      expect(navItemHrefIsActive('/example/foobar', '/example')).toBeFalsy();
+    });
   });
 });
