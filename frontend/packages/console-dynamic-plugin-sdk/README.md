@@ -129,6 +129,7 @@ The following shared modules are provided by Console, without plugins providing 
 
 - `@openshift-console/dynamic-plugin-sdk`
 - `@openshift-console/dynamic-plugin-sdk-internal`
+- `@patternfly/react-topology`
 - `react`
 - `react-i18next`
 - `react-redux`
@@ -175,6 +176,8 @@ This section documents notable changes in the Console provided shared modules ac
   `react-router-dom-v5-compat` will be removed in the future. Plugins should continue migration to the
   `react-router-dom-v5-compat` module until `react-router-dom` v6 is aliased to `react-router-dom` v6. See the
   [Official v5 to v6 Migration Guide](https://reactrouter.com/6.30.0/upgrading/v5) for details.
+- Added `@patternfly/react-topology` to shared modules. This supports dynamic plugins using PatternFly 6
+  topology components with consistent context and styling.
 
 ##### CSS styling
 
