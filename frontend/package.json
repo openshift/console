@@ -243,7 +243,7 @@
     "@types/jest": "21.x",
     "@types/json-schema": "^7.0.7",
     "@types/lodash-es": "4.17.x",
-    "@types/node": "18.x",
+    "@types/node": "22.x",
     "@types/prop-types": "15.5.6",
     "@types/react": "17.x",
     "@types/react-dom": "17.x",
@@ -317,7 +317,7 @@
     "webpack-dev-server": "^5.1.0"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=22.x"
   },
   "resolutions": {
     "@types/react-router": "^5.1.20",
