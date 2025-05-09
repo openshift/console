@@ -4,6 +4,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
@@ -99,8 +101,8 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   return (
     <PaneBody>
       <SectionHeading text={t('metal3-plugin~Bare Metal Host Details')} />
-      <div className="row">
-        <div className="col-xs-12 col-sm-6" id="name-description-column">
+      <Grid hasGutter>
+        <GridItem sm={6} id="name-description-column">
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('metal3-plugin~Name')}</DescriptionListTerm>
@@ -154,8 +156,8 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-        <div className="col-xs-12 col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('metal3-plugin~Status')}</DescriptionListTerm>
@@ -244,8 +246,8 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               </DescriptionListGroup>
             )}
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, GridItem } from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -111,9 +111,9 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   const label = descriptor?.displayName || groupSchema?.title || _.startCase(groupPath);
   const arrayGroups = _.pickBy(nested, 'isArrayGroup');
   const primitives = _.omitBy(nested, 'isArrayGroup');
-  const className = _.isEmpty(arrayGroups) || _.isEmpty(primitives) ? 'col-sm-6' : 'col-sm-12';
+  const span = _.isEmpty(arrayGroups) || _.isEmpty(primitives) ? 6 : 12;
   return (
-    <div className={className}>
+    <GridItem sm={span}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
         <DescriptionList className="olm-descriptors__group co-editable-label-group">
           {!_.isEmpty(primitives) &&
@@ -143,7 +143,7 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
             ))}
         </DescriptionList>
       </DetailsItem>
-    </div>
+    </GridItem>
   );
 };
 

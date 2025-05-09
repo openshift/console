@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -18,14 +19,14 @@ const BuildDetailsTab: React.FC<BuildDetailsTabProps> = ({ obj: build }) => {
       <PaneBody>
         <SectionHeading text={t('shipwright-plugin~Build details')} />
 
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={build} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <BuildSpecSection obj={build} buildSpec={build.spec} path="spec" />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
 
       {build.status ? (

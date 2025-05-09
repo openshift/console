@@ -10,6 +10,8 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
@@ -347,11 +349,11 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
       )}
       <PaneBody>
         <SectionHeading text={t('olm~InstallPlan details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj} showAnnotations={false} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
@@ -393,8 +395,8 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
                 ))}
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />

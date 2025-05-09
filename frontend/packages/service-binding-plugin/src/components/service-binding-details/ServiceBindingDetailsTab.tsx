@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
@@ -20,14 +21,14 @@ const ServiceBindingDetailsTab: React.FC<ServiceBindingDetailsTabProps> = ({
       <PaneBody>
         <SectionHeading text={t('service-binding-plugin~ServiceBinding details')} />
 
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={serviceBinding} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <ServiceBindingSummary serviceBinding={serviceBinding} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
 
       {serviceBinding.status?.conditions?.length ? (

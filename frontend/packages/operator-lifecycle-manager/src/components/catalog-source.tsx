@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, DescriptionList } from '@patternfly/react-core';
+import { Button, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import * as _ from 'lodash';
@@ -151,11 +151,11 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
           resource: CatalogSourceModel.label,
         })}
       />
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={catalogSource} />
-        </div>
-        <div className="col-sm-6 col-xs-12">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DetailsItem
               editAsGroup
@@ -202,8 +202,8 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
               {operatorCount}
             </DetailsItem>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   ) : (
     <div />

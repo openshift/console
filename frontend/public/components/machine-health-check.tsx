@@ -21,7 +21,7 @@ import {
   Timestamp,
   navFactory,
 } from './utils';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];
@@ -128,8 +128,8 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
     <>
       <PaneBody>
         <SectionHeading text={t('public~MachineHealthCheck details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj}>
               <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
                 <Selector
@@ -139,8 +139,8 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
                 />
               </DetailsItem>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
               <DetailsItem
@@ -154,8 +154,8 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
                 path="status.currentHealthy"
               />
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Unhealthy conditions')} />

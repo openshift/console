@@ -282,8 +282,8 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
             </div>
           </div>
         )}
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={build}>
               <DetailsItem
                 label={t('public~Triggered by')}
@@ -294,8 +294,8 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 {triggeredBy}
               </DetailsItem>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <BuildStrategy resource={build}>
               <DetailsItem label={t('public~Status')} obj={build} path="status.phase">
                 <Status status={build.status.phase} />
@@ -344,8 +344,8 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 <pre className="co-pre">{logSnippet}</pre>
               </DetailsItem>
             </BuildStrategy>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <BuildHooks resource={build} />
     </>

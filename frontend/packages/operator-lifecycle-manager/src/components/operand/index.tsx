@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
@@ -586,21 +587,21 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
 
 const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors, schema }) =>
   podStatusDescriptors?.length > 0 ? (
-    <div className="row">
+    <Grid hasGutter>
       {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => {
         return (
-          <DescriptorDetailsItem
-            className="col-sm-6"
-            key={statusDescriptor.path}
-            type={DescriptorType.status}
-            descriptor={statusDescriptor}
-            model={kindObj}
-            obj={obj}
-            schema={schema}
-          />
+          <GridItem sm={6} key={statusDescriptor.path}>
+            <DescriptorDetailsItem
+              type={DescriptorType.status}
+              descriptor={statusDescriptor}
+              model={kindObj}
+              obj={obj}
+              schema={schema}
+            />
+          </GridItem>
         );
       })}
-    </div>
+    </Grid>
   ) : null;
 
 export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: OperandDetailsProps) => {
@@ -670,48 +671,51 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
           podStatusDescriptors={podStatuses}
         />
         <div className="co-operand-details__section co-operand-details__section--info">
-          <div className="row">
-            <div className="col-sm-6">
+          <Grid hasGutter>
+            <GridItem sm={6}>
               <ResourceSummary resource={obj} />
-            </div>
+            </GridItem>
             {mainStatusDescriptor && (
-              <DescriptorDetailsItem
-                key={mainStatusDescriptor.path}
-                className="col-sm-6"
-                descriptor={mainStatusDescriptor}
-                model={kindObj}
-                obj={obj}
-                schema={schema}
-                type={DescriptorType.status}
-              />
+              <GridItem sm={6}>
+                <DescriptorDetailsItem
+                  key={mainStatusDescriptor.path}
+                  descriptor={mainStatusDescriptor}
+                  model={kindObj}
+                  obj={obj}
+                  schema={schema}
+                  type={DescriptorType.status}
+                />
+              </GridItem>
             )}
             {otherStatusDescriptors?.length > 0 && (
-              <DescriptorDetailsItemList
-                descriptors={otherStatusDescriptors}
-                itemClassName="col-sm-6"
-                model={kindObj}
-                obj={obj}
-                schema={schema}
-                type={DescriptorType.status}
-              />
+              <GridItem sm={6}>
+                <DescriptorDetailsItemList
+                  descriptors={otherStatusDescriptors}
+                  model={kindObj}
+                  obj={obj}
+                  schema={schema}
+                  type={DescriptorType.status}
+                />
+              </GridItem>
             )}
-          </div>
+          </Grid>
         </div>
       </PaneBody>
       {!_.isEmpty(specDescriptors) && (
         <PaneBody>
           <div className="co-operand-details__section co-operand-details__section--info">
-            <div className="row">
-              <DescriptorDetailsItemList
-                descriptors={specDescriptors}
-                itemClassName="col-sm-6"
-                model={kindObj}
-                obj={obj}
-                onError={handleError}
-                schema={schema}
-                type={DescriptorType.spec}
-              />
-            </div>
+            <Grid hasGutter>
+              <GridItem sm={6}>
+                <DescriptorDetailsItemList
+                  descriptors={specDescriptors}
+                  model={kindObj}
+                  obj={obj}
+                  onError={handleError}
+                  schema={schema}
+                  type={DescriptorType.spec}
+                />
+              </GridItem>
+            </Grid>
           </div>
         </PaneBody>
       )}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -23,11 +24,11 @@ const TriggerTemplateDetails: React.FC<TriggerTemplateDetailsProps> = ({
   return (
     <PaneBody>
       <SectionHeading text={t('pipelines-plugin~TriggerTemplate details')} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={triggerTemplate} />
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <ResourceLinkList
             namespace={triggerTemplate.metadata.namespace}
             model={PipelineModel}
@@ -38,8 +39,8 @@ const TriggerTemplateDetails: React.FC<TriggerTemplateDetailsProps> = ({
             model={EventListenerModel}
             links={eventListeners}
           />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

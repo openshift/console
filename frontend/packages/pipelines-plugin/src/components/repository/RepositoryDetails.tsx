@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClipboardCopy, DescriptionList } from '@patternfly/react-core';
+import { ClipboardCopy, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   SectionHeading,
@@ -26,11 +26,11 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
   return (
     <PaneBody>
       <SectionHeading text={t('pipelines-plugin~Repository details')} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={repository} />
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             {spec?.url && (
               <DetailsItem
@@ -94,8 +94,8 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
               </DetailsItem>
             )}
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

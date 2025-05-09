@@ -8,6 +8,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 
@@ -32,8 +34,8 @@ const Details: React.SFC<DetailsProps> = (props) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~Alertmanager details')} />
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>Name</DescriptionListTerm>
@@ -54,8 +56,8 @@ const Details: React.SFC<DetailsProps> = (props) => {
               </DescriptionListGroup>
             )}
           </DescriptionList>
-        </div>
-        <div className="col-sm-6 col-xs-12">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>Version</DescriptionListTerm>
@@ -77,8 +79,8 @@ const Details: React.SFC<DetailsProps> = (props) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

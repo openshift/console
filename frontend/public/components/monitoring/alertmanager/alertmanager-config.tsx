@@ -21,6 +21,8 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarItem,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -67,8 +69,8 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
           {t('public~Edit')}
         </Button>
       </SectionHeading>
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group by')}</DescriptionListTerm>
@@ -83,8 +85,8 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group interval')}</DescriptionListTerm>
@@ -99,8 +101,8 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

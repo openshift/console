@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { PipelineRunKind } from '../../../types';
@@ -15,14 +16,14 @@ const PipelineRunDetailsSection: React.FC<PipelineRunDetailsSectionProps> = ({ p
     <>
       <SectionHeading text={t('pipelines-plugin~PipelineRun details')} />
       <PipelineRunVisualization pipelineRun={pipelineRun} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={pipelineRun} />
-        </div>
-        <div className="col-sm-6 odc-pipeline-run-details__customDetails">
+        </GridItem>
+        <GridItem sm={6} className="odc-pipeline-run-details__customDetails">
           <PipelineRunCustomDetails pipelineRun={pipelineRun} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </>
   );
 };

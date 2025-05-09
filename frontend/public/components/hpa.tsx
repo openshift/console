@@ -24,7 +24,7 @@ import {
   navFactory,
 } from './utils';
 import { ResourceEventStream } from './events';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 
@@ -174,11 +174,11 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
     <>
       <PaneBody>
         <SectionHeading text={t('public~HorizontalPodAutoscaler details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={hpa} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DetailsItem label={t('public~Scale target')} obj={hpa} path="spec.scaleTargetRef">
                 <ResourceLink
@@ -208,8 +208,8 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
                 path="status.desiredReplicas"
               />
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <MetricsTable obj={hpa} />

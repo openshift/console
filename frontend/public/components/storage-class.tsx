@@ -32,6 +32,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
@@ -58,13 +60,13 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~StorageClass details')} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={obj}>
             <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
           </ResourceSummary>
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
             <DescriptionListGroup>
@@ -79,8 +81,8 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
               path="volumeBindingMode"
             />
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };
