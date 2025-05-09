@@ -53,7 +53,6 @@ export * from './dom-utils';
 export * from './owner-references';
 export { default } from './operator-backed-owner-references';
 export * from './field-level-help';
-export * from './single-typeahead-dropdown';
 export * from './details-item';
 export * from './types';
 export * from './release-notes-link';
