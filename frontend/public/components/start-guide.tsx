@@ -1,130 +1,135 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
-import { Button, Hint, HintTitle, HintBody } from '@patternfly/react-core';
-import { useTranslation, Trans } from 'react-i18next';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useSelector } from 'react-redux';
+import { Button, ButtonVariant, Divider, EmptyStateVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { createProjectMessageStateToProps } from '../reducers/ui';
-import { Disabled, openshiftHelpBase, LinkifyExternal } from './utils';
-import { connectToFlags } from '../reducers/connectToFlags';
+import { Disabled, openshiftHelpBase, LinkifyExternal, ConsoleEmptyState } from './utils';
 import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
+import { RootState } from '../redux';
+import { useFlag } from '@console/shared/src';
+import { ExternalLinkAltIcon, OpenshiftIcon } from '@patternfly/react-icons';
 
-export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
-  ({ canCreate = true, createProjectMessage }: OpenShiftGettingStartedProps) => {
-    const { t } = useTranslation();
-    const [, setActiveNamespace] = useActiveNamespace();
-    const [perspective] = useActivePerspective();
-    const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
-
-    return (
-      <>
-        {canCreate ? (
-          <p>
-            {t(
-              'public~OpenShift helps you quickly develop, host, and scale applications. To get started, create a project for your application.',
-            )}
-          </p>
-        ) : (
-          <p>
-            {t(
-              "public~OpenShift helps you quickly develop, host, and scale applications. To get started, you'll need a project. Currently, you can't create or access any projects.",
-            )}
-            {!createProjectMessage && (
-              <>&nbsp;{t("public~You'll need to contact a cluster administrator for help.")}</>
-            )}
-          </p>
-        )}
-        {createProjectMessage && (
-          <p className="co-pre-line">
-            <LinkifyExternal>{createProjectMessage}</LinkifyExternal>
-          </p>
-        )}
-        <p>
-          <Trans t={t} ns="public">
-            To learn more, visit the OpenShift{' '}
-            <ExternalLink href={openshiftHelpBase}>documentation</ExternalLink>.
-          </Trans>
-        </p>
-        <p>
-          <Trans t={t} ns="public">
-            Download the <Link to="/command-line-tools">command-line tools</Link>
-          </Trans>
-        </p>
-        {canCreate ? (
-          <Button
-            variant="link"
-            onClick={() =>
-              createNamespaceOrProjectModal({
-                onSubmit:
-                  perspective !== 'admin'
-                    ? (project: K8sResourceKind) => {
-                        setActiveNamespace(project.metadata?.name);
-                      }
-                    : undefined,
-              })
+export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = ({ title }) => {
+  const { t } = useTranslation();
+  const [, setActiveNamespace] = useActiveNamespace();
+  const [perspective] = useActivePerspective();
+  const canCreateNamespace = useFlag(FLAGS.CAN_CREATE_NS);
+  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
+  const canCreate = canCreateNamespace || canCreateProject;
+  const createProjectMessage = useSelector(({ UI }: RootState) => UI.get('createProjectMessage'));
+  const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
+  const onClickCreate = () =>
+    createNamespaceOrProjectModal({
+      onSubmit:
+        perspective !== 'admin'
+          ? (project: K8sResourceKind) => {
+              setActiveNamespace(project.metadata?.name);
             }
-          >
-            {t('public~Create a new project')}
-          </Button>
-        ) : null}
-      </>
-    );
-  },
-);
+          : undefined,
+    });
+
+  const primaryActions = canCreate
+    ? [
+        <Button key="create-project-action" variant={ButtonVariant.primary} onClick={onClickCreate}>
+          {t('public~Create a new Project')}
+        </Button>,
+      ]
+    : [];
+
+  const secondaryActions = [
+    <Button
+      key="download-cli-tools"
+      variant={ButtonVariant.link}
+      component="a"
+      href="/command-line-tools"
+    >
+      {t('public~Download command-line tools')}
+    </Button>,
+    <Button
+      key="visit-docs"
+      variant={ButtonVariant.link}
+      component="a"
+      href={openshiftHelpBase}
+      target="_blank"
+      rel="noopener noreferrer"
+      icon={<ExternalLinkAltIcon />}
+      iconPosition="end"
+    >
+      {t('public~View documentation')}
+    </Button>,
+  ];
+  return (
+    <ConsoleEmptyState
+      variant={EmptyStateVariant.xl}
+      icon={OpenshiftIcon}
+      title={title || t('public~Getting started in OpenShift')}
+      primaryActions={primaryActions}
+      secondaryActions={secondaryActions}
+    >
+      {canCreate ? (
+        <p>
+          {t(
+            'public~OpenShift helps you quickly develop, host, and scale applications. To get started, create a project for your application.',
+          )}
+        </p>
+      ) : (
+        <p>
+          {t(
+            "public~OpenShift helps you quickly develop, host, and scale applications. To get started, you'll need a project. Currently, you can't create or access any projects.",
+          )}
+          {!createProjectMessage &&
+            t("public~ You'll need to contact a cluster administrator for help.")}
+        </p>
+      )}
+      {createProjectMessage && (
+        <p className="co-pre-line">
+          <LinkifyExternal>{createProjectMessage}</LinkifyExternal>
+        </p>
+      )}
+    </ConsoleEmptyState>
+  );
+};
 
 type WithStartGuide = <P>(
   WrappedComponent: React.ComponentType<P & WithStartGuideProps>,
   disable?: boolean,
 ) => React.ComponentType<P>;
 
-export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true) =>
-  connectToFlags<any>(
-    FLAGS.SHOW_OPENSHIFT_START_GUIDE,
-    FLAGS.CAN_CREATE_NS,
-    FLAGS.CAN_CREATE_PROJECT,
-  )(({ flags, ...rest }: any) => {
-    const { kindObj } = rest;
-    const kind = _.get(kindObj, 'kind', rest.kind);
-    const { t } = useTranslation();
+export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true) => (
+  props: any,
+) => {
+  const showOpenshiftStartGuide = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
+  const { kindObj } = props;
+  const kind = _.get(kindObj, 'kind', props.kind);
 
-    // The start guide does not need to be shown on the Projects list page.
-    if (kind === ProjectModel.kind) {
-      return <WrappedComponent {...rest} />;
-    }
+  // The start guide does not need to be shown on the Projects list page.
+  if (kind === ProjectModel.kind || !showOpenshiftStartGuide) {
+    return <WrappedComponent {...props} />;
+  }
 
-    if (flags[FLAGS.SHOW_OPENSHIFT_START_GUIDE]) {
-      return (
-        <>
-          <Hint className="pf-v6-u-m-md">
-            <HintTitle>{t('public~Getting Started')}</HintTitle>
-            <HintBody>
-              <OpenShiftGettingStarted
-                canCreate={flags[FLAGS.CAN_CREATE_NS] || flags[FLAGS.CAN_CREATE_PROJECT]}
-              />
-            </HintBody>
-          </Hint>
-          {!disable || (rest.kindObj && !rest.kindObj.namespaced) ? (
-            <WrappedComponent {...rest} noProjectsAvailable />
-          ) : (
-            <Disabled>
-              <WrappedComponent {...rest} noProjectsAvailable />
-            </Disabled>
-          )}
-        </>
-      );
-    }
-    return <WrappedComponent {...rest} />;
-  });
+  return (
+    <>
+      <OpenShiftGettingStarted />
+      <Divider />
+      {!disable || (props.kindObj && !props.kindObj.namespaced) ? (
+        <WrappedComponent {...props} noProjectsAvailable />
+      ) : (
+        <Disabled>
+          <WrappedComponent {...props} noProjectsAvailable />
+        </Disabled>
+      )}
+    </>
+  );
+};
 
 type OpenShiftGettingStartedProps = {
-  canCreate: boolean;
-  createProjectMessage: string;
+  title?: string;
 };
 
 export type WithStartGuideProps = {
