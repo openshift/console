@@ -3,7 +3,6 @@ import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
 export const TYPE_WORKLOAD = 'workload';
 export const TYPE_CONNECTS_TO = 'connects-to';
 export const TYPE_AGGREGATE_EDGE = 'aggregate-edge';
-export const TYPE_SERVICE_BINDING = 'service-binding';
 export const TYPE_APPLICATION_GROUP = 'part-of';
 export const TYPE_TRAFFIC_CONNECTOR = 'traffic-connector';
 export const LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-topology-view`;
