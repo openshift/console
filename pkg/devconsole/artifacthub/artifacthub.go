@@ -1,6 +1,7 @@
 package artifacthub
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,21 +17,19 @@ const (
 	GITHUB_BASE_URL          string = "https://github.com"
 )
 
-func makeHTTPRequest(url string) (common.DevConsoleCommonResponse, error) {
-	serviceRequest, err := http.NewRequest(http.MethodGet, url, nil)
+var client *http.Client = &http.Client{
+	Transport: &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+	},
+}
+
+func makeHTTPRequest(ctx context.Context, url string) (common.DevConsoleCommonResponse, error) {
+	serviceRequest, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	serviceTransport := &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-	}
-
-	serviceClient := &http.Client{
-		Transport: serviceTransport,
-	}
-
-	serviceResponse, err := serviceClient.Do(serviceRequest)
+	serviceResponse, err := client.Do(serviceRequest)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to send request: %v", err)
 	}
@@ -59,7 +58,7 @@ func GetTaskYAMLFromGithub(r *http.Request, user *auth.User) (common.DevConsoleC
 		GITHUB_BASE_URL,
 		request.YamlPath,
 	)
-	return makeHTTPRequest(GITHUB_TASK_YAML_URL)
+	return makeHTTPRequest(r.Context(), GITHUB_TASK_YAML_URL)
 }
 
 func GetTaskDetails(r *http.Request, user *auth.User) (common.DevConsoleCommonResponse, error) {
@@ -75,7 +74,7 @@ func GetTaskDetails(r *http.Request, user *auth.User) (common.DevConsoleCommonRe
 		url.PathEscape(request.Name),
 		url.PathEscape(request.Version),
 	)
-	return makeHTTPRequest(ARTIFACTHUB_TASKS_DETAILS_URL)
+	return makeHTTPRequest(r.Context(), ARTIFACTHUB_TASKS_DETAILS_URL)
 }
 
 func SearchTasks(r *http.Request, user *auth.User) (common.DevConsoleCommonResponse, error) {
@@ -90,5 +89,5 @@ func SearchTasks(r *http.Request, user *auth.User) (common.DevConsoleCommonRespo
 		ARTIFACTHUB_TASKS_SEARCH_URL = fmt.Sprintf("%s&ts_query_web=%s", ARTIFACTHUB_TASKS_SEARCH_URL, url.PathEscape(request.SearchQuery))
 	}
 
-	return makeHTTPRequest(ARTIFACTHUB_TASKS_SEARCH_URL)
+	return makeHTTPRequest(r.Context(), ARTIFACTHUB_TASKS_SEARCH_URL)
 }
