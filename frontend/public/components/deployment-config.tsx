@@ -9,24 +9,14 @@ import {
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
-import {
-  AddHorizontalPodAutoScaler,
-  DeleteHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  hideActionForHPAs,
-} from '@console/app/src/actions/modify-hpa';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
-  k8sCreate,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
   referenceForModel,
   referenceFor,
 } from '../module/k8s';
-import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
@@ -36,14 +26,10 @@ import {
   AsyncComponent,
   ContainerTable,
   DetailsItem,
-  Kebab,
-  KebabAction,
   ResourceSummary,
   SectionHeading,
   WorkloadPausedAlert,
-  getExtensionsKebabActionsForKind,
   navFactory,
-  togglePaused,
   RuntimeClass,
   ExternalLink,
   getDocumentationURL,
@@ -62,71 +48,6 @@ import {
 } from '@patternfly/react-core';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
-
-const rollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
-  const req = {
-    kind: 'DeploymentRequest',
-    apiVersion: 'apps.openshift.io/v1',
-    name: dc.metadata.name,
-    latest: true,
-    force: true,
-  };
-  const opts = {
-    name: dc.metadata.name,
-    ns: dc.metadata.namespace,
-    path: 'instantiate',
-  };
-  return k8sCreate(DeploymentConfigModel, req, opts);
-};
-
-const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
-  // t('public~Start rollout')
-  labelKey: 'public~Start rollout',
-  callback: () =>
-    rollout(obj).catch((err) => {
-      const error = err.message;
-      errorModal({ error });
-    }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    subresource: 'instantiate',
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'create',
-  },
-});
-
-const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
-  // t('public~Resume rollouts')
-  // t('public~Pause rollouts')
-  labelKey: obj.spec.paused ? 'public~Resume rollouts' : 'public~Pause rollouts',
-  callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'patch',
-  },
-});
-
-const { ModifyCount, AddStorage, common } = Kebab.factory;
-
-export const menuActions: KebabAction[] = [
-  RolloutAction,
-  PauseAction,
-  hideActionForHPAs(ModifyCount),
-  AddHealthChecks,
-  AddHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  AddStorage,
-  DeleteHorizontalPodAutoScaler,
-  EditResourceLimits,
-  ...getExtensionsKebabActionsForKind(DeploymentConfigModel),
-  EditHealthChecks,
-  ...common,
-];
 
 const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
   const conditions = _.get(dc, 'status.conditions');
