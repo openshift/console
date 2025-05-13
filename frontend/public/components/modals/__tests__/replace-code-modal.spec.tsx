@@ -1,5 +1,4 @@
 import { render, fireEvent, configure } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 import { ReplaceCodeModal } from '../replace-code-modal';
 
 configure({ testIdAttribute: 'data-test' });

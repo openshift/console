@@ -229,7 +229,7 @@
     "@graphql-codegen/typescript-graphql-files-modules": "^1.15.1",
     "@graphql-codegen/typescript-operations": "^1.15.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.1.9",
     "@types/chai": "^4.2.12",
@@ -320,13 +320,11 @@
   "resolutions": {
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
-    "@types/jest": "21.x",
     "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
     "lodash-es": "^4.17.21",
     "minimist": "1.2.5",
     "ua-parser-js": "^0.7.24",
-    "jest": "21.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
     "async": "^3.2.5"
