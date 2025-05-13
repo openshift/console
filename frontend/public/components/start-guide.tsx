@@ -13,9 +13,9 @@ import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { RootState } from '../redux';
 import { useFlag } from '@console/shared/src';
-import { ExternalLinkAltIcon, OpenshiftIcon } from '@patternfly/react-icons';
+import { ClusterIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = ({ title }) => {
+export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = () => {
   const { t } = useTranslation();
   const [, setActiveNamespace] = useActiveNamespace();
   const [perspective] = useActivePerspective();
@@ -67,21 +67,17 @@ export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = 
   return (
     <ConsoleEmptyState
       variant={EmptyStateVariant.xl}
-      icon={OpenshiftIcon}
-      title={title || t('public~Getting started in OpenShift')}
+      icon={ClusterIcon}
+      title={t('public~Hello, world!')}
       primaryActions={primaryActions}
       secondaryActions={secondaryActions}
     >
       {canCreate ? (
-        <p>
-          {t(
-            'public~OpenShift helps you quickly develop, host, and scale applications. To get started, create a project for your application.',
-          )}
-        </p>
+        <p>{t('public~To get started, create a project for your application.')}</p>
       ) : (
         <p>
           {t(
-            "public~OpenShift helps you quickly develop, host, and scale applications. To get started, you'll need a project. Currently, you can't create or access any projects.",
+            "public~To get started, you'll need a project. Currently, you can't create or access any projects.",
           )}
           {!createProjectMessage &&
             t("public~ You'll need to contact a cluster administrator for help.")}

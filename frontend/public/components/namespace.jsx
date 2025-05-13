@@ -764,11 +764,6 @@ export const ProjectsTable = (props) => {
 const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
 const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
 
-const ProjectNotFoundMessage = () => {
-  const { t } = useTranslation();
-  return <OpenShiftGettingStarted title={t('public~Welcome to OpenShift')} />;
-};
-
 const ProjectEmptyMessage = () => {
   const { t } = useTranslation();
   return (
@@ -828,7 +823,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
       data={data}
       Header={showMetrics ? headerWithMetrics : headerNoMetrics}
       Row={ProjectTableRow}
-      NoDataEmptyMsg={ProjectNotFoundMessage}
+      NoDataEmptyMsg={OpenShiftGettingStarted}
       EmptyMsg={ProjectEmptyMessage}
       customData={customData}
       virtualize
