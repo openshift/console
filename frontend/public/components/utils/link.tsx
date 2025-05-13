@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
@@ -99,7 +99,7 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   const displayText = text || link;
 
   return (
-    <div className={classNames(additionalClassName)}>
+    <div className={css(additionalClassName)}>
       <a
         href={link}
         target="_blank"

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
@@ -92,7 +92,7 @@ const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, cust
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {obj.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         ) : (

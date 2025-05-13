@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, redirect } from 'react-router-dom-v5-compat';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
@@ -203,10 +203,7 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) =
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

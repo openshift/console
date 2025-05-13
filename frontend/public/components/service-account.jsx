@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -37,10 +37,7 @@ const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{secrets ? secrets.length : 0}</TableData>

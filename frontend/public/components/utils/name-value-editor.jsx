@@ -2,7 +2,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
 import { Button, Tooltip } from '@patternfly/react-core';
@@ -505,10 +505,7 @@ const PairElement_ = DragSource(
         return connectDropTarget(
           connectDragPreview(
             <div
-              className={classNames(
-                'row',
-                isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row',
-              )}
+              className={css('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')}
               data-test="pairs-list-row"
               ref={(node) => (this.node = node)}
             >
@@ -518,7 +515,7 @@ const PairElement_ = DragSource(
                 </div>
               )}
               <div className="col-xs-5 pairs-list__name-field">
-                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                <span className={css('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
                   <input
                     type="text"
                     data-test="pairs-list-name"
@@ -542,9 +539,7 @@ const PairElement_ = DragSource(
                 </div>
               ) : (
                 <div className="col-xs-5 pairs-list__value-field">
-                  <span
-                    className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}
-                  >
+                  <span className={css('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
                     <input
                       type="text"
                       data-test="pairs-list-value"
@@ -563,7 +558,7 @@ const PairElement_ = DragSource(
                       icon={deleteIcon}
                       type="button"
                       data-test="delete-button"
-                      className={classNames({
+                      className={css({
                         'pairs-list__span-btns': allowSorting,
                       })}
                       onClick={this._onRemove}
@@ -655,10 +650,7 @@ const EnvFromPairElement_ = DragSource(
         return connectDropTarget(
           connectDragPreview(
             <div
-              className={classNames(
-                'row',
-                isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row',
-              )}
+              className={css('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')}
               ref={(node) => (this.node = node)}
             >
               {!readOnly &&
@@ -685,7 +677,7 @@ const EnvFromPairElement_ = DragSource(
                 />
               </div>
               <div className="col-xs-5 pairs-list__name-field">
-                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                <span className={css('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
                   <input
                     data-test-id="env-prefix"
                     type="text"

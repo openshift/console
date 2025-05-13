@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Checkbox, Switch } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { WidgetProps } from '@rjsf/core';
 import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
-import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup } from '@console/internal/components/radio';
@@ -29,7 +29,7 @@ export const TextWidget: React.FC<WidgetProps> = (props) => {
     <NumberWidget {...props} />
   ) : (
     <span
-      className={classNames('pf-v6-c-form-control', {
+      className={css('pf-v6-c-form-control', {
         'pf-m-disabled': disabled,
         'pf-m-readonly': readonly,
       })}

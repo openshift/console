@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormHelperText, Title } from '@patternfly/react-core';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import './FormSection.scss';
 
 export interface FormSectionProps {
@@ -32,7 +32,7 @@ const FormSection: React.FC<FormSectionProps> = ({
   style,
 }) => (
   <div
-    className={cx('pf-v6-c-form', {
+    className={css('pf-v6-c-form', {
       'co-m-pane__form': !fullWidth,
       'odc-form-section--extra-margin': extraMargin,
     })}

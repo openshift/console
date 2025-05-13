@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useDocumentListener, getLabelsAsString } from '@console/shared';
 import { KeyEventModes } from '@console/shared/src/hooks';
 import { fuzzyCaseInsensitive } from './factory/table-filters';
@@ -110,7 +110,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
       />
       {showSuggestions && (
         <SelectList
-          className={classNames('co-suggestion-box__suggestions', {
+          className={css('co-suggestion-box__suggestions', {
             'co-suggestion-box__suggestions--shadowed': visible && suggestions?.length > 0,
           })}
         >

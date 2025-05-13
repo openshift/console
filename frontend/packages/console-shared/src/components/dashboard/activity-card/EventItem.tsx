@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle, Icon } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { typeFilter, getLastTime } from '@console/internal/components/events';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
@@ -26,7 +26,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
       <AccordionToggle
         onClick={() => onToggle(metadata.uid)}
         id={metadata.uid}
-        className={classNames('co-recent-item__toggle', {
+        className={css('co-recent-item__toggle', {
           'co-recent-item--warning': isWarning && expanded,
         })}
       >
@@ -57,7 +57,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
         </div>
       </AccordionToggle>
       <AccordionContent
-        className={classNames('co-recent-item__content', {
+        className={css('co-recent-item__content', {
           'co-recent-item--warning': isWarning,
         })}
       >

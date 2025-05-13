@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -24,7 +24,7 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

@@ -13,7 +13,7 @@ import {
   ISortBy,
   OnSort,
 } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
   AutoSizer,
@@ -109,7 +109,7 @@ export const TableRow: React.FC<TableRowProps> = ({
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}
-      className={classNames('pf-v6-c-table__tr', className)}
+      className={css('pf-v6-c-table__tr', className)}
       role="row"
     />
   );

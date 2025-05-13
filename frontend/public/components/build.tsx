@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link, redirect } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -444,10 +444,7 @@ const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => 
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

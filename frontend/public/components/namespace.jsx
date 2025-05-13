@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -336,14 +336,14 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         </span>
       </TableData>
       <TableData
-        className={classNames(namespaceColumnInfo.status.classes, 'co-break-word')}
+        className={css(namespaceColumnInfo.status.classes, 'co-break-word')}
         columns={columns}
         columnID={namespaceColumnInfo.status.id}
       >
         <Status status={ns.status?.phase} />
       </TableData>
       <TableData
-        className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+        className={css(namespaceColumnInfo.requester.classes, 'co-break-word')}
         columns={columns}
         columnID={namespaceColumnInfo.requester.id}
       >
@@ -678,7 +678,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
         <Status status={project.status?.phase} />
       </TableData>
       <TableData
-        className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+        className={css(namespaceColumnInfo.requester.classes, 'co-break-word')}
         columns={columns}
         columnID={namespaceColumnInfo.requester.id}
       >
@@ -1025,7 +1025,7 @@ export const NamespaceSummary = ({ ns }) => {
           <DescriptionListGroup>
             <DescriptionListTerm>{t('public~Display name')}</DescriptionListTerm>
             <DescriptionListDescription
-              className={classNames({
+              className={css({
                 'text-muted': !displayName,
               })}
             >
@@ -1036,7 +1036,7 @@ export const NamespaceSummary = ({ ns }) => {
             <DescriptionListTerm>{t('public~Description')}</DescriptionListTerm>
             <DescriptionListDescription>
               <p
-                className={classNames({
+                className={css({
                   'pf-v6-u-text-color-subtle': !description,
                   'co-pre-wrap': description,
                   'co-namespace-summary__description': description,

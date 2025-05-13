@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   DEFAULT_LAYER,
   DefaultNode,
@@ -9,7 +10,6 @@ import {
   useCombineRefs,
   StatusModifier,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { BaseNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -62,7 +62,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   const detailsLevel = element.getController().getGraph().getDetailsLevel();
   const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
   const badgeClassName = kindData
-    ? classNames('odc-resource-icon', {
+    ? css('odc-resource-icon', {
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
       })
     : '';
@@ -75,14 +75,9 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
       <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
         <DefaultNode
-          className={classNames(
-            'odc-base-node',
-            className,
-            alertVariant && StatusModifier[alertVariant],
-            {
-              'is-filtered': filtered,
-            },
-          )}
+          className={css('odc-base-node', className, alertVariant && StatusModifier[alertVariant], {
+            'is-filtered': filtered,
+          })}
           truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
           element={element}
           showLabel={showLabel}

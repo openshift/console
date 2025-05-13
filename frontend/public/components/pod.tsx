@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { sortable, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import {
   Button,
@@ -194,12 +194,12 @@ const podColumnInfo = Object.freeze({
     title: 'public~Status',
   },
   ready: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
+    classes: css('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
     id: 'ready',
     title: 'public~Ready',
   },
   restarts: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
+    classes: css('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
     id: 'restarts',
     title: 'public~Restarts',
   },
@@ -214,17 +214,17 @@ const podColumnInfo = Object.freeze({
     title: 'public~Node',
   },
   memory: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: css({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
     title: 'public~Memory',
   },
   cpu: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: css({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
     title: 'public~CPU',
   },
   created: {
-    classes: classNames('pf-v6-u-w-10-on-2xl'),
+    classes: css('pf-v6-u-w-10-on-2xl'),
     id: 'created',
     title: 'public~Created',
   },
@@ -386,7 +386,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         <ResourceLink kind={kind} name={name} namespace={namespace} />
       </TableData>
       <TableData
-        className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
+        className={css(podColumnInfo.namespace.classes, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
         id={podColumnInfo.namespace.id}
       >

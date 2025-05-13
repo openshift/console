@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
@@ -175,10 +175,7 @@ const ReplicationControllerTableRow = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
@@ -17,10 +17,10 @@ import GitOpsSyncFragment from './GitOpsSyncFragment';
 import './GitOpsTableRow.scss';
 
 const tableColumnClasses = [
-  classNames('pf-m-width-20'), // Application name
-  classNames('pf-m-width-30'), // Git repository
-  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-m-width-20'), // Environments
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-m-width-30'), // Last deployment
+  css('pf-m-width-20'), // Application name
+  css('pf-m-width-30'), // Git repository
+  css('pf-m-hidden', 'pf-m-visible-on-md', 'pf-m-width-20'), // Environments
+  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-m-width-30'), // Last deployment
 ];
 
 const getMatchingEnvs = (envs: string[], desiredStatus: string) => (
@@ -60,7 +60,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
           {name}
         </Link>
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1])}>
+      <TableData className={css(tableColumnClasses[1])}>
         <ExternalLink href={repoUrl} additionalClassName={'co-break-all'}>
           <span style={{ marginRight: 'var(--pf-t--global--spacer--xs)' }}>
             {routeDecoratorIcon(repoUrl, 12, t)}
@@ -68,7 +68,7 @@ const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) =>
           <span style={{ marginRight: 'var(--pf-t--global--spacer--xs)' }}>{repoUrl}</span>
         </ExternalLink>
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'pf-v6-u-text-nowrap')}>
+      <TableData className={css(tableColumnClasses[2], 'pf-v6-u-text-nowrap')}>
         {syncStatuses.length > 0 ? (
           <Flex className="gop-gitops-syncStatus">
             <GitOpsSyncFragment

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import {
   GraphElement,
   isGraph,
@@ -7,7 +8,6 @@ import {
   TopologyQuadrant,
   Visualization,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -385,7 +385,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
                   <div className="pf-topology-content ocs-quick-search-modal__no-backdrop">
                     {canDrop && isOver && (
                       <div
-                        className={classNames(
+                        className={css(
                           'co-file-dropzone-container',
                           'co-file-dropzone--drop-over',
                           'odc-topology__dropzone',

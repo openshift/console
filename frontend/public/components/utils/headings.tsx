@@ -2,7 +2,7 @@ import { ResourceStatus } from '@console/dynamic-plugin-sdk';
 import { Status, YellowExclamationTriangleIcon } from '@console/shared';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -161,7 +161,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
 }) => (
   <SecondaryHeading style={style} data-test-section-heading={text} id={id}>
     <span
-      className={classNames({
+      className={css({
         'co-required': required,
       })}
     >

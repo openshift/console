@@ -5,7 +5,7 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
 import './DynamicResourceLinkList.scss';
 
@@ -34,7 +34,7 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
   }
   return (
     <div
-      className={classNames('odc-dynamic-resource-link-list', {
+      className={css('odc-dynamic-resource-link-list', {
         'odc-dynamic-resource-link-list--addSpaceBelow': !removeSpaceBelow,
       })}
     >

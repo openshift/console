@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
@@ -40,7 +40,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
       isRequired,
       t,
     } = this.props;
-    const klass = classNames('co-file-dropzone-container', {
+    const klass = css('co-file-dropzone-container', {
       'co-file-dropzone--drop-over': isOver,
     });
     return connectDropTarget(
@@ -52,7 +52,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
         )}
 
         <div className="form-group">
-          <label className={classNames({ 'co-required': isRequired })} htmlFor={id}>
+          <label className={css({ 'co-required': isRequired })} htmlFor={id}>
             {this.props.label}
           </label>
           <div className="modal-body__field">

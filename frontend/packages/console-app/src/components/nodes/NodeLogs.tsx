@@ -15,7 +15,7 @@ import {
   Switch,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
@@ -89,7 +89,7 @@ const LogControls: React.FC<LogControlsProps> = ({
         <SelectOption
           key={value}
           value={value}
-          className={classNames({ 'co-node-logs__log-select-option': value.length > 50 })}
+          className={css({ 'co-node-logs__log-select-option': value.length > 50 })}
         >
           {value}
         </SelectOption>

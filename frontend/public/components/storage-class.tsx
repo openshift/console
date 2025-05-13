@@ -8,7 +8,7 @@ import {
   LazyActionMenu,
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
@@ -93,7 +93,7 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
   const context = { [resourceKind]: obj };
   return (
     <>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
           {isDefaultClass(obj) && (
             <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
@@ -102,7 +102,7 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
           )}
         </ResourceLink>
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {obj.provisioner}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>

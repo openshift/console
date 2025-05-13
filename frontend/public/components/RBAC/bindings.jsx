@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { connect } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
@@ -248,16 +248,16 @@ const RoleBindingsTableRow = ({ obj: binding }) => {
       <TableData className={tableColumnClasses[0]}>
         <BindingName binding={binding} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         <RoleLink binding={binding} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {binding.subject.kind}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         {binding.subject.name}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[4], 'co-break-word')}>
         {binding.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
         ) : (
@@ -737,9 +737,7 @@ const BaseEditRoleBinding = (props) => {
                 <label htmlFor="subject-name" className="co-required">
                   {t('public~Subject name')}
                 </label>
-                <span
-                  className={classNames('pf-v6-c-form-control', { disabled: isSubjectDisabled })}
-                >
+                <span className={css('pf-v6-c-form-control', { disabled: isSubjectDisabled })}>
                   <input
                     type="text"
                     onChange={changeSubjectName}

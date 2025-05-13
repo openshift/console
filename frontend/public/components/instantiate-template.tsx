@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import {
   ActionGroup,
   Button,
@@ -90,7 +90,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
               />
             ) : (
               <span
-                className={classNames(
+                className={css(
                   'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
                   normalizeIconClass(iconClass),
                 )}

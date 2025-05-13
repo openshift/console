@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';
@@ -71,7 +71,7 @@ const RolesTableRow = ({ obj: role }) => {
           namespace={role.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(roleColumnClasses[1], 'co-break-word')}>
         {role.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={role.metadata.namespace} />
         ) : (

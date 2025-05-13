@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -75,15 +75,10 @@ const SecretTableRow = ({ obj: secret }) => {
           namespace={secret.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={secret.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-        {secret.type}
-      </TableData>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
       <TableData className={tableColumnClasses[3]}>{data}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={secret.metadata.creationTimestamp} />

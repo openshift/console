@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as Immutable from 'immutable';
 import { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
@@ -485,7 +485,7 @@ const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ field, in
       className="form-group co-dynamic-form__form-group"
       data-test-selector={path}
     >
-      <label className={classNames('form-label', { 'co-required': required })} htmlFor={id}>
+      <label className={css('form-label', { 'co-required': required })} htmlFor={id}>
         {displayName}
       </label>
       {input}

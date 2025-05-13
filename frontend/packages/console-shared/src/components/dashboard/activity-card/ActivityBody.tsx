@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Accordion, Button } from '@patternfly/react-core';
 import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
 import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -223,7 +223,7 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
 };
 
 const ActivityBody: React.FC<ActivityBodyProps> = ({ children, className }) => (
-  <div className={classNames('co-activity-card__body', className)} id="activity-body">
+  <div className={css('co-activity-card__body', className)} id="activity-body">
     {children}
   </div>
 );

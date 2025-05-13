@@ -31,7 +31,7 @@ import {
   OutlinedWindowRestoreIcon,
   OutlinedPlayCircleIcon,
 } from '@patternfly/react-icons';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import {
   FLAGS,
   LOG_WRAP_LINES_USERSETTINGS_KEY,
@@ -783,9 +783,9 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     <>
       <div
         ref={resourceLogRef}
-        className={classNames('resource-log', { 'resource-log--fullscreen': isFullscreen })}
+        className={css('resource-log', { 'resource-log--fullscreen': isFullscreen })}
       >
-        <div className={classNames('resource-log__alert-wrapper')}>
+        <div className={css('resource-log__alert-wrapper')}>
           {error && (
             <Alert
               isInline
@@ -832,7 +832,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             </Alert>
           )}
         </div>
-        <div className={classNames('resource-log__log-viewer-wrapper')}>
+        <div className={css('resource-log__log-viewer-wrapper')}>
           <LogViewer
             header={
               <div className="log-window__header" data-test="no-log-lines">
@@ -847,7 +847,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             toolbar={logControls}
             footer={
               <FooterButton
-                className={classNames('log-window__footer', {
+                className={css('log-window__footer', {
                   'log-window__footer--hidden': status !== STREAM_PAUSED,
                 })}
                 setStatus={setStatus}

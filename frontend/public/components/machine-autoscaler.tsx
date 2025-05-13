@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -65,13 +65,10 @@ const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         <MachineAutoscalerTargetLink obj={obj} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>{_.get(obj, 'spec.minReplicas', '-')}</TableData>

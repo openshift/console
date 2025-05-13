@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PageSection, Skeleton, Switch, Tooltip } from '@patternfly/react-core';
-import classnames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { GettingStartedSection } from '@console/internal/components/dashboard/project-dashboard/getting-started/GettingStartedSection';
@@ -66,7 +66,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title }) => {
           <ResourceQuotaAlert namespace={activeNamespace} />
         </div>
         <div
-          className={classnames('odc-add-page-layout__hint-block__details-switch', {
+          className={css('odc-add-page-layout__hint-block__details-switch', {
             'odc-add-page-layout__hint-block__details-switch__loading-state': !extensionsLoaded,
           })}
           data-test="details-switch"

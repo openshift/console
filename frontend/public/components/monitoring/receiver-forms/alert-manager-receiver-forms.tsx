@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 import { APIError } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -383,7 +383,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
             <ReceiverInfoTip type={InitialReceivers.Watchdog} />
           )}
           <div
-            className={classNames('form-group', {
+            className={css('form-group', {
               'has-error': receiverNameAlreadyExist,
             })}
           >

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   Layer,
   useHover,
@@ -13,7 +14,6 @@ import {
   useCombineRefs,
   NodeLabel,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   NodeShadows,
@@ -79,7 +79,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
       ref={hoverRef}
       onClick={onSelect}
       onContextMenu={editAccess ? onContextMenu : null}
-      className={classNames('pf-topology__group odc-helm-release', {
+      className={css('pf-topology__group odc-helm-release', {
         'pf-m-dragging': dragging || labelDragging,
         'is-filtered': filtered,
       })}
@@ -88,7 +88,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <g
           ref={nodeRefs}
-          className={classNames('odc-helm-release', {
+          className={css('odc-helm-release', {
             'pf-m-selected': selected,
             'pf-m-dragging': dragging || labelDragging,
             'is-filtered': filtered,
