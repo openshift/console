@@ -8,9 +8,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { PageHeading, PageHeadingProps } from '@console/shared/src/components/heading/PageHeading';
+import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
 import { connectToModel } from '../../kinds';
 import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
-import { ActionsMenu, FirehoseResult, KebabOption, ResourceIcon } from './index';
+import { FirehoseResult, KebabOption, ResourceIcon } from './index';
 import { ManagedByOperatorLink } from './managed-by';
 
 export const ResourceItemDeleting = () => {
