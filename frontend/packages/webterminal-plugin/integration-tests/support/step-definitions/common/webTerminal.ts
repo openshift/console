@@ -10,9 +10,9 @@ import { checkDeveloperPerspective } from '@console/dev-console/integration-test
 import { checkTerminalIcon } from '@console/dev-console/integration-tests/support/pages/functions/checkTerminalIcon';
 import { webTerminalPage } from '@console/webterminal-plugin/integration-tests/support/step-definitions/pages/web-terminal/webTerminal-page';
 
-const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'consoledeveloper';
-const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'consoledeveloper';
-const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'developer';
+const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
+const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
+const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
 const kubeAdmUserName = Cypress.env('KUBEADMIN_NAME') || 'kubeadmin';
 const kubeAdmUserPass = Cypress.env('BRIDGE_KUBEADMIN_PASSWORD');
 
