@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -460,7 +460,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
 
       const children = parameter.values ? (
         <>
-          <label className={classNames({ 'co-required': paramIsRequired(key) })} htmlFor={paramId}>
+          <label className={css({ 'co-required': paramIsRequired(key) })} htmlFor={paramId}>
             {_.get(parameter, 'name', key)}
           </label>
           <Dropdown
@@ -495,7 +495,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           ) : (
             <>
               <label
-                className={classNames({
+                className={css({
                   'co-required': paramIsRequired(key),
                 })}
                 htmlFor={paramId}
@@ -520,7 +520,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       return (
         <div
           key={key}
-          className={classNames('form-group', {
+          className={css('form-group', {
             'has-error': _.get(newStorageClass.parameters, `${key}.validationMsg`, null),
           })}
         >
@@ -585,7 +585,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       />
       <PaneBody>
         <form data-test-id="storage-class-form">
-          <div className={classNames('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
+          <div className={css('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
             <label className="co-required" htmlFor="storage-class-name">
               {t('public~Name')}
             </label>

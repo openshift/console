@@ -10,8 +10,8 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { observer } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { TopologyListViewNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -116,7 +116,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
     }
   }
 
-  const className = classNames('odc-topology-list-view__item-row', { 'is-filtered': filtered });
+  const className = css('odc-topology-list-view__item-row', { 'is-filtered': filtered });
   return (
     <DataListItem
       key={item.getId()}

@@ -122,11 +122,7 @@ export const getCorePackage: GetPackageDefinition = (
     ...commonManifestFields,
     dependencies: {
       ...parseSharedModuleDeps(rootPackage, missingDepCallback),
-      ...parseDeps(
-        rootPackage,
-        ['classnames', 'immutable', 'reselect', 'typesafe-actions'],
-        missingDepCallback,
-      ),
+      ...parseDeps(rootPackage, ['immutable', 'reselect', 'typesafe-actions'], missingDepCallback),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
   },

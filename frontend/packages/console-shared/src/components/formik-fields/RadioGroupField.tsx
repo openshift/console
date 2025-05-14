@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useField } from 'formik';
 import { RedExclamationCircleIcon } from '../status';
 import { RadioGroupFieldProps } from './field-types';
@@ -25,7 +25,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
   const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
-      className={classNames('ocs-radio-group-field', { 'ocs-radio-group-field--inline': isInline })}
+      className={css('ocs-radio-group-field', { 'ocs-radio-group-field--inline': isInline })}
       fieldId={fieldId}
       isRequired={required}
       label={label}

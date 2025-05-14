@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -73,10 +73,7 @@ const CronJobTableRow: React.FC<RowFunctionArgs<CronJobKind>> = ({ obj: cronjob 
           namespace={cronjob.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{cronjob.spec.schedule}</TableData>

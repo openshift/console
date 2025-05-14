@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
@@ -717,7 +717,7 @@ const EditYAMLInner = (props) => {
     return <Loading />;
   }
 
-  const klass = classNames('co-file-dropzone-container', {
+  const klass = css('co-file-dropzone-container', {
     'co-file-dropzone--drop-over': isOver,
   });
 
@@ -794,11 +794,11 @@ const EditYAMLInner = (props) => {
       <PageBody className="pf-v6-c-form">
         <div className="co-p-has-sidebar">
           <div
-            className={classNames('co-p-has-sidebar__body', {
+            className={css('co-p-has-sidebar__body', {
               'co-p-has-sidebar__body--sidebar-open': showSidebar && hasSidebarContent,
             })}
           >
-            <div className={classNames('yaml-editor', customClass)} ref={editor}>
+            <div className={css('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
                 ref={monacoRef}

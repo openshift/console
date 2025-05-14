@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -97,11 +97,11 @@ export const PVCStatus = ({ pvc }) => {
 const tableColumnClasses = [
   '', // name
   '', // namespace
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // status
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // used capacity
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
+  css('pf-m-hidden', 'pf-m-visible-on-lg'), // status
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
+  css('pf-m-hidden', 'pf-m-visible-on-2xl'), // used capacity
+  css('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
   Kebab.columnClass,
 ];
 
@@ -122,10 +122,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={namespace} title={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -146,7 +143,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
         {totalCapacityMetric ? totalCapcityHumanized.string : '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>{metrics ? usedCapacity.string : '-'}</TableData>
-      <TableData className={classNames(tableColumnClasses[6])}>
+      <TableData className={css(tableColumnClasses[6])}>
         {obj?.spec?.storageClassName ? (
           <ResourceLink
             kind="StorageClass"

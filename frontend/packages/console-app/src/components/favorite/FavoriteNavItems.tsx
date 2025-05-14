@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { useUserSettingsCompatibility } from '@console/shared';
 import {
@@ -61,7 +61,7 @@ export const FavoriteNavItems: React.FC = () => {
         dataAttributes={{
           'data-test': 'favorite-resource-item',
         }}
-        className={classNames('co-favorite-resource')}
+        className={css('co-favorite-resource')}
         to={favorite.url}
         isActive={activeItem === `favorites-item-${favorite.url}`}
       >

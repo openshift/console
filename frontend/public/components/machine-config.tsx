@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -149,7 +149,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineConfigReference} name={obj.metadata.name} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {_.get(
           obj,
           [
@@ -163,7 +163,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[2]}>
         {_.get(obj, 'spec.config.ignition.version') || '-'}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         {_.get(obj, 'spec.osImageURL') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

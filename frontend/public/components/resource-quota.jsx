@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useParams } from 'react-router-dom-v5-compat';
 import { sortable, Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';
@@ -438,26 +438,23 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
           dataTest="resource-quota-link"
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         {rq.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={rq.metadata.namespace} />
         ) : (
           t('public~None')
         )}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         <LabelList
           kind={appliedClusterQuotaReference}
           labels={rq.spec?.selector?.labels?.matchLabels}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[4], 'co-break-word')}>
         {resourcesAtQuota > 0 ? (
           <>
             <YellowExclamationTriangleIcon />{' '}
@@ -503,16 +500,16 @@ const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
           className="co-resource-item__resource-name"
         />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(acrqTableColumnClasses[1], 'co-break-word')}>
         <LabelList
           kind={appliedClusterQuotaReference}
           labels={rq.spec?.selector?.labels?.matchLabels}
         />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(acrqTableColumnClasses[2], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(acrqTableColumnClasses[3], 'co-break-word')}>
         {resourcesAtQuota > 0 ? (
           <>
             <YellowExclamationTriangleIcon />{' '}

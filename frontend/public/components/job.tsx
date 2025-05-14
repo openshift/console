@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import {
@@ -89,10 +89,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={job.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

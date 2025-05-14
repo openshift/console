@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   Node,
   observer,
@@ -12,7 +13,6 @@ import {
   useDndDrop,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -94,7 +94,7 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
   const { data } = element.getData();
   const ownerReferenceKind = referenceFor({ kind: data.operatorKind, apiVersion: data.apiVersion });
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(ownerReferenceKind);
-  const badgeClassName = classNames('odc-resource-icon', {
+  const badgeClassName = css('odc-resource-icon', {
     [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
   });
 

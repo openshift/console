@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
@@ -12,8 +12,8 @@ const tableColumnClasses = [
   '', // Display Name
   '', // Namespace
   '', // Disabled
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // Repo URL
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // Created
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // Repo URL
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // Created
   Kebab.columnClass,
 ];
 

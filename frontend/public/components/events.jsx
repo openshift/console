@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define, tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -140,7 +140,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
 
   return (
     <div
-      className={classNames('co-sysevent', {
+      className={css('co-sysevent', {
         'co-sysevent--warning': isWarning,
       })}
       data-test={isWarning ? 'event-warning' : 'event'}
@@ -497,7 +497,7 @@ const EventStream = ({
     statusBtnTxt = <span>{t('public~Event stream is paused.')}</span>;
   }
 
-  const klass = classNames('co-sysevent-stream__timeline', {
+  const klass = css('co-sysevent-stream__timeline', {
     'co-sysevent-stream__timeline--empty': !allCount || !count,
   });
   const messageCount =

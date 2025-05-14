@@ -16,8 +16,8 @@ import {
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { css } from '@patternfly/react-styles';
 import { sortable, wrappable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
@@ -143,10 +143,10 @@ const isPackageServer = (obj) =>
 
 const nameColumnClass = '';
 const namespaceColumnClass = '';
-const managedNamespacesColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-sm');
-const statusColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-lg');
-const lastUpdatedColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-2xl');
-const providedAPIsColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-xl');
+const managedNamespacesColumnClass = css('pf-m-hidden', 'pf-m-visible-on-sm');
+const statusColumnClass = css('pf-m-hidden', 'pf-m-visible-on-lg');
+const lastUpdatedColumnClass = css('pf-m-hidden', 'pf-m-visible-on-2xl');
+const providedAPIsColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
 
 const editSubscription = (sub: SubscriptionKind): KebabOption =>
   !_.isNil(sub)

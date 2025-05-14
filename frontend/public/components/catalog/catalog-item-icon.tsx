@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 import { TemplateKind, PartialObjectMetadata } from '../../module/k8s';
 import aerogearImg from '../../imgs/logos/aerogear.svg';
@@ -257,7 +257,7 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
       <span className="co-catalog-item-icon__bg" aria-hidden>
         {iconClassImg ? (
           <img
-            className={classNames(
+            className={css(
               'co-catalog-item-icon__img',
               iconSize && `co-catalog-item-icon__img--${iconSize}`,
             )}
@@ -266,7 +266,7 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
           />
         ) : (
           <span
-            className={classNames(
+            className={css(
               'co-catalog-item-icon__icon',
               iconSize && `co-catalog-item-icon__icon--${iconSize}`,
               normalizeIconClass(iconClass),

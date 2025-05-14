@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import { Table, Tr, Tbody, Td, Thead, Th } from '@patternfly/react-table';
-import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import './FilterTable.scss';
 
@@ -17,13 +17,13 @@ const FilterTable: React.FC<FilterTableProps> = ({
   paddingLeft = false,
 }) => {
   const filterRow = (key: string, value: string) => {
-    const className = cx({ 'kn-filter-table__row--bordered': bordered });
+    const className = css({ 'kn-filter-table__row--bordered': bordered });
     return {
       cells: [
         {
           title: key,
           props: {
-            className: cx(className, { 'kn-filter-table__padding--left': paddingLeft }),
+            className: css(className, { 'kn-filter-table__padding--left': paddingLeft }),
           },
         },
         {
@@ -51,8 +51,8 @@ const FilterTable: React.FC<FilterTableProps> = ({
           {data.columns.map((column) => (
             <Th
               key={column}
-              className={cx(
-                cx({ 'kn-filter-table__padding--left': paddingLeft && column === t('Attribute') }),
+              className={css(
+                css({ 'kn-filter-table__padding--left': paddingLeft && column === t('Attribute') }),
                 { 'kn-filter-table__row--bordered': bordered },
               )}
             >

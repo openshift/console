@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -105,10 +105,7 @@ const ServiceTableRow = ({ obj: s }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={s.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

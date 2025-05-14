@@ -8,7 +8,7 @@ import {
   EmptyStateVariant,
   Truncate,
 } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -568,7 +568,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 )}
                 {!detailsItem.installed ? (
                   <Link
-                    className={classNames(
+                    className={css(
                       'pf-v6-c-button',
                       {
                         'pf-m-secondary': remoteWorkflowUrl,

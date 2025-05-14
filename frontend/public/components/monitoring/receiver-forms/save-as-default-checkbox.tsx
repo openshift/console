@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/shared';
@@ -11,7 +11,7 @@ export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
   dispatchFormChange,
   tooltip,
 }) => {
-  const saveAsDefaultLabelClass = classNames('checkbox', { 'co-no-bold': disabled });
+  const saveAsDefaultLabelClass = css('checkbox', { 'co-no-bold': disabled });
   return (
     <label className={saveAsDefaultLabelClass} htmlFor={formField}>
       <input

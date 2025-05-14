@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 const TertiaryHeading: React.FC<TertiaryHeadingProps> = ({
   altSpacing,
@@ -10,7 +10,7 @@ const TertiaryHeading: React.FC<TertiaryHeadingProps> = ({
 }) => (
   <Title
     headingLevel="h3"
-    className={classNames({ 'pf-v6-u-my-md': !altSpacing }, altSpacing, className)}
+    className={css({ 'pf-v6-u-my-md': !altSpacing }, altSpacing, className)}
     {...props}
   >
     {children}

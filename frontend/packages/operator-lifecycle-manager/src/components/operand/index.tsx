@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -91,9 +91,9 @@ const tableColumnClasses = [
   '',
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-2xl'),
   Kebab.columnClass,
 ];
 
@@ -175,7 +175,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNames
         <OperandLink obj={obj} />
       </TableData>
       <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        className={css(tableColumnClasses[1], 'co-break-word')}
         data-test-operand-kind={obj.kind}
       >
         {obj.kind}

@@ -1,6 +1,6 @@
 import { Tooltip } from '@patternfly/react-core';
 import { GlobeAmericasIcon } from '@patternfly/react-icons/dist/esm/icons/globe-americas-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useSelector } from 'react-redux';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 import { TimestampProps } from '@console/dynamic-plugin-sdk';
@@ -31,7 +31,7 @@ const Timestamp = (props: TimestampProps) => {
   }
 
   return (
-    <div className={classNames('co-timestamp co-icon-and-text', props.className)}>
+    <div className={css('co-timestamp co-icon-and-text', props.className)}>
       <GlobeAmericasIcon className="co-icon-and-text__icon" />
       <Tooltip
         content={[

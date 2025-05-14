@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
@@ -71,10 +71,10 @@ export const TextFilter: React.FC<TextFilterProps> = (props) => {
   const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
 
   return (
-    <div className={classNames('has-feedback', parentClassName)}>
+    <div className={css('has-feedback', parentClassName)}>
       <TextInput
         {...otherInputProps}
-        className={classNames('co-text-filter', className)}
+        className={css('co-text-filter', className)}
         data-test-id="item-filter"
         aria-label={placeholderText}
         placeholder={placeholderText}
@@ -291,7 +291,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
           buttonClassName="pf-m-primary"
           id="item-create"
           dataTest="item-create"
-          menuClassName={classNames({ 'prevent-overflow': title })}
+          menuClassName={css({ 'prevent-overflow': title })}
           title={createButtonText}
           noSelection
           items={createProps.items}

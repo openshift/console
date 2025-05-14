@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -62,7 +62,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                   <div className="form-inline">
                     <div className="pf-v6-c-input-group">
                       <span
-                        className={classNames('pf-v6-c-form-control', {
+                        className={css('pf-v6-c-form-control', {
                           'pf-m-disabled': strategyIsNotRollingUpdate,
                         })}
                       >
@@ -108,7 +108,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                   <div className="form-inline">
                     <div className="pf-v6-c-input-group">
                       <span
-                        className={classNames('pf-v6-c-form-control', {
+                        className={css('pf-v6-c-form-control', {
                           'pf-m-disabled': strategyIsNotRollingUpdate,
                         })}
                       >

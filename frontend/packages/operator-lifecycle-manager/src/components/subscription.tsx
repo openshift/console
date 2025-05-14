@@ -16,8 +16,8 @@ import {
 } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';
@@ -254,7 +254,7 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       <TableData className={tableColumnClasses[2]}>
         <SubscriptionStatus subscription={obj} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
+      <TableData className={css(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
         {obj.spec.channel || 'default'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

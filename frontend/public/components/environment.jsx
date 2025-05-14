@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import {
   Alert,
   Button,
@@ -613,7 +613,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     );
 
     return (
-      <div className={classNames({ 'pf-v6-c-page__main-section': !currentEnvVars.isCreate })}>
+      <div className={css({ 'pf-v6-c-page__main-section': !currentEnvVars.isCreate })}>
         {containerVars}
         {!currentEnvVars.isCreate && (
           <div className="pf-v6-c-form environment-buttons">

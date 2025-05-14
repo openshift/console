@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { debounce } from 'lodash';
 import { useDrag, useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
@@ -147,7 +147,7 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
       dataAttributes={{
         'data-test': draggable ? 'draggable-pinned-resource-item' : 'pinned-resource-item',
       }}
-      className={classNames('oc-pinned-resource', {
+      className={css('oc-pinned-resource', {
         'oc-pinned-resource--dragging': draggable && isOver,
       })}
     >

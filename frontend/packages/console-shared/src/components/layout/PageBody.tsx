@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Flex } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 const PageBody: React.FC<PageBodyProps> = ({ children, className, ...props }) => {
   return (
     <Flex
-      className={classNames('co-m-page__body', className)}
+      className={css('co-m-page__body', className)}
       direction={{ default: 'column' }}
       rowGap={{ default: 'rowGapNone' }}
       flexWrap={{ default: 'nowrap' }}

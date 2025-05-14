@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 const ExternalLink: React.FC<ExternalLinkProps> = ({
   children,
@@ -12,7 +12,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
 }) => (
   <a
     {...props}
-    className={cx('co-external-link', additionalClassName, props?.className)}
+    className={css('co-external-link', additionalClassName, props?.className)}
     href={href}
     target="_blank"
     rel="noopener noreferrer"

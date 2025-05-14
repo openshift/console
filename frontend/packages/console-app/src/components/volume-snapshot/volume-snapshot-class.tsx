@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   ListPageBody,
@@ -27,8 +27,8 @@ import { getAnnotations, LazyActionMenu } from '@console/shared';
 
 const tableColumnInfo = [
   { id: 'name' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
   { className: Kebab.columnClass, id: '' },
 ];
 

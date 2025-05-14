@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
 import { MatchExpression, Operator } from '@console/internal/module/k8s';
@@ -57,7 +57,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
           {t('olm~Values')}
         </div>
         <span
-          className={classNames('pf-v6-c-form-control', {
+          className={css('pf-v6-c-form-control', {
             'pf-m-disabled': valuesDisabled,
           })}
         >

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Title } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 const SecondaryHeading: React.FC<SecondaryHeadingProps> = ({ children, className, ...props }) => (
-  <Title headingLevel="h2" className={classNames('co-section-heading', className)} {...props}>
+  <Title headingLevel="h2" className={css('co-section-heading', className)} {...props}>
     {children}
   </Title>
 );

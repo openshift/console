@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -100,12 +100,7 @@ const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ o
       </TableData>
       <TableData className={tableColumnClasses[2]}>{operatorVersion || '-'}</TableData>
       <TableData
-        className={classNames(
-          tableColumnClasses[3],
-          'co-break-word',
-          'co-line-clamp',
-          'co-pre-line',
-        )}
+        className={css(tableColumnClasses[3], 'co-break-word', 'co-line-clamp', 'co-pre-line')}
       >
         <LinkifyExternal>{message || '-'}</LinkifyExternal>
       </TableData>

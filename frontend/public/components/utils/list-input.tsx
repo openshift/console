@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -52,7 +52,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
     const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
       <div className="form-group">
-        <label className={classNames({ 'co-required': required })}>{label}</label>
+        <label className={css({ 'co-required': required })}>{label}</label>
         {_.map(values, (v: string, i: number) => (
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
