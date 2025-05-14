@@ -12,7 +12,15 @@ import {
   useDataViewFilters,
   useDataViewPagination,
 } from '@patternfly/react-data-view';
-import { sortable, SortByDirection, Tbody, Td, ThProps, Tr } from '@patternfly/react-table';
+import {
+  InnerScrollContainer,
+  sortable,
+  SortByDirection,
+  Tbody,
+  Td,
+  ThProps,
+  Tr,
+} from '@patternfly/react-table';
 import { useNavigate, useSearchParams } from 'react-router-dom-v5-compat';
 import {
   PodKind,
@@ -27,12 +35,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import {
   formatBytesAsMiB,
   formatCores,
-  Kebab,
   LabelList,
   OwnerReferences,
   ResourceLink,
@@ -98,12 +105,12 @@ const podColumnInfo = Object.freeze({
     title: 'public~Status',
   },
   ready: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
+    classes: css('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
     id: 'ready',
     title: 'public~Ready',
   },
   restarts: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
+    classes: css('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
     id: 'restarts',
     title: 'public~Restarts',
   },
@@ -118,17 +125,17 @@ const podColumnInfo = Object.freeze({
     title: 'public~Node',
   },
   memory: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: css({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
     title: 'public~Memory',
   },
   cpu: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: css({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
     title: 'public~CPU',
   },
   created: {
-    classes: classNames('pf-v6-u-w-10-on-2xl'),
+    classes: css('pf-v6-u-w-10-on-2xl'),
     id: 'created',
     title: 'public~Created',
   },
@@ -155,7 +162,11 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     id: podColumnInfo.name.id,
     sort: 'metadata.name',
     transforms: [sortable],
-    props: { className: podColumnInfo.name.classes },
+    props: {
+      className: podColumnInfo.name.classes,
+      isStickyColumn: true,
+      hasRightBorder: true,
+    },
   },
   {
     title: t(podColumnInfo.namespace.title),
@@ -250,11 +261,6 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     props: { className: podColumnInfo.traffic.classes },
     additional: true,
   },
-  {
-    title: '',
-    id: '',
-    props: { className: Kebab.columnClass },
-  },
 ];
 
 /**
@@ -291,12 +297,18 @@ function useDataViewPodRow(
     const rowCells = {
       [podColumnInfo.name.id]: {
         id: podColumnInfo.name.id,
-        props: { className: podColumnInfo.name.classes },
+        props: {
+          className: podColumnInfo.name.classes,
+          isStickyColumn: true,
+          hasRightBorder: true,
+        },
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
       },
       [podColumnInfo.namespace.id]: {
         id: podColumnInfo.namespace.id,
-        props: { className: classNames(podColumnInfo.namespace.classes, 'co-break-word') },
+        props: {
+          className: css(podColumnInfo.namespace.classes, 'co-break-word'),
+        },
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [podColumnInfo.status.id]: {
@@ -362,7 +374,12 @@ function useDataViewPodRow(
     const dataViewRow: DataViewTd[] = columns.map(({ id }) => rowCells[id]);
     const actionsRow: DataViewTd = {
       id: '',
-      props: { className: Kebab.columnClass },
+      props: {
+        isStickyColumn: true,
+        hasLeftBorder: true,
+        isActionCell: true,
+        stickyMinWidth: '0',
+      },
       cell: <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />,
     };
     // Always add the actions column
@@ -390,7 +407,10 @@ function useDataViewSort({
   const [sortBy, setSortBy] = React.useState<{
     index: number;
     direction: SortByDirection;
-  }>({ index: sortColumnIndex ?? 0, direction: sortDirection || SortByDirection.asc });
+  }>({
+    index: sortColumnIndex ?? 0,
+    direction: sortDirection || SortByDirection.asc,
+  });
 
   const applySort = React.useCallback(
     (index, direction) => {
@@ -401,7 +421,9 @@ function useDataViewSort({
       if (sortColumn) {
         sp.set('orderBy', direction);
         sp.set('sortBy', sortColumn.title);
-        navigate(`${url.pathname}?${sp.toString()}${url.hash}`, { replace: true });
+        navigate(`${url.pathname}?${sp.toString()}${url.hash}`, {
+          replace: true,
+        });
         setSortBy({
           index,
           direction,
@@ -492,6 +514,7 @@ function useDataViewData({
           index: 0,
         },
       },
+      isStickyColumn: column.props.isStickyColumn,
     } as ThProps,
     cell: <span>{t(column.title)}</span>,
   }));
@@ -603,7 +626,7 @@ const LabelsFilter = ({
     >
       <div className="pf-v6-c-input-group co-filter-group">
         <AutocompleteInput
-          className="co-text-node"
+          color="purple"
           onSuggestionSelect={(selected) => {
             applyLabelFilters(_.uniq([...labelSelection, selected]));
           }}
@@ -650,11 +673,11 @@ const DataViewPodList = ({
   }, {});
   const debouncedOnFilterChange = useDebounceCallback(onFilterChange, 500);
   const debouncedSetSearchParams = useDebounceCallback(setSearchParams, 500);
-  // Currently there is a big that will only return the first item from the query, even though there are multiple items for one group
-  const { onSetFilters, filters: dataViewFilters } = useDataViewFilters({
+  // Currently there is a bug that will only return the first item from the query, even though there are multiple items for one group
+  const { filters: dataViewFilters, onSetFilters, clearAllFilters } = useDataViewFilters({
+    initialFilters,
     searchParams,
     setSearchParams: debouncedSetSearchParams,
-    initialFilters,
   });
 
   const bodyLoading = React.useMemo(
@@ -685,10 +708,15 @@ const DataViewPodList = ({
   }, [data.length, loaded]);
   const filtersMap = React.useMemo(() => {
     return filters.reduce<{
-      [filterGroup: string]: Omit<RowFilter<PodKind>, 'reducer'> & { all?: string[] };
+      [filterGroup: string]: Omit<RowFilter<PodKind>, 'reducer'> & {
+        all?: string[];
+      };
     }>(
       (acc, filter) => {
-        acc[filter.filterGroupName] = { ...filter, all: filter.items.map((item) => item.id) };
+        acc[filter.filterGroupName] = {
+          ...filter,
+          all: filter.items.map((item) => item.id),
+        };
         return acc;
       },
       {
@@ -710,7 +738,9 @@ const DataViewPodList = ({
           all: filter.all,
         });
       } else if (filter && typeof filterValue === 'string') {
-        debouncedOnFilterChange(filter.filterGroupName, { selected: [filterValue] });
+        debouncedOnFilterChange(filter.filterGroupName, {
+          selected: [filterValue],
+        });
       }
     });
   }
@@ -763,6 +793,7 @@ const DataViewPodList = ({
               onClick={() =>
                 createColumnManagementModal({
                   columnLayout,
+                  noLimit: true,
                 })
               }
               aria-label={t('public~Column management')}
@@ -775,15 +806,19 @@ const DataViewPodList = ({
           </ResponsiveActions>
         }
         pagination={<Pagination itemCount={data.length} {...pagination} />}
+        clearAllFilters={clearAllFilters}
       />
-      <DataViewTable
-        columns={dataViewColumns}
-        rows={dataViewRows}
-        bodyStates={{
-          empty: bodyEmpty,
-          loading: bodyLoading,
-        }}
-      />
+      <InnerScrollContainer>
+        <DataViewTable
+          columns={dataViewColumns}
+          rows={dataViewRows}
+          bodyStates={{
+            empty: bodyEmpty,
+            loading: bodyLoading,
+          }}
+          gridBreakPoint=""
+        />
+      </InnerScrollContainer>
     </DataView>
   );
 };
