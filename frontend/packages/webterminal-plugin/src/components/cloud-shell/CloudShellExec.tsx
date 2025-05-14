@@ -53,6 +53,10 @@ export type CloudShellExecProps = Props & DispatchProps & StateProps & WithFlags
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
+export const sanitizeURL = (data: string): string => {
+  return data.replace(/(https?:\/\/)[^@]*@/g, '$1');
+};
+
 const CloudShellExec: React.FC<CloudShellExecProps> = ({
   workspaceName,
   workspaceId,
@@ -141,7 +145,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             return;
           }
         }
-        const data = Base64.decode(msg.slice(1));
+        let data = Base64.decode(msg.slice(1));
+        data = sanitizeURL(data);
         currentTerminal && currentTerminal.onDataReceived(data);
         previous = data;
       })
