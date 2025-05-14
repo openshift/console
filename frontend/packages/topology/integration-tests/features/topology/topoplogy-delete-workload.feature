@@ -11,7 +11,7 @@ Feature: Deleteing an application node
         @regression
         Scenario: Deleting a workload through Action menu: T-15-TC01
             Given user has created workload "nodejs-ex-git-d" with resource type "Deployment"
-             When user clicks on workload "nodejs-ex-git-d"
+             When user opens the sidebar for "nodejs-ex-git-d"
               And user clicks on Action menu
               And user clicks "Delete Deployment" from action menu
               And user clicks on Delete button from modal

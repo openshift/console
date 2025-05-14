@@ -55,6 +55,10 @@ When('user clicks on workload {string}', (workloadName: string) => {
   topologyPage.componentNode(workloadName).click({ force: true });
 });
 
+When('user opens the sidebar for {string}', (workloadName: string) => {
+  topologyPage.verifyOrOpenSidebar(workloadName);
+});
+
 Then('user can see sidebar opens with Resources tab selected by default', () => {
   topologySidePane.verifySelectedTab('Resources');
 });
@@ -169,6 +173,7 @@ When('user clicks Start building your application', () => {
 
 When('user enters {string} builder image in Quick Search bar', (searchItem: string) => {
   cy.get(topologyPO.quickSearch).type(searchItem);
+  cy.wait(2000);
   cy.byTestID('item-name-.NET-Builder Images').first().click();
 });
 
