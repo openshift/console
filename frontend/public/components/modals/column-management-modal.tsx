@@ -64,7 +64,7 @@ const DataListRow: React.FC<DataListRowProps> = ({
 
 export const ColumnManagementModal: React.FC<
   ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>
-> = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns }) => {
+> = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
   const { t } = useTranslation();
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
@@ -110,20 +110,26 @@ export const ColumnManagementModal: React.FC<
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle className="modal-header">{t('public~Manage columns')}</ModalTitle>
       <ModalBody>
-        <div className="co-m-form-row">
-          <p>{t('public~Selected columns will appear in the table.')}</p>
-        </div>
-        <div className="co-m-form-row">
-          <Alert
-            className="co-alert"
-            isInline
-            title={t('public~You can select up to {{MAX_VIEW_COLS}} columns', { MAX_VIEW_COLS })}
-            variant="info"
-          >
-            {!columnLayout?.showNamespaceOverride &&
-              t('public~The namespace column is only shown when in "All projects"')}
-          </Alert>
-        </div>
+        {!noLimit && (
+          <>
+            <div className="co-m-form-row">
+              <p>{t('public~Selected columns will appear in the table.')}</p>
+            </div>
+            <div className="co-m-form-row">
+              <Alert
+                className="co-alert"
+                isInline
+                title={t('public~You can select up to {{MAX_VIEW_COLS}} columns', {
+                  MAX_VIEW_COLS,
+                })}
+                variant="info"
+              >
+                {!columnLayout?.showNamespaceOverride &&
+                  t('public~The namespace column is only shown when in "All projects"')}
+              </Alert>
+            </div>
+          </>
+        )}
         <Grid hasGutter className="co-m-form-row">
           <GridItem sm={6}>
             <label>
@@ -138,7 +144,7 @@ export const ColumnManagementModal: React.FC<
                 <DataListRow
                   key={defaultColumn.id}
                   onChange={onColumnChange}
-                  disableUncheckedRow={areMaxColumnsDisplayed}
+                  disableUncheckedRow={!noLimit && areMaxColumnsDisplayed}
                   column={defaultColumn}
                   checkedColumns={checkedColumns}
                 />
@@ -156,7 +162,7 @@ export const ColumnManagementModal: React.FC<
                 <DataListRow
                   key={additionalColumn.id}
                   onChange={onColumnChange}
-                  disableUncheckedRow={areMaxColumnsDisplayed}
+                  disableUncheckedRow={!noLimit && areMaxColumnsDisplayed}
                   column={additionalColumn}
                   checkedColumns={checkedColumns}
                 />
@@ -201,4 +207,5 @@ export type ColumnManagementModalProps = {
   cancel?: () => void;
   close?: () => void;
   columnLayout: ColumnLayout;
+  noLimit?: boolean;
 };

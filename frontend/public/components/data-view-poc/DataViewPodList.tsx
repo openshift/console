@@ -12,11 +12,20 @@ import {
   useDataViewFilters,
   useDataViewPagination,
 } from '@patternfly/react-data-view';
-import { sortable, SortByDirection, Tbody, Td, ThProps, Tr } from '@patternfly/react-table';
+import {
+  InnerScrollContainer,
+  sortable,
+  SortByDirection,
+  Tbody,
+  Td,
+  ThProps,
+  Tr,
+} from '@patternfly/react-table';
 import { useNavigate, useSearchParams } from 'react-router-dom-v5-compat';
 import {
   PodKind,
   podPhase,
+  podPhaseFilterReducer,
   podReadiness,
   podRestarts,
   referenceFor,
@@ -27,8 +36,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
-import * as classNames from 'classnames';
-import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
+import { css } from '@patternfly/react-styles';
 import {
   formatBytesAsMiB,
   formatCores,
@@ -39,7 +47,7 @@ import {
   Timestamp,
 } from '../utils';
 import { PodTraffic } from '../pod-traffic';
-import { LazyActionMenu, useDebounceCallback } from '@console/shared';
+import { getLabelsAsString, LazyActionMenu } from '@console/shared';
 import { PodStatus } from '../pod';
 import { sortResourceByValue } from '../factory/Table/sort';
 import * as UIActions from '../../actions/ui';
@@ -51,13 +59,10 @@ import {
   ResponsiveActions,
   SkeletonTableBody,
 } from '@patternfly/react-component-groups';
-import { RowFilter } from '../filter-toolbar';
-import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
-import {
-  ColumnLayout,
-  OnFilterChange,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import useLabelSelectionFix from '../useLabelSelectionFix';
+import DataViewFilters, {
+  DataViewFilterOption,
+} from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import { ColumnLayout } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import AutocompleteInput from '../autocomplete';
 import { ColumnsIcon } from '@patternfly/react-icons';
 import { createColumnManagementModal } from '../modals';
@@ -75,9 +80,6 @@ const columnManagementID = referenceForModel(PodModel);
 type PodRowData = {
   showNodes?: boolean;
 };
-
-const showMetrics =
-  PROMETHEUS_BASE_PATH && PROMETHEUS_TENANCY_BASE_PATH && window.screen.width >= 1200;
 
 const kind = 'Pod';
 
@@ -98,12 +100,12 @@ const podColumnInfo = Object.freeze({
     title: 'public~Status',
   },
   ready: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
+    classes: 'pf-m-nowrap',
     id: 'ready',
     title: 'public~Ready',
   },
   restarts: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
+    classes: 'pf-m-nowrap',
     id: 'restarts',
     title: 'public~Restarts',
   },
@@ -118,17 +120,17 @@ const podColumnInfo = Object.freeze({
     title: 'public~Node',
   },
   memory: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: '',
     id: 'memory',
     title: 'public~Memory',
   },
   cpu: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: '',
     id: 'cpu',
     title: 'public~CPU',
   },
   created: {
-    classes: classNames('pf-v6-u-w-10-on-2xl'),
+    classes: '',
     id: 'created',
     title: 'public~Created',
   },
@@ -155,7 +157,11 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     id: podColumnInfo.name.id,
     sort: 'metadata.name',
     transforms: [sortable],
-    props: { className: podColumnInfo.name.classes },
+    props: {
+      className: podColumnInfo.name.classes,
+      isStickyColumn: true,
+      hasRightBorder: true,
+    },
   },
   {
     title: t(podColumnInfo.namespace.title),
@@ -251,9 +257,14 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     additional: true,
   },
   {
-    title: '',
-    id: '',
-    props: { className: Kebab.columnClass },
+    title: 'Actions',
+    id: 'actions',
+    props: {
+      isStickyColumn: true,
+      hasLeftBorder: true,
+      isActionCell: true,
+      stickyMinWidth: '0',
+    },
   },
 ];
 
@@ -291,12 +302,18 @@ function useDataViewPodRow(
     const rowCells = {
       [podColumnInfo.name.id]: {
         id: podColumnInfo.name.id,
-        props: { className: podColumnInfo.name.classes },
+        props: {
+          className: podColumnInfo.name.classes,
+          isStickyColumn: true,
+          hasRightBorder: true,
+        },
         cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
       },
       [podColumnInfo.namespace.id]: {
         id: podColumnInfo.namespace.id,
-        props: { className: classNames(podColumnInfo.namespace.classes, 'co-break-word') },
+        props: {
+          className: css(podColumnInfo.namespace.classes, 'co-break-word'),
+        },
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [podColumnInfo.status.id]: {
@@ -362,7 +379,13 @@ function useDataViewPodRow(
     const dataViewRow: DataViewTd[] = columns.map(({ id }) => rowCells[id]);
     const actionsRow: DataViewTd = {
       id: '',
-      props: { className: Kebab.columnClass },
+      props: {
+        className: Kebab.columnClass,
+        isStickyColumn: true,
+        hasLeftBorder: true,
+        isActionCell: true,
+        stickyMinWidth: '0',
+      },
       cell: <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />,
     };
     // Always add the actions column
@@ -390,7 +413,10 @@ function useDataViewSort({
   const [sortBy, setSortBy] = React.useState<{
     index: number;
     direction: SortByDirection;
-  }>({ index: sortColumnIndex ?? 0, direction: sortDirection || SortByDirection.asc });
+  }>({
+    index: sortColumnIndex ?? 0,
+    direction: sortDirection || SortByDirection.asc,
+  });
 
   const applySort = React.useCallback(
     (index, direction) => {
@@ -401,7 +427,9 @@ function useDataViewSort({
       if (sortColumn) {
         sp.set('orderBy', direction);
         sp.set('sortBy', sortColumn.title);
-        navigate(`${url.pathname}?${sp.toString()}${url.hash}`, { replace: true });
+        navigate(`${url.pathname}?${sp.toString()}${url.hash}`, {
+          replace: true,
+        });
         setSortBy({
           index,
           direction,
@@ -449,13 +477,13 @@ function isDataViewConfigurableColumn(
 }
 
 function useDataViewData({
-  data,
+  filteredData,
   showNodes,
   showNamespaceOverride,
 }: {
-  showNamespaceOverride?: boolean;
+  filteredData: PodKind[];
   showNodes: boolean;
-  data: PodKind[];
+  showNamespaceOverride?: boolean;
 }) {
   const { t } = useTranslation();
   // Couple of hooks to persist the pagination information in URL
@@ -472,11 +500,12 @@ function useDataViewData({
     showNamespaceOverride,
     columnManagementID,
   });
-  // Slice 0 - 9 to mimic the column management, will be done later
   // extend the type with custom attributes so we can access original sorting function and propagate additional data to lookup filter arguments in the URL
   const dataViewColumns: (DataViewTh & {
     id: string;
-    sortFunction?: string | ((data: PodKind[], sortDirection: SortByDirection) => PodKind[]);
+    sortFunction?:
+      | string
+      | ((filteredData: PodKind[], sortDirection: SortByDirection) => PodKind[]);
     title: string;
   })[] = activeColumns.map((column, index) => ({
     id: column.id,
@@ -492,6 +521,7 @@ function useDataViewData({
           index: 0,
         },
       },
+      isStickyColumn: column.props.isStickyColumn,
     } as ThProps,
     cell: <span>{t(column.title)}</span>,
   }));
@@ -508,29 +538,29 @@ function useDataViewData({
   const sortedData = React.useMemo(() => {
     const sortColumn = dataViewColumns[sortBy.index];
     if (!isDataViewConfigurableColumn(sortColumn)) {
-      return data;
+      return filteredData;
     } else if (
       sortColumn &&
       isDataViewConfigurableColumn(sortColumn) &&
       typeof sortColumn?.props.sort === 'string'
     ) {
-      return data.sort(
+      return filteredData.sort(
         sortResourceByValue(sortBy.direction, (obj) =>
-          // In data view sort is never a string but we can keep the code for now
+          // In filteredData view sort is never a string but we can keep the code for now
           _.get(obj, (sortColumn?.props?.sort as unknown) as string, ''),
         ),
       );
     } else if (typeof sortColumn?.sortFunction === 'string') {
-      return data.sort(
+      return filteredData.sort(
         sortResourceByValue(sortBy.direction, (obj) =>
           _.get(obj, sortColumn.sortFunction as string),
         ),
       );
     } else if (typeof sortColumn?.sortFunction === 'function') {
-      return sortColumn?.sortFunction?.(data, sortBy.direction);
+      return sortColumn?.sortFunction?.(filteredData, sortBy.direction);
     }
-    return data;
-  }, [dataViewColumns, data, sortBy.direction, sortBy.index]);
+    return filteredData;
+  }, [dataViewColumns, filteredData, sortBy.direction, sortBy.index]);
 
   const transformedData = sortedData
     .map<RowProps<PodKind, PodRowData>>((pod, index) => ({
@@ -563,37 +593,36 @@ function useDataViewData({
 // Mostly copied over from public/components/filter-toolbar.tsx
 // Only taken the labels filter as it is unique to OCP and not in data view
 // Seems like it could be generalized and transferred as a new filter type to data view
-const LabelsFilter = ({
-  onFilterChange,
+const DataViewLabelFilter = ({
   data,
   title,
   filterId,
   showToolbarItem,
+  onChange,
 }: {
-  onFilterChange: OnFilterChange;
   data: PodKind[];
   filterId: string;
   title: string;
   showToolbarItem?: boolean;
+  onChange?: (key: string, newValues) => void; // TODO: add type for newValues
 }) => {
   const { t } = useTranslation();
   const [labelInputText, setLabelInputText] = React.useState('');
   const [searchParams] = useSearchParams();
 
-  const [labelSelection, onLabelSelectionChange] = useLabelSelectionFix(searchParams, filterId);
+  const labelSelection = searchParams.get(filterId)?.split(',') ?? [];
   const applyLabelFilters = (values: string[]) => {
     setLabelInputText('');
-    onLabelSelectionChange(values);
-    onFilterChange(filterId, { all: values });
+    onChange?.(filterId, values.join(','));
   };
 
   return (
     <ToolbarFilter
+      labels={labelSelection}
       deleteLabelGroup={() => {
         setLabelInputText('');
         applyLabelFilters([]);
       }}
-      labels={labelSelection}
       deleteLabel={(f, chip: string) => {
         setLabelInputText('');
         applyLabelFilters(_.difference(labelSelection, [chip]));
@@ -603,14 +632,14 @@ const LabelsFilter = ({
     >
       <div className="pf-v6-c-input-group co-filter-group">
         <AutocompleteInput
-          className="co-text-node"
+          color="purple"
           onSuggestionSelect={(selected) => {
             applyLabelFilters(_.uniq([...labelSelection, selected]));
           }}
           showSuggestions
           textValue={labelInputText}
           setTextValue={setLabelInputText}
-          placeholder={t('public~Search by label...')}
+          placeholder={t('public~Filter by label')}
           data={data}
         />
       </div>
@@ -622,8 +651,6 @@ type DataViewPodListProps = {
   loaded: boolean;
   data: PodKind[];
   showNodes?: boolean;
-  filters?: RowFilter<PodKind>[];
-  onFilterChange: OnFilterChange;
   columnLayout?: ColumnLayout;
   showNamespaceOverride?: boolean;
 };
@@ -632,29 +659,61 @@ const DataViewPodList = ({
   data,
   showNodes,
   loaded,
-  filters,
-  onFilterChange,
   columnLayout,
   showNamespaceOverride,
 }: DataViewPodListProps) => {
   const { t } = useTranslation();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { filters, onSetFilters, clearAllFilters } = useDataViewFilters({
+    initialFilters: { status: [], name: '', label: '' },
+    searchParams,
+    setSearchParams,
+  });
+
+  const filterOptions: DataViewFilterOption[] = React.useMemo(
+    () => [
+      { value: 'Running', label: t('public~Running') },
+      { value: 'Pending', label: t('public~Pending') },
+      { value: 'Terminating', label: t('public~Terminating') },
+      { value: 'CrashLoopBackOff', label: t('public~CrashLoopBackOff') },
+      // Use title "Completed" to match what appears in the status column for the pod.
+      // The pod phase is "Succeeded," but the container state is "Completed."
+      { value: 'Succeeded', label: t('public~Completed') },
+      { value: 'Failed', label: t('public~Failed') },
+      { value: 'Unknown', label: t('public~Unknown') },
+    ],
+    [],
+  );
+
+  // TODO: account for filter user preference in name filter
+  const filteredData = React.useMemo(
+    () =>
+      data.filter((item) => {
+        const filterLabelArray = filters.label !== '' ? filters.label.split(',') : [];
+        const itemLabels = getLabelsAsString(item);
+
+        return (
+          (!filters.status ||
+            filters.status.length === 0 ||
+            filters.status.includes(
+              String(
+                filterOptions.find((option) => option.value === podPhaseFilterReducer(item))?.value,
+              ),
+            )) &&
+          (!filters.name ||
+            item.metadata.name?.toLocaleLowerCase().includes(filters.name?.toLocaleLowerCase())) &&
+          (!filters.label || filterLabelArray.every((label) => itemLabels.includes(label)))
+        );
+      }),
+    [data, filters.label, filters.name, filters.status, filterOptions],
+  );
+
   const { dataViewColumns, dataViewRows, pagination } = useDataViewData({
-    data,
+    filteredData,
     showNodes,
     showNamespaceOverride,
-  });
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialFilters = filters?.reduce((acc, curr) => {
-    acc[curr.filterGroupName] = searchParams.getAll(curr.filterGroupName);
-    return acc;
-  }, {});
-  const debouncedOnFilterChange = useDebounceCallback(onFilterChange, 500);
-  const debouncedSetSearchParams = useDebounceCallback(setSearchParams, 500);
-  // Currently there is a big that will only return the first item from the query, even though there are multiple items for one group
-  const { onSetFilters, filters: dataViewFilters } = useDataViewFilters({
-    searchParams,
-    setSearchParams: debouncedSetSearchParams,
-    initialFilters,
   });
 
   const bodyLoading = React.useMemo(
@@ -677,84 +736,38 @@ const DataViewPodList = ({
     if (!loaded) {
       return DataViewState.loading;
     }
-    if (data.length === 0) {
+    if (filteredData.length === 0) {
       return DataViewState.empty;
     }
 
     return undefined;
-  }, [data.length, loaded]);
-  const filtersMap = React.useMemo(() => {
-    return filters.reduce<{
-      [filterGroup: string]: Omit<RowFilter<PodKind>, 'reducer'> & { all?: string[] };
-    }>(
-      (acc, filter) => {
-        acc[filter.filterGroupName] = { ...filter, all: filter.items.map((item) => item.id) };
-        return acc;
-      },
-      {
-        name: {
-          filterGroupName: 'name',
-          type: 'Name',
-          items: [],
-        },
-      },
-    );
-  }, [filters]);
-  function handleFilter(_e, filterConfig: { [filterId: string]: unknown }) {
-    onSetFilters(filterConfig);
-    Object.entries(filterConfig).map(([filterKey, filterValue]) => {
-      const filter = filtersMap[filterKey];
-      if (filter && filter.all) {
-        debouncedOnFilterChange(filter.type, {
-          selected: Array.isArray(filterValue) ? filterValue : [filterValue],
-          all: filter.all,
-        });
-      } else if (filter && typeof filterValue === 'string') {
-        debouncedOnFilterChange(filter.filterGroupName, { selected: [filterValue] });
-      }
-    });
-  }
+  }, [filteredData.length, loaded]);
 
   const dataViewFiltersNodes = React.useMemo(() => {
     return [
-      ...filters?.map((filter, index) => {
-        if (filter.items) {
-          return (
-            <DataViewCheckboxFilter
-              key={filter.filterGroupName}
-              filterId={filter.filterGroupName}
-              title={filter.filterGroupName}
-              placeholder={`Filter by ${filter.filterGroupName}`}
-              options={filter.items.map((option) => ({
-                label: option.title,
-                value: option.id,
-              }))}
-            />
-          );
-        }
-        return <div key={index}>Foobar</div>;
-      }),
-      <DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />,
-      <LabelsFilter
-        key="labels"
-        filterId="labels"
-        title={t('public~Label')}
-        data={data}
-        onFilterChange={onFilterChange}
+      <DataViewCheckboxFilter
+        key="status"
+        filterId="status"
+        title={t('public~Status')}
+        placeholder={t('public~Filter by status')}
+        options={filterOptions}
       />,
+      <DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />,
+      <DataViewLabelFilter key="label" filterId="label" title={t('public~Label')} data={data} />,
     ];
     // can't use data in the deps array is will re-compute the filters and will cause the selected category to reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, t, onFilterChange]);
+  }, [filterOptions, t]);
 
   return (
     <DataView activeState={activeState}>
       <DataViewToolbar
         filters={
-          <DataViewFilters values={dataViewFilters} onChange={handleFilter}>
+          <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
             {dataViewFiltersNodes}
           </DataViewFilters>
         }
+        clearAllFilters={clearAllFilters}
         actions={
           <ResponsiveActions breakpoint="lg">
             <ResponsiveAction
@@ -763,6 +776,7 @@ const DataViewPodList = ({
               onClick={() =>
                 createColumnManagementModal({
                   columnLayout,
+                  noLimit: true,
                 })
               }
               aria-label={t('public~Column management')}
@@ -774,16 +788,19 @@ const DataViewPodList = ({
             </ResponsiveAction>
           </ResponsiveActions>
         }
-        pagination={<Pagination itemCount={data.length} {...pagination} />}
+        pagination={<Pagination itemCount={filteredData.length} {...pagination} />}
       />
-      <DataViewTable
-        columns={dataViewColumns}
-        rows={dataViewRows}
-        bodyStates={{
-          empty: bodyEmpty,
-          loading: bodyLoading,
-        }}
-      />
+      <InnerScrollContainer>
+        <DataViewTable
+          columns={dataViewColumns}
+          rows={dataViewRows}
+          bodyStates={{
+            empty: bodyEmpty,
+            loading: bodyLoading,
+          }}
+          gridBreakPoint=""
+        />
+      </InnerScrollContainer>
     </DataView>
   );
 };

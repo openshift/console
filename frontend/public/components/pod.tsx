@@ -1161,13 +1161,25 @@ export const PodsPage: React.FC<PodPageProps> = ({
   return (
     userSettingsLoaded && (
       <>
-        <Switch
-          isChecked={usedw}
-          label="Use data view pod list"
-          onChange={() => {
-            setUsedw((prev) => !prev);
-          }}
-        />
+        <div style={{ position: 'relative' }}>
+          <div
+            style={{
+              position: 'absolute',
+              right: '0',
+              left: '0',
+              top: '24px',
+              textAlign: 'center',
+            }}
+          >
+            <Switch
+              isChecked={usedw}
+              label="Use Data view"
+              onChange={() => {
+                setUsedw((prev) => !prev);
+              }}
+            />
+          </div>
+        </div>
         <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
           {canCreate && (
             <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
@@ -1178,9 +1190,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
         <ListPageBody>
           {usedw ? (
             <DataViewPodList
-              onFilterChange={onFilterChange}
-              filters={filters}
-              data={filteredData}
+              data={data}
               showNodes={showNodes}
               loaded={loaded}
               columnLayout={columnLayout}
