@@ -1,4 +1,4 @@
-const defaultResolver = require('jest-resolve').default;
+const defaultResolver = require('jest-resolve/build/defaultResolver').default;
 
 // eslint-disable-next-line no-undef
 module.exports = (request, options) => {
