@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net"
 	"runtime"
 
 	"io/ioutil"
@@ -99,8 +101,8 @@ func main() {
 	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
 	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
-	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
-	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
+	fTLSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
+	fTLSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 
 	_ = fs.String("kubectl-client-id", "", "DEPRECATED: setting this does not do anything.")
@@ -608,7 +610,6 @@ func main() {
 
 	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
-		os.Exit(1)
 	}
 
 	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
@@ -617,24 +618,34 @@ func main() {
 	switch listenURL.Scheme {
 	case "http":
 	case "https":
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTLSCertFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTLSKeyFile))
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
 	}
 
-	consoleHandler, err := srv.HTTPHandler()
+	handler, err := srv.HTTPHandler()
 	if err != nil {
-		klog.Errorf("failed to set up the console's HTTP handler: %v", err)
-		os.Exit(1)
+		klog.Fatalf("failed to set up HTTP handler: %v", err)
 	}
-	httpsrv := &http.Server{
-		Addr:    listenURL.Host,
-		Handler: consoleHandler,
-		// Disable HTTP/2, which breaks WebSockets.
-		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
-		TLSConfig:    oscrypto.SecureTLSConfig(&tls.Config{}),
+
+	httpsrv := &http.Server{Handler: handler}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
+	if err != nil {
+		klog.Fatalf("error getting listener, %v", err)
 	}
+	defer listener.Close()
+
+	go func() {
+		<-ctx.Done()
+		klog.Infof("Shutting down server...")
+		if err = httpsrv.Shutdown(ctx); err != nil {
+			klog.Fatalf("Error shutting down server: %v", err)
+		}
+	}()
 
 	if *fRedirectPort != 0 {
 		go func() {
@@ -655,12 +666,26 @@ func main() {
 		}()
 	}
 
-	klog.Infof("Binding to %s...", httpsrv.Addr)
-	if listenURL.Scheme == "https" {
-		klog.Info("using TLS")
-		klog.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
-	} else {
-		klog.Info("not using TLS")
-		klog.Fatal(httpsrv.ListenAndServe())
+	httpsrv.Serve(listener)
+}
+
+func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
+	klog.Infof("Binding to %s...", host)
+	if scheme == "http" {
+		klog.Info("Not using TLS")
+		return net.Listen("tcp", host)
 	}
+	klog.Info("Using TLS")
+	tlsConfig := &tls.Config{
+		NextProtos: []string{"http/1.1"},
+		GetCertificate: func(_ *tls.ClientHelloInfo) (*tls.Certificate, error) {
+			klog.V(4).Infof("Getting TLS certs.")
+			cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+			if err != nil {
+				return nil, err
+			}
+			return &cert, nil
+		},
+	}
+	return tls.Listen("tcp", host, tlsConfig)
 }
