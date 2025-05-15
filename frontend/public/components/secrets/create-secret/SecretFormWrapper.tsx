@@ -44,12 +44,13 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState();
   const [stringData, setStringData] = React.useState(
-    _.mapValues(_.get(props.obj, 'data'), (value) => {
+    Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
       if (isBinary(null, Buffer.from(value, 'base64'))) {
         return null;
       }
-      return value ? Base64.decode(value) : '';
-    }),
+      acc[key] = value ? Base64.decode(value) : '';
+      return acc;
+    }, {}),
   );
   const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
