@@ -2,7 +2,7 @@ import { nodeStatus } from '@console/app/src/status/node';
 import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { StatusProps } from '../components/types';
-import { isHostPoweredOn, hasPowerManagement } from '../selectors';
+import { isHostPoweredOn, hasPowerManagement, isDetached } from '../selectors';
 import { BareMetalHostKind, CertificateSigningRequestKind } from '../types';
 import { getNodeMaintenanceStatus } from './node-maintenance-status';
 
@@ -46,7 +46,7 @@ export const baremetalNodeSecondaryStatus = ({
     states.push('Scheduling disabled');
   }
   // show host power status only if there is actual host associated to node
-  if (host && hasPowerManagement(host) && !isHostPoweredOn(host)) {
+  if (host && hasPowerManagement(host) && !isHostPoweredOn(host) && !isDetached(host)) {
     states.push('Host is powered off');
   }
   return states;
