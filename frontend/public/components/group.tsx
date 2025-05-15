@@ -74,12 +74,13 @@ const getImpersonateAction = (
 export const GroupKebab: React.FC<GroupKebabProps> = ({ group }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const startImpersonate = React.useCallback(
+    (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
+    [dispatch],
+  );
   return (
     <ResourceKebab
-      actions={[
-        getImpersonateAction(dispatch(UIActions.startImpersonate), navigate),
-        ...menuActions,
-      ]}
+      actions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
       kind={referenceForModel(GroupModel)}
       resource={group}
     />
@@ -222,15 +223,16 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
 export const GroupDetailsPage: React.FC = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const startImpersonate = React.useCallback(
+    (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
+    [dispatch],
+  );
 
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(GroupModel)}
-      menuActions={[
-        getImpersonateAction(dispatch(UIActions.startImpersonate), navigate),
-        ...menuActions,
-      ]}
+      menuActions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
       pages={[
         navFactory.details(GroupDetails),
         navFactory.editYaml(),
