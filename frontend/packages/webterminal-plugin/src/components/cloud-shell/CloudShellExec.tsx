@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { PodModel } from '@console/internal/models';
-import { resourceURL, K8sKind } from '@console/internal/module/k8s';
+import { resourceURL, K8sKind, PodKind } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { FLAGS, useTelemetry } from '@console/shared';
@@ -53,8 +54,52 @@ export type CloudShellExecProps = Props & DispatchProps & StateProps & WithFlags
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-export const sanitizeURL = (data: string): string => {
-  return data.replace(/(https?:\/\/)[^@]*@/g, '$1');
+export const sanitizeURL = (data: string, proxyUrl: any): string => {
+  if (!proxyUrl) {
+    return data;
+  }
+  const { httpProxy, httpsProxy } = proxyUrl;
+  let result = data;
+  if (httpProxy) {
+    result = data.replaceAll(httpProxy, httpProxy.replace(/(https?:\/\/)[^@]*@/g, '$1'));
+  }
+  if (httpsProxy) {
+    result = data.replaceAll(httpsProxy, httpsProxy.replace(/(https?:\/\/)[^@]*@/g, '$1'));
+  }
+  return result;
+};
+
+export const extractProxyEnvVarsFromWorkspacePod = async (podName: string, namespace: string) => {
+  try {
+    const pod = await k8sGetResource<PodKind>({
+      model: PodModel,
+      name: podName,
+      ns: namespace,
+    });
+
+    if (!pod?.spec?.containers) {
+      return null;
+    }
+    let httpProxyValue: string | null = null;
+    let httpsProxyValue: string | null = null;
+
+    for (const container of pod.spec.containers) {
+      for (const envVar of container.env ?? []) {
+        if (envVar.name === 'HTTP_PROXY') {
+          httpProxyValue = envVar.value;
+        } else if (envVar.name === 'HTTPS_PROXY') {
+          httpsProxyValue = envVar.value;
+        }
+      }
+    }
+
+    return {
+      httpProxy: httpProxyValue,
+      httpsProxy: httpsProxyValue,
+    };
+  } catch (error) {
+    return null;
+  }
 };
 
 const CloudShellExec: React.FC<CloudShellExecProps> = ({
@@ -104,6 +149,16 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     const usedClient = flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
     const cmd = shcommand || ['sh', '-i', '-c', 'TERM=xterm sh'];
     const subprotocols = (impersonate?.subprotocols || []).concat('base64.channel.k8s.io');
+    let webTerminalProxyUrls;
+
+    extractProxyEnvVarsFromWorkspacePod(podname, namespace)
+      .then((proxyUrls) => {
+        webTerminalProxyUrls = proxyUrls;
+      })
+      .catch((error) => {
+        webTerminalProxyUrls = { httpProxy: null, httpsProxy: null };
+        t('Error extracting proxy vars:', error);
+      });
 
     const urlOpts = {
       ns: namespace,
@@ -146,7 +201,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           }
         }
         let data = Base64.decode(msg.slice(1));
-        data = sanitizeURL(data);
+        data = sanitizeURL(data, webTerminalProxyUrls);
         currentTerminal && currentTerminal.onDataReceived(data);
         previous = data;
       })
