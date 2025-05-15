@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/blang/semver/v4"
+
 	"github.com/operator-framework/operator-registry/alpha/model"
 	"github.com/operator-framework/operator-registry/alpha/property"
 )
@@ -20,6 +22,11 @@ func ConvertAPIBundleToModelBundle(b *Bundle) (*model.Bundle, error) {
 		return nil, fmt.Errorf("get related iamges: %v", err)
 	}
 
+	vers, err := semver.Parse(b.Version)
+	if err != nil {
+		return nil, fmt.Errorf("parse version %q: %v", b.Version, err)
+	}
+
 	return &model.Bundle{
 		Name:          b.CsvName,
 		Image:         b.BundlePath,
@@ -30,6 +37,7 @@ func ConvertAPIBundleToModelBundle(b *Bundle) (*model.Bundle, error) {
 		Objects:       b.Object,
 		Properties:    bundleProps,
 		RelatedImages: relatedImages,
+		Version:       vers,
 	}, nil
 }
 
@@ -107,7 +115,7 @@ func convertAPIBundleToModelProperties(b *Bundle) ([]property.Property, error) {
 	}
 
 	for _, obj := range b.Object {
-		out = append(out, property.MustBuildBundleObjectData([]byte(obj)))
+		out = append(out, property.MustBuildBundleObject([]byte(obj)))
 	}
 
 	sort.Slice(out, func(i, j int) bool {

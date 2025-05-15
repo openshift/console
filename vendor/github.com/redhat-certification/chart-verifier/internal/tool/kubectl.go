@@ -2,13 +2,10 @@ package tool
 
 import (
 	"context"
-	"embed"
 	"errors"
 	"fmt"
 	"time"
 
-	"github.com/Masterminds/semver"
-	"gopkg.in/yaml.v3"
 	"helm.sh/helm/v3/pkg/cli"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -22,57 +19,16 @@ import (
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
 )
 
-//go:embed kubeOpenShiftVersionMap.yaml
-var content embed.FS
-
-// Based on https://access.redhat.com/solutions/4870701
 var (
-	kubeOpenShiftVersionMap map[string]string
-	listDeployments         = getDeploymentsList
-	listDaemonSets          = getDaemonSetsList
-	listStatefulSets        = getStatefulSetsList
-	latestKubeVersion       *semver.Version
+	listDeployments  = getDeploymentsList
+	listDaemonSets   = getDaemonSetsList
+	listStatefulSets = getStatefulSetsList
 )
-
-type versionMap struct {
-	Versions []*versionMapping `yaml:"versions"`
-}
-
-type versionMapping struct {
-	KubeVersion string `yaml:"kube-version"`
-	OcpVersion  string `yaml:"ocp-version"`
-}
 
 type workloadNotReady struct {
 	ResourceType string
 	Name         string
 	Unavailable  int32
-}
-
-func init() {
-	kubeOpenShiftVersionMap = make(map[string]string)
-
-	yamlFile, err := content.ReadFile("kubeOpenShiftVersionMap.yaml")
-	if err != nil {
-		utils.LogError(fmt.Sprintf("Error reading content of kubeOpenShiftVersionMap.yaml: %v", err))
-		return
-	}
-
-	versions := versionMap{}
-	err = yaml.Unmarshal(yamlFile, &versions)
-	if err != nil {
-		utils.LogError(fmt.Sprintf("Error reading content of kubeOpenShiftVersionMap.yaml: %v", err))
-		return
-	}
-
-	latestKubeVersion, _ = semver.NewVersion("0.0")
-	for _, versionMap := range versions.Versions {
-		currentVersion, _ := semver.NewVersion(versionMap.KubeVersion)
-		if currentVersion.GreaterThan(latestKubeVersion) {
-			latestKubeVersion = currentVersion
-		}
-		kubeOpenShiftVersionMap[versionMap.KubeVersion] = versionMap.OcpVersion
-	}
 }
 
 type Kubectl struct {
@@ -171,11 +127,14 @@ func (k Kubectl) WaitForWorkloadResources(context context.Context, namespace str
 		return errors.New(errorMsg)
 	}
 	if len(unavailableWorkloadResources) > 0 {
-		errorMsg := "error unavailable workload resources, timeout has expired, please consider increasing the timeout using the chart-verifier --timeout flag"
+		// Initialize errorMsg
+		errorMsg := "error unavailable workload resources, timeout has expired, please consider increasing the timeout using the chart-verifier --timeout flag. Unavailable resources: "
+		for _, unavailableWorkloadResource := range unavailableWorkloadResources {
+			errorMsg += fmt.Sprintf("%s/%s, ", unavailableWorkloadResource.ResourceType, unavailableWorkloadResource.Name)
+		}
 		utils.LogError(errorMsg)
 		return errors.New(errorMsg)
 	}
-
 	return nil
 }
 
@@ -192,10 +151,6 @@ func (k Kubectl) GetServerVersion() (*version.Info, error) {
 		return nil, err
 	}
 	return version, err
-}
-
-func GetKubeOpenShiftVersionMap() map[string]string {
-	return kubeOpenShiftVersionMap
 }
 
 func GetClientConfig(envSettings *cli.EnvSettings) clientcmd.ClientConfig {
@@ -231,8 +186,4 @@ func getDaemonSetsList(k Kubectl, context context.Context, namespace string, sel
 		return nil, err
 	}
 	return list.Items, err
-}
-
-func GetLatestKubeVersion() string {
-	return latestKubeVersion.String()
 }
