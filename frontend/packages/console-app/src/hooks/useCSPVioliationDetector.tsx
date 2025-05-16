@@ -21,6 +21,23 @@ const isRecordExpired = ({ timestamp }: CSPViolationRecord): boolean => {
   return timestamp && Date.now() - timestamp > CSP_VIOLATION_EXPIRATION;
 };
 
+const sameHostname = (a: string, b: string): boolean => {
+  const urlA = new URL(a);
+  const urlB = new URL(b);
+  return urlA.hostname === urlB.hostname;
+};
+
+// CSP violiation records are considered equal if the following properties match:
+// - pluginName
+// - effectiveDirective
+// - sourceFile
+// - blockedURI hostname
+const cspViolationRecordsAreEqual = (a: CSPViolationRecord, b: CSPViolationRecord): boolean =>
+  a.pluginName === b.pluginName &&
+  a.effectiveDirective === b.effectiveDirective &&
+  a.sourceFile === b.sourceFile &&
+  sameHostname(a.blockedURI, b.blockedURI);
+
 // Export for testing
 export const newCSPViolationReport = (
   pluginName: string,
@@ -74,12 +91,8 @@ export const useCSPViolationDetector = () => {
       // update the timestamp. Otherwise, append the new record.
       const [updatedRecords] = existingRecords.reduce(
         ([acc, hasBeenRecorded], existingRecord, i, all) => {
-          // Exclude originalPolicy and timestamp from equality comparison.
-          const { timestamp, originalPolicy, ...existingReport } = existingRecord;
-          const { timestamp: _t, originalPolicy: _o, ...newReport } = newRecord;
-
           // Replace matching report with a newly timestamped record
-          if (_.isEqual(newReport, existingReport)) {
+          if (cspViolationRecordsAreEqual(newRecord, existingRecord)) {
             return [[...acc, newRecord], true];
           }
 
