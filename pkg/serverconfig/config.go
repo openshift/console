@@ -419,15 +419,21 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 	return alreadySet
 }
 
-func addContentSecurityPolicy(fs *flag.FlagSet, csp MultiKeyValue) {
+func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
+	var directives []string
 	for cspDirectiveName, cspDirectiveValue := range csp {
-		directiveName := getDirectiveName(cspDirectiveName)
+		directiveName := getDirectiveName(string(cspDirectiveName))
 		if directiveName == "" {
 			klog.Fatalf("invalid CSP directive: %s", cspDirectiveName)
 		}
 
-		fs.Set("content-security-policy", fmt.Sprintf("%s=%s", directiveName, cspDirectiveValue))
+		directives = append(directives, fmt.Sprintf("%s=%s", directiveName, strings.Join(cspDirectiveValue, " ")))
 	}
+
+	if len(directives) > 0 {
+		fs.Set("content-security-policy", strings.Join(directives, ", "))
+	}
+	return nil
 }
 
 func getDirectiveName(directive string) string {
