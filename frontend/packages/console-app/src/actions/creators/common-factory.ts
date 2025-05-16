@@ -1,3 +1,4 @@
+import * as React from 'react';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
@@ -20,7 +21,7 @@ export type ResourceActionCreator = (
 
 export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
 
-export const CommonActionFactory: ResourceActionFactory = {
+export const createCommonActionFactory = (): ResourceActionFactory => ({
   Delete: (
     kind: K8sKind,
     obj: K8sResourceKind,
@@ -111,17 +112,25 @@ export const CommonActionFactory: ResourceActionFactory = {
     },
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
+});
+
+export const useCommonActionFactory = () => {
+  const factory = React.useMemo(() => {
+    return createCommonActionFactory();
+  }, []);
+  return factory;
 };
 
-export const getCommonResourceActions = (
+export const useCommonResourceActions = (
   kind: K8sKind,
   obj: K8sResourceKind,
   message?: JSX.Element,
 ): Action[] => {
+  const actionFactory = useCommonActionFactory();
   return [
-    CommonActionFactory.ModifyLabels(kind, obj),
-    CommonActionFactory.ModifyAnnotations(kind, obj),
-    CommonActionFactory.Edit(kind, obj),
-    CommonActionFactory.Delete(kind, obj, undefined, message),
+    actionFactory.ModifyLabels(kind, obj),
+    actionFactory.ModifyAnnotations(kind, obj),
+    actionFactory.Edit(kind, obj),
+    actionFactory.Delete(kind, obj, null, message),
   ];
 };

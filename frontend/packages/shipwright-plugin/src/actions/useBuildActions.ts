@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
+import { useCommonActionFactory } from '@console/app/src/actions/creators/common-factory';
 import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { errorModal } from '@console/internal/components/modals';
 import { resourceObjPath } from '@console/internal/components/utils';
@@ -15,6 +15,7 @@ const useBuildActions = (build: Build) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [kindObj, inFlight] = useK8sModel(referenceFor(build));
+  const actionFactory = useCommonActionFactory();
 
   const actionsMenu = React.useMemo<Action[]>(() => {
     const actions: Action[] = [];
@@ -63,8 +64,8 @@ const useBuildActions = (build: Build) => {
     }
     actions.push(
       ...[
-        CommonActionFactory.ModifyLabels(kindObj, build),
-        CommonActionFactory.ModifyAnnotations(kindObj, build),
+        actionFactory.ModifyLabels(kindObj, build),
+        actionFactory.ModifyAnnotations(kindObj, build),
       ],
     );
     actions.push({
@@ -80,9 +81,9 @@ const useBuildActions = (build: Build) => {
         namespace: build.metadata?.namespace,
       },
     });
-    actions.push(CommonActionFactory.Delete(kindObj, build));
+    actions.push(actionFactory.Delete(kindObj, build));
     return actions;
-  }, [t, build, kindObj, navigate]);
+  }, [t, build, kindObj, navigate, actionFactory]);
 
   return [actionsMenu, !inFlight, undefined];
 };
