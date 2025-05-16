@@ -8,6 +8,8 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	consolev1 "github.com/openshift/api/console/v1"
 )
 
 func TestMultiKeyValueSetter(t *testing.T) {
@@ -294,9 +296,9 @@ func TestSetFlagsFromConfig(t *testing.T) {
 			config: Config{
 				APIVersion: "console.openshift.io/v1",
 				Kind:       "ConsoleConfig",
-				ContentSecurityPolicy: MultiKeyValue{
-					"FontSrc":   "value2 value3",
-					"ScriptSrc": "value1",
+				ContentSecurityPolicy: map[consolev1.DirectiveType][]string{
+					"FontSrc":   {"value2", "value3"},
+					"ScriptSrc": {"value1"},
 				},
 			},
 			expectedFlagValues: map[string]string{
