@@ -18,8 +18,10 @@ import {
   catalogPage,
   addPage,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   // cy.testA11y('Developer perspective with guider tour modal');
 });
@@ -111,6 +113,7 @@ When('user clicks on the link for the {string} of helm release', (resource: stri
 });
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

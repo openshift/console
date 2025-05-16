@@ -34,9 +34,9 @@ Feature: Events tab in Pipeline run and Task run details pages
         @smoke
         Scenario: Events tab in pipeline run details page of developer perspective: P-03-TC03
             Given user is at developer perspective
-              And user is at pipelines page
+              And user is at pipelines page in developer view
               And pipeline run is displayed for "ex-pipeline-two" with resource
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user navigates to Pipeline Runs tab
               # And user clicks on pipeline "ex-pipeline-two"
               And user clicks on pipeline run for pipeline "ex-pipeline-two"
@@ -48,7 +48,7 @@ Feature: Events tab in Pipeline run and Task run details pages
         Scenario: Events tab in task run details page of developer perspective: P-03-TC04
             Given user is at developer perspective
               And task named "ex-task-one" is available with task run for pipeline
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user clicks on available pipeline "new-pipeline-one"
               And user goes to Pipeline Runs tab
               And user opens pipeline run "new-pipeline-one"

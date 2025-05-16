@@ -190,7 +190,7 @@ export const eventingPO = {
     containersource: '[data-test-row-filter="containersource"]',
     pingsource: '[data-test-row-filter="pingsource"]',
     sinkbinding: '[data-test-row-filter="sinkbinding"]',
-    labelSuggestion: '.co-suggestion-line',
+    labelSuggestion: '[data-test="suggestion-line"]',
     checkbox: '.pf-v6-c-check__input',
   },
   resourceIcon: '.co-m-resource-icon',

@@ -64,7 +64,7 @@ Feature: Create Pipeline from Add Options
         @smoke
         Scenario Outline: Search the created pipeline from Add options in pipelines page: P-01-TC05
             Given user created workload "<name>" from add page with pipeline
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user searches for pipeline "<name>" in pipelines page
              Then pipeline "<name>" is displayed in pipelines page
 
