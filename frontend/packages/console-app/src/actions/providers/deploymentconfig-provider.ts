@@ -6,11 +6,12 @@ import { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { errorModal } from '@console/internal/components/modals';
 import { DeploymentConfigKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { CommonActionFactory } from '../creators/common-factory';
 import { DeploymentActionFactory, retryRollout } from '../creators/deployment-factory';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
 import { useHPAActions } from '../creators/hpa-factory';
 import { usePDBActions } from '../creators/pdb-factory';
+import { CommonActionCreator } from '../hooks/types';
+import { useCommonActions } from '../hooks/useCommonActions';
 
 const useReplicationController = (resource: DeploymentConfigKind) => {
   const [rcModel, rcModelInFlight] = useK8sModel('ReplicationController');
@@ -74,26 +75,34 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
   const [pdbActions] = usePDBActions(kindObj, resource);
   const retryRolloutAction = useRetryRolloutAction(resource);
 
+  const commonActions = useCommonActions(kindObj, resource, [
+    CommonActionCreator.ModifyCount,
+    CommonActionCreator.Delete,
+    CommonActionCreator.ModifyLabels,
+    CommonActionCreator.ModifyAnnotations,
+    CommonActionCreator.AddStorage,
+  ] as const);
+
   const deploymentConfigActions = React.useMemo(() => {
     const actions = [
-      ...(relatedHPAs?.length === 0 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
+      ...(relatedHPAs?.length === 0 ? [commonActions.ModifyCount] : []),
       ...hpaActions,
       ...pdbActions,
       getHealthChecksAction(kindObj, resource),
       DeploymentActionFactory.StartDCRollout(kindObj, resource),
       retryRolloutAction,
       DeploymentActionFactory.PauseRollout(kindObj, resource),
-      CommonActionFactory.AddStorage(kindObj, resource),
+      commonActions.AddStorage,
       DeploymentActionFactory.EditResourceLimits(kindObj, resource),
-      CommonActionFactory.ModifyLabels(kindObj, resource),
-      CommonActionFactory.ModifyAnnotations(kindObj, resource),
+      commonActions.ModifyLabels,
+      commonActions.ModifyAnnotations,
       DeploymentActionFactory.EditDeployment(kindObj, resource),
       ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
         ? [DeleteResourceAction(kindObj, resource)]
-        : [CommonActionFactory.Delete(kindObj, resource)]),
+        : [commonActions.Delete]),
     ];
     return actions;
-  }, [resource, kindObj, hpaActions, pdbActions, relatedHPAs, retryRolloutAction]);
+  }, [resource, kindObj, hpaActions, pdbActions, relatedHPAs, retryRolloutAction, commonActions]);
 
   return [deploymentConfigActions, !inFlight, undefined];
 };
