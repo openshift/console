@@ -609,11 +609,9 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
 
-	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
-		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
-			promhttp.Handler().ServeHTTP(w, r)
-		}),
-	))
+	handle("/metrics", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+		metrics.AddHeaderAsCookieMiddleware(promhttp.Handler()).ServeHTTP(w, r)
+	}))
 	handleFunc("/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
 	}))

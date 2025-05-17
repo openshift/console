@@ -1,6 +1,9 @@
 package metrics
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 func AddHeaderAsCookieMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -8,7 +11,8 @@ func AddHeaderAsCookieMiddleware(next http.Handler) http.Handler {
 		// This allows metric requests with proper tokens in either headers or cookies.
 		if r.URL.Path == "/metrics" {
 			openshiftSessionCookieName := "openshift-session-token"
-			openshiftSessionCookieValue := r.Header.Get("Authorization") // FIXME: in OIDC setup, this actually ends up checking the token "Bearer <jwt>" to the underlying auth layer - instead of `<jwt>`.
+			openshiftSessionCookieValue := r.Header.Get("Authorization")
+			openshiftSessionCookieValue = strings.TrimPrefix(openshiftSessionCookieValue, "Bearer ")
 			r.AddCookie(&http.Cookie{Name: openshiftSessionCookieName, Value: openshiftSessionCookieValue})
 		}
 		next.ServeHTTP(w, r)
