@@ -419,35 +419,16 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 	return alreadySet
 }
 
-func addContentSecurityPolicy(fs *flag.FlagSet, csp MultiKeyValue) {
-	for cspDirectiveName, cspDirectiveValue := range csp {
-		directiveName := getDirectiveName(cspDirectiveName)
-		if directiveName == "" {
-			klog.Fatalf("invalid CSP directive: %s", cspDirectiveName)
+func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
+	if csp != nil {
+		marshaledCSP, err := json.Marshal(csp)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig 'content-security-policy' field: %v", err)
+			return err
 		}
-
-		fs.Set("content-security-policy", fmt.Sprintf("%s=%s", directiveName, cspDirectiveValue))
+		fs.Set("content-security-policy", string(marshaledCSP))
 	}
-}
-
-func getDirectiveName(directive string) string {
-	switch directive {
-	case string(consolev1.DefaultSrc):
-		return "default-src"
-	case string(consolev1.ImgSrc):
-		return "img-src"
-	case string(consolev1.FontSrc):
-		return "font-src"
-	case string(consolev1.ScriptSrc):
-		return "script-src"
-	case string(consolev1.StyleSrc):
-		return "style-src"
-	case string(consolev1.ConnectSrc):
-		return "connect-src"
-	default:
-		klog.Infof("ignored invalid CSP directive: %s", directive)
-		return ""
-	}
+	return nil
 }
 
 func addPlugins(fs *flag.FlagSet, plugins MultiKeyValue) {
