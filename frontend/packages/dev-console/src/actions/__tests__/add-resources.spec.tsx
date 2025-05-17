@@ -31,7 +31,6 @@ describe('add-resources', () => {
         'xyz',
         'my-app',
         'nodejs',
-        false,
       ),
     ).toEqual(
       '/catalog/ns/xyz?catalogType=OperatorBackedService&application=my-app&action=%7B%22type%22%3A%22connectsTo%22%2C%22payload%22%3A%22nodejs%22%7D',
@@ -44,10 +43,9 @@ describe('add-resources', () => {
         'xyz',
         'my-app',
         'nodejs',
-        true,
       ),
     ).toEqual(
-      '/catalog/ns/xyz?catalogType=OperatorBackedService&application=my-app&action=%7B%22type%22%3A%22serviceBinding%22%2C%22payload%22%3A%22nodejs%22%7D',
+      '/catalog/ns/xyz?catalogType=OperatorBackedService&application=my-app&action=%7B%22type%22%3A%22connectsTo%22%2C%22payload%22%3A%22nodejs%22%7D',
     );
   });
 });

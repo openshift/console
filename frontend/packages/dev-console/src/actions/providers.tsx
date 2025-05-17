@@ -19,7 +19,6 @@ import {
   K8sResourceKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import {
   isCatalogTypeEnabled,
   useActiveNamespace,
@@ -118,7 +117,6 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   const secretAccess = useAccessReview(resourceAttributes(SecretModel, namespace));
   const routeAccess = useAccessReview(resourceAttributes(RouteModel, namespace));
   const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, namespace));
-  const serviceBindingAccess = useAccessReview(resourceAttributes(ServiceBindingModel, namespace));
   const isImportResourceAccess =
     buildConfigsAccess &&
     imageStreamAccess &&
@@ -156,14 +154,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     );
     if (isOperatorBackedServiceEnabled) {
       actionsWithSourceRef.push(
-        AddActions.OperatorBacked(
-          namespace,
-          undefined,
-          sourceReference,
-          '',
-          null,
-          serviceBindingAccess,
-        ),
+        AddActions.OperatorBacked(namespace, undefined, sourceReference, '', null),
       );
     }
     if (isJavaImageStreamEnabled) {
@@ -290,7 +281,6 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     isSampleTypeEnabled,
     isSoftwareCatalogEnabled,
     element,
-    serviceBindingAccess,
   ]);
 };
 

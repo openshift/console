@@ -1,4 +1,4 @@
-import { EdgeModel, Model, NodeModel, NodeShape } from '@patternfly/react-topology';
+import { Model, NodeModel, NodeShape } from '@patternfly/react-topology';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
@@ -6,14 +6,8 @@ import {
   getImageForCSVIcon,
   getOperatorBackedServiceKindMap,
 } from '@console/shared';
-import {
-  NODE_HEIGHT,
-  NODE_PADDING,
-  NODE_WIDTH,
-  TYPE_SERVICE_BINDING,
-} from '@console/topology/src/const';
+import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '@console/topology/src/const';
 import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
-import { edgesFromServiceBinding } from '@console/topology/src/operators/operators-data-transformer';
 import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
 import { TYPE_BINDABLE_NODE } from '../const';
 import { getBindableServicesList } from './fetch-bindable-services-utils';
@@ -65,50 +59,10 @@ const getTopologyBindableServiceNodes = (
   return nodes;
 };
 
-export const getBindableServiceBindingEdges = (
-  dc: K8sResourceKind,
-  rhoasNodes: NodeModel[],
-  sbrs: K8sResourceKind[],
-): EdgeModel[] => {
-  const edges = [];
-  if (!sbrs?.length || !rhoasNodes?.length) {
-    return edges;
-  }
-
-  edgesFromServiceBinding(dc, sbrs).forEach((sbr) => {
-    sbr.spec.services?.forEach((bss) => {
-      if (bss) {
-        const targetNode = rhoasNodes.find(
-          (node) =>
-            node.data.resource.kind === bss.kind && node.data.resource.metadata.name === bss.name,
-        );
-        if (targetNode) {
-          const target = targetNode.data.resource.metadata.uid;
-          const source = dc.metadata.uid;
-          if (source && target) {
-            edges.push({
-              id: `${source}_${target}`,
-              type: TYPE_SERVICE_BINDING,
-              source,
-              target,
-              resource: sbr,
-              data: { sbr },
-            });
-          }
-        }
-      }
-    });
-  });
-
-  return edges;
-};
-
 export const getBindableServicesTopologyDataModel = async (
   _namespace: string,
   resources: TopologyDataResources,
-  workloads: K8sResourceKind[],
 ): Promise<Model> => {
-  const serviceBindingRequests = resources?.serviceBindingRequests?.data;
   const bindableResourcesList = getBindableServicesList();
   const watchedBindableResources = bindableResourcesList.map(
     ({ kind }) => resources[kind]?.data || [],
@@ -121,18 +75,6 @@ export const getBindableServicesTopologyDataModel = async (
   watchedBindableResources.forEach((services) => {
     servicesDataModel.nodes.push(...getTopologyBindableServiceNodes(services, resources));
   });
-
-  if (servicesDataModel.nodes.length && serviceBindingRequests?.length) {
-    workloads.forEach((resource) =>
-      servicesDataModel.edges.push(
-        ...getBindableServiceBindingEdges(
-          resource,
-          servicesDataModel.nodes,
-          serviceBindingRequests,
-        ),
-      ),
-    );
-  }
 
   return servicesDataModel;
 };
