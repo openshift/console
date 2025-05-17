@@ -152,7 +152,7 @@ const ReplicaSetTableRow = ({ obj }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} metadata={obj.metadata} />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />

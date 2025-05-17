@@ -73,6 +73,7 @@ const SecretTableRow = ({ obj: secret }) => {
           kind="Secret"
           name={secret.metadata.name}
           namespace={secret.metadata.namespace}
+          metadata={secret.metadata}
         />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">

@@ -20,6 +20,36 @@
   }
 }
 
+.co-resource-managed-by-icon {
+  border: 1px solid var(--pf-v5-global--palette--orange);
+  background-color: $color-container-dark;
+  align-self: flex-start;
+  display: inline-flex;
+  flex-direction: column;
+  border-radius: 20px;
+  margin-left: 4px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  max-width: 22px;
+  max-height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+}
+
+.co-m-resource-extension-icon {
+  border-radius: 24px;
+  color: var(--pf-v5-global--palette--white);
+  display: inline-block;
+  font-size: $font-size-base;
+  line-height: 16px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+  min-width: 18px;
+  text-align: center;
+  white-space: nowrap;
+  align-items: end;
+}
+
 .co-resource-icon--fixed-width {
   display: flex;
   justify-content: center;
