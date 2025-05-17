@@ -42,6 +42,7 @@ import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/das
 
 export * from '../app/components';
 export * from './common-types';
+export * from './utils';
 
 /**
  * React hook for consuming Console extensions with resolved `CodeRef` properties.
