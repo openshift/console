@@ -1,5 +1,4 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import { memo, useEffect } from 'react';
 import {
   Brand,
   Masthead as PfMasthead,
@@ -21,16 +20,22 @@ import {
   useCustomLogoURL,
 } from './utils/branding';
 
-export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
+type MastheadProps = {
+  isMastheadStacked: boolean;
+  isNavOpen: boolean;
+  onNavToggle: () => void;
+};
+
+export const Masthead = memo(({ isMastheadStacked, isNavOpen, onNavToggle }: MastheadProps) => {
   const { productName, staticLogo } = getBrandingDetails();
   const navigate = useNavigate();
 
   const { logoUrl: customMastheadUrl, loading } = useCustomLogoURL(MASTHEAD_TYPE);
   const { logoUrl: customFaviconUrl } = useCustomLogoURL(FAVICON_TYPE);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (customFaviconUrl) {
-      let link = document.querySelector("link[rel='icon']");
+      let link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
       if (!link) {
         link = document.createElement('link');
         link.rel = 'icon';
@@ -79,9 +84,3 @@ export const Masthead = React.memo(({ isMastheadStacked, isNavOpen, onNavToggle 
     </PfMasthead>
   );
 });
-
-Masthead.propTypes = {
-  isMastheadStacked: PropTypes.bool,
-  isNavOpen: PropTypes.bool,
-  onNavToggle: PropTypes.func,
-};

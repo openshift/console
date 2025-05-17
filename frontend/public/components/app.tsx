@@ -7,9 +7,9 @@ import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
-import store, { applyReduxExtensions } from '../redux';
+import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
-import { coFetchJSON, appInternalFetch } from '../co-fetch';
+import { appInternalFetch } from '../co-fetch';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
 import AppContents from './app-contents';
@@ -18,7 +18,7 @@ import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
 import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
-import { history, AsyncComponent, LoadingBox, useSafeFetch, usePoll } from './utils';
+import { history, AsyncComponent, LoadingBox } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
@@ -39,24 +39,22 @@ import {
   AppInitSDK,
   getUser,
   useActivePerspective,
+  ReduxReducer,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
-import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
-import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
-import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
 import { FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
-import { AlertVariant, Flex, Page, SkipToContent } from '@patternfly/react-core';
+import { Flex, Page, SkipToContent } from '@patternfly/react-core';
 import { AuthenticationErrorPage } from './error';
 import '../vendor.scss';
 import '../style.scss';
@@ -65,6 +63,7 @@ import '@patternfly/quickstarts/dist/quickstarts.min.css';
 const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
+import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
@@ -209,17 +208,17 @@ const App = (props) => {
   const { productName } = getBrandingDetails();
 
   const isNotificationDrawerExpanded = useSelector(
-    (state) => !!state.UI.getIn(['notifications', 'isExpanded']),
+    ({ UI }: RootState) => !!UI.getIn(['notifications', 'isExpanded']),
   );
 
-  const drawerRef = React.useRef();
+  const drawerRef = React.useRef<HTMLElement | null>(null);
 
   const focusDrawer = () => {
     if (drawerRef.current === null) {
       return;
     }
-    const firstTabbableItem = drawerRef.current.querySelector('a, button');
-    firstTabbableItem?.focus();
+    // Focus first tabbable item
+    drawerRef.current.querySelector<HTMLAnchorElement | HTMLButtonElement>('a, button')?.focus();
   };
 
   const content = (
@@ -303,7 +302,9 @@ const App = (props) => {
 };
 
 const AppWithExtensions = (props) => {
-  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions(isReduxReducer);
+  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions<ReduxReducer>(
+    isReduxReducer,
+  );
   const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
 
   if (reducersResolved && providersResolved) {
@@ -321,10 +322,10 @@ const AppRouter = () => {
   // Treat the authentication error page as a standalone route. There is no need to render the rest
   // of the app if we know authentication has failed.
   return (
-    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+    <Router history={history}>
       <CompatRouter>
         <Routes>
-          <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
+          <Route path={LOGIN_ERROR_PATH} Component={AuthenticationErrorPage} />
           {standaloneRouteExtensions.map((e) => (
             <Route
               key={e.uid}
@@ -396,178 +397,6 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
   return null;
 });
 
-const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
-  const toastContext = useToast();
-  const { t } = useTranslation();
-
-  const [isToastOpen, setToastOpen] = React.useState(false);
-  const [pluginsChanged, setPluginsChanged] = React.useState(false);
-  const [pluginVersionsChanged, setPluginVersionsChanged] = React.useState(false);
-  const [consoleChanged, setConsoleChanged] = React.useState(false);
-  const [isFetchingPluginEndpoints, setIsFetchingPluginEndpoints] = React.useState(false);
-  const [allPluginEndpointsReady, setAllPluginEndpointsReady] = React.useState(false);
-
-  const [updateData, setUpdateData] = React.useState();
-  const [updateError, setUpdateError] = React.useState();
-  const [newPlugins, setNewPlugins] = React.useState();
-  const [pluginManifestsData, setPluginManifestsData] = React.useState();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const safeFetch = React.useCallback(useSafeFetch(), []);
-  const fetchPluginManifest = (pluginName) =>
-    coFetchJSON(
-      `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
-      'get',
-      { cache: 'no-cache' },
-    );
-  const tick = React.useCallback(() => {
-    safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
-      .then((response) => {
-        setUpdateData(response);
-        setUpdateError(null);
-        const pluginManifests = response?.plugins?.map((pluginName) =>
-          fetchPluginManifest(pluginName),
-        );
-        if (pluginManifests) {
-          settleAllPromises(pluginManifests).then(([fulfilledValues]) => {
-            setPluginManifestsData(fulfilledValues);
-          });
-        }
-      })
-      .catch(setUpdateError);
-  }, [safeFetch]);
-  usePoll(tick, URL_POLL_DEFAULT_DELAY);
-
-  const prevUpdateDataRef = React.useRef();
-  const prevPluginManifestsDataRef = React.useRef();
-  React.useEffect(() => {
-    prevUpdateDataRef.current = updateData;
-    prevPluginManifestsDataRef.current = pluginManifestsData;
-  });
-  const prevUpdateData = prevUpdateDataRef.current;
-  const prevPluginManifestsData = prevPluginManifestsDataRef.current;
-  const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
-  const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
-  const pluginsRemovedList = prevUpdateData?.plugins.filter(
-    (x) => !updateData?.plugins.includes(x),
-  );
-  const pluginsAdded = !_.isEmpty(pluginsAddedList);
-  const pluginsRemoved = !_.isEmpty(pluginsRemovedList);
-
-  if (stateInitialized && pluginsAdded && !pluginsChanged) {
-    setPluginsChanged(true);
-    setNewPlugins(pluginsAddedList);
-  }
-
-  if (stateInitialized && pluginsRemoved && !consoleChanged) {
-    setConsoleChanged(true);
-  }
-
-  if (pluginsChanged && !allPluginEndpointsReady && !isFetchingPluginEndpoints) {
-    const pluginEndpointsReady =
-      newPlugins?.map((pluginName) => fetchPluginManifest(pluginName)) ?? [];
-    if (!_.isEmpty(pluginEndpointsReady)) {
-      settleAllPromises(pluginEndpointsReady).then(([, rejectedReasons]) => {
-        if (!_.isEmpty(rejectedReasons)) {
-          setAllPluginEndpointsReady(false);
-          setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
-          return;
-        }
-        setAllPluginEndpointsReady(true);
-        setIsFetchingPluginEndpoints(false);
-        setNewPlugins(null);
-      });
-      setIsFetchingPluginEndpoints(true);
-    } else {
-      setAllPluginEndpointsReady(true);
-      setIsFetchingPluginEndpoints(false);
-    }
-  }
-
-  const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) => {
-    return prevPluginManifestsData?.some((previousManifest) => {
-      return (
-        manifest.name === previousManifest.name && manifest.version !== previousManifest.version
-      );
-    });
-  });
-  if (
-    stateInitialized &&
-    !_.isEmpty(prevPluginManifestsData) &&
-    pluginManifestsVersionsChanged &&
-    !pluginVersionsChanged
-  ) {
-    setPluginVersionsChanged(true);
-  }
-
-  const consoleCapabilitiesChanged = !_.isEqual(
-    prevUpdateData?.capabilities,
-    updateData?.capabilities,
-  );
-  const consoleCSPChanged = !_.isEqual(
-    prevUpdateData?.contentSecurityPolicy,
-    updateData?.contentSecurityPolicy,
-  );
-  const consoleCommitChanged = prevUpdateData?.consoleCommit !== updateData?.consoleCommit;
-
-  if (
-    stateInitialized &&
-    (consoleCommitChanged || consoleCapabilitiesChanged || consoleCSPChanged) &&
-    !consoleChanged
-  ) {
-    setConsoleChanged(true);
-  }
-
-  if (isToastOpen || !stateInitialized) {
-    return null;
-  }
-
-  if (!pluginsChanged && !pluginVersionsChanged && !consoleChanged) {
-    return null;
-  }
-
-  if (pluginsChanged && !allPluginEndpointsReady) {
-    return null;
-  }
-
-  const toastCallback = () => {
-    setToastOpen(false);
-    setPluginsChanged(false);
-    setPluginVersionsChanged(false);
-    setConsoleChanged(false);
-    setAllPluginEndpointsReady(false);
-    setIsFetchingPluginEndpoints(false);
-  };
-
-  toastContext.addToast({
-    variant: AlertVariant.warning,
-    title: t('public~Web console update is available'),
-    content: t(
-      'public~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
-    ),
-    timeout: false,
-    dismissible: true,
-    actions: [
-      {
-        dismiss: true,
-        label: t('public~Refresh web console'),
-        callback: () => {
-          if (window.location.pathname.includes('/operatorhub/subscribe')) {
-            window.location.href = '/operatorhub';
-          } else {
-            window.location.reload();
-          }
-        },
-        dataTest: 'refresh-web-console',
-      },
-    ],
-    onClose: toastCallback,
-    onRemove: toastCallback,
-  });
-
-  setToastOpen(true);
-  return null;
-});
-
 let updateSwaggerInterval;
 
 /**
@@ -606,7 +435,7 @@ const initApiDiscovery = (storeInstance) => {
 };
 
 graphQLReady.onReady(() => {
-  store.dispatch(detectFeatures());
+  store.dispatch<any>(detectFeatures());
 
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
@@ -631,11 +460,12 @@ graphQLReady.onReady(() => {
   if ('serviceWorker' in navigator) {
     if (window.SERVER_FLAGS.loadTestFactor > 1) {
       // eslint-disable-next-line import/no-unresolved
+      // @ts-expect-error file-loader is not a module but it does resolve
       import('file-loader?name=load-test.sw.js!../load-test.sw.js')
         .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
         .then(
           () =>
-            new Promise((r) =>
+            new Promise<void>((r) =>
               navigator.serviceWorker.controller
                 ? r()
                 : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
