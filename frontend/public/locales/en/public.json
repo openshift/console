@@ -1797,6 +1797,8 @@
   "{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.": "{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
   "prometheusBaseURL not set": "prometheusBaseURL not set",
   "alertManagerBaseURL not set": "alertManagerBaseURL not set",
+  "Critical": "Critical",
+  "Info": "Info",
   "Loading {{title}} status": "Loading {{title}} status",
   "Waiting for the build": "Waiting for the build",
   "graph timespan": "graph timespan",
