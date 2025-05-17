@@ -150,6 +150,9 @@ export const getInitializationResource: AnnotationParser<K8sResourceKind> = (
     ...options,
   });
 
+export const getInitializationLink: AnnotationParser<string> = (annotations) =>
+  annotations?.[OLMAnnotation.InitializationLink];
+
 const parseValidSubscriptionAnnotation: AnnotationParser<string[]> = (annotations, options) =>
   parseJSONAnnotation<string[]>(annotations, OLMAnnotation.ValidSubscription, {
     validate: isArrayOfStrings,
