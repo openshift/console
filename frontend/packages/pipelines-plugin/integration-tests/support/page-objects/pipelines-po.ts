@@ -1,5 +1,5 @@
 export const pipelineBuilderPO = {
-  title: '.odc-pipeline-builder-header h1',
+  title: '[data-test="page-heading"] h1',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
   pipeline: '#pipeline-link',
