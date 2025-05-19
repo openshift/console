@@ -23,6 +23,7 @@ type Config struct {
 	Helm                         `yaml:"helm"`
 	MonitoringInfo               `yaml:"monitoringInfo,omitempty"`
 	Plugins                      MultiKeyValue `yaml:"plugins,omitempty"`
+	PluginsOrder                 []string      `yaml:"pluginsOrder,omitempty"`
 	I18nNamespaces               []string      `yaml:"i18nNamespaces,omitempty"`
 	Proxy                        Proxy         `yaml:"proxy,omitempty"`
 	ContentSecurityPolicyEnabled bool          `yaml:"contentSecurityPolicyEnabled,omitempty"`
