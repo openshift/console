@@ -2,17 +2,12 @@ import * as React from 'react';
 import { Split, SplitItem, Bullseye, Icon } from '@patternfly/react-core';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
 import { t_color_gray_50 as color200 } from '@patternfly/react-tokens';
+import { PodRingSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { LoadingInline } from '@console/internal/components/utils';
-import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
+import { modelFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '../../hooks';
 import { getPodData } from '../../utils';
 import PodRing from './PodRing';
-
-interface PodRingSetProps {
-  obj: K8sResourceKind;
-  path: string;
-  impersonate?: string;
-}
 
 const PodRingSet: React.FC<PodRingSetProps> = ({ obj, path }) => {
   const { podData, loadError, loaded } = usePodsWatcher(obj);
