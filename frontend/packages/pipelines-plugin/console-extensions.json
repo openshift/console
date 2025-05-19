@@ -288,6 +288,9 @@
         "kind": "Condition"
       },
       "flag": "OPENSHIFT_PIPELINE_CONDITION"
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
@@ -299,6 +302,9 @@
         "kind": "Repository"
       },
       "flag": "OPENSHIFT_PIPELINE_AS_CODE"
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
@@ -310,6 +316,9 @@
         "kind": "Pipeline"
       },
       "flag": "OPENSHIFT_PIPELINE_V1BETA1"
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
@@ -321,6 +330,9 @@
         "kind": "Pipeline"
       },
       "flag": "OPENSHIFT_PIPELINE"
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
@@ -717,6 +729,9 @@
       "component": {
         "$codeRef": "pipelineComponent.NamespaceRedirect"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"]
     }
   },
   {
@@ -729,7 +744,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -742,7 +760,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -755,7 +776,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -782,7 +806,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -795,7 +822,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -807,6 +837,9 @@
         "/k8s/ns/:ns/tekton.dev~v1beta1~PipelineRun/:plrName/logs/:taskName"
       ],
       "component": { "$codeRef": "pipelinesComponent.LogURLRedirect" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"]
     }
   },
   {
@@ -819,7 +852,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -832,7 +868,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -845,7 +884,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -856,6 +898,12 @@
       "component": {
         "$codeRef": "pipelinesComponent.RepositoryFormPage"
       }
+    },
+    "flags": {
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORY_FORM",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -872,7 +920,10 @@
       }
     },
     "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
@@ -884,7 +935,8 @@
       "decorator": { "$codeRef": "topology.getPipelineRunDecorator" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DECORATOR_PROVIDER_EXTENSION"]
     }
   },
   {
@@ -905,7 +957,8 @@
       "getDataModelReconciler": { "$codeRef": "topology.getPipelinesDataModelReconciler" }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DATA_FACTORY_EXTENSION"]
     }
   },
   {
@@ -933,7 +986,11 @@
     "type": "dev-console.add/action",
     "flags": {
       "required": ["OPENSHIFT_PIPELINE_V1BETA1"],
-      "disallowed": ["FLAG_TEKTON_V1_ENABLED", "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
+      "disallowed": [
+        "FLAG_TEKTON_V1_ENABLED",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_DEVCONSOLE_ADD_ACTION_EXTENSION"
+      ]
     },
     "properties": {
       "id": "pipeline",
@@ -955,7 +1012,10 @@
     "type": "dev-console.add/action",
     "flags": {
       "required": ["OPENSHIFT_PIPELINE", "FLAG_TEKTON_V1_ENABLED"],
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_DEVCONSOLE_ADD_ACTION_EXTENSION"
+      ]
     },
     "properties": {
       "id": "pipeline",
@@ -1131,6 +1191,9 @@
         "version": "v1beta1"
       },
       "template": { "$codeRef": "yamlTemplates.newTaskTemplate" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"]
     }
   },
   {
@@ -1143,6 +1206,9 @@
         "version": "v1beta1"
       },
       "template": { "$codeRef": "yamlTemplates.newTaskRunTemplate" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"]
     }
   },
   {
@@ -1155,6 +1221,9 @@
         "version": "v1alpha1"
       },
       "template": { "$codeRef": "yamlTemplates.newPipelineResourceTemplate" }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"]
     }
   },
   {
@@ -1169,7 +1238,10 @@
       "template": { "$codeRef": "yamlTemplates.newClusterTaskTemplate" }
     },
     "flags": {
-      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"]
+      "disallowed": [
+        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"
+      ]
     }
   },
   {
@@ -1249,7 +1321,8 @@
       }
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE"]
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DETAILS_TABSECTION_EXTENSION"]
     }
   },
   {
@@ -1263,7 +1336,10 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
+      "disallowed": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION",
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION"
+      ]
     }
   },
   {
