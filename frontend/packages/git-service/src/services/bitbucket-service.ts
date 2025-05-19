@@ -2,12 +2,7 @@ import { Base64 } from 'js-base64';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import 'whatwg-fetch';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import {
-  API_PROXY_URL,
-  ProxyResponse,
-  consoleProxyFetchJSON,
-  convertHeaders,
-} from '@console/shared/src/utils/proxy';
+import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
   GitSource,
   SecretType,
@@ -18,6 +13,24 @@ import {
   RepoStatus,
 } from '../types';
 import { BaseService } from './base-service';
+
+type BBWebhookBody = {
+  url: string;
+  events: string[];
+  skip_cert_verification: boolean;
+  active: boolean;
+};
+
+type BitbucketWebhookRequest = {
+  headers: Headers;
+  isServer: boolean;
+  baseURL: string;
+  owner: string;
+  repoName: string;
+  body: BBWebhookBody;
+};
+
+export const BITBUCKET_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/bitbucket';
 
 export class BitbucketService extends BaseService {
   private readonly metadata: RepoMetadata;
@@ -60,15 +73,6 @@ export class BitbucketService extends BaseService {
       ...authHeaders,
       ...headers,
     };
-
-    if (this.isServer) {
-      return consoleProxyFetchJSON({
-        url,
-        method: requestMethod || 'GET',
-        headers: convertHeaders(requestHeaders),
-        ...(body && { body: JSON.stringify(body) }),
-      });
-    }
 
     const response = await fetch(url, {
       method: requestMethod || 'GET',
@@ -183,28 +187,33 @@ export class BitbucketService extends BaseService {
     webhookURL: string,
     sslVerification: boolean,
   ): Promise<boolean> => {
-    const headers = {
-      'Content-Type': ['application/json'],
-      Authorization: [`Basic ${token}`],
-    };
-    const body = {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${token}`,
+    });
+    const body: BBWebhookBody = {
       url: webhookURL,
       events: ['repo:push', 'pullrequest:created', 'pullrequest:updated'],
       skip_cert_verification: !sslVerification,
       active: true,
     };
-    const url = this.isServer
-      ? `${this.baseURL}/projects/${this.metadata.owner}/repos/${this.metadata.repoName}/hooks`
-      : `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/hooks`;
 
-    /* Using DevConsole Proxy to create webhook as Bitbucket is giving CORS error */
-    const webhookResponse: ProxyResponse = await consoleFetchJSON.post(API_PROXY_URL, {
-      url,
-      method: 'POST',
+    const webhookRequestBody: BitbucketWebhookRequest = {
       headers,
-      body: JSON.stringify(body),
-    });
+      isServer: this.isServer,
+      baseURL: this.baseURL,
+      owner: this.metadata.owner,
+      repoName: this.metadata.repoName,
+      body,
+    };
 
+    const webhookResponse: DevConsoleEndpointResponse = await consoleFetchJSON.post(
+      BITBUCKET_WEBHOOK_BACKEND_URL,
+      webhookRequestBody,
+    );
+    if (!webhookResponse.statusCode) {
+      throw new Error('Unexpected proxy response: Status code is missing!');
+    }
     return webhookResponse.statusCode === 201;
   };
 
