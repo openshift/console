@@ -10,11 +10,16 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
-## 4.19.0-prerelease.2 - TBD
+## 4.19.0-prerelease.2 - 2025-05-20
 
-- The base `tsconfig` file now sets the `jsx` option to `react-jsx` to use the new JSX transform introduced
-  in React 17+. Plugins should update their `tsconfig` files accordingly and run the `update-react-imports`
-  [react-codemod](https://github.com/reactjs/react-codemod) if needed. ([OCPBUGS-52589], [#14864])
+> This release includes a change in generated JS code to use new JSX transform `react-jsx` introduced
+> in React 17. Plugins should update their TSConfig files accordingly (i.e. set `jsx` to `react-jsx`)
+> and run the `update-react-imports` [codemod](https://github.com/reactjs/react-codemod) if needed.
+
+- Add `@patternfly/react-topology` to Console provided shared modules ([OCPBUGS-55323], [#14993])
+- Skip processing type-only dynamic module imports ([OCPBUGS-53030], [#14861])
+- Update `typescript` peer dependency to match Console TS build version ([#14861])
+- Generated JS code now uses new JSX transform `react-jsx` ([OCPBUGS-52589], [#14864])
 
 ## 4.19.0-prerelease.1 - 2025-02-17
 
@@ -68,6 +73,8 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-38734]: https://issues.redhat.com/browse/OCPBUGS-38734
 [OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
 [OCPBUGS-52589]: https://issues.redhat.com/browse/OCPBUGS-52589
+[OCPBUGS-53030]: https://issues.redhat.com/browse/OCPBUGS-53030
+[OCPBUGS-55323]: https://issues.redhat.com/browse/OCPBUGS-55323
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -81,4 +88,6 @@ in [Console dynamic plugins README](./README.md).
 [#14300]: https://github.com/openshift/console/pull/14300
 [#14615]: https://github.com/openshift/console/pull/14615
 [#14620]: https://github.com/openshift/console/pull/14620
+[#14861]: https://github.com/openshift/console/pull/14861
 [#14864]: https://github.com/openshift/console/pull/14864
+[#14993]: https://github.com/openshift/console/pull/14993
