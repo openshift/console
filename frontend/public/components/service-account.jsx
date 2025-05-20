@@ -35,7 +35,7 @@ const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
+        <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} metadata={serviceaccount.metadata}/>
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}

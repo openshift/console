@@ -185,7 +185,7 @@ const RouteTableRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj: route }) => 
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={route.metadata.name} namespace={route.metadata.namespace} />
+        <ResourceLink kind={kind} name={route.metadata.name} namespace={route.metadata.namespace} metadata={route.metadata} />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={route.metadata.namespace} />
