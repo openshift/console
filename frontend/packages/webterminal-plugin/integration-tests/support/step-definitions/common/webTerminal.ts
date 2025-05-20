@@ -1,12 +1,7 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { switchPerspective } from '@console/dev-console/integration-tests/support/constants';
-import { devNavigationMenuPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { adminNavigationMenuPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import {
-  perspective,
-  projectNameSpace,
-} from '@console/dev-console/integration-tests/support/pages';
+import { perspective } from '@console/dev-console/integration-tests/support/pages';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { checkTerminalIcon } from '@console/dev-console/integration-tests/support/pages/functions/checkTerminalIcon';
 import { webTerminalPage } from '@console/webterminal-plugin/integration-tests/support/step-definitions/pages/web-terminal/webTerminal-page';
