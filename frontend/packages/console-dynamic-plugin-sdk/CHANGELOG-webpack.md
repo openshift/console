@@ -12,6 +12,7 @@ in [Console dynamic plugins README](./README.md).
 
 ## 4.19.0-prerelease.2 - 2025-05-20
 
+> [!IMPORTANT]
 > This release includes a change in generated JS code to use new JSX transform `react-jsx` introduced
 > in React 17. Plugins should update their TSConfig files accordingly (i.e. set `jsx` to `react-jsx`)
 > and run the `update-react-imports` [codemod](https://github.com/reactjs/react-codemod) if needed.
