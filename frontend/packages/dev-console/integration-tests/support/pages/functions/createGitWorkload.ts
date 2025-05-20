@@ -1,8 +1,20 @@
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
-import { devNavigationMenu, addOptions } from '../../constants';
+import { devNavigationMenu, addOptions, pageTitle } from '../../constants';
 import { formPO, topologyPO } from '../../pageObjects';
 import { addPage, gitPage } from '../add-flow';
 import { createForm, navigateTo } from '../app';
+
+export const selectImportFromGitQuickCreate = () => {
+  guidedTour.close();
+  cy.get('[data-test="quick-create-dropdown"]').click();
+  cy.get('[data-test="qc-import-from-git"] [role="menuitem"]')
+    .should('be.visible')
+    .click({ force: true });
+  cy.testA11y('Import from Git Page');
+  detailsPage.titleShouldContain(pageTitle.Git);
+};
 
 export const createGitWorkload = (
   gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
@@ -12,7 +24,7 @@ export const createGitWorkload = (
   isPipelineSelected: boolean = false,
   isServerlessFunction: boolean = false,
 ) => {
-  addPage.selectCardFromOptions(addOptions.ImportFromGit);
+  selectImportFromGitQuickCreate();
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage(gitUrl);
   gitPage.enterComponentName(componentName);
@@ -52,7 +64,6 @@ export const createGitWorkloadIfNotExistsOnTopologyPage = (
   cy.get('body').then(($body) => {
     if ($body.find(topologyPO.emptyStateIcon).length) {
       cy.log(`Topology doesn't have workload "${componentName}", lets create it`);
-      navigateTo(devNavigationMenu.Add);
       createGitWorkload(
         gitUrl,
         componentName,
@@ -68,7 +79,6 @@ export const createGitWorkloadIfNotExistsOnTopologyPage = (
         if ($node.find(topologyPO.highlightNode).length) {
           cy.log(`knative service: ${componentName} is already created`);
         } else {
-          navigateTo(devNavigationMenu.Add);
           createGitWorkload(
             gitUrl,
             componentName,

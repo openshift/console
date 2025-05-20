@@ -1,4 +1,5 @@
-@knative-admin @knative
+@knative-admin @knative @broken-test
+# Broken due to https://issues.redhat.com/browse/OCPBUGS-55368
 Feature: Eventing page at Administrator perspective
               As a user, I should be able to access event sources, channels, brokers at Administrator perspective
 
@@ -10,7 +11,7 @@ Feature: Eventing page at Administrator perspective
 
         @regression
         Scenario: Create new Event Source: KA-01-TC01
-            Given user has created knative service "hello-openshift"
+            Given user has created knative service "hello-openshift" in admin
               And user is at administrator perspective
               And user is at eventing page
              When user clicks on Create dropdown button
@@ -20,8 +21,8 @@ Feature: Eventing page at Administrator perspective
               And user enters "* * * * *" in Schedule field
               And user selects resource "hello-openshift"
               And user clicks on Create button to submit
-             Then user will be redirected to Project Details page
-              And user will see ping-source created
+             Then user will be redirected to Topology page
+              And ApiServerSource event source "ping-source" is created and linked to selected knative service "hello-openshift"
 
 
         @regression
@@ -31,8 +32,8 @@ Feature: Eventing page at Administrator perspective
               And user selects Channel
               And user selects Default channels
               And user clicks on Create button to create channel
-             Then user will be redirected to Project Details page
-              And user will see channel created
+             Then user will be redirected to Topology page
+              And user will see the channel "channel" created
 
 
         @manual

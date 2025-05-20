@@ -49,7 +49,8 @@ When('user clicks on Service button', () => {
 });
 
 Then('user can see titles URL, Revision, Created, Conditions, Ready, Reason', () => {
-  cy.get('[role="rowgroup"]')
+  cy.get('[aria-label="Services"]')
+    // cy.get('[role="rowgroup"]')
     .should('contain', 'URL')
     .and('contain', 'Revision')
     .and('contain', 'Created')
@@ -59,7 +60,8 @@ Then('user can see titles URL, Revision, Created, Conditions, Ready, Reason', ()
 });
 
 Then('user can see titles Namespace, Service, Created, Conditions, Ready, Reason', () => {
-  cy.get('[role="rowgroup"]')
+  cy.get('[aria-label="Revisions"]')
+    // cy.get('[role="rowgroup"]')
     .should('contain', 'Name')
     .and('contain', 'Service')
     .and('contain', 'Created')
@@ -69,7 +71,8 @@ Then('user can see titles Namespace, Service, Created, Conditions, Ready, Reason
 });
 
 Then('user can see titles URL, Created, Conditions, Traffic', () => {
-  cy.get('[role="rowgroup"]')
+  cy.get('[aria-label="Routes"]')
+    // cy.get('[role="rowgroup"]')
     .should('contain', 'URL')
     .and('contain', 'Created')
     .and('contain', 'Conditions')

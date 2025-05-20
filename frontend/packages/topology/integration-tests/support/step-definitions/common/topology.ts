@@ -17,6 +17,7 @@ import {
   navigateTo,
   createForm,
 } from '@console/dev-console/integration-tests/support/pages/app';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import {
   verifyAndInstallGitopsPrimerOperator,
   verifyAndInstallPipelinesOperator,
@@ -116,6 +117,7 @@ Then('user is able to see health check notification', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
@@ -159,6 +161,7 @@ Given(
 );
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

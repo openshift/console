@@ -21,6 +21,7 @@ import {
   projectNameSpace,
   yamlEditor,
 } from '@console/dev-console/integration-tests/support/pages/app';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { chartAreaPO } from '../../page-objects/chart-area-po';
 import { topologyPO, typeOfWorkload } from '../../page-objects/topology-po';
 import {
@@ -195,6 +196,7 @@ Given('user has installed Service Binding operator', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);

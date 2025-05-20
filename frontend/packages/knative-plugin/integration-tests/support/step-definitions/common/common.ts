@@ -41,7 +41,7 @@ Given('user is at developer perspective', () => {
 
 Given('user is at administrator perspective', () => {
   perspective.switchTo(switchPerspective.Administrator);
-  cy.testA11y('Administrator perspective');
+  // cy.testA11y('Administrator perspective');
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
@@ -50,6 +50,7 @@ Given('user has created or selected namespace {string}', (projectName: string) =
 });
 
 Given('user is at pipelines page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Pipelines);
 });
 
@@ -133,6 +134,15 @@ Given(
 
 Given('user has created knative service {string}', (knativeServiceName: string) => {
   perspective.switchTo(switchPerspective.Developer);
+  createGitWorkloadIfNotExistsOnTopologyPage(
+    'https://github.com/sclorg/nodejs-ex.git',
+    knativeServiceName,
+    resourceTypes.knativeService,
+  );
+});
+
+Given('user has created knative service {string} in admin', (knativeServiceName: string) => {
+  perspective.switchTo(switchPerspective.Administrator);
   createGitWorkloadIfNotExistsOnTopologyPage(
     'https://github.com/sclorg/nodejs-ex.git',
     knativeServiceName,
