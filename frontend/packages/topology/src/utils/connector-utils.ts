@@ -1,6 +1,5 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { serviceBindingModal } from '@console/app/src/components/modals/service-binding';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import {
   k8sGet,
@@ -237,7 +236,6 @@ export const removeResourceConnection = (
 const getSourceAndTargetForBinding = async (
   resources: K8sResourceKind[] | K8sResourceKind,
   contextualSource: string,
-  serviceBindingAvailable?: boolean,
 ): Promise<{ source: K8sResourceKind; target: K8sResourceKind }> => {
   if (!contextualSource) {
     return Promise.reject(
@@ -248,14 +246,9 @@ const getSourceAndTargetForBinding = async (
     referenceForModel(DeploymentConfigModel),
     referenceForModel(DeploymentModel),
   ];
-  let target;
-  if (serviceBindingAvailable || !Array.isArray(resources)) {
-    target = resources;
-  } else {
-    target = (resources as K8sResourceKind[]).find((resource) =>
-      linkingModelRefs.includes(referenceFor(resource)),
-    );
-  }
+  const target = (resources as K8sResourceKind[]).find((resource) =>
+    linkingModelRefs.includes(referenceFor(resource)),
+  );
   const {
     metadata: { namespace },
   } = target;
@@ -288,17 +281,4 @@ export const doConnectsToBinding = async (
   await createResourceConnection(source, target);
 
   return resources;
-};
-
-export const doContextualBinding = async (
-  target: K8sResourceKind,
-  contextualSource: string,
-): Promise<K8sResourceKind> => {
-  const { source } = await getSourceAndTargetForBinding(target, contextualSource, true);
-  serviceBindingModal({
-    model: modelFor(referenceFor(source)),
-    source,
-    target,
-  });
-  return target;
 };

@@ -16,7 +16,6 @@ import {
 import { connect } from 'react-redux';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
 import {
   canDropEdgeOnNode,
   highlightNode,
@@ -24,7 +23,7 @@ import {
   nodesEdgeIsDragging,
 } from '../../components/graph-view/components';
 import { getKindStringAndAbbreviation } from '../../components/graph-view/components/nodes/nodeUtils';
-import { getServiceBindingStatus, getResource } from '../../utils/topology-utils';
+import { getResource } from '../../utils/topology-utils';
 import OperatorBackedServiceGroup from './OperatorBackedServiceGroup';
 import OperatorBackedServiceNode from './OperatorBackedServiceNode';
 
@@ -127,9 +126,9 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
+const mapStateToProps = (): StateProps => {
   return {
-    serviceBinding: getServiceBindingStatus(state),
+    serviceBinding: null,
   };
 };
 

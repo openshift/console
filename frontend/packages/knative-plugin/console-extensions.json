@@ -980,22 +980,6 @@
     }
   },
   {
-    "type": "console.topology/relationship/provider",
-    "properties": {
-      "provides": {
-        "$codeRef": "relationshipPrrovider.providerProvidesServiceBinding"
-      },
-      "tooltip": "%knative-plugin~Create Service Binding%",
-      "create": {
-        "$codeRef": "relationshipPrrovider.providerCreateServiceBinding"
-      },
-      "priority": 200
-    },
-    "flags": {
-      "required": ["ALLOW_SERVICE_BINDING"]
-    }
-  },
-  {
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
