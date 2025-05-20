@@ -142,14 +142,14 @@ The following shared modules are provided by Console, without plugins providing 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
 
-### Changes in shared modules
+### Changes in shared modules and APIs
 
-This section documents notable changes in the Console provided shared modules across Console versions.
+This section documents notable changes in Console provided shared modules and other plugin APIs.
 
 #### Console 4.14.x
 
-- Added `react-router-dom-v5-compat` module to allow plugins to migrate to React Router v6. Check the
-  [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
+- Added `react-router-dom-v5-compat` shared module to allow plugins to migrate to React Router v6.
+  Check the [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
   (section "Migration Strategy" and beyond) for details.
 
 #### Console 4.15.x
@@ -159,7 +159,7 @@ This section documents notable changes in the Console provided shared modules ac
 
 #### Console 4.16.x
 
-- Removed `react-helmet` module.
+- Removed `react-helmet` shared module.
 - All Console provided PatternFly 4.x shared modules are deprecated and will be removed in the future.
   See [PatternFly Upgrade Notes][console-pf-upgrade-notes] for details on upgrading to PatternFly 5.
 - All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
@@ -169,15 +169,13 @@ This section documents notable changes in the Console provided shared modules ac
 
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
-- VirtualizedTable, ListPageFilter, and useListPageFilter are deprecated and will be removed in the future.
-  PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) extension should be used
+- Added `@patternfly/react-topology` shared module. This allows plugins to use PatternFly's topology
+  components with consistent React context and styling.
+- `react-router-dom-v5-compat` shared module is deprecated and will be removed in the future. Plugins
+  should continue using `react-router-dom-v5-compat` module in order to consume React Router v6 APIs.
+- `VirtualizedTable`, `ListPageFilter` and `useListPageFilter` are deprecated and will be removed in
+  the future. Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview)
   instead. See this [proof of concept](https://github.com/openshift/console/pull/14897) for an example.
-- `react-router-dom-v5-compat` module is deprecated and will aliased to `react-router-dom` v6 and
-  `react-router-dom-v5-compat` will be removed in the future. Plugins should continue migration to the
-  `react-router-dom-v5-compat` module until `react-router-dom` v6 is aliased to `react-router-dom` v6. See the
-  [Official v5 to v6 Migration Guide](https://reactrouter.com/6.30.0/upgrading/v5) for details.
-- Added `@patternfly/react-topology` to shared modules. This supports dynamic plugins using PatternFly 6
-  topology components with consistent context and styling.
 
 ##### CSS styling
 
