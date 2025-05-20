@@ -1051,6 +1051,38 @@ export type VolumeSnapshotKind = K8sResourceCommon & {
   };
 };
 
+export type VolumeGroupSnapshotStatus = {
+  boundVolumeGroupSnapshotContentName?: string;
+  readyToUse?: boolean;
+  creationTime?: string;
+  error?: {
+    message?: string;
+    time?: string;
+  };
+};
+
+export type VolumeGroupSnapshotLabelSelector = {
+  matchLabels?: {
+    [key: string]: string;
+  };
+  matchExpressions?: Array<{
+    key: string;
+    operator: string;
+    values?: string[];
+  }>;
+};
+
+export type VolumeGroupSnapshotKind = K8sResourceCommon & {
+  spec: {
+    volumeGroupSnapshotClassName?: string;
+    source: {
+      selector?: VolumeGroupSnapshotLabelSelector;
+      volumeGroupSnapshotContentName?: string;
+    };
+  };
+  status?: VolumeGroupSnapshotStatus;
+};
+
 export type VolumeSnapshotContentKind = K8sResourceCommon & {
   status: VolumeSnapshotStatus & {
     snapshotHandle?: string;
@@ -1070,6 +1102,47 @@ export type VolumeSnapshotContentKind = K8sResourceCommon & {
   };
 };
 
+export type VolumeSnapshotHandlePair = {
+  volumeHandle: string;
+  snapshotHandle: string;
+};
+
+export type VolumeGroupSnapshotContentStatus = {
+  readyToUse?: boolean;
+  creationTime?: string;
+  volumeGroupSnapshotHandle?: string;
+  volumeSnapshotHandlePairList?: VolumeSnapshotHandlePair[];
+  error?: {
+    message?: string;
+    time?: string;
+  };
+};
+
+export type VolumeGroupSnapshotContentKind = K8sResourceCommon & {
+  spec: {
+    deletionPolicy: 'Delete' | 'Retain';
+    driver: string;
+    volumeGroupSnapshotClassName?: string;
+    volumeGroupSnapshotRef: {
+      name: string;
+      namespace: string;
+      kind?: string;
+      apiVersion?: string;
+      uid?: string;
+      resourceVersion?: string;
+      fieldPath?: string;
+    };
+    source: {
+      volumeHandles?: string[];
+      groupSnapshotHandles?: {
+        volumeGroupSnapshotHandle: string;
+        volumeSnapshotHandles: string[];
+      };
+    };
+  };
+  status?: VolumeGroupSnapshotContentStatus;
+};
+
 export type VolumeSnapshotStatus = {
   readyToUse: boolean;
   restoreSize?: number;
@@ -1082,6 +1155,14 @@ export type VolumeSnapshotStatus = {
 export type VolumeSnapshotClassKind = K8sResourceCommon & {
   deletionPolicy: string;
   driver: string;
+};
+
+export type VolumeGroupSnapshotClassKind = K8sResourceCommon & {
+  deletionPolicy: 'Delete' | 'Retain';
+  driver: string;
+  parameters?: {
+    [key: string]: string;
+  };
 };
 
 export type PersistentVolumeClaimKind = K8sResourceCommon & {
