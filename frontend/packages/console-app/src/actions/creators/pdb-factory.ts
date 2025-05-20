@@ -14,7 +14,7 @@ import { deletePDBModal } from '../../components/pdb/modals';
 import { PodDisruptionBudgetKind } from '../../components/pdb/types';
 import { getPDBResource } from '../../components/pdb/utils/get-pdb-resources';
 import { PodDisruptionBudgetModel } from '../../models';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 const pdbRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kindObj: K8sKind) =>
   `/k8s/ns/${namespace}/${referenceForModel(kindObj)}/form?name=${name}`;
