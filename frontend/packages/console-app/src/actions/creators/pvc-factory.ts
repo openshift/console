@@ -7,7 +7,7 @@ import {
 import { asAccessReview } from '@console/internal/components/utils';
 import { VolumeSnapshotModel } from '@console/internal/models';
 import { VolumeSnapshotKind } from '@console/internal/module/k8s';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 export const PVCActionFactory: ResourceActionFactory = {
   ExpandPVC: (kind, obj) => ({
