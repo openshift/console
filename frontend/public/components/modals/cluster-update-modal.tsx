@@ -3,21 +3,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Radio, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  documentationURLs,
-  ExternalLink,
-  getDocumentationURL,
-} from '@console/internal/components/utils';
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
-import {
-  FieldLevelHelp,
-  HandlePromiseProps,
-  LinkifyExternal,
-  isManaged,
-  withHandlePromise,
-} from '../utils';
+import { FieldLevelHelp, HandlePromiseProps, LinkifyExternal, withHandlePromise } from '../utils';
 import {
   ClusterVersionKind,
   getConditionUpgradeableFalse,
@@ -189,7 +178,6 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
       label: t('public~Have known issues'),
     });
   }
-  const helpURL = getDocumentationURL(documentationURLs.updateUsingCustomMachineConfigPools);
 
   return (
     <form onSubmit={submit} name="form" className="modal-content" data-test="update-cluster-modal">
@@ -255,7 +243,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
             {t('public~Update options')}
             <FieldLevelHelp>
               {t(
-                "public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule, but you'll need to resume the non-control plane Node updates within 60 days to avoid failure.",
+                'public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule.',
               )}
             </FieldLevelHelp>
           </label>
@@ -307,24 +295,11 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
             className="pf-v5-u-mb-md"
             body={
               upgradeType === upgradeTypes.Partial && (
-                <>
-                  <MachineConfigPoolsSelector
-                    machineConfigPools={pauseableMCPs}
-                    selected={machineConfigPoolsToPause}
-                    onChange={handleMCPSelectionChange}
-                  />
-                  <Alert
-                    variant="warning"
-                    isInline
-                    isPlain
-                    title={t('public~You must resume updates within 60 days to avoid failures.')}
-                    className="pf-v5-u-mb-md"
-                  >
-                    {!isManaged() && (
-                      <ExternalLink href={helpURL}>{t('public~Learn more')}</ExternalLink>
-                    )}
-                  </Alert>
-                </>
+                <MachineConfigPoolsSelector
+                  machineConfigPools={pauseableMCPs}
+                  selected={machineConfigPoolsToPause}
+                  onChange={handleMCPSelectionChange}
+                />
               )
             }
             data-test="update-cluster-modal-partial-update-radio"
