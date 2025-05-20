@@ -10,15 +10,7 @@ import {
 } from '@console/internal/components/modals';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
 import { referenceForModel, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-
-export type ResourceActionCreator = (
-  kind: K8sKind,
-  obj: K8sResourceKind,
-  relatedResource?: K8sResourceKind,
-  message?: JSX.Element,
-) => Action;
-
-export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
+import { ResourceActionFactory } from './types';
 
 export const CommonActionFactory: ResourceActionFactory = {
   Delete: (

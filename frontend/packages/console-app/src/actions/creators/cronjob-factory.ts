@@ -8,7 +8,7 @@ import {
   JobKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 const startJob = (obj: CronJobKind): Promise<JobKind> => {
   const reqPayload = {
