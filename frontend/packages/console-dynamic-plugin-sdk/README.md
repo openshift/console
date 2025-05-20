@@ -169,7 +169,7 @@ This section documents notable changes in Console provided shared modules and ot
 
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
-- Added `@patternfly/react-topology` shared module. This allows plugins to use PatternFly 6 topology
+- Added `@patternfly/react-topology` shared module. This allows plugins to use PatternFly's topology
   components with consistent React context and styling.
 - `react-router-dom-v5-compat` shared module is deprecated and will be removed in the future. Plugins
   should continue using `react-router-dom-v5-compat` module in order to consume React Router v6 APIs.
