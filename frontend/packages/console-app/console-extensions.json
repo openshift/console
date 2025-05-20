@@ -314,6 +314,16 @@
     "properties": {
       "model": {
         "version": "v1",
+        "kind": "PersistentVolumeClaim"
+      },
+      "provider": { "$codeRef": "persistentVolumeClaimsProvider.usePVCActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
         "kind": "StorageClass",
         "group": "storage.k8s.io"
       },

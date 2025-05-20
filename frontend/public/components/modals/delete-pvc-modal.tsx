@@ -12,7 +12,7 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '../factory';
-import { k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '../../models';
 
 const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
@@ -77,7 +77,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
 });
 
 export type DeletePVCModalProps = {
-  pvc: PersistentVolumeClaimKind;
+  pvc: K8sResourceKind;
 } & ModalComponentProps &
   HandlePromiseProps;
 
