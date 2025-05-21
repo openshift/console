@@ -226,55 +226,61 @@ const App = (props) => {
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
-        <Flex
-          id="app-content"
-          direction={{ default: 'column' }}
-          style={{ flex: '1 0 auto', height: '100%' }}
-        >
-          <Page
-            isContentFilled
-            id="content"
-            // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
-            mainTabIndex={null}
-            masthead={
-              <Masthead
-                isNavOpen={isNavOpen}
-                onNavToggle={onNavToggle}
-                isMastheadStacked={isMastheadStacked}
-              />
-            }
-            sidebar={
-              <Navigation
-                isNavOpen={isNavOpen}
-                onNavSelect={onNavSelect}
-                onPerspectiveSelected={onNavSelect}
-              />
-            }
-            skipToContent={
-              <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
-                {t('public~Skip to content')}
-              </SkipToContent>
-            }
-            notificationDrawer={
-              <NotificationDrawer
-                onDrawerChange={onNotificationDrawerToggle}
-                isDrawerExpanded={isNotificationDrawerExpanded}
-                drawerRef={drawerRef}
-              />
-            }
-            onNotificationDrawerExpand={() => focusDrawer()}
-            isNotificationDrawerExpanded={isNotificationDrawerExpanded}
-            style={{ flex: '1', height: '0' }}
+        <CloudShell>
+          <Flex
+            id="app-content"
+            direction={{ default: 'column' }}
+            style={{ flex: '1 0 auto', height: '100%' }}
           >
-            <AppContents />
-          </Page>
-          <CloudShell />
-          <GuidedTour />
-        </Flex>
-        {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
-          <Lightspeed />
-        )}
-        <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
+            <Page
+              isContentFilled
+              id="content"
+              // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
+              mainTabIndex={null}
+              masthead={
+                <Masthead
+                  isNavOpen={isNavOpen}
+                  onNavToggle={onNavToggle}
+                  isMastheadStacked={isMastheadStacked}
+                />
+              }
+              sidebar={
+                <Navigation
+                  isNavOpen={isNavOpen}
+                  onNavSelect={onNavSelect}
+                  onPerspectiveSelected={onNavSelect}
+                />
+              }
+              skipToContent={
+                <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
+                  {t('public~Skip to content')}
+                </SkipToContent>
+              }
+              notificationDrawer={
+                <NotificationDrawer
+                  onDrawerChange={onNotificationDrawerToggle}
+                  isDrawerExpanded={isNotificationDrawerExpanded}
+                  drawerRef={drawerRef}
+                />
+              }
+              onNotificationDrawerExpand={() => focusDrawer()}
+              isNotificationDrawerExpanded={isNotificationDrawerExpanded}
+              style={{ flex: '1', height: '0' }}
+            >
+              <AppContents />
+            </Page>
+            <GuidedTour />
+          </Flex>
+          {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
+            <Lightspeed />
+          )}
+          <div
+            id="modal-container"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('public~Modal')}
+          />
+        </CloudShell>
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
