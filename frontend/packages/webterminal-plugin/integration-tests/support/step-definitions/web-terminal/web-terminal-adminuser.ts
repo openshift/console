@@ -76,7 +76,7 @@ When('user closed web terminal window', () => {
 
 Then('user is able see {int} web terminal tabs', (n: number) => {
   cy.get(webTerminalPO.tabsList).then(($el) => {
-    expect($el.prop('children').length).toEqual(n + 1);
+    expect($el.prop('children').length).toEqual(n);
   });
 });
 
