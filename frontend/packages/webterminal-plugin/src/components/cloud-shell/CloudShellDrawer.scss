@@ -1,14 +1,25 @@
+@use '../../../../../public/style/vars';
+
 .co-cloud-shell-drawer {
-  &__heading {
-    padding-left: var(--pf-t--global--spacer--md);
+  &__header {
+    background-color: var(--pf-t--global--background--color--secondary--default);
   }
   &__body {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    height: 100%;
+    // since we removed the gap and padding from the drawer header, the height
+    // is exactly the height of the buttons
+    --co-cloud-shell-header-height: #{vars.$co-button-height};
+
+    &-collapsed .pf-v6-c-drawer__panel-main {
+      overflow-y: hidden;
+    }
+    &.pf-v6-c-drawer__panel {
+      gap: 0;
+    }
     & .pf-v6-c-tabs {
       flex-shrink: 0;
+    }
+    & .pf-v6-c-drawer__panel-main {
+      padding: 0;
     }
   }
 }
