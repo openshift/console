@@ -766,18 +766,6 @@ export const ProjectsTable = (props) => {
 const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
 const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
 
-const ProjectNotFoundMessage = () => {
-  const { t } = useTranslation();
-  const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
-  const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
-  const canCreate = canCreateNs || canCreateProject;
-  return (
-    <ConsoleEmptyState title={t('public~Welcome to OpenShift')}>
-      <OpenShiftGettingStarted canCreate={canCreate} />
-    </ConsoleEmptyState>
-  );
-};
-
 const ProjectEmptyMessage = () => {
   const { t } = useTranslation();
   return (
@@ -837,7 +825,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
       data={data}
       Header={showMetrics ? headerWithMetrics : headerNoMetrics}
       Row={ProjectTableRow}
-      NoDataEmptyMsg={ProjectNotFoundMessage}
+      NoDataEmptyMsg={OpenShiftGettingStarted}
       EmptyMsg={ProjectEmptyMessage}
       customData={customData}
       virtualize

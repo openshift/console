@@ -52,11 +52,10 @@ export const ConsoleEmptyState: React.FC<ConsoleEmptyStateProps> = ({
 ConsoleEmptyState.displayName = 'ConsoleEmptyState';
 
 type ConsoleEmptyStateProps = Partial<EmptyStateProps> & {
-  className?: string;
+  variant?: EmptyStateProps['variant'];
   'data-test'?: string;
-  Icon?: React.ComponentType;
+  Icon?: EmptyStateProps['icon'];
   primaryActions?: React.ReactElement[];
   secondaryActions?: React.ReactElement[];
-  title?: string | React.ReactElement;
-  variant?: EmptyStateVariant;
+  title?: EmptyStateProps['title'];
 };
