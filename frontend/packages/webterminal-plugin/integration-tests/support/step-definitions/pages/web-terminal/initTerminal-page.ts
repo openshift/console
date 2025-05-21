@@ -31,7 +31,7 @@ export const initTerminalPage = {
       if ($body.find('[data-test="loading-box-body"]').length === 0) {
         cy.log('loading did not go through');
         cy.wait(10000);
-        cy.get(webTerminalPO.terminalCloseWindowBtn).click();
+        cy.get(webTerminalPO.closeTerminalIcon).click();
         cy.reload();
         app.waitForDocumentLoad();
         perspective.switchTo(switchPerspective.Administrator);

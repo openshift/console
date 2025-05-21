@@ -1,13 +1,13 @@
 export const webTerminalPO = {
   webTerminalIcon: '[data-tour-id="tour-cloud-shell-button"]',
-  addTerminalIcon: '[data-test="add-terminal-icon"]',
-  closeTerminalIcon: '[data-test="close-terminal-icon"]',
+  addTerminalIcon: '[data-test="multi-tab-terminal"] [aria-label="Add new tab"]',
+  closeTerminalIcon: '[aria-label="Close terminal tab"]',
   tabsList: '[data-test="multi-tab-terminal"] ul',
   openCommandLine: 'button[data-tour-id="tour-cloud-shell-button"]',
   terminalWindow: 'canvas.xterm-cursor-layer',
   terminalWindowWithEnabledMouseEvent: 'div.xterm-screen>canvas.xterm-cursor-layer',
   terminalOpenInNewTabBtn: "a[href='/terminal']",
-  terminalCloseWindowBtn: "button[data-test='close-terminal-icon']",
+  terminalCloseWindowBtn: "button[aria-label='Close terminal'], [aria-label='Close terminal tab']",
   terminalInnactivityMessageArea: 'div.co-cloudshell-exec__error-msg',
   createProjectMenu: {
     createProjectDropdownMenu: '[data-test-id="namespace-bar-dropdown"] [type="button"]',

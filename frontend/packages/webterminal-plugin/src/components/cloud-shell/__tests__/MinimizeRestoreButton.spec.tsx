@@ -1,6 +1,6 @@
 import { Button } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
-import MinimizeRestoreButton from '../MinimizeRestoreButton';
+import { MinimizeRestoreButton } from '../MinimizeRestoreButton';
 
 describe('MinimizeRestoreButton', () => {
   it('should render a button', () => {
