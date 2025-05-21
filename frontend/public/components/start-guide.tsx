@@ -68,7 +68,7 @@ export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = 
     <ConsoleEmptyState
       variant={EmptyStateVariant.xl}
       icon={ClusterIcon}
-      title={t('public~Hello, world!')}
+      title={t('public~Hello, world')}
       primaryActions={primaryActions}
       secondaryActions={secondaryActions}
     >
