@@ -73,8 +73,6 @@ And('user has logged in as basic user', () => {
   // sometimes guide tour is not closed properly without delay
   cy.wait(1000);
   guidedTour.close();
-  // perspective.switchTo(switchPerspective.Developer);
-  // cy.get(devNavigationMenuPO.project).click();
 });
 
 Given('user is at developer perspective', () => {
