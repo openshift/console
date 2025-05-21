@@ -1,6 +1,7 @@
+import * as React from 'react';
 import * as _ from 'lodash-es';
 import { css } from '@patternfly/react-styles';
-import { useDispatch, connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut } from '@patternfly/react-charts/victory';
@@ -9,38 +10,42 @@ import {
   isPVCAlert,
   isPVCCreateProp,
   isPVCStatus,
+  PVCStatus as PVCStatusType,
+  PVCAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import {
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
   Status,
   FLAGS,
   calculateRadius,
   getNamespace,
   getName,
   getRequestedPVCSize,
+  LazyActionMenu,
+  useFlag,
 } from '@console/shared';
+import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { connectToFlags } from '../reducers/connectToFlags';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
   navFactory,
-  ResourceKebab,
   SectionHeading,
   ResourceLink,
   ResourceSummary,
   Selector,
   humanizeBinaryBytes,
   convertToBaseValue,
-  asAccessReview,
 } from './utils';
 import { ResourceEventStream } from './events';
-import { PersistentVolumeClaimModel } from '../models';
-import { setPVCMetrics } from '../actions/ui';
+import { PVCMetrics, setPVCMetrics } from '@console/internal/actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';
+import { RootState } from '@console/internal/redux';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
-import deletePVCModal from './modals/delete-pvc-modal';
 import i18next from 'i18next';
 import {
   DescriptionList,
@@ -51,28 +56,9 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-const { ModifyLabels, ModifyAnnotations, Edit, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
-const menuActions = [
-  ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
-  ExpandPVC,
-  PVCSnapshot,
-  ClonePVC,
-  ModifyLabels,
-  ModifyAnnotations,
-  Edit,
-  (kind, pvc) => ({
-    label: i18next.t('public~Delete PersistentVolumeClaim'),
-    callback: () =>
-      deletePVCModal({
-        pvc,
-      }),
-    accessReview: asAccessReview(kind, pvc, 'delete'),
-  }),
-];
-
-export const PVCStatus = ({ pvc }) => {
+export const PVCStatus: React.FC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
-  const [pvcStatusExtensions, resolved] = useResolvedExtensions(isPVCStatus);
+  const [pvcStatusExtensions, resolved] = useResolvedExtensions<PVCStatusType>(isPVCStatus);
   if (resolved && pvcStatusExtensions.length > 0) {
     const sortedByPriority = pvcStatusExtensions.sort(
       (a, b) => b.properties.priority - a.properties.priority,
@@ -107,16 +93,17 @@ const tableColumnClasses = [
 
 const kind = 'PersistentVolumeClaim';
 
-const mapStateToProps = ({ UI }, { obj }) => ({
-  metrics: UI.getIn(['metrics', 'pvc'])?.usedCapacity?.[getNamespace(obj)]?.[getName(obj)],
-});
-
-const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
+const PVCTableRow: React.FC<PVCTableRowProps> = ({ obj }) => {
+  const metrics = useSelector<RootState, PVCMetrics>(
+    ({ UI }) => UI.getIn(['metrics', 'pvc'])?.usedCapacity?.[getNamespace(obj)]?.[getName(obj)],
+  );
   const [name, namespace] = [getName(obj), getNamespace(obj)];
   const totalCapacityMetric = convertToBaseValue(obj?.status?.capacity?.storage);
   const totalCapcityHumanized = humanizeBinaryBytes(totalCapacityMetric);
   const usedCapacity = humanizeBinaryBytes(metrics);
   const { t } = useTranslation();
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -155,13 +142,14 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
         )}
       </TableData>
       <TableData className={tableColumnClasses[7]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
-});
+};
 
-const Details_ = ({ flags, obj: pvc }) => {
+const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
+  const flags = useFlag(FLAGS.CAN_LIST_PV);
   const canListPV = flags[FLAGS.CAN_LIST_PV];
   const name = pvc?.metadata?.name;
   const namespace = pvc?.metadata?.namespace;
@@ -186,7 +174,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   const totalCapacityMetric = convertToBaseValue(storage);
   const totalRequestMetric = convertToBaseValue(requestedStorage);
   const usedMetrics = response?.data?.result?.[0]?.value?.[1];
-  const availableMetrics = usedMetrics ? totalCapacityMetric - usedMetrics : null;
+  const availableMetrics = usedMetrics ? totalCapacityMetric - parseInt(usedMetrics, 10) : null;
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
   const availableCapacity = humanizeBinaryBytes(availableMetrics, undefined, totalCapacity.unit);
   const usedCapacity = humanizeBinaryBytes(usedMetrics, undefined, totalCapacity.unit);
@@ -203,7 +191,7 @@ const Details_ = ({ flags, obj: pvc }) => {
       ]
     : [{ x: i18next.t('public~Total'), y: totalCapacity.value }];
 
-  const [pvcAlertExtensions] = useResolvedExtensions(isPVCAlert);
+  const [pvcAlertExtensions] = useResolvedExtensions<PVCAlert>(isPVCAlert);
   const alertComponents = pvcAlertExtensions?.map(
     ({ properties: { alert: AlertComponent }, uid }) => <AlertComponent key={uid} pvc={pvc} />,
   );
@@ -228,7 +216,6 @@ const Details_ = ({ flags, obj: pvc }) => {
               }
               height={130}
               width={130}
-              size={130}
               innerRadius={innerRadius}
               radius={radius}
               data={donutData}
@@ -323,8 +310,6 @@ const Details_ = ({ flags, obj: pvc }) => {
     </>
   );
 };
-
-const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
 
 export const PersistentVolumeClaimsList = (props) => {
   const { t } = useTranslation();
@@ -466,13 +451,27 @@ export const PersistentVolumeClaimsPage = (props) => {
 
 export const PersistentVolumeClaimsDetailsPage = (props) => {
   const { t } = useTranslation();
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceFor(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
       getResourceStatus={(pvc) =>
         pvc.metadata.deletionTimestamp ? t('public~Terminating') : pvc.status.phase
       }
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={[
         navFactory.details(Details),
         navFactory.editYaml(),
@@ -481,3 +480,11 @@ export const PersistentVolumeClaimsDetailsPage = (props) => {
     />
   );
 };
+
+type PVCTableRowProps = {
+  obj: PersistentVolumeClaimKind;
+};
+
+type PVCStatusProps = { pvc: PersistentVolumeClaimKind };
+
+type PVCDetailsProps = { obj: PersistentVolumeClaimKind };
