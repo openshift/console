@@ -7,7 +7,6 @@ import {
   CellMeasurer,
   CellMeasurerCache,
 } from 'react-virtualized';
-import { CSSTransition } from 'react-transition-group';
 import { css } from '@patternfly/react-styles';
 
 import { EventKind } from '../../module/k8s';
@@ -15,7 +14,6 @@ import { WithScrollContainer } from './dom-utils';
 
 // Keep track of seen events so we only animate new ones.
 const seen = new Set();
-const timeout = { enter: 150 };
 
 const measurementCache = new CellMeasurerCache({
   fixedWidth: true,
@@ -50,21 +48,16 @@ class SysEvent extends React.Component<SysEventProps> {
     }
 
     return (
-      <div className={css('co-sysevent--transition', className)} style={style} role="row">
-        <CSSTransition
-          mountOnEnter={true}
-          appear={shouldAnimate}
-          in
-          exit={false}
-          timeout={timeout}
-          classNames="slide"
-        >
-          {(status) => (
-            <div className={`slide-${status}`}>
-              <EventComponent event={event} list={list} cache={measurementCache} index={index} />
-            </div>
-          )}
-        </CSSTransition>
+      <div
+        className={css(
+          { 'co-sysevent-slide-in': shouldAnimate },
+          'co-sysevent--transition',
+          className,
+        )}
+        style={style}
+        role="row"
+      >
+        <EventComponent event={event} list={list} cache={measurementCache} index={index} />
       </div>
     );
   }
@@ -115,6 +108,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
           {({ width }) => (
             <div ref={registerChild}>
               <VirtualList
+                className="co-sysevent-slide-in"
                 autoHeight
                 data={events}
                 deferredMeasurementCache={measurementCache}
