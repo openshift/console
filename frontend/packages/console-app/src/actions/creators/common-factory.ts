@@ -1,4 +1,5 @@
-import i18next from 'i18next';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import {
   annotationsModalLauncher,
@@ -20,108 +21,118 @@ export type ResourceActionCreator = (
 
 export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
 
-export const CommonActionFactory: ResourceActionFactory = {
-  Delete: (
-    kind: K8sKind,
-    obj: K8sResourceKind,
-    relatedResource?: K8sResourceKind,
-    message?: JSX.Element,
-  ): Action => ({
-    id: `delete-resource`,
-    label: i18next.t('console-app~Delete {{kind}}', { kind: kind.kind }),
-    cta: () =>
-      deleteModal({
-        kind,
-        resource: obj,
-        message,
+export const useCommonActionFactory = (): ResourceActionFactory => {
+  const { t } = useTranslation();
+  const actionFactory = React.useMemo(() => {
+    return {
+      Delete: (
+        kind: K8sKind,
+        obj: K8sResourceKind,
+        relatedResource?: K8sResourceKind,
+        message?: JSX.Element,
+      ): Action => ({
+        id: `delete-resource`,
+        label: t('console-app~Delete {{kind}}', { kind: kind.kind }),
+        cta: () =>
+          deleteModal({
+            kind,
+            resource: obj,
+            message,
+          }),
+        accessReview: asAccessReview(kind, obj, 'delete'),
       }),
-    accessReview: asAccessReview(kind, obj, 'delete'),
-  }),
-  Edit: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: `edit-resource`,
-    label: i18next.t('console-app~Edit {{kind}}', { kind: kind.kind }),
-    cta: {
-      href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
-    },
-    // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-    accessReview: asAccessReview(kind, obj, 'update'),
-  }),
-  ModifyLabels: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-labels',
-    label: i18next.t('console-app~Edit labels'),
-    cta: () =>
-      labelsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
+      Edit: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+        id: `edit-resource`,
+        label: t('console-app~Edit {{kind}}', { kind: kind.kind }),
+        cta: {
+          href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
+        },
+        // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
+        accessReview: asAccessReview(kind, obj, 'update'),
       }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyAnnotations: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-annotations',
-    label: i18next.t('console-app~Edit annotations'),
-    cta: () =>
-      annotationsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
+      ModifyLabels: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+        id: 'edit-labels',
+        label: t('console-app~Edit labels'),
+        cta: () =>
+          labelsModalLauncher({
+            kind,
+            resource: obj,
+            blocking: true,
+          }),
+        accessReview: asAccessReview(kind, obj, 'patch'),
       }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyCount: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-pod-count',
-    label: i18next.t('console-app~Edit Pod count'),
-    cta: () =>
-      configureReplicaCountModal({
-        resourceKind: kind,
-        resource: obj,
+      ModifyAnnotations: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+        id: 'edit-annotations',
+        label: t('console-app~Edit annotations'),
+        cta: () =>
+          annotationsModalLauncher({
+            kind,
+            resource: obj,
+            blocking: true,
+          }),
+        accessReview: asAccessReview(kind, obj, 'patch'),
       }),
-    accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
-  }),
-  ModifyPodSelector: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-pod-selector',
-    label: i18next.t('console-app~Edit Pod selector'),
-    cta: () =>
-      podSelectorModal({
-        kind,
-        resource: obj,
-        blocking: true,
+      ModifyCount: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+        id: 'edit-pod-count',
+        label: t('console-app~Edit Pod count'),
+        cta: () =>
+          configureReplicaCountModal({
+            resourceKind: kind,
+            resource: obj,
+          }),
+        accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
       }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyTolerations: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-toleration',
-    label: i18next.t('console-app~Edit tolerations'),
-    cta: () =>
-      tolerationsModal({
-        resourceKind: kind,
-        resource: obj,
-        modalClassName: 'modal-lg',
+      ModifyPodSelector: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+        id: 'edit-pod-selector',
+        label: t('console-app~Edit Pod selector'),
+        cta: () =>
+          podSelectorModal({
+            kind,
+            resource: obj,
+            blocking: true,
+          }),
+        accessReview: asAccessReview(kind, obj, 'patch'),
       }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  AddStorage: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'add-storage',
-    label: i18next.t('console-app~Add storage'),
-    cta: {
-      href: `${resourceObjPath(
-        obj,
-        kind.crd ? referenceForModel(kind) : kind.kind,
-      )}/attach-storage`,
-    },
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
+      ModifyTolerations: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+        id: 'edit-toleration',
+        label: t('console-app~Edit tolerations'),
+        cta: () =>
+          tolerationsModal({
+            resourceKind: kind,
+            resource: obj,
+            modalClassName: 'modal-lg',
+          }),
+        accessReview: asAccessReview(kind, obj, 'patch'),
+      }),
+      AddStorage: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+        id: 'add-storage',
+        label: t('console-app~Add storage'),
+        cta: {
+          href: `${resourceObjPath(
+            obj,
+            kind.crd ? referenceForModel(kind) : kind.kind,
+          )}/attach-storage`,
+        },
+        accessReview: asAccessReview(kind, obj, 'patch'),
+      }),
+    };
+  }, [t]);
+  return actionFactory;
 };
 
-export const getCommonResourceActions = (
+export const useCommonResourceActions = (
   kind: K8sKind,
   obj: K8sResourceKind,
   message?: JSX.Element,
 ): Action[] => {
-  return [
-    CommonActionFactory.ModifyLabels(kind, obj),
-    CommonActionFactory.ModifyAnnotations(kind, obj),
-    CommonActionFactory.Edit(kind, obj),
-    CommonActionFactory.Delete(kind, obj, undefined, message),
-  ];
+  const actionFactory = useCommonActionFactory();
+  const actions = React.useMemo(() => {
+    return [
+      actionFactory.ModifyLabels(kind, obj),
+      actionFactory.ModifyAnnotations(kind, obj),
+      actionFactory.Edit(kind, obj),
+      actionFactory.Delete(kind, obj, null, message),
+    ];
+  }, [kind, obj, actionFactory, message]);
+  return actions;
 };

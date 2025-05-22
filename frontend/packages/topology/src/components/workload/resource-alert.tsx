@@ -2,7 +2,7 @@ import { AlertActionLink } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
+import { useCommonActionFactory } from '@console/app/src/actions/creators/common-factory';
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { Action, DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';
 import {
@@ -91,6 +91,7 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
   const resource = getResource(element);
   const name = resource?.metadata?.name;
   const namespace = resource?.metadata?.namespace;
+  const actionFactory = useCommonActionFactory();
 
   const [canUseAlertAction, canUseAlertActionLoading] = useAccessReview({
     group: DeploymentModel.apiGroup,
@@ -111,7 +112,7 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
   if (resourceQuotaRequested.includes('limits')) {
     alertAction = DeploymentActionFactory.EditResourceLimits(DeploymentModel, resource);
   } else if (resourceQuotaRequested.includes('pods')) {
-    alertAction = CommonActionFactory.ModifyCount(DeploymentModel, resource);
+    alertAction = actionFactory.ModifyCount(DeploymentModel, resource);
   }
 
   const showAlertActionLink = alertAction && canUseAlertAction && !canUseAlertActionLoading;

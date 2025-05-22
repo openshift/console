@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GraphElement, Node, isGraph } from '@patternfly/react-topology';
 import i18next from 'i18next';
-import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
+import { useCommonActionFactory } from '@console/app/src/actions/creators/common-factory';
 import { K8sModel, Action, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -63,23 +63,25 @@ export const useEditImportActionProvider = (resource: K8sResourceKind) => {
 
 export const useServiceBindingActionProvider = (resource: K8sResourceKind) => {
   const [k8sKind, inFlight] = useK8sModel(referenceFor(resource));
+  const actionFactory = useCommonActionFactory();
   const actions = React.useMemo(() => {
-    let commonActions: Action[];
+    const commonActions: Action[] = [
+      actionFactory.ModifyLabels(k8sKind, resource),
+      actionFactory.ModifyAnnotations(k8sKind, resource),
+      actionFactory.Edit(k8sKind, resource),
+    ];
+    const deleteMessage = (
+      <p>
+        {i18next.t(
+          'devconsole~Deletion of a Service Binding resource that utilizes label selector will result in the removal of all bindings on applications that share the labels defined in the Service Binding resource.',
+        )}
+      </p>
+    );
     if (resource.spec.application.labelSelector) {
-      const message = (
-        <p>
-          {i18next.t(
-            'devconsole~Deletion of a Service Binding resource that utilizes label selector will result in the removal of all bindings on applications that share the labels defined in the Service Binding resource.',
-          )}
-        </p>
-      );
-      commonActions = getCommonResourceActions(k8sKind, resource, message);
-    } else {
-      commonActions = getCommonResourceActions(k8sKind, resource);
+      return [actionFactory.Delete(k8sKind, resource, null, deleteMessage), ...commonActions];
     }
-
-    return commonActions;
-  }, [k8sKind, resource]);
+    return [actionFactory.Delete(k8sKind, resource), ...commonActions];
+  }, [k8sKind, resource, actionFactory]);
   return [actions, !inFlight, undefined];
 };
 
