@@ -18,7 +18,6 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
 import { ResourceQuotaCard } from './resource-quota-card';
 import { GettingStartedSection as DevGettingStartedSection } from './getting-started/GettingStartedSection';
-import { GettingStartedSection } from '../dashboards-page/cluster-dashboard/getting-started/getting-started-section';
 import { PROJECT_OVERVIEW_USER_SETTINGS_KEY } from '../dashboards-page/cluster-dashboard/getting-started/constants';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
@@ -84,7 +83,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
             <DevGettingStartedSection userSettingKey="devconsole.projectOverview.gettingStarted" />
           ) : (
             consoleCapabilityGettingStartedBannerIsEnabled && (
-              <GettingStartedSection userSettingKey={PROJECT_OVERVIEW_USER_SETTINGS_KEY} />
+              <DevGettingStartedSection userSettingKey={PROJECT_OVERVIEW_USER_SETTINGS_KEY} />
             )
           )}
           <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
