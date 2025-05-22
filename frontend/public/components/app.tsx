@@ -274,8 +274,8 @@ const App = (props) => {
         {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
           <Lightspeed />
         )}
-        <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       </QuickStartDrawer>
+      <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
     </HelmetProvider>
