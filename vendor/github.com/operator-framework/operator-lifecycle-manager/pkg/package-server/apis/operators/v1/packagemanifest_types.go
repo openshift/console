@@ -1,10 +1,9 @@
 package v1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"github.com/operator-framework/api/pkg/lib/version"
 	operatorv1alpha1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // PackageManifestList is a list of PackageManifest objects.
@@ -47,6 +46,9 @@ type PackageManifestStatus struct {
 	// PackageName is the name of the overall package, ala `etcd`.
 	PackageName string `json:"packageName"`
 
+	// Deprecation is an optional field which contains information if the package is deprecated.
+	Deprecation *Deprecation `json:"deprecation,omitempty"`
+
 	// Channels are the declared channels for the package, ala `stable` or `alpha`.
 	// +listType=set
 	Channels []PackageChannel `json:"channels"`
@@ -55,6 +57,12 @@ type PackageManifestStatus struct {
 	// default channel will be installed if no other channel is explicitly given. If the package
 	// has a single channel, then that channel is implicitly the default.
 	DefaultChannel string `json:"defaultChannel"`
+}
+
+// Deprecation conveys information regarding a deprecated resource.
+type Deprecation struct {
+	// Message is a human readable message describing the deprecation.
+	Message string `json:"message"`
 }
 
 // GetDefaultChannel gets the default channel or returns the only one if there's only one. returns empty string if it
@@ -81,6 +89,24 @@ type PackageChannel struct {
 
 	// CurrentCSVSpec holds the spec of the current CSV
 	CurrentCSVDesc CSVDescription `json:"currentCSVDesc,omitempty"`
+
+	// Deprecation is an optional field which contains information if the channel is deprecated.
+	Deprecation *Deprecation `json:"deprecation,omitempty"`
+
+	// Entries lists all CSVs in the channel, with their upgrade edges.
+	Entries []ChannelEntry `json:"entries"`
+}
+
+// ChannelEntry defines a member of a package channel.
+type ChannelEntry struct {
+	// Name is the name of the bundle for this entry.
+	Name string `json:"name"`
+
+	// Version is the version of the bundle for this entry.
+	Version string `json:"version,omitempty"`
+
+	// Deprecation is an optional field which contains information if the channel entry is deprecated.
+	Deprecation *Deprecation `json:"deprecation,omitempty"`
 }
 
 // CSVDescription defines a description of a CSV

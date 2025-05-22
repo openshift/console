@@ -14,6 +14,7 @@ const (
 	ChartTesting               CheckName = "chart-testing"
 	RequiredAnnotationsPresent CheckName = "required-annotations-present"
 	SignatureIsValid           CheckName = "signature-is-valid"
+	HasNotes                   CheckName = "has-notes"
 	MandatoryCheckType         CheckType = "Mandatory"
 	OptionalCheckType          CheckType = "Optional"
 	ExperimentalCheckType      CheckType = "Experimental"
@@ -25,6 +26,7 @@ var setCheckNames = []CheckName{
 	ContainsValuesSchema,
 	ContainsValues,
 	HasKubeVersion,
+	HasNotes,
 	HasReadme,
 	HelmLint,
 	ImagesAreCertified,

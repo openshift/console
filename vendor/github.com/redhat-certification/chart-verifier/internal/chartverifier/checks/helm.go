@@ -38,7 +38,6 @@ import (
 	"helm.sh/helm/v3/pkg/storage/driver"
 
 	"github.com/redhat-certification/chart-verifier/internal/helm/actions"
-	"github.com/redhat-certification/chart-verifier/internal/tool"
 )
 
 // loadChartFromRemote attempts to retrieve a Helm chart from the given remote url. Returns an error if the given url
@@ -190,25 +189,34 @@ func IsChartNotFound(err error) bool {
 	return ok
 }
 
-func getImageReferences(chartURI string, vals map[string]interface{}, kubeVersionString string) ([]string, error) {
-	capabilities := chartutil.DefaultCapabilities
+// getImageReferences renders the templates for chartURI and extracts
+// imageReferences from the template output, using vals as necessaary.
+//
+// Note that template rendering doesn't technically need a remote cluster, but
+// the chart's constraints are still validated against mocked cluster
+// information. For this reaosn, serverKubeVersionString must produce a valid
+// semantic version corresponding to a kubeVersion within the chart's
+// constraints as defined in Chart.yaml.
+func getImageReferences(chartURI string, vals map[string]interface{}, serverKubeVersionString string) ([]string, error) {
+	// We'll start with DefaultCapabilities, but we'll really only use the
+	// kubeVersion of this when rendering manifests because Helm replaces the
+	// action config's capabilities for client-only execution.
+	caps := chartutil.DefaultCapabilities.Copy()
 
-	if kubeVersionString == "" {
-		kubeVersionString = tool.GetLatestKubeVersion()
-	}
-	kubeVersion, err := chartutil.ParseKubeVersion(kubeVersionString)
+	kubeVersion, err := chartutil.ParseKubeVersion(serverKubeVersionString)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s: %w", "unable to render manifests and extract images due to invalid kubeVersion in server capabilities", err)
 	}
 
-	capabilities.KubeVersion = *kubeVersion
+	caps.KubeVersion = *kubeVersion
 
 	actionConfig := &action.Configuration{
 		Releases:     nil,
 		KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-		Capabilities: capabilities,
+		Capabilities: caps,
 		Log:          func(format string, v ...interface{}) {},
 	}
+
 	mem := driver.NewMemory()
 	mem.SetNamespace("TestNamespace")
 	actionConfig.Releases = storage.Init(mem)

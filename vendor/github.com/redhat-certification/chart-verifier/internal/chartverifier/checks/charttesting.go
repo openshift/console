@@ -6,11 +6,12 @@ import (
 	"os"
 	"path"
 
+	"dario.cat/mergo"
 	"github.com/Masterminds/semver"
 	"github.com/helm/chart-testing/v3/pkg/chart"
 	"github.com/helm/chart-testing/v3/pkg/config"
 	"github.com/helm/chart-testing/v3/pkg/util"
-	"github.com/imdario/mergo"
+	"github.com/opdev/getocprange"
 	"gopkg.in/yaml.v3"
 	"helm.sh/helm/v3/pkg/cli"
 
@@ -40,12 +41,15 @@ func getVersion(envSettings *cli.EnvSettings) (string, error) {
 	// Relying on Kubernetes version can be replaced after fixing this issue:
 	// https://bugzilla.redhat.com/show_bug.cgi?id=1850656
 	kubeVersion := fmt.Sprintf("%s.%s", serverVersion.Major, serverVersion.Minor)
-	osVersion, ok := tool.GetKubeOpenShiftVersionMap()[kubeVersion]
-	if !ok {
-		return "", fmt.Errorf("internal error: %q not found in Kubernetes-OpenShift version map", kubeVersion)
+
+	// We can safely assume that GetOCPRange is going to return a single version rather than a range,
+	// given that "kubeVersion" is itself a single version and not a range.
+	OCPVersion, err := getocprange.GetOCPRange(kubeVersion)
+	if err != nil {
+		return "", fmt.Errorf("Error translating kubeVersion %q to an OCP version: %v", kubeVersion, err)
 	}
 
-	return osVersion, nil
+	return OCPVersion, nil
 }
 
 type OpenShiftVersionErr string
@@ -367,12 +371,13 @@ func newTempValuesFileWithOverrides(filename string, valuesOverrides map[string]
 
 	if filename != "" {
 		// in the case a filename is provided, read its contents and merge any available values override.
-		obj, err := readObjectFromYamlFile(filename)
+		var err error
+		obj, err = readObjectFromYamlFile(filename)
 		if err != nil {
 			return "", nil, fmt.Errorf("reading values file: %w", err)
 		}
 
-		err = mergo.MergeWithOverwrite(&obj, valuesOverrides)
+		err = mergo.Merge(&obj, valuesOverrides, mergo.WithOverride)
 		if err != nil {
 			return "", nil, fmt.Errorf("merging extra values: %w", err)
 		}
