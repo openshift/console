@@ -13,7 +13,7 @@ import {
 import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import { resourceLimitsModal } from '../../components/modals/resource-limits';
 import { serviceBindingModal } from '../../components/modals/service-binding';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
   const req = {

@@ -81,7 +81,7 @@ export type NodeMetrics = {
 };
 
 export type PVCMetrics = {
-  usedCapacity: MetricValuesByName;
+  usedCapacity?: MetricValuesByName;
 };
 
 // URL routes that can be namespaced
