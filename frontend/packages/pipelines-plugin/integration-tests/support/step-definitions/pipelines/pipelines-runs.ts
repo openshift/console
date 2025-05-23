@@ -202,7 +202,9 @@ When(
         numOfPipelineRunsBeforeDeletion = $ele.length;
       });
     pipelineRunsPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(pipelineActions.DeletePipelineRun).click({ force: true });
+    cy.get(`[data-test-action="${pipelineActions.DeletePipelineRun}"] button`)
+      .eq(0)
+      .click({ force: true });
   },
 );
 
@@ -507,7 +509,9 @@ Then('user will see VolumeClaimTemplate Workspace in Pipeline Run Details page',
 });
 
 Then('user will see Empty Directory in Pipeline Run Details page', () => {
-  cy.get(pipelineRunDetailsPO.details.workspacesResources.emptyDirectory).should('be.visible');
+  cy.get(pipelineRunDetailsPO.details.workspacesResources.emptyDirectory)
+    .scrollIntoView()
+    .should('be.visible');
 });
 
 When('user clicks on Start', () => {
