@@ -2,18 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { useTranslation, withTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { Divider, Popper, Title } from '@patternfly/react-core';
-import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
+import { Divider, Popper, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
-
-import { checkAccess } from './rbac';
-import { KebabItems } from './kebab';
+import { withTranslation } from 'react-i18next';
 
 class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -677,148 +671,4 @@ Dropdown.propTypes = {
   describedBy: PropTypes.string,
   required: PropTypes.bool,
   dataTest: PropTypes.string,
-};
-
-const ActionsMenuDropdown = (props) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [active, setActive] = React.useState(!!props.active);
-
-  const dropdownElement = React.useRef();
-
-  const show = () => {
-    setActive(true);
-  };
-
-  const hide = (e) => {
-    e?.stopPropagation();
-    setActive(false);
-  };
-
-  const listener = React.useCallback(
-    (event) => {
-      if (!active) {
-        return;
-      }
-
-      const { current } = dropdownElement;
-      if (!current) {
-        return;
-      }
-
-      if (event.target === current || current.contains(event.target)) {
-        return;
-      }
-
-      hide(event);
-    },
-    [active, dropdownElement],
-  );
-
-  React.useEffect(() => {
-    if (active) {
-      window.addEventListener('click', listener);
-    } else {
-      window.removeEventListener('click', listener);
-    }
-    return () => {
-      window.removeEventListener('click', listener);
-    };
-  }, [active, listener]);
-
-  const toggle = (e) => {
-    e.preventDefault();
-
-    if (props.disabled) {
-      return;
-    }
-
-    if (active) {
-      hide(e);
-    } else {
-      show(e);
-    }
-  };
-
-  const onClick = (event, option) => {
-    event.preventDefault();
-
-    if (option.callback) {
-      option.callback();
-    }
-
-    if (option.href) {
-      navigate(option.href);
-    }
-
-    hide();
-  };
-
-  return (
-    <div ref={dropdownElement}>
-      <button
-        type="button"
-        aria-haspopup="true"
-        aria-label={t('public~Actions')}
-        aria-expanded={active}
-        className={classNames({
-          'pf-v6-c-menu-toggle': true,
-          'pf-m-expanded': active,
-        })}
-        onClick={toggle}
-        data-test-id="actions-menu-button"
-      >
-        <span className="pf-v6-c-menu__toggle-text">{props.title || t('public~Actions')}</span>
-        <CaretDownIcon />
-      </button>
-      {active && (
-        <div className="co-actions-menu dropdown-menu pf-v6-c-menu">
-          <KebabItems options={props.actions} onClick={onClick} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
-  const [isVisible, setVisible] = useSafetyFirst(false);
-
-  // Check if any actions are visible when actions have access reviews.
-  React.useEffect(() => {
-    if (!actions.length) {
-      setVisible(false);
-      return;
-    }
-    const promises = actions.reduce((acc, action) => {
-      if (action.accessReview) {
-        acc.push(checkAccess(action.accessReview));
-      }
-      return acc;
-    }, []);
-
-    // Only need to resolve if all actions require access review
-    if (promises.length !== actions.length) {
-      setVisible(true);
-      return;
-    }
-    Promise.all(promises)
-      .then((results) => setVisible(_.some(results, 'status.allowed')))
-      .catch(() => setVisible(true));
-  }, [actions, impersonate, setVisible]);
-  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
-};
-
-export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
-
-ActionsMenu.propTypes = {
-  actions: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.node,
-      labelKey: PropTypes.string,
-      href: PropTypes.string,
-      callback: PropTypes.func,
-      accessReview: PropTypes.object,
-    }),
-  ).isRequired,
-  title: PropTypes.node,
 };

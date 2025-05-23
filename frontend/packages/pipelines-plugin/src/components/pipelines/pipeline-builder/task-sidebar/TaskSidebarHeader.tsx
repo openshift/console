@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu } from '@console/internal/components/utils';
+import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { TaskKind } from '../../../../types';
 import PipelineResourceRef from '../../../shared/common/PipelineResourceRef';
