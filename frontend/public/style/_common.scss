@@ -1,27 +1,5 @@
 $co-external-link-padding-right: 15px;
 
-// Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.
-$co-icon-external-link-alt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0 -16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0 -16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34L157.7 377a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15 41 4.5 41-17V24A24 24 0 0 0 488 0z'/%3E%3C/svg%3E ");
-$co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath d='M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z'/%3E%3C/svg%3E");
-
-@mixin co-embedded-icon {
-  content: '';
-  display: inline-block;
-  vertical-align: baseline;
-  // mask an SVG with the text icon
-  background-color: currentColor;
-  color: inherit;
-  mask-position: center bottom;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  height: 16px;
-  margin-left: 3px;
-  margin-right: -15px; // width + margin-left
-  position: relative;
-  top: 0;
-  width: 12px;
-}
-
 .co-divider {
   margin-bottom: var(--pf-t--global--spacer--lg);
   margin-top: var(--pf-t--global--spacer--lg);
@@ -142,8 +120,22 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 // append external-link icon to <a> so that it doesn't wrap without text
 // there must be no white space between the text and the closing </a> tag holding the pseudo element
 .co-external-link::after {
-  @include co-embedded-icon;
-  mask-image: $co-icon-external-link-alt;
+  content: '';
+  display: inline-block;
+  vertical-align: baseline;
+  // mask an SVG with the text icon
+  background-color: currentColor;
+  color: inherit;
+  mask-position: center bottom;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  height: 16px;
+  margin-left: 3px;
+  margin-right: -15px; // width + margin-left
+  position: relative;
+  top: 0;
+  width: 12px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0 -16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0 -16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34L157.7 377a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15 41 4.5 41-17V24A24 24 0 0 0 488 0z'/%3E%3C/svg%3E ");
 
   .pf-v6-c-dropdown__menu-item & {
     color: var(--pf-t--global--text--color--subtle);
@@ -187,11 +179,6 @@ $co-icon-arrow-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 .co-icon-nowrap {
   display: inline;
   white-space: nowrap;
-}
-
-.co-goto-arrow::after {
-  @include co-embedded-icon;
-  mask-image: $co-icon-arrow-right;
 }
 
 .co-icon-flex-child {
