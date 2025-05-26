@@ -25,7 +25,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
-	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
+	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
@@ -161,6 +161,7 @@ type Server struct {
 	InternalProxiedK8SClientConfig      *rest.Config
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
+	ProxyHeaderDenyList                 []string
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
@@ -461,11 +462,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 
-	// Dev-Console Proxy
+	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsoleProxy.Handler(user, w, r)
+			devconsole.Handler(user, w, r, internalProxiedDynamic, s.K8sMode, s.ProxyHeaderDenyList)
 		})),
 	)
 
