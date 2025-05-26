@@ -392,7 +392,7 @@ type DescribedObject = {
   name: string;
 };
 export type HPAMetric = {
-  type: 'Object' | 'Pods' | 'Resource' | 'External';
+  type: 'Object' | 'Pods' | 'Resource' | 'External' | 'ContainerResource';
   resource?: {
     name: string;
     target: TargetObjcet;
