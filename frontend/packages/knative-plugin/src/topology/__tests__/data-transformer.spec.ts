@@ -72,13 +72,7 @@ const getTransformedTopologyData = (
         ...(kameletModel.edges as EdgeModel[]),
       ],
     };
-    return baseDataModelGetter(
-      model,
-      'test-project',
-      mockData,
-      workloadResources,
-      dataModelDepicters,
-    );
+    return baseDataModelGetter(model, mockData, workloadResources, dataModelDepicters);
   });
 };
 

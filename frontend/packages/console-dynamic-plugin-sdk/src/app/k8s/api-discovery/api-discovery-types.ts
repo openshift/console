@@ -1,6 +1,6 @@
 import { Store, AnyAction } from 'redux';
 import { ActionType as Action } from 'typesafe-actions';
-import { K8sVerb } from '../../../extensions/console-types';
+import { K8sVerb } from '../../../api/common-types';
 
 export type InitApiDiscovery = (store: Store<any, Action<AnyAction>>) => void;
 

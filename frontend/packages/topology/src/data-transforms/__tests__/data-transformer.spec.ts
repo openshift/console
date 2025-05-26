@@ -16,8 +16,6 @@ import { getEditURL, WORKLOAD_TYPES } from '../../utils/topology-utils';
 import { getTrafficConnectors, baseDataModelGetter } from '../data-transformer';
 import { getWorkloadResources } from '../transform-utils';
 
-const namespace = 'test-project';
-
 function getTransformedTopologyData(
   mockData: TopologyDataResources,
   transformByProp: string[] = WORKLOAD_TYPES,
@@ -32,7 +30,7 @@ function getTransformedTopologyData(
   const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, transformByProp);
   const model = { nodes: [], edges: [] };
 
-  return baseDataModelGetter(model, namespace, mockData, workloadResources, [], trafficData);
+  return baseDataModelGetter(model, mockData, workloadResources, [], trafficData);
 }
 
 describe('data transformer ', () => {
@@ -44,13 +42,13 @@ describe('data transformer ', () => {
 
   it('should be able to create an object', () => {
     const model = { nodes: [], edges: [] };
-    const data = baseDataModelGetter(model, namespace, resources, [], []);
+    const data = baseDataModelGetter(model, resources, [], []);
     expect(data).toBeTruthy();
   });
 
   it('should return graph and topology data', () => {
     const model = { nodes: [], edges: [] };
-    const data = baseDataModelGetter(model, namespace, resources, [], []);
+    const data = baseDataModelGetter(model, resources, [], []);
     expect(data).toEqual(topologyData);
   });
 
