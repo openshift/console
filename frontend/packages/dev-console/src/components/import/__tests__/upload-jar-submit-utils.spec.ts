@@ -44,7 +44,7 @@ describe('Upload Jar Submit Utils', () => {
             namespace: 'my-app',
           },
           fieldPath: 'spec.template.spec.containers[?(@.name=="java-ex-git")].image',
-          paused: 'false',
+          paused: false,
         },
       ]);
       done();
