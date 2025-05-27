@@ -1,6 +1,6 @@
 .co-suggestion-box {
   background-color: var(--pf-t--global--background--color--primary--default);
-  z-index: 5;
+  z-index: var(--pf-t--global--z-index--sm);
   width: 100%;
   @media (max-width: $screen-xs-min) {
     max-width: calc(100% - 95px);
