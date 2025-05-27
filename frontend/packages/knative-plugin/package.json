@@ -59,7 +59,6 @@
       "createConnectorUtils": "src/topology/create-connector-utils.ts",
       "getServiceRouteDecorator": "src/topology/components/decorators/getServiceRouteDecorator.tsx",
       "getRevisionRouteDecorator": "src/topology/components/decorators/getRevisionRouteDecorator.tsx",
-      "relationshipPrrovider": "src/topology/relationship-provider.ts",
       "dataTransformer": "src/topology/data-transformer.ts",
       "knativeComponentFactory": "src/topology/components/knativeComponentFactory.ts",
       "eventingContext": "src/topology/eventing-context.ts"

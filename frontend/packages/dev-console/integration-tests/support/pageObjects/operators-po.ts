@@ -37,8 +37,6 @@ export const operatorsPO = {
     redHatCodeReadyWorkspacesCard:
       '[data-test^="codeready-workspaces-redhat-operators-openshift-marketplace"]',
     gitopsPrimer: '[data-test="gitops-primer-community-operators-openshift-marketplace"]',
-    serviceBinding:
-      '[data-test="rh-service-binding-operator-redhat-operators-openshift-marketplace"]',
     CrunchyPostgresforKubernetes:
       '[data-test="crunchy-postgres-operator-certified-operators-openshift-marketplace"]',
     quayContainerSecurity:
