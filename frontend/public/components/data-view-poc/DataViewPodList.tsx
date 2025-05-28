@@ -750,6 +750,18 @@ const DataViewPodList = ({
   return (
     <DataView activeState={activeState}>
       <DataViewToolbar
+        clearAllFilters={(e) => {
+          const clearFilters = {};
+          Object.keys(filtersMap).forEach((filterKey) => {
+            const filter = filtersMap[filterKey];
+            if (filter.all) {
+              clearFilters[filterKey] = [];
+            } else {
+              clearFilters[filterKey] = '';
+            }
+          });
+          handleFilter(e, clearFilters);
+        }}
         filters={
           <DataViewFilters values={dataViewFilters} onChange={handleFilter}>
             {dataViewFiltersNodes}

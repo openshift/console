@@ -1940,7 +1940,7 @@
     react-dropzone "^14.3.5"
     tslib "^2.8.1"
 
-"@patternfly/react-data-view@^6.1.0":
+"@patternfly/react-data-view@^6.1.0", "@patternfly/react-data-view@^6.2.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@patternfly/react-data-view/-/react-data-view-6.1.0.tgz#3662beacd92b408c8ff345c75c52d3fe6ca5f4be"
   integrity sha512-TS5lfuBmjyDMd6s5QsF9V49x7FeinjwnRLnj78xak4IO9PMOvmYaO5qvmQ5sifwBo1yvsl2wH9fpDgZiyxrnew==

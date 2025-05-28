@@ -142,7 +142,7 @@
     "@patternfly/react-component-groups": "^6.2.0-prerelease.4",
     "@patternfly/react-console": "^6.0.0",
     "@patternfly/react-core": "^6.2.0-prerelease.15",
-    "@patternfly/react-data-view": "^6.1.0",
+    "@patternfly/react-data-view": "^6.2.0",
     "@patternfly/react-icons": "^6.2.0-prerelease.2",
     "@patternfly/react-log-viewer": "^6.1.0",
     "@patternfly/react-styles": "^6.2.0-prerelease.2",
