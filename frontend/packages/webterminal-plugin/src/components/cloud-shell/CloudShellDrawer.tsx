@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
+import { css } from '@patternfly/react-styles';
 import { c_drawer_m_inline_m_panel_bottom__splitter_Height as pfSplitterHeight } from '@patternfly/react-tokens/dist/esm/c_drawer_m_inline_m_panel_bottom__splitter_Height';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -34,7 +35,7 @@ const getMastheadHeight = (): number => {
   return height;
 };
 
-const HEADER_HEIGHT = 'var(--co-cloud-shell-header-height)';
+const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
 const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({
   open = true,
@@ -43,6 +44,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({
   children,
 }) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
+  const [height, setHeight] = React.useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
 
@@ -55,11 +57,17 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({
 
   const panelContent = (
     <DrawerPanelContent
-      className="co-cloud-shell-drawer__body pf-v6-u-p-0"
-      isResizable={expanded}
-      defaultSize="385px"
-      minSize={expanded ? `calc(${pfSplitterHeight.var} + ${HEADER_HEIGHT})` : HEADER_HEIGHT}
-      maxSize={expanded ? `calc(100vh - ${getMastheadHeight()}px)` : HEADER_HEIGHT}
+      className={css('co-cloud-shell-drawer__body', 'pf-v6-u-p-0', {
+        'co-cloud-shell-drawer__body-collapsed': !expanded,
+      })}
+      isResizable
+      onResize={(_, w) => {
+        setExpanded(w > 47); // 47px is an arbitrary computed value of HEADER_HEIGHT.
+        setHeight(w);
+      }}
+      defaultSize={expanded ? `${height}px` : '0px'}
+      minSize={HEADER_HEIGHT}
+      maxSize={`calc(100vh - ${getMastheadHeight()}px)`}
     >
       <DrawerHead className="co-cloud-shell-drawer__header pf-v6-u-p-0">
         <Flex grow={{ default: 'grow' }} data-test="cloudshell-drawer-header">
