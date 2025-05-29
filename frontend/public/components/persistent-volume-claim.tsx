@@ -174,7 +174,7 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const totalCapacityMetric = convertToBaseValue(storage);
   const totalRequestMetric = convertToBaseValue(requestedStorage);
   const usedMetrics = response?.data?.result?.[0]?.value?.[1];
-  const availableMetrics = usedMetrics ? totalCapacityMetric - parseInt(usedMetrics, 10) : null;
+  const availableMetrics = usedMetrics ? totalCapacityMetric - Number(usedMetrics) : null;
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
   const availableCapacity = humanizeBinaryBytes(availableMetrics, undefined, totalCapacity.unit);
   const usedCapacity = humanizeBinaryBytes(usedMetrics, undefined, totalCapacity.unit);
@@ -481,9 +481,7 @@ export const PersistentVolumeClaimsDetailsPage = (props) => {
   );
 };
 
-type PVCTableRowProps = {
-  obj: PersistentVolumeClaimKind;
-};
+type PVCTableRowProps = { obj: PersistentVolumeClaimKind };
 
 type PVCStatusProps = { pvc: PersistentVolumeClaimKind };
 
