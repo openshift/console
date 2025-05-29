@@ -24,6 +24,7 @@ import {
   WithContextMenu,
   WithCreateConnector,
   OdcBaseNodeConstructor,
+  PodRingSetProps,
 } from '../extensions/topology-types';
 
 export const CpuCellComponent: React.FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
@@ -97,3 +98,6 @@ export const withCreateConnector: WithCreateConnector = require('@console/topolo
 
 export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements')
   .OdcBaseNode;
+
+export const PodRingSet: React.FC<PodRingSetProps> = require('@console/shared/src/components/pod/PodRingSet')
+  .default;
