@@ -14,10 +14,11 @@ import { useTranslation } from 'react-i18next';
 import { QuickStartModel } from '@console/app/src/models';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import {
+  documentationURLs,
+  getDocumentationURL,
+} from '@console/internal/components/utils/documentation';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-
-const QUICK_START_DOCS_URL =
-  'https://docs.redhat.com/en/documentation/openshift_container_platform/latest/html/web_console/creating-quick-start-tutorials';
 
 export const QuickStartEmptyState = () => {
   const { t } = useTranslation('console-app');
@@ -64,7 +65,7 @@ export const QuickStartEmptyState = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   component="a"
-                  href={QUICK_START_DOCS_URL}
+                  href={getDocumentationURL(documentationURLs.creatingQuickStartsTutorial)}
                   iconPosition="right"
                   icon={<ExternalLinkAltIcon />}
                 >
