@@ -98,7 +98,7 @@ And(
     const linkToYamlEditorPrefURI = `${baseUrl}/k8s/ns/${terminalNamespace}/workspace.devfile.io~v1alpha1~DevWorkspace/`;
 
     // get the devworkspace name from resource title
-    cy.get('[data-test="page-heading"] h1')
+    cy.get('[data-test="page-heading"] h1 [data-test-id="resource-title"]')
       .should('be.visible')
       .then(($item) => {
         devWsName = $item.text();
