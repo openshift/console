@@ -1,7 +1,6 @@
 package static
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/openshift/console/pkg/auth"
@@ -21,10 +20,6 @@ func NewStaticAuthenticator(user auth.User) *StaticAuthenticator {
 func (s *StaticAuthenticator) Authenticate(w http.ResponseWriter, req *http.Request) (*auth.User, error) {
 	userCopy := *s.user
 	return &userCopy, nil
-}
-
-func (s *StaticAuthenticator) ReviewToken(ctx context.Context, token string) error {
-	return nil
 }
 
 func (s *StaticAuthenticator) LoginFunc(w http.ResponseWriter, req *http.Request) {

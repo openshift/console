@@ -2,7 +2,6 @@ package sessions
 
 import (
 	"fmt"
-	"net/http"
 	"reflect"
 	"strconv"
 	"sync"
@@ -329,42 +328,6 @@ func TestSessionStore_pruneSessions(t *testing.T) {
 
 		})
 	}
-}
-
-func TestSessionStore_GetSessionTokenFromCookie(t *testing.T) {
-	// Returns the token when it exists
-	r, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	cookie := &http.Cookie{
-		Name:  OpenshiftAccessTokenCookieName,
-		Value: "test",
-	}
-	r.AddCookie(cookie)
-	token, err := GetSessionTokenFromCookie(r)
-	require.Nil(t, err)
-	require.Equal(t, "test", token)
-
-	// Returns an error when cookie value is empty
-	r, err = http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	cookie.Value = ""
-	r.AddCookie(cookie)
-	token, err = GetSessionTokenFromCookie(r)
-	require.NotNil(t, err)
-	require.Equal(t, "", token)
-
-	// Returns an error when no cookie exists
-	r, err = http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	token, err = GetSessionTokenFromCookie(r)
-	require.NotNil(t, err)
-	require.Equal(t, "", token)
 }
 
 func withServerSessions(sessions ...*LoginState) func(ss *SessionStore) {
