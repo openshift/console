@@ -1,18 +1,40 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Action } from '@console/dynamic-plugin-sdk';
 import { clonePVCModal, expandPVCModal } from '@console/internal/components/modals';
 import deletePVCModal from '@console/internal/components/modals/delete-pvc-modal';
 import { asAccessReview } from '@console/internal/components/utils';
 import { VolumeSnapshotModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, K8sModel } from '@console/internal/module/k8s';
-import { ResourceActionFactory } from './types';
+import { PVCActionCreator } from './types';
 
-const usePVCActionFactory = (): ResourceActionFactory => {
+/**
+ * A React hook for retrieving actions related to a PersistentVolumeClaim (PVC).
+ *
+ * @param {K8sModel} kind - The K8s model for the PersistentVolumeClaim.
+ * @param {PersistentVolumeClaimKind} obj - The specific PVC resource instance for which to generate actions.
+ * @param {PVCActionCreator[]} [filterActions] - Optional. If provided, the returned `actions` array will contain
+ * only the specified actions. If omitted, it will contain all PVC actions. In case of invalid `actionCreators`
+ * returned `actions` are an empty array.
+ * @returns {Action[]} An array containing the generated action(s).
+ *
+ * @example
+ * // Getting ExpandPVC and PVCSnapshot actions for PVC resource
+ * const MyPVCComponent = ({ kind, obj }) => {
+ * const actions = usePVCActions(kind, obj, [PVCActionCreator.ExpandPVC, PVCActionCreator.PVCSnapshot]);
+ * return <Kebab actions={actions} />;
+ * };
+ */
+export const usePVCActions = (
+  kind: K8sModel,
+  obj: PersistentVolumeClaimKind,
+  filterActions?: PVCActionCreator[],
+): Action[] => {
   const { t } = useTranslation();
 
-  const factory = React.useMemo(() => {
-    return {
-      ExpandPVC: (kind: K8sModel, obj: PersistentVolumeClaimKind) => ({
+  const factory = React.useMemo(
+    () => ({
+      ExpandPVC: () => ({
         id: 'expand-pvc',
         label: t('console-app~Expand PVC'),
         cta: () =>
@@ -22,7 +44,7 @@ const usePVCActionFactory = (): ResourceActionFactory => {
           }),
         accessReview: asAccessReview(kind, obj, 'patch'),
       }),
-      PVCSnapshot: (kind: K8sModel, obj: PersistentVolumeClaimKind) => ({
+      PVCSnapshot: () => ({
         id: 'create-snapshot',
         label: t('console-app~Create snapshot'),
         disabled: obj?.status?.phase !== 'Bound',
@@ -32,7 +54,7 @@ const usePVCActionFactory = (): ResourceActionFactory => {
         },
         accessReview: asAccessReview(kind, obj, 'create'),
       }),
-      ClonePVC: (kind: K8sModel, obj: PersistentVolumeClaimKind) => ({
+      ClonePVC: () => ({
         id: 'clone-pvc',
         label: t('console-app~Clone PVC'),
         disabled: obj?.status?.phase !== 'Bound',
@@ -44,7 +66,7 @@ const usePVCActionFactory = (): ResourceActionFactory => {
           }),
         accessReview: asAccessReview(kind, obj, 'create'),
       }),
-      DeletePVC: (kind: K8sModel, obj: PersistentVolumeClaimKind) => ({
+      DeletePVC: () => ({
         id: 'delete-pvc',
         label: t('public~Delete PersistentVolumeClaim'),
         cta: () =>
@@ -53,20 +75,16 @@ const usePVCActionFactory = (): ResourceActionFactory => {
           }),
         accessReview: asAccessReview(kind, obj, 'delete'),
       }),
-    };
-  }, [t]);
-  return factory;
-};
+    }),
+    [t, kind, obj],
+  );
 
-export const usePVCActions = (kind: K8sModel, obj: PersistentVolumeClaimKind) => {
-  const actionFactory = usePVCActionFactory();
-  const actions = React.useMemo(() => {
-    return [
-      actionFactory.ExpandPVC(kind, obj),
-      actionFactory.PVCSnapshot(kind, obj),
-      actionFactory.ClonePVC(kind, obj),
-      actionFactory.DeletePVC(kind, obj),
-    ];
-  }, [kind, obj, actionFactory]);
+  // filter and initialize requested actions or construct list of all PVCActions
+  const actions = React.useMemo<Action[]>(() => {
+    if (filterActions) {
+      return filterActions.map((creator) => factory[creator]?.()).filter(Boolean);
+    }
+    return [factory.ExpandPVC(), factory.PVCSnapshot(), factory.ClonePVC(), factory.DeletePVC()];
+  }, [factory, filterActions]);
   return actions;
 };
