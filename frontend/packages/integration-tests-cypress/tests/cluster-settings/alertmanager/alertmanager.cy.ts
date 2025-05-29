@@ -105,7 +105,7 @@ receivers:
       .within(() => {
         cy.get('[data-test-id="kebab-button"]').click();
       });
-    cy.get('[data-test-action="Delete Receiver"]').should('be.disabled');
+    cy.get('[data-test-action="Delete Receiver"] button').should('be.disabled');
     alertmanager.reset();
   });
 

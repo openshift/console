@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu, SimpleTabNav } from '@console/internal/components/utils';
+import { SimpleTabNav } from '@console/internal/components/utils';
+import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { edgeActions } from '../../actions/edgeActions';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
