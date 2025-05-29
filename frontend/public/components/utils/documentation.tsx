@@ -5,10 +5,15 @@ export const openshiftHelpBase = window.SERVER_FLAGS.documentationBaseURL || UPS
 
 export const DOC_URL_OPENSHIFT_WHATS_NEW = 'https://www.openshift.com/learn/whats-new';
 export const DOC_URL_OPERATORFRAMEWORK_SDK = 'https://sdk.operatorframework.io/';
-export const DOC_URL_PODDISRUPTIONBUDGET_POLICY = `${UPSTREAM_LATEST}rest_api/policy_apis/poddisruptionbudget-policy-v1.html#poddisruptionbudget-policy-v1`;
 export const DOC_URL_PODMAN = 'https://podman.io/';
 export const DOC_URL_RED_HAT_MARKETPLACE =
   'https://marketplace.redhat.com/en-us?utm_source=openshift_console';
+
+// documentationBaseUrl points to OCP and not Serverless so we cannot use it
+const OPENSHIFT_SERVERLESS_DOCS =
+  'https://docs.redhat.com/en/documentation/red_hat_openshift_serverless/latest/';
+// no OKD equivalent docs either
+export const DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED = `${OPENSHIFT_SERVERLESS_DOCS}html/functions/serverless-functions-getting-started`;
 
 const KUBE_DOCS = 'https://kubernetes.io/docs/';
 export const DOC_URL_STORAGE_CLASSES_AWS_EBS = `${KUBE_DOCS}/concepts/storage/storage-classes/#aws-ebs`;
@@ -83,6 +88,16 @@ export const documentationURLs: documentationURLsType = {
     downstream: 'html/architecture/admission-plug-ins#admission-plug-ins-about_admission-plug-ins',
     kube: `${KUBE_DOCS}/reference/access-authn-authz/extensible-admission-controllers/#response`,
     upstream: 'architecture/index.html#about-admission-plug-ins',
+  },
+  creatingQuickStartsTutorials: {
+    downstream: 'html/web_console/creating-quick-start-tutorials',
+    upstream: 'web_console/creating-quick-start-tutorials.html',
+  },
+  podDisruptionBudgetPolicyV1: {
+    downstream: 'html/policy_apis/poddisruptionbudget-policy-v1',
+    kube: `${KUBE_DOCS}/reference/kubernetes-api/policy-resources/pod-disruption-budget-v1/`,
+    upstream:
+      'rest_api/policy_apis/poddisruptionbudget-policy-v1.html#poddisruptionbudget-policy-v1',
   },
 };
 
