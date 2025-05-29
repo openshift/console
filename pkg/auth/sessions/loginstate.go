@@ -60,6 +60,17 @@ func newLoginState(tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginSt
 		return nil, fmt.Errorf("no token response was supplied")
 	}
 
+	if tokenVerifier == nil {
+		ls := &LoginState{
+			now:          time.Now,
+			rawToken:     token.AccessToken,
+			sessionToken: RandomString(256),
+			refreshToken: token.RefreshToken,
+		}
+		ls.updateExpiry(jsonTime(token.Expiry))
+		return ls, nil
+	}
+
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
 		return nil, errors.New("token response did not have an id_token field")
@@ -93,6 +104,13 @@ func (ls *LoginState) Username() string {
 }
 
 func (ls *LoginState) UpdateTokens(verifier IDTokenVerifier, tokenResponse *oauth2.Token) error {
+	if verifier == nil {
+		ls.rawToken = tokenResponse.AccessToken
+		ls.refreshToken = tokenResponse.RefreshToken
+		ls.updateExpiry(jsonTime(tokenResponse.Expiry))
+		return nil
+	}
+
 	rawIDToken, ok := tokenResponse.Extra("id_token").(string)
 	if !ok {
 		return errors.New("token response did not have an id_token field")
