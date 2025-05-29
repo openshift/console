@@ -37,7 +37,7 @@ export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = 
   const primaryActions = canCreate
     ? [
         <Button key="create-project-action" variant={ButtonVariant.primary} onClick={onClickCreate}>
-          {t('public~Create a new Project')}
+          {t('public~Create a new project')}
         </Button>,
       ]
     : [];
