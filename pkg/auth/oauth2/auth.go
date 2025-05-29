@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,9 +21,6 @@ import (
 	"github.com/openshift/console/pkg/auth/sessions"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
-	authv1 "k8s.io/api/authentication/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 )
@@ -51,8 +47,7 @@ var (
 )
 
 type OAuth2Authenticator struct {
-	clientFunc           func() *http.Client
-	internalK8sClientset *kubernetes.Clientset
+	clientFunc func() *http.Client
 
 	clientID     string
 	clientSecret string
@@ -82,7 +77,7 @@ type loginMethod interface {
 	// cookie with the user.
 	login(http.ResponseWriter, *http.Request, *oauth2.Token) (*sessions.LoginState, error)
 	// Removes user token cookie, but does not write a response.
-	DeleteCookie(http.ResponseWriter, *http.Request)
+	DeleteSession(http.ResponseWriter, *http.Request)
 	// logout deletes any cookies associated with the user, and writes a no-content response.
 	logout(http.ResponseWriter, *http.Request)
 	// LogoutRedirectURL returns the URL to redirect to after a logout.
@@ -138,8 +133,7 @@ type Config struct {
 type completedConfig struct {
 	*Config
 
-	clientFunc           func() *http.Client
-	internalK8sClientset *kubernetes.Clientset
+	clientFunc func() *http.Client
 }
 
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
@@ -209,7 +203,6 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 		cookiePath:             c.CookiePath,
 		secureCookies:          c.SecureCookies,
 		constructOAuth2Config:  a.oauth2ConfigConstructor,
-		internalK8sConfig:      c.K8sConfig,
 	}
 
 	var tokenHandler loginMethod
@@ -265,8 +258,7 @@ func (a *OAuth2Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endp
 
 func newUnstartedAuthenticator(c *completedConfig) *OAuth2Authenticator {
 	return &OAuth2Authenticator{
-		clientFunc:           c.clientFunc,
-		internalK8sClientset: c.internalK8sClientset,
+		clientFunc: c.clientFunc,
 
 		clientID:     c.ClientID,
 		clientSecret: c.ClientSecret,
@@ -302,42 +294,6 @@ func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) 
 	}
 	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, a.oauth2Config().AuthCodeURL(state), http.StatusSeeOther)
-}
-
-func (a *OAuth2Authenticator) ReviewToken(r *http.Request) error {
-	token, err := sessions.GetSessionTokenFromCookie(r)
-	if err != nil {
-		return err
-	}
-
-	tokenReview := &authv1.TokenReview{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "authentication.k8s.io/v1",
-			Kind:       "TokenReview",
-		},
-		Spec: authv1.TokenReviewSpec{
-			Token: token,
-		},
-	}
-
-	completedTokenReview, err := a.
-		internalK8sClientset.
-		AuthenticationV1().
-		TokenReviews().
-		Create(r.Context(), tokenReview, metav1.CreateOptions{})
-
-	if err != nil {
-		return fmt.Errorf("failed to create TokenReview, %v", err)
-	}
-
-	// Check if the token is authenticated
-	if !completedTokenReview.Status.Authenticated {
-		if completedTokenReview.Status.Error != "" {
-			return errors.New(completedTokenReview.Status.Error)
-		}
-		return errors.New("failed to authenticate the token, unknownd error")
-	}
-	return nil
 }
 
 // LogoutFunc cleans up session cookies.
@@ -454,12 +410,6 @@ func (c *Config) Complete() (*completedConfig, error) {
 		return currentClient
 	}
 	completed.clientFunc = clientFunc
-
-	internalK8sClientset, err := kubernetes.NewForConfig(c.K8sConfig)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create K8s Clientset: %v", err)
-	}
-	completed.internalK8sClientset = internalK8sClientset
 
 	errURL := "/"
 	if c.ErrorURL != "" {
