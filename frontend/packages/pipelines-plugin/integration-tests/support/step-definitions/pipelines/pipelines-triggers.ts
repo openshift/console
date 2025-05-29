@@ -207,7 +207,7 @@ Then(
   (option: string, pipelineName: string) => {
     pipelinesPage.search(pipelineName);
     pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byLegacyTestID('action-items').find('li').contains(option).should('not.exist');
+    cy.get('[role="menu"]').find('li').contains(option).should('not.exist');
   },
 );
 

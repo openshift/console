@@ -68,7 +68,8 @@ export const pipelinesPage = {
         }
       });
     });
-    cy.get('[data-test-id="action-items"]').should('be.visible');
+    // cy.get('[data-test-id="action-items"]').should('be.visible');
+    cy.get('[role="menu"]').should('be.visible');
   },
 
   selectActionForPipeline: (pipelineName: string, action: string | pipelineActions) => {
@@ -85,8 +86,11 @@ export const pipelinesPage = {
         }
       });
     });
-    cy.byLegacyTestID('action-items').should('be.visible');
-    cy.byTestActionID(action).click({ force: true });
+    // cy.byLegacyTestID('action-items').should('be.visible');
+    cy.get('[role="menu"]').should('be.visible');
+    /* eslint-disable cypress/no-unnecessary-waiting */
+    cy.wait(2000);
+    cy.get(`[data-test-action="${action}"] button`).click({ force: true });
   },
 
   verifyDefaultPipelineColumnValues: (defaultValue: string = '-') => {
@@ -357,7 +361,8 @@ export const startPipelineInPipelinesPage = {
       case 'Secret':
         cy.byTestDropDownMenu('secret').click();
         break;
-      case 'PersistentVolumeClaim' || 'PVC':
+      case 'PersistentVolumeClaim':
+      case 'PVC':
         cy.byTestDropDownMenu('pvc').click();
         break;
       case 'VolumeClaimTemplate':
