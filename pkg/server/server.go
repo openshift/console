@@ -161,8 +161,8 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
-	ContentSecurityPolicy               string
 	ContentSecurityPolicyEnabled        bool
+	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
@@ -281,8 +281,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		tpl.Delims("[[", "]]")
 		tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, tokenizerPageTemplateName))
 		if err != nil {
-			fmt.Printf("%v not found in configured public-dir path: %v", tokenizerPageTemplateName, err)
-			os.Exit(1)
+			klog.Fatalf("%v not found in configured public-dir path: %v", tokenizerPageTemplateName, err)
 		}
 
 		if err := tpls.ExecuteTemplate(w, tokenizerPageTemplateName, templateData); err != nil {
@@ -542,12 +541,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		proxyConfig, err := plugins.ParsePluginProxyConfig(s.PluginProxy)
 		if err != nil {
 			klog.Fatalf("Error parsing plugin proxy config: %s", err)
-			os.Exit(1)
 		}
 		proxyServiceHandlers, err := plugins.GetPluginProxyServiceHandlers(proxyConfig, s.PluginsProxyTLSConfig, pluginProxyEndpoint)
 		if err != nil {
 			klog.Fatalf("Error getting plugin proxy handlers: %s", err)
-			os.Exit(1)
 		}
 		if len(proxyServiceHandlers) != 0 {
 			klog.Infoln("The following console endpoints are now proxied to these services:")
@@ -586,7 +583,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			ConsoleCommit:         os.Getenv("SOURCE_GIT_COMMIT"),
 			Plugins:               pluginsHandler.GetPluginsList(),
 			Capabilities:          s.Capabilities,
-			ContentSecurityPolicy: s.ContentSecurityPolicy,
+			ContentSecurityPolicy: s.ContentSecurityPolicy.String(),
 		})
 	}))
 
@@ -707,7 +704,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			klog.Fatalf("Error building Content Security Policy directives: %s", err)
-			os.Exit(1)
 		}
 		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
 	}
@@ -791,8 +787,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Delims("[[", "]]")
 	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, indexPageTemplateName))
 	if err != nil {
-		fmt.Printf("index.html not found in configured public-dir path: %v", err)
-		os.Exit(1)
+		klog.Fatalf("index.html not found in configured public-dir path: %v", err)
 	}
 
 	if err := tpls.ExecuteTemplate(w, indexPageTemplateName, templateData); err != nil {
