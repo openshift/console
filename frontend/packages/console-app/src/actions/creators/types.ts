@@ -9,3 +9,15 @@ export type ResourceActionCreator = (
 ) => Action;
 
 export type ResourceActionFactory = Record<string, ResourceActionCreator>;
+
+export type ResourceActionsKit = {
+  factory: ResourceActionFactory;
+  actions: Action[];
+};
+
+export enum PVCActionCreator {
+  ExpandPVC = 'ExpandPVC',
+  PVCSnapshot = 'PVCSnapshot',
+  ClonePVC = 'ClonePVC',
+  DeletePVC = 'DeletePVC',
+}

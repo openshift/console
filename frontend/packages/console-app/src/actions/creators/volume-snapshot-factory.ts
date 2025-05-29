@@ -5,10 +5,23 @@ import { asAccessReview } from '@console/internal/components/utils';
 import { VolumeSnapshotKind, K8sModel } from '@console/internal/module/k8s';
 import { ResourceActionFactory } from './types';
 
+/**
+ * A React hook for creating actions related to VolumeSnapshots.
+ *
+ * @returns {ResourceActionFactory} An object containing the action factory used to generate
+ * all actions specific to VolumeSnaphots.
+ *
+ * @example
+ * // Getting actions for VolumeSnapshot resources
+ * const MyVolumeSnapshotComponent = ({ kind, obj }) => {
+ * const factory = useVolumeSnapshotActionFactory();
+ * return <Kebab actions={factory.RestorePVC(kind, obj)} />;
+ * };
+ */
 export const useVolumeSnapshotActionFactory = (): ResourceActionFactory => {
   const { t } = useTranslation();
-  const factory = React.useMemo(() => {
-    return {
+  return React.useMemo(
+    () => ({
       RestorePVC: (kind: K8sModel, obj: VolumeSnapshotKind) => ({
         id: 'clone-pvc',
         label: t('console-app~Restore as new PVC'),
@@ -21,7 +34,7 @@ export const useVolumeSnapshotActionFactory = (): ResourceActionFactory => {
           }),
         accessReview: asAccessReview(kind, obj, 'create'),
       }),
-    };
-  }, [t]);
-  return factory;
+    }),
+    [t],
+  );
 };
