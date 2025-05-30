@@ -630,6 +630,7 @@
   "Group details": "Group details",
   "resource {{name}}": "resource {{name}}",
   "(as a percentage of request)": "(as a percentage of request)",
+  "{{container}}: resource {{name}}": "{{container}}: resource {{name}}",
   "{{name}} on pods": "{{name}} on pods",
   "{{name}} on<2></2>": "{{name}} on<2></2>",
   "Metrics": "Metrics",
