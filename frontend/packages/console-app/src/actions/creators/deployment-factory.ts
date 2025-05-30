@@ -11,7 +11,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { resourceLimitsModal } from '../../components/modals/resource-limits';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
   const req = {
