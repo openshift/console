@@ -7,7 +7,7 @@ import { TimestampProps } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import * as dateTime from '../../utils/datetime';
 
-const Timestamp = (props: TimestampProps) => {
+export const Timestamp = (props: TimestampProps) => {
   const now = useSelector<RootState, string>(({ UI }) => UI.get('lastTick'));
 
   // Workaround for Date&Time values are not showing in supported languages onchange of language selector.

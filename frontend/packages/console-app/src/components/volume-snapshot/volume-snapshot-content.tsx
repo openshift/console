@@ -17,7 +17,6 @@ import { useActiveColumns } from '@console/internal/components/factory/Table/act
 import {
   ResourceLink,
   ResourceKebab,
-  Timestamp,
   Kebab,
   humanizeBinaryBytes,
   PageComponentProps,
@@ -30,6 +29,7 @@ import {
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 export const tableColumnInfo = [

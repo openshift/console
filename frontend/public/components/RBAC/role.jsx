@@ -18,9 +18,9 @@ import {
   navFactory,
   ResourceKebab,
   ResourceLink,
-  Timestamp,
   resourceListPathFromModel,
 } from '../utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
