@@ -50,8 +50,8 @@ import {
   resourcePath,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';

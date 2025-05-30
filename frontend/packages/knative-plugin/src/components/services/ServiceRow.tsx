@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu, ClampedText } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ServiceModel } from '../../models';
 import { ServiceKind, ConditionTypes } from '../../types';

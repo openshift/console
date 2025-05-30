@@ -35,10 +35,10 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   navFactory,
   FirehoseResourcesResult,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
 import { PodList, getFilters as getPodFilters } from './pod';

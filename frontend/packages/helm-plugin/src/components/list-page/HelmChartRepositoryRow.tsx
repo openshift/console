@@ -3,8 +3,9 @@ import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp, Kebab } from '@console/internal/components/utils';
+import { ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { HelmChartRepositoryModel } from '../../models';
 

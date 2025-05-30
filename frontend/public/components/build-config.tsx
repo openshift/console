@@ -32,9 +32,9 @@ import {
   resourceObjPath,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   WebhookTriggers,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
   BuildsPage,
   BuildEnvironmentComponent,

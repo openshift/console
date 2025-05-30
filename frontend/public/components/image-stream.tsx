@@ -28,7 +28,7 @@ import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from './utils/timestamp';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 

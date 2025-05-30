@@ -18,9 +18,9 @@ import {
   ResourceSummary,
   SectionHeading,
   Selector,
-  Timestamp,
   navFactory,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;

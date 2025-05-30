@@ -12,8 +12,8 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ConfigMapModel } from '../models';
 
 const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Kebab.factory.common];

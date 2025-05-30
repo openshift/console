@@ -7,11 +7,11 @@ import { ErrorState } from '@console/internal/components/error';
 import {
   documentationURLs,
   getDocumentationURL,
-  Timestamp,
   isManaged,
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   riskIcons,

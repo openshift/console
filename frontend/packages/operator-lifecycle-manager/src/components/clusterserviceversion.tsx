@@ -61,7 +61,6 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   StatusBox,
-  Timestamp,
 } from '@console/internal/components/utils';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -76,6 +75,7 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { withFallback } from '@console/shared/src/components/error';

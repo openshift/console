@@ -7,7 +7,6 @@ export * from './label-list';
 export * from './resource-icon';
 export * from './resource-link';
 export * from './resource-log';
-export * from './timestamp';
 export * from './horizontal-nav';
 export * from './details-page';
 export * from './inject';
