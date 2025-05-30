@@ -61,7 +61,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
         </p>
         <NumberSpinner
           value={value}
-          onChange={(e: any) => setValue(e.target.value)}
+          onChange={(e: any) => setValue(_.toInteger(e.target.value))}
           changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
           autoFocus
           required
