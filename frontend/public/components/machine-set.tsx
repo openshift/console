@@ -432,7 +432,7 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
     namespace,
   });
   const createAccessReview = {
-    groupVersionKind: 'machine.openshift.io~v1beta1~MachineSet',
+    groupVersionKind: referenceForModel(MachineSetModel),
     namespace: namespace || 'default',
   };
 
