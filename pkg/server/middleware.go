@@ -43,10 +43,15 @@ func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrf
 	)
 }
 
-func withTokenReview(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+func withBearerTokenReview(tokenReviewer *auth.TokenReviewer, h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := authenticator.ReviewToken(r)
+			token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+			if token == "" {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			err := tokenReviewer.ReviewToken(r.Context(), token)
 			if err != nil {
 				klog.Errorf("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
 				w.WriteHeader(http.StatusUnauthorized)
