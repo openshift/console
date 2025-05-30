@@ -18,7 +18,6 @@ import { useParams } from 'react-router-dom-v5-compat';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
   ButtonBar,
-  ExternalLink,
   getNetworkPolicyDocURL,
   history,
   isManaged,
@@ -29,6 +28,7 @@ import { k8sCreate, NetworkPolicyKind } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import NADsSelector from './NADsSelector';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';

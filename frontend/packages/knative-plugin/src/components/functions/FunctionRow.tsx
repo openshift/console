@@ -2,14 +2,10 @@ import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import {
-  ResourceLink,
-  Timestamp,
-  ExternalLink,
-  ResourceIcon,
-} from '@console/internal/components/utils';
+import { ResourceLink, Timestamp, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu, ClampedText } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ServiceModel } from '../../models';
 import { ServiceKind, ConditionTypes } from '../../types';
 import { getCondition } from '../../utils/condition-utils';

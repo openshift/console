@@ -15,11 +15,12 @@ import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon'
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { ExternalLink, Timestamp } from '@console/internal/components/utils';
+import { Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { GitOpsEnvironment } from '../utils/gitops-types';
 import ArgoCdLink from './ArgoCdLink';
 import GitOpsRenderStatusLabel from './GitOpsRenderStatusLabel';

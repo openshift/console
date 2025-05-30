@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { ErrorState } from '@console/internal/components/error';
 import {
   documentationURLs,
-  ExternalLink,
   getDocumentationURL,
   Timestamp,
   isManaged,
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   riskIcons,
   colorScale,

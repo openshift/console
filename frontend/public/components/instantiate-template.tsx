@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
@@ -33,7 +33,7 @@ import {
   getTemplateIcon,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
-import { ButtonBar, ExternalLink, Firehose, LoadError, LoadingBox, NsDropdown } from './utils';
+import { ButtonBar, Firehose, LoadError, LoadingBox, NsDropdown } from './utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {

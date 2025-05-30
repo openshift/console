@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import {
   SectionHeading,
   ResourceSummary,
-  ExternalLink,
   ResourceLink,
   DetailsItem,
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { usePacInfo } from './hooks/pac-hook';
 import { getGitProviderIcon } from './repository-utils';
 import { RepositoryKind } from './types';

@@ -15,7 +15,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import PDBAlert from '@console/app/src/components/pdb/PDBAlert';
 import { ResourceQuotaAlert } from '@console/dev-console/src/components/resource-quota/ResourceQuotaAlert';
-import { ExternalLink, setQueryArgument } from '@console/internal/components/utils';
+import { setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -23,6 +23,7 @@ import { requirementFromString } from '@console/internal/module/k8s/selector-req
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { useFlag, useQueryParams } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import ExportApplication from '../components/export-app/ExportApplication';
 import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
 import { ALLOW_EXPORT_APP } from '../const';

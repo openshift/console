@@ -17,10 +17,10 @@ import {
   getMostRecentBuilderTag,
   isBuilder,
 } from '@console/internal/components/image-stream';
-import { ExternalLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],

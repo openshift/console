@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Content } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { ExternalLink } from '@console/internal/components/utils/link';
 import { ConfigMapKind } from '@console/internal/module/k8s/types';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 type GithubSectionProps = {
   pac: ConfigMapKind;

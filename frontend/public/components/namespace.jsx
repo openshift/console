@@ -56,9 +56,9 @@ import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   DetailsItem,
-  ExternalLink,
   Kebab,
   LabelList,
   LoadingInline,

@@ -15,7 +15,7 @@ import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { ExternalLink, Timestamp, getQueryArgument } from '@console/internal/components/utils';
+import { Timestamp, getQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   CloudCredentialKind,
@@ -26,6 +26,7 @@ import {
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import CatalogPageOverlay from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlay';
 import CatalogPageOverlayDescription from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlayDescription';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
