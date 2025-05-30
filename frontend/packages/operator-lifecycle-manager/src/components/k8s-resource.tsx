@@ -12,7 +12,6 @@ import {
 } from '@console/internal/components/factory';
 import {
   ResourceLink,
-  Timestamp,
   ConsoleEmptyState,
   FirehoseResource,
 } from '@console/internal/components/utils';
@@ -33,6 +32,7 @@ import {
   K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RouteParams } from '@console/shared/src/types';
 import { CRDDescription, ProvidedAPI } from '../types';
 import { OperandLink } from './operand/operand-link';

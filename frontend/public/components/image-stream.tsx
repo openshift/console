@@ -21,14 +21,14 @@ import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './fact
 import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
-import { ExternalLink } from './utils/link';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from './utils/timestamp';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 

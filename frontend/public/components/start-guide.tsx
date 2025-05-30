@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { Button, Hint, HintTitle, HintBody } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { createProjectMessageStateToProps } from '../reducers/ui';
-import { Disabled, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
+import { Disabled, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';

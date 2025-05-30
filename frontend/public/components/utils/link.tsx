@@ -7,8 +7,6 @@ import { ClipboardCopyButton } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
-export { default as ExternalLink } from '@console/shared/src/components/links/ExternalLink'; // TODO Remove re-export
-
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
 // long. This pattern checks the pattern but not the length.

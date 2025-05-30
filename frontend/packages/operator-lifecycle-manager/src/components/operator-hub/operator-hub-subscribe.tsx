@@ -14,7 +14,6 @@ import { useLocation, Link } from 'react-router-dom-v5-compat';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   documentationURLs,
-  ExternalLink,
   FieldLevelHelp,
   Firehose,
   getDocumentationURL,
@@ -52,6 +51,7 @@ import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import {

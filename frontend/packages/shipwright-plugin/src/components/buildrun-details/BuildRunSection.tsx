@@ -7,7 +7,8 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { ResourceLink, DetailsItem, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink, DetailsItem } from '@console/internal/components/utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildModel, BuildModelV1Alpha1 } from '../../models';
 import { BuildRun } from '../../types';
 import { getBuildNameFromBuildRun, isV1Alpha1Resource } from '../../utils';

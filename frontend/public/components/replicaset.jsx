@@ -19,10 +19,10 @@ import {
   resourcePath,
   LabelList,
   OwnerReferences,
-  Timestamp,
   PodsComponent,
   RuntimeClass,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import {

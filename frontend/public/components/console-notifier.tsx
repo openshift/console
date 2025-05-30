@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Banner, Flex } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared';
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
-import { ExternalLink, Firehose, FirehoseResult } from './utils';
+import { Firehose, FirehoseResult } from './utils';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
 

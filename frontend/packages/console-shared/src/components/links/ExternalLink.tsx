@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 
-const ExternalLink: React.FC<ExternalLinkProps> = ({
+export const ExternalLink: React.FC<ExternalLinkProps> = ({
   children,
   href,
   text,
@@ -30,5 +30,3 @@ type ExternalLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   dataTestID?: string;
   stopPropagation?: boolean;
 };
-
-export default ExternalLink;

@@ -1,7 +1,7 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { DOC_URL_RED_HAT_MARKETPLACE } from '@console/internal/components/utils';
 import { CatalogController, CatalogServiceProvider } from '@console/shared/src/components/catalog';
-import ExternalLink from '@console/shared/src/components/links/ExternalLink';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useExtensionCatalogCategories } from '../hooks/useExtensionCatalogCategories';
 

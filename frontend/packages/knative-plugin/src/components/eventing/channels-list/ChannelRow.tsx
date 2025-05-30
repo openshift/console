@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventChannelKind, ChannelConditionTypes } from '../../../types';
 import { getCondition, getConditionStats } from '../../../utils/condition-utils';
 import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';

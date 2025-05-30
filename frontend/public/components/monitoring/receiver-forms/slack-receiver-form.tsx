@@ -5,7 +5,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { TextArea } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
-import { ExpandCollapse, ExternalLink } from '../../utils';
+import { ExpandCollapse } from '../../utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
 import { FormProps } from './receiver-form-props';

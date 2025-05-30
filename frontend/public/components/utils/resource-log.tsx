@@ -39,7 +39,8 @@ import {
 } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import { LoadingInline, TogglePlay, ExternalLink } from './';
+import { LoadingInline, TogglePlay } from './';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import * as screenfull from 'screenfull';

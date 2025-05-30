@@ -20,7 +20,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
-  ExternalLink,
   getQueryArgument,
   LoadingBox,
   LoadingInline,
@@ -30,6 +29,7 @@ import {
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';

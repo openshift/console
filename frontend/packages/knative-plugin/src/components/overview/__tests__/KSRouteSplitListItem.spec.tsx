@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
 import KSRouteSplitListItem from '../KSRouteSplitListItem';

@@ -24,13 +24,12 @@ import {
   AsyncComponent,
   ButtonBar,
   Dropdown,
-  ExternalLink,
   Firehose,
   FirehoseResult,
   NameValueEditorPair,
   resourceObjPath,
 } from './utils';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';

@@ -3,8 +3,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { Button, Tooltip } from '@patternfly/react-core';
-
-import { ExternalLink, SectionHeading } from '../../utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { SectionHeading } from '../../utils';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 

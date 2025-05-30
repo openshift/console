@@ -8,13 +8,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
-  ExternalLink,
   CopyToClipboard,
   truncateMiddle,
   ResourceIcon,
   resourcePath,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RepositoryModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import {

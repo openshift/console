@@ -89,10 +89,10 @@ import {
   splitClusterVersionChannel,
   UpdateHistory,
 } from '../../module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   documentationURLs,
   EmptyBox,
-  ExternalLink,
   FieldLevelHelp,
   Firehose,
   FirehoseResource,
@@ -103,11 +103,11 @@ import {
   ResourceLink,
   resourcePathFromModel,
   SectionHeading,
-  Timestamp,
   togglePaused,
   UpstreamConfigDetailsItem,
   useAccessReview,
 } from '../utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   isClusterExternallyManaged,

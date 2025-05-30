@@ -10,7 +10,8 @@ import {
   DynamicPluginInfo,
 } from '@console/plugin-sdk';
 import * as UIActions from '@console/internal/actions/ui';
-import { resourcePath, Timestamp } from '@console/internal/components/utils';
+import { resourcePath } from '@console/internal/components/utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
 

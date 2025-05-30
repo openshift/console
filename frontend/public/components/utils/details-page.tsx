@@ -12,7 +12,7 @@ import { LabelList } from './label-list';
 import { OwnerReferences } from './owner-references';
 import { ResourceLink } from './resource-link';
 import { Selector } from './selector';
-import { Timestamp } from './timestamp';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useAccessReview } from './rbac';
 import {
   ClusterVersionKind,

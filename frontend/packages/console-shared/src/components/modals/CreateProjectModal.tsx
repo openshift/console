@@ -17,11 +17,11 @@ import {
   isManaged,
 } from '@console/internal/components/utils/documentation';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
-import { ExternalLink } from '@console/internal/components/utils/link';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { LoadingInline } from '@console/shared/src/components/loading/LoadingInline';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 

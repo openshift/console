@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   K8sResourceKind,
@@ -9,6 +8,7 @@ import {
   modelFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { GitOpsResource } from '../utils/gitops-types';
 
 interface TimestampWrapperProps {

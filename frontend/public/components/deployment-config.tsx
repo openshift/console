@@ -22,6 +22,7 @@ import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   AsyncComponent,
   ContainerTable,
@@ -31,7 +32,6 @@ import {
   WorkloadPausedAlert,
   navFactory,
   RuntimeClass,
-  ExternalLink,
   getDocumentationURL,
   documentationURLs,
   isManaged,

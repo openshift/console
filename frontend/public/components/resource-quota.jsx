@@ -28,9 +28,9 @@ import {
   useAccessReview,
   LabelList,
   Selector,
-  Timestamp,
   DetailsItem,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending } from '../reducers/features';
 import { LoadingBox } from './utils/status-box';

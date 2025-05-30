@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import { SectionHeading, Timestamp } from '@console/internal/components/utils';
+import { SectionHeading } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 type NodeDetailsConditionsProps = {

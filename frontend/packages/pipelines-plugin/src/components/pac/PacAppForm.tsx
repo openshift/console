@@ -10,8 +10,8 @@ import { FormikProps, FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { ExternalLink } from '@console/internal/components/utils';
 import { FormFooter, FormBody, InputField, FlexForm } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { PAC_GH_APP_DOC, PAC_GH_APP_NEW } from './const';
 import PacPermissions from './PacPermissions';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import { Timestamp } from '@console/internal/components/utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { GitOpsHistoryData } from '../utils/gitops-types';
 import { CommitRevision } from './CommitRevision';
 import { GitOpsDeploymentHistoryTableColumnClasses } from './GitOpsDeploymentHistoryTableColumnClasses';

@@ -19,7 +19,6 @@ import { useActiveColumns } from '@console/internal/components/factory/Table/act
 import {
   ResourceLink,
   ResourceKebab,
-  Timestamp,
   Kebab,
   convertToBaseValue,
   humanizeBinaryBytes,
@@ -40,6 +39,7 @@ import {
   Selector,
 } from '@console/internal/module/k8s';
 import { Status, getName, getNamespace, snapshotSource, FLAGS } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
