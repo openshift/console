@@ -121,7 +121,12 @@ import {
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
 import { operatorGroupFor, operatorNamespaceFor, targetNamespacesFor } from './operator-group';
-import { getClusterServiceVersionPlugins } from './operator-hub/operator-hub-utils';
+import { OLMAnnotation } from './operator-hub';
+import {
+  getClusterServiceVersionPlugins,
+  getInitializationLink,
+  getInitializationResource,
+} from './operator-hub/operator-hub-utils';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   SourceMissingStatus,
@@ -987,26 +992,22 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
   props,
 ) => {
   const { t } = useTranslation();
-  const { spec, metadata, status } = props.obj;
+  const { spec, metadata, status } = props.obj ?? {};
   const { subscription } = props.customData;
   const providedAPIs = providedAPIsForCSV(props.obj);
-  // TODO (jon) remove annotation destructuring and use helper functions
-  const {
-    'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
-    'operatorframework.io/initialization-resource': initializationResourceJSON,
-  } = metadata.annotations || {};
-
-  const initializationResource = React.useMemo(() => {
-    if (initializationResourceJSON) {
-      try {
-        return JSON.parse(initializationResourceJSON);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error while parseing CSV initialization resource JSON', error.message);
-      }
-    }
-    return null;
-  }, [initializationResourceJSON]);
+  const marketplaceSupportWorkflow = metadata?.annotations?.[OLMAnnotation.SupportWorkflow] || '';
+  const initializationLink = getInitializationLink(metadata?.annotations);
+  const initializationResource = React.useMemo(
+    () =>
+      !initializationLink &&
+      getInitializationResource(metadata?.annotations, {
+        onError: (error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error while parsing CSV initialization resource JSON,', error.message);
+        },
+      }),
+    [metadata?.annotations, initializationLink],
+  );
 
   const supportWorkflowUrl = React.useMemo(() => {
     if (marketplaceSupportWorkflow) {
