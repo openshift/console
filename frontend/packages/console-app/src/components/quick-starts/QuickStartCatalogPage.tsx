@@ -5,22 +5,27 @@ import { LoadingBox } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import QuickStartsLoader from './loader/QuickStartsLoader';
+import { QuickStartEmptyState } from './QuickStartEmptyState';
 
 const QuickStartCatalogPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
-      <DocumentTitle>{t('console-app~Quick Starts')}</DocumentTitle>
+      <DocumentTitle>{t('Quick Starts')}</DocumentTitle>
       <PageHeading
-        title={t('console-app~Quick Starts')}
+        title={t('Quick Starts')}
         helpText={t(
-          'console-app~Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.',
+          'Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.',
         )}
       />
       <QuickStartsLoader>
         {(quickStarts, loaded) =>
           loaded ? (
-            <PfQuickStartCatalogPage showTitle={false} quickStarts={quickStarts} showFilter />
+            quickStarts.length > 0 ? (
+              <PfQuickStartCatalogPage showTitle={false} quickStarts={quickStarts} showFilter />
+            ) : (
+              <QuickStartEmptyState />
+            )
           ) : (
             <LoadingBox />
           )
