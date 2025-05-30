@@ -67,13 +67,14 @@
 65.  [useActiveNamespace](#useactivenamespace)
 66.  [useUserSettings](#useusersettings)
 67.  [useQuickStartContext](#usequickstartcontext)
-68. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-69. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-70. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-71. [DEPRECATED] [VirtualizedTable](#virtualizedtable)
-72. [DEPRECATED] [ListPageFilter](#listpagefilter)
-73. [DEPRECATED] [useListPageFilter](#uselistpagefilter)
-74. [DEPRECATED] [YAMLEditor](#yamleditor)
+68.  [getSwaggerPropertyDescription](#getswaggerpropertydescription)
+69. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+70. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+71. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+72. [DEPRECATED] [VirtualizedTable](#virtualizedtable)
+73. [DEPRECATED] [ListPageFilter](#listpagefilter)
+74. [DEPRECATED] [useListPageFilter](#uselistpagefilter)
+75. [DEPRECATED] [YAMLEditor](#yamleditor)
 
 ---
 
@@ -2348,6 +2349,31 @@ const OpenQuickStartButton = ({ quickStartId }) => {
 ### Returns
 
 Quick start context values object.
+
+
+---
+
+## `getSwaggerPropertyDescription`
+
+### Summary 
+
+Function that returns a description of a K8s property described by a given K8sModel and path.<br/>Dynamic plugins can use this function to generate popover help content for standard K8s properties like Name, Namespace, Labels, etc.
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `kindObj` | K8sModel whose properties will be used |
+| `propertyPath` | path to the property in a given K8sModel, e.g. "metadata.name" |
+
+
+
+### Returns
+
+Description of a given property.
 
 
 ---
