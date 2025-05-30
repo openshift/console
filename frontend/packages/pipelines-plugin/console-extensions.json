@@ -790,6 +790,9 @@
       "component": {
         "$codeRef": "pacComponent.PacPage"
       }
+    },
+    "flags": {
+      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PAC_FORM"]
     }
   },
   {
