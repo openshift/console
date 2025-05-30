@@ -10,7 +10,6 @@ import { PodsPage } from '@console/internal/components/pod';
 import {
   ContainerTable,
   DetailsItem,
-  ExternalLink,
   ResourceSummary,
   SectionHeading,
   navFactory,
@@ -24,6 +23,7 @@ import {
   useTabbedTableBreadcrumbsFor,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RevisionModel, RouteModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { RevisionKind, ServiceKind, ServiceTypeValue } from '../../types';

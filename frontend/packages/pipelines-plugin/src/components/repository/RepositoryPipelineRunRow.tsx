@@ -3,13 +3,9 @@ import { Tooltip } from '@patternfly/react-core';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import {
-  ResourceLink,
-  Timestamp,
-  truncateMiddle,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { ResourceLink, Timestamp, truncateMiddle } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,

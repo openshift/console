@@ -21,7 +21,7 @@ import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './fact
 import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
-import { ExternalLink } from './utils/link';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';

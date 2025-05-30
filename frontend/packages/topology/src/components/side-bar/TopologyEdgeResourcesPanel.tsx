@@ -2,14 +2,11 @@ import * as React from 'react';
 import { Edge } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ResourceLink,
-  SidebarSectionHeading,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel, SecretModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import { getNamespaceDashboardKialiLink, getResource } from '../../utils/topology-utils';
 

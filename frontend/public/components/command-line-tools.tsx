@@ -3,12 +3,12 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { Button, Divider } from '@patternfly/react-core';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { FLAGS, useCopyLoginCommands } from '@console/shared';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { ExternalLink, Firehose, FirehoseResult } from './utils';
+import { Firehose, FirehoseResult } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';

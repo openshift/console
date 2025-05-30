@@ -7,8 +7,7 @@ import {
   USER_TELEMETRY_ANALYTICS,
   useUserSettings,
 } from '@console/shared';
-import { ExternalLink } from './utils';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 export const TelemetryNotifier = () => {
   const { t } = useTranslation();
 

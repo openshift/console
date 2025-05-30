@@ -6,7 +6,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
   documentationURLs,
-  ExternalLink,
   getDocumentationURL,
   history,
   isManaged,
@@ -16,6 +15,7 @@ import {
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
   getNewRoles,
