@@ -68,6 +68,8 @@ import { ColumnsIcon } from '@patternfly/react-icons';
 import { createColumnManagementModal } from '../modals';
 import { useActiveColumns } from '../factory/Table/active-columns-hook';
 import { PodModel } from '../../models';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
+import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
 
 /**
  * Copy paste section
@@ -665,9 +667,10 @@ const DataViewPodList = ({
   const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isExactSearch] = useExactSearch();
 
   const { filters, onSetFilters, clearAllFilters } = useDataViewFilters({
-    initialFilters: { status: [], name: '', label: '' },
+    initialFilters: { status: [], name: '', labels: '' },
     searchParams,
     setSearchParams,
   });
@@ -687,11 +690,12 @@ const DataViewPodList = ({
     [],
   );
 
-  // TODO: account for filter user preference in name filter
   const filteredData = React.useMemo(
     () =>
       data.filter((item) => {
-        const filterLabelArray = filters.label !== '' ? filters.label.split(',') : [];
+        const nameFilter = filters.name;
+        const podName = item.metadata.name;
+        const filterLabelArray = filters.labels !== '' ? filters.labels.split(',') : [];
         const itemLabels = getLabelsAsString(item);
 
         return (
@@ -702,12 +706,13 @@ const DataViewPodList = ({
                 filterOptions.find((option) => option.value === podPhaseFilterReducer(item))?.value,
               ),
             )) &&
-          (!filters.name ||
-            item.metadata.name?.toLocaleLowerCase().includes(filters.name?.toLocaleLowerCase())) &&
-          (!filters.label || filterLabelArray.every((label) => itemLabels.includes(label)))
+          (!filters.name || isExactSearch
+            ? exactMatch(nameFilter, podName)
+            : fuzzyCaseInsensitive(nameFilter, podName)) &&
+          (!filters.labels || filterLabelArray.every((label) => itemLabels.includes(label)))
         );
       }),
-    [data, filters.label, filters.name, filters.status, filterOptions],
+    [data, filters.name, filters.labels, filters.status, filterOptions, isExactSearch],
   );
 
   const { dataViewColumns, dataViewRows, pagination } = useDataViewData({
@@ -747,13 +752,13 @@ const DataViewPodList = ({
     return [
       <DataViewCheckboxFilter
         key="status"
-        filterId="status"
+        filterId="status" // is `rowFilter-pod-status`in <FilterToolbar> as a single param, not multiple
         title={t('public~Status')}
         placeholder={t('public~Filter by status')}
         options={filterOptions}
       />,
       <DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />,
-      <DataViewLabelFilter key="label" filterId="label" title={t('public~Label')} data={data} />,
+      <DataViewLabelFilter key="labels" filterId="label" title={t('public~Label')} data={data} />,
     ];
     // can't use data in the deps array is will re-compute the filters and will cause the selected category to reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
