@@ -45,6 +45,7 @@ import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plug
 import { GuidedTour } from '@console/app/src/components/tour';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
@@ -286,14 +287,16 @@ const App = (props) => {
       <CaptureTelemetry />
       <DetectNamespace>
         <ModalProvider>
-          {contextProviderExtensions.reduce(
-            (children, e) => (
-              <EnhancedProvider key={e.uid} {...e.properties}>
-                {children}
-              </EnhancedProvider>
-            ),
-            content,
-          )}
+          <OverlayProvider>
+            {contextProviderExtensions.reduce(
+              (children, e) => (
+                <EnhancedProvider key={e.uid} {...e.properties}>
+                  {children}
+                </EnhancedProvider>
+              ),
+              content,
+            )}
+          </OverlayProvider>
         </ModalProvider>
       </DetectNamespace>
       <DetectLanguage />
