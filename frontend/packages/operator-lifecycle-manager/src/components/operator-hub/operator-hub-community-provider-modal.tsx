@@ -8,8 +8,8 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { ExternalLink } from '@console/internal/components/utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityProviderModalProps> = ({
   close,

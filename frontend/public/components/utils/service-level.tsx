@@ -15,10 +15,10 @@ import { getDuration, dateFormatter } from './datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
-import { ExternalLink, FieldLevelHelp } from './index';
+import { FieldLevelHelp } from './index';
 import { RootState } from '../../redux';
 import { NotificationTypes } from '../notification-drawer';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 const useServiceLevelText = (level: string): string => {
   const { t } = useTranslation();
   const levels = {

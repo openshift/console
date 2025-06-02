@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { getReleaseNotesLink } from '../../module/k8s';
-import { ExternalLink } from '../utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 export const ReleaseNotesLink: React.FC<ReleaseNotesLinkProps> = ({ version }) => {
   const releaseNotesLink = getReleaseNotesLink(version);

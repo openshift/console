@@ -28,6 +28,7 @@ import {
 import { cloneBuild, getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { errorModal, confirmModal } from './modals';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   AsyncComponent,
   BuildHooks,
@@ -35,7 +36,6 @@ import {
   ConsoleEmptyState,
   DetailsItem,
   documentationURLs,
-  ExternalLink,
   getDocumentationURL,
   humanizeBinaryBytes,
   humanizeCpuCores,
@@ -50,8 +50,8 @@ import {
   resourcePath,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';

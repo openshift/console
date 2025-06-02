@@ -6,7 +6,7 @@ import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { PendingIcon } from '@patternfly/react-icons/dist/esm/icons/pending-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
-import { ExternalLink } from './utils/link';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { resourcePath } from './utils/resource-link';
 import { fromNow } from './utils/datetime';
 import { K8sResourceKind } from '../module/k8s';

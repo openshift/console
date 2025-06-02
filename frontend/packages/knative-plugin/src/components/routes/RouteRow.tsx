@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp, ExternalLinkWithCopy } from '@console/internal/components/utils';
+import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RevisionModel, RouteModel } from '../../models';
 import { RouteKind } from '../../types';
 import { getConditionString } from '../../utils/condition-utils';

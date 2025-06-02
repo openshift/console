@@ -20,8 +20,8 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;

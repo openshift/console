@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import { ExternalLink, Timestamp } from '@console/internal/components/utils';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
   GrayUnknownIcon,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { GitOpsAppGroupData } from '../utils/gitops-types';
 import GitOpsSyncFragment from './GitOpsSyncFragment';
 

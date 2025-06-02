@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { updateTimestamps } from '@console/internal/actions/ui';
+import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
+import store from '@console/internal/redux';
 import { ONE_MINUTE } from '@console/shared/src';
-import store from '../../../redux';
-import { updateTimestamps } from '../../../actions/ui';
-import { Timestamp } from '../timestamp';
-import { dateTimeFormatter } from '../datetime';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 describe('Timestamp', () => {
   it("should say 'Just now'", () => {

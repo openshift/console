@@ -82,7 +82,6 @@ import {
   ResourceSummary,
   ScrollToTopOnMount,
   SectionHeading,
-  Timestamp,
   formatBytesAsMiB,
   formatCores,
   humanizeBinaryBytes,
@@ -93,6 +92,7 @@ import {
   LabelList,
   RuntimeClass,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PodLogs } from './pod-logs';
 import {
   Area,

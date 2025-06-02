@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 import './render-utils.scss';
 

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventSubscriptionKind, SubscriptionConditionTypes } from '../../../types';
 import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { tableColumnClasses } from './subscription-table';

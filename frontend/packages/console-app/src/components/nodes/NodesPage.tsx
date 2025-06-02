@@ -29,7 +29,6 @@ import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/componen
 import {
   Kebab,
   ResourceLink,
-  Timestamp,
   humanizeBinaryBytes,
   formatCores,
   LabelList,
@@ -70,6 +69,7 @@ import {
   sortWithCSRResource,
   LazyActionMenu,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { nodeStatus } from '../../status';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import NodeUptime from './node-dashboard/NodeUptime';

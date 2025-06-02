@@ -12,7 +12,6 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
   detailsPage,
   navFactory,
   resourceObjPath,
@@ -21,6 +20,7 @@ import { SecretType } from './secrets/create-secret/types';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
 import { DescriptionList } from '@patternfly/react-core';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;

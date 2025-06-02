@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Timestamp } from '@console/internal/components/utils';
 import { Status, RadioButtonField } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 import { tableColumnClasses } from './RevisionListHeader';
 

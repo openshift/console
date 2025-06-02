@@ -43,8 +43,9 @@ import {
   ClusterUpdateStatus,
   getOCMLink,
 } from '../../../../module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { flagPending } from '../../../../reducers/features';
-import { ExternalLink, LoadingInline } from '../../../utils';
+import { LoadingInline } from '../../../utils';
 import { Link } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';

@@ -43,9 +43,9 @@ import {
   ResourceLink,
   ScrollToTopOnMount,
   SectionHeading,
-  Timestamp,
   LoadingBox,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import i18n from 'i18next';
 import { ErrorPage404 } from './error';

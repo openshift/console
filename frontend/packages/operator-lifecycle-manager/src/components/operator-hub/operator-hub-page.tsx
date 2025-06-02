@@ -5,7 +5,6 @@ import { useParams, Link } from 'react-router-dom-v5-compat';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import {
   DOC_URL_RED_HAT_MARKETPLACE,
-  ExternalLink,
   Firehose,
   skeletonCatalog,
   StatusBox,
@@ -23,6 +22,7 @@ import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PageBody from '@console/shared/src/components/layout/PageBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,

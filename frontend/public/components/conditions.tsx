@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import { ConsoleEmptyState, LinkifyExternal, Timestamp } from './utils';
+import { ConsoleEmptyState, LinkifyExternal } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 

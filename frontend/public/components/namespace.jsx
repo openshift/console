@@ -56,9 +56,9 @@ import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   DetailsItem,
-  ExternalLink,
   Kebab,
   LabelList,
   LoadingInline,
@@ -68,7 +68,6 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   formatBytesAsMiB,
   formatCores,
   humanizeBinaryBytes,
@@ -76,6 +75,7 @@ import {
   navFactory,
   useAccessReview,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH } from './graphs';

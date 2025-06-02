@@ -2,13 +2,10 @@ import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import {
-  SidebarSectionHeading,
-  ResourceLink,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, PodKind, podPhase } from '@console/internal/module/k8s';
 import { AllPodStatus, usePodsWatcher } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
