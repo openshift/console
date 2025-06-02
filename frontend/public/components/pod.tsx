@@ -1195,6 +1195,8 @@ export const PodsPage: React.FC<PodPageProps> = ({
               loaded={loaded}
               columnLayout={columnLayout}
               showNamespaceOverride={showNamespaceOverride}
+              hideNameLabelFilters={hideNameLabelFilters}
+              hideColumnManagement={hideColumnManagement}
             />
           ) : (
             <>

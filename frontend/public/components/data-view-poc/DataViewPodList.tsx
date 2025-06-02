@@ -655,6 +655,9 @@ type DataViewPodListProps = {
   showNodes?: boolean;
   columnLayout?: ColumnLayout;
   showNamespaceOverride?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  hideColumnManagement?: boolean;
 };
 
 const DataViewPodList = ({
@@ -663,6 +666,9 @@ const DataViewPodList = ({
   loaded,
   columnLayout,
   showNamespaceOverride,
+  hideNameLabelFilters,
+  hideLabelFilter,
+  hideColumnManagement,
 }: DataViewPodListProps) => {
   const { t } = useTranslation();
 
@@ -749,6 +755,7 @@ const DataViewPodList = ({
   }, [filteredData.length, loaded]);
 
   const dataViewFiltersNodes = React.useMemo(() => {
+    const showNameLabelFilters = hideNameLabelFilters !== true;
     return [
       <DataViewCheckboxFilter
         key="status"
@@ -757,8 +764,12 @@ const DataViewPodList = ({
         placeholder={t('public~Filter by status')}
         options={filterOptions}
       />,
-      <DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />,
-      <DataViewLabelFilter key="labels" filterId="label" title={t('public~Label')} data={data} />,
+      showNameLabelFilters && (
+        <DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />
+      ),
+      showNameLabelFilters && hideLabelFilter !== true && (
+        <DataViewLabelFilter key="labels" filterId="label" title={t('public~Label')} data={data} />
+      ),
     ];
     // can't use data in the deps array is will re-compute the filters and will cause the selected category to reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -774,24 +785,26 @@ const DataViewPodList = ({
         }
         clearAllFilters={clearAllFilters}
         actions={
-          <ResponsiveActions breakpoint="lg">
-            <ResponsiveAction
-              isPersistent
-              variant="plain"
-              onClick={() =>
-                createColumnManagementModal({
-                  columnLayout,
-                  noLimit: true,
-                })
-              }
-              aria-label={t('public~Column management')}
-              data-test="manage-columns"
-            >
-              <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
-                <ColumnsIcon />
-              </Tooltip>
-            </ResponsiveAction>
-          </ResponsiveActions>
+          !hideColumnManagement && (
+            <ResponsiveActions breakpoint="lg">
+              <ResponsiveAction
+                isPersistent
+                variant="plain"
+                onClick={() =>
+                  createColumnManagementModal({
+                    columnLayout,
+                    noLimit: true,
+                  })
+                }
+                aria-label={t('public~Column management')}
+                data-test="manage-columns"
+              >
+                <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
+                  <ColumnsIcon />
+                </Tooltip>
+              </ResponsiveAction>
+            </ResponsiveActions>
+          )
         }
         pagination={<Pagination itemCount={filteredData.length} {...pagination} />}
       />
