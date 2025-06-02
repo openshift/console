@@ -123,7 +123,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
       progressDeadlineSeconds: 600,
     },
   },
-  hasCpuOnlyLimits: {
+  hasCpuOnlyRequests: {
     kind: 'Deployment',
     apiVersion: 'apps/v1',
     metadata: {
@@ -219,7 +219,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
                 },
               ],
               resources: {
-                limits: {
+                requested: {
                   cpu: '2m',
                   memory: '2Mi',
                 },
@@ -418,7 +418,7 @@ export const deploymentConfigExamples: { [key: string]: K8sResourceKind } = {
       },
     },
   },
-  hasCpuOnlyLimits: {
+  hasCpuOnlyRequests: {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
     metadata: {
