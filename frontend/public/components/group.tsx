@@ -26,6 +26,7 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const addUsers: KebabAction = (kind: K8sKind, group: GroupKind) => ({
   label: i18next.t('public~Add Users'),
@@ -197,11 +198,11 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~Group details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Users')} />

@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
-import { Alert, CodeBlock, CodeBlockCode } from '@patternfly/react-core';
+import { Alert, CodeBlock, CodeBlockCode, Grid, GridItem } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 
 import { CONST } from '@console/shared';
@@ -131,27 +131,27 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
       <form onSubmit={this._submit} name="form" className="modal-content">
         <ModalTitle>{t('public~Default pull Secret')}</ModalTitle>
         <ModalBody>
-          <p>
-            {t(
-              'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
-            )}
-          </p>
+          <Grid hasGutter>
+            <GridItem span={12}>
+              <p>
+                {t(
+                  'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
+                )}
+              </p>
+            </GridItem>
 
-          <div className="row co-m-form-row">
-            <div className="col-xs-3">
+            <GridItem span={3}>
               <label>{t('public~Namespace')}</label>
-            </div>
-            <div className="col-xs-9">
+            </GridItem>
+            <GridItem span={9}>
               <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
-            </div>
-          </div>
+            </GridItem>
 
-          <div className="row co-m-form-row">
-            <div className="col-xs-3">
+            <GridItem span={3}>
               <label htmlFor="namespace-pull-secret-name">{t('public~Secret name')}</label>
-            </div>
+            </GridItem>
 
-            <div className="col-xs-9">
+            <GridItem span={9}>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -166,14 +166,12 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               >
                 {t('public~Friendly name to help you manage this in the future')}
               </p>
-            </div>
-          </div>
+            </GridItem>
 
-          <div className="row co-m-form-row form-group">
-            <div className="col-xs-3">
+            <GridItem span={3}>
               <label>{t('public~Method')}</label>
-            </div>
-            <div className="col-xs-9">
+            </GridItem>
+            <GridItem span={9}>
               <div className="radio">
                 <label>
                   <input
@@ -198,18 +196,16 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   {t('public~Upload Docker config.json')}
                 </label>
               </div>
-            </div>
-          </div>
+            </GridItem>
 
-          {this.state.method === 'form' && (
-            <div>
-              <div className="row co-m-form-row">
-                <div className="col-xs-3">
+            {this.state.method === 'form' && (
+              <>
+                <GridItem span={3}>
                   <label htmlFor="namespace-pull-secret-address">
                     {t('public~Registry address')}
                   </label>
-                </div>
-                <div className="col-xs-9">
+                </GridItem>
+                <GridItem span={9}>
                   <span className="pf-v6-c-form-control">
                     <input
                       type="text"
@@ -218,13 +214,12 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                       required
                     />
                   </span>
-                </div>
-              </div>
-              <div className="row co-m-form-row">
-                <div className="col-xs-3">
+                </GridItem>
+
+                <GridItem span={3}>
                   <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
-                </div>
-                <div className="col-xs-9">
+                </GridItem>
+                <GridItem span={9}>
                   <span className="pf-v6-c-form-control">
                     <input
                       type="email"
@@ -238,38 +233,34 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   >
                     {t('public~Optional, depending on registry provider')}
                   </p>
-                </div>
-              </div>
-              <div className="row co-m-form-row">
-                <div className="col-xs-3">
+                </GridItem>
+
+                <GridItem span={3}>
                   <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
-                </div>
-                <div className="col-xs-9">
+                </GridItem>
+                <GridItem span={9}>
                   <span className="pf-v6-c-form-control">
                     <input type="text" id="namespace-pull-secret-username" required />
                   </span>
-                </div>
-              </div>
-              <div className="row co-m-form-row">
-                <div className="col-xs-3">
+                </GridItem>
+
+                <GridItem span={3}>
                   <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
-                </div>
-                <div className="col-xs-9">
+                </GridItem>
+                <GridItem span={9}>
                   <span className="pf-v6-c-form-control">
                     <input type="password" id="namespace-pull-secret-password" required />
                   </span>
-                </div>
-              </div>
-            </div>
-          )}
+                </GridItem>
+              </>
+            )}
 
-          {this.state.method === 'upload' && (
-            <div>
-              <div className="row co-m-form-row">
-                <div className="col-xs-3">
+            {this.state.method === 'upload' && (
+              <>
+                <GridItem span={3}>
                   <label htmlFor="namespace-pull-secret-file">{t('public~File upload')}</label>
-                </div>
-                <div className="col-xs-9">
+                </GridItem>
+                <GridItem span={9}>
                   <input
                     type="file"
                     id="namespace-pull-secret-file"
@@ -284,11 +275,10 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                       'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
                     )}
                   </p>
-                </div>
-              </div>
-              {this.state.invalidJson && (
-                <div className="row co-m-form-row">
-                  <div className="col-xs-9 col-sm-offset-3">
+                </GridItem>
+
+                {this.state.invalidJson && (
+                  <GridItem span={9} smOffset={3}>
                     <Alert
                       isInline
                       className="co-alert"
@@ -297,20 +287,18 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                     >
                       {t('public~The uploaded file is not properly-formatted JSON.')}
                     </Alert>
-                  </div>
-                </div>
-              )}
-              {this.state.fileData && (
-                <div className="row co-m-form-row">
-                  <div className="col-xs-9 col-sm-offset-3">
+                  </GridItem>
+                )}
+                {this.state.fileData && (
+                  <GridItem span={9} smOffset={3}>
                     <CodeBlock>
                       <CodeBlockCode>{this.state.fileData}</CodeBlockCode>
                     </CodeBlock>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                  </GridItem>
+                )}
+              </>
+            )}
+          </Grid>
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={this.state.errorMessage}

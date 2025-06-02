@@ -11,6 +11,8 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   Divider,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { Status } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -283,8 +285,8 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
     <PaneBody>
       <ScrollToTopOnMount />
 
-      <div className="row">
-        <div className="col-lg-4">
+      <Grid hasGutter>
+        <GridItem lg={4}>
           <SectionHeading text={t('public~Container details')} />
           <DescriptionList>
             <DescriptionListGroup>
@@ -364,9 +366,9 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
+        </GridItem>
 
-        <div className="col-lg-4">
+        <GridItem lg={4}>
           <SectionHeading text={t('public~Image details')} />
           <DescriptionList>
             <DescriptionListGroup>
@@ -414,9 +416,9 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
+        </GridItem>
 
-        <div className="col-lg-4">
+        <GridItem lg={4}>
           <SectionHeading text={t('public~Network')} />
           <DescriptionList>
             <DescriptionListGroup>
@@ -430,33 +432,33 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
               <DescriptionListDescription>{pod.status.podIP || '-'}</DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
 
-      <Divider className="co-divider" />
+        <GridItem span={12}>
+          <Divider className="co-divider" />
+        </GridItem>
 
-      <div className="row">
-        <div className="col-lg-4">
+        <GridItem lg={4}>
           <SectionHeading text={t('public~Ports')} />
           <div className="co-table-container">
             <Ports ports={container.ports} />
           </div>
-        </div>
+        </GridItem>
 
-        <div className="col-lg-4">
+        <GridItem lg={4}>
           <SectionHeading text={t('public~Mounted volumes')} />
           <div className="co-table-container">
             <VolumeMounts volumeMounts={container.volumeMounts} />
           </div>
-        </div>
+        </GridItem>
 
-        <div className="col-lg-4">
+        <GridItem lg={4}>
           <SectionHeading text={t('public~Environment variables')} />
           <div className="co-table-container">
             <Env env={container.env} />
           </div>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

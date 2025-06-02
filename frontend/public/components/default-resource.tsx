@@ -22,7 +22,7 @@ import {
   SectionHeading,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -58,16 +58,18 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
             kind: model?.labelKey ? t(model.labelKey) : model?.label,
           })}
         />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false}>
               {leftDetailsItems}
             </ResourceSummary>
-          </div>
+          </GridItem>
           {rightDetailsItems.length > 0 && (
-            <DescriptionList className="col-md-6">{rightDetailsItems}</DescriptionList>
+            <GridItem md={6}>
+              <DescriptionList>{rightDetailsItems}</DescriptionList>
+            </GridItem>
           )}
-        </div>
+        </Grid>
       </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
         <PaneBody>

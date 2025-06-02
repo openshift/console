@@ -29,6 +29,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
@@ -111,8 +113,8 @@ class Details extends React.Component {
       <div>
         <PaneBody>
           <SectionHeading text={t('public~Role details')} />
-          <div className="row">
-            <div className="col-xs-6">
+          <Grid hasGutter>
+            <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~Role name')}</DescriptionListTerm>
@@ -127,8 +129,8 @@ class Details extends React.Component {
                   </DescriptionListGroup>
                 )}
               </DescriptionList>
-            </div>
-            <div className="col-xs-6">
+            </GridItem>
+            <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~Created at')}</DescriptionListTerm>
@@ -137,8 +139,8 @@ class Details extends React.Component {
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               </DescriptionList>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         </PaneBody>
         <PaneBody>
           <SectionHeading text={t('public~Rules')} />

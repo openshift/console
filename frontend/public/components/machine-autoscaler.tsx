@@ -25,6 +25,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
@@ -141,8 +143,8 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
     <>
       <PaneBody>
         <SectionHeading text={t('public~MachineAutoscaler details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj}>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Scale target')}</DescriptionListTerm>
@@ -163,8 +165,8 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
     </>
   );

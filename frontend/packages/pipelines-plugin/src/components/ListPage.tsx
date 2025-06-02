@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
+import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 // eslint-disable-next-line no-restricted-imports
 import * as _ from 'lodash-es';
@@ -157,11 +157,11 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
   return (
     <div>
       {!_.isEmpty(dta) && Filter}
-      <div className="row">
-        <div className="col-xs-12">
+      <Grid>
+        <GridItem>
           <ListComponent {...props} data={dta} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </div>
   );
 };

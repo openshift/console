@@ -15,6 +15,7 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ConfigMapModel } from '../models';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Kebab.factory.common];
 
@@ -109,11 +110,11 @@ const ConfigMapsDetailsPage = (props) => {
       <>
         <PaneBody>
           <SectionHeading text={t('public~ConfigMap details')} />
-          <div className="row">
-            <div className="col-md-6">
+          <Grid hasGutter>
+            <GridItem md={6}>
               <ResourceSummary resource={configMap} />
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         </PaneBody>
         <PaneBody>
           <SectionHeading text={t('public~Data')} />

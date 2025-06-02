@@ -43,6 +43,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
@@ -119,8 +121,8 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
   return (
     <>
       <PaneBody>
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <SectionHeading text={t('public~Job details')} />
             <ResourceSummary resource={job} showPodSelector>
               <DetailsItem
@@ -139,8 +141,8 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
                   : t('public~Not configured')}
               </DetailsItem>
             </ResourceSummary>
-          </div>
-          <div className="col-md-6">
+          </GridItem>
+          <GridItem md={6}>
             <SectionHeading text={t('public~Job status')} />
             <DescriptionList>
               <DescriptionListGroup>
@@ -183,8 +185,8 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
               />
               <PodDisruptionBudgetField obj={job} />
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Containers')} />

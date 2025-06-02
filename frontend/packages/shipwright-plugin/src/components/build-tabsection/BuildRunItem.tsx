@@ -47,7 +47,7 @@ const BuildRunItem: React.FC<BuildRunItemProps> = ({ buildRun }) => {
         <GridItem span={3}>
           <BuildRunStatus buildRun={buildRun} />
         </GridItem>
-        <GridItem span={3} className="text-right">
+        <GridItem span={3}>
           <Link to={`${path}/logs`}>{t('shipwright-plugin~View logs')}</Link>
         </GridItem>
       </Grid>

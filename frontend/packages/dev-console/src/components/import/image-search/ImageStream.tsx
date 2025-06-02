@@ -5,6 +5,8 @@ import {
   ClipboardCopyVariant,
   FormGroup,
   FormHelperText,
+  Grid,
+  GridItem,
   HelperText,
   HelperTextItem,
   ValidatedOptions,
@@ -95,27 +97,27 @@ const ImageStream: React.FC<{
           required={required}
           data-test={dataTest}
         >
-          <div className="row">
-            <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+          <Grid hasGutter>
+            <GridItem lg={4} md={4} sm={4} span={12}>
               <ImageStreamNsDropdown disabled={disabled} formContextField={formContextField} />
-            </div>
-            <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            </GridItem>
+            <GridItem lg={4} md={4} sm={4} span={12}>
               <ImageStreamDropdown
                 disabled={disabled}
                 formContextField={formContextField}
                 reloadCount={reloadCount}
               />
               <div className="odc-imagestream-separator">/</div>
-            </div>
-            <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            </GridItem>
+            <GridItem lg={4} md={4} sm={4} span={12}>
               <ImageStreamTagDropdown
                 disabled={disabled}
                 formContextField={formContextField}
                 reloadCount={reloadCount}
               />
               <div className="odc-imagestream-separator">:</div>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
 
           {validated === ValidatedOptions.error && (
             <FormHelperText>
