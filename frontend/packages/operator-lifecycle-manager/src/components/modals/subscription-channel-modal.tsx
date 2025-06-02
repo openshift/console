@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -50,12 +51,13 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
         {t('olm~Change Subscription update channel')}
       </ModalTitle>
       <ModalBody>
-        <div className="co-m-form-row">
-          <p>{t('olm~Which channel is used to receive updates?')}</p>
-        </div>
-        <div className="co-m-form-row row">
+        <Grid>
+          <GridItem span={12}>
+            <p>{t('olm~Which channel is used to receive updates?')}</p>
+          </GridItem>
+
           {pkg?.status?.channels?.map?.((channel) => (
-            <div key={channel.name} className="col-sm-12">
+            <GridItem span={12} key={channel.name}>
               <RadioInput
                 onChange={(e) => setSelectedChannel(e.target.value)}
                 value={channel.name}
@@ -74,9 +76,9 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
                   </ResourceLink>
                 }
               />
-            </div>
+            </GridItem>
           ))}
-        </div>
+        </Grid>
       </ModalBody>
       <ModalSubmitFooter
         inProgress={inProgress}

@@ -23,6 +23,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const menuActions = [
@@ -243,14 +245,14 @@ const Details = ({ obj: s }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>
-      <div className="row">
-        <div className="col-md-6">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <SectionHeading text={t('public~Service details')} />
           <ResourceSummary resource={s} showPodSelector>
             <DetailsItem label={t('public~Session affinity')} obj={s} path="spec.sessionAffinity" />
           </ResourceSummary>
-        </div>
-        <div className="col-md-6">
+        </GridItem>
+        <GridItem md={6}>
           <SectionHeading text={t('public~Service routing')} />
           <DescriptionList>
             <DescriptionListGroup>
@@ -274,8 +276,8 @@ const Details = ({ obj: s }) => {
               </div>
             </DetailsItem>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

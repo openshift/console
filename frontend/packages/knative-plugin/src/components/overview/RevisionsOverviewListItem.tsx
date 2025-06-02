@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
 import { PodStatus } from '@console/shared';
@@ -29,25 +30,27 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
   const { urls = [], percent: trafficPercent } = getTrafficByRevision(name, service);
   return (
     <li className="list-group-item">
-      <div className="row">
-        <div className="col-sm-8 col-xs-9">
+      <Grid hasGutter>
+        <GridItem span={9} sm={8}>
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
-        </div>
+        </GridItem>
         {trafficPercent && (
-          <span className="col-sm-4 col-xs-3 pf-v6-u-text-align-right">{trafficPercent}</span>
+          <GridItem span={3} sm={4} className="pf-v6-u-text-align-right">
+            {trafficPercent}
+          </GridItem>
         )}
-      </div>
+      </Grid>
       {deploymentData.name && (
         <div className="odc-revision-deployment-list">
-          <div className="row">
-            <div className="col-sm-8 col-xs-9">
+          <Grid hasGutter>
+            <GridItem span={9} sm={8}>
               <ResourceLink
                 kind={deploymentData.kind}
                 name={deploymentData.name}
                 namespace={namespace}
               />
-            </div>
-            <div className="col-sm-4 col-xs-3">
+            </GridItem>
+            <GridItem span={3} sm={4}>
               <div className="odc-revision-deployment-list__pod">
                 <PodStatus
                   standalone
@@ -60,14 +63,14 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
                   showTooltip={false}
                 />
               </div>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
           {urls.length > 0 && (
-            <div className="row">
-              <div className="col-sm-12">
+            <Grid hasGutter>
+              <GridItem span={12}>
                 <RoutesUrlLink urls={urls} />
-              </div>
-            </div>
+              </GridItem>
+            </Grid>
           )}
         </div>
       )}

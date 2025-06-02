@@ -13,6 +13,7 @@ import {
 } from './utils';
 import { ServiceAccountModel } from '../models';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
@@ -57,11 +58,11 @@ const Details = ({ obj: serviceaccount }) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~ServiceAccount details')} />
-      <div className="row">
-        <div className="col-md-6">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <ResourceSummary resource={serviceaccount} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -19,8 +19,8 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
   const { cpu, memory, storage, onChangeCPU, onChangeMemory, onChangeStorage, path = '' } = props;
 
   return (
-    <div className="row co-m-form-row">
-      <div className="col-xs-4">
+    <>
+      <GridItem span={4}>
         <label
           style={{ fontWeight: 300 }}
           className="pf-v6-u-text-color-subtle"
@@ -38,8 +38,8 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
             placeholder="500m"
           />
         </span>
-      </div>
-      <div className="col-xs-4">
+      </GridItem>
+      <GridItem span={4}>
         <label
           style={{ fontWeight: 300 }}
           className="pf-v6-u-text-color-subtle"
@@ -57,8 +57,8 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
             placeholder="50Mi"
           />
         </span>
-      </div>
-      <div className="col-xs-4">
+      </GridItem>
+      <GridItem span={4}>
         <label
           style={{ fontWeight: 300 }}
           className="pf-v6-u-text-color-subtle"
@@ -76,8 +76,8 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
             placeholder="50Mi"
           />
         </span>
-      </div>
-    </div>
+      </GridItem>
+    </>
   );
 };
 
@@ -107,18 +107,18 @@ export const ResourceRequirementsModal = withHandlePromise(
       <form onSubmit={(e) => submit(e)} className="modal-content">
         <ModalTitle>{props.title}</ModalTitle>
         <ModalBody>
-          <div className="row co-m-form-row">
-            <div className="col-sm-12">{props.description}</div>
-          </div>
-          <ResourceRequirements
-            cpu={cpu}
-            memory={memory}
-            storage={storage}
-            onChangeCPU={setCPU}
-            onChangeMemory={setMemory}
-            onChangeStorage={setStorage}
-            path={path}
-          />
+          <Grid hasGutter>
+            <GridItem span={12}>{props.description}</GridItem>
+            <ResourceRequirements
+              cpu={cpu}
+              memory={memory}
+              storage={storage}
+              onChangeCPU={setCPU}
+              onChangeMemory={setMemory}
+              onChangeStorage={setStorage}
+              path={path}
+            />
+          </Grid>
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={props.errorMessage}

@@ -14,6 +14,8 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
@@ -243,8 +245,8 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
     <PaneBody>
       <SectionHeading text={t('public~MachineSet details')} />
       <MachineCounts resourceKind={MachineSetModel} resource={obj} />
-      <div className="row">
-        <div className="col-md-6">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <ResourceSummary resource={obj}>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Selector')}</DescriptionListTerm>
@@ -279,8 +281,8 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
               </DescriptionListGroup>
             )}
           </ResourceSummary>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

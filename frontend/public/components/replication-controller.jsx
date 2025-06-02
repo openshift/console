@@ -36,6 +36,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const EnvironmentPage = (props) => (
@@ -76,8 +78,8 @@ export const ReplicationControllersDetailsPage = (props) => {
       <>
         <PaneBody>
           <SectionHeading text={t('public~ReplicationController details')} />
-          <div className="row">
-            <div className="col-md-6">
+          <Grid hasGutter>
+            <GridItem md={6}>
               <ResourceSummary
                 resource={replicationController}
                 showPodSelector
@@ -91,8 +93,8 @@ export const ReplicationControllersDetailsPage = (props) => {
                   </DescriptionListGroup>
                 )}
               </ResourceSummary>
-            </div>
-            <div className="col-md-6">
+            </GridItem>
+            <GridItem md={6}>
               <DescriptionList>
                 {phase && (
                   <DescriptionListGroup>
@@ -106,8 +108,8 @@ export const ReplicationControllersDetailsPage = (props) => {
                 <RuntimeClass obj={replicationController} />
                 <PodDisruptionBudgetField obj={replicationController} />
               </DescriptionList>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         </PaneBody>
         <PaneBody>
           <SectionHeading text={t('public~Containers')} />

@@ -39,6 +39,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const Details = ({ obj: replicaSet }) => {
@@ -52,8 +54,8 @@ const Details = ({ obj: replicaSet }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~ReplicaSet details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
               {revision && (
                 <DescriptionListGroup>
@@ -62,15 +64,15 @@ const Details = ({ obj: replicaSet }) => {
                 </DescriptionListGroup>
               )}
             </ResourceSummary>
-          </div>
-          <div className="col-md-6">
+          </GridItem>
+          <GridItem md={6}>
             <DescriptionList>
               <ResourcePodCount resource={replicaSet} />
               <RuntimeClass obj={replicaSet} />
               <PodDisruptionBudgetField obj={replicaSet} />
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Containers')} />

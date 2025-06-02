@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertActionLink } from '@patternfly/react-core';
+import { Alert, AlertActionLink, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -112,20 +112,20 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
   const { t } = useTranslation();
   return (
     <li className="list-group-item">
-      <div className="row">
-        <span className="col-xs-5">
+      <Grid hasGutter>
+        <GridItem span={5}>
           <ResourceLink kind={kind} name={name} namespace={namespace} />
-        </span>
-        <span className="col-xs-3">
+        </GridItem>
+        <GridItem span={3}>
           <PodStatus pod={pod} />
-        </span>
-        <span className="col-xs-1">
+        </GridItem>
+        <GridItem span={1}>
           <PodTraffic podName={name} namespace={namespace} tooltipFlag />
-        </span>
-        <span className="col-xs-3 text-right">
+        </GridItem>
+        <GridItem span={3}>
           <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
-        </span>
-      </div>
+        </GridItem>
+      </Grid>
     </li>
   );
 };

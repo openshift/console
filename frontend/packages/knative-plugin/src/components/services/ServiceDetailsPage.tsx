@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -50,15 +50,15 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary
               resource={obj}
               podSelector="spec.podSelector"
               showNodeSelector={false}
             />
-          </div>
-          <div className="col-md-6">
+          </GridItem>
+          <GridItem md={6}>
             <DescriptionList>
               {isServerlessFunction(obj) && (
                 <DetailsItem label={t('knative-plugin~Type')} obj={obj}>
@@ -80,8 +80,8 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
                 </DetailsItem>
               )}
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Containers')} />

@@ -36,7 +36,7 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
@@ -94,19 +94,19 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
         ) : (
           <LoadingInline />
         )}
-        <div className="row">
-          <div className="col-lg-6">
+        <Grid hasGutter>
+          <GridItem lg={6}>
             <ResourceSummary
               resource={daemonset}
               showPodSelector
               showNodeSelector
               showTolerations
             />
-          </div>
-          <div className="col-lg-6">
+          </GridItem>
+          <GridItem lg={6}>
             <DaemonSetDetailsList ds={daemonset} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Containers')} />

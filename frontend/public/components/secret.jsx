@@ -19,7 +19,7 @@ import {
 import { SecretType } from './secrets/create-secret/types';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 export const addSecretToWorkload = (kindObj, secret) => {
@@ -97,18 +97,18 @@ const SecretDetails = ({ obj: secret }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~Secret details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={secret} />
-          </div>
+          </GridItem>
           {type && (
-            <div className="col-md-6">
+            <GridItem md={6}>
               <DescriptionList data-test-id="resource-type">
                 <DetailsItem label={t('public~Type')} obj={secret} path="type" />
               </DescriptionList>
-            </div>
+            </GridItem>
           )}
-        </div>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SecretData data={data} type={type} />
