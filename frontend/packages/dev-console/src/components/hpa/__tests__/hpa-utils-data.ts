@@ -5,7 +5,7 @@ import {
 } from '@console/internal/module/k8s';
 
 export const deploymentExamples: { [key: string]: DeploymentKind } = {
-  hasNoLimits: {
+  hasNoRequests: {
     kind: 'Deployment',
     apiVersion: 'apps/v1',
     metadata: {
@@ -62,7 +62,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
       progressDeadlineSeconds: 600,
     },
   },
-  hasMemoryOnlyLimits: {
+  hasMemoryOnlyRequests: {
     kind: 'Deployment',
     apiVersion: 'apps/v1',
     metadata: {
@@ -123,7 +123,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
       progressDeadlineSeconds: 600,
     },
   },
-  hasCpuOnlyLimits: {
+  hasCpuOnlyRequests: {
     kind: 'Deployment',
     apiVersion: 'apps/v1',
     metadata: {
@@ -219,7 +219,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
                 },
               ],
               resources: {
-                limits: {
+                requests: {
                   cpu: '2m',
                   memory: '2Mi',
                 },
@@ -249,7 +249,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
 };
 
 export const deploymentConfigExamples: { [key: string]: K8sResourceKind } = {
-  hasNoLimits: {
+  hasNoRequests: {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
     metadata: {
@@ -330,7 +330,7 @@ export const deploymentConfigExamples: { [key: string]: K8sResourceKind } = {
       },
     },
   },
-  hasMemoryOnlyLimits: {
+  hasMemoryOnlyRequests: {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
     metadata: {
@@ -418,7 +418,7 @@ export const deploymentConfigExamples: { [key: string]: K8sResourceKind } = {
       },
     },
   },
-  hasCpuOnlyLimits: {
+  hasCpuOnlyRequests: {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
     metadata: {
