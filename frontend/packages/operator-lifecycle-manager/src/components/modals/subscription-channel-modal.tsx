@@ -52,12 +52,12 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
       </ModalTitle>
       <ModalBody>
         <Grid>
-          <GridItem span={12}>
+          <GridItem>
             <p>{t('olm~Which channel is used to receive updates?')}</p>
           </GridItem>
 
           {pkg?.status?.channels?.map?.((channel) => (
-            <GridItem span={12} key={channel.name}>
+            <GridItem key={channel.name}>
               <RadioInput
                 onChange={(e) => setSelectedChannel(e.target.value)}
                 value={channel.name}

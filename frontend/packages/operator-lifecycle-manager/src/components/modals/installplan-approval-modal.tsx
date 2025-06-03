@@ -57,11 +57,11 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
       <ModalTitle className="modal-header">{t('olm~Change update approval strategy')}</ModalTitle>
       <ModalBody>
         <Grid hasGutter>
-          <GridItem span={12}>
+          <GridItem>
             <p>{t('olm~What strategy is used for approving updates?')}</p>
           </GridItem>
 
-          <GridItem span={12}>
+          <GridItem>
             <RadioInput
               onChange={(e) => setSelectedApprovalStrategy(e.target.value)}
               value={InstallPlanApproval.Automatic}
@@ -76,7 +76,7 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
               </div>
             </RadioInput>
           </GridItem>
-          <GridItem span={12}>
+          <GridItem>
             <RadioInput
               onChange={(e) => setSelectedApprovalStrategy(e.target.value)}
               value={InstallPlanApproval.Manual}

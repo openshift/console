@@ -26,7 +26,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
         </GridItem>
         {percent.length > 0 && (
-          <GridItem span={2} className="pf-v6-u-text-align-right">
+          <GridItem span={2} className="pf-v6-u-text-align-right" data-test="route-percent">
             {totalPercent || percent}
           </GridItem>
         )}

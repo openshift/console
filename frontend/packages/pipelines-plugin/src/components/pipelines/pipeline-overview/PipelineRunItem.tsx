@@ -54,7 +54,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
           <Link to={`${path}/logs`}>{t('pipelines-plugin~View logs')}</Link>
         </GridItem>
         {logDetails && (
-          <GridItem span={12}>
+          <GridItem>
             <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
               {(logSnippet: string) => (
                 <LogSnippet message={logDetails.title} logSnippet={logSnippet} />
