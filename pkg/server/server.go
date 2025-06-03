@@ -569,7 +569,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}
 	}
 
-	handle(updatesEndpoint, authHandler(func(w http.ResponseWriter, r *http.Request) {
+	handleFunc(updatesEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			w.Header().Set("Allow", "GET")
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
@@ -586,7 +586,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			Capabilities:          s.Capabilities,
 			ContentSecurityPolicy: s.ContentSecurityPolicy.String(),
 		})
-	}))
+	})
 
 	// Metrics
 	config := &serverconfig.Config{
