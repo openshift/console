@@ -15,6 +15,8 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -1089,8 +1091,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
 
   return (
     <PaneBody>
-      <div className="row">
-        <div className="col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
+      <Grid hasGutter>
+        <GridItem md={4} lg={5} order={{ default: '0', lg: '1' }}>
           {csv && providedAPI && (
             <div style={{ marginBottom: '30px' }}>
               <ClusterServiceVersionLogo
@@ -1101,8 +1103,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               <SyncMarkdownView content={providedAPI.description} />
             </div>
           )}
-        </div>
-        <div className="col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5">
+        </GridItem>
+        <GridItem md={8} lg={7} order={{ default: '1', lg: '0' }}>
           <Alert
             isInline
             className="co-alert co-break-word"
@@ -1177,8 +1179,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               </ActionGroup>
             </div>
           </form>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

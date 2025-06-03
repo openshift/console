@@ -1,14 +1,24 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { css } from '@patternfly/react-styles';
-import { Tooltip } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  FormSection,
+  HelperText,
+  HelperTextItem,
+  InputGroup,
+  InputGroupItem,
+  InputGroupText,
+  Radio,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { withHandlePromise, HandlePromiseProps } from '../utils';
-import { RadioInput } from '../radio';
 
 export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
@@ -26,137 +36,108 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
   const { t } = useTranslation();
   const strategyIsNotRollingUpdate = props.strategyType !== 'RollingUpdate';
   return (
-    <>
+    <div className="pf-v6-c-form pf-m-horizontal">
       {showDescription && (
-        <div className="co-m-form-row">
-          <p>{t('public~How should the pods be replaced when a new revision is created?')}</p>
-        </div>
+        <FormSection>
+          {t('public~How should the pods be replaced when a new revision is created?')}
+        </FormSection>
       )}
-      <div className="row co-m-form-row">
-        <div className="col-sm-12">
-          <RadioInput
-            name={`${props.uid || 'update-strategy'}-type`}
-            onChange={(e) => {
-              props.onChangeStrategyType(e.target.value);
-            }}
-            value="RollingUpdate"
-            checked={props.strategyType === 'RollingUpdate'}
-            title={t('public~RollingUpdate')}
-            subTitle={t('public~(default)')}
-            autoFocus={props.strategyType === 'RollingUpdate'}
-          >
-            <div className="co-m-radio-desc">
-              <p className="pf-v6-u-text-color-subtle modal-paragraph">
-                {t(
-                  'public~Execute a smooth roll out of the new revision, based on the settings below',
-                )}
-              </p>
 
-              <div className="row co-m-form-row">
-                <div className="col-sm-3">
-                  <label htmlFor="input-max-unavailable" className="co-break-word">
-                    {t('public~Max unavailable')}
-                  </label>
-                </div>
-                <div className="co-m-form-col col-sm-9">
-                  <div className="form-inline">
-                    <div className="pf-v6-c-input-group">
-                      <span
-                        className={css('pf-v6-c-form-control', {
-                          'pf-m-disabled': strategyIsNotRollingUpdate,
-                        })}
-                      >
-                        <input
-                          disabled={strategyIsNotRollingUpdate}
-                          placeholder="25%"
-                          size={5}
-                          type="text"
-                          id="input-max-unavailable"
-                          value={props.maxUnavailable}
-                          onChange={(e) => props.onChangeMaxUnavailable(e.target.value)}
-                          aria-describedby="input-max-unavailable-help"
-                        />
-                      </span>
-                      {props.replicas && (
-                        <span className="pf-v6-c-input-group__text">
-                          <Tooltip content={t('public~Current desired pod count')}>
-                            <span>{t('public~of pod', { count: props.replicas })}</span>
-                          </Tooltip>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <p
-                    className="help-block pf-v6-u-text-color-subtle"
-                    id="input-max-unavailable-help"
-                  >
+      <Radio
+        id={`${props.uid || 'update-strategy'}-rolling-update`}
+        name={`${props.uid || 'update-strategy'}-type`}
+        onChange={(_e, value) => {
+          props.onChangeStrategyType(value ? 'RollingUpdate' : 'Recreate');
+        }}
+        value="RollingUpdate"
+        checked={props.strategyType === 'RollingUpdate'}
+        label={`${t('public~RollingUpdate')} (${t('public~default')})`}
+        description={t(
+          'public~Execute a smooth roll out of the new revision, based on the settings below',
+        )}
+        autoFocus={props.strategyType === 'RollingUpdate'}
+        body={
+          <FormSection>
+            <FormGroup label={t('public~Max unavailable')} fieldId="input-max-unavailable">
+              <InputGroup>
+                <InputGroupItem isFill>
+                  <TextInput
+                    isDisabled={strategyIsNotRollingUpdate}
+                    id="input-max-unavailable"
+                    placeholder="25%"
+                    name="maxUnavailable"
+                    type="text"
+                    value={props.maxUnavailable}
+                    onChange={(_e, value) => props.onChangeMaxUnavailable(value)}
+                    aria-describedby="input-max-unavailable-help"
+                  />
+                </InputGroupItem>
+                <Tooltip content={t('public~Current desired pod count')}>
+                  <InputGroupText className="pf-v6-c-input-group__text">
+                    {t('public~of pod', { count: props.replicas })}
+                  </InputGroupText>
+                </Tooltip>
+              </InputGroup>
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem id="input-max-unavailable-help">
                     {t(
                       'public~Percentage of total number of pods or the maximum number ' +
                         'of pods that can be unavailable during the update(optional)',
                     )}
-                  </p>
-                </div>
-              </div>
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </FormGroup>
 
-              <div className="row co-m-form-row">
-                <div className="col-sm-3">
-                  <label htmlFor="input-max-surge" className="co-break-word">
-                    {t('public~Max surge')}
-                  </label>
-                </div>
-                <div className="co-m-form-col col-sm-9">
-                  <div className="form-inline">
-                    <div className="pf-v6-c-input-group">
-                      <span
-                        className={css('pf-v6-c-form-control', {
-                          'pf-m-disabled': strategyIsNotRollingUpdate,
-                        })}
-                      >
-                        <input
-                          disabled={strategyIsNotRollingUpdate}
-                          placeholder="25%"
-                          size={5}
-                          type="text"
-                          id="input-max-surge"
-                          value={props.maxSurge}
-                          onChange={(e) => props.onChangeMaxSurge(e.target.value)}
-                          aria-describedby="input-max-surge-help"
-                        />
-                      </span>
-                      <span className="pf-v6-c-input-group__text">
-                        <Tooltip content={t('public~Current desired pod count')}>
-                          <span>{t('public~greater than pod', { count: props.replicas })}</span>
-                        </Tooltip>
-                      </span>
-                    </div>
-                  </div>
-                  <p className="help-block pf-v6-u-text-color-subtle" id="input-max-surge-help">
+            <FormGroup label={t('public~Max surge')} fieldId="input-max-surge">
+              <InputGroup>
+                <InputGroupItem isFill>
+                  <TextInput
+                    isDisabled={strategyIsNotRollingUpdate}
+                    id="input-max-surge"
+                    name="max-surge"
+                    type="text"
+                    placeholder="25%"
+                    value={props.maxSurge}
+                    onChange={(_e, value) => props.onChangeMaxSurge(value)}
+                    aria-describedby="input-max-surge-help"
+                  />
+                </InputGroupItem>
+                <Tooltip content={t('public~Current desired pod count')}>
+                  <InputGroupText className="pf-v6-c-input-group__text">
+                    {t('public~greater than pod', { count: props.replicas })}
+                  </InputGroupText>
+                </Tooltip>
+              </InputGroup>
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem id="input-max-surge-help">
                     {t(
                       'public~Percentage of total number of pods or the maximum number ' +
                         'of pods that can be scheduled above the original number of pods(optional)',
                     )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </RadioInput>
-        </div>
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </FormGroup>
+          </FormSection>
+        }
+      />
 
-        <div className="col-sm-12">
-          <RadioInput
-            name={`${props.uid || 'update-strategy'}-type`}
-            onChange={(e) => {
-              props.onChangeStrategyType(e.target.value);
-            }}
-            value="Recreate"
-            checked={props.strategyType === 'Recreate'}
-            title={t('public~Recreate')}
-            desc={t('public~Shut down all existing pods before creating new ones')}
-            autoFocus={props.strategyType === 'Recreate'}
-          />
-        </div>
-      </div>
-    </>
+      <Radio
+        id={`${props.uid || 'update-strategy'}-recreate`}
+        name={`${props.uid || 'update-strategy'}-type`}
+        onChange={(_e, value) => {
+          props.onChangeStrategyType(value ? 'Recreate' : 'RollingUpdate');
+        }}
+        value="Recreate"
+        checked={props.strategyType === 'Recreate'}
+        label={t('public~Recreate')}
+        description={t('public~Shut down all existing pods before creating new ones')}
+        autoFocus={props.strategyType === 'Recreate'}
+      />
+    </div>
   );
 };
 
