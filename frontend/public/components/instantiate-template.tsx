@@ -16,6 +16,8 @@ import {
   TextArea,
   InputGroup,
   InputGroupItem,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { CompressIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
 /* eslint-disable import/named */
@@ -77,7 +79,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   const supportURL = annotations[ANNOTATIONS.supportURL];
 
   return (
-    <div className="co-catalog-item-info">
+    <div className="pf-v6-u-mb-md">
       <div className="co-catalog-item-details">
         <div className="co-catalog-item-icon">
           <span className="co-catalog-item-icon__bg">
@@ -330,11 +332,11 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   const params = template.parameters || [];
 
   return (
-    <div className="row">
-      <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+    <Grid hasGutter>
+      <GridItem md={7} order={{ default: '0', md: '1' }}>
         <TemplateInfo template={template} />
-      </div>
-      <div className="col-md-5 col-md-pull-7">
+      </GridItem>
+      <GridItem md={5} order={{ default: '1', md: '0' }}>
         <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
             <label className="co-required" htmlFor="namespace">
@@ -381,8 +383,8 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   );
 };
 

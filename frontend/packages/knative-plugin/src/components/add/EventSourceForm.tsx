@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, Grid, GridItem } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -50,11 +50,11 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
     });
 
   const formEditor = (
-    <div className="row">
-      <div className="col-sm-12 col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
+    <Grid hasGutter>
+      <GridItem md={4} lg={5} order={{ default: '0', md: '1' }}>
         {eventSourceMetaDescription}
-      </div>
-      <div className="col-sm-12 col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5">
+      </GridItem>
+      <GridItem md={8} lg={7} order={{ default: '1', md: '0' }}>
         {values.showCanUseYAMLMessage && (
           <Alert
             actionClose={
@@ -70,8 +70,8 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
           />
         )}
         <EventSourceSection namespace={namespace} kameletSource={kameletSource} fullWidth />{' '}
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   );
   return (
     <FlexForm onSubmit={handleSubmit}>
