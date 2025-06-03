@@ -282,7 +282,7 @@ function useDataViewPodRow(
   columns: (DataViewTh & { id?: string })[],
 ) {
   const { t } = useTranslation();
-  // We have to iterate over the redux state as the dw rows are not separate entities.
+  // We have to iterate over the redux state as the data view rows are not separate entities.
   // The data is referenced by indexes
   // In a finished implementation, the data should combined within the state to avoid extra iteration
   const allCores = useSelector<RootState, [number, number][]>(({ UI }) => {
@@ -468,7 +468,7 @@ function useDataViewSort({
   return { sortBy, onSort };
 }
 
-// Simple type guard for checking what type of DW column is used
+// Simple type guard for checking what type of data view column is used
 function isDataViewConfigurableColumn(
   column: DataViewTh,
 ): column is {
@@ -824,7 +824,7 @@ const DataViewPodList = ({
 };
 
 // props.data is mutating and can change the filters not to work
-// Sow e have to wait for the data to be loaded as we have to memoize the filters themselves
+// So we have to wait for the data to be loaded as we have to memoize the filters themselves
 const DataViewPodListWrapper = (props: DataViewPodListProps) => {
   if (!props.loaded) {
     return null;
