@@ -89,14 +89,14 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
       </ModalTitle>
       <ModalBody>
         <Grid hasGutter>
-          <GridItem span={12}>
+          <GridItem>
             {messageKey
               ? t(messageKey, messageVariables)
               : t(
                   'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
                 )}
           </GridItem>
-          <GridItem span={12}>
+          <GridItem>
             <label htmlFor="tags-input">
               {descriptionKey
                 ? t('{{description}} for', { description: t(descriptionKey) })

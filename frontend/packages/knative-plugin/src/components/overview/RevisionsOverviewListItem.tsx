@@ -35,7 +35,12 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
         </GridItem>
         {trafficPercent && (
-          <GridItem span={3} sm={4} className="pf-v6-u-text-align-right">
+          <GridItem
+            span={3}
+            sm={4}
+            className="pf-v6-u-text-align-right"
+            data-test="revision-traffic-percent"
+          >
             {trafficPercent}
           </GridItem>
         )}
@@ -67,7 +72,7 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
           </Grid>
           {urls.length > 0 && (
             <Grid hasGutter>
-              <GridItem span={12}>
+              <GridItem>
                 <RoutesUrlLink urls={urls} />
               </GridItem>
             </Grid>

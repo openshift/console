@@ -24,7 +24,7 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
   return (
     <li className="list-group-item">
       <Grid hasGutter>
-        <GridItem span={12}>
+        <GridItem>
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
           {status?.url?.length > 0 && (
             <>

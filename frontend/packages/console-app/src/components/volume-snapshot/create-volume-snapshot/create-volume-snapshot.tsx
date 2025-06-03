@@ -63,14 +63,14 @@ import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
   <Grid className="skeleton-box">
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
   </Grid>
 );
 

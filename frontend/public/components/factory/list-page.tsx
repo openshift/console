@@ -162,7 +162,7 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
     <div>
       {!_.isEmpty(data) && Filter}
       <Grid>
-        <GridItem span={12}>
+        <GridItem>
           <ListComponent {...props} data={data} />
         </GridItem>
       </Grid>

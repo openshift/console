@@ -132,7 +132,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
         <ModalTitle>{t('public~Default pull Secret')}</ModalTitle>
         <ModalBody>
           <Grid hasGutter>
-            <GridItem span={12}>
+            <GridItem>
               <p>
                 {t(
                   'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',

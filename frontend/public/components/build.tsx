@@ -277,7 +277,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
         <SectionHeading text={t('public~Build details')} />
         <Grid hasGutter>
           {hasPipeline && (
-            <GridItem span={12}>
+            <GridItem>
               <BuildPipeline obj={build} />
             </GridItem>
           )}

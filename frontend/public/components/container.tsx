@@ -434,7 +434,7 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
           </DescriptionList>
         </GridItem>
 
-        <GridItem span={12}>
+        <GridItem>
           <Divider className="co-divider" />
         </GridItem>
 

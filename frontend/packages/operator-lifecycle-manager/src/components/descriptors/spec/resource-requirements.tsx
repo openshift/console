@@ -108,7 +108,7 @@ export const ResourceRequirementsModal = withHandlePromise(
         <ModalTitle>{props.title}</ModalTitle>
         <ModalBody>
           <Grid hasGutter>
-            <GridItem span={12}>{props.description}</GridItem>
+            <GridItem>{props.description}</GridItem>
             <ResourceRequirements
               cpu={cpu}
               memory={memory}
