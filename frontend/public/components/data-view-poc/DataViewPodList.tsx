@@ -817,6 +817,7 @@ const DataViewPodList = ({
             loading: bodyLoading,
           }}
           gridBreakPoint=""
+          variant="compact"
         />
       </InnerScrollContainer>
     </DataView>
