@@ -15,7 +15,7 @@ const HPADetailsForm: React.FC = () => {
   const {
     setFieldValue,
     values: {
-      disabledFields: { name: nameDisabled, cpuUtilization, memoryUtilization },
+      disabledFields: { name: nameDisabled },
       showCanUseYAMLMessage,
     },
   } = useFormikContext<HPAFormValues>();
@@ -84,14 +84,12 @@ const HPADetailsForm: React.FC = () => {
               setOutputAsIntegerFlag
             />
             <HPAUtilizationField
-              disabled={cpuUtilization}
               hpa={field.value}
               label={t('devconsole~CPU')}
               onUpdate={updateField('cpu')}
               type="cpu"
             />
             <HPAUtilizationField
-              disabled={memoryUtilization}
               hpa={field.value}
               label={t('devconsole~Memory')}
               onUpdate={updateField('memory')}
