@@ -44,7 +44,6 @@ import {
   LabelList,
   OwnerReferences,
   ResourceLink,
-  Timestamp,
 } from '../utils';
 import { PodTraffic } from '../pod-traffic';
 import { getLabelsAsString, LazyActionMenu } from '@console/shared';
@@ -70,6 +69,7 @@ import { useActiveColumns } from '../factory/Table/active-columns-hook';
 import { PodModel } from '../../models';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { exactMatch, fuzzyCaseInsensitive } from '../factory/table-filters';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 /**
  * Copy paste section
@@ -259,7 +259,7 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     additional: true,
   },
   {
-    title: 'Actions',
+    title: t('public~Actions'),
     id: 'actions',
     props: {
       isStickyColumn: true,
