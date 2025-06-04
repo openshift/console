@@ -161,7 +161,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                       </span>
                     )}
                   </div>
-                  <div className="clearfix visible-sm visible-xs" />
+                  <div className="visible-sm visible-xs" />
                   <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                       {t('public~Value')}
