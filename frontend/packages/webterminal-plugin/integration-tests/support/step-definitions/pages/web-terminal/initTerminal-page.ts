@@ -18,8 +18,8 @@ export const initTerminalPage = {
 
   clickStartButton: () => {
     cy.get(formPO.create).should('be.enabled').click({ force: true });
-    cy.get('[data-test="loading-box-body"]').should('exist', { timeout: 5000 }); // wait for "loading..." appears
-    cy.get('[data-test="loading-box-body"]').should('not.exist', { timeout: 180000 }); // wait for terminal loading
+    cy.get('[data-test="loading-box-body"]', { timeout: 5000 }).should('exist'); // wait for "loading..." appears
+    cy.get('[data-test="loading-box-body"]', { timeout: 180000 }).should('not.exist'); // wait for terminal loading
   },
 
   selectProject: (projectName: string) => {
