@@ -1,6 +1,7 @@
 .env
 .idea
 .vscode
+!/vendor/**
 !.vscode/settings.json
 .DS_Store
 cypress-a11y-report.json
