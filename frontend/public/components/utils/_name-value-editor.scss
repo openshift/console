@@ -1,10 +1,5 @@
 $drag-column-width: 28px;
 
-.co-empty__header {
-  padding: 0;
-  width: $drag-column-width;
-}
-
 .pairs-list__action {
   padding: 0;
   width: $drag-column-width;
@@ -19,16 +14,6 @@ $drag-column-width: 28px;
 
 .pairs-list__action-icon--reorder {
   cursor: move;
-}
-
-.pairs-list__heading {
-  margin-bottom: 5px;
-}
-
-.pairs-list__row {
-  align-items: center;
-  display: flex;
-  padding-bottom: 15px;
 }
 
 .pairs-list__row-dragging {

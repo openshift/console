@@ -45,6 +45,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 
       <Radio
         id={`${props.uid || 'update-strategy'}-rolling-update`}
+        data-test="rolling-update-strategy-radio"
         name={`${props.uid || 'update-strategy'}-type`}
         onChange={(_e, value) => {
           props.onChangeStrategyType(value ? 'RollingUpdate' : 'Recreate');
@@ -70,6 +71,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                     value={props.maxUnavailable}
                     onChange={(_e, value) => props.onChangeMaxUnavailable(value)}
                     aria-describedby="input-max-unavailable-help"
+                    data-test="max-unavailable-input"
                   />
                 </InputGroupItem>
                 <Tooltip content={t('public~Current desired pod count')}>
@@ -102,6 +104,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                     value={props.maxSurge}
                     onChange={(_e, value) => props.onChangeMaxSurge(value)}
                     aria-describedby="input-max-surge-help"
+                    data-test="max-surge-input"
                   />
                 </InputGroupItem>
                 <Tooltip content={t('public~Current desired pod count')}>
@@ -136,6 +139,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
         label={t('public~Recreate')}
         description={t('public~Shut down all existing pods before creating new ones')}
         autoFocus={props.strategyType === 'Recreate'}
+        data-test="recreate-update-strategy-radio"
       />
     </div>
   );

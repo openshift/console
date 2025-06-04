@@ -97,7 +97,7 @@ export const CloudServiceTokenWarningAlert = ({
       variant="warning"
       title={title}
       actionClose={<AlertActionCloseButton onClose={() => onClose(false)} />}
-      className="pf-u-mb-lg"
+      className="pf-v6-u-mb-lg"
     >
       <p>{message}</p>
     </Alert>

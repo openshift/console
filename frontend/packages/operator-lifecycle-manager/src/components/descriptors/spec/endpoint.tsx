@@ -1,8 +1,11 @@
 import * as React from 'react';
+import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 
 export const EndpointRow: React.FC<EndpointRowProps> = ({ endpoint }) => {
+  const { t } = useTranslation('olm');
+
   const detail = ['scheme', 'honorLabels', 'targetPort'].reduce(
     (element, field) =>
       endpoint?.[field] ? (
@@ -17,40 +20,37 @@ export const EndpointRow: React.FC<EndpointRowProps> = ({ endpoint }) => {
   );
 
   return (
-    <div className="co-ip-row">
-      <div className="row">
-        <div className="col-xs-6">
-          <p>
-            <ResourceIcon kind="Service" />
-            {endpoint.port || '--'}
-          </p>
+    <Tr>
+      <Td dataLabel={t('Port')}>
+        <div>
+          <ResourceIcon kind="Service" /> {endpoint.port || '--'}
         </div>
-        <div className="col-xs-2">
-          <p>{endpoint.interval || '--'}</p>
-        </div>
-        <div className="col-xs-4">{detail}</div>
-      </div>
-    </div>
+      </Td>
+      <Td dataLabel={t('Interval')}>{endpoint.interval || '--'}</Td>
+      <Td dataLabel={t('Details')}>{detail}</Td>
+    </Tr>
   );
 };
 
 export const EndpointList: React.FC<EndpointListProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
-    <div className="service-ips">
-      <div className="row co-ip-header">
-        <div className="col-xs-6">{t('olm~Port')}</div>
-        <div className="col-xs-2">{t('olm~Interval')}</div>
-        <div className="col-xs-4" />
-      </div>
-      <div className="rows">
+    <Table aria-label={t('Endpoints')} variant="compact" borders={false}>
+      <Thead>
+        <Tr>
+          <Th>{t('Port')}</Th>
+          <Th>{t('Interval')}</Th>
+          <Th />
+        </Tr>
+      </Thead>
+      <Tbody>
         {props.endpoints ? (
           props.endpoints.map((e) => <EndpointRow endpoint={e} key={e.port} />)
         ) : (
-          <span className="pf-v6-u-text-color-subtle">{t('olm~No endpoints')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('No endpoints')}</span>
         )}
-      </div>
-    </div>
+      </Tbody>
+    </Table>
   );
 };
 

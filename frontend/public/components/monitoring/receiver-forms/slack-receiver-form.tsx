@@ -31,7 +31,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           {t('public~Slack API URL')}
         </label>
         <Grid hasGutter>
-          <GridItem sm={7}>
+          <GridItem span={7}>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -48,7 +48,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               />
             </span>
           </GridItem>
-          <GridItem sm={5}>
+          <GridItem span={1} /> {/* fixes an overlapping control issue */}
+          <GridItem span={4}>
             <SaveAsDefaultCheckbox
               formField="slackSaveAsDefault"
               disabled={formValues.slack_api_url === globals?.slack_api_url}
