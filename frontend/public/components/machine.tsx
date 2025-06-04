@@ -283,7 +283,10 @@ export const MachinePage: React.FC<MachinePageProps> = ({
     selector,
     namespace,
   });
-
+  const createAccessReview = {
+    groupVersionKind: referenceForModel(MachineModel),
+    namespace: namespace || 'default',
+  };
   const machineFilter = [
     { type: 'name', filterGroupName: 'Machine', filter: tableFilters(isExactSearch).machine },
   ];
@@ -292,7 +295,10 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   return (
     <>
       <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
-        <ListPageCreate groupVersionKind={referenceForModel(MachineModel)}>
+        <ListPageCreate
+          createAccessReview={createAccessReview}
+          groupVersionKind={referenceForModel(MachineModel)}
+        >
           {t('public~Create machine')}
         </ListPageCreate>
       </ListPageHeader>
