@@ -1,6 +1,9 @@
 import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
 import { TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
 
+// Sample 20% of sessions
+const SAMPLE_SESSION = Math.random() < 0.2;
+
 /** Segmnet API Key that looks like a hash */
 const apiKey =
   window.SERVER_FLAGS?.telemetry?.DEVSANDBOX_SEGMENT_API_KEY ||
@@ -97,7 +100,7 @@ const initSegment = () => {
   analytics.load(apiKey, options);
 };
 
-if (!TELEMETRY_DISABLED && apiKey) {
+if (!TELEMETRY_DISABLED && apiKey && SAMPLE_SESSION) {
   initSegment();
 }
 
@@ -116,6 +119,17 @@ export const eventListener: TelemetryEventListener = async (
       // eslint-disable-next-line no-console
       console.debug(
         'console-telemetry-plugin: telemetry disabled - ignoring telemetry event:',
+        eventType,
+        properties,
+      );
+    }
+    return;
+  }
+  if (!SAMPLE_SESSION) {
+    if (TELEMETRY_DEBUG) {
+      // eslint-disable-next-line no-console
+      console.debug(
+        'console-telemetry-plugin: session is not being sampled - ignoring telemetry event',
         eventType,
         properties,
       );
