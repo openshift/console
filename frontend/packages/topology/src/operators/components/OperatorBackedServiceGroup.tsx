@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import {
   Node,
   observer,
@@ -16,7 +17,6 @@ import {
   WithContextMenuProps,
   NodeLabel,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   noRegroupDragSourceSpec,
@@ -77,7 +77,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       ref={hoverRef}
       onClick={onSelect}
       onContextMenu={editAccess ? onContextMenu : null}
-      className={classNames('odc-operator-backed-service', {
+      className={css('odc-operator-backed-service', {
         'pf-m-dragging': dragging || labelDragging,
         'is-filtered': filtered,
         'pf-m-highlight': canDrop,
@@ -96,7 +96,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           <g ref={ref}>
             <g
               ref={nodeRefs}
-              className={classNames('odc-operator-backed-service', {
+              className={css('odc-operator-backed-service', {
                 'pf-m-selected': selected,
                 'pf-m-highlight': canDrop,
                 'pf-m-dragging': dragging || labelDragging,

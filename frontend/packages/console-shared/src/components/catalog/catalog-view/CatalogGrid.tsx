@@ -18,14 +18,12 @@ const CatalogGrid: React.FC<CatalogGridProps> = ({ items, renderTile, isGrouped 
   );
 
   return (
-    <div className="co-catalog-page__grid">
-      <VirtualizedGrid
-        items={items}
-        renderCell={renderTile}
-        renderHeader={renderGroupHeader}
-        isItemsGrouped={isGrouped}
-      />
-    </div>
+    <VirtualizedGrid
+      items={items}
+      renderCell={renderTile}
+      renderHeader={renderGroupHeader}
+      isItemsGrouped={isGrouped}
+    />
   );
 };
 

@@ -7,7 +7,7 @@ import userEvent from '../../__tests__/user-event';
 import HooksSection, { HooksSectionFormData } from '../HooksSection';
 
 jest.mock('../EditorField', () =>
-  require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
+  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
 configure({ testIdAttribute: 'data-test' });

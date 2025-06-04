@@ -16,11 +16,13 @@ import {
   createGitWorkload,
   dockerfilePage,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { pipelineActions } from '../../constants';
 import { pipelineRunDetailsPO } from '../../page-objects/pipelines-po';
 import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 
@@ -151,11 +153,11 @@ Given('user created workload {string} from add page with pipeline', (pipelineNam
   topologyPage.verifyTopologyPage();
 });
 
-Given('user is at Developer Catalog form with builder images', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+Given('user is at Software Catalog form with builder images', () => {
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
-When('user searches builder image {string} in developer catalog', (searchItem: string) => {
+When('user searches builder image {string} in software catalog', (searchItem: string) => {
   catalogPage.search(searchItem);
 });
 

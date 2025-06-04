@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { screen, configure, fireEvent, act, waitFor } from '@testing-library/react';
 import { mockFormikRenderer } from '../../../test-utils/unit-test-utils';
 import NumberSpinnerField from '../NumberSpinnerField';

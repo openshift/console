@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -52,7 +52,7 @@ export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_
 
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
   ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
-    <div ref={ref} className={classNames('graph-wrapper graph-wrapper__horizontal-bar', className)}>
+    <div ref={ref} className={css('graph-wrapper graph-wrapper__horizontal-bar', className)}>
       {title && (
         <Title headingLevel="h5" className="graph-title">
           {title}

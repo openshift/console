@@ -35,6 +35,7 @@ import {
 } from '@console/internal/components/utils';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { k8sCreate } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityRequirementPopover from './AvailabilityRequirementPopover';
 import { pdbToK8sResource, initialValuesFromK8sResource, patchPDB, FormValues } from './pdb-models';
@@ -161,7 +162,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   };
 
   return (
-    <div className="co-m-pane__body co-m-pane__form">
+    <PaneBody className="co-m-pane__form">
       <Form onSubmit={handleSubmit}>
         <Stack hasGutter>
           <StackItem>
@@ -229,7 +230,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                   isOpen={isOpen}
                   onOpenChange={(open) => setIsOpen(open)}
                   selected={selectedRequirement}
-                  onSelect={(value: string) => handleAvailabilityRequirementKeyChange(value)}
+                  onSelect={(_e, value: string) => handleAvailabilityRequirementKeyChange(value)}
                   toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
                     <MenuToggle
                       ref={toggleRef}
@@ -309,7 +310,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
           </StackItem>
         </Stack>
       </Form>
-    </div>
+    </PaneBody>
   );
 };
 

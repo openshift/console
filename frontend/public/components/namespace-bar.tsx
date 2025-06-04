@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -107,9 +107,7 @@ export const NamespaceBar: React.FC<NamespaceBarProps & { hideProjects?: boolean
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
   return (
-    <div
-      className={classNames('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}
-    >
+    <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
       {hideProjects ? (
         <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
           {children}

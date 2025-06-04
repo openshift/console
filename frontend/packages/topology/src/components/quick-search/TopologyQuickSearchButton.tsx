@@ -5,13 +5,17 @@ import QuickSearchIcon from '@console/shared/src/components/quick-search/QuickSe
 
 interface QuickSearchButtonProps {
   onClick: () => void;
+  tooltipPosition?: React.ComponentProps<typeof Tooltip>['position'];
 }
 
-const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }) => {
+const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({
+  onClick,
+  tooltipPosition = 'bottom',
+}) => {
   const { t } = useTranslation();
 
   return (
-    <Tooltip position="right" content={t('topology~Add to Project')}>
+    <Tooltip position={tooltipPosition} content={t('topology~Add to Project')}>
       <Button
         icon={<QuickSearchIcon height="2rem" width="2rem" />}
         className="co-xl-icon-button"

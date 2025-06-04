@@ -22,7 +22,7 @@ const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ eve
           return (
             <div className="odc-monitoring-events__event-item" key={e.metadata.uid}>
               <Flex alignSelf={{ default: 'alignSelfBaseline' }}>
-                <FlexItem title={e.lastTimestamp} className="text-secondary">
+                <FlexItem title={e.lastTimestamp} className="pf-v6-u-text-color-subtle">
                   {timeFormatter.format(new Date(getLastTime(e)))}
                 </FlexItem>
                 {e.type === 'Warning' && (
@@ -44,7 +44,9 @@ const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ eve
           );
         })
       ) : (
-        <div className="text-secondary">{t('devconsole~There are no recent events.')}</div>
+        <div className="pf-v6-u-text-color-subtle">
+          {t('devconsole~There are no recent events.')}
+        </div>
       )}
     </div>
   );

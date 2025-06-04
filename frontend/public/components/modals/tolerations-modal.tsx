@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classnames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -113,10 +113,10 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
         ) : (
           <>
             <div className="row toleration-modal__heading hidden-sm hidden-xs">
-              <div className="col-md-4 text-secondary text-uppercase">{t('public~Key')}</div>
-              <div className="col-md-2 text-secondary text-uppercase">{t('public~Operator')}</div>
-              <div className="col-md-3 text-secondary text-uppercase">{t('public~Value')}</div>
-              <div className="col-md-2 text-secondary text-uppercase">{t('public~Effect')}</div>
+              <div className="col-md-4 pf-v6-u-text-color-subtle">{t('public~Key')}</div>
+              <div className="col-md-2 pf-v6-u-text-color-subtle">{t('public~Operator')}</div>
+              <div className="col-md-3 pf-v6-u-text-color-subtle">{t('public~Value')}</div>
+              <div className="col-md-2 pf-v6-u-text-color-subtle">{t('public~Effect')}</div>
               <div className="col-md-1" />
             </div>
             {_.map(tolerations, (toleration, i) => {
@@ -126,11 +126,11 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
               return (
                 <div className="row toleration-modal__row" key={i}>
                   <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
+                    <div className="toleration-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                       {t('public~Key')}
                     </div>
                     <span
-                      className={classnames('pf-v6-c-form-control', {
+                      className={css('pf-v6-c-form-control', {
                         'pf-m-readonly': keyReadOnly,
                       })}
                     >
@@ -143,7 +143,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </span>
                   </div>
                   <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
+                    <div className="toleration-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                       {t('public~Operator')}
                     </div>
                     {isEditable(toleration) ? (
@@ -163,11 +163,11 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                   </div>
                   <div className="clearfix visible-sm visible-xs" />
                   <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
+                    <div className="toleration-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                       {t('public~Value')}
                     </div>
                     <span
-                      className={classnames('pf-v6-c-form-control', {
+                      className={css('pf-v6-c-form-control', {
                         'pf-m-readonly': valueReadOnly,
                       })}
                     >
@@ -180,7 +180,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </span>
                   </div>
                   <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
+                    <div className="toleration-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                       {t('public~Effect')}
                     </div>
                     {isEditable(toleration) ? (

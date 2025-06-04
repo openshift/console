@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Button, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Tooltip,
+} from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import * as _ from 'lodash';
@@ -101,7 +108,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
       )}
       {type === AffinityRuleType.Preferred && (
         <div className="co-affinity-term__weight-input">
-          <label className="control-label co-required" htmlFor={`preference-${key}`}>
+          <label className="co-required" htmlFor={`preference-${key}`}>
             {t('olm~Weight')}
           </label>
           <span className="pf-v6-c-form-control">
@@ -179,68 +186,76 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
     });
 
   return (
-    <dl>
-      <Tooltip
-        content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
-      >
-        <dt>{t('olm~Required during scheduling, ignored during execution')}</dt>
-      </Tooltip>
-      <dd>
-        {requiredRules.map((selector, requiredIndex) => (
-          <NodeAffinityRule
-            // Have to use array index in the key bc any other unique id whould have to use editable fields.
-            // eslint-disable-next-line react/no-array-index-key
-            key={`${uid}-node-affinity-required-${requiredIndex}`}
-            onChange={(rule) => updateRequiredRules(rule, requiredIndex)}
-            onClickRemove={() => removeRequiredRule(requiredIndex)}
-            rule={{ selector }}
-            showRemoveButton
-            type={AffinityRuleType.Required}
-          />
-        ))}
-        <div className="row">
-          <Button
-            icon={<PlusCircleIcon className="co-icon-space-r" />}
-            type="button"
-            onClick={addRequiredRule}
-            variant="link"
-          >
-            {t('olm~Add required')}
-          </Button>
-        </div>
-      </dd>
-      <Tooltip
-        content={t(
-          'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
-        )}
-      >
-        <dt>{t('olm~Preferred during scheduling, ignored during execution')}</dt>
-      </Tooltip>
-      <dd>
-        {preferredRules.map(({ preference: selector, weight }, preferredIndex) => (
-          <NodeAffinityRule
-            // Have to use array index in the key bc any other unique id whould have to use editable fields.
-            // eslint-disable-next-line react/no-array-index-key
-            key={`${uid}-node-affinity-preferred-${preferredIndex}`}
-            onChange={(rule) => updatePreferredRules(rule, preferredIndex)}
-            onClickRemove={() => removePreferredRule(preferredIndex)}
-            rule={{ selector, weight }}
-            showRemoveButton
-            type={AffinityRuleType.Preferred}
-          />
-        ))}
-        <div className="row">
-          <Button
-            icon={<PlusCircleIcon className="co-icon-space-r" />}
-            type="button"
-            onClick={addPreferredRule}
-            variant="link"
-          >
-            {t('olm~Add preferred')}
-          </Button>
-        </div>
-      </dd>
-    </dl>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <Tooltip
+          content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
+        >
+          <DescriptionListTerm>
+            {t('olm~Required during scheduling, ignored during execution')}
+          </DescriptionListTerm>
+        </Tooltip>
+        <DescriptionListDescription>
+          {requiredRules.map((selector, requiredIndex) => (
+            <NodeAffinityRule
+              // Have to use array index in the key bc any other unique id whould have to use editable fields.
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${uid}-node-affinity-required-${requiredIndex}`}
+              onChange={(rule) => updateRequiredRules(rule, requiredIndex)}
+              onClickRemove={() => removeRequiredRule(requiredIndex)}
+              rule={{ selector }}
+              showRemoveButton
+              type={AffinityRuleType.Required}
+            />
+          ))}
+          <div className="row">
+            <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              type="button"
+              onClick={addRequiredRule}
+              variant="link"
+            >
+              {t('olm~Add required')}
+            </Button>
+          </div>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <Tooltip
+          content={t(
+            'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
+          )}
+        >
+          <DescriptionListTerm>
+            {t('olm~Preferred during scheduling, ignored during execution')}
+          </DescriptionListTerm>
+        </Tooltip>
+        <DescriptionListDescription>
+          {preferredRules.map(({ preference: selector, weight }, preferredIndex) => (
+            <NodeAffinityRule
+              // Have to use array index in the key bc any other unique id whould have to use editable fields.
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${uid}-node-affinity-preferred-${preferredIndex}`}
+              onChange={(rule) => updatePreferredRules(rule, preferredIndex)}
+              onClickRemove={() => removePreferredRule(preferredIndex)}
+              rule={{ selector, weight }}
+              showRemoveButton
+              type={AffinityRuleType.Preferred}
+            />
+          ))}
+          <div className="row">
+            <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              type="button"
+              onClick={addPreferredRule}
+              variant="link"
+            >
+              {t('olm~Add preferred')}
+            </Button>
+          </div>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 
@@ -300,7 +315,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
       <div className="co-affinity-term__topology">
         {type === AffinityRuleType.Preferred && (
           <div className="co-affinity-term__weight-input">
-            <label className="control-label co-required" htmlFor={`preference-${key}`}>
+            <label className="co-required" htmlFor={`preference-${key}`}>
               {t('olm~Weight')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -309,7 +324,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
           </div>
         )}
         <div className="co-affinity-term__topology-input">
-          <label className="control-label co-required" htmlFor={`topology-${key}`}>
+          <label className="co-required" htmlFor={`topology-${key}`}>
             {t('olm~Topology key')}
           </label>
           <span className="pf-v6-c-form-control">
@@ -393,71 +408,79 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
     });
 
   return (
-    <dl>
-      <Tooltip
-        content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
-      >
-        <dt>{t('olm~Required during scheduling, ignored during execution')}</dt>
-      </Tooltip>
-      <dd>
-        {_.map(requiredRules, (podAffinityTerm, ruleIndex) => (
-          // Have to use array index in the key bc any other unique id whould have to use editable fields.
-          // eslint-disable-next-line react/no-array-index-key
-          <PodAffinityRule
-            key={`${uid}-pod-affinity-required-${ruleIndex}`}
-            rule={{ podAffinityTerm }}
-            onChange={(rule) => updateRequiredRules(rule, ruleIndex)}
-            onClickRemove={() => removeRequiredRule(ruleIndex)}
-            showRemoveButton
-            type={AffinityRuleType.Required}
-          />
-        ))}
-        <div className="row">
-          <Button
-            icon={<PlusCircleIcon className="co-icon-space-r" />}
-            type="button"
-            onClick={addRequiredRule}
-            variant="link"
-          >
-            {t('olm~Add required')}
-          </Button>
-        </div>
-      </dd>
-      <Tooltip
-        content={t(
-          'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
-        )}
-      >
-        <dt>{t('olm~Preferred during scheduling, ignored during execution')}</dt>
-      </Tooltip>
-      <dd>
-        {preferredRules.map((preferredRule, ruleIndex) => {
-          // Have to use array index in the key bc any other unique id whould have to use editable fields.
-          return (
+    <DescriptionList>
+      <DescriptionListGroup>
+        <Tooltip
+          content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
+        >
+          <DescriptionListTerm>
+            {t('olm~Required during scheduling, ignored during execution')}
+          </DescriptionListTerm>
+        </Tooltip>
+        <DescriptionListDescription>
+          {_.map(requiredRules, (podAffinityTerm, ruleIndex) => (
+            // Have to use array index in the key bc any other unique id whould have to use editable fields.
+            // eslint-disable-next-line react/no-array-index-key
             <PodAffinityRule
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${uid}-pod-affinity-preferred-${ruleIndex}`}
-              onChange={(rule) => updatePreferredRules(rule, ruleIndex)}
-              onClickRemove={() => removePreferredRule(ruleIndex)}
+              key={`${uid}-pod-affinity-required-${ruleIndex}`}
+              rule={{ podAffinityTerm }}
+              onChange={(rule) => updateRequiredRules(rule, ruleIndex)}
+              onClickRemove={() => removeRequiredRule(ruleIndex)}
               showRemoveButton
-              rule={preferredRule}
-              type={AffinityRuleType.Preferred}
+              type={AffinityRuleType.Required}
             />
-          );
-        })}
+          ))}
+          <div className="row">
+            <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              type="button"
+              onClick={addRequiredRule}
+              variant="link"
+            >
+              {t('olm~Add required')}
+            </Button>
+          </div>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <Tooltip
+          content={t(
+            'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
+          )}
+        >
+          <DescriptionListTerm>
+            {t('olm~Preferred during scheduling, ignored during execution')}
+          </DescriptionListTerm>
+        </Tooltip>
+        <DescriptionListDescription>
+          {preferredRules.map((preferredRule, ruleIndex) => {
+            // Have to use array index in the key bc any other unique id whould have to use editable fields.
+            return (
+              <PodAffinityRule
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${uid}-pod-affinity-preferred-${ruleIndex}`}
+                onChange={(rule) => updatePreferredRules(rule, ruleIndex)}
+                onClickRemove={() => removePreferredRule(ruleIndex)}
+                showRemoveButton
+                rule={preferredRule}
+                type={AffinityRuleType.Preferred}
+              />
+            );
+          })}
 
-        <div className="row">
-          <Button
-            icon={<PlusCircleIcon className="co-icon-space-r" />}
-            type="button"
-            onClick={addPreferredRule}
-            variant="link"
-          >
-            {t('olm~Add preferred')}
-          </Button>
-        </div>
-      </dd>
-    </dl>
+          <div className="row">
+            <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              type="button"
+              onClick={addPreferredRule}
+              variant="link"
+            >
+              {t('olm~Add preferred')}
+            </Button>
+          </div>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

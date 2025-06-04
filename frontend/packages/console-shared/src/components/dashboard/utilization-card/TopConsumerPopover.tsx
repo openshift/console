@@ -202,7 +202,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
 
       let body: React.ReactNode;
       if (error || consumersLoadError) {
-        body = <div className="text-secondary">{t('console-shared~Not available')}</div>;
+        body = <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>;
       } else if (!consumerLoaded || !data) {
         body = (
           <ul className="co-utilization-card-popover__consumer-list">

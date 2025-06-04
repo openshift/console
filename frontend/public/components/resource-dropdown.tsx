@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from './utils';
 import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
@@ -194,7 +194,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
               )}
             </span>
             {isDup(model.kind) && (
-              <div className="co-resource-item__resource-api text-muted co-truncate co-nowrap small">
+              <div className="co-resource-item__resource-api pf-v6-u-text-color-subtle co-truncate co-nowrap small">
                 {model.apiGroup || 'core'}/{model.apiVersion}
               </div>
             )}
@@ -232,7 +232,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
                     )}
                   </span>
                   {isDup(model.kind) && (
-                    <div className="co-resource-item__resource-api text-muted co-truncate co-nowrap small">
+                    <div className="co-resource-item__resource-api pf-v6-u-text-color-subtle co-truncate co-nowrap small">
                       {model.apiGroup || 'core'}/{model.apiVersion}
                     </div>
                   )}
@@ -467,7 +467,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
         shouldFocusFirstItemOnOpen={false}
         isScrollable
         role="menu"
-        className={classNames('co-type-selector', className)}
+        className={css('co-type-selector', className)}
       >
         <SelectList isAriaMultiselectable id="resource-dropdown-listbox">
           {renderedOptions()}

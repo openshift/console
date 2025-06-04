@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render } from '@testing-library/react';
 import { incompleteBuildRun } from '../../../__tests__/mock-data-v1beta1';
 import { BuildRun } from '../../../types';

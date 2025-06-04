@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { cleanup, configure, render, screen } from '@testing-library/react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { FinishTourText } from '../GuidedTourText';

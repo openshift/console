@@ -2,6 +2,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -71,6 +72,7 @@ describe('CustomResourceDefinitions', () => {
 
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

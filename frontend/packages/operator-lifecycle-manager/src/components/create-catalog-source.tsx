@@ -9,17 +9,18 @@ import {
   HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
   ButtonBar,
   history,
   NsDropdown,
-  PageHeading,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { CatalogSourceModel } from '../models';
 
 enum AvailabilityValue {
@@ -87,16 +88,14 @@ export const CreateCatalogSource: React.FC = withHandlePromise(
     const title = t('olm~Create CatalogSource');
     return (
       <div className="co-m-pane__form">
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
+        <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
           title={title}
           helpText={t(
             'olm~Create a CatalogSource in order to make operators available in OperatorHub.',
           )}
         />
-        <div className="co-m-pane__body">
+        <PaneBody>
           <Form onSubmit={onSave}>
             <FormGroup fieldId="catalog-source-name" isRequired label={t('olm~CatalogSource name')}>
               <TextInput
@@ -183,7 +182,7 @@ export const CreateCatalogSource: React.FC = withHandlePromise(
               </ActionGroup>
             </ButtonBar>
           </Form>
-        </div>
+        </PaneBody>
       </div>
     );
   },

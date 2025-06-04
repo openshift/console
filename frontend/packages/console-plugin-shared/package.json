@@ -20,7 +20,6 @@
     "stylefiles": "cd src && find . -name '*.scss' -exec cp '{}' ../dist/lib/'{}' \\;"
   },
   "dependencies": {
-    "classnames": "2.x",
     "lodash-es": "^4.17.21",
     "sanitize-html": "^2.3.2",
     "showdown": "1.8.6"

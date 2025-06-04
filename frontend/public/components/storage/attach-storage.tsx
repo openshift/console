@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams } from 'react-router-dom-v5-compat';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
@@ -7,7 +7,8 @@ import { useExtensions } from '@console/plugin-sdk';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, ResourceLink, LoadingBox } from '../utils';
 import { connectToPlural } from '../../kinds';
@@ -59,13 +60,11 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
   return !kindObj && kindsInFlight ? (
     <LoadingBox />
   ) : (
-    <div className="co-m-pane__body">
-      <Helmet>
-        <title>{t('public~Add Storage')}</title>
-      </Helmet>
+    <PaneBody>
+      <DocumentTitle>{t('public~Add Storage')}</DocumentTitle>
+      <PageHeading title={t('public~Add Storage')} />
       <div className="co-storage-heading__wrapper">
         <Trans t={t} ns="public">
-          <PrimaryHeading>Add Storage</PrimaryHeading>
           <div className="co-m-pane__explanation co-storage-heading__subtitle">
             {' '}
             to{' '}
@@ -99,7 +98,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
       <ErrorBoundaryPage>
         <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
       </ErrorBoundaryPage>
-    </div>
+    </PaneBody>
   );
 };
 

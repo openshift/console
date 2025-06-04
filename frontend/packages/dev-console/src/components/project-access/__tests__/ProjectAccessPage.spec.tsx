@@ -1,8 +1,7 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as Router from 'react-router-dom-v5-compat';
-import { PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import NamespacedPage from '../../NamespacedPage';
 import ProjectAccess from '../ProjectAccess';
 import ProjectAccessPage from '../ProjectAccessPage';
@@ -14,7 +13,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

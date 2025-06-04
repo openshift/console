@@ -19,6 +19,7 @@ import {
   projectNameSpace,
   app,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 
 When('user selects YAML view', () => {
   cy.document().its('readyState').should('eq', 'complete');
@@ -80,6 +81,7 @@ Then('user will see A-Z, Z-A sort by dropdown', () => {
 });
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 
@@ -111,7 +113,7 @@ Then(
 );
 
 When('user clicks on quick start link in helm catalog description', () => {
-  cy.get('[data-test-id="catalog-page-description"]>a').should('be.visible').click();
+  cy.get('[data-test="help-text"]>a').should('be.visible').click();
 });
 
 Then('user will see {string} quick start', (quickStartName: string) => {

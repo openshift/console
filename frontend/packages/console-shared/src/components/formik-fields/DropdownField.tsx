@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Dropdown } from '@console/internal/components/utils';
 import { useFormikValidationFix } from '../../hooks';
@@ -23,7 +23,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
         {...props}
         id={fieldId}
         selectedKey={field.value}
-        dropDownClassName={cx({ 'dropdown--full-width': props.fullWidth })}
+        dropDownClassName={css({ 'dropdown--full-width': props.fullWidth })}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
         onChange={(value: string) => {
           props.onChange && props.onChange(value);

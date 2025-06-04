@@ -1,4 +1,5 @@
 import { checkErrors } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 import { masthead } from '../../views/masthead';
 
 const url = '/dashboards?pseudolocalization=true&lng=en';
@@ -6,6 +7,7 @@ const url = '/dashboards?pseudolocalization=true&lng=en';
 describe('Localization', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
   });
 
   afterEach(() => {

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import { Perspective } from '@console/dynamic-plugin-sdk';
@@ -16,7 +15,7 @@ jest.mock('@console/shared/src', () => ({
 
 jest.mock('react-router', () => {
   return {
-    ...require.requireActual('react-router'),
+    ...jest.requireActual('react-router'),
     useLocation: jest.fn(() => ({ pathname: '' })),
   };
 });

@@ -1,6 +1,12 @@
 import * as React from 'react';
-import { Alert, Label, Skeleton } from '@patternfly/react-core';
-import { NotificationEntry, NotificationTypes } from '@console/patternfly';
+import {
+  Alert,
+  Label,
+  NotificationDrawerListItem,
+  NotificationDrawerListItemBody,
+  NotificationDrawerListItemHeader,
+  Skeleton,
+} from '@patternfly/react-core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
@@ -9,9 +15,10 @@ import { getDuration, dateFormatter } from './datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
-import { ExternalLink, FieldLevelHelp } from './index';
+import { FieldLevelHelp } from './index';
 import { RootState } from '../../redux';
-
+import { NotificationTypes } from '../notification-drawer';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 const useServiceLevelText = (level: string): string => {
   const { t } = useTranslation();
   const levels = {
@@ -275,8 +282,7 @@ export const useShowServiceLevelNotifications = (clusterID: string): boolean => 
 
 export const ServiceLevelNotification: React.FC<{
   clusterID?: string;
-  toggleNotificationDrawer: () => void;
-}> = ({ clusterID, toggleNotificationDrawer }) => {
+}> = ({ clusterID }) => {
   const { t } = useTranslation();
   const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID);
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
@@ -298,19 +304,19 @@ export const ServiceLevelNotification: React.FC<{
         });
 
   return (
-    <NotificationEntry
-      title={t('public~This cluster is not supported.')}
-      actionExternalLinkURL={getOCMLink(clusterID)}
-      actionText={t('public~Get support')}
-      toggleNotificationDrawer={toggleNotificationDrawer}
-      description={
+    <NotificationDrawerListItem variant={NotificationTypes.warning} isHoverable={false}>
+      <NotificationDrawerListItemHeader
+        variant={NotificationTypes.warning}
+        title={t('public~This cluster is not supported.')}
+      />
+      <NotificationDrawerListItemBody>
         <>
           {`${notificationStart} ${t(
             'public~For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.',
-          )}`}
+          )}`}{' '}
+          <ExternalLink href={getOCMLink(clusterID)}>{t('public~Get support')}</ExternalLink>
         </>
-      }
-      type={NotificationTypes.warning}
-    />
+      </NotificationDrawerListItemBody>
+    </NotificationDrawerListItem>
   );
 };

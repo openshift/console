@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -46,7 +46,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
             autoFocus={props.strategyType === 'RollingUpdate'}
           >
             <div className="co-m-radio-desc">
-              <p className="text-muted modal-paragraph">
+              <p className="pf-v6-u-text-color-subtle modal-paragraph">
                 {t(
                   'public~Execute a smooth roll out of the new revision, based on the settings below',
                 )}
@@ -54,7 +54,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 
               <div className="row co-m-form-row">
                 <div className="col-sm-3">
-                  <label htmlFor="input-max-unavailable" className="control-label co-break-word">
+                  <label htmlFor="input-max-unavailable" className="co-break-word">
                     {t('public~Max unavailable')}
                   </label>
                 </div>
@@ -62,7 +62,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                   <div className="form-inline">
                     <div className="pf-v6-c-input-group">
                       <span
-                        className={classNames('pf-v6-c-form-control', {
+                        className={css('pf-v6-c-form-control', {
                           'pf-m-disabled': strategyIsNotRollingUpdate,
                         })}
                       >
@@ -86,7 +86,10 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                       )}
                     </div>
                   </div>
-                  <p className="help-block text-muted" id="input-max-unavailable-help">
+                  <p
+                    className="help-block pf-v6-u-text-color-subtle"
+                    id="input-max-unavailable-help"
+                  >
                     {t(
                       'public~Percentage of total number of pods or the maximum number ' +
                         'of pods that can be unavailable during the update(optional)',
@@ -97,7 +100,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 
               <div className="row co-m-form-row">
                 <div className="col-sm-3">
-                  <label htmlFor="input-max-surge" className="control-label co-break-word">
+                  <label htmlFor="input-max-surge" className="co-break-word">
                     {t('public~Max surge')}
                   </label>
                 </div>
@@ -105,7 +108,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                   <div className="form-inline">
                     <div className="pf-v6-c-input-group">
                       <span
-                        className={classNames('pf-v6-c-form-control', {
+                        className={css('pf-v6-c-form-control', {
                           'pf-m-disabled': strategyIsNotRollingUpdate,
                         })}
                       >
@@ -127,7 +130,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                       </span>
                     </div>
                   </div>
-                  <p className="help-block text-muted" id="input-max-surge-help">
+                  <p className="help-block pf-v6-u-text-color-subtle" id="input-max-surge-help">
                     {t(
                       'public~Percentage of total number of pods or the maximum number ' +
                         'of pods that can be scheduled above the original number of pods(optional)',

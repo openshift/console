@@ -1,12 +1,10 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { TaskModel, ClusterTaskModel } from '../../../../models';
-import PipelineResourceRef from '../../../shared/common/PipelineResourceRef';
 import DynamicResourceLinkList from '../DynamicResourceLinkList';
 
-type ResourceLinkListProps = React.ComponentProps<typeof DynamicResourceLinkList>;
 describe('DynamicResourceLinkList component', () => {
-  const props: ResourceLinkListProps = {
+  const props = {
     namespace: 'test-ns',
     title: 'Tasks',
     links: [
@@ -15,21 +13,19 @@ describe('DynamicResourceLinkList component', () => {
     ],
   };
 
-  let wrapper: ShallowWrapper<ResourceLinkListProps>;
-  beforeEach(() => {
-    wrapper = shallow(<DynamicResourceLinkList {...props} />);
-  });
-
   it('should not render the children if links are empty', () => {
-    wrapper.setProps({ links: [] });
-    expect(wrapper.isEmptyRender()).toBe(true);
+    render(<DynamicResourceLinkList {...props} links={[]} />);
+    expect(screen.queryByText(props.title)).not.toBeInTheDocument();
   });
 
   it('should render resourceLinks if the links are passed', () => {
-    expect(wrapper.find(PipelineResourceRef)).toHaveLength(2);
+    render(<DynamicResourceLinkList {...props} />);
+    expect(screen.getAllByText('namespaced-task')).toHaveLength(1);
+    expect(screen.getAllByText('cluster-task')).toHaveLength(1);
   });
 
   it('should render proper title based on the model', () => {
-    expect(wrapper.find('dt').text()).toBe(props.title);
+    render(<DynamicResourceLinkList {...props} />);
+    expect(screen.getAllByText(props.title)).toHaveLength(1);
   });
 });

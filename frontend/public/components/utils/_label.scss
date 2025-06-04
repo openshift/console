@@ -13,6 +13,13 @@
   max-width: 100%;
 }
 
+// mimics .pf-v6-c-label-group.pf-m-category with different padding
+.co-editable-label-group {
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--small);
+  padding: var(--pf-t--global--spacer--xs);
+}
+
 .co-label__key,
 .co-label__value {
   overflow: hidden;

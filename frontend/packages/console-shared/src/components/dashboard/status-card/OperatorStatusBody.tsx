@@ -36,7 +36,7 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
       firstColumn={
         <>
           <span>{title}</span>
-          <span className="text-secondary co-status__operator-detail">
+          <span className="pf-v6-u-text-color-subtle co-status__operator-detail">
             {' '}
             {t('console-shared~({{operatorStatusLength}} installed)', {
               operatorStatusLength: operatorStatuses.length,
@@ -47,7 +47,7 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
       secondColumn={t('console-shared~Status')}
     >
       {error ? (
-        <div className="text-secondary">{t('console-shared~Not available')}</div>
+        <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
       ) : (
         !operatorsHealthy &&
         sortedOperatorStatuses.map((operatorStatus) => (

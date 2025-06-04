@@ -213,27 +213,12 @@ export const catalogPage = {
   },
   verifyCategories: () => {
     const categories = ['All items', 'CI/CD', 'Databases', 'Languages', 'Middleware', 'Other'];
-    cy.get(
-      'ul.vertical-tabs-pf.restrict-tabs li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty >a',
-    ).each(($el) => {
+    cy.get('ul.vertical-tabs-pf.restrict-tabs li.vertical-tabs-pf-tab.shown >a').each(($el) => {
       expect(categories).toContain($el.text());
     });
   },
-  verifyTypes: () => {
-    const categories = [
-      'Builder Images',
-      'Devfiles',
-      'Event Sources',
-      'Helm Charts',
-      'Operator Backed',
-      'Templates',
-    ];
-    cy.get('ul.vertical-tabs-pf.restrict-tabs')
-      .eq(6)
-      .find('li a')
-      .each(($el) => {
-        expect(categories).toContain($el.text());
-      });
+  verifyTypes: (category: string) => {
+    cy.get(`[data-test="tab ${category}"]`);
   },
   verifyCardTypeOfAllCards: (cardType: string) => {
     cy.get(catalogPO.card).each(($card) => {

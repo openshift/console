@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PipelineModel, PipelineRunModel } from '../../../models';
 import { ComputedStatus, PipelineWithLatest, TaskRunKind } from '../../../types';
 import { TaskStatus } from '../../../utils/pipeline-augment';

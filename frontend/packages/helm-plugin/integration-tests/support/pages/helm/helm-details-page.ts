@@ -20,10 +20,7 @@ export const helmDetailsPage = {
       });
   },
   verifyFieldValue: (fieldName: string, fieldValue: string) => {
-    cy.get('dl.co-m-pane__details dt')
-      .contains(fieldName)
-      .next('dd')
-      .should('contain.text', fieldValue);
+    cy.get('dl dt').contains(fieldName).next('dd').should('contain.text', fieldValue);
   },
   uninstallHelmRelease: () => {
     cy.get('form.modal-content').within(() => {

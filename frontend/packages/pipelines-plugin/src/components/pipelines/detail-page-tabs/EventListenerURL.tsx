@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
+import {
+  ClipboardCopy,
+  ClipboardCopyVariant,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { EventListenerKind } from '../resource-types';
 import { useEventListenerURL } from '../utils/triggers';
@@ -16,14 +23,14 @@ const EventListenerURL: React.FC<EventListenerURLProps> = ({ eventListener, name
   const routeURL = useEventListenerURL(eventListener, namespace);
   return (
     routeURL && (
-      <div className="odc-event-listener-url">
-        <dl>
-          <dt>{t('pipelines-plugin~URL')}</dt>
-          <dd>
+      <DescriptionList className="odc-event-listener-url">
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('pipelines-plugin~URL')}</DescriptionListTerm>
+          <DescriptionListDescription>
             <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>{routeURL}</ClipboardCopy>
-          </dd>
-        </dl>
-      </div>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
     )
   );
 };

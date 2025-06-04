@@ -25,7 +25,7 @@ Then('user can see the "View all quick starts" on the card', () => {
 
 When('user selects QuickStarts from the help menu icon on the masthead', () => {
   cy.get(helpDropdownMenu).should('be.visible').click();
-  cy.get('button[role="menuitem"]').contains('Quick Starts').click();
+  cy.get('[data-test="masthead-quick-starts"]').contains('Quick Starts').click();
 });
 
 Then(

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { SecondaryStatus } from '../../status';
@@ -35,7 +35,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
 
     return (
       <div
-        className={classNames('co-status-card__health-item', className)}
+        className={css('co-status-card__health-item', className)}
         data-item-id={`${title}-health-item`}
       >
         {state === HealthState.LOADING ? (

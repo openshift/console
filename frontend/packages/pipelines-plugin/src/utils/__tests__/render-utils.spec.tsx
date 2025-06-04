@@ -1,6 +1,5 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { handleURLs, GROUP_MATCH_REGEXP } from '../render-utils';
 
 describe('handleURLs', () => {

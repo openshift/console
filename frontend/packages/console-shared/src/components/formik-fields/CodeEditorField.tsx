@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Switch } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -82,7 +82,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   return (
     <div className="osc-yaml-editor co-p-has-sidebar" data-test="yaml-editor">
       <div
-        className={classNames('co-p-has-sidebar__body', {
+        className={css('co-p-has-sidebar__body', {
           'co-p-has-sidebar__body--sidebar-open': sidebarOpen && hasSidebarContent,
         })}
       >

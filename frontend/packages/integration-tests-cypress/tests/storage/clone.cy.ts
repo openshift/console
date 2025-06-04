@@ -2,6 +2,7 @@ import { PVC, PVCGP3, testerDeployment } from '../../mocks/snapshot';
 import { testName, checkErrors } from '../../support';
 import { resourceStatusShouldContain } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -23,6 +24,7 @@ if (Cypress.env('BRIDGE_AWS')) {
   describe('Clone Tests', () => {
     before(() => {
       cy.login();
+      guidedTour.close();
       cy.createProjectWithCLI(testName);
       cy.exec(`echo '${JSON.stringify(PVC)}' | oc apply -n ${testName} -f -`);
       cy.exec(`echo '${JSON.stringify(PVCGP3)}' | oc apply -n ${testName} -f -`);

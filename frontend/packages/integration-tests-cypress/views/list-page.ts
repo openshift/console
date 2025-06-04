@@ -2,7 +2,7 @@ import * as yamlEditor from './yaml-editor';
 
 export const listPage = {
   titleShouldHaveText: (title: string) =>
-    cy.byLegacyTestID('resource-title').contains(title).should('exist'),
+    cy.get('[data-test="page-heading"] h1').contains(title).should('exist'),
   clickCreateYAMLdropdownButton: () => {
     cy.byTestID('item-create')
       .click()

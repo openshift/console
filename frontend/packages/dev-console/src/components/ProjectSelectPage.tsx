@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -13,6 +12,7 @@ import {
   kindForReference,
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
@@ -39,7 +39,7 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
       : `"${plural}"`;
     return (
       <ErrorPage404
-        message={t(
+        bodyText={t(
           "devconsole~The server doesn't have a resource type {{missingType}}. Try refreshing the page if it was recently added.",
           { missingType },
         )}
@@ -49,9 +49,7 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
   const { labelPlural: projectLabelPlural } = kindObj;
   return (
     <>
-      <Helmet>
-        <title>{projectLabelPlural}</title>
-      </Helmet>
+      <DocumentTitle>{projectLabelPlural}</DocumentTitle>
       <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
         {(openProjectModal) => (
           <Trans t={t} ns="devconsole" values={{ projectLabelPlural }}>

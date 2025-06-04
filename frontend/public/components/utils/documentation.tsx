@@ -61,11 +61,6 @@ export const documentationURLs: documentationURLsType = {
       'html/updating_clusters/performing-a-cluster-update#updating-a-cluster-in-a-disconnected-environment',
     upstream: '', // intentionally blank as there is no upstream equivalent
   },
-  updateUsingCustomMachineConfigPools: {
-    downstream:
-      'html/updating_clusters/performing-a-cluster-update#update-using-custom-machine-config-pools',
-    upstream: 'updating/updating_a_cluster/update-using-custom-machine-config-pools.html',
-  },
   usingInsights: {
     downstream:
       'html/support/remote-health-monitoring-with-connected-clusters#using-insights-to-identify-issues-with-your-cluster',

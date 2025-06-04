@@ -130,7 +130,7 @@ export const getChartIndexEntry = (
   chartName: string,
   chartRepoName: string,
 ) => {
-  const repoName = chartRepoName.toLowerCase().split(' ').join('-');
+  const repoName = chartRepoName?.toLowerCase().split(' ').join('-');
   const indexEntry = Object.keys(chartEntries).find((val) =>
     val.includes(`${chartName}--${repoName}`),
   );
@@ -311,7 +311,16 @@ export const loadHelmManifestResources = (release: HelmRelease): K8sResourceKind
     return [];
   }
   const manifests = loadAll(release.manifest, null, { schema: DEFAULT_SAFE_SCHEMA, json: true });
-  return manifests.filter(Boolean);
+
+  // Flatten out any "kind: List" items into top-level objects
+  const flattened = manifests.flatMap((resource) => {
+    if (resource?.kind === 'List' && Array.isArray(resource.items)) {
+      return resource.items;
+    }
+    return [resource];
+  });
+
+  return flattened.filter(Boolean);
 };
 
 export const getChartReadme = (chart: HelmChart): string => {

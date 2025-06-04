@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { EventListenerModel } from '../../../models';
 import { getResourceModelFromBindingKind } from '../../../utils/pipeline-augment';
 import ResourceLinkList from '../resource-overview/ResourceLinkList';
@@ -15,25 +17,25 @@ const TriggerBindingDetails: React.FC<TriggerBindingDetailsProps> = ({ obj: trig
   const { t } = useTranslation();
   const eventListeners: string[] = useTriggerBindingEventListenerNames(triggerBinding);
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading
         text={t('pipelines-plugin~{{triggerBindingLabel}} details', {
           triggerBindingLabel: t(getResourceModelFromBindingKind(triggerBinding.kind).labelKey),
         })}
       />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={triggerBinding} />
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <ResourceLinkList
             namespace={triggerBinding.metadata.namespace}
             model={EventListenerModel}
             links={eventListeners}
           />
-        </div>
-      </div>
-    </div>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 

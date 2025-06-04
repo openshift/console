@@ -1,28 +1,3 @@
-.co-favorite-delete-button {
-  background-color: transparent !important;
-  margin-left: auto;
-  margin-right: var(--pf-t--global--spacer--lg);
-}
-
-.co-favorite-resource.pf-v6-c-nav__item {
-  .pf-v6-c-nav__link {
-    padding-bottom: 0;
-    padding-right: 0;
-    padding-top: 0;
-    white-space: nowrap;
-
-    &:hover {
-      --pf-v6-c-nav__section-title--PaddingRight: 30px;
-
-      .co-favorite-delete-button {
-        .pf-v6-c-button__text {
-          opacity: 1;
-        }
-      }
-    }
-  }
-}
-
 .co-no-favorites-message {
   color: var(--pf-v6-c-nav__link--Color);
   padding-left: var(--pf-v6-c-nav__link--PaddingInlineStart);

@@ -9,42 +9,29 @@ import {
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
-  AddHorizontalPodAutoScaler,
-  DeleteHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  hideActionForHPAs,
-} from '@console/app/src/actions/modify-hpa';
-import {
-  k8sCreate,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
   referenceForModel,
   referenceFor,
 } from '../module/k8s';
-import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   AsyncComponent,
   ContainerTable,
   DetailsItem,
-  Kebab,
-  KebabAction,
   ResourceSummary,
   SectionHeading,
   WorkloadPausedAlert,
-  getExtensionsKebabActionsForKind,
   navFactory,
-  togglePaused,
   RuntimeClass,
-  ExternalLink,
   getDocumentationURL,
   documentationURLs,
   isManaged,
@@ -52,74 +39,17 @@ import {
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { Alert } from '@patternfly/react-core';
+import {
+  Alert,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
-
-const rollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
-  const req = {
-    kind: 'DeploymentRequest',
-    apiVersion: 'apps.openshift.io/v1',
-    name: dc.metadata.name,
-    latest: true,
-    force: true,
-  };
-  const opts = {
-    name: dc.metadata.name,
-    ns: dc.metadata.namespace,
-    path: 'instantiate',
-  };
-  return k8sCreate(DeploymentConfigModel, req, opts);
-};
-
-const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
-  // t('public~Start rollout')
-  labelKey: 'public~Start rollout',
-  callback: () =>
-    rollout(obj).catch((err) => {
-      const error = err.message;
-      errorModal({ error });
-    }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    subresource: 'instantiate',
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'create',
-  },
-});
-
-const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
-  // t('public~Resume rollouts')
-  // t('public~Pause rollouts')
-  labelKey: obj.spec.paused ? 'public~Resume rollouts' : 'public~Pause rollouts',
-  callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'patch',
-  },
-});
-
-const { ModifyCount, AddStorage, common } = Kebab.factory;
-
-export const menuActions: KebabAction[] = [
-  RolloutAction,
-  PauseAction,
-  hideActionForHPAs(ModifyCount),
-  AddHealthChecks,
-  AddHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  AddStorage,
-  DeleteHorizontalPodAutoScaler,
-  EditResourceLimits,
-  ...getExtensionsKebabActionsForKind(DeploymentConfigModel),
-  EditHealthChecks,
-  ...common,
-];
 
 const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
   const conditions = _.get(dc, 'status.conditions');
@@ -149,7 +79,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   const interval = _.get(dc, 'spec.strategy.rollingParams.intervalSeconds');
   const triggers = _.map(dc.spec.triggers, 'type').join(', ');
   return (
-    <dl className="co-m-pane__details">
+    <DescriptionList>
       <DetailsItem label={t('public~Latest version')} obj={dc} path="status.latestVersion" />
       <DetailsItem label={t('public~Message')} obj={dc} path="status.details.message" hideEmpty />
       <DetailsItem label={t('public~Update strategy')} obj={dc} path="spec.strategy.type" />
@@ -211,7 +141,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
       </DetailsItem>
       <RuntimeClass obj={dc} />
       <PodDisruptionBudgetField obj={dc} />
-    </dl>
+    </DescriptionList>
   );
 };
 
@@ -248,37 +178,37 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~DeploymentConfig details')} />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
         <PodRingSet key={dc.metadata.uid} obj={dc} path="/spec/replicas" />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
-                <dt>{t('public~Status')}</dt>
-                <dd>
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <Status status={getDeploymentConfigStatus(dc)} />
-                </dd>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <DeploymentConfigDetailsList dc={dc} />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </ResourceSummary>
+          </GridItem>
+          <GridItem sm={6}>
+            <DeploymentConfigDetailsList dc={dc} />
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={dc.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={dc} heading={t('public~Volumes')} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={dc.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -358,10 +288,8 @@ export const DeploymentConfigsDetailsPage: React.FC = (props) => {
       kind={DeploymentConfigsReference}
       customActionMenu={customActionMenu}
       pages={pages}
-    >
-      <DeploymentConfigDeprecationAlert />
-      <br />
-    </DetailsPage>
+      helpAlert={<DeploymentConfigDeprecationAlert />}
+    />
   );
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
@@ -407,7 +335,7 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (prop
       ListComponent={DeploymentConfigsList}
       createProps={createProps}
       canCreate={true}
-      helpText={<DeploymentConfigDeprecationAlert />}
+      helpAlert={<DeploymentConfigDeprecationAlert />}
       {...props}
     />
   );

@@ -8,13 +8,14 @@ import {
   PageSection,
   Title,
 } from '@patternfly/react-core';
-import { NamespaceBar } from '@openshift-console/dynamic-plugin-sdk';
+import { DocumentTitle, NamespaceBar } from '@openshift-console/dynamic-plugin-sdk';
 
 const NamespacePageContent = ({ namespace }: { namespace?: string }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
 
   return (
     <>
+      <DocumentTitle>{t('Example Namespaced Page')}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1">{t('Example page with a namespace bar')}</Title>
       </PageSection>

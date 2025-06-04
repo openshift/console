@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useUserSettings } from '@console/shared';
 import {
@@ -10,12 +9,12 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { GettingStartedSection } from '../GettingStartedSection';
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...require.requireActual('@console/shared/src/hooks/flag'),
+  ...jest.requireActual('@console/shared/src/hooks/flag'),
   useFlag: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/getting-started', () => ({
-  ...require.requireActual('@console/shared/src/components/getting-started'),
+  ...jest.requireActual('@console/shared/src/components/getting-started'),
   useGettingStartedShowState: jest.fn(),
 }));
 

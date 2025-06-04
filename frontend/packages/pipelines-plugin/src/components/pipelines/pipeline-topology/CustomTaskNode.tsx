@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
+import { css } from '@patternfly/react-styles';
 import { t_color_gray_50 as customTaskColor } from '@patternfly/react-tokens';
 import { observer, Node, NodeModel, useHover, createSvgIdUrl } from '@patternfly/react-topology';
-import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -79,7 +79,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
       ref={nameRef}
       x={showStatusState ? 30 : width / 2}
       y={height / 2 + 1}
-      className={cx('odc-pipeline-vis-task-text', {
+      className={css('odc-pipeline-vis-task-text', {
         'is-text-center': !pipelineRunName,
         'is-linked': enableLogLink,
       })}
@@ -96,7 +96,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
         width={width}
         height={height}
         rx={5}
-        className={cx('odc-pipeline-vis-task', {
+        className={css('odc-pipeline-vis-task', {
           'is-selected': !!pipelineRunName && hover,
           'is-linked': !!pipelineRunName && enableLogLink,
         })}
@@ -142,7 +142,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
     );
   }
   return (
-    <g className={cx('odc-pipeline-topology__task-node', { 'is-link': enableLogLink })}>
+    <g className={css('odc-pipeline-topology__task-node', { 'is-link': enableLogLink })}>
       {enableLogLink ? <Link to={path}>{taskPill}</Link> : taskPill}
     </g>
   );

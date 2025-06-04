@@ -9,6 +9,7 @@ import {
   LazyActionMenu,
   usePrometheusGate,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DeploymentKind, K8sResourceKind, referenceForModel, referenceFor } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
@@ -29,6 +30,7 @@ import {
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { DescriptionList } from '@patternfly/react-core';
 
 const { AddStorage, common, ModifyCount } = Kebab.factory;
 export const menuActions: KebabAction[] = [
@@ -58,7 +60,7 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~StatefulSet details')} />
         <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
         <div className="row">
@@ -67,18 +69,18 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
               <RuntimeClass obj={ss} />
             </ResourceSummary>
           </div>
-          <dl className="co-m-pane__details">
+          <DescriptionList>
             <PodDisruptionBudgetField obj={ss} />
-          </dl>
+          </DescriptionList>
         </div>
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={ss.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={ss} heading={t('public~Volumes')} />
-      </div>
+      </PaneBody>
     </>
   );
 };

@@ -23,7 +23,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
       <div className="col-xs-4">
         <label
           style={{ fontWeight: 300 }}
-          className="text-muted text-uppercase"
+          className="pf-v6-u-text-color-subtle"
           htmlFor={`${path}.cpu`}
         >
           {t('olm~CPU cores')}
@@ -42,7 +42,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
       <div className="col-xs-4">
         <label
           style={{ fontWeight: 300 }}
-          className="text-muted text-uppercase"
+          className="pf-v6-u-text-color-subtle"
           htmlFor={`${path}.memory`}
         >
           {t('olm~Memory')}
@@ -61,7 +61,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
       <div className="col-xs-4">
         <label
           style={{ fontWeight: 300 }}
-          className="text-muted text-uppercase"
+          className="pf-v6-u-text-color-subtle"
           htmlFor={`${path}.ephemeral-storage`}
         >
           {t('olm~Storage')}

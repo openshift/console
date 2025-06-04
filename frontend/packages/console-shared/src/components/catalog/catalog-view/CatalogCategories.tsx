@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
-import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
 import { isModifiedEvent } from '@console/shared/src/utils';
@@ -30,16 +29,13 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
   ) => {
     if (!categorizedIds[category.id]) return null;
 
-    const { id, label, subcategories, numItems } = category;
+    const { id, label, subcategories } = category;
     const active = id === selectedCategory;
-
-    const tabClasses = cx('text-capitalize', { 'co-catalog-tab__empty': !numItems });
 
     return (
       <VerticalTabsTab
         key={id}
         active={active}
-        className={tabClasses}
         hasActiveDescendant={hasActiveDescendant(selectedCategory, category)}
         shown={toplevelCategory}
         data-test={`tab ${id}`}

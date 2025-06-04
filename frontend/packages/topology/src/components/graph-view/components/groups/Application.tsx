@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   DefaultGroup,
   Node,
@@ -10,7 +11,6 @@ import {
   useCombineRefs,
   useHover,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { useSearchFilter } from '../../../../filters';
 import { useShowLabel } from '../../../../filters/useShowLabel';
 import { ApplicationModel } from '../../../../models';
@@ -56,11 +56,11 @@ const Application: React.FC<ApplicationProps> = ({
   }, [dropTarget, canDrop, element, dragRegroupable]);
   const showLabel = useShowLabel(hover);
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(ApplicationModel.kind);
-  const badgeClassName = classNames('odc-resource-icon', {
+  const badgeClassName = css('odc-resource-icon', {
     [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
   });
 
-  const groupClasses = classNames('odc-application-group', {
+  const groupClasses = css('odc-application-group', {
     'is-filtered': filtered,
   });
 

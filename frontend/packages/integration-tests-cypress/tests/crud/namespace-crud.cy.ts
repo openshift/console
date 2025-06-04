@@ -1,6 +1,7 @@
 import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -8,6 +9,7 @@ import { nav } from '../../views/nav';
 describe('Namespace', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

@@ -9,6 +9,10 @@ import { useUserSettings } from '@console/shared/src';
 import BuildConfigFormPage from '../BuildConfigFormPage';
 import { BuildConfig } from '../types';
 
+jest.mock('react-helmet-async', () => ({
+  Helmet: () => null,
+}));
+
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
@@ -23,7 +27,7 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
 }));
 
 jest.mock('../sections/EditorField', () =>
-  require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
+  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
@@ -38,7 +42,7 @@ jest.mock(
 );
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 

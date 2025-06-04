@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, FormFieldGroupExpandable } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { ButtonBar } from '@console/internal/components/utils';
@@ -20,7 +19,7 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(() => ({ ns: 'default' })),
   useLocation: jest.fn(() => ({
     pathname: '/k8s/ns/default/networking.k8s.io~v1~NetworkPolicy/~new/form',

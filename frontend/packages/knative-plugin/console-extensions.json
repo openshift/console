@@ -172,7 +172,7 @@
         "version": "v1",
         "kind": "Revision"
       },
-      "component": { "$codeRef": "revisionsComponent.RevisionsPage" }
+      "component": { "$codeRef": "RevisionsPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
@@ -186,7 +186,7 @@
         "version": "v1",
         "kind": "Service"
       },
-      "component": { "$codeRef": "servicesComponent.ServicesPage" }
+      "component": { "$codeRef": "ServicesPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
@@ -200,7 +200,7 @@
         "version": "v1",
         "kind": "Route"
       },
-      "component": { "$codeRef": "routesComponent.RoutesPage" }
+      "component": { "$codeRef": "RoutesPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_ROUTE"]
@@ -214,7 +214,7 @@
         "version": "v1",
         "kind": "Revision"
       },
-      "component": { "$codeRef": "revisionsComponent.RevisionDetailsPage" }
+      "component": { "$codeRef": "RevisionDetailsPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
@@ -228,7 +228,7 @@
         "version": "v1",
         "kind": "Route"
       },
-      "component": { "$codeRef": "routesComponent.RouteDetailsPage" }
+      "component": { "$codeRef": "RouteDetailsPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_ROUTE"]
@@ -242,7 +242,7 @@
         "version": "v1",
         "kind": "Service"
       },
-      "component": { "$codeRef": "servicesComponent.ServiceDetailsPage" }
+      "component": { "$codeRef": "ServiceDetailsPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
@@ -256,7 +256,7 @@
         "version": "v1alpha1",
         "kind": "KnativeServing"
       },
-      "component": { "$codeRef": "overviewComponent.KnativeServingDetailsPage" }
+      "component": { "$codeRef": "KnativeServingDetailsPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING"]
@@ -270,7 +270,7 @@
         "version": "v1",
         "kind": "Trigger"
       },
-      "component": { "$codeRef": "eventingComponent.TriggerListPage" }
+      "component": { "$codeRef": "TriggerListPage" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_TRIGGER"]
@@ -284,7 +284,7 @@
         "version": "v1",
         "kind": "Trigger"
       },
-      "component": { "$codeRef": "pubSubComponent.TriggerDetailsPage" }
+      "component": { "$codeRef": "TriggerDetailsPage" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_TRIGGER"]
@@ -298,7 +298,7 @@
         "version": "v1",
         "kind": "Subscription"
       },
-      "component": { "$codeRef": "eventingComponent.SubscriptionListPage" }
+      "component": { "$codeRef": "SubscriptionListPage" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"]
@@ -312,7 +312,7 @@
         "version": "v1",
         "kind": "Subscription"
       },
-      "component": { "$codeRef": "pubSubComponent.SubscriptionDetailsPage" }
+      "component": { "$codeRef": "SubscriptionDetailsPage" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_SUBSCRIPTION"]
@@ -324,7 +324,7 @@
       "exact": true,
       "path": ["/event-source"],
       "component": {
-        "$codeRef": "knativeComponent.NamespaceRedirect"
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
       }
     },
     "flags": {
@@ -337,7 +337,7 @@
       "exact": true,
       "path": ["/catalog/all-namespaces/eventsource", "/catalog/ns/:ns/eventsource"],
       "component": {
-        "$codeRef": "addComponent.EventSourcePage"
+        "$codeRef": "EventSourcePage"
       }
     },
     "flags": {
@@ -350,7 +350,7 @@
       "exact": true,
       "path": ["/catalog/ns/:ns/eventsink"],
       "component": {
-        "$codeRef": "addComponent.EventSinkPage"
+        "$codeRef": "EventSinkPage"
       }
     },
     "flags": {
@@ -363,7 +363,7 @@
       "exact": true,
       "path": ["/channel"],
       "component": {
-        "$codeRef": "knativeComponent.NamespaceRedirect"
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
       }
     },
     "flags": {
@@ -376,7 +376,7 @@
       "exact": true,
       "path": ["/channel/all-namespaces", "/channel/ns/:ns"],
       "component": {
-        "$codeRef": "addComponent.EventingChannelPage"
+        "$codeRef": "EventingChannelPage"
       }
     },
     "flags": {
@@ -389,7 +389,7 @@
       "exact": true,
       "path": ["/broker/all-namespaces", "/broker/ns/:ns"],
       "component": {
-        "$codeRef": "addComponent.EventingBrokerPage"
+        "$codeRef": "EventingBrokerPage"
       }
     },
     "flags": {
@@ -402,7 +402,7 @@
       "exact": true,
       "path": ["/serving"],
       "component": {
-        "$codeRef": "knativeComponent.NamespaceRedirect"
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
       }
     },
     "flags": {
@@ -415,7 +415,7 @@
       "exact": true,
       "path": ["/functions/all-namespaces", "/functions/ns/:ns"],
       "component": {
-        "$codeRef": "overviewComponent.FunctionsPage"
+        "$codeRef": "FunctionsPage"
       }
     },
     "flags": {
@@ -428,7 +428,7 @@
       "exact": true,
       "path": ["/functions"],
       "component": {
-        "$codeRef": "knativeComponent.NamespaceRedirect"
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
       }
     },
     "flags": {
@@ -464,7 +464,7 @@
         "version": "v1",
         "kind": "Service"
       },
-      "component": { "$codeRef": "overviewComponent.FunctionDetailsPage" }
+      "component": { "$codeRef": "FunctionDetailsPage" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_SERVING_SERVICE"]
@@ -494,7 +494,7 @@
       "catalogId": "dev-catalog",
       "type": "EventType",
       "title": "%knative-plugin~Event Types%",
-      "provider": { "$codeRef": "catalog.eventTypeProvider" }
+      "provider": { "$codeRef": "useEventTypeProvider" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -506,7 +506,7 @@
       "exact": false,
       "path": ["/serving/all-namespaces", "/serving/ns/:ns"],
       "component": {
-        "$codeRef": "overviewComponent.ServingListPage"
+        "$codeRef": "ServingListPage"
       }
     },
     "flags": {
@@ -519,7 +519,7 @@
       "exact": true,
       "path": ["/eventing"],
       "component": {
-        "$codeRef": "knativeComponent.NamespaceRedirect"
+        "$codeRef": "namespaceRedirect.NamespaceRedirect"
       }
     },
     "flags": {
@@ -532,7 +532,7 @@
       "exact": false,
       "path": ["/eventing/all-namespaces", "/eventing/ns/:ns"],
       "component": {
-        "$codeRef": "eventingComponent.EventingListPage"
+        "$codeRef": "EventingListPage"
       }
     },
     "flags": {
@@ -545,7 +545,7 @@
       "exact": true,
       "path": ["/knatify/ns/:ns"],
       "component": {
-        "$codeRef": "knatifyComponent.CreateKnatifyPage"
+        "$codeRef": "CreateKnatifyPage"
       }
     },
     "flags": {
@@ -555,13 +555,13 @@
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "catalog.useKnativeEventingProvider" }
+      "handler": { "$codeRef": "useEventSourceProvider.useKnativeEventingProvider" }
     }
   },
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "catalog.knativeEventingTypeProvider" }
+      "handler": { "$codeRef": "useEventSourceProvider.knativeEventingTypeProvider" }
     }
   },
   {
@@ -725,7 +725,7 @@
       "catalogId": "dev-catalog",
       "type": "EventSource",
       "title": "%knative-plugin~Event Sources%",
-      "provider": { "$codeRef": "catalog.useEventSourceProvider" }
+      "provider": { "$codeRef": "useEventSourceProvider.useEventSourceProvider" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -737,7 +737,7 @@
       "catalogId": "dev-catalog",
       "type": "EventSource",
       "title": "%knative-plugin~Event Sources%",
-      "provider": { "$codeRef": "catalog.kameletsProvider" }
+      "provider": { "$codeRef": "useKameletsProvider" }
     },
     "flags": {
       "required": ["FLAG_CAMEL_KAMELETS"]
@@ -767,7 +767,7 @@
       "catalogId": "dev-catalog",
       "type": "EventSink",
       "title": "%knative-plugin~Event Sinks%",
-      "provider": { "$codeRef": "catalog.kameletsSinkProvider" }
+      "provider": { "$codeRef": "useKameletsSinkProvider" }
     },
     "flags": {
       "required": ["FLAG_CAMEL_KAMELETS"]
@@ -779,7 +779,7 @@
       "catalogId": "dev-catalog",
       "type": "EventSink",
       "title": "%knative-plugin~Event Sinks%",
-      "provider": { "$codeRef": "catalog.kafkaSinkProvider" }
+      "provider": { "$codeRef": "useKafkaSinkProvider" }
     },
     "flags": {
       "required": ["FLAG_KAFKA_SINK"]
@@ -972,7 +972,7 @@
       "id": "knative-plugin-tab-section-resource-pubsub",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useResourceTabPubSubSectionForTopologySidebar"
+        "$codeRef": "knativePubsubTabSections.useResourceTabPubSubSectionForTopologySidebar"
       }
     },
     "flags": {
@@ -980,26 +980,10 @@
     }
   },
   {
-    "type": "console.topology/relationship/provider",
-    "properties": {
-      "provides": {
-        "$codeRef": "topology.providerProvidesServiceBinding"
-      },
-      "tooltip": "%knative-plugin~Create Service Binding%",
-      "create": {
-        "$codeRef": "topology.providerCreateServiceBinding"
-      },
-      "priority": 200
-    },
-    "flags": {
-      "required": ["ALLOW_SERVICE_BINDING"]
-    }
-  },
-  {
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
-        "$codeRef": "topology.getKnativeServingComponentFactory"
+        "$codeRef": "knativeComponentFactory.getKnativeServingComponentFactory"
       }
     },
     "flags": {
@@ -1010,7 +994,7 @@
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
-        "$codeRef": "topology.getKnativeEventingComponentFactory"
+        "$codeRef": "knativeComponentFactory.getKnativeEventingComponentFactory"
       }
     },
     "flags": {
@@ -1020,8 +1004,8 @@
   {
     "type": "console.topology/display/filters",
     "properties": {
-      "getTopologyFilters": { "$codeRef": "topology.getTopologyFilters" },
-      "applyDisplayOptions": { "$codeRef": "topology.applyKnativeDisplayOptions" }
+      "getTopologyFilters": { "$codeRef": "knativeFilters.getTopologyFilters" },
+      "applyDisplayOptions": { "$codeRef": "knativeFilters.applyKnativeDisplayOptions" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING", "KNATIVE_EVENTING"]
@@ -1030,7 +1014,7 @@
   {
     "type": "console.topology/create/connector",
     "properties": {
-      "getCreateConnector": { "$codeRef": "topology.getCreateConnector" }
+      "getCreateConnector": { "$codeRef": "createConnectorUtils.getCreateConnector" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -1043,7 +1027,7 @@
       "id": "knative-service-route-decorator",
       "priority": 100,
       "quadrant": "upperRight",
-      "decorator": { "$codeRef": "topology.getServiceRouteDecorator" }
+      "decorator": { "$codeRef": "getServiceRouteDecorator.getServiceRouteDecorator" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING_SERVICE"]
@@ -1055,7 +1039,7 @@
       "id": "revision-url-decorator",
       "priority": 100,
       "quadrant": "upperRight",
-      "decorator": { "$codeRef": "topology.getRevisionRouteDecorator" }
+      "decorator": { "$codeRef": "getRevisionRouteDecorator.getRevisionRouteDecorator" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING_SERVICE", "KNATIVE_SERVING_REVISION"]
@@ -1073,7 +1057,7 @@
         "name": "%knative-plugin~Subscriptions%",
         "href": "subscriptions"
       },
-      "component": { "$codeRef": "eventingComponent.ChannelSubscriptionTab" }
+      "component": { "$codeRef": "ChannelSubscriptionTab" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -1091,7 +1075,7 @@
         "name": "%knative-plugin~Triggers%",
         "href": "triggers"
       },
-      "component": { "$codeRef": "eventingComponent.BrokerTriggerTab" }
+      "component": { "$codeRef": "BrokerTriggerTab" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -1109,7 +1093,7 @@
         "name": "%knative-plugin~Subscriptions%",
         "href": "subscriptions"
       },
-      "component": { "$codeRef": "eventingComponent.ChannelSubscriptionTab" }
+      "component": { "$codeRef": "ChannelSubscriptionTab" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -1127,7 +1111,7 @@
         "name": "%knative-plugin~Subscriptions%",
         "href": "subscriptions"
       },
-      "component": { "$codeRef": "eventingComponent.ChannelSubscriptionTab" }
+      "component": { "$codeRef": "ChannelSubscriptionTab" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -1169,7 +1153,7 @@
       "id": "topology-tab-section-ksvc-details",
       "tab": "topology-side-bar-tab-details",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelDetailsTab"
+        "$codeRef": "knativeCommonTabSections.useKnativeSidepanelDetailsTab"
       }
     },
     "flags": {
@@ -1180,7 +1164,7 @@
     "type": "console.topology/adapter/pod",
     "properties": {
       "adapt": {
-        "$codeRef": "knativeTopologySidebar.getKnativeSidepanelPodsAdapterSection"
+        "$codeRef": "knativeCommonTabSections.getKnativeSidepanelPodsAdapterSection"
       }
     },
     "flags": {
@@ -1194,7 +1178,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertAfter": "topology-tab-section-pods-overview",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelRevisionSection"
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelRevisionSection"
       }
     },
     "flags": {
@@ -1209,7 +1193,7 @@
       "insertAfter": "topology-tab-section-revision-deployment",
       "insertBefore": "topology-tab-section-builds-overview",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelRoutesSection"
+        "$codeRef": "knativeCommonTabSections.useKnativeSidepanelRoutesSection"
       }
     },
     "flags": {
@@ -1220,7 +1204,7 @@
     "type": "console.topology/adapter/build",
     "properties": {
       "adapt": {
-        "$codeRef": "knativeTopologySidebar.getKnativeSidepanelBuildAdapterSection"
+        "$codeRef": "knativeServiceTabSections.getKnativeSidepanelBuildAdapterSection"
       }
     },
     "flags": {
@@ -1234,7 +1218,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertAfter": "topology-tab-section-builds-overview",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelEventSourcesSection"
+        "$codeRef": "knativeCommonTabSections.useKnativeSidepanelEventSourcesSection"
       }
     },
     "flags": {
@@ -1248,7 +1232,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertAfter": "topology-tab-section-eventsources",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelSubscriptionsSection"
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelSubscriptionsSection"
       }
     },
     "flags": {
@@ -1262,7 +1246,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertAfter": "topology-tab-section-ksvc-subscriptions",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelTriggersSection"
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelTriggersSection"
       }
     },
     "flags": {
@@ -1276,7 +1260,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertAfter": "topology-tab-section-ksvc-triggers",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelDomainMappingsSection"
+        "$codeRef": "knativeServiceTabSections.useKnativeSidepanelDomainMappingsSection"
       }
     },
     "flags": {
@@ -1338,7 +1322,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertAfter": "topology-tab-section-pods-overview",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelDeploymentSection"
+        "$codeRef": "knativeRevisionTabSections.useKnativeSidepanelDeploymentSection"
       }
     },
     "flags": {
@@ -1352,7 +1336,7 @@
       "tab": "topology-side-bar-tab-resource",
       "insertAfter": "topology-tab-section-knative-routes",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelConfigurationsSection"
+        "$codeRef": "knativeRevisionTabSections.useKnativeSidepanelConfigurationsSection"
       }
     },
     "flags": {
@@ -1405,7 +1389,7 @@
       "id": "topology-tab-section-eventsource-target",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelSinkSection"
+        "$codeRef": "knativeEventsourceTabSections.useKnativeSidepanelSinkSection"
       }
     },
     "flags": {
@@ -1418,7 +1402,7 @@
       "id": "topology-tab-section-eventsource-associateddeployment",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelSinkAssociatedDeployment"
+        "$codeRef": "knativeEventsourceTabSections.useKnativeSidepanelSinkAssociatedDeployment"
       }
     },
     "flags": {
@@ -1431,7 +1415,7 @@
       "id": "topology-tab-section-eventsource-ownedeventsources",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelSinkEventSources"
+        "$codeRef": "knativeEventsourceTabSections.useKnativeSidepanelSinkEventSources"
       }
     },
     "flags": {
@@ -1442,7 +1426,7 @@
     "type": "console.topology/details/resource-link",
     "properties": {
       "priority": 100,
-      "link": { "$codeRef": "knativeTopologySidebar.getKnativeURISinkResourceLink" }
+      "link": { "$codeRef": "knativeEventsourceTabSections.getKnativeURISinkResourceLink" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]
@@ -1464,7 +1448,7 @@
       "id": "topology-tab-section-kn-connector-resource",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeConnectorSidepanelResourceSection"
+        "$codeRef": "knativeConnectorsTabSections.useKnativeConnectorSidepanelResourceSection"
       }
     },
     "flags": {
@@ -1879,7 +1863,7 @@
       "id": "topology-tab-section-kn-event-sink-details",
       "tab": "topology-side-bar-tab-details",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidePanelEventSinkDetailsTab"
+        "$codeRef": "knativeCommonTabSections.useKnativeSidePanelEventSinkDetailsTab"
       }
     },
     "flags": {
@@ -1892,7 +1876,7 @@
       "id": "topology-tab-section-kn-event-sink-output-target",
       "tab": "topology-side-bar-tab-resource",
       "provider": {
-        "$codeRef": "knativeTopologySidebar.useKnativeSidepanelEventSinkSection"
+        "$codeRef": "knativeResourceTabSections.useKnativeSidepanelEventSinkSection"
       }
     },
     "flags": {
@@ -1903,7 +1887,7 @@
     "type": "console.topology/adapter/pod",
     "properties": {
       "adapt": {
-        "$codeRef": "knativeTopologySidebar.getEventSinkPodsApdapter"
+        "$codeRef": "knativeResourceTabSections.getEventSinkPodsApdapter"
       }
     },
     "flags": {
@@ -1927,7 +1911,7 @@
       },
       "workloadKeys": ["kafkasinks"],
       "getDataModel": {
-        "$codeRef": "topology.getKafkaSinkKnativeTopologyData"
+        "$codeRef": "dataTransformer.getKafkaSinkKnativeTopologyData"
       }
     },
     "flags": {
@@ -1938,7 +1922,7 @@
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
-        "$codeRef": "topology.getKafkaSinkComponentFactory"
+        "$codeRef": "knativeComponentFactory.getKafkaSinkComponentFactory"
       }
     },
     "flags": {
@@ -1949,7 +1933,7 @@
     "type": "console.topology/adapter/pod",
     "properties": {
       "adapt": {
-        "$codeRef": "knativeTopologySidebar.getEventSourcePodsApdapter"
+        "$codeRef": "knativeResourceTabSections.getEventSourcePodsApdapter"
       }
     },
     "flags": {
@@ -1976,7 +1960,7 @@
       "exact": true,
       "path": ["/catalog/ns/:ns/subscribe"],
       "component": {
-        "$codeRef": "addComponent.SubscribePage"
+        "$codeRef": "SubscribePage"
       }
     },
     "flags": {

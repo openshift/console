@@ -6,11 +6,11 @@ import { createBrokerIfNotExistsOnTopologyPage } from '@console/dev-console/inte
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
 import { eventingPO } from '../../pageObjects/global-po';
 
-Given('user selects Broker from Developer Catalog card', () => {
+Given('user selects Broker from Software Catalog card', () => {
   cy.get(eventingPO.brokerCard).click();
 });
 
-Given('user selects Event Source from Developer Catalog card', () => {
+Given('user selects Event Source from Software Catalog card', () => {
   cy.get(eventingPO.eventSourceCard).click();
 });
 

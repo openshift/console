@@ -1,0 +1,9 @@
+.job-overview__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-overview__pod-donut-sm {
+  width: var(--pf-t--global--icon--size--lg);
+}

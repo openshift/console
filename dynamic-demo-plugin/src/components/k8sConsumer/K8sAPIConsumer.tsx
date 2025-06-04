@@ -13,6 +13,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import {
+  DocumentTitle,
   getGroupVersionKindForResource,
   k8sCreate,
   k8sDelete,
@@ -131,6 +132,7 @@ const K8sAPIConsumer: React.FC = () => {
 
   return (
     <>
+      <DocumentTitle>{t('K8s API')}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1" data-test="test-k8sapi-title">{t('K8s API from Dynamic Plugin SDK')}</Title>
       </PageSection>

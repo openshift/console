@@ -5,7 +5,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
 import { usePerspectiveExtension, usePerspectives } from '@console/shared/src';
 import { ACM_PERSPECTIVE_ID } from '../../../consts';
-import { usePreferredPerspective } from '../../user-preferences';
+import { usePreferredPerspective } from '../../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
@@ -24,7 +24,7 @@ jest.mock('../../user-preferences/perspective/usePreferredPerspective', () => ({
 }));
 
 jest.mock('react', () => {
-  const reactModule = require.requireActual('react');
+  const reactModule = jest.requireActual('react');
   return {
     ...reactModule,
     useState: jest.fn(),

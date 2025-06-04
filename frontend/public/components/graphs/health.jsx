@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { Status, errorStatus } from './';
@@ -6,6 +5,7 @@ import { coFetch, coFetchJSON } from '../../co-fetch';
 import { featureReducerName } from '../../reducers/features';
 import { FLAGS } from '@console/shared';
 import { k8sBasePath } from '../../module/k8s';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 // Use the shorter 'OpenShift Console' instead of 'OpenShift Container Platform Console' since the title appears in the chart.
 const consoleName = window.SERVER_FLAGS.branding === 'okd' ? 'OKD Console' : 'OpenShift Console';
@@ -70,18 +70,18 @@ const CrashloopingPods = ({ namespace }) => (
 );
 
 export const Health = ({ namespace }) => (
-  <div className="row">
-    <div className="col-md-3 col-sm-6">
+  <Grid hasGutter>
+    <GridItem md={3} sm={6}>
       <KubernetesHealth />
-    </div>
-    <div className="col-md-3 col-sm-6">
+    </GridItem>
+    <GridItem md={3} sm={6}>
       <ConsoleHealth />
-    </div>
-    <div className="col-md-3 col-sm-6">
+    </GridItem>
+    <GridItem md={3} sm={6}>
       <AlertsFiring namespace={namespace} />
-    </div>
-    <div className="col-md-3 col-sm-6">
+    </GridItem>
+    <GridItem md={3} sm={6}>
       <CrashloopingPods namespace={namespace} />
-    </div>
-  </div>
+    </GridItem>
+  </Grid>
 );

@@ -34,7 +34,7 @@ When('user selects Add option from left side navigation menu', () => {
 });
 
 Then('user will be redirected to Add page', () => {
-  cy.get('.ocs-page-layout__title').should('contain.text', pageTitle.Add);
+  cy.get('[data-test="page-heading"] h1').should('contain.text', pageTitle.Add);
 });
 
 When('user selects event source type {string}', (eventSourceType: string) => {

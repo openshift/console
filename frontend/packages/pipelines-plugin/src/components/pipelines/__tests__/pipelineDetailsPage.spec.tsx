@@ -45,14 +45,15 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
 }));
 
 jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...require.requireActual('@console/internal/components/utils/firehose'),
+  ...jest.requireActual('@console/internal/components/utils/firehose'),
   Firehose: ({ children }) => children,
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(),
   useParams: jest.fn(),
+  useNavigate: jest.fn(),
 }));
 
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
@@ -85,16 +86,15 @@ describe('PipelineDetailsPage:', () => {
   });
   const renderPipelineDetailsPage = async () => {
     let wrapper: ReactWrapper;
-    await act(
-      async () =>
-        (wrapper = mount(
-          <BrowserRouter>
-            <Provider store={store}>
-              <PipelineDetailsPage {...PipelineDetailsPageProps} />
-            </Provider>
-          </BrowserRouter>,
-        )),
-    );
+    await act(async () => {
+      wrapper = mount(
+        <BrowserRouter>
+          <Provider store={store}>
+            <PipelineDetailsPage {...PipelineDetailsPageProps} />
+          </Provider>
+        </BrowserRouter>,
+      );
+    });
     return wrapper;
   };
 

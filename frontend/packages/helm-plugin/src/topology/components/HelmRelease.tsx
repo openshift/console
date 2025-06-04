@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   Node,
   observer,
@@ -7,7 +8,6 @@ import {
   WithContextMenuProps,
   WithDragNodeProps,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import GroupNode from '@console/topology/src/components/graph-view/components/groups/GroupNode';
@@ -35,7 +35,7 @@ const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
     namespace: secretObj?.metadata.namespace,
   });
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation('HelmRelease');
-  const badgeClassName = classNames('odc-resource-icon', {
+  const badgeClassName = css('odc-resource-icon', {
     [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
   });
 

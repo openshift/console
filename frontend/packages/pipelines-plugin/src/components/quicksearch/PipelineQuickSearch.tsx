@@ -27,7 +27,6 @@ import PipelineQuickSearchDetails from './PipelineQuickSearchDetails';
 
 interface QuickSearchProps {
   namespace: string;
-  viewContainer?: HTMLElement;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   callback: TaskSearchCallback;
@@ -39,16 +38,7 @@ const Contents: React.FC<
   {
     catalogService: CatalogService;
   } & QuickSearchProps
-> = ({
-  catalogService,
-  namespace,
-  viewContainer,
-  isOpen,
-  setIsOpen,
-  callback,
-  onUpdateTasks,
-  taskGroup,
-}) => {
+> = ({ catalogService, namespace, isOpen, setIsOpen, callback, onUpdateTasks, taskGroup }) => {
   const { t } = useTranslation();
   const savedCallback = React.useRef(null);
   savedCallback.current = callback;
@@ -143,7 +133,6 @@ const Contents: React.FC<
       allItemsLoaded={catalogService.loaded}
       searchPlaceholder={`${t('pipelines-plugin~Add task')}...`}
       namespace={namespace}
-      viewContainer={viewContainer}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       disableKeyboardOpen
@@ -155,7 +144,6 @@ const Contents: React.FC<
 
 const PipelineQuickSearch: React.FC<QuickSearchProps> = ({
   namespace,
-  viewContainer,
   isOpen,
   setIsOpen,
   callback,
@@ -168,7 +156,6 @@ const PipelineQuickSearch: React.FC<QuickSearchProps> = ({
         <Contents
           {...{
             namespace,
-            viewContainer,
             isOpen,
             setIsOpen,
             catalogService,

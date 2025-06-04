@@ -24,9 +24,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
     <>
       {isCreate && (
         <div className="form-group">
-          <label className="control-label" htmlFor="secret-type">
-            {t('public~Authentication type')}
-          </label>
+          <label htmlFor="secret-type">{t('public~Authentication type')}</label>
           <div className="co-create-secret__dropdown">
             <Dropdown
               items={authTypes}

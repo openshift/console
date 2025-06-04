@@ -1,11 +1,18 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   SectionHeading,
-  Timestamp,
   humanizeDecimalBytes,
   ResourceLink,
 } from '@console/internal/components/utils';
@@ -27,6 +34,8 @@ import {
   SecondaryStatus,
   DASH,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {
   getHostNICs,
@@ -45,12 +54,37 @@ import {
   getHostBootMACAddress,
   isHostScheduledForRestart,
   hasPowerManagement,
+  isDetached,
 } from '../../selectors';
 import { getHostStatus } from '../../status/host-status';
 import { BareMetalHostKind } from '../../types';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import MachineLink from './MachineLink';
+
+const PowerStatus = ({ host }: { host: BareMetalHostKind }) => {
+  const { t } = useTranslation();
+  if (isDetached(host)) {
+    return <SecondaryStatus status={t('metal3-plugin~Detached')} />;
+  }
+
+  if (!hasPowerManagement(host)) {
+    return <SecondaryStatus status={t('metal3-plugin~No power management')} />;
+  }
+
+  const powerStatus = getHostPowerStatus(host);
+  return (
+    <>
+      <StatusIconAndText
+        title={powerStatus}
+        icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
+      />
+      {isHostScheduledForRestart(host) && (
+        <StatusIconAndText title={t('metal3-plugin~Restart pending')} icon={<RebootingIcon />} />
+      )}
+    </>
+  );
+};
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;
@@ -80,7 +114,6 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   const hostStorage = getHostTotalStorageCapacity(host);
   const totalStorageCapacity = hostStorage ? humanizeDecimalBytes(hostStorage).string : DASH;
   const description = getHostDescription(host);
-  const powerStatus = getHostPowerStatus(host);
   const provisioningState = getHostProvisioningState(host);
   const { count: CPUCount, model: CPUModel } = getHostCPU(host);
   const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
@@ -90,104 +123,99 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   const status = getHostStatus({ host, machine, node, nodeMaintenance });
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('metal3-plugin~Bare Metal Host Details')} />
-      <div className="row">
-        <div className="col-xs-12 col-sm-6" id="name-description-column">
-          <dl>
-            <dt>{t('metal3-plugin~Name')}</dt>
-            <dd>{getName(host)}</dd>
+      <Grid hasGutter>
+        <GridItem sm={6} id="name-description-column">
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Name')}</DescriptionListTerm>
+              <DescriptionListDescription>{getName(host)}</DescriptionListDescription>
+            </DescriptionListGroup>
             {description && (
-              <>
-                <dt>{t('metal3-plugin~Description')}</dt>
-                <dd>{description}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Description')}</DescriptionListTerm>
+                <DescriptionListDescription>{description}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('metal3-plugin~Host Addresses')}</dt>
-            <dd>
-              <DetailPropertyList>
-                <DetailPropertyListItem title="Management">
-                  {getHostBMCAddress(host) || DASH}
-                </DetailPropertyListItem>
-                <DetailPropertyListItem title="NICs">{ips}</DetailPropertyListItem>
-                <DetailPropertyListItem title="Boot Interface MAC">
-                  {getHostBootMACAddress(host)}
-                </DetailPropertyListItem>
-              </DetailPropertyList>
-            </dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Host Addresses')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <DetailPropertyList>
+                  <DetailPropertyListItem title="Management">
+                    {getHostBMCAddress(host) || DASH}
+                  </DetailPropertyListItem>
+                  <DetailPropertyListItem title="NICs">{ips}</DetailPropertyListItem>
+                  <DetailPropertyListItem title="Boot Interface MAC">
+                    {getHostBootMACAddress(host)}
+                  </DetailPropertyListItem>
+                </DetailPropertyList>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {machineName && (
-              <>
-                <dt>{t('metal3-plugin~Machine')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Machine')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <MachineLink host={host} />
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {nodeName && (
-              <>
-                <dt>{t('metal3-plugin~Node')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Node')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <ResourceLink
                     kind={referenceForModel(NodeModel)}
                     name={nodeName}
                     namespace={namespace}
                     title={nodeName}
                   />
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('metal3-plugin~Created at')}</dt>
-            <dd>
-              <Timestamp timestamp={creationTimestamp} />
-            </dd>
-          </dl>
-        </div>
-        <div className="col-xs-12 col-sm-6">
-          <dl>
-            <dt>{t('metal3-plugin~Status')}</dt>
-            <dd>
-              <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
-            </dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Created at')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Timestamp timestamp={creationTimestamp} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
+        </GridItem>
+        <GridItem sm={6}>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('metal3-plugin~Status')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {/* power status is not available until host registration/inspection is finished */}
             {!HOST_REGISTERING_STATES.includes(provisioningState) && (
-              <>
-                <dt>{t('metal3-plugin~Power Status')}</dt>
-                <dd>
-                  {!hasPowerManagement(host) ? (
-                    <SecondaryStatus status={t('metal3-plugin~No power management')} />
-                  ) : (
-                    <>
-                      <StatusIconAndText
-                        title={powerStatus}
-                        icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
-                      />
-                      {isHostScheduledForRestart(host) && (
-                        <StatusIconAndText
-                          title={t('metal3-plugin~Restart pending')}
-                          icon={<RebootingIcon />}
-                        />
-                      )}
-                    </>
-                  )}
-                </dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Power Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <PowerStatus host={host} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {role && (
-              <>
-                <dt>{t('metal3-plugin~Role')}</dt>
-                <dd>{role}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Role')}</DescriptionListTerm>
+                <DescriptionListDescription>{role}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {(manufacturer || productName) && (
-              <>
-                <dt>{t('metal3-plugin~Model')}</dt>
-                <dd>{_.filter([manufacturer, productName]).join(', ')}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Model')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {_.filter([manufacturer, productName]).join(', ')}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {bios && (
-              <>
-                <dt>{t('metal3-plugin~Bios')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Bios')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <DetailPropertyList>
                     <DetailPropertyListItem title="Version">
                       {bios.version || DASH}
@@ -199,19 +227,19 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                       {bios.date || DASH}
                     </DetailPropertyListItem>
                   </DetailPropertyList>
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {serialNumber && (
-              <>
-                <dt>{t('metal3-plugin~Serial Number')}</dt>
-                <dd>{serialNumber}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Serial Number')}</DescriptionListTerm>
+                <DescriptionListDescription>{serialNumber}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {_.get(host, 'status.hardware') && (
-              <>
-                <dt>{t('metal3-plugin~Hardware')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Hardware')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <DetailPropertyList>
                     <DetailPropertyListItem title={t('metal3-plugin~CPU')}>
                       {CPUCount ? `${CPUCount}x ${CPUModel}` : DASH}
@@ -223,13 +251,13 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                       {totalStorageCapacity}
                     </DetailPropertyListItem>
                   </DetailPropertyList>
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-          </dl>
-        </div>
-      </div>
-    </div>
+          </DescriptionList>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 

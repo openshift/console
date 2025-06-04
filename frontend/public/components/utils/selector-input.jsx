@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as TagsInput from 'react-tagsinput';
 import { Label as PfLabel } from '@patternfly/react-core';
 
@@ -120,7 +120,7 @@ export class SelectorInput extends React.Component {
 
     const inputProps = {
       autoFocus: this.props.autoFocus,
-      className: classNames('input', { 'invalid-tag': !isInputValid }),
+      className: css('input', { 'invalid-tag': !isInputValid }),
       onChange: this.handleInputChange.bind(this),
       placeholder: _.isEmpty(tags) ? this.props.placeholder || 'app=frontend' : '',
       spellCheck: 'false',
@@ -133,7 +133,7 @@ export class SelectorInput extends React.Component {
     const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => {
       return (
         <PfLabel
-          className={classNames('co-label tag-item-content', this.props.labelClassName)}
+          className={css('co-label tag-item-content', this.props.labelClassName)}
           key={key}
           onClose={() => onRemove(key)}
           isTruncated

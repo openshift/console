@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { Banner, Button, Flex, PageSection } from '@patternfly/react-core';
 
@@ -8,8 +7,7 @@ import {
   USER_TELEMETRY_ANALYTICS,
   useUserSettings,
 } from '@console/shared';
-import { ExternalLink } from './utils';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 export const TelemetryNotifier = () => {
   const { t } = useTranslation();
 

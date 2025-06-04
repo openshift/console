@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
+import { DocumentTitle, consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from "react-i18next";
 
 import {
@@ -14,6 +14,7 @@ const ExampleProxyPage: React.FC = () => {
   const { t } = useTranslation("plugin__console-demo-plugin");
   return (
     <>
+      <DocumentTitle>{t("Dynamic Plugin Proxy Services example")}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1">
           {t("Dynamic Plugin Proxy Services example")}

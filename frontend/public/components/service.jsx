@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   DetailsItem,
@@ -18,6 +18,12 @@ import {
   navFactory,
 } from './utils';
 import { ServiceModel } from '../models';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 const menuActions = [
   Kebab.factory.ModifyPodSelector,
@@ -99,10 +105,7 @@ const ServiceTableRow = ({ obj: s }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={s.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -131,7 +134,7 @@ const ServiceAddress = ({ s }) => {
           <p className="ip-desc">{desc}</p>
         </div>
         <div className="col-xs-6">
-          {note && <span className="text-muted">{note}</span>}
+          {note && <span className="pf-v6-u-text-color-subtle">{note}</span>}
           {ips.join(', ')}
         </div>
       </div>
@@ -239,7 +242,7 @@ const ServicePortMapping = ({ ports }) => {
 const Details = ({ obj: s }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <div className="row">
         <div className="col-md-6">
           <SectionHeading text={t('public~Service details')} />
@@ -249,27 +252,31 @@ const Details = ({ obj: s }) => {
         </div>
         <div className="col-md-6">
           <SectionHeading text={t('public~Service routing')} />
-          <dl>
-            <dt>{t('public~Hostname')}</dt>
-            <dd>
-              <div className="co-select-to-copy">
-                {s.metadata.name}.{s.metadata.namespace}.svc.cluster.local
-              </div>
-              <div>{t('public~Accessible within the cluster only')}</div>
-            </dd>
-            <dt>{t('public~Service address')}</dt>
-            <dd className="service-ips">
-              <ServiceAddress s={s} />
-            </dd>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Hostname')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <div className="co-select-to-copy">
+                  {s.metadata.name}.{s.metadata.namespace}.svc.cluster.local
+                </div>
+                <div>{t('public~Accessible within the cluster only')}</div>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Service address')}</DescriptionListTerm>
+              <DescriptionListDescription className="service-ips">
+                <ServiceAddress s={s} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             <DetailsItem label={t('public~Service port mapping')} obj={s} path="spec.ports">
               <div className="service-ips">
                 {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
               </div>
             </DetailsItem>
-          </dl>
+          </DescriptionList>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

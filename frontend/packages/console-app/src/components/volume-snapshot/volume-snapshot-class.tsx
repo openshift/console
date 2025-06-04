@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   ListPageBody,
@@ -14,16 +14,21 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
-import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
-import { referenceForModel, VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
-import { getAnnotations } from '@console/shared';
+import {
+  referenceForModel,
+  VolumeSnapshotClassKind,
+  Selector,
+  referenceFor,
+} from '@console/internal/module/k8s';
+import { getAnnotations, LazyActionMenu } from '@console/shared';
 
 const tableColumnInfo = [
   { id: 'name' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
   { className: Kebab.columnClass, id: '' },
 ];
 
@@ -36,24 +41,23 @@ export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassK
 const Row: React.FC<RowProps<VolumeSnapshotClassKind>> = ({ obj }) => {
   const { name } = obj?.metadata || {};
   const { deletionPolicy, driver } = obj || {};
-
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData {...tableColumnInfo[0]}>
         <ResourceLink name={name} kind={referenceForModel(VolumeSnapshotClassModel)}>
           {isDefaultSnapshotClass(obj) && (
-            <span className="small text-muted co-resource-item__help-text">&ndash; Default</span>
+            <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
+              &ndash; Default
+            </span>
           )}
         </ResourceLink>
       </TableData>
       <TableData {...tableColumnInfo[1]}>{driver}</TableData>
       <TableData {...tableColumnInfo[2]}>{deletionPolicy}</TableData>
       <TableData {...tableColumnInfo[3]}>
-        <ResourceKebab
-          kind={referenceForModel(VolumeSnapshotClassModel)}
-          resource={obj}
-          actions={Kebab.factory.common}
-        />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

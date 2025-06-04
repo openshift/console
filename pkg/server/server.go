@@ -25,7 +25,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
-	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
+	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	gql "github.com/openshift/console/pkg/graphql"
 	"github.com/openshift/console/pkg/graphql/resolver"
@@ -86,6 +86,11 @@ const (
 	updatesEndpoint                       = "/api/check-updates"
 )
 
+type CustomFaviconPath struct {
+	CustomFaviconDarkThemePath  string `json:"darkThemePath"`
+	CustomFaviconLightThemePath string `json:"lightThemePath"`
+}
+
 type jsGlobals struct {
 	AddPage                         string                     `json:"addPage"`
 	AlertManagerBaseURL             string                     `json:"alertManagerBaseURL"`
@@ -94,11 +99,14 @@ type jsGlobals struct {
 	AuthDisabled                    bool                       `json:"authDisabled"`
 	BasePath                        string                     `json:"basePath"`
 	Branding                        string                     `json:"branding"`
+	Capabilities                    []operatorv1.Capability    `json:"capabilities"`
 	ConsolePlugins                  []string                   `json:"consolePlugins"`
 	ConsoleVersion                  string                     `json:"consoleVersion"`
 	ContentSecurityPolicy           string                     `json:"contentSecurityPolicy"`
 	ControlPlaneTopology            string                     `json:"controlPlaneTopology"`
 	CopiedCSVsDisabled              bool                       `json:"copiedCSVsDisabled"`
+	CustomFaviconsConfigured        bool                       `json:"customFaviconsConfigured"`
+	CustomLogosConfigured           bool                       `json:"customLogosConfigured"`
 	CustomLogoURL                   string                     `json:"customLogoURL"`
 	CustomProductName               string                     `json:"customProductName"`
 	DevCatalogCategories            string                     `json:"developerCatalogCategories"`
@@ -112,6 +120,7 @@ type jsGlobals struct {
 	InactivityTimeout               int                        `json:"inactivityTimeout"`
 	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
 	KubeAPIServerURL                string                     `json:"kubeAPIServerURL"`
+	K8sMode                         string                     `json:"k8sMode"`
 	LoadTestFactor                  int                        `json:"loadTestFactor"`
 	LoginErrorURL                   string                     `json:"loginErrorURL"`
 	LoginSuccessURL                 string                     `json:"loginSuccessURL"`
@@ -131,8 +140,6 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
-	K8sMode                         string                     `json:"k8sMode"`
-	Capabilities                    []operatorv1.Capability    `json:"capabilities"`
 }
 
 type Server struct {
@@ -143,20 +150,24 @@ type Server struct {
 	AlertManagerTenancyProxyConfig      *proxy.Config
 	AlertManagerUserWorkloadHost        string
 	AlertManagerUserWorkloadProxyConfig *proxy.Config
+	AnonymousInternalProxiedK8SRT       http.RoundTripper
 	AuthDisabled                        bool
 	Authenticator                       auth.Authenticator
+	AuthMetrics                         *auth.Metrics
 	BaseURL                             *url.URL
 	Branding                            string
+	Capabilities                        []operatorv1.Capability
 	CatalogdProxyConfig                 *proxy.Config
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
-	ContentSecurityPolicy               string
 	ContentSecurityPolicyEnabled        bool
+	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
-	CustomLogoFile                      string
+	CustomLogoFiles                     serverconfig.LogosKeyValue
+	CustomFaviconFiles                  serverconfig.LogosKeyValue
 	CustomProductName                   string
 	DevCatalogCategories                string
 	DevCatalogTypes                     string
@@ -169,9 +180,9 @@ type Server struct {
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
 	InternalProxiedK8SClientConfig      *rest.Config
-	AnonymousInternalProxiedK8SRT       http.RoundTripper
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
+	ProxyHeaderDenyList                 []string
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
@@ -181,7 +192,6 @@ type Server struct {
 	NodeArchitectures                   []string
 	NodeOperatingSystems                []string
 	Perspectives                        string
-	Capabilities                        []operatorv1.Capability
 	PluginProxy                         string
 	PluginsProxyTLSConfig               *tls.Config
 	ProjectAccessClusterRoles           string
@@ -199,7 +209,6 @@ type Server struct {
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
 	UserSettingsLocation                string
-	AuthMetrics                         *auth.Metrics
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -272,8 +281,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		tpl.Delims("[[", "]]")
 		tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, tokenizerPageTemplateName))
 		if err != nil {
-			fmt.Printf("%v not found in configured public-dir path: %v", tokenizerPageTemplateName, err)
-			os.Exit(1)
+			klog.Fatalf("%v not found in configured public-dir path: %v", tokenizerPageTemplateName, err)
 		}
 
 		if err := tpls.ExecuteTemplate(w, tokenizerPageTemplateName, templateData); err != nil {
@@ -303,9 +311,9 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
 
-	if s.CustomLogoFile != "" {
+	if s.CustomLogoFiles != nil {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFile(w, r, s.CustomLogoFile)
+			serverconfig.CustomLogosHandler(w, r, s.CustomLogoFiles, s.CustomFaviconFiles)
 		})
 	}
 
@@ -480,11 +488,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/console/knative-event-sources", tokenReviewHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", tokenReviewHandler(s.handleKnativeChannelCRDs))
 
-	// Dev-Console Proxy
+	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsoleProxy.Handler(user, w, r)
+			devconsole.Handler(user, w, r, internalProxiedDynamic, s.K8sMode, s.ProxyHeaderDenyList)
 		})),
 	)
 
@@ -533,12 +541,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		proxyConfig, err := plugins.ParsePluginProxyConfig(s.PluginProxy)
 		if err != nil {
 			klog.Fatalf("Error parsing plugin proxy config: %s", err)
-			os.Exit(1)
 		}
 		proxyServiceHandlers, err := plugins.GetPluginProxyServiceHandlers(proxyConfig, s.PluginsProxyTLSConfig, pluginProxyEndpoint)
 		if err != nil {
 			klog.Fatalf("Error getting plugin proxy handlers: %s", err)
-			os.Exit(1)
 		}
 		if len(proxyServiceHandlers) != 0 {
 			klog.Infoln("The following console endpoints are now proxied to these services:")
@@ -577,7 +583,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			ConsoleCommit:         os.Getenv("SOURCE_GIT_COMMIT"),
 			Plugins:               pluginsHandler.GetPluginsList(),
 			Capabilities:          s.Capabilities,
-			ContentSecurityPolicy: s.ContentSecurityPolicy,
+			ContentSecurityPolicy: s.ContentSecurityPolicy.String(),
 		})
 	}))
 
@@ -594,6 +600,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			klog.Errorf("Unable to parse perspective JSON: %v", err)
 		}
 	}
+
 	serverconfigMetrics := serverconfig.NewMetrics(config)
 	serverconfigMetrics.MonitorPlugins(internalProxiedDynamic)
 	usageMetrics := usage.NewMetrics()
@@ -697,7 +704,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		if err != nil {
 			klog.Fatalf("Error building Content Security Policy directives: %s", err)
-			os.Exit(1)
 		}
 		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
 	}
@@ -708,46 +714,48 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsg := &jsGlobals{
-		AuthDisabled:              s.Authenticator.IsStatic(),
-		ConsoleVersion:            version.Version,
-		BasePath:                  s.BaseURL.Path,
-		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:                 authLogoutEndpoint,
-		LogoutRedirect:            s.Authenticator.LogoutRedirectURL(),
-		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
-		KubeAPIServerURL:          s.KubeAPIServerURL,
-		Branding:                  s.Branding,
-		CustomProductName:         s.CustomProductName,
-		ControlPlaneTopology:      s.ControlPlaneTopology,
-		StatuspageID:              s.StatuspageID,
-		InactivityTimeout:         s.InactivityTimeout,
-		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
+		AddPage:                   s.AddPage,
 		AlertManagerPublicURL:     s.AlertManagerPublicURL.String(),
-		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
-		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
-		ThanosPublicURL:           s.ThanosPublicURL.String(),
-		GOARCH:                    s.GOARCH,
-		GOOS:                      s.GOOS,
-		LoadTestFactor:            s.LoadTestFactor,
-		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
+		AuthDisabled:              s.Authenticator.IsStatic(),
+		BasePath:                  s.BaseURL.Path,
+		Branding:                  s.Branding,
+		Capabilities:              s.Capabilities,
+		ConsolePlugins:            plugins,
+		ConsoleVersion:            version.Version,
+		ControlPlaneTopology:      s.ControlPlaneTopology,
+		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
+		CustomFaviconsConfigured:  !s.CustomFaviconFiles.IsEmpty(),
+		CustomLogosConfigured:     !s.CustomLogoFiles.IsEmpty(),
+		CustomProductName:         s.CustomProductName,
 		DevCatalogCategories:      s.DevCatalogCategories,
 		DevCatalogTypes:           s.DevCatalogTypes,
-		UserSettingsLocation:      s.UserSettingsLocation,
-		ConsolePlugins:            plugins,
+		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
+		GOARCH:                    s.GOARCH,
+		GOOS:                      s.GOOS,
+		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
+		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
 		I18nNamespaces:            s.I18nNamespaces,
-		QuickStarts:               s.QuickStarts,
-		AddPage:                   s.AddPage,
-		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
-		Perspectives:              s.Perspectives,
-		Telemetry:                 s.Telemetry,
-		ReleaseVersion:            s.ReleaseVersion,
+		InactivityTimeout:         s.InactivityTimeout,
+		K8sMode:                   s.K8sMode,
+		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
+		KubeAPIServerURL:          s.KubeAPIServerURL,
+		LoadTestFactor:            s.LoadTestFactor,
+		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LogoutRedirect:            s.Authenticator.LogoutRedirectURL(),
+		LogoutURL:                 authLogoutEndpoint,
 		NodeArchitectures:         s.NodeArchitectures,
 		NodeOperatingSystems:      s.NodeOperatingSystems,
-		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
-		K8sMode:                   s.K8sMode,
-		Capabilities:              s.Capabilities,
+		Perspectives:              s.Perspectives,
+		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
+		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
+		QuickStarts:               s.QuickStarts,
+		ReleaseVersion:            s.ReleaseVersion,
+		StatuspageID:              s.StatuspageID,
+		Telemetry:                 s.Telemetry,
+		ThanosPublicURL:           s.ThanosPublicURL.String(),
+		UserSettingsLocation:      s.UserSettingsLocation,
 	}
 
 	if s.prometheusProxyEnabled() {
@@ -762,7 +770,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.CSRFVerifier.SetCSRFCookie(s.BaseURL.Path, w)
 
-	if s.CustomLogoFile != "" {
+	// set the customLogoURL server flag only when there is a customLogo or customFavicon configuration
+	if !s.CustomLogoFiles.IsEmpty() || !s.CustomFaviconFiles.IsEmpty() {
 		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
 	}
 
@@ -778,8 +787,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Delims("[[", "]]")
 	tpls, err := tpl.ParseFiles(path.Join(s.PublicDir, indexPageTemplateName))
 	if err != nil {
-		fmt.Printf("index.html not found in configured public-dir path: %v", err)
-		os.Exit(1)
+		klog.Fatalf("index.html not found in configured public-dir path: %v", err)
 	}
 
 	if err := tpls.ExecuteTemplate(w, indexPageTemplateName, templateData); err != nil {

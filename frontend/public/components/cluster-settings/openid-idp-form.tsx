@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PageHeading } from '../utils';
+import { ButtonBar, ListInput } from '../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -155,20 +157,18 @@ export const AddOpenIDIDPPage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         helpText={t(
           'public~Integrate with an OpenID Connect identity provider using an Authorization Code Flow.',
         )}
       />
-      <div className="co-m-pane__body">
-        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+      <PaneBody>
+        <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
+            <label className="co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -182,7 +182,7 @@ export const AddOpenIDIDPPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
+            <label className="co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -196,7 +196,7 @@ export const AddOpenIDIDPPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="issuer">
+            <label className="co-required" htmlFor="issuer">
               {t('public~Issuer URL')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -219,7 +219,7 @@ export const AddOpenIDIDPPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Claims')}
           </Title>
-          <p className="co-help-text">
+          <p>
             {t(
               'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
             )}
@@ -267,7 +267,7 @@ export const AddOpenIDIDPPage = () => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

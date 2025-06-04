@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
-import { CodeBlock, CodeBlockCode } from '@patternfly/react-core';
+import { CodeBlock, CodeBlockCode, DescriptionList } from '@patternfly/react-core';
 import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
 import { DetailsItem } from './details-item';
 import { ResourceLink } from './resource-link';
@@ -26,7 +26,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   const { t } = useTranslation();
 
   return (
-    <dl className="co-m-pane__details">
+    <DescriptionList>
       {children}
       <DetailsItem label={t('public~Type')} obj={resource} path="spec.strategy.type" />
       <DetailsItem
@@ -147,7 +147,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
           {triggers}
         </DetailsItem>
       )}
-    </dl>
+    </DescriptionList>
   );
 };
 

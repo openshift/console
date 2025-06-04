@@ -18,7 +18,7 @@ const ModelStatusBox: React.FC<ModelStatusBoxProps> = ({ groupVersionKind, child
   if (!model) {
     return (
       <ErrorPage404
-        message={t(
+        bodyText={t(
           "olm~The server doesn't have a resource type {{kind}}. Try refreshing the page if it was recently added.",
           { kind: kindForReference(groupVersionKind) },
         )}

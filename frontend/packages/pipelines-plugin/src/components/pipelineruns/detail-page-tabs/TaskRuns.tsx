@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { TaskRunKind } from '../../../types';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 
@@ -12,12 +12,15 @@ const TaskRuns: React.FC<TaskRunsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet>
-        <title>{t('pipelines-plugin~TaskRuns')}</title>
-      </Helmet>
+      <DocumentTitle>{t('pipelines-plugin~TaskRuns')}</DocumentTitle>
       <TaskRunsListPage
         showTitle={false}
-        selector={{ matchLabels: { 'tekton.dev/pipelineRun': obj.metadata.name } }}
+        selector={{
+          matchLabels: {
+            'tekton.dev/pipelineRun': obj.metadata.name,
+            'tekton.dev/pipelineRunUID': obj.metadata?.uid,
+          },
+        }}
         showPipelineColumn={false}
         namespace={obj.metadata.namespace}
         hideBadge

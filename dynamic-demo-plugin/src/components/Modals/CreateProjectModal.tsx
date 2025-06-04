@@ -15,10 +15,10 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { k8sCreate } from '@openshift-console/dynamic-plugin-sdk';
+import { k8sCreate, ModalComponent } from '@openshift-console/dynamic-plugin-sdk';
 import { K8sModel } from '@openshift-console/dynamic-plugin-sdk/lib/api/common-types';
 
-const CreateProjectModal: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
+const CreateProjectModal: ModalComponent = ({ closeModal }) => {
   const { t } = useTranslation('plugin__console-plugin-template');
   const [name, setName] = React.useState<string>('');
   const [displayName, setDisplayName] = React.useState('');
@@ -69,12 +69,11 @@ const CreateProjectModal: React.FC<{ closeModal: () => void }> = ({ closeModal }
   };
 
   return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={closeModal}
-    >
-      <ModalHeader title={t('Create Project')} description={t('This modal is created with an extension.')} />
+    <Modal variant={ModalVariant.small} isOpen onClose={closeModal}>
+      <ModalHeader
+        title={t('Create Project')}
+        description={t('This modal is created with an extension.')}
+      />
       <ModalBody>
         <Form>
           <FormGroup label={t('Name')} isRequired fieldId="input-name">
@@ -121,18 +120,16 @@ const CreateProjectModal: React.FC<{ closeModal: () => void }> = ({ closeModal }
         </Form>
       </ModalBody>
       <ModalFooter>
-        {
-          inProgress
-            ? [<Spinner key="foo" />]
-            : [
-                <Button key="create" variant="primary" onClick={create}>
-                  {t('Create')}
-                </Button>,
-                <Button key="cancel" variant="link" onClick={closeModal}>
-                  {t('Cancel')}
-                </Button>,
-              ]
-        }
+        {inProgress
+          ? [<Spinner key="foo" />]
+          : [
+              <Button key="create" variant="primary" onClick={create}>
+                {t('Create')}
+              </Button>,
+              <Button key="cancel" variant="link" onClick={closeModal}>
+                {t('Cancel')}
+              </Button>,
+            ]}
       </ModalFooter>
     </Modal>
   );

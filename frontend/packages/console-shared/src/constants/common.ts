@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
+export { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
+
 export const CONST = Object.freeze({
   // http://kubernetes.io/docs/user-guide/images/#bypassing-kubectl-create-secrets
   PULL_SECRET_TYPE: 'kubernetes.io/dockerconfigjson',
@@ -21,9 +23,6 @@ export const KEYBOARD_SHORTCUTS = Object.freeze({
 });
 
 export const RESOURCE_NAME_TRUNCATE_LENGTH = 13;
-
-// Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
-export const ALL_NAMESPACES_KEY = '#ALL_NS#';
 
 // Use a key for the "all" applications option that would be an invalid application name to avoid a potential clash
 export const ALL_APPLICATIONS_KEY = '#ALL_APPS#';
@@ -92,6 +91,7 @@ export enum FLAGS {
   CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED = 'CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED',
   CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED = 'CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED',
   LIGHTSPEED_IS_AVAILABLE_TO_INSTALL = 'LIGHTSPEED_IS_AVAILABLE_TO_INSTALL',
+  DEVCONSOLE_PROXY = 'DEVCONSOLE_PROXY',
 }
 
 export const CONFIG_STORAGE_CONSOLE = 'console';

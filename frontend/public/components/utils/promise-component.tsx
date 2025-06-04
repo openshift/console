@@ -2,6 +2,7 @@ import * as React from 'react';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 
+/** @deprecated Use the `usePromiseHandler` instead */
 export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');

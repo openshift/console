@@ -169,6 +169,20 @@ type fileSorter struct {
 	by    func(p1, p2 *helmchart.File) bool // Closure used in the Less method.
 }
 
+// If chart-verifier is run from within the helm chart directory
+// the output will be sent to the OutputDirectory and affect the digest.
+// This removes any verifier output files from the calculated digest
+func filterOutputDirectory(files []*helmchart.File) []*helmchart.File {
+	n := 0
+	for _, file := range files {
+		if !strings.Contains(file.Name, utils.OutputDirectory) {
+			files[n] = file
+			n++
+		}
+	}
+	return files[:n]
+}
+
 func (by By) sort(files []*helmchart.File) {
 	fs := &fileSorter{
 		files: files,
@@ -200,6 +214,8 @@ func GenerateSha(rawFiles []*helmchart.File) string {
 	chartSha := sha256.New()
 	sortedFiles := rawFiles
 	By(name).sort(sortedFiles)
+	sortedFiles = filterOutputDirectory(sortedFiles)
+
 	for _, chartFile := range sortedFiles {
 		chartSha.Write(chartFile.Data)
 	}

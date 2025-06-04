@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
+import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { QUERY_PROPERTIES } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
@@ -80,9 +81,7 @@ const ImportPage: React.FunctionComponent = () => {
     <QueryFocusApplication>
       {(application) => (
         <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-          <Helmet>
-            <title>{importData.title}</title>
-          </Helmet>
+          <DocumentTitle>{importData.title}</DocumentTitle>
           <PageHeading
             title={importData.title}
             badge={importType === ImportTypes.devfile ? <DevPreviewBadge /> : null}

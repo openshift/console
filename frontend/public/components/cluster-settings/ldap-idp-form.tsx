@@ -1,13 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PageHeading } from '../utils';
+import { ButtonBar, ListInput } from '../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -166,15 +168,13 @@ export const AddLDAPPage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} helpText={t('public~Integrate with an LDAP identity provider.')} />
-      <div className="co-m-pane__body">
-        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+      <PaneBody>
+        <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
+            <label className="co-required" htmlFor="url">
               {t('public~URL')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -192,9 +192,7 @@ export const AddLDAPPage = () => {
             </div>
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="bind-dn">
-              {t('public~Bind DN')}
-            </label>
+            <label htmlFor="bind-dn">{t('public~Bind DN')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -209,9 +207,7 @@ export const AddLDAPPage = () => {
             </div>
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="bind-password">
-              {t('public~Bind password')}
-            </label>
+            <label htmlFor="bind-password">{t('public~Bind password')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
@@ -229,9 +225,7 @@ export const AddLDAPPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Attributes')}
           </Title>
-          <p className="co-help-text">
-            {t('public~Attributes map LDAP attributes to identities.')}
-          </p>
+          <p>{t('public~Attributes map LDAP attributes to identities.')}</p>
           <ListInput
             label={t('public~ID')}
             required
@@ -280,7 +274,7 @@ export const AddLDAPPage = () => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

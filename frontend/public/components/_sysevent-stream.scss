@@ -178,7 +178,7 @@
       var(--pf-t--global--color--nonstatus--gray--default);
     margin-left: 10px;
     &--empty {
-      border: 0;
+      border-color: transparent;
     }
   }
 

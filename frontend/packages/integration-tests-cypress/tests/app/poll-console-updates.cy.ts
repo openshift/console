@@ -55,6 +55,7 @@ const checkConsoleUpdateToast = () => {
 describe('PollConsoleUpdates Test', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
   });
 
   afterEach(() => {

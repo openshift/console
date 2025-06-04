@@ -1,8 +1,15 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateVariant, Tooltip } from '@patternfly/react-core';
+import {
+  DescriptionList,
+  EmptyState,
+  EmptyStateVariant,
+  Grid,
+  GridItem,
+  Tooltip,
+} from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
-import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
+import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +27,6 @@ import {
 import { ContainerLink } from '@console/internal/components/pod';
 import {
   ResourceLink,
-  ExternalLink,
   navFactory,
   SectionHeading,
   ResourceSummary,
@@ -31,6 +37,8 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln } from '../types';
@@ -58,17 +66,17 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
   const queryURL = quayURLFor(props.obj);
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('container-security~Image Manifest Vulnerabilities details')} />
         <ImageVulnerabilityToggleGroup obj={props.obj} />
-      </div>
-      <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-sm-6">
+      </PaneBody>
+      <PaneBody>
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={props.obj} />
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
               <DetailsItem
                 label={t('container-security~Registry')}
                 obj={props.obj}
@@ -84,10 +92,10 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
                   <ExternalLink text={shortenHash(props.obj.spec.manifest)} href={queryURL} />
                 </DetailsItem>
               )}
-            </dl>
-          </div>
-        </div>
-      </div>
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
       <div className="cs-imagevulnerabilitieslist__wrapper">
         <ImageVulnerabilitiesList {...props} />
       </div>
@@ -146,12 +154,12 @@ export const ImageManifestVulnDetailsPage: React.FC = () => {
 
 const tableColumnClasses = [
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
+  css('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-md'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
 ];
 
 export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVuln>> = ({
@@ -189,7 +197,7 @@ export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVu
         {queryURL ? (
           <ExternalLink text={shortenHash(obj.spec.manifest)} href={queryURL} />
         ) : (
-          <span className="small text-muted">-</span>
+          <span className="small pf-v6-u-text-color-subtle">-</span>
         )}
       </TableData>
     </>
@@ -326,27 +334,29 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
   ) => (vuln !== undefined ? exists(vuln) : absent());
 
   return (
-    <div className="co-m-pane__body">
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-md-3">{t('container-security~Container')}</div>
-          <div className="col-md-4">{t('container-security~Image')}</div>
-          <div className="col-md-2">
-            <Tooltip content="Results provided by Quay security scanner">
-              <span>{t('container-security~Security scan')}</span>
-            </Tooltip>
-          </div>
-        </div>
-        <div className="co-m-table-grid__body">
+    <PaneBody>
+      <PfTable gridBreakPoint="">
+        <Thead>
+          <Tr>
+            <Th width={30}>{t('container-security~Container')}</Th>
+            <Th width={50}>{t('container-security~Image')}</Th>
+            <Th width={20}>
+              <Tooltip content="Results provided by Quay security scanner">
+                <span>{t('container-security~Security scan')}</span>
+              </Tooltip>
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {props.pod.status.containerStatuses.map((status) => (
-            <div className="row" key={status.containerID}>
-              <div className="col-md-3">
+            <Tr key={status.containerID}>
+              <Td>
                 <ContainerLink pod={props.pod} name={status.name} />
-              </div>
-              <div className="col-md-4 co-truncate co-nowrap co-select-to-copy">
+              </Td>
+              <Td className="co-select-to-copy" modifier="breakWord">
                 {props.pod.spec.containers.find((c) => c.name === status.name).image}
-              </div>
-              <div className="col-md-3">
+              </Td>
+              <Td>
                 {props.loaded ? (
                   withVuln(
                     vulnFor(status),
@@ -380,12 +390,12 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
                     <Loading />
                   </div>
                 )}
-              </div>
-            </div>
+              </Td>
+            </Tr>
           ))}
-        </div>
-      </div>
-    </div>
+        </Tbody>
+      </PfTable>
+    </PaneBody>
   );
 };
 

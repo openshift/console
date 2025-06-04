@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { BoltIcon } from '@patternfly/react-icons/dist/esm/icons/bolt-icon';
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { DatabaseIcon } from '@patternfly/react-icons/dist/esm/icons/database-icon';
@@ -10,11 +9,7 @@ import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk/src';
 import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import {
-  INCONTEXT_ACTIONS_CONNECTS_TO,
-  INCONTEXT_ACTIONS_SERVICE_BINDING,
-  QUERY_PROPERTIES,
-} from '../const';
+import { INCONTEXT_ACTIONS_CONNECTS_TO, QUERY_PROPERTIES } from '../const';
 import { resolvedHref } from '../utils/add-page-utils';
 import { getDisabledAddActions } from '../utils/useAddActionExtensions';
 
@@ -35,7 +30,6 @@ export const resolvedURLWithParams = (
   namespace: string,
   application?: string,
   contextSource?: string,
-  allowServiceBinding?: boolean,
 ) => {
   const resolvedURL = resolvedHref(unresolvedHref, namespace);
   const queryParams = new URLSearchParams();
@@ -47,9 +41,7 @@ export const resolvedURLWithParams = (
       queryParams.append(
         QUERY_PROPERTIES.CONTEXT_ACTION,
         JSON.stringify({
-          type: allowServiceBinding
-            ? INCONTEXT_ACTIONS_SERVICE_BINDING
-            : INCONTEXT_ACTIONS_CONNECTS_TO,
+          type: INCONTEXT_ACTIONS_CONNECTS_TO,
           payload: contextSource,
         }),
       );
@@ -84,7 +76,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
     path,
     disabled: accessReviewDisabled,
   }),
-  DevCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
+  SoftwareCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'dev-catalog',
     label: i18next.t('devconsole~From Catalog'),
     icon: <CatalogIcon />,
@@ -119,14 +111,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
     path,
     disabled: accessReviewDisabled,
   }),
-  OperatorBacked: (
-    namespace,
-    application,
-    contextSource,
-    path,
-    accessReviewDisabled,
-    isServiceBindingAllowed,
-  ) => ({
+  OperatorBacked: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'operator-backed',
     label: i18next.t('devconsole~Operator Backed'),
     icon: <BoltIcon />,
@@ -136,7 +121,6 @@ export const AddActions: { [name: string]: ActionFactory } = {
         namespace,
         application,
         contextSource,
-        isServiceBindingAllowed,
       ),
     },
     path,

@@ -14,9 +14,15 @@ let helmReleaseDetailsProps: React.ComponentProps<typeof HelmReleaseDetails>;
 let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmReleaseDetails>;
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
+  useNavigate: jest.fn(),
+}));
+
+// jest mock useClusterVersion
+jest.mock('@console/shared/src/hooks/version', () => ({
+  useClusterVersion: jest.fn(),
 }));
 
 describe('HelmReleaseDetails', () => {

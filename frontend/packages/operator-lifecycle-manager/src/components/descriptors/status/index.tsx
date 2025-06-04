@@ -23,7 +23,7 @@ const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses'
       return <Invalid path={descriptor.path} />;
     }
     if (_.every(value, (v) => _.isArray(v) && v.length === 0)) {
-      return <span className="text-muted">{t('olm~No members')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('olm~No members')}</span>;
     }
     return <PodStatusChart statuses={value} subTitle={descriptor.path} />;
   }, [descriptor.path, t, value]);
@@ -49,7 +49,7 @@ const Link: React.FC<StatusCapabilityProps<string>> = ({
       {!_.isNil(value) ? (
         <a href={value}>{value.replace(/https?:\/\//, '')}</a>
       ) : (
-        <span className="text-muted">{t('public~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
       )}
     </DetailsItem>
   );
@@ -78,7 +78,7 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps<string>> = ({
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {_.isEmpty(value) ? (
-        <span className="text-muted">{t('public~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
       ) : (
         <pre className="co-pre" style={{ width: 'max-content' }}>
           {value}

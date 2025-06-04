@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
 import { Alert, CodeBlock, CodeBlockCode } from '@patternfly/react-core';
@@ -161,7 +160,10 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   required
                 />
               </span>
-              <p className="help-block text-muted" id="namespace-pull-secret-name-help">
+              <p
+                className="help-block pf-v6-u-text-color-subtle"
+                id="namespace-pull-secret-name-help"
+              >
                 {t('public~Friendly name to help you manage this in the future')}
               </p>
             </div>
@@ -173,7 +175,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
             </div>
             <div className="col-xs-9">
               <div className="radio">
-                <label className="control-label">
+                <label>
                   <input
                     type="radio"
                     id="namespace-pull-secret-method--form"
@@ -185,7 +187,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                 </label>
               </div>
               <div className="radio">
-                <label className="control-label">
+                <label>
                   <input
                     type="radio"
                     checked={this.state.method === 'upload'}
@@ -230,7 +232,10 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                       aria-describedby="namespace-pull-secret-email-help"
                     />
                   </span>
-                  <p className="help-block text-muted" id="namespace-pull-secret-email-help">
+                  <p
+                    className="help-block pf-v6-u-text-color-subtle"
+                    id="namespace-pull-secret-email-help"
+                  >
                     {t('public~Optional, depending on registry provider')}
                   </p>
                 </div>
@@ -271,7 +276,10 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                     onChange={this._onFileChange}
                     aria-describedby="namespace-pull-secret-file-help"
                   />
-                  <p className="help-block etext-muted" id="namespace-pull-secret-file-help">
+                  <p
+                    className="help-block epf-v6-u-text-color-subtle"
+                    id="namespace-pull-secret-file-help"
+                  >
                     {t(
                       'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
                     )}

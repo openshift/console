@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';

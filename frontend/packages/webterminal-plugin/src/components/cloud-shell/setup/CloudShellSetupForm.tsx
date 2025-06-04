@@ -16,7 +16,7 @@ const CloudShellSetupForm: React.FC<
   const { t } = useTranslation();
   return (
     <FlexForm onSubmit={handleSubmit}>
-      <FormBody className="co-m-pane__form">
+      <FormBody className="co-m-pane__form" style={{ padding: 'var(--pf-t--global--spacer--md)' }}>
         {isAdmin ? <AdminNamespaceSection /> : <NamespaceSection />}
         <CloudShellAdvancedOption />
       </FormBody>

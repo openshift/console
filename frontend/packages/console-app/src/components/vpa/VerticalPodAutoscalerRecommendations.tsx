@@ -1,4 +1,9 @@
 import * as React from 'react';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -47,9 +52,9 @@ export const VerticalPodAutoscalerRecommendations: React.FC<VerticalPodAutoscale
   const verticalPodAutoscalers = getVerticalPodAutoscalersForResource(vpas, obj);
 
   return (
-    <>
-      <dt>{t('console-app~VerticalPodAutoscalers')}</dt>
-      <dd>
+    <DescriptionListGroup>
+      <DescriptionListTerm>{t('console-app~VerticalPodAutoscalers')}</DescriptionListTerm>
+      <DescriptionListDescription>
         {verticalPodAutoscalers.length > 0
           ? verticalPodAutoscalers.map((vpa) => (
               <>
@@ -64,8 +69,8 @@ export const VerticalPodAutoscalerRecommendations: React.FC<VerticalPodAutoscale
               </>
             ))
           : t('console-app~No VerticalPodAutoscalers')}
-      </dd>
-    </>
+      </DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };
 

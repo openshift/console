@@ -5,7 +5,7 @@ Feature: Filters on Serving and Eventing page
 
         Background:
             Given user has created or selected namespace "aut-serving-eventing"
-              And user has created knative service "hello-openshift"
+              And user has created knative service "hello-openshift" in admin
               And user is at administrator perspective
 
         @regression
@@ -41,7 +41,8 @@ Feature: Filters on Serving and Eventing page
               And user will see Clear all filters
 
 
-        @regression
+        @regression @broken-test
+        # Broken due to https://issues.redhat.com/browse/OCPBUGS-55368
         Scenario: Filter the Event Sources: KA-02-TC04
             Given user has created ApiServer Source
               And user has created Ping Source

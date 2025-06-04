@@ -1,10 +1,12 @@
 import { checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 
 describe('Node terminal', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
   });
 
   beforeEach(() => {

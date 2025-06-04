@@ -1,6 +1,6 @@
 // Residual css rules within codebase that pertain to Bootstrap
 .form-group {
-  margin-bottom: $form-group-margin-bottom;
+  margin-bottom: var(--pf-t--global--spacer--md);
 }
 
 .has-feedback {
@@ -9,19 +9,15 @@
 
 .help-block {
   display: block; // account for any element using help-block
-  margin-top: 5px;
-  margin-bottom: 10px;
-  color: var(
-    --pf-t--global--text--color--regular
-  ); // matches --pf-v6-c-helper-text__item-text--Color and picks up dark theme variable
+  margin-top: var(--pf-t--global--spacer--xs);
 }
 
 :where(:not([class*='pf-v6-c-'])) {
   @at-root label#{&} {
     display: inline-block;
     max-width: 100%;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: var(--pf-t--global--spacer--xs);
+    font-weight: var(--pf-t--global--font--weight--body--bold);
   }
 }
 
@@ -35,7 +31,7 @@
 
 .list-group {
   // No need to set list-style: none; since .list-group-item is block level
-  margin-bottom: 20px;
+  margin-bottom: var(--pf-t--global--spacer--lg);
   padding-left: 0; // reset padding because ul and ol
 }
 
@@ -46,7 +42,7 @@
 .list-group-item {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
   background-color: var(--pf-t--global--background--color--primary--default);
@@ -57,8 +53,8 @@
 .checkbox {
   position: relative;
   display: block;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: var(--pf-t--global--spacer--sm);
+  margin-bottom: var(--pf-t--global--spacer--sm);
 
   // These are used on elements with <label> descendants
   &.disabled,
@@ -72,7 +68,7 @@
     min-height: $line-height-computed; // Ensure the input doesn't jump when there is no text
     padding-left: 20px;
     margin-bottom: 0;
-    font-weight: 400;
+    font-weight: var(--pf-t--global--font--weight--body--default);
     cursor: pointer;
   }
 }
@@ -81,13 +77,15 @@
 .checkbox input[type='checkbox'],
 .checkbox-inline input[type='checkbox'] {
   position: absolute;
-  margin-top: 4px;
+  margin-top: var(--pf-t--global--spacer--xs);
   margin-left: -20px;
 }
 
 .radio + .radio,
 .checkbox + .checkbox {
-  margin-top: -5px; // Move up sibling radios or checkboxes for tighter spacing
+  margin-top: calc(
+    var(--pf-t--global--spacer--xs) * -1
+  ); // Move up sibling radios or checkboxes for tighter spacing
 }
 
 // Radios and checkboxes on same line
@@ -98,7 +96,7 @@
   padding-left: 20px;
   margin-bottom: 0;
   margin-right: 20px;
-  font-weight: 400;
+  font-weight: var(--pf-t--global--font--weight--body--default);
   vertical-align: middle;
   cursor: pointer;
 
@@ -111,52 +109,5 @@
 
 .small,
 small {
-  font-size: var(--pf-t--global--font--size--sm) !important;
-}
-
-.table {
-  width: 100%;
-  max-width: 100%;
-  margin-bottom: $line-height-computed;
-  // Cells
-  > thead,
-  > tbody,
-  > tfoot {
-    > tr {
-      > th,
-      > td {
-        padding: var(
-          --pf-t--global--spacer--sm
-        ); // matches --pf-v6-c-table--m-compact--cell--Padding
-        vertical-align: top;
-        border-top: var(--pf-t--global--border--width--divider--default) solid
-          var(--pf-t--global--border--color--default);
-      }
-    }
-  }
-  // Bottom align for column headings
-  > thead > tr > th {
-    vertical-align: bottom;
-    border-bottom: var(--pf-t--global--border--width--md) solid
-      var(--pf-t--global--border--color--default);
-  }
-  // Remove top border from thead by default
-  > caption + thead,
-  > colgroup + thead,
-  > thead:first-child {
-    > tr:first-child {
-      > th,
-      > td {
-        border-top: 0;
-      }
-    }
-  }
-}
-
-.text-muted {
-  color: var(--pf-t--global--text--color--subtle);
-}
-
-.text-secondary {
-  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--xs) !important;
 }

@@ -5,7 +5,7 @@ Then('user will see {string}', (tableColumn: string) => {
 });
 
 Then('user will see {string} Build details page', (build: string) => {
-  cy.get('[data-test-id="resource-title"]').should('contain', build);
+  cy.get('[data-test="page-heading"] h1').should('contain', build);
 });
 
 When('user clicks on last run of {string} build', (build: string) => {
@@ -13,5 +13,5 @@ When('user clicks on last run of {string} build', (build: string) => {
 });
 
 Then('user will see {string} BuildRun details page', (build: string) => {
-  cy.get('[data-test-id="resource-title"]').should('contain', build);
+  cy.get('[data-test="page-heading"] h1').should('contain', build);
 });

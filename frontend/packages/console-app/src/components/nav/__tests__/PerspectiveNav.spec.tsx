@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Nav } from '@patternfly/react-core';
 import { shallow, mount } from 'enzyme';
 import { Provider } from 'react-redux';
@@ -8,8 +7,8 @@ import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources
 import PerspectiveNav from '../PerspectiveNav';
 
 jest.mock('react', () => ({
-  ...require.requireActual('react'),
-  useLayoutEffect: require.requireActual('react').useEffect,
+  ...jest.requireActual('react'),
+  useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn().mockReturnValue(['dev', jest.fn()]),
@@ -21,7 +20,7 @@ jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
   usePerspectives: jest.fn(),
 }));
 jest.mock('react-dnd', () => {
-  const reactDnd = require.requireActual('react-dnd');
+  const reactDnd = jest.requireActual('react-dnd');
   return {
     ...reactDnd,
     useDrag: jest.fn().mockReturnValue([{}, {}, jest.fn()]),

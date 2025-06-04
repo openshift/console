@@ -29,7 +29,6 @@ import {
   withHandlePromise,
   history,
   RequestSizeInput,
-  Timestamp,
   resourcePathFromModel,
   convertToBaseValue,
   humanizeBinaryBytesWithoutB,
@@ -58,6 +57,7 @@ import {
   RedExclamationCircleIcon,
   onlyPvcSCs,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';
@@ -231,7 +231,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             )}
           </FormGroup>
           <div className="co-restore-pvc-modal__details-section">
-            <p className="text-muted">
+            <p className="pf-v6-u-text-color-subtle">
               {t('console-app~{{resourceKind}} details', {
                 resourceKind: VolumeSnapshotModel.label,
               })}

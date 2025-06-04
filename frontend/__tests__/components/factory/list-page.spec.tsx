@@ -1,5 +1,9 @@
 import * as React from 'react';
 import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import configureMockStore from 'redux-mock-store';
+import { Provider } from 'react-redux';
 import { TextInput } from '@patternfly/react-core';
 import {
   TextFilter,
@@ -7,10 +11,10 @@ import {
   FireMan,
   MultiListPage,
 } from '../../../public/components/factory/list-page';
-import { Firehose, PageHeading } from '../../../public/components/utils';
+import { Firehose } from '../../../public/components/utils';
 
 jest.mock('react-redux', () => {
-  const ActualReactRedux = require.requireActual('react-redux');
+  const ActualReactRedux = jest.requireActual('react-redux');
   return {
     ...ActualReactRedux,
     useDispatch: jest.fn(),
@@ -18,7 +22,7 @@ jest.mock('react-redux', () => {
 });
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useNavigate: jest.fn(),
 }));
 
@@ -74,40 +78,49 @@ describe(TextFilter.displayName, () => {
 });
 
 describe(FireMan.displayName, () => {
-  let wrapper: ShallowWrapper<any>;
-
-  beforeEach(() => {
-    const resources = [{ kind: 'Node', prop: 'obj' }];
-    wrapper = shallow(<FireMan resources={resources} />);
+  const mockStore = configureMockStore();
+  const store = mockStore({
+    k8s: {
+      getIn: jest.fn().mockReturnValue({}),
+    },
+    sdkCore: {
+      impersonate: {},
+    },
   });
 
   it('renders `title` if given `title`', () => {
-    expect(wrapper.find(PageHeading).props().title).toBe(undefined);
+    const { rerender } = render(
+      <Provider store={store}>
+        <FireMan resources={[{ kind: 'Node', prop: 'obj' }]} />
+      </Provider>,
+    );
+    expect(screen.queryByText('My pods')).not.toBeInTheDocument();
 
-    const title = 'My pods';
-    wrapper.setProps({ title });
-
-    expect(wrapper.find(PageHeading).props().title).toEqual(title);
+    rerender(
+      <Provider store={store}>
+        <FireMan resources={[{ kind: 'Node', prop: 'obj' }]} title="My pods" />
+      </Provider>,
+    );
+    expect(screen.getByText('My pods')).toBeInTheDocument();
   });
 
   it('renders create button if given `canCreate` true', () => {
-    expect(wrapper.find('button#yaml-create').exists()).toBe(false);
+    const createProps = {};
+    render(
+      <Provider store={store}>
+        <FireMan
+          resources={[{ kind: 'Node', prop: 'obj' }]}
+          canCreate
+          createProps={createProps}
+          createButtonText="Create Me!"
+          title="Nights Watch"
+        />
+      </Provider>,
+    );
 
-    const createProps = { foo: 'bar' };
-    const button = wrapper
-      .setProps({
-        canCreate: true,
-        createProps,
-        createButtonText: 'Create Me!',
-        title: 'Nights Watch',
-      })
-      .find('#yaml-create');
-
-    expect(wrapper.find('#yaml-create').childAt(0).text()).toEqual('Create Me!');
-
-    Object.keys(createProps).forEach((key) => {
-      expect(createProps[key] === button.props()[key]).toBe(true);
-    });
+    const button = screen.getByRole('button', { name: 'Create Me!' });
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveAttribute('id', 'yaml-create');
   });
 });
 

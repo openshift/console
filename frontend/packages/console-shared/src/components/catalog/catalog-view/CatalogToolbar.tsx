@@ -6,6 +6,10 @@ import { Dropdown } from '@console/internal/components/utils';
 import { useDebounceCallback } from '@console/shared';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
+import CatalogPageHeader from './CatalogPageHeader';
+import CatalogPageHeading from './CatalogPageHeading';
+import CatalogPageNumItems from './CatalogPageNumItems';
+import CatalogPageToolbar from './CatalogPageToolbar';
 
 type CatalogToolbarProps = {
   title: string;
@@ -51,9 +55,9 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
     const debouncedOnSearchKeywordChange = useDebounceCallback(onSearchKeywordChange);
 
     return (
-      <div className="co-catalog-page__header">
-        <div className="co-catalog-page__heading text-capitalize">{title}</div>
-        <div className="co-catalog-page__filter">
+      <CatalogPageHeader>
+        <CatalogPageHeading>{title}</CatalogPageHeading>
+        <CatalogPageToolbar>
           <Flex>
             <FlexItem>
               <SearchInput
@@ -78,7 +82,6 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
             {showGrouping && (
               <FlexItem>
                 <Dropdown
-                  className="co-catalog-page__btn-group__group-by"
                   menuClassName="dropdown-menu--text-wrap"
                   items={catalogGroupItems}
                   onChange={onGroupingChange}
@@ -88,11 +91,11 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               </FlexItem>
             )}
           </Flex>
-          <div className="co-catalog-page__num-items">
+          <CatalogPageNumItems>
             {t('console-shared~{{totalItems}} items', { totalItems })}
-          </div>
-        </div>
-      </div>
+          </CatalogPageNumItems>
+        </CatalogPageToolbar>
+      </CatalogPageHeader>
     );
   },
 );

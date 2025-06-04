@@ -5,7 +5,8 @@ import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
-import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
+import { HorizontalNav, LoadingBox, Page, AsyncComponent } from '../../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
@@ -120,7 +121,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sMode
   ) : (
     <>
       <PageTitleContext.Provider value={titleProviderValues}>
-        <PageHeading title={title} detail={true} badge={badge} />
+        <PageHeading title={title} badge={badge} />
         <HorizontalNav pages={allPages} noStatusBox />
       </PageTitleContext.Provider>
     </>

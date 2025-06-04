@@ -1,12 +1,23 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
-import { Tooltip } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import {
+  Card,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+  Tooltip,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
 import { MachineConfigPoolModel } from '../models';
@@ -92,42 +103,48 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
   const { t } = useTranslation();
 
   return (
-    <dl className="co-m-pane__details">
-      <dt>{t('public~Max unavailable machines')}</dt>
-      <dd>{maxUnavailable}</dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('public~Max unavailable machines')}</DescriptionListTerm>
+        <DescriptionListDescription>{maxUnavailable}</DescriptionListDescription>
+      </DescriptionListGroup>
       {configuration && (
         <>
-          <dt>{t('public~Current configuration')}</dt>
-          <dd>
-            {configuration.name ? (
-              <ResourceLink
-                kind={machineConfigReference}
-                name={configuration.name}
-                title={configuration.name}
-              />
-            ) : (
-              '-'
-            )}
-          </dd>
-          <dt>{t('public~Current configuration source')}</dt>
-          <dd>
-            {configuration.source
-              ? _.map(configuration.source, ({ apiVersion, kind, name }) => (
-                  <ResourceLink
-                    key={`${apiVersion}-${kind}-${name}`}
-                    kind={machineConfigReference}
-                    name={name}
-                    title={name}
-                  />
-                ))
-              : '-'}
-          </dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Current configuration')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              {configuration.name ? (
+                <ResourceLink
+                  kind={machineConfigReference}
+                  name={configuration.name}
+                  title={configuration.name}
+                />
+              ) : (
+                '-'
+              )}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Current configuration source')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              {configuration.source
+                ? _.map(configuration.source, ({ apiVersion, kind, name }) => (
+                    <ResourceLink
+                      key={`${apiVersion}-${kind}-${name}`}
+                      kind={machineConfigReference}
+                      name={name}
+                      title={name}
+                    />
+                  ))
+                : '-'}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
           <DetailsItem label={t('public~Paused')} obj={obj} path={'spec.paused'}>
             {obj.spec?.paused ? t('public~True') : t('public~False')}
           </DetailsItem>
         </>
       )}
-    </dl>
+    </DescriptionList>
   );
 };
 
@@ -135,74 +152,64 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
   const { t } = useTranslation();
 
   return (
-    <div className="co-m-pane__body-group">
-      <div className="co-detail-table">
-        <div className="co-detail-table__row row">
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Total machine count')}</dt>
-              <dd>
-                <Tooltip content={t('public~Total number of machines in the machine pool.')}>
-                  <span>
-                    {obj?.status?.machineCount}{' '}
-                    {t('public~machine', { count: obj?.status?.machineCount })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Ready machines')}</dt>
-              <dd>
-                <Tooltip content={t('public~Total number of ready machines targeted by the pool.')}>
-                  <span>
-                    {obj?.status?.readyMachineCount}{' '}
-                    {t('public~machine', { count: obj?.status?.readyMachineCount })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Updated count')}</dt>
-              <dd>
-                <Tooltip
-                  content={t(
-                    'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
-                  )}
-                >
-                  <span>
-                    {obj?.status?.updatedMachineCount}{' '}
-                    {t('public~machine', { count: obj?.status?.updatedMachineCount })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section co-detail-table__section--last">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('public~Unavailable count')}</dt>
-              <dd>
-                <Tooltip
-                  content={t(
-                    'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
-                  )}
-                >
-                  <span>
-                    {obj?.status?.unavailableMachineCount}{' '}
-                    {t('public~machine', {
-                      count: obj?.status?.unavailableMachineCount,
-                    })}
-                  </span>
-                </Tooltip>
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PaneBodyGroup>
+      <DescriptionList className="co-detail-table">
+        <Card>
+          <DescriptionListTerm>{t('public~Total machine count')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip content={t('public~Total number of machines in the machine pool.')}>
+              <span>
+                {obj?.status?.machineCount}{' '}
+                {t('public~machine', { count: obj?.status?.machineCount })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+        <Card>
+          <DescriptionListTerm>{t('public~Ready machines')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip content={t('public~Total number of ready machines targeted by the pool.')}>
+              <span>
+                {obj?.status?.readyMachineCount}{' '}
+                {t('public~machine', { count: obj?.status?.readyMachineCount })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+        <Card>
+          <DescriptionListTerm>{t('public~Updated count')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip
+              content={t(
+                'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
+              )}
+            >
+              <span>
+                {obj?.status?.updatedMachineCount}{' '}
+                {t('public~machine', { count: obj?.status?.updatedMachineCount })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+        <Card>
+          <DescriptionListTerm>{t('public~Unavailable count')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Tooltip
+              content={t(
+                'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
+              )}
+            >
+              <span>
+                {obj?.status?.unavailableMachineCount}{' '}
+                {t('public~machine', {
+                  count: obj?.status?.unavailableMachineCount,
+                })}
+              </span>
+            </Tooltip>
+          </DescriptionListDescription>
+        </Card>
+      </DescriptionList>
+    </PaneBodyGroup>
   );
 };
 
@@ -211,10 +218,12 @@ const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({ ob
   const { t } = useTranslation();
   return (
     <ResourceSummary resource={obj} showNodeSelector nodeSelector="spec.nodeSelector">
-      <dt>{t('public~MachineConfig selector')}</dt>
-      <dd>
-        <Selector kind={machineConfigReference} selector={machineConfigSelector} />
-      </dd>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('public~MachineConfig selector')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <Selector kind={machineConfigReference} selector={machineConfigSelector} />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
     </ResourceSummary>
   );
 };
@@ -232,23 +241,23 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineConfigPool details')} />
         {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
         <MachineConfigPoolCounts obj={obj} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <MachineConfigPoolSummary obj={obj} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <MachineConfigPoolCharacteristics obj={obj} />
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={_.get(obj, 'status.conditions')} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -334,10 +343,10 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   const MachineConfigPoolTableRow: React.FC<RowFunctionArgs<MachineConfigPoolKind>> = ({ obj }) => {
     return (
       <>
-        <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+        <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
           <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} />
         </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
           {_.get(obj, 'status.configuration.name') ? (
             <ResourceLink
               kind={machineConfigReference}
@@ -348,7 +357,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
             '-'
           )}
         </TableData>
-        <TableData className={classNames(tableColumnClasses[2], 'co-truncate')}>
+        <TableData className={css(tableColumnClasses[2], 'co-truncate')}>
           {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
         </TableData>
         <TableData className={tableColumnClasses[3]}>

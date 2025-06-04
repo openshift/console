@@ -1,19 +1,15 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import {
-  FirehoseResource,
-  LoadingBox,
-  history,
-  PageHeading,
-} from '@console/internal/components/utils';
+import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import {
   normalizeBuilderImages,
@@ -130,9 +126,7 @@ const ImportSamplePage: React.FC = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <Helmet>
-        <title>{t('devconsole~Create Sample application')}</title>
-      </Helmet>
+      <DocumentTitle>{t('devconsole~Create Sample application')}</DocumentTitle>
       <PageHeading title={t('devconsole~Create Sample application')} />
       <Formik
         initialValues={initialValues}

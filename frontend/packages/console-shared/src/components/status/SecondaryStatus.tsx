@@ -13,7 +13,7 @@ const SecondaryStatus: React.FC<SecondaryStatusProps> = ({ status, className, da
   if (statusLabel) {
     return (
       <div data-status-id={dataStatusID}>
-        <small className={`${cssClassName} text-muted`}>{statusLabel}</small>
+        <small className={`${cssClassName} pf-v6-u-text-color-subtle`}>{statusLabel}</small>
       </div>
     );
   }

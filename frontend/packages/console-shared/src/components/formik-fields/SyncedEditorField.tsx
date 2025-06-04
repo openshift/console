@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, Button, AlertActionCloseButton } from '@patternfly/react-core';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -146,7 +146,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   return loaded ? (
     <>
       <div
-        className={cx('ocs-synced-editor-field__editor-toggle', { margin: !noMargin })}
+        className={css('ocs-synced-editor-field__editor-toggle', { margin: !noMargin })}
         data-test="synced-editor-field"
       >
         <RadioGroupField
@@ -175,7 +175,9 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
           isInline
           title={t('console-shared~Invalid YAML cannot be persisted')}
         >
-          <p>{t('console-shared~Switching to form view will delete any invalid YAML.')}</p>
+          <p className="pf-v6-u-mb-sm">
+            {t('console-shared~Switching to form view will delete any invalid YAML.')}
+          </p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
             {t('console-shared~Switch and delete')}
           </Button>

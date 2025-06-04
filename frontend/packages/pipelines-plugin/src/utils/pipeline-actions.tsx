@@ -1,4 +1,3 @@
-import * as React from 'react';
 import i18n from 'i18next';
 import * as _ from 'lodash';
 import { SemVer } from 'semver';

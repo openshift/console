@@ -1,16 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ResourceLink,
-  ExternalLink,
-  SidebarSectionHeading,
-} from '@console/internal/components/utils';
+import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
   referenceForGroupVersionKind,
   groupVersionFor,
 } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import EventSourceOwnedList from './EventSourceOwnedList';
 
 type EventSourceTargetProps = {
@@ -53,7 +50,9 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
             )}
             {sinkUri && (
               <>
-                <span className="text-muted">{t('knative-plugin~Target URI:')} </span>
+                <span className="pf-v6-u-text-color-subtle">
+                  {t('knative-plugin~Target URI:')}{' '}
+                </span>
                 <ExternalLink
                   href={sinkUri}
                   additionalClassName="co-external-link--block"
@@ -64,7 +63,9 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
           </li>
         </ul>
       ) : (
-        <span className="text-muted">{t('knative-plugin~No sink found for this resource.')}</span>
+        <span className="pf-v6-u-text-color-subtle">
+          {t('knative-plugin~No sink found for this resource.')}
+        </span>
       )}
     </>
   );

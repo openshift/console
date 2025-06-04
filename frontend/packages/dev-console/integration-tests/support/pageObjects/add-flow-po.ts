@@ -157,7 +157,7 @@ export const catalogPO = {
   filterInfoTipContent: '[id*=popover]',
   filterCheckBox: '[type="checkbox"]',
   chartRepositoryGroup: '[data-test-group-name="chartRepositoryTitle"]',
-  catalogTypeLink: 'li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty',
+  catalogTypeLink: 'li.vertical-tabs-pf-tab.shown',
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
     helmCharts: '[data-test="tab HelmChart"]',
@@ -195,7 +195,7 @@ export const catalogPO = {
   },
   mariaDBTemplate: {
     namespace: '#namespace',
-    title: 'h1.co-m-pane__heading',
+    title: '[data-test="page-heading"] h1',
     memoryLimit: '#MEMORY_LIMIT',
     imageStreamNameSpace: '#NAMESPACE',
     databaseServiceName: '#DATABASE_SERVICE_NAME',
@@ -259,7 +259,7 @@ export const samplesPO = {
   },
   form: {
     name: '[data-test-id="application-form-app-name"]',
-    header: '[data-test-id="resource-title"]',
+    header: '[data-test="page-heading"] h1',
   },
 };
 
@@ -365,7 +365,7 @@ export const eventsPO = {
   attributeName: '[data-test="pairs-list-name"]',
   attributeValue: '[data-test="pairs-list-value"]',
   nameField: '[id="form-input-formData-metadata-name-field"]',
-  pageTitle: '[data-test-id="resource-title"]',
+  pageTitle: '[data-test="page-heading"] h1',
   search: '[placeholder="Filter by keyword..."]',
   subscribeButton: '[data-test-id="submit-button"]',
   subscriberDropDown: '[id="form-ns-dropdown-formData-spec-subscriber-ref-name-field"]',
@@ -410,7 +410,7 @@ export const quickSearchAddPO = {
     return `[data-test="item-name-${itemName}-${itemType}"]`;
   },
   quickSearchCreateButton: '[data-test="create-quick-search"]',
-  viewInDevCatalog: '#devCatalog',
+  viewInSoftwareCatalog: '#devCatalog',
   quickSearchNoResults: '[data-test="quick-search-no-results"]',
 };
 

@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Title } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { k8sGetResource, k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { SectionHeading } from '@console/internal/components/utils';
 import { LoadError } from '@console/internal/components/utils/status-box';
 import { NamespaceModel } from '@console/internal/models';
 import {
@@ -18,6 +18,7 @@ import {
   getCloudShellTimeout,
 } from './cloud-shell-setup-utils';
 import CloudSehellSetupForm from './CloudShellSetupForm';
+import './CloudShellSetup.scss';
 
 type Props = {
   onSubmit?: (namespace: string) => void;
@@ -105,13 +106,10 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
   }
 
   return (
-    <>
-      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-        <SectionHeading
-          text={t('webterminal-plugin~Initialize terminal')}
-          style={{ marginBottom: 0 }}
-        />
-      </div>
+    <div className="wt-cloud-shell-setup">
+      <Title headingLevel="h2" className="wt-cloud-shell-setup--title">
+        {t('webterminal-plugin~Initialize terminal')}
+      </Title>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -120,7 +118,7 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
       >
         {(formikProps) => <CloudSehellSetupForm {...formikProps} isAdmin />}
       </Formik>
-    </>
+    </div>
   );
 };
 

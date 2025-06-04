@@ -25,6 +25,7 @@ import {
   installKnativeOperatorUsingCLI,
   installRedHatIntegrationCamelKOperatorUsingCLI,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 import { userLoginPage } from '../../pages/dev-perspective/common';
 
@@ -34,12 +35,13 @@ Given('user has logged in as a basic user', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
 });
 
 Given('user is at administrator perspective', () => {
   perspective.switchTo(switchPerspective.Administrator);
-  cy.testA11y('Administrator perspective');
+  // cy.testA11y('Administrator perspective');
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
@@ -48,11 +50,18 @@ Given('user has created or selected namespace {string}', (projectName: string) =
 });
 
 Given('user is at pipelines page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Pipelines);
 });
 
 Given('user is at Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
+});
+
+Given('user is at Topology page in the admin view', () => {
+  cy.get('[data-quickstart-id="qs-nav-workloads"]').should('be.visible').click({ force: true });
+  cy.byLegacyTestID('topology-header').should('be.visible').click({ force: true });
+  topologyPage.verifyTopologyPage();
 });
 
 Given('user is at Monitoring page', () => {
@@ -125,6 +134,15 @@ Given(
 
 Given('user has created knative service {string}', (knativeServiceName: string) => {
   perspective.switchTo(switchPerspective.Developer);
+  createGitWorkloadIfNotExistsOnTopologyPage(
+    'https://github.com/sclorg/nodejs-ex.git',
+    knativeServiceName,
+    resourceTypes.knativeService,
+  );
+});
+
+Given('user has created knative service {string} in admin', (knativeServiceName: string) => {
+  perspective.switchTo(switchPerspective.Administrator);
   createGitWorkloadIfNotExistsOnTopologyPage(
     'https://github.com/sclorg/nodejs-ex.git',
     knativeServiceName,

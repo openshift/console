@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"github.com/graph-gophers/graphql-go/types"
+	"github.com/graph-gophers/graphql-go/ast"
 )
 
 func init() {
@@ -9,11 +9,10 @@ func init() {
 }
 
 // newMeta initializes an instance of the meta Schema.
-func newMeta() *types.Schema {
-	s := &types.Schema{
-		EntryPointNames: make(map[string]string),
-		Types:           make(map[string]types.NamedType),
-		Directives:      make(map[string]*types.DirectiveDefinition),
+func newMeta() *ast.Schema {
+	s := &ast.Schema{
+		Types:      make(map[string]ast.NamedType),
+		Directives: make(map[string]*ast.DirectiveDefinition),
 	}
 
 	err := Parse(s, metaSrc, false)
@@ -149,6 +148,8 @@ var metaSrc = `
 		type: __Type!
 		# A GraphQL-formatted string representing the default value for this input value.
 		defaultValue: String
+		isDeprecated: Boolean!
+		deprecationReason: String
 	}
 
 	# A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all
@@ -206,9 +207,5 @@ var metaSrc = `
 		LIST
 		# Indicates this type is a non-null. ` + "`" + `ofType` + "`" + ` is a valid field.
 		NON_NULL
-	}
-
-	type _Service {
-		sdl: String!
 	}
 `

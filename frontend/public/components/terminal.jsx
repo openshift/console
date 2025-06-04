@@ -1,4 +1,4 @@
-import React from 'react';
+import { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
 import { Terminal as XTerminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -7,12 +7,12 @@ import { CompressIcon } from '@patternfly/react-icons/dist/esm/icons/compress-ic
 import { Button } from '@patternfly/react-core';
 import { XtermAddonFullscreen } from '@console/shared';
 
-class Terminal_ extends React.Component {
+class Terminal_ extends Component {
   constructor(props) {
     super(props);
     this.state = { height: 0, width: 0 };
-    this.innerRef = React.createRef();
-    this.outerRef = React.createRef();
+    this.innerRef = createRef();
+    this.outerRef = createRef();
     this.isFullscreen = false;
     this.onResize = () => this.onResize_();
     this.onDataReceived = (data) => this.terminal && this.terminal.write(data);

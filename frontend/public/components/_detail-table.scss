@@ -1,47 +1,17 @@
+@import '../style/vars';
+
 .co-detail-table {
-  text-align: center;
-  border-width: 1px;
-  max-width: 800px;
-  white-space: nowrap;
-
-  &--lg {
-    max-width: 900px;
-  }
-
-  &__row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  &,
-  &__section {
-    border-color: var(--pf-t--global--border--color--default);
-    border-style: solid;
-  }
-
-  &__section {
-    align-items: center;
-    border-width: 1px 1px 0 0;
-    display: flex;
-    flex: 1 0 auto;
-    justify-content: center;
-    padding: 20px 10px;
-    margin-right: -1px;
-    margin-top: -1px;
-
-    &--last {
-      border-right-width: 0;
-    }
-
-    &-header {
-      margin-top: 4px;
-      margin-bottom: 4px;
-    }
-  }
-
   $bracket-height: 48px;
+
+  // override PatternFly DescriptionList grid so that
+  // there can be more than three columns
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (max-width: $screen-xs-max) {
+    flex-direction: column;
+  }
+
   &__bracket {
     width: 12px;
     height: $bracket-height;

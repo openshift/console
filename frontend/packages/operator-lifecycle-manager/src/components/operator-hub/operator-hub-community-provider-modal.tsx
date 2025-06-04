@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox } from '@patternfly/react-core';
+import { Checkbox, Content, ContentVariants, Icon, Split, SplitItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,8 +8,8 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { ExternalLink } from '@console/internal/components/utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityProviderModalProps> = ({
   close,
@@ -27,27 +27,29 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
   );
 
   return (
-    <form onSubmit={submit} className="modal-content co-modal-ignore-warning">
+    <form onSubmit={submit} className="modal-content">
       <ModalTitle>{t('olm~Show community Operator')}</ModalTitle>
       <ModalBody>
-        <div className="co-modal-ignore-warning__content">
-          <div className="co-modal-ignore-warning__icon">
-            <InfoCircleIcon />
-          </div>
-          <div>
-            <p>
+        <Split hasGutter>
+          <SplitItem>
+            <Icon size="xl" status="info">
+              <InfoCircleIcon />
+            </Icon>
+          </SplitItem>
+          <SplitItem>
+            <Content component={ContentVariants.p}>
               {t(
                 'olm~Community Operators are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
               )}
-              {RH_OPERATOR_SUPPORT_POLICY_LINK && (
-                <span className="co-modal-ignore-warning__link">
-                  <ExternalLink
-                    href={RH_OPERATOR_SUPPORT_POLICY_LINK}
-                    text={t('olm~Learn more about Red Hat’s third party software support policy')}
-                  />
-                </span>
-              )}
-            </p>
+            </Content>
+            {RH_OPERATOR_SUPPORT_POLICY_LINK && (
+              <Content component={ContentVariants.p}>
+                <ExternalLink
+                  href={RH_OPERATOR_SUPPORT_POLICY_LINK}
+                  text={t('olm~Learn more about Red Hat’s third party software support policy')}
+                />
+              </Content>
+            )}
             <Checkbox
               className="co-modal-ignore-warning__checkbox"
               onChange={(_event, value) => setIgnoreWarnings(value)}
@@ -56,8 +58,8 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
               id="do-not-show-warning"
               label={t('olm~Do not show this warning again')}
             />
-          </div>
-        </div>
+          </SplitItem>
+        </Split>
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('olm~Continue')}

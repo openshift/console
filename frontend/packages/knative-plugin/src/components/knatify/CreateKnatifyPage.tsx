@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
@@ -14,11 +13,13 @@ import {
   WatchK8sResultsObject,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
-import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
+import { LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { BadgeType, getBadgeFromType, usePerspectives, useRelatedHPA } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   getInitialValuesKnatify,
   knatifyResources,
@@ -115,17 +116,14 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{t('knative-plugin~Make Serverless')}</title>
-      </Helmet>
+      <DocumentTitle>{t('knative-plugin~Make Serverless')}</DocumentTitle>
       <PageHeading
         title={t('knative-plugin~Make Serverless')}
         badge={getBadgeFromType(BadgeType.TECH)}
-      >
-        {t(
+        helpText={t(
           'knative-plugin~This feature will create a new serverless deployment next to your existing deployment. Other configurations, including the traffic pattern, can be modified in the form.',
         )}
-      </PageHeading>
+      />
       {isResourceLoaded ? (
         <Formik
           initialValues={getInitialValuesKnatify(

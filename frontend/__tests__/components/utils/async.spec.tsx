@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 
 import { AsyncComponent } from '../../../public/components/utils/async';

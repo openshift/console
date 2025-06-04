@@ -13,7 +13,7 @@ import {
   ISortBy,
   OnSort,
 } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
   AutoSizer,
@@ -38,7 +38,6 @@ import {
 import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
 import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
-import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
   CustomResourceDefinitionKind,
@@ -63,7 +62,6 @@ const sorts = {
   daemonsetNumScheduled: (daemonset) =>
     _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
-  ingressValidHosts,
   instanceType: (obj): string => getMachineSetInstanceType(obj),
   jobCompletionsSucceeded: (job) => job?.status?.succeeded || 0,
   jobType: (job) => getJobTypeAndCompletions(job).type,
@@ -111,7 +109,7 @@ export const TableRow: React.FC<TableRowProps> = ({
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}
-      className={classNames('pf-v6-c-table__tr', className)}
+      className={css('pf-v6-c-table__tr', className)}
       role="row"
     />
   );
@@ -596,7 +594,7 @@ export const Table: React.FC<TableProps> = ({
   }, []);
 
   return (
-    <div data-test={dataTest} className="co-m-table-grid co-m-table-grid--bordered">
+    <div data-test={dataTest}>
       {mock ? (
         <EmptyBox label={label} />
       ) : (

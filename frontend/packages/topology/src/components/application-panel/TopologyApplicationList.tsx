@@ -17,7 +17,7 @@ const TopologyApplicationResourceList: React.FC<TopologyApplicationResourceListP
           metadata: { name, namespace, uid },
         } = resource;
         return (
-          <li className="list-group-item  container-fluid" key={uid}>
+          <li className="list-group-item" key={uid}>
             <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
           </li>
         );

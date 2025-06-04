@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import {
@@ -10,9 +10,7 @@ import {
   AccordionToggle,
   Button,
   ButtonVariant,
-  Divider,
   PageSection,
-  Content,
   Toolbar,
   ToolbarLabel,
   ToolbarContent,
@@ -41,6 +39,7 @@ import {
   setQueryArgument,
   AsyncComponent,
 } from './utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import confirmNavUnpinModal from '@console/app/src/components/nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
@@ -207,7 +206,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     return (
       <span className="co-search-group__accordion-label">
         {labelPluralKey ? t(labelPluralKey) : labelPlural}{' '}
-        <div className="text-muted small">
+        <div className="pf-v6-u-text-color-subtle small">
           {apiGroup || 'core'}/{apiVersion}
         </div>
       </span>
@@ -225,11 +224,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('public~Search')}</title>
-      </Helmet>
+      <DocumentTitle>{t('public~Search')}</DocumentTitle>
+      <PageHeading title={t('public~Search')} />
       <PageSection hasBodyWrapper={false}>
-        <Content component="h1">{t('public~Search')}</Content>
         <Toolbar
           id="search-toolbar"
           clearAllFilters={clearAll}
@@ -285,9 +282,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             </ToolbarItem>
           </ToolbarContent>
         </Toolbar>
-      </PageSection>
-      <Divider component="div" />
-      <PageSection hasBodyWrapper={false}>
         <Accordion asDefinitionList={false}>
           {[...selectedItems].map((resource) => {
             const isCollapsed = collapsedKinds.has(resource);

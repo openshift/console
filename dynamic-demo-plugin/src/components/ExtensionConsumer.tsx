@@ -5,6 +5,7 @@ import {
   useResolvedExtensions,
   isModelFeatureFlag,
   ModelFeatureFlag,
+  DocumentTitle,
 } from "@openshift-console/dynamic-plugin-sdk";
 import {
   Card,
@@ -27,6 +28,7 @@ const ExtensionConsumer: React.FC = () => {
 
   return extensions.length ? (
     <>
+      <DocumentTitle>{t("Test Consumer")}</DocumentTitle>
       <PageSection>
         <Title headingLevel="h1" data-test="test-consumer-title">
           {t("Extensions of type Console.flag/Model")}

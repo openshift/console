@@ -529,7 +529,7 @@
   "Create {{label}}": "Créer {{label}}",
   "Edit {{label}}": "Modifier {{label}}",
   "{helpText}": "{helpText}",
-  "Create PodDiscruptionBudget": "Créer un objet PodDiscruptionBudget",
+  "Create PodDisruptionBudget": "Créer un objet PodDisruptionBudget",
   "Disruption not allowed": "Disruption non autorisée",
   "PodDisruptionBudget": "PodDisruptionBudget",
   "No PodDisruptionBudget": "Aucun objet PodDisruptionBudget",

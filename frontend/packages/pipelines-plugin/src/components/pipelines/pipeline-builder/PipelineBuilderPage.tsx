@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Formik, FormikBag } from 'formik';
 import { safeLoad } from 'js-yaml';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { history } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate, referenceForModel } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { PipelineKind } from '../../../types';
 import { returnValidPipelineModel } from '../../../utils/pipeline-utils';
@@ -79,9 +79,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
 
   return (
     <div className="odc-pipeline-builder-page">
-      <Helmet>
-        <title>{t('pipelines-plugin~Pipeline builder')}</title>
-      </Helmet>
+      <DocumentTitle>{t('pipelines-plugin~Pipeline builder')}</DocumentTitle>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

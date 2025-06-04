@@ -62,7 +62,9 @@ const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], bool
         if (mounted) setLoadedError(err);
       });
 
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const normalizedDevfileSamples = React.useMemo(

@@ -9,7 +9,7 @@ import {
 import { useFormikContext, FormikValues, FormikTouched } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
+import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { k8sCreate, ContainerPort } from '@console/internal/module/k8s';
 import { InputField, useDebounceCallback, CheckboxField } from '@console/shared';
@@ -268,7 +268,7 @@ const ImageSearch: React.FC = () => {
               secretModalLauncher({
                 namespace,
                 save: handleSave,
-                secretType: SecretTypeAbstraction.image,
+                formType: SecretFormType.image,
               })
             }
           >

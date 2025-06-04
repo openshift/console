@@ -18,6 +18,7 @@ import {
   perspective,
   createForm,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { helmPage, helmDetailsPage } from '../../pages';
 
@@ -30,6 +31,7 @@ const deleteChartRepositoryFromDetailsPage = (name: string, type: string) => {
 };
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
 });
 
@@ -50,7 +52,7 @@ Then('user is able to see the message {string}', (noHelmReleasesFound: string) =
   helmPage.verifyMessage(noHelmReleasesFound);
 });
 
-Then('user will get the link to install helm charts from developer catalog', () => {
+Then('user will get the link to install helm charts from software catalog', () => {
   helmPage.verifyInstallHelmLink();
 });
 
@@ -279,7 +281,7 @@ When(
   (type: string, name: string) => {
     createForm.clickSave();
     cy.get(`[title=${type}`).should('be.visible');
-    cy.byLegacyTestID('resource-title').contains(name);
+    cy.get('[data-test="page-heading"] h1').contains(name);
   },
 );
 
@@ -319,7 +321,7 @@ When('user navigates to Helm page', () => {
 
 When('user can see {string} {string} details page', (type: string, name: string) => {
   cy.get(`[title=${type}`).should('be.visible');
-  cy.byLegacyTestID('resource-title').contains(name);
+  cy.get('[data-test="page-heading"] h1').contains(name);
 });
 
 Given(
@@ -346,7 +348,7 @@ Given(
 );
 
 Then('user is able to see the status and status icon in title after {string}', () => {
-  cy.byLegacyTestID('resource-title').within(() => {
+  cy.get('[data-test="page-heading"] h1').within(() => {
     helmPage.verifyHelmChartStatus();
   });
 });

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 // import { BrowserRouter } from 'react-router-dom';
 import * as Router from 'react-router-dom-v5-compat';
@@ -18,7 +17,7 @@ jest.mock('../../../hooks/useEventSinkStatus', () => ({
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

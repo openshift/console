@@ -13,9 +13,7 @@ export const BasicAuthSubform: React.FC<BasicAuthSubformProps> = ({ onChange, st
   return (
     <>
       <div className="form-group">
-        <label className="control-label" htmlFor="username">
-          {t('public~Username')}
-        </label>
+        <label htmlFor="username">{t('public~Username')}</label>
         <div>
           <span className="pf-v6-c-form-control">
             <input
@@ -34,7 +32,7 @@ export const BasicAuthSubform: React.FC<BasicAuthSubformProps> = ({ onChange, st
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label co-required" htmlFor="password">
+        <label className="co-required" htmlFor="password">
           {t('public~Password or token')}
         </label>
         <div>

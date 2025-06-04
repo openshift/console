@@ -1,20 +1,21 @@
 import * as React from 'react';
+import { Content, ContentVariants } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
   documentationURLs,
-  ExternalLink,
   getDocumentationURL,
   history,
   isManaged,
   LoadingBox,
-  PageHeading,
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import {
   getNewRoles,
@@ -118,22 +119,30 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
       <PageHeading
         title={fullFormView ? t('devconsole~Project access') : null}
         data-test="project-access-page"
-      >
-        <Trans t={t} ns="devconsole">
-          {
-            "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in "
-          }
-          <Link to={`/k8s/ns/${namespace}/${RoleModel.plural}`}>Roles</Link> and{' '}
-          <Link to={`/k8s/ns/${namespace}/${RoleBindingModel.plural}`}>Role Bindings</Link>.
-        </Trans>
-        {!isManaged() && (
-          <Trans t={t} ns="devconsole">
-            {' '}
-            For more information, see the{' '}
-            <ExternalLink href={rbacURL}>role-based access control documentation</ExternalLink>.
-          </Trans>
-        )}
-      </PageHeading>
+        helpText={
+          <>
+            <Content component={ContentVariants.p}>
+              <Trans t={t} ns="devconsole">
+                {
+                  "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in "
+                }
+                <Link to={`/k8s/ns/${namespace}/${RoleModel.plural}`}>Roles</Link> and{' '}
+                <Link to={`/k8s/ns/${namespace}/${RoleBindingModel.plural}`}>Role Bindings</Link>.
+              </Trans>
+              {!isManaged() && (
+                <Trans t={t} ns="devconsole">
+                  {' '}
+                  For more information, see the{' '}
+                  <ExternalLink href={rbacURL}>
+                    role-based access control documentation
+                  </ExternalLink>
+                  .
+                </Trans>
+              )}
+            </Content>
+          </>
+        }
+      />
       {roleBindings.loadError ? (
         <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
       ) : (
@@ -158,9 +167,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
 
   return fullFormView ? (
     <NamespacedPage hideApplications variant={NamespacedPageVariants.light} disabled>
-      <Helmet>
-        <title>{t('devconsole~Project access')}</title>
-      </Helmet>
+      <DocumentTitle>{t('devconsole~Project access')}</DocumentTitle>
       {projectAccessForm}
     </NamespacedPage>
   ) : (

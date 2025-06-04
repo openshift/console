@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
 
 import './DynamicResourceLink.scss';
@@ -17,12 +23,14 @@ const DynamicResourceLink: React.FC<DynamicResourceLinkProps> = ({
   kind,
 }) => (
   <div className="kn-resource-link-list kn-resource-link-list--addSpaceBelow">
-    <dl>
-      <dt>{title}</dt>
-      <dd>
-        <ResourceLink kind={kind} name={name} namespace={namespace} />
-      </dd>
-    </dl>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{title}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <ResourceLink kind={kind} name={name} namespace={namespace} />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   </div>
 );
 

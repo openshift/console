@@ -22,8 +22,10 @@ import {
   createGitWorkloadIfNotExistsOnTopologyPage,
   verifyAndInstallGitopsPrimerOperator,
 } from '../../pages';
+import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 
@@ -61,10 +63,16 @@ Given('user has opened application {string} in topology page', (componentName: s
   topologyPage.verifyWorkloadInTopologyPage(componentName);
 });
 
-Given('user is at Developer Catalog page', () => {
+Given('user is at Software Catalog page', () => {
   perspective.switchTo(switchPerspective.Developer);
   navigateTo(devNavigationMenu.Add);
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
+});
+
+Given('user is at Software Catalog page in admin page', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  cy.get('[data-quickstart-id="qs-nav-home"]').should('be.visible').click();
+  cy.byLegacyTestID('developer-catalog-header').should('exist').click({ force: true });
 });
 
 When('user clicks Instantiate Template button on side bar', () => {
@@ -81,7 +89,7 @@ When('user clicks Create button on Add page', () => {
 
 Then('user will be redirected to Add page', () => {
   // detailsPage.titleShouldContain(pageTitle.Add);
-  cy.get('.ocs-page-layout__title').should('contain.text', pageTitle.Add);
+  cy.get('[data-test="page-heading"] h1').should('contain.text', pageTitle.Add);
 });
 
 When('user clicks Cancel button on Add page', () => {

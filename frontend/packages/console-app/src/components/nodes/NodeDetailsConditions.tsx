@@ -2,8 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import { SectionHeading, Timestamp } from '@console/internal/components/utils';
+import { SectionHeading } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 type NodeDetailsConditionsProps = {
   node: NodeKind;
@@ -12,7 +14,7 @@ type NodeDetailsConditionsProps = {
 const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('console-app~Node conditions')} />
       <div className="co-table-container">
         <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
@@ -46,7 +48,7 @@ const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) =
           </tbody>
         </table>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export default () => (
   <svg
     style={{ verticalAlign: '-0.125em' }}

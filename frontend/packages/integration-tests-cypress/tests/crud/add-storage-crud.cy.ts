@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { testName, checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { submitButton } from '../../views/form';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -20,6 +21,7 @@ const resourceObjs =
 describe('Add storage is applicable for all workloads', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

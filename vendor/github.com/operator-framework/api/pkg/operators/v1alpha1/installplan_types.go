@@ -239,6 +239,9 @@ const (
 	// BundleLookupPending describes BundleLookups that are not complete.
 	BundleLookupPending BundleLookupConditionType = "BundleLookupPending"
 
+	// BundleLookupFailed describes conditions types for when BundleLookups fail
+	BundleLookupFailed BundleLookupConditionType = "BundleLookupFailed"
+
 	crdKind = "CustomResourceDefinition"
 )
 
@@ -274,6 +277,8 @@ type BundleLookup struct {
 	CatalogSourceRef *corev1.ObjectReference `json:"catalogSourceRef"`
 	// Conditions represents the overall state of a BundleLookup.
 	// +optional
+	// +patchMergeKey=type
+	// +patchStrategy=merge
 	Conditions []BundleLookupCondition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 	// The effective properties of the unpacked bundle.
 	// +optional

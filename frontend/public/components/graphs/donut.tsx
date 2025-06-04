@@ -8,7 +8,7 @@ import {
   chart_color_yellow_400,
   chart_color_yellow_500,
 } from '@patternfly/react-tokens';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
@@ -41,7 +41,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({
 
   return (
     <PrometheusGraph
-      className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
+      className={css('graph-wrapper--title-center graph-wrapper--gauge', className)}
       ref={ref}
       title={title}
     >

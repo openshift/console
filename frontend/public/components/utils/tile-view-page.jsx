@@ -16,7 +16,6 @@ import {
   EmptyStateBody,
   EmptyStateVariant,
   SearchInput,
-  Title,
   EmptyStateActions,
   EmptyStateFooter,
   Flex,
@@ -25,9 +24,16 @@ import {
 import { useDebounceCallback, getURLWithParams, VirtualizedGrid } from '@console/shared';
 import { Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { isModifiedEvent } from '@console/shared/src/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import CatalogPage from '@console/shared/src/components/catalog/catalog-view/CatalogPage';
+import CatalogPageContent from '@console/shared/src/components/catalog/catalog-view/CatalogPageContent';
+import CatalogPageHeader from '@console/shared/src/components/catalog/catalog-view/CatalogPageHeader';
+import CatalogPageHeading from '@console/shared/src/components/catalog/catalog-view/CatalogPageHeading';
+import CatalogPageNumItems from '@console/shared/src/components/catalog/catalog-view/CatalogPageNumItems';
+import CatalogPageTabs from '@console/shared/src/components/catalog/catalog-view/CatalogPageTabs';
+import CatalogPageToolbar from '@console/shared/src/components/catalog/catalog-view/CatalogPageToolbar';
 
 import { isModalOpen } from '../modals';
-import { Dropdown } from '../utils';
 
 export const FilterTypes = {
   category: 'category',
@@ -483,7 +489,6 @@ export const TileViewPage = (props) => {
     emptyStateTitle,
     emptyStateInfo,
     renderTile,
-    groupItems,
   } = props;
 
   const { t } = useTranslation();
@@ -498,7 +503,6 @@ export const TileViewPage = (props) => {
   const [activeFilters, setActiveFilters] = React.useState(defaultFilters);
   const [filterCounts, setFilterCounts] = React.useState(null);
   const [filterGroupsShowAll, setFilterGroupsShowAll] = React.useState({});
-  const [groupBy, setGroupBy] = React.useState(groupByTypes ? groupByTypes.None : '');
 
   const updateURLParams = (paramName, value) => {
     const params = new URLSearchParams(window.location.search);
@@ -565,7 +569,6 @@ export const TileViewPage = (props) => {
     setSelectedCategoryId(updatedState.selectedCategoryId);
     setActiveFilters(updatedState.activeFilters);
     setFilterCounts(updatedState.filterCounts);
-    setGroupBy(activeValues?.groupBy);
 
     filterByKeywordInput.current.focus({ preventScroll: true });
   };
@@ -681,22 +684,15 @@ export const TileViewPage = (props) => {
     setFilterGroupsShowAll(updatedShow);
   };
 
-  const onGroupChange = (value) => {
-    updateURLParams('groupBy', value === groupByTypes.None ? `` : `${value}`);
-    setGroupBy(value);
-  };
-
   const renderTabs = (category, selected) => {
-    const { id, label, subcategories, numItems } = category;
+    const { id, label, subcategories } = category;
     const active = id === selected;
     const shown = id === 'all';
 
-    const tabClasses = `text-capitalize${!numItems ? ' co-catalog-tab__empty' : ''}`;
     return (
       <VerticalTabsTab
         key={id}
         active={active}
-        className={tabClasses}
         hasActiveDescendant={hasActiveDescendant(selected, category)}
         shown={shown}
         data-test={id}
@@ -806,23 +802,6 @@ export const TileViewPage = (props) => {
     );
   };
 
-  const renderGroupedItems = (itemsGroups) => {
-    const groupedItems = groupItems(itemsGroups, groupBy);
-    const renderGroupHeader = (heading) => (
-      <Title className="co-catalog-page__group-title" headingLevel="h2" size="lg">
-        {heading} ({_.size(groupedItems[heading])})
-      </Title>
-    );
-    return (
-      <VirtualizedGrid
-        items={groupedItems}
-        renderCell={renderTile}
-        renderHeader={renderGroupHeader}
-        isItemsGrouped
-      />
-    );
-  };
-
   let activeCategory = findActiveCategory(selectedCategoryId, categories);
   if (!activeCategory) {
     activeCategory = findActiveCategory('all', categories);
@@ -832,56 +811,40 @@ export const TileViewPage = (props) => {
   });
 
   return (
-    <div className="co-catalog-page">
-      <div className="co-catalog-page__tabs">
-        {renderCategoryTabs(activeCategory.id)}
-        {renderSidePanel()}
-      </div>
-      <div className="co-catalog-page__content">
-        <div className="co-catalog-page__header">
-          <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
-          <div className="co-catalog-page__filter">
-            <Flex>
-              <FlexItem>
-                <SearchInput
-                  data-test="search-operatorhub"
-                  ref={filterByKeywordInput}
-                  placeholder={t('public~Filter by keyword...')}
-                  value={activeFilters.keyword.value}
-                  onChange={(event, text) => onKeywordChange(text)}
-                  onClear={() => onKeywordChange('')}
-                  aria-label={t('public~Filter by keyword...')}
-                />
-              </FlexItem>
-              {groupItems && (
+    <PaneBody>
+      <CatalogPage>
+        <CatalogPageTabs>
+          {renderCategoryTabs(activeCategory.id)}
+          {renderSidePanel()}
+        </CatalogPageTabs>
+        <CatalogPageContent>
+          <CatalogPageHeader>
+            <CatalogPageHeading>{activeCategory.label}</CatalogPageHeading>
+            <CatalogPageToolbar>
+              <Flex alignItems={{ default: 'alignItemsBaseline' }}>
                 <FlexItem>
-                  <Dropdown
-                    className="co-catalog-page__btn-group__group-by"
-                    menuClassName="dropdown-menu--text-wrap"
-                    items={groupByTypes}
-                    onChange={(e) => onGroupChange(e)}
-                    titlePrefix="Group By"
-                    title={groupBy}
+                  <SearchInput
+                    data-test="search-operatorhub"
+                    ref={filterByKeywordInput}
+                    placeholder={t('public~Filter by keyword...')}
+                    value={activeFilters.keyword.value}
+                    onChange={(event, text) => onKeywordChange(text)}
+                    onClear={() => onKeywordChange('')}
+                    aria-label={t('public~Filter by keyword...')}
                   />
                 </FlexItem>
-              )}
-            </Flex>
-            <div className="co-catalog-page__num-items">{numItems}</div>
-          </div>
-        </div>
+              </Flex>
+              <CatalogPageNumItems>{numItems}</CatalogPageNumItems>
+            </CatalogPageToolbar>
+          </CatalogPageHeader>
 
-        {activeCategory.numItems > 0 && (
-          <div className="co-catalog-page__grid">
-            {groupItems && groupBy !== groupByTypes.None ? (
-              renderGroupedItems(activeCategory.items)
-            ) : (
-              <VirtualizedGrid items={activeCategory.items} renderCell={renderTile} />
-            )}
-          </div>
-        )}
-        {activeCategory.numItems === 0 && renderEmptyState()}
-      </div>
-    </div>
+          {activeCategory.numItems > 0 && (
+            <VirtualizedGrid items={activeCategory.items} renderCell={renderTile} />
+          )}
+          {activeCategory.numItems === 0 && renderEmptyState()}
+        </CatalogPageContent>
+      </CatalogPage>
+    </PaneBody>
   );
 };
 
@@ -899,7 +862,6 @@ TileViewPage.propTypes = {
   renderTile: PropTypes.func.isRequired,
   emptyStateTitle: PropTypes.string,
   emptyStateInfo: PropTypes.string,
-  groupItems: PropTypes.func,
   groupByTypes: PropTypes.object,
 };
 

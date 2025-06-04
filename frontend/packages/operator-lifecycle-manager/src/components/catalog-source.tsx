@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -35,6 +35,7 @@ import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import { referenceForModel, K8sKind, k8sPatch } from '@console/internal/module/k8s';
 import { withFallback } from '@console/shared/src/components/error';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 import {
   SubscriptionModel,
@@ -144,18 +145,18 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
       : catalogSource.metadata.namespace;
 
   return !_.isEmpty(catalogSource) ? (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading
         text={t('olm~CatalogSource details', {
           resource: CatalogSourceModel.label,
         })}
       />
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={catalogSource} />
-        </div>
-        <div className="col-sm-6 col-xs-12">
-          <div className="co-m-pane__body">
+        </GridItem>
+        <GridItem sm={6}>
+          <DescriptionList>
             <DetailsItem
               editAsGroup
               label={t('public~Status')}
@@ -200,10 +201,10 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
             >
               {operatorCount}
             </DetailsItem>
-          </div>
-        </div>
-      </div>
-    </div>
+          </DescriptionList>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   ) : (
     <div />
   );
@@ -327,12 +328,12 @@ export const CreateSubscriptionYAML: React.FC = (props) => {
 
 const tableColumnClasses = [
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm'),
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 

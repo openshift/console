@@ -1,6 +1,6 @@
 $co-channel-background-color: var(--pf-t--global--background--color--primary--default);
-$co-channel-color: var(--pf-t--color--gray--40);
-$co-channel-current-color: var(--pf-t--chart--color--blue--300);
+$co-channel-color: var(--pf-t--global--border--color--disabled);
+$co-channel-current-color: var(--pf-t--global--border--color--brand--default);
 $co-channel-height: 60px;
 
 .cluster-channel-modal__dropdown .pf-v6-c-dropdown {
@@ -267,7 +267,7 @@ $co-channel-height: 60px;
   }
 
   &__updates-progress:not(:empty) {
-    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg) 0 0;
+    padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--lg) 0 0;
   }
 
   &__updates-type {
@@ -277,8 +277,4 @@ $co-channel-height: 60px;
 
 .co-update-status {
   padding-bottom: 5px;
-}
-
-.co-cluster-paragraph {
-  margin-bottom: var(--pf-v6-c-content--MarginBottom);
 }

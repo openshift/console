@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { Divider } from '@patternfly/react-core';
@@ -9,26 +8,29 @@ import { RoleModel, ClusterRoleModel } from '../../models';
 import { Kebab, EmptyBox, ResourceIcon } from '../utils';
 import { confirmModal } from '../modals';
 import { useTranslation } from 'react-i18next';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 export const RulesList = ({ rules, name, namespace }) => {
   const { t } = useTranslation();
   return _.isEmpty(rules) ? (
     <EmptyBox label={t('public~Rules')} />
   ) : (
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">{t('public~Actions')}</div>
-        <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">{t('public~API groups')}</div>
-        <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">{t('public~Resources')}</div>
-      </div>
-      <div className="co-m-table-grid__body">
+    <Table gridBreakPoint="">
+      <Thead>
+        <Tr>
+          <Th>{t('public~Actions')}</Th>
+          <Th visibility={['hidden', 'visibleOnSm']}>{t('public~API groups')}</Th>
+          <Th>{t('public~Resources')}</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
         {rules.map((rule, i) => (
-          <div className="row co-resource-list__item" key={i}>
+          <Tr key={i}>
             <Rule {...rule} name={name} namespace={namespace} i={i} />
-          </div>
+          </Tr>
         ))}
-      </div>
-    </div>
+      </Tbody>
+    </Table>
   );
 };
 
@@ -159,18 +161,18 @@ const RuleKebab = ({ name, namespace, i }) => {
 };
 
 const Rule = ({ resources, nonResourceURLs, verbs, apiGroups, name, namespace, i }) => (
-  <div className="rbac-rule">
-    <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">
+  <>
+    <Td>
       <Actions verbs={verbs} />
-    </div>
-    <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">
+    </Td>
+    <Td visibility={['hidden', 'visibleOnSm']}>
       <Groups apiGroups={apiGroups} />
-    </div>
-    <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
+    </Td>
+    <Td>
       <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
-    </div>
-    <div className="dropdown-kebab-pf">
+    </Td>
+    <Td className="pf-v6-c-table__action">
       <RuleKebab name={name} namespace={namespace} i={i} />
-    </div>
-  </div>
+    </Td>
+  </>
 );

@@ -11,7 +11,7 @@ export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) =>
   const { t } = useTranslation();
   return (
     <div data-test-id="webhook-receiver-form" className="form-group">
-      <label className="control-label co-required" htmlFor="webhook-url">
+      <label className="co-required" htmlFor="webhook-url">
         {t('public~URL')}
       </label>
       <span className="pf-v6-c-form-control">

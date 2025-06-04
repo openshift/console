@@ -4,40 +4,45 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
-  EmptyStateVariant,
   EmptyStateFooter,
+  EmptyStateVariant,
   Truncate,
 } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { ExternalLink, getQueryArgument } from '@console/internal/components/utils';
+import { getQueryArgument } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
 import {
-  COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
-  COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
   GreenCheckCircleIcon,
   Modal,
+  COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
+  COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   useUserSettingsCompatibility,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { isModifiedEvent } from '@console/shared/src/utils';
-import { DefaultCatalogSource, PackageSource } from '../../const';
+import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';
 import { DeprecatedOperatorWarningBadge } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
 import {
-  OperatorHubItem,
-  InstalledState,
-  CapabilityLevel,
-  ValidSubscriptionValue,
-  InfrastructureFeature,
-} from './index';
+  capabilityLevelSort,
+  infraFeaturesSort,
+  installedStateSort,
+  isAWSSTSCluster,
+  isAzureWIFCluster,
+  isGCPWIFCluster,
+  providerSort,
+  sourceSort,
+  validSubscriptionSort,
+} from './operator-hub-utils';
+import { InfrastructureFeature, OperatorHubItem } from './index';
 
 const osBaseLabel = 'operatorframework.io/os.';
 const archBaseLabel = 'operatorframework.io/arch.';
@@ -160,112 +165,31 @@ export const getProviderValue = (value) => {
   return value;
 };
 
-const providerSort = (provider) => {
-  if (provider.value.toLowerCase() === 'red hat') {
-    return '';
-  }
-  return provider.value;
-};
-
-const sourceSort = (source) => {
-  switch (source.value) {
-    case PackageSource.RedHatOperators:
-      return 0;
-    case PackageSource.CertifiedOperators:
-      return 1;
-    case PackageSource.CommunityOperators:
-      return 2;
-    case PackageSource.RedHatMarketplace:
-      return 3;
-    default:
-      return 4;
-  }
-};
-
-const installedStateSort = (provider) => {
-  switch (provider.value) {
-    case InstalledState.Installed:
-      return 0;
-    case InstalledState.NotInstalled:
-      return 1;
-    default:
-      return 3;
-  }
-};
-
-const capabilityLevelSort = (provider) => {
-  switch (provider.value) {
-    case CapabilityLevel.BasicInstall:
-      return 0;
-    case CapabilityLevel.SeamlessUpgrades:
-      return 1;
-    case CapabilityLevel.FullLifecycle:
-      return 2;
-    case CapabilityLevel.DeepInsights:
-      return 3;
-    default:
-      return 5;
-  }
-};
-
-const infraFeaturesSort = (infrastructure) => {
-  switch (infrastructure.value) {
-    case InfrastructureFeature.Disconnected:
-      return 0;
-    case InfrastructureFeature.ProxyAware:
-      return 1;
-    case InfrastructureFeature.FIPSMode:
-      return 2;
-    case InfrastructureFeature.TokenAuth:
-      return 3;
-    case InfrastructureFeature.TLSProfiles:
-      return 4;
-    default:
-      return 5;
-  }
-};
-
-const validSubscriptionSort = (validSubscription) => {
-  switch (validSubscription.value) {
-    case ValidSubscriptionValue.OpenShiftKubernetesEngine:
-    case ValidSubscriptionValue.OpenShiftVirtualizationEngine:
-      return 0;
-    case ValidSubscriptionValue.OpenShiftContainerPlatform:
-      return 1;
-    case ValidSubscriptionValue.OpenShiftPlatformPlus:
-      return 2;
-    case ValidSubscriptionValue.RequiresSeparateSubscription:
-      return 3;
-    default:
-      return 4;
-  }
-};
-
 const sortFilterValues = (values, field) => {
   let sorter: any = ['value'];
 
   if (field === 'provider') {
-    sorter = providerSort;
+    sorter = ({ value }) => providerSort(value);
   }
 
   if (field === 'source') {
-    return _.sortBy(values, [sourceSort, 'value']);
+    return _.sortBy(values, [({ value }) => sourceSort(value), 'value']);
   }
 
   if (field === 'installState') {
-    sorter = installedStateSort;
+    sorter = ({ value }) => installedStateSort(value);
   }
 
   if (field === 'capabilityLevel') {
-    sorter = capabilityLevelSort;
+    sorter = ({ value }) => capabilityLevelSort(value);
   }
 
   if (field === 'infraFeatures') {
-    sorter = infraFeaturesSort;
+    sorter = ({ value }) => infraFeaturesSort(value);
   }
 
   if (field === 'validSubscriptionFilters') {
-    sorter = validSubscriptionSort;
+    sorter = ({ value }) => validSubscriptionSort(value);
   }
 
   return _.sortBy(values, sorter);
@@ -645,7 +569,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 )}
                 {!detailsItem.installed ? (
                   <Link
-                    className={classNames(
+                    className={css(
                       'pf-v6-c-button',
                       {
                         'pf-m-secondary': remoteWorkflowUrl,

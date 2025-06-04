@@ -128,12 +128,12 @@ describe('PubSubResourceOverviewList', () => {
     expect(findPubSubList).toHaveLength(2);
     expect(findPubSubList.at(0).props().name).toEqual('testchannel');
     expect(wrapper.find(SidebarSectionHeading)).toHaveLength(1);
-    expect(wrapper.find('.text-muted').exists()).toBe(false);
+    expect(wrapper.find('.pf-v6-u-text-color-subtle').exists()).toBe(false);
   });
 
-  it('should render SidebarSectionHeading, text-muted and not ResourceLink if no resources exists', () => {
+  it('should render SidebarSectionHeading, pf-v6-u-text-color-subtle and not ResourceLink if no resources exists', () => {
     wrapper = shallow(<PubSubResourceOverviewList items={[]} title="Connections" />);
-    const findTextMutedList = wrapper.find('.text-muted');
+    const findTextMutedList = wrapper.find('.pf-v6-u-text-color-subtle');
     expect(wrapper.find(ResourceLink).exists()).toBe(false);
     expect(wrapper.find(SidebarSectionHeading)).toHaveLength(1);
     expect(findTextMutedList.exists()).toBe(true);

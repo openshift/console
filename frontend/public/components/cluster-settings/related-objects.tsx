@@ -1,7 +1,8 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Table, TableData, RowFunctionArgs } from '../factory';
 import {
   referenceForModel,
@@ -13,8 +14,8 @@ import { ResourceLink, EmptyBox } from '../utils';
 
 const tableColumnClasses = [
   '', // Name
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'), // Resource
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'), // Group
+  css('pf-m-hidden', 'pf-m-visible-on-sm'), // Resource
+  css('pf-m-hidden', 'pf-m-visible-on-md'), // Group
   '', // NS
 ];
 
@@ -40,7 +41,9 @@ const Row: React.FC<RowFunctionArgs> = ({ obj, customData: { findModel } }) => {
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         {resource}
-        {group && <div className="pf-v6-u-display-none-on-md text-muted">{group}</div>}
+        {group && (
+          <div className="pf-v6-u-display-none-on-md pf-v6-u-text-color-subtle">{group}</div>
+        )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{group || '-'}</TableData>
       <TableData className={tableColumnClasses[3]}>
@@ -91,7 +94,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
     [findModel],
   );
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <Table
         {...props}
         Header={Header}
@@ -100,7 +103,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
         aria-label={t('public~Related objects')}
         NoDataEmptyMsg={EmptyMessage}
       />
-    </div>
+    </PaneBody>
   );
 };
 

@@ -15,7 +15,7 @@ const HelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof ListPage
   return (
     <ListPage
       {...props}
-      aria-label={t('helm-plugin~Helm Chart Repositories')}
+      aria-label={t('helm-plugin~HelmChartRepositories')}
       canCreate
       createProps={createProps}
       kind={referenceForModel(HelmChartRepositoryModel)}

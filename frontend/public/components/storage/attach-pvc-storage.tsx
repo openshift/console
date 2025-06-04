@@ -269,7 +269,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
 
   return (
     <form className="co-m-pane__body-group co-m-pane__form" onSubmit={save}>
-      <label className="control-label co-required">{t('public~PersistentVolumeClaim')}</label>
+      <label className="co-required">{t('public~PersistentVolumeClaim')}</label>
       <div className="form-group">
         <RadioInput
           title={t('public~Use existing claim')}
@@ -311,7 +311,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
 
       {claimVolumeMode === 'Block' ? (
         <div className="form-group">
-          <label className="control-label co-required" htmlFor="device-path">
+          <label className="co-required" htmlFor="device-path">
             {t('public~Device path')}
           </label>
           <div>
@@ -333,7 +333,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
         </div>
       ) : (
         <div className="form-group">
-          <label className="control-label co-required" htmlFor="mount-path">
+          <label className="co-required" htmlFor="mount-path">
             {t('public~Mount path')}
           </label>
           <div>
@@ -360,9 +360,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
             name="mountAsReadOnly"
           />
           <div className="form-group">
-            <label className="control-label" htmlFor="subpath">
-              {t('public~Subpath')}
-            </label>
+            <label htmlFor="subpath">{t('public~Subpath')}</label>
             <div>
               <span className="pf-v6-c-form-control">
                 <input
@@ -397,7 +395,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       )}
       {useContainerSelector && (
         <div className="form-group co-break-word">
-          <label className="control-label">{t('public~Containers')}</label>
+          <label>{t('public~Containers')}</label>
           <Button type="button" onClick={handleSelectContainers} variant="link">
             {t('public~(use all containers)')}
           </Button>

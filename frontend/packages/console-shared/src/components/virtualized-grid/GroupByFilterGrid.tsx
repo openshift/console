@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { Params, GroupedItems, GridChildrenProps } from './types';
 import { getItemsAndRowCount, CellMeasurementContext } from './utils';
@@ -48,7 +48,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
   return (
     <GridComponent
       autoHeight
-      className={classNames('ocs-grid', className)}
+      className={css('ocs-grid', className)}
       tabIndex={null}
       height={height ?? 0}
       width={width}

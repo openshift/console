@@ -15,7 +15,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 
 ### Dependencies:
 
-1. [node.js](https://nodejs.org/) >= 18 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.20
+1. [node.js](https://nodejs.org/) >= 22 & [yarn classic](https://classic.yarnpkg.com/en/docs/install) >= 1.20
 2. [go](https://golang.org/) >= 1.22+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
@@ -107,16 +107,19 @@ In order to enable the monitoring UI and see the "Observe" navigation item while
   ```
 
 #### Updating `tectonic-console-builder` image
-Updating `tectonic-console-builder` image is needed whenever there is a change in the build-time dependencies and/or go versions.
+The `tectonic-console-builder` image is used to run Cypress tests in CI. Updating it is
+needed when there is a change in the Node.js version. Note that the instance of `go` present
+in the container image is unused, because the backend tests use a different image.
 
-In order to update the `tectonic-console-builder` to a new version i.e. v27, follow these steps:
+In order to update the `tectonic-console-builder` to a new version (e.g., v29), follow these steps:
 
 1. Update the `tectonic-console-builder` image tag in files listed below:
    - .ci-operator.yaml
    - Dockerfile.dev
    - Dockerfile.plugins.demo
-   For example, `tectonic-console-builder:27`
-2. Update the dependencies in Dockerfile.builder file i.e. v18.0.0.
+   For example, `tectonic-console-builder:29`
+2. Update the dependencies in Dockerfile.builder file by setting the `NODE_VERSION`
+   and `YARN_VERSION` environment variables to the desired versions.
 3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
    Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
    To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo.
@@ -460,6 +463,23 @@ include in the data reported to telemetry. If a plugin name is not determined in
 this way, then 'none' will be used. Additionally, violation reporting is throttled to prevent
 spamming the telemetry service with repetitive data. Identical violations will not be
 reported more than once a day.
+
+In case of local developement of the dynamic plugin, just pass needed CSP directives address to the console server, using the `--content-security-policy` flag.
+
+Example:
+
+```
+./bin/bridge --content-security-policy script-src='localhost:1234',font-src='localhost:2345 localhost:3456'
+```
+
+List of configurable CSP directives is available in the [openshift/api repository](https://github.com/openshift/api/blob/master/console/v1/types_console_plugin.go#L102-L137).
+
+The list is extended automatically by the console server with following CSP directives:
+- `"frame-src 'none'"`
+- `"frame-ancestors 'none'"`
+- `"object-src 'none'"`
+
+Currently this feature is behind feature gate.
 
 ## Frontend Packages
 - [console-dynamic-plugin-sdk](./frontend/packages/console-dynamic-plugin-sdk/README.md)

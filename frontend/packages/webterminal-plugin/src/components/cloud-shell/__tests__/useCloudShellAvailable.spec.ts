@@ -16,7 +16,7 @@ jest.mock('../cloud-shell-utils', () => {
 });
 
 jest.mock('@console/shared/src/hooks/flag', () => {
-  const originalModule = (jest as any).requireActual('@console/shared/src/hooks/flag');
+  const originalModule = jest.requireActual('@console/shared/src/hooks/flag');
   return {
     ...originalModule,
     useFlag: jest.fn<boolean>(),

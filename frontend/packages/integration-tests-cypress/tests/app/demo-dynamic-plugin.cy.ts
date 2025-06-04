@@ -3,6 +3,7 @@ import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
 import { refreshWebConsoleLink } from '../../views/form';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -85,6 +86,7 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
   describe('Demo dynamic plugin test', () => {
     before(() => {
       cy.login();
+      guidedTour.close();
       cy.createProjectWithCLI(PLUGIN_NAME);
       cy.readFile(`${PLUGIN_PATH}/oc-manifest.yaml`).then((textManifest) => {
         const yamlManifest = safeLoadAll(textManifest);

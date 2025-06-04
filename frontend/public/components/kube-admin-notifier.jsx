@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { Banner, Flex } from '@patternfly/react-core';

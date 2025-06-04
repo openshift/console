@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PipelineRunWorkspace } from '../../../../types';

@@ -1,9 +1,8 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ExternalLink } from '@console/internal/components/utils';
 import { ClampedText } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { ServiceKind } from '../../../types';
 import ServiceRow from '../ServiceRow';

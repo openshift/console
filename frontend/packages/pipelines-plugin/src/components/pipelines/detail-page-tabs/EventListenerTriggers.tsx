@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -23,39 +29,41 @@ const EventListenerTriggers: React.FC<EventListenerTriggersProps> = ({ namespace
     return null;
   }
   return (
-    <dl>
-      <dt>{t('pipelines-plugin~Triggers')}</dt>
-      <dd>
-        {triggerTemplates.map((trigger) => {
-          const triggerTemplateKind = referenceForModel(TriggerTemplateModel);
-          const triggerTemplateName = trigger.template?.ref || trigger.template?.name;
-          const bindings: ResourceModelLink[] = getEventListenerTriggerBindingNames(
-            trigger.bindings,
-          );
-          return (
-            <div key={`${triggerTemplateKind}/${triggerTemplateName}`}>
-              <ResourceLink
-                kind={triggerTemplateKind}
-                name={triggerTemplateName}
-                displayName={triggerTemplateName}
-                namespace={namespace}
-                title={triggerTemplateName}
-                inline
-              />
-              {!_.isEmpty(bindings) && (
-                <div className="odc-event-listener-triggers__bindings">
-                  <DynamicResourceLinkList
-                    links={bindings}
-                    namespace={namespace}
-                    removeSpaceBelow
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </dd>
-    </dl>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Triggers')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          {triggerTemplates.map((trigger) => {
+            const triggerTemplateKind = referenceForModel(TriggerTemplateModel);
+            const triggerTemplateName = trigger.template?.ref || trigger.template?.name;
+            const bindings: ResourceModelLink[] = getEventListenerTriggerBindingNames(
+              trigger.bindings,
+            );
+            return (
+              <div key={`${triggerTemplateKind}/${triggerTemplateName}`}>
+                <ResourceLink
+                  kind={triggerTemplateKind}
+                  name={triggerTemplateName}
+                  displayName={triggerTemplateName}
+                  namespace={namespace}
+                  title={triggerTemplateName}
+                  inline
+                />
+                {!_.isEmpty(bindings) && (
+                  <div className="odc-event-listener-triggers__bindings">
+                    <DynamicResourceLinkList
+                      links={bindings}
+                      namespace={namespace}
+                      removeSpaceBelow
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

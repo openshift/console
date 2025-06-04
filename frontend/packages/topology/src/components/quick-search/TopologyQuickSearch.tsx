@@ -12,7 +12,6 @@ import { useTransformedQuickStarts } from './topology-quick-search-utils';
 
 interface QuickSearchProps {
   namespace: string;
-  viewContainer?: HTMLElement;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
@@ -30,7 +29,6 @@ const Contents: React.FC<
   catalogService,
   catalogServiceSample,
   namespace,
-  viewContainer,
   isOpen,
   setIsOpen,
 }) => {
@@ -73,7 +71,6 @@ const Contents: React.FC<
       allItemsLoaded={catalogService.loaded && quickStartsLoaded}
       searchPlaceholder={`${t('topology~Add to Project')}...`}
       namespace={namespace}
-      viewContainer={viewContainer}
       isOpen={isOpen}
       limitItemCount={DEFAULT_LIMIT_ITEM_COUNT}
       setIsOpen={setIsOpen}
@@ -81,12 +78,7 @@ const Contents: React.FC<
   );
 };
 
-const TopologyQuickSearch: React.FC<QuickSearchProps> = ({
-  namespace,
-  viewContainer,
-  isOpen,
-  setIsOpen,
-}) => {
+const TopologyQuickSearch: React.FC<QuickSearchProps> = ({ namespace, isOpen, setIsOpen }) => {
   return (
     <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog">
       {(catalogService: CatalogService) => (
@@ -97,7 +89,6 @@ const TopologyQuickSearch: React.FC<QuickSearchProps> = ({
                 <Contents
                   {...{
                     namespace,
-                    viewContainer,
                     isOpen,
                     setIsOpen,
                     catalogService,

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import * as _ from 'lodash';
 import { GridPosition } from '@console/dynamic-plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package

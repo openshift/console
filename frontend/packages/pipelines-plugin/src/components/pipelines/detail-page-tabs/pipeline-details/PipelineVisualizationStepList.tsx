@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { ComputedStatus } from '../../../../types';
 import { getRunStatusColor } from '../../../../utils/pipeline-augment';
@@ -67,7 +67,7 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
       {steps.map(({ duration, name, status }) => {
         return (
           <div
-            className={classNames('odc-pipeline-visualization-step-list__step', {
+            className={css('odc-pipeline-visualization-step-list__step', {
               'odc-pipeline-visualization-step-list__step--task-run': !isSpecOverview,
             })}
             key={name}

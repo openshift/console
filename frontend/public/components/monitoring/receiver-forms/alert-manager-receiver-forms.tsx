@@ -1,15 +1,15 @@
 /* eslint-disable camelcase, tsdoc/syntax */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 import { APIError } from '@console/shared';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ButtonBar } from '../../utils/button-bar';
 import { Dropdown } from '../../utils/dropdown';
 import { Firehose } from '../../utils/firehose';
@@ -32,6 +32,7 @@ import * as WebhookForm from './webhook-receiver-form';
 import * as EmailForm from './email-receiver-form';
 import * as SlackForm from './slack-receiver-form';
 import { coFetchJSON } from '../../../co-fetch';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 /**
  * Converts deprecated route match and match_re:
@@ -363,112 +364,112 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const defaultString = isDefaultReceiver ? t('public~Default') : null;
 
   return (
-    <div className="co-m-pane__body co-m-pane__form">
-      <Helmet>
-        <title>{t('public~{{titleVerb}} Receiver', { titleVerb })}</title>
-      </Helmet>
-      <form className="co-m-pane__body-group" onSubmit={save}>
-        <PrimaryHeading>
-          {t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
-            titleVerb,
-            receiverTypeLabel,
-            defaultString,
-          })}
-        </PrimaryHeading>
-        {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
-        {formValues.receiverName === 'Critical' && !formValues.receiverType && (
-          <ReceiverInfoTip type={InitialReceivers.Critical} />
-        )}
-        {formValues.receiverName === 'Watchdog' && !formValues.receiverType && (
-          <ReceiverInfoTip type={InitialReceivers.Watchdog} />
-        )}
-        <div
-          className={classNames('form-group', {
-            'has-error': receiverNameAlreadyExist,
-          })}
-        >
-          <label className="control-label co-required">{t('public~Receiver name')}</label>
-          <span className="pf-v6-c-form-control">
-            <input
-              type="text"
-              value={formValues.receiverName}
-              onChange={(e) =>
+    <>
+      <DocumentTitle>{t('public~{{titleVerb}} Receiver', { titleVerb })}</DocumentTitle>
+      <PageHeading
+        title={t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
+          titleVerb,
+          receiverTypeLabel,
+          defaultString,
+        })}
+      />
+      <PaneBody className="co-m-pane__form">
+        <form onSubmit={save}>
+          {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
+          {formValues.receiverName === 'Critical' && !formValues.receiverType && (
+            <ReceiverInfoTip type={InitialReceivers.Critical} />
+          )}
+          {formValues.receiverName === 'Watchdog' && !formValues.receiverType && (
+            <ReceiverInfoTip type={InitialReceivers.Watchdog} />
+          )}
+          <div
+            className={css('form-group', {
+              'has-error': receiverNameAlreadyExist,
+            })}
+          >
+            <label className="co-required">{t('public~Receiver name')}</label>
+            <span className="pf-v6-c-form-control">
+              <input
+                type="text"
+                value={formValues.receiverName}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { receiverName: e.target.value },
+                  })
+                }
+                aria-describedby="receiver-name-help"
+                name="receiverName"
+                data-test-id="receiver-name"
+                required
+              />
+            </span>
+            {receiverNameAlreadyExist && (
+              <span className="help-block">
+                <span data-test-id="receiver-name-already-exists-error">
+                  {t('public~A receiver with that name already exists.')}
+                </span>
+              </span>
+            )}
+          </div>
+          <div className="form-group">
+            <label className="co-required">{t('public~Receiver type')}</label>
+            <Dropdown
+              title="Select receiver type..."
+              name="receiverType"
+              items={receiverTypes}
+              dropDownClassName="dropdown--full-width"
+              data-test-id="receiver-type"
+              selectedKey={formValues.receiverType}
+              onChange={(receiverType) =>
                 dispatchFormChange({
                   type: 'setFormValues',
-                  payload: { receiverName: e.target.value },
+                  payload: {
+                    receiverType,
+                  },
                 })
               }
-              aria-describedby="receiver-name-help"
-              name="receiverName"
-              data-test-id="receiver-name"
-              required
             />
-          </span>
-          {receiverNameAlreadyExist && (
-            <span className="help-block">
-              <span data-test-id="receiver-name-already-exists-error">
-                {t('public~A receiver with that name already exists.')}
-              </span>
-            </span>
+          </div>
+
+          {formValues.receiverType && (
+            <>
+              <SubForm.Form
+                globals={defaultGlobals}
+                formValues={formValues}
+                dispatchFormChange={dispatchFormChange}
+              />
+              <RoutingLabelEditor
+                formValues={formValues}
+                dispatchFormChange={dispatchFormChange}
+                isDefaultReceiver={isDefaultReceiver}
+              />
+            </>
           )}
-        </div>
-        <div className="form-group co-m-pane__dropdown">
-          <label className="control-label co-required">{t('public~Receiver type')}</label>
-          <Dropdown
-            title="Select receiver type..."
-            name="receiverType"
-            items={receiverTypes}
-            dropDownClassName="dropdown--full-width"
-            data-test-id="receiver-type"
-            selectedKey={formValues.receiverType}
-            onChange={(receiverType) =>
-              dispatchFormChange({
-                type: 'setFormValues',
-                payload: {
-                  receiverType,
-                },
-              })
-            }
-          />
-        </div>
 
-        {formValues.receiverType && (
-          <>
-            <SubForm.Form
-              globals={defaultGlobals}
-              formValues={formValues}
-              dispatchFormChange={dispatchFormChange}
-            />
-            <RoutingLabelEditor
-              formValues={formValues}
-              dispatchFormChange={dispatchFormChange}
-              isDefaultReceiver={isDefaultReceiver}
-            />
-          </>
-        )}
-
-        <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
-          <ActionGroup className="pf-v6-c-form">
-            <Button
-              type="submit"
-              variant="primary"
-              data-test-id="save-changes"
-              isDisabled={isFormInvalid}
-            >
-              {saveButtonText}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              data-test-id="cancel"
-              onClick={() => navigate(-1)}
-            >
-              {t('public~Cancel')}
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
-      </form>
-    </div>
+          <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
+            <ActionGroup className="pf-v6-c-form">
+              <Button
+                type="submit"
+                variant="primary"
+                data-test-id="save-changes"
+                isDisabled={isFormInvalid}
+              >
+                {saveButtonText}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                data-test-id="cancel"
+                onClick={() => navigate(-1)}
+              >
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </PaneBody>
+    </>
   );
 };
 

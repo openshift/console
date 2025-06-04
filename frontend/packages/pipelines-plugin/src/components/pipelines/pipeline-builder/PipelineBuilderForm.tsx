@@ -204,14 +204,9 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
             <PipelineBuilderHeader namespace={namespace} />
             <FlexForm className="opp-pipeline-builder-form" onSubmit={handleSubmit}>
               <div className="opp-pipeline-builder-form__content">
-                <FormBody
-                  flexLayout
-                  disablePaneBody
-                  className="co-m-pane__body co-m-pane__body--no-top-margin"
-                >
+                <FormBody flexLayout disablePaneBody className="pf-v6-c-page__main-section">
                   <PipelineQuickSearch
                     namespace={namespace}
-                    viewContainer={contentRef.current}
                     isOpen={menuOpen}
                     callback={savedCallback.current}
                     setIsOpen={(open) => setMenuOpen(open)}

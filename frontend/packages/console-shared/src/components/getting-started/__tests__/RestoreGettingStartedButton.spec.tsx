@@ -1,19 +1,18 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { RestoreGettingStartedButton } from '../RestoreGettingStartedButton';
 import { useGettingStartedShowState, GettingStartedShowState } from '../useGettingStartedShowState';
 
 jest.mock('react', () => ({
-  ...require.requireActual('react'),
+  ...jest.requireActual('react'),
   // Set useLayoutEffect to useEffect to solve react warning
   // "useLayoutEffect does nothing on the server, ..." while
   // running this test. useLayoutEffect was used internally by
   // the PatternFly Label for a tooltip.
-  useLayoutEffect: require.requireActual('react').useEffect,
+  useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
 jest.mock('../useGettingStartedShowState', () => ({
-  ...require.requireActual('../useGettingStartedShowState'),
+  ...jest.requireActual('../useGettingStartedShowState'),
   useGettingStartedShowState: jest.fn(),
 }));
 

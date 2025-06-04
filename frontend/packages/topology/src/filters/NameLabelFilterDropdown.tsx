@@ -13,6 +13,8 @@ import { TextFilter } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NameLabelFilterValues } from './filter-utils';
 
+import './NameLabelFilterDropdown.scss';
+
 type NameLabelFilterDropdownProps = {
   isDisabled: boolean;
   data: K8sResourceKind[];
@@ -44,6 +46,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
         onToggle(_event, !isOpen);
       }}
       isDisabled={isDisabled}
+      className="odc-topology-name-label-filter"
     >
       <>
         <FilterIcon className="span--icon__right-margin" /> {t(selected)}
@@ -82,7 +85,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
           setTextValue={handleInputValue}
           placeholder={t('topology~Find by label...')}
           data={data}
-          className="co-text-node"
+          color="purple"
           labelPath={'metadata.labels'}
         />
       ) : (

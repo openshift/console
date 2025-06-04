@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Node } from '@patternfly/react-topology';
 import PipelineRunDecorator from './PipelineRunDecorator';
 

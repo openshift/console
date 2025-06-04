@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { PipeLineRunWithRepoMetadata } from '../../../test-data/pipeline-data';
 import { getLabelValue, sanitizeBranchName } from '../repository-utils';

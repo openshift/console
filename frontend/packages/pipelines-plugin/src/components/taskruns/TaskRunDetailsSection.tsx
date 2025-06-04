@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { TaskRunModel } from '../../models';
@@ -18,14 +19,14 @@ const TaskRunDetailsSection: React.FC<TaskRunDetailsSectionProps> = ({ taskRun }
           taskRunLabel: t(TaskRunModel.labelKey),
         })}
       />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={taskRun} />
-        </div>
-        <div className="col-sm-6 odc-taskrun-details__status">
+        </GridItem>
+        <GridItem sm={6} className="odc-taskrun-details__status">
           <TaskRunDetailsStatus taskRun={taskRun} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </>
   );
 };

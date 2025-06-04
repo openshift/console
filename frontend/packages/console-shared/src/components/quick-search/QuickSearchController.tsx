@@ -7,7 +7,6 @@ import { quickSearch } from './utils/quick-search-utils';
 
 type QuickSearchControllerProps = {
   namespace: string;
-  viewContainer?: HTMLElement;
   quickSearchProviders: QuickSearchProviders;
   searchPlaceholder: string;
   allItemsLoaded: boolean;
@@ -23,7 +22,6 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   namespace,
   quickSearchProviders,
   searchPlaceholder,
-  viewContainer,
   allItemsLoaded,
   limitItemCount,
   icon,
@@ -102,7 +100,6 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
       searchPlaceholder={searchPlaceholder}
       allCatalogItemsLoaded={allItemsLoaded}
       searchCatalog={searchCatalog}
-      viewContainer={viewContainer}
       detailsRenderer={detailsRenderer}
     />
   );

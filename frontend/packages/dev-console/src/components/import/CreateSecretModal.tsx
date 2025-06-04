@@ -5,18 +5,18 @@ import {
 } from '@console/internal/components/factory/modal';
 import {
   SecretFormWrapper,
-  SecretTypeAbstraction,
+  SecretFormType,
 } from '@console/internal/components/secrets/create-secret';
 
 export interface CreateSecretModalProps {
   save?: (name: string) => void;
   namespace: string;
-  secretType: SecretTypeAbstraction;
+  formType: SecretFormType;
 }
 
 type Props = CreateSecretModalProps & ModalComponentProps;
 
-const CreateSecretModal: React.FC<Props> = ({ close, namespace, save, secretType }) => {
+const CreateSecretModal: React.FC<Props> = ({ close, namespace, save, formType }) => {
   const handleSave = (name: string) => {
     close();
     save(name);
@@ -27,7 +27,7 @@ const CreateSecretModal: React.FC<Props> = ({ close, namespace, save, secretType
       onCancel={close}
       onSave={handleSave}
       fixed={{ metadata: { namespace } }}
-      secretTypeAbstraction={secretType}
+      formType={formType}
       isCreate
       modal
     />

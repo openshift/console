@@ -1,4 +1,5 @@
 import { checkErrors, testName } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 import * as yamlEditor from '../../views/yaml-editor';
 
 describe('Bulk import operation', () => {
@@ -73,6 +74,7 @@ stringData:
 
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(namespace);
   });
 

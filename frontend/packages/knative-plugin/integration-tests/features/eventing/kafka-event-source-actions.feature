@@ -13,7 +13,7 @@ Feature: Kafka event Sources actions
 
         @regression @manual
         Scenario: Filter the Event Sources: KF-03-TC01
-            Given user is at the Developer Catalog page
+            Given user is at the Software Catalog page
              When user clicks on Event Sources
               And user enters characters in the Filter field
              Then user will see only those event source cards that match the filters

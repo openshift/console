@@ -152,8 +152,10 @@ $pipelineStageScreenSize: (
   text-align: center;
 }
 .build-pipeline__stage-name {
-  @include text-overflow();
   margin-bottom: $pipeline-padding + 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .build-pipeline__stage-time,
 .build-pipeline__stage-actions {

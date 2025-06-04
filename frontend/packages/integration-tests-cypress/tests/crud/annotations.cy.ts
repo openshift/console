@@ -3,6 +3,7 @@ import { defaultsDeep } from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -12,7 +13,7 @@ const configmapName = 'example';
 
 const createExampleConfigMapInstance = () => {
   nav.sidenav.clickNavLink(['Workloads', 'ConfigMaps']);
-  cy.byLegacyTestID('resource-title').should('have.text', 'ConfigMaps');
+  cy.get('[data-test="page-heading"] h1').should('have.text', 'ConfigMaps');
   projectDropdown.selectProject(testName);
   projectDropdown.shouldContain(testName);
   listPage.clickCreateYAMLbutton();
@@ -95,6 +96,7 @@ const annotations = [
 describe('Annotations', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
     createExampleConfigMapInstance();
   });

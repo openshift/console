@@ -94,10 +94,6 @@ export type DetailItemProps = {
   errorMessage?: string;
 };
 
-export type DetailsBodyProps = {
-  children?: React.ReactNode;
-};
-
 export type UtilizationBodyProps = {
   children: React.ReactNode;
 };

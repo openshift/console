@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { PopoverProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ShortcutTable, Shortcut } from '../shortcuts';

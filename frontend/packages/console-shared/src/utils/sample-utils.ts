@@ -300,7 +300,7 @@ const defaultSamples = (t: TFunction) =>
         {
           title: t('console-shared~Add catalog categories'),
           description: t(
-            'console-shared~Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.',
+            'console-shared~Provides a list of default categories which are shown in the Software Catalog. The categories must be added below customization developerCatalog.',
           ),
           id: 'devcatalog-categories',
           snippet: true,
@@ -363,7 +363,7 @@ const defaultSamples = (t: TFunction) =>
         {
           title: t('console-shared~Add sub-catalog types'),
           description: t(
-            'console-shared~Provides a list of all the available sub-catalog types which are shown in the Developer Catalog. The types must be added below spec customization developerCatalog',
+            'console-shared~Provides a list of all the available sub-catalog types which are shown in the Software Catalog. The types must be added below spec customization developerCatalog',
           ),
           id: 'devcatalog-types',
           snippet: true,

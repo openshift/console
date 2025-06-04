@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MachineHealthCheckModel, MachineModel } from '../models';
 import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
 import { referenceForModel } from '../module/k8s/k8s';
@@ -17,9 +18,10 @@ import {
   ResourceSummary,
   SectionHeading,
   Selector,
-  Timestamp,
   navFactory,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];
@@ -37,10 +39,7 @@ const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = (
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -124,43 +123,41 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineHealthCheck details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj}>
-                <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
-                  <Selector
-                    kind={referenceForModel(MachineModel)}
-                    selector={_.get(obj, 'spec.selector')}
-                    namespace={obj.metadata.namespace}
-                  />
-                </DetailsItem>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
-                <DetailsItem
-                  label={t('public~Expected machines')}
-                  obj={obj}
-                  path="status.expectedMachines"
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <ResourceSummary resource={obj}>
+              <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
+                <Selector
+                  kind={referenceForModel(MachineModel)}
+                  selector={_.get(obj, 'spec.selector')}
+                  namespace={obj.metadata.namespace}
                 />
-                <DetailsItem
-                  label={t('public~Current healthy')}
-                  obj={obj}
-                  path="status.currentHealthy"
-                />
-              </dl>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+              </DetailsItem>
+            </ResourceSummary>
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
+              <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
+              <DetailsItem
+                label={t('public~Expected machines')}
+                obj={obj}
+                path="status.expectedMachines"
+              />
+              <DetailsItem
+                label={t('public~Current healthy')}
+                obj={obj}
+                path="status.currentHealthy"
+              />
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Unhealthy conditions')} />
         <UnhealthyConditionsTable obj={obj} />
-      </div>
+      </PaneBody>
     </>
   );
 };

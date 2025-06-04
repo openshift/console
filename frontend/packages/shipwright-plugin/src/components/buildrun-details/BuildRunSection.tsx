@@ -1,7 +1,14 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { ResourceLink, DetailsItem, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink, DetailsItem } from '@console/internal/components/utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildModel, BuildModelV1Alpha1 } from '../../models';
 import { BuildRun } from '../../types';
 import { getBuildNameFromBuildRun, isV1Alpha1Resource } from '../../utils';
@@ -17,11 +24,13 @@ const BuildRunSection: React.FC<BuildRunSectionProps> = ({ buildRun }) => {
   const buildModel = isV1Alpha1Resource(buildRun) ? BuildModelV1Alpha1 : BuildModel;
 
   return (
-    <dl>
-      <dt>{t('shipwright-plugin~Status')}</dt>
-      <dd>
-        <BuildRunStatus buildRun={buildRun} />
-      </dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('shipwright-plugin~Status')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <BuildRunStatus buildRun={buildRun} />
+        </DescriptionListDescription>
+      </DescriptionListGroup>
 
       <DetailsItem
         label={t('shipwright-plugin~Build')}
@@ -51,11 +60,13 @@ const BuildRunSection: React.FC<BuildRunSectionProps> = ({ buildRun }) => {
         <Timestamp timestamp={buildRun.status?.completionTime} />
       </DetailsItem>
 
-      <>
-        <dt>{t('shipwright-plugin~Duration')}</dt>
-        <dd>{buildRun.status?.startTime ? <BuildRunDuration buildRun={buildRun} /> : '-'}</dd>
-      </>
-    </dl>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('shipwright-plugin~Duration')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          {buildRun.status?.startTime ? <BuildRunDuration buildRun={buildRun} /> : '-'}
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

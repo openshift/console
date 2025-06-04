@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { Title } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
-import { SectionHeading } from '@console/internal/components/utils';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
@@ -16,6 +16,7 @@ import {
   getCloudShellTimeout,
 } from './cloud-shell-setup-utils';
 import CloudSehellSetupForm from './CloudShellSetupForm';
+import './CloudShellSetup.scss';
 
 interface StateProps {
   activeNamespace: string;
@@ -80,13 +81,10 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   };
 
   return (
-    <>
-      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-        <SectionHeading
-          text={t('webterminal-plugin~Initialize terminal')}
-          style={{ marginBottom: 0 }}
-        />
-      </div>
+    <div className="wt-cloud-shell-setup">
+      <Title headingLevel="h2" className="wt-cloud-shell-setup--title">
+        {t('webterminal-plugin~Initialize terminal')}
+      </Title>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -95,7 +93,7 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
       >
         {(formikProps) => <CloudSehellSetupForm {...formikProps} />}
       </Formik>
-    </>
+    </div>
   );
 };
 

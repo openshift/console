@@ -24,7 +24,7 @@
   display: flex;
   justify-content: center;
   text-align: center;
-  width: 50px;
+  width: 54px;
 }
 
 .co-m-resource-application {
@@ -103,12 +103,6 @@
   background-color: $color-ingress-dark;
 }
 
-@keyframes co-resource-icon__deleting {
-  to {
-    color: var(--pf-t--color--gray--50);
-  }
-}
-
 .co-resource-item {
   align-items: baseline;
   display: flex;
@@ -125,18 +119,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-  }
-  &__deleting {
-    animation: co-resource-icon__deleting 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) alternate
-      infinite;
-    flex: 0 0 auto;
-    font-size: ($font-size-base - 1);
-    font-weight: var(--pf-t--global--font--weight--body--bold);
-    margin: 0 0 0 15px;
-    overflow: hidden;
-    padding: 0 0 2px;
-    position: relative;
-    white-space: nowrap;
   }
   &__help-text {
     margin-left: 3px;

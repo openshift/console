@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Build } from '../../types';
 import BuildSpecSection from './BuildSpecSection';
 import BuildStatusSection from './BuildStatusSection';
@@ -14,24 +16,24 @@ const BuildDetailsTab: React.FC<BuildDetailsTabProps> = ({ obj: build }) => {
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('shipwright-plugin~Build details')} />
 
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={build} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <BuildSpecSection obj={build} buildSpec={build.spec} path="spec" />
-          </div>
-        </div>
-      </div>
+          </GridItem>
+        </Grid>
+      </PaneBody>
 
       {build.status ? (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('shipwright-plugin~Status')} />
           <BuildStatusSection obj={build} buildStatus={build.status} />
-        </div>
+        </PaneBody>
       ) : null}
     </>
   );

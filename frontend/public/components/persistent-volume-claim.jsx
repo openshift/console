@@ -1,6 +1,5 @@
-import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +19,7 @@ import {
   getName,
   getRequestedPVCSize,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
@@ -42,6 +42,14 @@ import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
 import deletePVCModal from './modals/delete-pvc-modal';
 import i18next from 'i18next';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const { ModifyLabels, ModifyAnnotations, Edit, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
 const menuActions = [
@@ -89,11 +97,11 @@ export const PVCStatus = ({ pvc }) => {
 const tableColumnClasses = [
   '', // name
   '', // namespace
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // status
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // used capacity
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
+  css('pf-m-hidden', 'pf-m-visible-on-lg'), // status
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
+  css('pf-m-hidden', 'pf-m-visible-on-2xl'), // used capacity
+  css('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
   Kebab.columnClass,
 ];
 
@@ -114,10 +122,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={namespace} title={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -131,14 +136,14 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
             title={obj.spec.volumeName}
           />
         ) : (
-          <div className="text-muted">{t('public~No PersistentVolume')}</div>
+          <div className="pf-v6-u-text-color-subtle">{t('public~No PersistentVolume')}</div>
         )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         {totalCapacityMetric ? totalCapcityHumanized.string : '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>{metrics ? usedCapacity.string : '-'}</TableData>
-      <TableData className={classNames(tableColumnClasses[6])}>
+      <TableData className={css(tableColumnClasses[6])}>
         {obj?.spec?.storageClassName ? (
           <ResourceLink
             kind="StorageClass"
@@ -205,7 +210,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         {alertComponents}
         <SectionHeading text={t('public~PersistentVolumeClaim details')} />
         {totalCapacityMetric && !loading && (
@@ -234,69 +239,87 @@ const Details_ = ({ flags, obj: pvc }) => {
             />
           </div>
         )}
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={pvc}>
-              <dt>{t('public~Label selector')}</dt>
-              <dd data-test-id="pvc-name">
-                <Selector selector={labelSelector} kind="PersistentVolume" />
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Label selector')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-name">
+                  <Selector selector={labelSelector} kind="PersistentVolume" />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
-            <dl>
-              <dt>{t('public~Status')}</dt>
-              <dd data-test-id="pvc-status">
-                <PVCStatus pvc={pvc} />
-              </dd>
-              <dt>{t('public~Requested capacity')}</dt>
-              <dd data-test="pvc-requested-capacity">
-                {humanizeBinaryBytes(totalRequestMetric).string}
-              </dd>
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-status">
+                  <PVCStatus pvc={pvc} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Requested capacity')}</DescriptionListTerm>
+                <DescriptionListDescription data-test="pvc-requested-capacity">
+                  {humanizeBinaryBytes(totalRequestMetric).string}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               {storage && (
-                <>
-                  <dt>{t('public~Capacity')}</dt>
-                  <dd data-test-id="pvc-capacity">{totalCapacity.string}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Capacity')}</DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="pvc-capacity">
+                    {totalCapacity.string}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {usedMetrics && _.isEmpty(loadError) && !loading && (
-                <>
-                  <dt>{t('public~Used')}</dt>
-                  <dd>{humanizeBinaryBytes(usedMetrics).string}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Used')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {humanizeBinaryBytes(usedMetrics).string}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
               {!_.isEmpty(accessModes) && (
-                <>
-                  <dt>{t('public~Access modes')}</dt>
-                  <dd data-test-id="pvc-access-mode">{accessModes.join(', ')}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Access modes')}</DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="pvc-access-mode">
+                    {accessModes.join(', ')}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-              <dt>{t('public~Volume mode')}</dt>
-              <dd data-test-id="pvc-volume-mode">{volumeMode || 'Filesystem'}</dd>
-              <dt>{t('public~StorageClasses')}</dt>
-              <dd data-test-id="pvc-storageclass">
-                {storageClassName ? (
-                  <ResourceLink kind="StorageClass" name={storageClassName} />
-                ) : (
-                  '-'
-                )}
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Volume mode')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-volume-mode">
+                  {volumeMode || 'Filesystem'}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~StorageClasses')}</DescriptionListTerm>
+                <DescriptionListDescription data-test-id="pvc-storageclass">
+                  {storageClassName ? (
+                    <ResourceLink kind="StorageClass" name={storageClassName} />
+                  ) : (
+                    '-'
+                  )}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               {volumeName && canListPV && (
-                <>
-                  <dt>{t('public~PersistentVolumes')}</dt>
-                  <dd data-test-id="persistent-volume">
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~PersistentVolumes')}</DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="persistent-volume">
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
-                  </dd>
-                </>
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

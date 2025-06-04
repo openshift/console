@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -16,7 +16,8 @@ import { ActivityCard } from './activity-card';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
 import { ResourceQuotaCard } from './resource-quota-card';
-import { GettingStartedSection } from './getting-started/GettingStartedSection';
+import { GettingStartedSection as DevGettingStartedSection } from './getting-started/GettingStartedSection';
+import { PROJECT_OVERVIEW_USER_SETTINGS_KEY } from '../dashboards-page/cluster-dashboard/getting-started/constants';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
@@ -71,14 +72,16 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
 
   return (
     <>
-      {perspective === 'dev' && (
-        <Helmet>
-          <title>{t('public~Project overview')}</title>
-        </Helmet>
-      )}
+      {perspective === 'dev' && <DocumentTitle>{t('public~Project overview')}</DocumentTitle>}
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>
-          <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />
+          <DevGettingStartedSection
+            userSettingKey={
+              perspective === 'dev'
+                ? 'devconsole.projectOverview.gettingStarted'
+                : PROJECT_OVERVIEW_USER_SETTINGS_KEY
+            }
+          />
           <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
         </Dashboard>
       </ProjectDashboardContext.Provider>

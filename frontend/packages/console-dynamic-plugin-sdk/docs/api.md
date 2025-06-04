@@ -11,9 +11,9 @@
 9.  [SuccessStatus](#successstatus)
 10.  [checkAccess](#checkaccess)
 11.  [useAccessReview](#useaccessreview)
-12.  [useResolvedExtensions](#useresolvedextensions)
-13.  [HorizontalNav](#horizontalnav)
-14.  [VirtualizedTable](#virtualizedtable)
+12.  [isAllNamespacesKey](#isallnamespaceskey)
+13.  [useResolvedExtensions](#useresolvedextensions)
+14.  [HorizontalNav](#horizontalnav)
 15.  [TableData](#tabledata)
 16.  [useActiveColumns](#useactivecolumns)
 17.  [ListPageHeader](#listpageheader)
@@ -21,58 +21,61 @@
 19.  [ListPageCreateLink](#listpagecreatelink)
 20.  [ListPageCreateButton](#listpagecreatebutton)
 21.  [ListPageCreateDropdown](#listpagecreatedropdown)
-22.  [ListPageFilter](#listpagefilter)
-23.  [useListPageFilter](#uselistpagefilter)
-24.  [ResourceLink](#resourcelink)
-25.  [ResourceIcon](#resourceicon)
-26.  [useK8sModel](#usek8smodel)
-27.  [useK8sModels](#usek8smodels)
-28.  [useK8sWatchResource](#usek8swatchresource)
-29.  [useK8sWatchResources](#usek8swatchresources)
-30.  [consoleFetch](#consolefetch)
-31.  [consoleFetchJSON](#consolefetchjson)
-32.  [consoleFetchText](#consolefetchtext)
-33.  [getConsoleRequestHeaders](#getconsolerequestheaders)
-34.  [k8sGetResource](#k8sgetresource)
-35.  [k8sCreateResource](#k8screateresource)
-36.  [k8sUpdateResource](#k8supdateresource)
-37.  [k8sPatchResource](#k8spatchresource)
-38.  [k8sDeleteResource](#k8sdeleteresource)
-39.  [k8sListResource](#k8slistresource)
-40.  [k8sListResourceItems](#k8slistresourceitems)
-41.  [getAPIVersionForModel](#getapiversionformodel)
-42.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
-43.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
-44.  [StatusPopupSection](#statuspopupsection)
-45.  [StatusPopupItem](#statuspopupitem)
-46.  [Overview](#overview)
-47.  [OverviewGrid](#overviewgrid)
-48.  [InventoryItem](#inventoryitem)
-49.  [InventoryItemTitle](#inventoryitemtitle)
-50.  [InventoryItemBody](#inventoryitembody)
-51.  [InventoryItemStatus](#inventoryitemstatus)
-52.  [InventoryItemLoading](#inventoryitemloading)
-53.  [useFlag](#useflag)
-54.  [CodeEditor](#codeeditor)
-55.  [ResourceYAMLEditor](#resourceyamleditor)
-56.  [ResourceEventStream](#resourceeventstream)
-57.  [usePrometheusPoll](#useprometheuspoll)
-58.  [Timestamp](#timestamp)
-59.  [useModal](#usemodal)
-60.  [ActionServiceProvider](#actionserviceprovider)
-61.  [NamespaceBar](#namespacebar)
-62.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
-63.  [QueryBrowser](#querybrowser)
-64.  [useAnnotationsModal](#useannotationsmodal)
-65.  [useDeleteModal](#usedeletemodal)
-66.  [useLabelsModal](#uselabelsmodal)
-67.  [useActiveNamespace](#useactivenamespace)
-68.  [useUserSettings](#useusersettings)
-69.  [useQuickStartContext](#usequickstartcontext)
-70. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
-71. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
-72. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
-73. [DEPRECATED] [YAMLEditor](#yamleditor)
+22.  [ResourceLink](#resourcelink)
+23.  [ResourceIcon](#resourceicon)
+24.  [useK8sModel](#usek8smodel)
+25.  [useK8sModels](#usek8smodels)
+26.  [useK8sWatchResource](#usek8swatchresource)
+27.  [useK8sWatchResources](#usek8swatchresources)
+28.  [consoleFetch](#consolefetch)
+29.  [consoleFetchJSON](#consolefetchjson)
+30.  [consoleFetchText](#consolefetchtext)
+31.  [getConsoleRequestHeaders](#getconsolerequestheaders)
+32.  [k8sGetResource](#k8sgetresource)
+33.  [k8sCreateResource](#k8screateresource)
+34.  [k8sUpdateResource](#k8supdateresource)
+35.  [k8sPatchResource](#k8spatchresource)
+36.  [k8sDeleteResource](#k8sdeleteresource)
+37.  [k8sListResource](#k8slistresource)
+38.  [k8sListResourceItems](#k8slistresourceitems)
+39.  [getAPIVersionForModel](#getapiversionformodel)
+40.  [getGroupVersionKindForResource](#getgroupversionkindforresource)
+41.  [getGroupVersionKindForModel](#getgroupversionkindformodel)
+42.  [StatusPopupSection](#statuspopupsection)
+43.  [StatusPopupItem](#statuspopupitem)
+44.  [Overview](#overview)
+45.  [OverviewGrid](#overviewgrid)
+46.  [InventoryItem](#inventoryitem)
+47.  [InventoryItemTitle](#inventoryitemtitle)
+48.  [InventoryItemBody](#inventoryitembody)
+49.  [InventoryItemStatus](#inventoryitemstatus)
+50.  [InventoryItemLoading](#inventoryitemloading)
+51.  [useFlag](#useflag)
+52.  [CodeEditor](#codeeditor)
+53.  [ResourceYAMLEditor](#resourceyamleditor)
+54.  [ResourceEventStream](#resourceeventstream)
+55.  [DocumentTitle](#documenttitle)
+56.  [usePrometheusPoll](#useprometheuspoll)
+57.  [Timestamp](#timestamp)
+58.  [useOverlay](#useoverlay)
+59.  [ActionServiceProvider](#actionserviceprovider)
+60.  [NamespaceBar](#namespacebar)
+61.  [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage)
+62.  [QueryBrowser](#querybrowser)
+63.  [useAnnotationsModal](#useannotationsmodal)
+64.  [useDeleteModal](#usedeletemodal)
+65.  [useLabelsModal](#uselabelsmodal)
+66.  [useActiveNamespace](#useactivenamespace)
+67.  [useUserSettings](#useusersettings)
+68.  [useQuickStartContext](#usequickstartcontext)
+69. [DEPRECATED] [PerspectiveContext](#perspectivecontext)
+70. [DEPRECATED] [useAccessReviewAllowed](#useaccessreviewallowed)
+71. [DEPRECATED] [useSafetyFirst](#usesafetyfirst)
+72. [DEPRECATED] [VirtualizedTable](#virtualizedtable)
+73. [DEPRECATED] [ListPageFilter](#listpagefilter)
+74. [DEPRECATED] [useListPageFilter](#uselistpagefilter)
+75. [DEPRECATED] [YAMLEditor](#yamleditor)
+76. [DEPRECATED] [useModal](#usemodal)
 
 ---
 
@@ -421,6 +424,19 @@ Array with `isAllowed` and `loading` values.
 
 ---
 
+## `isAllNamespacesKey`
+
+### Summary 
+
+Returns true if the provided value represents the special "all" namespaces option key.
+
+
+
+
+
+
+---
+
 ## `useResolvedExtensions`
 
 ### Summary 
@@ -489,60 +505,6 @@ const HomePage: React.FC = (props) => {
 | `resource` | (optional) the resource associated with this Navigation, an object of K8sResourceCommon type |
 | `pages` | an array of page objects |
 | `customData` | (optional) custom data to be shared between the pages in the navigation. |
-
-
-
----
-
-## `VirtualizedTable`
-
-### Summary 
-
-A component for making virtualized tables
-
-
-
-### Example
-
-
-```ts
-const MachineList: React.FC<MachineListProps> = (props) => {
-  return (
-    <VirtualizedTable<MachineKind>
-     {...props}
-     aria-label='Machines'
-     columns={getMachineColumns}
-     Row={getMachineTableRow}
-    />
-  );
-}
-```
-
-
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `data` | data for table |
-| `loaded` | flag indicating data is loaded |
-| `loadError` | error object if issue loading data |
-| `columns` | column setup |
-| `Row` | row setup |
-| `unfilteredData` | original data without filter |
-| `NoDataEmptyMsg` | (optional) no data empty message component |
-| `EmptyMsg` | (optional) empty message component |
-| `scrollNode` | (optional) function to handle scroll |
-| `label` | (optional) label for table |
-| `ariaLabel` | (optional) aria label |
-| `gridBreakPoint` | sizing of how to break up grid for responsiveness |
-| `onSelect` | (optional) function for handling select of table |
-| `rowData` | (optional) data specific to row |
-| `sortColumnIndex` | (optional) The index of the column to sort. The default is `0` |
-| `sortDirection` | (optional) The direction of the sort. The default is `SortByDirection.asc` |
-| `onRowsRendered` | (optional) Callback invoked with information about the slice of rows that were just rendered. |
 
 
 
@@ -666,9 +628,12 @@ const exampleList: React.FC = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `title` | heading title |
-| `helpText` | (optional) help section as react node |
-| `badge` | (optional) badge icon as react node |
+| `title` | The heading title. If no title is set, only the `children`, `badge`, and `helpAlert` props will be rendered. |
+| `badge` | (optional) A badge that is displayed next to the title of the heading |
+| `helpAlert` | (optional) An alert placed below the heading in the same PageSection. |
+| `helpText` | (optional) A subtitle placed below the title. |
+| `hideFavoriteButton` | (optional) The "Add to favourites" button is shown by default while in the admin perspective. This prop allows you to hide the button. It should be hidden when `ListPageHeader` is not the primary page header to avoid having multiple favourites buttons. |
+| `children` | (optional) A primary action that is always rendered. |
 
 
 
@@ -828,115 +793,6 @@ const exampleList: React.FC<MyProps> = () => {
 | `createAccessReview` | (optional) object with namespace and kind used to determine access |
 | `children` | (optional) children for the dropdown toggle |
 
-
-
----
-
-## `ListPageFilter`
-
-### Summary 
-
-Component that generates filter for list page.
-
-
-
-### Example
-
-
-```tsx
-  // See implementation for more details on RowFilter and FilterValue types
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(
-    data,
-    [...rowFilters, ...searchFilters],
-    staticFilters,
-  );
-  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
-  return (
-    <>
-      <ListPageHeader />
-      <ListPagBody>
-        <ListPageFilter data={staticData} onFilterChange={onFilterChange} rowFilters={rowFilters} rowSearchFilters={searchFilters} />
-        <List data={filteredData} />
-      </ListPageBody>
-    </>
-  )
-```
-
-
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `data` | An array of data points |
-| `loaded` | indicates that data has loaded |
-| `onFilterChange` | callback function for when filter is updated |
-| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
-| `labelFilter` | (optional) a unique name key for label filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
-| `labelPath` | (optional) the path to labels to filter from |
-| `nameFilterTitle` | (optional) title for name filter |
-| `nameFilterPlaceholder` | (optional) placeholder for name filter |
-| `labelFilterPlaceholder` | (optional) placeholder for label filter |
-| `hideLabelFilter` | (optional) only shows the name filter instead of both name and label filter |
-| `hideNameLabelFilter` | (optional) hides both name and label filter |
-| `columnLayout` | (optional) column layout object |
-| `hideColumnManagement` | (optional) flag to hide the column management |
-| `nameFilter` | (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
-| `rowSearchFilters` | (optional) An array of RowSearchFilters elements that define search text filters added on top of Name and Label filters |
-
-
-
----
-
-## `useListPageFilter`
-
-### Summary 
-
-A hook that manages filter state for the ListPageFilter component.
-
-
-
-### Example
-
-
-```tsx
-  // See implementation for more details on RowFilter and FilterValue types
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(
-    data,
-    rowFilters,
-    staticFilters,
-  );
-  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
-  return (
-    <>
-      <ListPageHeader .../>
-      <ListPagBody>
-        <ListPageFilter data={staticData} onFilterChange={onFilterChange} />
-        <List data={filteredData} />
-      </ListPageBody>
-    </>
-  )
-```
-
-
-
-
-
-### Parameters
-
-| Parameter Name | Description |
-| -------------- | ----------- |
-| `data` | An array of data points |
-| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
-| `staticFilters` | (optional) An array of FilterValue elements that are statically applied to the data |
-
-
-
-### Returns
-
-A tuple containing the data filtered by all static filteres, the data filtered by all static and row filters, and a callback that updates rowFilters
 
 
 ---
@@ -1549,7 +1405,7 @@ Component that shows the status in a popup window. Can be used when building `co
     firstColumn={
       <>
         <span>{title}</span>
-        <span className="text-secondary">
+        <span className="pf-v6-u-text-color-subtle">
           My Example Item
         </span>
       </>
@@ -1996,6 +1852,37 @@ return <ResourceEventStream resource={resource} />
 
 ---
 
+## `DocumentTitle`
+
+### Summary 
+
+A component to change the document title of the page.
+
+
+
+### Example
+
+
+```tsx
+<DocumentTitle>My Page Title</DocumentTitle>
+```
+This will change the title to "My Page Title · [Product Name]"
+
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `children` | The title to display |
+
+
+
+---
+
 ## `usePrometheusPoll`
 
 ### Summary 
@@ -2049,11 +1936,11 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 ---
 
-## `useModal`
+## `useOverlay`
 
 ### Summary 
 
-A hook to launch Modals.
+The `useOverlay` hook inserts a component directly to the DOM outside the web console's page structure. This allows the component to be freely styled and positioning with CSS. For example, to float the overlay in the top right corner of the UI: `style={{ position: 'absolute', right: '2rem', top: '2rem', zIndex: 999 }}`.<br/><br/>It is possible to add multiple overlays by calling `useOverlay` multiple times.<br/><br/>A `closeOverlay` function is passed to the overlay component. Calling it removes the component from the DOM without affecting any other overlays that might have been added with `useOverlay`.<br/><br/>Additional props can be passed to `useOverlay` and they will be passed through to the overlay component.
 
 
 
@@ -2061,12 +1948,34 @@ A hook to launch Modals.
 
 
 ```tsx
+const OverlayComponent = ({ closeOverlay, heading }) => {
+  return (
+    <div style={{ position: 'absolute', right: '2rem', top: '2rem', zIndex: 999 }}>
+      <h2>{heading}</h2>
+      <Button onClick={closeOverlay}>Close</Button>
+    </div>
+  );
+};
+
+const ModalComponent = ({ body, closeOverlay, title }) => (
+  <Modal isOpen onClose={closeOverlay}>
+    <ModalHeader title={title} />
+    <ModalBody>{body}</ModalBody>
+  </Modal>
+);
+
 const AppPage: React.FC = () => {
- const launchModal = useModal();
- const onClick = () => launchModal(ModalComponent);
- return (
-   <Button onClick={onClick}>Launch a Modal</Button>
- )
+  const launchOverlay = useOverlay();
+  const onClickOverlay = () => {
+    launchOverlay(OverlayComponent, { heading: 'Test overlay' });
+  };
+  const onClickModal = () => {
+    launchOverlay(ModalComponent, { body: 'Test modal', title: 'Overlay modal' });
+  };
+  return (
+    <Button onClick={onClickOverlay}>Launch an Overlay</Button>
+    <Button onClick={onClickModal}>Launch a Modal</Button>
+  )
 }
 ```
 
@@ -2161,7 +2070,7 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 
 ### Summary 
 
-Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information.<br/>This is to be used in conjunction with an `ErrorBoundary` component.
+Creates a full page ErrorBoundaryFallbackPage component to display the "Something wrong happened" message along with the stack trace and other helpful debugging information.<br/>This is to be used in conjunction with an `ErrorBoundary` component.
 
 
 
@@ -2548,7 +2457,170 @@ The isAllowed boolean value.
 
 ### Returns
 
-An array with a pair of state value and it's set function.
+An array with a pair of state value and its set function.
+
+
+---
+
+## `VirtualizedTable`
+
+### Summary [DEPRECATED]
+
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>A component for making virtualized tables
+
+
+
+### Example
+
+
+```ts
+const MachineList: React.FC<MachineListProps> = (props) => {
+  return (
+    <VirtualizedTable<MachineKind>
+     {...props}
+     aria-label='Machines'
+     columns={getMachineColumns}
+     Row={getMachineTableRow}
+    />
+  );
+}
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `data` | data for table |
+| `loaded` | flag indicating data is loaded |
+| `loadError` | error object if issue loading data |
+| `columns` | column setup |
+| `Row` | row setup |
+| `unfilteredData` | original data without filter |
+| `NoDataEmptyMsg` | (optional) no data empty message component |
+| `EmptyMsg` | (optional) empty message component |
+| `scrollNode` | (optional) function to handle scroll |
+| `label` | (optional) label for table |
+| `ariaLabel` | (optional) aria label |
+| `gridBreakPoint` | sizing of how to break up grid for responsiveness |
+| `onSelect` | (optional) function for handling select of table |
+| `rowData` | (optional) data specific to row |
+| `sortColumnIndex` | (optional) The index of the column to sort. The default is `0` |
+| `sortDirection` | (optional) The direction of the sort. The default is `SortByDirection.asc` |
+| `onRowsRendered` | (optional) Callback invoked with information about the slice of rows that were just rendered. |
+
+
+
+---
+
+## `ListPageFilter`
+
+### Summary [DEPRECATED]
+
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>Component that generates filter for list page.
+
+
+
+### Example
+
+
+```tsx
+  // See implementation for more details on RowFilter and FilterValue types
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(
+    data,
+    [...rowFilters, ...searchFilters],
+    staticFilters,
+  );
+  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
+  return (
+    <>
+      <ListPageHeader />
+      <ListPagBody>
+        <ListPageFilter data={staticData} onFilterChange={onFilterChange} rowFilters={rowFilters} rowSearchFilters={searchFilters} />
+        <List data={filteredData} />
+      </ListPageBody>
+    </>
+  )
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `data` | An array of data points |
+| `loaded` | indicates that data has loaded |
+| `onFilterChange` | callback function for when filter is updated |
+| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
+| `labelFilter` | (optional) a unique name key for label filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
+| `labelPath` | (optional) the path to labels to filter from |
+| `nameFilterTitle` | (optional) title for name filter |
+| `nameFilterPlaceholder` | (optional) placeholder for name filter |
+| `labelFilterPlaceholder` | (optional) placeholder for label filter |
+| `hideLabelFilter` | (optional) only shows the name filter instead of both name and label filter |
+| `hideNameLabelFilter` | (optional) hides both name and label filter |
+| `columnLayout` | (optional) column layout object |
+| `hideColumnManagement` | (optional) flag to hide the column management |
+| `nameFilter` | (optional) a unique name key for name filter. This may be useful if there are multiple `ListPageFilter` components rendered at once. |
+| `rowSearchFilters` | (optional) An array of RowSearchFilters elements that define search text filters added on top of Name and Label filters |
+
+
+
+---
+
+## `useListPageFilter`
+
+### Summary [DEPRECATED]
+
+@deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.<br/>A hook that manages filter state for the ListPageFilter component.
+
+
+
+### Example
+
+
+```tsx
+  // See implementation for more details on RowFilter and FilterValue types
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(
+    data,
+    rowFilters,
+    staticFilters,
+  );
+  // ListPageFilter updates filter state based on user interaction and resulting filtered data can be rendered in an independent component.
+  return (
+    <>
+      <ListPageHeader .../>
+      <ListPagBody>
+        <ListPageFilter data={staticData} onFilterChange={onFilterChange} />
+        <List data={filteredData} />
+      </ListPageBody>
+    </>
+  )
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `data` | An array of data points |
+| `rowFilters` | (optional) An array of RowFilter elements that define the available filter options |
+| `staticFilters` | (optional) An array of FilterValue elements that are statically applied to the data |
+
+
+
+### Returns
+
+A tuple containing the data filtered by all static filteres, the data filtered by all static and row filters, and a callback that updates rowFilters
 
 
 ---
@@ -2589,6 +2661,35 @@ An array with a pair of state value and it's set function.
 | `onChange` | Callback for on code change event. |
 | `onSave` | Callback called when the command `CTRL + S` / `CMD + S` is triggered. |
 | `ref` | React reference to `{ editor?: IStandaloneCodeEditor }`. Using the 'editor' property, you are able to access to all methods to control the editor. For more information, see https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html. |
+
+
+
+---
+
+## `useModal`
+
+### Summary [DEPRECATED]
+
+@deprecated - Use useOverlay from \@console/dynamic-plugin-sdk instead.<br/>A hook to launch Modals.
+
+
+
+### Example
+
+
+```tsx
+const AppPage: React.FC = () => {
+ const launchModal = useModal();
+ const onClick = () => launchModal(ModalComponent);
+ return (
+   <Button onClick={onClick}>Launch a Modal</Button>
+ )
+}
+```
+
+
+
+
 
 
 

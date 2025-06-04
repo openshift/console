@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { RouteLinkAndCopy } from '@console/internal/components/routes';
 import { mockResources } from '../../__mocks__/import-toast-mock';

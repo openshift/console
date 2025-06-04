@@ -1,19 +1,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { useTranslation, withTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { Divider, Popper, Title } from '@patternfly/react-core';
-import { impersonateStateToProps, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useUserSettingsCompatibility } from '@console/shared';
+import { Divider, Popper, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
-
-import { checkAccess } from './rbac';
-import { KebabItems } from './kebab';
+import { withTranslation } from 'react-i18next';
 
 class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -150,7 +144,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
       prefix = (
         <a
           href="#"
-          className={classNames(
+          className={css(
             'pf-v6-c-menu__item-action pf-m-favorite',
             { hover, focus: selected },
             { 'pf-m-favorited': isBookmarked },
@@ -179,7 +173,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
       suffix = (
         <a
           href="#"
-          className={classNames('bookmarker', { hover, focus: selected })}
+          className={css('bookmarker', { hover, focus: selected })}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -191,19 +185,19 @@ class DropDownRowWithTranslation extends React.PureComponent {
               : t('public~Add favorite {{content}}', { content: contentString })
           }
         >
-          <StarIcon className={classNames({ favorite: isFavorite })} />
+          <StarIcon className={css({ favorite: isFavorite })} />
         </a>
       );
     }
 
     return (
-      <li role="option" className={classNames('pf-v6-c-menu__list-item', className)} key={itemKey}>
+      <li role="option" className={css('pf-v6-c-menu__list-item', className)} key={itemKey}>
         <a
           href="#"
           ref={this.link}
           id={`${itemKey}-link`}
           data-test="dropdown-menu-item-link"
-          className={classNames('pf-v6-c-menu__item', {
+          className={css('pf-v6-c-menu__item', {
             'pf-m-selected': selected,
           })}
           onClick={(e) => onclick(itemKey, e)}
@@ -351,7 +345,7 @@ class Dropdown_ extends DropdownMixin {
         <>
           {actionItems.map((ai) => (
             <DropDownRow
-              className={classNames({ active: ai.actionKey === selectedKey && !noSelection })}
+              className={css({ active: ai.actionKey === selectedKey && !noSelection })}
               key={`${ai.actionKey}-${ai.actionTitle}`}
               itemKey={ai.actionKey}
               content={ai.actionTitle}
@@ -395,7 +389,7 @@ class Dropdown_ extends DropdownMixin {
     const addItem = (key, content) => {
       const selected = key === selectedKey && !this.props.noSelection;
       const hover = key === keyboardHoverKey;
-      const klass = classNames({ active: selected });
+      const klass = css({ active: selected });
       if (storageKey && bookmarks && bookmarks[key]) {
         bookMarkRows.push(
           <DropDownRow
@@ -456,7 +450,7 @@ class Dropdown_ extends DropdownMixin {
           onClick={this.toggle}
           onKeyDown={this.onKeyDown}
           type="button"
-          className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
+          className={css('pf-v6-c-menu-toggle', buttonClassName)}
           id={this.props.id}
           aria-describedby={describedBy}
           disabled={disabled}
@@ -520,7 +514,7 @@ class Dropdown_ extends DropdownMixin {
       return (
         <div className={className} ref={this.dropdownElement} style={this.props.style}>
           <div
-            className={classNames(
+            className={css(
               'pf-v6-c-dropdown',
               { 'pf-m-expanded': this.state.active },
               dropDownClassName,
@@ -545,7 +539,7 @@ class Dropdown_ extends DropdownMixin {
         aria-label={ariaLabel}
         aria-haspopup="true"
         aria-expanded={this.state.active}
-        className={classNames('pf-v6-c-menu-toggle', buttonClassName)}
+        className={css('pf-v6-c-menu-toggle', buttonClassName)}
         data-test-id="dropdown-button"
         onClick={this.toggle}
         onKeyDown={this.onKeyDown}
@@ -567,7 +561,7 @@ class Dropdown_ extends DropdownMixin {
     const menu = (
       <div className="pf-v6-c-menu" ref={this.dropdownMenuRef}>
         <div className="pf-v6-c-menu__content">
-          <ul ref={this.dropdownList} className={classNames('pf-v6-c-menu-list', menuClassName)}>
+          <ul ref={this.dropdownList} className={css('pf-v6-c-menu-list', menuClassName)}>
             {rows}
           </ul>
         </div>
@@ -578,7 +572,7 @@ class Dropdown_ extends DropdownMixin {
     return (
       <div className={className} ref={this.dropdownElement} style={this.props.style}>
         <div
-          className={classNames(
+          className={css(
             { 'pf-v6-c-dropdown': true, 'pf-m-expanded': this.state.active },
             dropDownClassName,
           )}
@@ -677,148 +671,4 @@ Dropdown.propTypes = {
   describedBy: PropTypes.string,
   required: PropTypes.bool,
   dataTest: PropTypes.string,
-};
-
-const ActionsMenuDropdown = (props) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [active, setActive] = React.useState(!!props.active);
-
-  const dropdownElement = React.useRef();
-
-  const show = () => {
-    setActive(true);
-  };
-
-  const hide = (e) => {
-    e?.stopPropagation();
-    setActive(false);
-  };
-
-  const listener = React.useCallback(
-    (event) => {
-      if (!active) {
-        return;
-      }
-
-      const { current } = dropdownElement;
-      if (!current) {
-        return;
-      }
-
-      if (event.target === current || current.contains(event.target)) {
-        return;
-      }
-
-      hide(event);
-    },
-    [active, dropdownElement],
-  );
-
-  React.useEffect(() => {
-    if (active) {
-      window.addEventListener('click', listener);
-    } else {
-      window.removeEventListener('click', listener);
-    }
-    return () => {
-      window.removeEventListener('click', listener);
-    };
-  }, [active, listener]);
-
-  const toggle = (e) => {
-    e.preventDefault();
-
-    if (props.disabled) {
-      return;
-    }
-
-    if (active) {
-      hide(e);
-    } else {
-      show(e);
-    }
-  };
-
-  const onClick = (event, option) => {
-    event.preventDefault();
-
-    if (option.callback) {
-      option.callback();
-    }
-
-    if (option.href) {
-      navigate(option.href);
-    }
-
-    hide();
-  };
-
-  return (
-    <div ref={dropdownElement} className="co-action-buttons__btn">
-      <button
-        type="button"
-        aria-haspopup="true"
-        aria-label={t('public~Actions')}
-        aria-expanded={active}
-        className={classNames({
-          'pf-v6-c-menu-toggle': true,
-          'pf-m-expanded': active,
-        })}
-        onClick={toggle}
-        data-test-id="actions-menu-button"
-      >
-        <span className="pf-v6-c-menu__toggle-text">{props.title || t('public~Actions')}</span>
-        <CaretDownIcon />
-      </button>
-      {active && (
-        <div className="co-actions-menu dropdown-menu pf-v6-c-menu">
-          <KebabItems options={props.actions} onClick={onClick} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
-  const [isVisible, setVisible] = useSafetyFirst(false);
-
-  // Check if any actions are visible when actions have access reviews.
-  React.useEffect(() => {
-    if (!actions.length) {
-      setVisible(false);
-      return;
-    }
-    const promises = actions.reduce((acc, action) => {
-      if (action.accessReview) {
-        acc.push(checkAccess(action.accessReview));
-      }
-      return acc;
-    }, []);
-
-    // Only need to resolve if all actions require access review
-    if (promises.length !== actions.length) {
-      setVisible(true);
-      return;
-    }
-    Promise.all(promises)
-      .then((results) => setVisible(_.some(results, 'status.allowed')))
-      .catch(() => setVisible(true));
-  }, [actions, impersonate, setVisible]);
-  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
-};
-
-export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
-
-ActionsMenu.propTypes = {
-  actions: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.node,
-      labelKey: PropTypes.string,
-      href: PropTypes.string,
-      callback: PropTypes.func,
-      accessReview: PropTypes.object,
-    }),
-  ).isRequired,
-  title: PropTypes.node,
 };

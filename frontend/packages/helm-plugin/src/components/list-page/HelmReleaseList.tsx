@@ -6,7 +6,6 @@ import {
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
@@ -14,6 +13,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { SecretModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled, CustomResourceList } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
 import {
   helmReleasesRowFilters,
@@ -131,9 +131,7 @@ const HelmReleaseList: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('helm-plugin~Helm Releases')}</title>
-      </Helmet>
+      <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
       <CustomResourceList
         resources={releases}
         loaded={secretsLoaded && releasesLoaded && newCount === secretsCountRef.current}

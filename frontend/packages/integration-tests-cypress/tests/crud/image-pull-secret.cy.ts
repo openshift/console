@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../support';
 import { projectDropdown } from '../../views/common';
+import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { nav } from '../../views/nav';
 
@@ -25,7 +26,7 @@ const populateImageSecretForm = (
   password: string,
   email: string,
 ) => {
-  cy.get('.co-m-pane__heading').contains('Create image pull secret');
+  cy.get('[data-test="page-heading"] h1').contains('Create image pull secret');
   cy.byTestID('secret-name').should('exist');
   typeValue('secret-name', name);
   typeValue('image-secret-address', address);
@@ -51,6 +52,7 @@ describe('Create image pull secret', () => {
 
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

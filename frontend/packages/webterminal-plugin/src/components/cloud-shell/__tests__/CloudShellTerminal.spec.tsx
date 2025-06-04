@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { useFlag } from '@console/shared';
@@ -28,7 +27,7 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
 });
 
 jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+  const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
     useFlag: jest.fn<boolean>(),

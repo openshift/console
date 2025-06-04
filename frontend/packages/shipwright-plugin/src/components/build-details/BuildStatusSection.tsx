@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
 import { Build, BuildStatus } from '../../types';
@@ -16,7 +17,7 @@ const BuildStatusSection: React.FC<BuildStatusSectionProps> = ({ obj, buildStatu
   }
 
   return (
-    <dl>
+    <DescriptionList>
       {buildStatus.registered ? (
         <DetailsItem label={t('shipwright-plugin~Registered')} obj={obj} path="status.registered">
           {buildStatus.registered}
@@ -32,7 +33,7 @@ const BuildStatusSection: React.FC<BuildStatusSectionProps> = ({ obj, buildStatu
           {buildStatus.message}
         </DetailsItem>
       ) : null}
-    </dl>
+    </DescriptionList>
   );
 };
 

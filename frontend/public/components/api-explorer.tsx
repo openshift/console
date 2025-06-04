@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
-import { useLocation, useParams, Link } from 'react-router-dom-v5-compat';
+import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
 import {
-  Tooltip,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
@@ -16,6 +15,10 @@ import {
   Switch,
   FlexItem,
   Flex,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { sortable } from '@patternfly/react-table';
@@ -23,9 +26,11 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
-import { useExactSearch } from '@console/app/src/components/user-preferences/search';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { Page, PageHeading, useAccessReview } from '@console/internal/components/utils';
+import { Page, useAccessReview } from '@console/internal/components/utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -66,6 +71,8 @@ import {
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { ErrorPage404 } from './error';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -123,7 +130,7 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
   ) : (
     <span className="co-break-word">
       {first}
-      <span className="text-muted">.{rest.join('.')}</span>
+      <span className="pf-v6-u-text-color-subtle">.{rest.join('.')}</span>
     </span>
   );
 };
@@ -315,63 +322,61 @@ const APIResourcesList = compose(
   ];
 
   return (
-    <>
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
-        <Toolbar className="pf-m-toggle-group-container">
-          <ToolbarContent>
-            <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-              <ToolbarItem>
-                <Dropdown
-                  autocompleteFilter={autocompleteGroups}
-                  items={groupOptions}
-                  onChange={onGroupSelected}
-                  selectedKey={groupFilter}
-                  spacerBefore={groupSpacer}
-                  title={groupOptions[groupFilter]}
-                  dropDownClassName="dropdown--full-width"
-                />
-              </ToolbarItem>
-              <ToolbarItem>
-                <Dropdown
-                  items={versionOptions}
-                  onChange={onVersionSelected}
-                  selectedKey={versionFilter}
-                  spacerBefore={versionSpacer}
-                  title={versionOptions[versionFilter]}
-                  dropDownClassName="dropdown--full-width"
-                />
-              </ToolbarItem>
-              <ToolbarItem>
-                <Dropdown
-                  items={scopeOptions}
-                  onChange={onScopeSelected}
-                  selectedKey={scopeFilter}
-                  spacerBefore={scopeSpacer}
-                  title={scopeOptions[scopeFilter]}
-                  dropDownClassName="dropdown--full-width"
-                />
-              </ToolbarItem>
-            </ToolbarToggleGroup>
+    <PaneBody>
+      <Toolbar className="pf-m-toggle-group-container">
+        <ToolbarContent>
+          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             <ToolbarItem>
-              <TextFilter
-                value={textFilter}
-                label={t('public~by kind')}
-                onChange={(_event, value) => setTextFilter(value)}
+              <Dropdown
+                autocompleteFilter={autocompleteGroups}
+                items={groupOptions}
+                onChange={onGroupSelected}
+                selectedKey={groupFilter}
+                spacerBefore={groupSpacer}
+                title={groupOptions[groupFilter]}
+                dropDownClassName="dropdown--full-width"
               />
             </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
-        <Table
-          EmptyMsg={EmptyAPIResourcesMsg}
-          Header={APIResourceHeader}
-          Rows={APIResourceRows}
-          aria-label={t('public~API resources')}
-          data={sortedResources}
-          loaded={!!models.size}
-          virtualize={false}
-        />
-      </div>
-    </>
+            <ToolbarItem>
+              <Dropdown
+                items={versionOptions}
+                onChange={onVersionSelected}
+                selectedKey={versionFilter}
+                spacerBefore={versionSpacer}
+                title={versionOptions[versionFilter]}
+                dropDownClassName="dropdown--full-width"
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <Dropdown
+                items={scopeOptions}
+                onChange={onScopeSelected}
+                selectedKey={scopeFilter}
+                spacerBefore={scopeSpacer}
+                title={scopeOptions[scopeFilter]}
+                dropDownClassName="dropdown--full-width"
+              />
+            </ToolbarItem>
+          </ToolbarToggleGroup>
+          <ToolbarItem>
+            <TextFilter
+              value={textFilter}
+              label={t('public~by kind')}
+              onChange={(_event, value) => setTextFilter(value)}
+            />
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
+      <Table
+        EmptyMsg={EmptyAPIResourcesMsg}
+        Header={APIResourceHeader}
+        Rows={APIResourceRows}
+        aria-label={t('public~API resources')}
+        data={sortedResources}
+        loaded={!!models.size}
+        virtualize={false}
+      />
+    </PaneBody>
   );
 });
 APIResourcesList.displayName = 'APIResourcesList';
@@ -381,9 +386,7 @@ export const APIExplorerPage: React.FC<{}> = () => {
   const title = t('public~API Explorer');
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} />
       <APIResourcesList />
     </>
@@ -396,49 +399,60 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
   const description = getResourceDescription(kindObj);
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
-      <dl className="co-m-pane__details">
-        <dt>{t('public~Kind')}</dt>
-        <dd>{kind}</dd>
-        <dt>{t('public~API group')}</dt>
-        <dd className="co-select-to-copy">{apiGroup || '-'}</dd>
-        <dt>{t('public~API version')}</dt>
-        <dd>{apiVersion}</dd>
-        <dt>{t('public~Namespaced')}</dt>
-        <dd>{namespaced ? t('public~true') : t('public~false')}</dd>
-        <dt>{t('public~Verbs')}</dt>
-        <dd>{verbs.join(', ')}</dd>
+    <PaneBody>
+      <DescriptionList>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('public~Kind')}</DescriptionListTerm>
+          <DescriptionListDescription>{kind}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('public~API group')}</DescriptionListTerm>
+          <DescriptionListDescription className="co-select-to-copy">
+            {apiGroup || '-'}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('public~API version')}</DescriptionListTerm>
+          <DescriptionListDescription>{apiVersion}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('public~Namespaced')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            {namespaced ? t('public~true') : t('public~false')}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('public~Verbs')}</DescriptionListTerm>
+          <DescriptionListDescription>{verbs.join(', ')}</DescriptionListDescription>
+        </DescriptionListGroup>
         {shortNames && (
-          <>
-            <dt>
-              <Tooltip
-                content={t('public~Short names can be used to match this resource on the CLI.')}
-              >
-                <span>{t('public~Short names')}</span>
-              </Tooltip>
-            </dt>
-            <dd>{shortNames.join(', ')}</dd>
-          </>
+          <DescriptionListGroup>
+            <DescriptionListTermHelp
+              text={t('public~Short names')}
+              textHelp={t('public~Short names can be used to match this resource on the CLI.')}
+            />
+            <DescriptionListDescription>{shortNames.join(', ')}</DescriptionListDescription>
+          </DescriptionListGroup>
         )}
         {description && (
-          <>
-            <dt>{t('public~Description')}</dt>
-            <dd className="co-break-word co-pre-wrap">
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('public~Description')}</DescriptionListTerm>
+            <DescriptionListDescription className="co-break-word co-pre-wrap">
               <LinkifyExternal>{description}</LinkifyExternal>
-            </dd>
-          </>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         )}
-      </dl>
-    </div>
+      </DescriptionList>
+    </PaneBody>
   );
 };
 
 const scrollTop = () => (document.getElementById('content-scrollable').scrollTop = 0);
 const APIResourceSchema: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
-    </div>
+    </PaneBody>
   );
 };
 
@@ -470,7 +484,7 @@ const Subject: React.FC<{ value: string }> = ({ value }) => {
   const [first, ...rest] = value.split(':');
   return first === 'system' && !_.isEmpty(rest) ? (
     <>
-      <span className="text-muted">{first}:</span>
+      <span className="pf-v6-u-text-color-subtle">{first}:</span>
       {rest.join(':')}
     </>
   ) : (
@@ -487,6 +501,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
   const { apiGroup, apiVersion, namespaced, plural, verbs } = kindObj;
+  const [searchParams] = useSearchParams();
 
   // state
   const [verb, setVerb] = React.useState(_.first(verbs));
@@ -535,7 +550,6 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     }
   });
   const groups = _.map(accessResponse.groups, (name: string) => ({ name, type: 'Group' }));
-
   // filter and sort
   const verbOptions = _.zipObject(verbs, verbs);
   const data = [
@@ -547,7 +561,11 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const itemCount = accessResponse.users.length + accessResponse.groups.length;
   const selectedCount = data.length;
   const filteredData = data.filter(({ name }: { name: string }) => fuzzy(filter, name));
-  const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
+  const orderBy = searchParams.get('orderBy');
+  const sortByParam = searchParams.get('sortBy');
+  const sortBy = sortByParam === 'Type' ? 'type' : 'name';
+  const sortedData = _.orderBy(filteredData, [sortBy], [orderBy]);
+
   const AccessTableHeader = () => [
     {
       title: t('public~Subject'),
@@ -575,7 +593,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   };
 
   const AccessTableRows = () =>
-    _.map(data, (subject) => [
+    sortedData.map((subject) => [
       {
         title: (
           <span className="co-break-word co-select-to-copy">
@@ -607,24 +625,24 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
 
   return (
     <>
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <Dropdown
-            items={verbOptions}
-            onChange={(v: K8sVerb) => setVerb(v)}
-            selectedKey={verb}
-            titlePrefix={t('public~Verb')}
-          />
-        </div>
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter
-            defaultValue={filter}
-            label={t('public~by subject')}
-            onChange={(_event, val) => setFilter(val)}
-          />
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+      <PaneBody>
+        <Flex className="pf-v6-u-mb-lg">
+          <FlexItem>
+            <Dropdown
+              items={verbOptions}
+              onChange={(v: K8sVerb) => setVerb(v)}
+              selectedKey={verb}
+              titlePrefix={t('public~Verb')}
+            />
+          </FlexItem>
+          <FlexItem align={{ default: 'alignRight' }}>
+            <TextFilter
+              defaultValue={filter}
+              label={t('public~by subject')}
+              onChange={(_event, val) => setFilter(val)}
+            />
+          </FlexItem>
+        </Flex>
         <RowFilter
           allSelected={allSelected}
           itemCount={itemCount}
@@ -689,7 +707,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           loaded
           virtualize={false}
         />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -717,13 +735,7 @@ const APIResourcePage_ = (props) => {
   });
 
   if (!kindObj) {
-    return kindsInFlight ? (
-      <LoadingBox />
-    ) : (
-      <div className="co-m-pane__body">
-        <PageHeading title={t('public~404: Not found')} centerText />
-      </div>
-    );
+    return kindsInFlight ? <LoadingBox /> : <ErrorPage404 />;
   }
 
   const breadcrumbs = [
@@ -782,7 +794,6 @@ const APIResourcePage_ = (props) => {
         <PageHeading
           title={<div data-test-id="api-explorer-resource-title">{kindObj.label}</div>}
           breadcrumbs={breadcrumbs}
-          detail
         />
         <HorizontalNav pages={pages} customData={{ kindObj, namespace }} noStatusBox />
       </PageTitleContext.Provider>

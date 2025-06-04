@@ -9,6 +9,7 @@ import {
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, JobKind } from '@console/internal/module/k8s';
 import { PodStatus, usePodsWatcher } from '@console/shared';
+import './JobsOverview.scss';
 
 const kind: string = 'Job';
 const MAX_JOBS: number = 3;
@@ -21,10 +22,10 @@ const JobOverviewItem: React.FC<JobOverviewItemProps> = ({ job }) => {
   const { podData, loaded, loadError } = usePodsWatcher(job, 'Job', namespace);
 
   return loaded && !loadError ? (
-    <li className="list-group-item container-fluid">
+    <li className="list-group-item">
       <div className="job-overview__item">
         <ResourceLink kind={kind} name={name} namespace={namespace} />
-        <Link to={podsLink} className="overview__pod-donut-sm">
+        <Link to={podsLink} className="job-overview__pod-donut-sm">
           <PodStatus
             standalone
             data={podData.pods}
@@ -80,7 +81,7 @@ export const JobsOverview: React.FC<JobsOverviewProps> = ({
         )}
       </SidebarSectionHeading>
       {!(jobs?.length > 0) ? (
-        <span className="text-muted">{emptyMessage}</span>
+        <span className="pf-v6-u-text-color-subtle">{emptyMessage}</span>
       ) : (
         <JobsOverviewList jobs={jobs.slice(0, MAX_JOBS)} />
       )}

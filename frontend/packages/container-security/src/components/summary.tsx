@@ -6,10 +6,10 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
-import { ExternalLink } from '@console/internal/components/utils/link';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { vulnPriority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln, WatchImageVuln } from '../types';
@@ -143,7 +143,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                   <span className="co-status-popup__text--bold">
                     {t('container-security~Fixable Container Images')}
                   </span>
-                  <span className="text-secondary">
+                  <span className="pf-v6-u-text-color-subtle">
                     &nbsp;
                     {t('container-security~{{vulnImageCount, number}} total', {
                       vulnImageCount: fixableVulns.size,
@@ -184,11 +184,11 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                           )}
                     </Link>
                   </span>
-                  <div className="text-secondary">
+                  <div className="pf-v6-u-text-color-subtle">
                     {quayURLFor(v) ? (
                       <ExternalLink href={quayURLFor(v)} text={getVulnerabilityCountText(v)} />
                     ) : (
-                      <span className="small text-muted">-</span>
+                      <span className="small pf-v6-u-text-color-subtle">-</span>
                     )}
                   </div>
                 </div>
@@ -209,7 +209,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
         </>
       ) : (
         <StackItem>
-          <span className="text-secondary">
+          <span className="pf-v6-u-text-color-subtle">
             {t('container-security~No vulnerabilities detected.')}
           </span>
         </StackItem>

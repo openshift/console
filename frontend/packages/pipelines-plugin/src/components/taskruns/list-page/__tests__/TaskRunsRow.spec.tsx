@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { TaskRunKind } from '../../../../types';
 import TaskRunsRow from '../TaskRunsRow';
 

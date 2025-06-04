@@ -57,7 +57,7 @@ export type SingleTypeaheadDropdownProps = {
  */
 const getTextWidth = (text: string, font: string): number => {
   const canvas: HTMLCanvasElement =
-    // @ts-ignore: re-use canvas object for better performance
+    // @ts-expect-error: re-use canvas object for better performance
     getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
   const context = canvas.getContext('2d');
   context.font = font;
@@ -88,7 +88,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     selectOptions,
     selectedKey,
   ]);
-  const [inputValue, setInputValue] = React.useState<string>(selectedValue?.children || '');
+  const [inputValue, setInputValue] = React.useState<string>(String(selectedValue?.children) || '');
   const [filterValue, setFilterValue] = React.useState<string>('');
   const [filteredSelectOptions, setFilteredSelectOptions] = React.useState<SelectOptionProps[]>(
     items,

@@ -1,7 +1,7 @@
 export const buildConfigPO = {
   actionItems: '[data-test-id="action-items"]',
   kebabButton: '[data-test-id="kebab-button"]',
-  resourceTitle: '[data-test-id="resource-title"]',
+  resourceTitle: '[data-test="page-heading"] h1',
   nameField: '#form-input-formData-name-field',
   buildFrom: {
     buildTypeDropdown: '[id="form-dropdown-formData-images-buildFrom-type-field"]',

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { MaintenanceIcon } from '@patternfly/react-icons/dist/esm/icons/maintenance-icon';
 import * as _ from 'lodash';
 import '@console/internal/i18n.js';
@@ -35,7 +34,7 @@ import {
   NodeMaintenanceKubevirtAlphaModel,
   NodeMaintenanceKubevirtBetaModel,
 } from './models';
-import { getHostPowerStatus, hasPowerManagement } from './selectors';
+import { getHostPowerStatus, hasPowerManagement, isDetached } from './selectors';
 import { BareMetalHostKind } from './types';
 
 type ConsumedExtensions =
@@ -301,7 +300,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       isActivity: (resource: BareMetalHostKind) =>
         [HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON].includes(
           getHostPowerStatus(resource),
-        ) && hasPowerManagement(resource),
+        ) &&
+        hasPowerManagement(resource) &&
+        !isDetached(resource),
       loader: () =>
         import(
           './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */

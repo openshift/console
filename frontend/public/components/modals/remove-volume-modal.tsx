@@ -92,7 +92,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         </div>
         {type && (
           <div>
-            <label className="control-label">
+            <label>
               {t('public~Note: This will not remove the underlying {{type}}.', { type })}
             </label>
           </div>

@@ -18,6 +18,6 @@ export const overviewPage = {
     cy.get('.resource-overview').should(exist ? 'exist' : 'not.exist');
   },
   detailsSidebarHeadingContains: (name) => {
-    cy.get('.resource-overview__heading .co-m-pane__name').contains(name);
+    cy.get('.resource-overview__heading h1').contains(name);
   },
 };

@@ -5,7 +5,7 @@ export const IDPNameInput: React.FC<IDPNameInputProps> = ({ value, onChange }) =
   const { t } = useTranslation();
   return (
     <div className="form-group">
-      <label className="control-label co-required" htmlFor="idp-name">
+      <label className="co-required" htmlFor="idp-name">
         {t('public~Name')}
       </label>
       <span className="pf-v6-c-form-control">

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import i18next, { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { ImpersonateKind, useSafetyFirst } from '@console/dynamic-plugin-sdk';
@@ -100,7 +100,7 @@ const getTitleComponent = (
   longSubtitle: boolean = false,
   reversed: boolean = false,
 ) => {
-  const labelClasses = classNames('pf-v6-chart-donut-title', {
+  const labelClasses = css('pf-v6-chart-donut-title', {
     'pod-ring__center-text--reversed': reversed,
     'pod-ring__center-text': !reversed,
     'pod-ring__long-text': longTitle,

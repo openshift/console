@@ -16,9 +16,9 @@ export const getGuidedTour = (): TourDataType => ({
       placement: 'right',
       // t('console-app~Home')
       heading: '%console-app~Home%',
-      // t('console-app~Here is where you can view all of your OpenShift enviroments, including your projects and inventory. You can also access APIs and software catalogs.')
+      // t('console-app~Here is where you can view all of your OpenShift environments, including your projects and inventory. You can also access APIs and software catalogs.')
       content:
-        '%console-app~Here is where you can view all of your OpenShift enviroments, including your projects and inventory. You can also access APIs and software catalogs.%',
+        '%console-app~Here is where you can view all of your OpenShift environments, including your projects and inventory. You can also access APIs and software catalogs.%',
       selector: getSelector('tour-home-nav'),
     },
     {
@@ -30,6 +30,15 @@ export const getGuidedTour = (): TourDataType => ({
         '%console-app~Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.%',
       selector: getSelector('tour-software-catalog-nav'),
       expandableSelector: getSelector('tour-home-nav'),
+    },
+    {
+      placement: 'bottom',
+      // t('console-app~Quick create')
+      heading: '%console-app~Quick create%',
+      // t('console-app~Create resources in just a few steps via Git, YAML,  or container images.')
+      content:
+        '%console-app~Create resources in just a few steps via Git, YAML,  or container images.%',
+      selector: getSelector('tour-quick-create-button'),
     },
     {
       placement: 'bottom',

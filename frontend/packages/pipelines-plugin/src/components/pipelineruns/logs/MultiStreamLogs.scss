@@ -23,12 +23,14 @@
   }
 
   &__container {
+    background-color: var(--pf-t--global--background--color--primary--default);
+    border: 1px solid var(--pf-t--global--border--color--default);
+    color: var(--pf-t--global--text--color--regular);
     display: flex;
-    flex: 1;
     flex-direction: column;
-    background-color: var(--pf-t--color--black);
-    color: var(--pf-t--global--text--color--300);
-    font-family: Menlo, Monaco, 'Courier New', monospace;
+    flex: 1;
+    font-family: var(--pf-t--global--font--family--mono);
+    font-size: var(--pf-t--global--font--size--body--sm);
     overflow-y: scroll;
     position: relative;
     &__logs {
@@ -37,9 +39,9 @@
     }
   }
   &__taskName {
-    background-color: var(--pf-t--color--gray--70);
-    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
-    color: var(--pf-t--global--text--color--300);
+    background-color: var(--pf-t--global--color--nonstatus--gray--default);
+    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--lg);
+    color: var(--pf-t--global--text--color--regular);
   }
   &__taskName__loading-indicator {
     margin-left: var(--pf-t--global--spacer--sm);

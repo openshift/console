@@ -57,7 +57,7 @@ const StatusCellResourceStatus: React.FC<StatusCellResourceStatus> = ({ obj, pod
   }
 
   return podData.isRollingOut ? (
-    <span className="text-muted">{t('topology~Rollout in progress...')}</span>
+    <span className="pf-v6-u-text-color-subtle">{t('topology~Rollout in progress...')}</span>
   ) : (
     <StatusCellResourceLink
       desired={obj.spec.replicas}

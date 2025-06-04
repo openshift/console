@@ -1,5 +1,5 @@
 export const customizationPO = {
-  developerCatalog: {
+  softwareCatalog: {
     formSection: 'catalog-types form-section',
     availableSearchInput: '[aria-label="Available search input"]',
     choosenSearchInput: '[aria-label="Chosen search input"]',

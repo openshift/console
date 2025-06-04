@@ -13,7 +13,7 @@ Feature: Helm Release
              When user clicks on the Helm Release tab in admin perspective
              Then user will be redirected to Helm releases page under Helm tab
               And user is able to see the message "No Helm Releases found"
-              And user will get the link to install helm charts from developer catalog
+              And user will get the link to install helm charts from software catalog
 
 
         Scenario: Create Helm Release page details: HR-05-TC02
@@ -119,4 +119,3 @@ Feature: Helm Release
               And user enters the release name "nodejs-release"
               And user clicks on the Delete button
              Then user will be redirected to Topology page
-

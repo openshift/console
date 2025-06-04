@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { mockRepositories } from '../../../test-data/pipeline-data';
 import RepositoryDetails from '../RepositoryDetails';

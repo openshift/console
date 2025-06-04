@@ -7,7 +7,7 @@ import {
   IncompleteDataError,
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import { ErrorPage404 } from '@console/internal/components/error';
 import { AccessDenied, EmptyBox } from '../empty-state';
 import { LoadError, LoadingBox } from '../loading';
 
@@ -45,11 +45,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   if (loadError) {
     const status = _.get(loadError, 'response.status');
     if (status === 404) {
-      return (
-        <div className="co-m-pane__body">
-          <PrimaryHeading centerText>{t('404: Not Found')}</PrimaryHeading>
-        </div>
-      );
+      return <ErrorPage404 />;
     }
     if (status === 403) {
       return <AccessDenied>{loadError.message}</AccessDenied>;
@@ -80,7 +76,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
     if (loaded && loadError instanceof TimeoutError) {
       return (
         <Data data={data} {...dataProps}>
-          <div className="co-m-timeout-error text-muted">
+          <div className="co-m-timeout-error pf-v6-u-text-color-subtle">
             {t('Timed out fetching new data. The data below is stale.')}
           </div>
           {props.children}

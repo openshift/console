@@ -1,5 +1,10 @@
-import * as React from 'react';
-import { CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
+import {
+  CardTitle,
+  CardBody,
+  CardFooter,
+  DescriptionListTerm,
+  DescriptionListDescription,
+} from '@patternfly/react-core';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
@@ -12,7 +17,6 @@ import {
   ComponentProps,
 } from '@console/internal/components/factory';
 import {
-  Timestamp,
   ResourceKebab,
   ScrollToTopOnMount,
   SectionHeading,
@@ -22,7 +26,9 @@ import {
 import operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ErrorBoundary } from '@console/shared/src/components/error';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import {
   testClusterServiceVersion,
@@ -66,7 +72,7 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => {
 });
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -293,7 +299,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders description section for ClusterServiceVersion', () => {
-    expect(wrapper.find('.co-m-pane__body').at(0).find(SectionHeading).at(1).props().text).toEqual(
+    expect(wrapper.find(PaneBody).at(0).find(SectionHeading).at(1).props().text).toEqual(
       'Description',
     );
   });
@@ -306,10 +312,11 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders list of maintainers from ClusterServiceVersion', () => {
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Maintainers</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription)
+      .shallow();
 
     expect(maintainers.length).toEqual(testClusterServiceVersion.spec.maintainers.length);
 
@@ -324,10 +331,10 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders important links from ClusterServiceVersion', () => {
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>Links</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Links</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription);
 
     expect(links.length).toEqual(testClusterServiceVersion.spec.links.length);
   });
@@ -343,21 +350,23 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper.setProps({ obj: emptyClusterServiceVersion });
 
     const provider = wrapper
-      .findWhere((node) => node.equals(<dt>Provider</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Provider</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd')
-      .at(0);
+      .find(DescriptionListDescription)
+      .shallow();
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>Links</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Links</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription)
+      .shallow();
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
+      .findWhere((node) => node.equals(<DescriptionListTerm>Maintainers</DescriptionListTerm>))
       .parents()
       .at(0)
-      .find('dd');
+      .find(DescriptionListDescription)
+      .shallow();
 
     expect(provider.text()).toEqual('Not available');
     expect(links.text()).toEqual('Not available');
@@ -365,15 +374,13 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders info section for ClusterServiceVersion', () => {
-    expect(wrapper.find('.co-m-pane__body').at(1).find(SectionHeading).props().text).toEqual(
+    expect(wrapper.find(PaneBody).at(1).find(SectionHeading).props().text).toEqual(
       'ClusterServiceVersion details',
     );
   });
 
   it('renders conditions section for ClusterServiceVersion', () => {
-    expect(wrapper.find('.co-m-pane__body').at(2).find(SectionHeading).props().text).toEqual(
-      'Conditions',
-    );
+    expect(wrapper.find(PaneBody).at(2).find(SectionHeading).props().text).toEqual('Conditions');
   });
 
   it('does not render service accounts section if empty', () => {
@@ -390,11 +397,9 @@ describe(ClusterServiceVersionDetails.displayName, () => {
       />,
     );
     expect(emptyTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(0);
-    expect(
-      wrapper.findWhere(
-        (node) => node.type() === 'dt' && node.text() === 'Operator ServiceAccounts',
-      ).length,
-    ).toEqual(0);
+    expect(wrapper.findWhere((node) => node.text() === 'Operator ServiceAccounts').length).toEqual(
+      0,
+    );
   });
 
   it('does not render duplicate service accounts', () => {
@@ -412,11 +417,9 @@ describe(ClusterServiceVersionDetails.displayName, () => {
       />,
     );
     expect(duplicateTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(2);
-    expect(
-      wrapper.findWhere(
-        (node) => node.type() === 'dt' && node.text() === 'Operator ServiceAccounts',
-      ).length,
-    ).toEqual(1);
+    expect(wrapper.findWhere((node) => node.text() === 'Operator ServiceAccounts').length).toEqual(
+      1,
+    );
     expect(
       wrapper.find(`[data-service-account-name="${permission.serviceAccountName}"]`).length,
     ).toEqual(1);

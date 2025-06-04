@@ -11,10 +11,14 @@ import {
   AccordionItem,
   AccordionToggle,
   AccordionContent,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as Immutable from 'immutable';
 import { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
@@ -42,6 +46,7 @@ import {
   NodeAffinity as NodeAffinityType,
 } from '@console/internal/module/k8s';
 import { usePostFormSubmitAction } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ProvidedAPI } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import {
@@ -480,7 +485,7 @@ const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ field, in
       className="form-group co-dynamic-form__form-group"
       data-test-selector={path}
     >
-      <label className={classNames('form-label', { 'co-required': required })} htmlFor={id}>
+      <label className={css('form-label', { 'co-required': required })} htmlFor={id}>
         {displayName}
       </label>
       {input}
@@ -730,38 +735,44 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       const memoryRequestsPath = `requests.memory`;
       const storageRequestsPath = 'requests.ephemeral-storage';
       return (
-        <dl style={{ marginLeft: '15px' }}>
-          <dt>{t('olm~Limits')}</dt>
-          <dd>
-            <ResourceRequirements
-              cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
-              memory={currentValue.getIn?.(_.toPath(memoryLimitsPath))}
-              storage={currentValue.getIn?.(_.toPath(storageLimitsPath))}
-              onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuLimitsPath}`, value)}
-              onChangeMemory={(value) => handleFormDataUpdate(`${path}.${memoryLimitsPath}`, value)}
-              onChangeStorage={(value) =>
-                handleFormDataUpdate(`${path}.${storageLimitsPath}`, value)
-              }
-              path={`${id}.limits`}
-            />
-          </dd>
-          <dt>{t('olm~Requests')}</dt>
-          <dd>
-            <ResourceRequirements
-              cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
-              memory={currentValue.getIn?.(_.toPath(memoryRequestsPath))}
-              storage={currentValue.getIn?.(_.toPath(storageRequestsPath))}
-              onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuRequestsPath}`, value)}
-              onChangeMemory={(value) =>
-                handleFormDataUpdate(`${path}.${memoryRequestsPath}`, value)
-              }
-              onChangeStorage={(value) =>
-                handleFormDataUpdate(`${path}.${storageRequestsPath}`, value)
-              }
-              path={`${id}.requests`}
-            />
-          </dd>
-        </dl>
+        <DescriptionList className="pf-v6-u-ml-md">
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('olm~Limits')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ResourceRequirements
+                cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
+                memory={currentValue.getIn?.(_.toPath(memoryLimitsPath))}
+                storage={currentValue.getIn?.(_.toPath(storageLimitsPath))}
+                onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuLimitsPath}`, value)}
+                onChangeMemory={(value) =>
+                  handleFormDataUpdate(`${path}.${memoryLimitsPath}`, value)
+                }
+                onChangeStorage={(value) =>
+                  handleFormDataUpdate(`${path}.${storageLimitsPath}`, value)
+                }
+                path={`${id}.limits`}
+              />
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('olm~Requests')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ResourceRequirements
+                cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
+                memory={currentValue.getIn?.(_.toPath(memoryRequestsPath))}
+                storage={currentValue.getIn?.(_.toPath(storageRequestsPath))}
+                onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuRequestsPath}`, value)}
+                onChangeMemory={(value) =>
+                  handleFormDataUpdate(`${path}.${memoryRequestsPath}`, value)
+                }
+                onChangeStorage={(value) =>
+                  handleFormDataUpdate(`${path}.${storageRequestsPath}`, value)
+                }
+                path={`${id}.requests`}
+              />
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+        </DescriptionList>
       );
     }
     if (capabilities.includes(SpecCapability.password)) {
@@ -1077,7 +1088,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   useScrollToTopOnMount();
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <div className="row">
         <div className="col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
           {csv && providedAPI && (
@@ -1168,7 +1179,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           </form>
         </div>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

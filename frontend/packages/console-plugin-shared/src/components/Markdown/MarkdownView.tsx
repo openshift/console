@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import * as sanitizeHtml from 'sanitize-html';
 import { Converter, ShowdownOptions, ShowdownExtension } from 'showdown';
@@ -168,7 +168,7 @@ const InlineMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
 }) => {
   const id = React.useMemo(() => _.uniqueId('markdown'), []);
   return (
-    <div className={cx('co-markdown-view', { 'is-empty': isEmpty })} id={id}>
+    <div className={css('co-markdown-view', { 'is-empty': isEmpty })} id={id}>
       {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: markup }} />
       <RenderExtension renderExtension={renderExtension} selector={`#${id}`} markup={markup} />

@@ -10,15 +10,12 @@
 
 FROM golang:1.22-bullseye
 
-### For golang testing stuff
-RUN go install github.com/jstemmer/go-junit-report@latest
-
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v18.18.1"
-ENV YARN_VERSION="v1.22.10"
+ENV NODE_VERSION="v22.14.0"
+ENV YARN_VERSION="v1.22.22"
 
 # yarn needs a home writable by any user running the container
-ENV HOME /opt/home
+ENV HOME=/opt/home
 RUN mkdir -p ${HOME}
 RUN chmod 777 -R ${HOME}
 

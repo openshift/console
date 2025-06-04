@@ -176,7 +176,10 @@ class PipelineRunLogsWithTranslation extends React.Component<
                           </span>
                         </Link>
                       </NavItem>
-                      <NavItemSeparator />
+                      {/* changed role due to accessibility violation
+                          [role=separator] is not allowed under a role=list
+                          https://github.com/patternfly/patternfly-react/issues/11717 */}
+                      <NavItemSeparator role="presentation" />
                     </>
                   );
                 })}

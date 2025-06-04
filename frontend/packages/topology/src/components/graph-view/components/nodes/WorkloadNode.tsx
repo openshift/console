@@ -1,19 +1,15 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
-  Node,
   NodeStatus,
   observer,
   ScaleDetailsLevel,
   useHover,
   useVisualizationController,
-  WithContextMenuProps,
-  WithDndDropProps,
-  WithDragNodeProps,
-  WithSelectionProps,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
+import { WorkloadNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   AllPodStatus,
@@ -25,10 +21,9 @@ import {
   useBuildConfigsWatcher,
   usePodsWatcher,
 } from '@console/shared';
-import { WithCreateConnectorProps } from '../../../../behavior/withCreateConnector';
 import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
-import { useResourceQuotaAlert } from '../../../workload';
+import { useResourceQuotaAlert } from '../../../workload/resource-alert';
 import BaseNode from './BaseNode';
 import { getNodeDecorators } from './decorators/getNodeDecorators';
 import PodSet, { podSetInnerRadius } from './PodSet';
@@ -138,20 +133,6 @@ export const getAggregateStatus = (
   }
   return NodeStatus.default;
 };
-
-type WorkloadNodeProps = {
-  element: Node;
-  dragging?: boolean;
-  highlight?: boolean;
-  canDrop?: boolean;
-  dropTarget?: boolean;
-  urlAnchorRef?: React.Ref<SVGCircleElement>;
-  dropTooltip?: React.ReactNode;
-} & WithSelectionProps &
-  WithDragNodeProps &
-  WithDndDropProps &
-  WithContextMenuProps &
-  WithCreateConnectorProps;
 
 type WorkloadPodsNodeProps = WorkloadNodeProps & {
   donutStatus: PodRCData;

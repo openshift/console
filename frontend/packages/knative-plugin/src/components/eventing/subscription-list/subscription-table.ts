@@ -1,13 +1,13 @@
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Kebab } from '@console/internal/components/utils';
 
 export const tableColumnClasses = [
   '', // name
   '', // namespace
-  cx('pf-m-hidden', 'pf-m-visible-on-sm'), // ready
-  cx('pf-m-hidden', 'pf-m-visible-on-md'), // condition
-  cx('pf-m-hidden', 'pf-m-visible-on-xl'), // channel
-  cx('pf-m-hidden', 'pf-m-visible-on-xl'), // subscriber
-  cx('pf-m-hidden', 'pf-m-visible-on-2xl'), // created
+  css('pf-m-hidden', 'pf-m-visible-on-sm'), // ready
+  css('pf-m-hidden', 'pf-m-visible-on-md'), // condition
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // channel
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // subscriber
+  css('pf-m-hidden', 'pf-m-visible-on-2xl'), // created
   Kebab.columnClass, // kebab menu
 ];

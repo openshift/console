@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import EventPubSubResources from '../../components/overview/EventPubSubResources';

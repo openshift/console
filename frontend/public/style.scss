@@ -8,7 +8,6 @@
 
 // Mixins
 @import 'style/mixin/break-word';
-@import 'style/mixin/popover-button';
 @import 'style/mixin/prefix';
 @import 'style/mixin/truncate';
 @import 'style/mixin/line-clamp';
@@ -42,7 +41,6 @@
 @import 'components/utils/copy-to-clipboard';
 @import 'components/utils/disabled';
 @import 'components/utils/file-input';
-@import 'components/utils/kebab';
 @import 'components/utils/label';
 @import 'components/utils/number-spinner';
 @import 'components/utils/request-size-input';
@@ -58,9 +56,7 @@
 @import 'components/detail-table';
 @import 'components/dropdown';
 @import 'components/import-yaml-results';
-@import 'components/list';
 @import 'components/monitoring/monitoring';
-@import 'components/nav-title';
 @import 'components/RBAC/rbac';
 @import 'components/secrets/create-secret';
 @import 'components/resource';
@@ -83,8 +79,6 @@
 @import 'components/utils/value-from-pair';
 @import 'components/terminal';
 @import 'components/catalog/catalog';
-@import 'components/overview/build-overview';
-@import 'components/overview/job-overview';
 @import 'components/overview/overview';
 @import 'components/deploy-image';
 @import 'components/instantiate-template';
@@ -92,15 +86,12 @@
 @import 'components/storage-class-form';
 @import 'components/quota';
 @import 'components/cluster-settings/cluster-settings';
-@import 'components/search';
-@import 'components/notification-drawer';
 @import 'components/radio';
 @import 'components/filter-toolbar';
 @import 'components/autocomplete';
 @import 'components/conditions';
 @import 'components/persistent-volume-claim';
 @import 'components/factory/Table/virtualized-table';
-@import 'components/utils/details-item';
 @import 'components/utils/resource-metrics';
 @import 'components/configmaps/create-configmap';
 

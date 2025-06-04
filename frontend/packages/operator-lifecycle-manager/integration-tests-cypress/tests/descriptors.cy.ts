@@ -90,7 +90,7 @@ describe('Using OLM descriptor components', () => {
     cy.visit(URL);
     // TODO figure out why this element is detaching
     cy.byTestID('item-create').click({ force: true });
-    cy.byLegacyTestID('resource-title').should('have.text', 'Create App');
+    cy.get('[data-test="page-heading"] h1').should('have.text', 'Create App');
     // TODO: implement tests for more descriptor-based form fields and widgets as well as data syncing.
     atomicFields.forEach(({ label, id, path }) => {
       getOperandFormFieldElement(id).should('exist');

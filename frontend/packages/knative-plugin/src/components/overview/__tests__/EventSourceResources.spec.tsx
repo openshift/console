@@ -1,8 +1,8 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   EVENTING_IMC_KIND,
   EVENT_SOURCE_API_SERVER_KIND,
@@ -15,7 +15,7 @@ import { getEventSourceResponse } from '../../../topology/__tests__/topology-kna
 import { EventSourceTarget } from '../EventSourceResources';
 
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = jest.requireActual('@console/shared');
   return {
     ...ActualShared,
     usePodsWatcher: jest.fn(),

@@ -66,6 +66,7 @@ module.exports = {
     'prefer-const': ['error', { destructuring: 'all' }],
     'prefer-template': 2,
     radix: 2,
+    'react/react-in-jsx-scope': 'off', // React 17 doesn't require this anymore
     'react/jsx-fragments': 'error',
     'react/jsx-no-duplicate-props': 2,
     'react/jsx-uses-react': 'error',

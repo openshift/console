@@ -1,11 +1,10 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { Button, Tooltip } from '@patternfly/react-core';
-
-import { ExternalLink, SectionHeading } from '../../utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { SectionHeading } from '../../utils';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 
@@ -51,7 +50,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
   return (
     <div data-test-id="receiver-routing-labels-editor" className="form-group">
       <SectionHeading text={t('public~Routing labels')} required={!isDefaultReceiver} />
-      <p className="co-help-text pf-u-mb-md">
+      <p className="pf-u-mb-md">
         <Trans ns="public">
           Firing alerts with labels that match all of these{' '}
           <ExternalLink

@@ -15,7 +15,7 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { CreateRoute } from './create-route';
 import { convertEditFormToRoute, convertRouteToEditForm } from './utils';
-import { PageHeading } from '../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 type RouteFormProps = {
   handleCancel: () => void;
@@ -73,7 +73,7 @@ export const RouteForm: React.FC<FormikProps<FormikValues> & RouteFormProps> = (
         helpText={t('public~Routing is a way to make your application publicly visible.')}
       />
       <FlexForm onSubmit={handleSubmit}>
-        <FormBody flexLayout className="co-m-pane__body--no-top-margin">
+        <FormBody flexLayout className="pf-v6-u-mt-0">
           <SyncedEditorField
             name="editorType"
             formContext={{

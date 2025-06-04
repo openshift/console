@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CombinedErrorDetails } from './log-snippet-types';
 import LogSnippetBlock from './LogSnippetBlock';
@@ -15,20 +21,20 @@ const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({ logDetails, name
   }
 
   return (
-    <>
-      <dl>
-        <dt>{t('pipelines-plugin~Message')}</dt>
-        <dd>{logDetails.title}</dd>
-      </dl>
-      <dl>
-        <dt>{t('pipelines-plugin~Log snippet')}</dt>
-        <dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Message')}</DescriptionListTerm>
+        <DescriptionListDescription>{logDetails.title}</DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Log snippet')}</DescriptionListTerm>
+        <DescriptionListDescription>
           <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
             {(logSnippet: string) => <pre className="co-pre">{logSnippet}</pre>}
           </LogSnippetBlock>
-        </dd>
-      </dl>
-    </>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

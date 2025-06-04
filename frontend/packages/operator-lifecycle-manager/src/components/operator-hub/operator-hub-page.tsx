@@ -1,14 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import {
   DOC_URL_RED_HAT_MARKETPLACE,
-  ExternalLink,
   Firehose,
-  PageHeading,
   skeletonCatalog,
   StatusBox,
 } from '@console/internal/components/utils';
@@ -19,9 +16,13 @@ import {
   AuthenticationKind,
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
+import { isCatalogTypeEnabled, useIsSoftwareCatalogEnabled } from '@console/shared';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PageBody from '@console/shared/src/components/layout/PageBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
@@ -169,47 +170,47 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const installed = loaded && clusterServiceVersion?.status?.phase === 'Succeeded';
 
           return {
-            obj: pkg,
-            kind: PackageManifestModel.kind,
-            name: currentCSVDesc?.displayName ?? pkg.metadata.name,
-            uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
+            authentication,
+            capabilityLevel,
+            catalogSource: pkg.status.catalogSource,
+            catalogSourceNamespace: pkg.status.catalogSourceNamespace,
+            categories: (currentCSVAnnotations?.categories ?? '')
+              .split(',')
+              .map((category) => category.trim()),
+            certifiedLevel,
+            cloudCredentials,
+            containerImage,
+            createdAt,
+            description: currentCSVAnnotations.description || currentCSVDesc.description,
+            healthIndex,
+            imgUrl: iconFor(pkg),
+            infraFeatures,
+            infrastructure,
             installed,
+            installState: installed ? InstalledState.Installed : InstalledState.NotInstalled,
             isInstalling:
               loaded &&
               !_.isNil(subscription) &&
               !_.isNil(clusterServiceVersion?.status?.phase) &&
               clusterServiceVersion?.status?.phase !== 'Succeeded',
-            subscription,
-            installState: installed ? InstalledState.Installed : InstalledState.NotInstalled,
-            imgUrl: iconFor(pkg),
-            description: currentCSVAnnotations.description || currentCSVDesc.description,
+            keywords: currentCSVDesc?.keywords ?? [],
+            kind: PackageManifestModel.kind,
             longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-            provider: pkg.status.provider?.name ?? pkg.metadata.labels?.provider,
-            tags: [],
-            version: currentCSVDesc?.version,
-            categories: (currentCSVAnnotations?.categories ?? '')
-              .split(',')
-              .map((category) => category.trim()),
-            catalogSource: pkg.status.catalogSource,
-            source: getPackageSource(pkg),
-            catalogSourceNamespace: pkg.status.catalogSourceNamespace,
-            certifiedLevel,
-            healthIndex,
-            repository,
-            containerImage,
-            createdAt,
-            support,
-            capabilityLevel,
             marketplaceActionText,
             marketplaceRemoteWorkflow,
             marketplaceSupportWorkflow,
+            name: currentCSVDesc?.displayName ?? pkg.metadata.name,
+            obj: pkg,
+            provider: pkg.status.provider?.name ?? pkg.metadata.labels?.provider,
+            repository,
+            source: getPackageSource(pkg),
+            subscription,
+            support,
+            tags: [],
+            uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
             validSubscription,
             validSubscriptionFilters,
-            infraFeatures,
-            keywords: currentCSVDesc?.keywords ?? [],
-            cloudCredentials,
-            infrastructure,
-            authentication,
+            version: currentCSVDesc?.version,
           };
         },
       );
@@ -249,27 +250,25 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
 
 export const OperatorHubPage = withFallback((props) => {
   const params = useParams();
-  const isDevCatalogEnabled = useIsDeveloperCatalogEnabled();
+  const isSoftwareCatalogEnabled = useIsSoftwareCatalogEnabled();
   const isOperatorBackedServiceEnabled = isCatalogTypeEnabled(
     OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
   );
   return (
     <>
-      <Helmet>
-        <title>OperatorHub</title>
-      </Helmet>
-      <div className="co-m-page__body">
-        <div className="co-catalog">
-          <PageHeading title="OperatorHub" />
-          <p className="co-catalog-page__description">
-            {isDevCatalogEnabled && isOperatorBackedServiceEnabled ? (
+      <DocumentTitle>OperatorHub</DocumentTitle>
+      <PageBody>
+        <PageHeading
+          title="OperatorHub"
+          helpText={
+            isSoftwareCatalogEnabled && isOperatorBackedServiceEnabled ? (
               <Trans ns="olm">
                 Discover Operators from the Kubernetes community and Red Hat partners, curated by
                 Red Hat. You can purchase commercial software through{' '}
                 <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
                 You can install Operators on your clusters to provide optional add-ons and shared
                 services to your developers. After installation, the Operator capabilities will
-                appear in the <Link to="/catalog">Developer Catalog</Link> providing a self-service
+                appear in the <Link to="/catalog">Software Catalog</Link>, providing a self-service
                 experience.
               </Trans>
             ) : (
@@ -278,71 +277,69 @@ export const OperatorHubPage = withFallback((props) => {
                 Red Hat. You can purchase commercial software through{' '}
                 <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
                 You can install Operators on your clusters to provide optional add-ons and shared
-                services to your developers. The Operator Backed Developer Catalog is currently
+                services to your developers. The Operator Backed Software Catalog is currently
                 disabled, thus Operator capabilities will not be exposed to developers.
               </Trans>
-            )}
-          </p>
-          <div className="co-catalog__body">
-            <Firehose
-              resources={[
-                {
-                  isList: true,
-                  kind: referenceForModel(OperatorGroupModel),
-                  prop: 'operatorGroups',
-                },
-                {
-                  isList: true,
-                  kind: referenceForModel(PackageManifestModel),
-                  namespace: params.ns,
-                  selector: { 'openshift-marketplace': 'true' },
-                  prop: 'marketplacePackageManifests',
-                },
-                {
-                  isList: true,
-                  kind: referenceForModel(PackageManifestModel),
-                  namespace: params.ns,
-                  selector: fromRequirements([
-                    { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
-                    { key: 'csc-owner-name', operator: 'DoesNotExist' },
-                  ]),
-                  prop: 'packageManifests',
-                },
-                {
-                  isList: true,
-                  kind: referenceForModel(SubscriptionModel),
-                  prop: 'subscriptions',
-                },
-                {
-                  kind: referenceForModel(ClusterServiceVersionModel),
-                  namespaced: true,
-                  isList: true,
-                  namespace: params.ns,
-                  prop: 'clusterServiceVersions',
-                },
-                {
-                  kind: referenceForModel(CloudCredentialModel),
-                  prop: 'cloudCredentials',
-                  name: 'cluster',
-                },
-                {
-                  kind: referenceForModel(InfrastructureModel),
-                  prop: 'infrastructure',
-                  name: 'cluster',
-                },
-                {
-                  kind: referenceForModel(AuthenticationModel),
-                  prop: 'authentication',
-                  name: 'cluster',
-                },
-              ]}
-            >
-              {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-              <OperatorHubList {...(props as any)} namespace={params.ns} />
-            </Firehose>
-          </div>
-        </div>
-      </div>
+            )
+          }
+        />
+        <Firehose
+          resources={[
+            {
+              isList: true,
+              kind: referenceForModel(OperatorGroupModel),
+              prop: 'operatorGroups',
+            },
+            {
+              isList: true,
+              kind: referenceForModel(PackageManifestModel),
+              namespace: params.ns,
+              selector: { 'openshift-marketplace': 'true' },
+              prop: 'marketplacePackageManifests',
+            },
+            {
+              isList: true,
+              kind: referenceForModel(PackageManifestModel),
+              namespace: params.ns,
+              selector: fromRequirements([
+                { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
+                { key: 'csc-owner-name', operator: 'DoesNotExist' },
+              ]),
+              prop: 'packageManifests',
+            },
+            {
+              isList: true,
+              kind: referenceForModel(SubscriptionModel),
+              prop: 'subscriptions',
+            },
+            {
+              kind: referenceForModel(ClusterServiceVersionModel),
+              namespaced: true,
+              isList: true,
+              namespace: params.ns,
+              prop: 'clusterServiceVersions',
+            },
+            {
+              kind: referenceForModel(CloudCredentialModel),
+              prop: 'cloudCredentials',
+              name: 'cluster',
+            },
+            {
+              kind: referenceForModel(InfrastructureModel),
+              prop: 'infrastructure',
+              name: 'cluster',
+            },
+            {
+              kind: referenceForModel(AuthenticationModel),
+              prop: 'authentication',
+              name: 'cluster',
+            },
+          ]}
+        >
+          {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
+          <OperatorHubList {...(props as any)} namespace={params.ns} />
+        </Firehose>
+      </PageBody>
     </>
   );
 }, ErrorBoundaryFallbackPage);

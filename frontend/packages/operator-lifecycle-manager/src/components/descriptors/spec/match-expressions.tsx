@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
 import { MatchExpression, Operator } from '@console/internal/module/k8s';
@@ -29,7 +29,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
   return (
     <div className="row key-operator-value__row">
       <div className="col-md-4 col-xs-5 key-operator-value__name-field">
-        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+        <div className="key-operator-value__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
           {t('olm~Key')}
         </div>
         <span className="pf-v6-c-form-control">
@@ -41,7 +41,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
         </span>
       </div>
       <div className="col-md-3 col-xs-5 key-operator-value__operator-field">
-        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+        <div className="key-operator-value__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
           {t('olm~Operator')}
         </div>
         <Dropdown
@@ -53,11 +53,11 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
         />
       </div>
       <div className="col-md-3 col-xs-5 key-operator-value__value-field key-operator-value__value-field--stacked">
-        <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
+        <div className="key-operator-value__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
           {t('olm~Values')}
         </div>
         <span
-          className={classNames('pf-v6-c-form-control', {
+          className={css('pf-v6-c-form-control', {
             'pf-m-disabled': valuesDisabled,
           })}
         >
@@ -110,9 +110,9 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
   return (
     <>
       <div className="row key-operator-value__heading hidden-sm hidden-xs">
-        <div className="col-md-4 text-secondary text-uppercase">{t('olm~Key')}</div>
-        <div className="col-md-3 text-secondary text-uppercase">{t('olm~Operator')}</div>
-        <div className="col-md-3 text-secondary text-uppercase">{t('olm~Values')}</div>
+        <div className="col-md-4 pf-v6-u-text-color-subtle">{t('olm~Key')}</div>
+        <div className="col-md-3 pf-v6-u-text-color-subtle">{t('olm~Operator')}</div>
+        <div className="col-md-3 pf-v6-u-text-color-subtle">{t('olm~Values')}</div>
       </div>
       {matchExpressions.map((expression, index) => (
         // Have to use array index in the key bc any other unique id whould have to use editable fields.

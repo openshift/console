@@ -30,9 +30,9 @@ Feature: Support for Managed Services
 
 
         @regression @manual
-        Scenario: Create the Managed Services from Developer Catalog: KM-02-TC02
+        Scenario: Create the Managed Services from Software Catalog: KM-02-TC02
             Given user is at Add page
-             When user clicks Developer Catalog card
+             When user clicks Software Catalog card
               And user selects Type as Managed Services
               And user clicks "Red Hat OpenShift Application Services" card
               And user clicks on link "https://cloud.redhat.com/openshift/token"

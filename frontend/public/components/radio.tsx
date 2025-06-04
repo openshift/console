@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 export const RadioInput: React.SFC<RadioInputProps> = (props) => {
   const inputProps: React.InputHTMLAttributes<any> = _.omit(props, [
@@ -12,9 +12,7 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
   ]);
   const inputElement = (
     <>
-      <label
-        className={classNames({ 'radio-inline': props.inline, 'co-disabled': props.disabled })}
-      >
+      <label className={css({ 'radio-inline': props.inline, 'co-disabled': props.disabled })}>
         <input
           type="radio"
           {...inputProps}
@@ -23,7 +21,7 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
         />
         {props.title} {props.subTitle && <span className="co-no-bold">{props.subTitle}</span>}
       </label>
-      {props.desc && <p className="co-m-radio-desc text-muted">{props.desc}</p>}
+      {props.desc && <p className="co-m-radio-desc pf-v6-u-text-color-subtle">{props.desc}</p>}
       {props.children}
     </>
   );
@@ -53,7 +51,7 @@ export const RadioGroup: React.SFC<RadioGroupProps> = ({
     />
   ));
   return (
-    <div className={classNames('co-radio-group', { 'co-radio-group--inline': inline })}>
+    <div className={css('co-radio-group', { 'co-radio-group--inline': inline })}>
       {label ? (
         <>
           <label className="form-label co-radio-group__label" htmlFor={id}>

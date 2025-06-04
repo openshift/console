@@ -85,7 +85,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
             </Trans>
           </p>
           <p>
-            <InfoCircleIcon color="var(--pf-t--color--blue--40)" />{' '}
+            <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
             <Trans t={t} ns="helm-plugin">
               All data entered for version <strong>{{ currentVersion }}</strong> will be reset
             </Trans>
@@ -137,7 +137,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       if (!chartIndexEntry) {
         setFieldValue(
           'chartIndexEntry',
-          getChartIndexEntry(json?.entries, chartName, chartEntries[0].repoName),
+          getChartIndexEntry(json?.entries, chartName, chartEntries[0]?.repoName),
         );
       }
       setHelmChartRepos(json?.entries);

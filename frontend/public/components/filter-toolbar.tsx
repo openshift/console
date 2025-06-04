@@ -413,7 +413,6 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       selected={selectedRowFilters}
                       maxMenuHeight="60vh"
                       isScrollable
-                      className="co-toolbar__selector"
                     >
                       <SelectList data-test="filter-dropdown-list">{dropdownItems}</SelectList>
                     </Select>
@@ -455,7 +454,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       )}
                       {filterType === FilterType.LABEL && (
                         <AutocompleteInput
-                          className="co-text-node"
+                          color="purple"
                           onSuggestionSelect={(selected) => {
                             applyLabelFilters(_.uniq([...labelSelection, selected]));
                           }}
