@@ -71,7 +71,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
   return (
     <Stack className="opp-task-sidebar">
-      <StackItem className="co-sidebar-dismiss clearfix">
+      <StackItem className="co-sidebar-dismiss">
         <CloseButton
           onClick={onClose}
           dataTestID="sidebar-close-button"

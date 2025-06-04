@@ -103,7 +103,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                     <input type="text" value={c.value} onChange={(e) => change(e, i, 'value')} />
                   </span>
                 </div>
-                <div className="clearfix visible-sm visible-xs" />
+                <div className="visible-sm visible-xs" />
                 <div className="col-md-4 col-xs-5 taint-modal__field">
                   <div className="taint-modal__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
                     {t('public~Effect')}

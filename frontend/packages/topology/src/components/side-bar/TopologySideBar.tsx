@@ -37,7 +37,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ children, onClose }) 
         data-test="topology-sidepane"
       >
         <div className="pf-topology-side-bar__body">
-          <div className="co-sidebar-dismiss clearfix">
+          <div className="co-sidebar-dismiss">
             <CloseButton
               onClick={onClose}
               dataTestID="sidebar-close-button"
