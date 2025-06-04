@@ -3,6 +3,7 @@
 .vscode
 .protractor-fail-fast
 .DS_Store
+!/vendor/**
 cypress-a11y-report.json
 /bin
 /gopath
