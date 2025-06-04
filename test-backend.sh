@@ -28,6 +28,17 @@ OPENSHIFT_CI=${OPENSHIFT_CI:=false}
 TESTABLE="./..."
 FORMATTABLE=(cmd pkg)
 
+# ensure console can be built with konflux
+echo "Verifying go deps..."
+go mod tidy
+go mod vendor
+CHANGES=$(git status --porcelain --ignored)
+if [ -n "$CHANGES" ] ; then
+    echo "ERROR: detected vendor inconsistency after 'go mod tidy; go mod vendor':"
+    echo "$CHANGES"
+    exit 1
+fi
+
 # user has not provided PKG override
 if [ -z "${PKG}" ]; then
 	TEST=${TESTABLE}
