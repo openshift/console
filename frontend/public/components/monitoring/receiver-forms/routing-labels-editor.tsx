@@ -50,7 +50,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
   return (
     <div data-test-id="receiver-routing-labels-editor" className="form-group">
       <SectionHeading text={t('public~Routing labels')} required={!isDefaultReceiver} />
-      <p className="pf-u-mb-md">
+      <p className="pf-v6-u-mb-md">
         <Trans ns="public">
           Firing alerts with labels that match all of these{' '}
           <ExternalLink

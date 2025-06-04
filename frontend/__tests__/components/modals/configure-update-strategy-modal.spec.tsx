@@ -1,24 +1,24 @@
-import { shallow, ShallowWrapper } from 'enzyme';
-import Spy = jasmine.Spy;
+import { render, screen, fireEvent, configure } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 
-import {
-  ConfigureUpdateStrategy,
-  ConfigureUpdateStrategyProps,
-} from '@console/internal/components/modals/configure-update-strategy-modal';
-import { RadioInput } from '@console/internal/components/radio';
+describe('ConfigureUpdateStrategy', () => {
+  let onChangeStrategyType: jest.Mock;
+  let onChangeMaxSurge: jest.Mock;
+  let onChangeMaxUnavailable: jest.Mock;
 
-describe(ConfigureUpdateStrategy.displayName, () => {
-  let wrapper: ShallowWrapper<ConfigureUpdateStrategyProps>;
-  let onChangeStrategyType: Spy;
-  let onChangeMaxSurge: Spy;
-  let onChangeMaxUnavailable: Spy;
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
 
   beforeEach(() => {
-    onChangeStrategyType = jasmine.createSpy('onChangeStrategyType');
-    onChangeMaxSurge = jasmine.createSpy('onChangeMaxSurge');
-    onChangeMaxUnavailable = jasmine.createSpy('onChangeMaxUnavailable');
+    onChangeStrategyType = jest.fn();
+    onChangeMaxSurge = jest.fn();
+    onChangeMaxUnavailable = jest.fn();
+  });
 
-    wrapper = shallow(
+  it('renders two choices for different update strategy types', () => {
+    render(
       <ConfigureUpdateStrategy
         onChangeStrategyType={onChangeStrategyType}
         onChangeMaxSurge={onChangeMaxSurge}
@@ -28,26 +28,38 @@ describe(ConfigureUpdateStrategy.displayName, () => {
         maxUnavailable={null}
       />,
     );
-  });
 
-  it('renders two choices for different update strategy types', () => {
-    expect(wrapper.find(RadioInput).at(0).props().value).toEqual('RollingUpdate');
-    expect(wrapper.find(RadioInput).at(1).props().value).toEqual('Recreate');
-    expect(wrapper.find(RadioInput).at(1).props().checked).toBe(true);
+    const rollingUpdateRadio = screen.getByTestId('rolling-update-strategy-radio');
+    const recreateRadio = screen.getByTestId('recreate-update-strategy-radio');
+
+    expect(rollingUpdateRadio).toBeInTheDocument();
+    expect(recreateRadio).toBeInTheDocument();
+    expect(recreateRadio).toBeChecked();
+    expect(rollingUpdateRadio).not.toBeChecked();
   });
 
   it('is a controlled component', () => {
-    wrapper
-      .find(RadioInput)
-      .at(0)
-      .dive()
-      .find('input[type="radio"]')
-      .simulate('change', { target: { value: 'RollingUpdate' } });
-    wrapper.find('#input-max-unavailable').simulate('change', { target: { value: '25%' } });
-    wrapper.find('#input-max-surge').simulate('change', { target: { value: '50%' } });
+    render(
+      <ConfigureUpdateStrategy
+        onChangeStrategyType={onChangeStrategyType}
+        onChangeMaxSurge={onChangeMaxSurge}
+        onChangeMaxUnavailable={onChangeMaxUnavailable}
+        strategyType="Recreate"
+        maxSurge={null}
+        maxUnavailable={null}
+      />,
+    );
 
-    expect(onChangeStrategyType.calls.argsFor(0)[0]).toEqual('RollingUpdate');
-    expect(onChangeMaxUnavailable.calls.argsFor(0)[0]).toEqual('25%');
-    expect(onChangeMaxSurge.calls.argsFor(0)[0]).toEqual('50%');
+    const rollingUpdateRadio = screen.getByTestId('rolling-update-strategy-radio');
+    const maxUnavailableInput = screen.getByTestId('max-unavailable-input');
+    const maxSurgeInput = screen.getByTestId('max-surge-input');
+
+    fireEvent.click(rollingUpdateRadio);
+    fireEvent.change(maxUnavailableInput, { target: { value: '25%' } });
+    fireEvent.change(maxSurgeInput, { target: { value: '50%' } });
+
+    expect(onChangeStrategyType).toHaveBeenCalledWith('RollingUpdate');
+    expect(onChangeMaxUnavailable).toHaveBeenCalledWith('25%');
+    expect(onChangeMaxSurge).toHaveBeenCalledWith('50%');
   });
 });

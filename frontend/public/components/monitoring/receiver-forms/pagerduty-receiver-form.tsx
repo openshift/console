@@ -87,7 +87,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           {t('public~PagerDuty URL')}
         </label>
         <Grid hasGutter>
-          <GridItem sm={7}>
+          <GridItem span={7}>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -104,7 +104,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               />
             </span>
           </GridItem>
-          <GridItem sm={5}>
+          <GridItem span={1} /> {/* fixes an overlapping control issue */}
+          <GridItem span={4}>
             <SaveAsDefaultCheckbox
               formField="pagerdutySaveAsDefault"
               disabled={formValues.pagerduty_url === globals?.pagerduty_url}
