@@ -443,3 +443,9 @@ export interface OdcBaseNodeInterface extends Node<OdcNodeModel> {
 }
 
 export type OdcBaseNodeConstructor = new () => OdcBaseNodeInterface;
+
+export interface PodRingSetProps {
+  obj: K8sResourceKind;
+  path: string;
+  impersonate?: string;
+}
