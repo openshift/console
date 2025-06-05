@@ -44,6 +44,33 @@ export const TestModal: ModalComponent = (props) => {
   );
 };
 
+const testComponentWithIDStyle: React.CSSProperties = {
+  backgroundColor: 'gray',
+  padding: '1rem 4rem',
+  position: 'absolute',
+  right: '5rem',
+  textAlign: 'center',
+  zIndex: 9999,
+};
+
+const TEST_ID_1 = 'TEST_ID_1';
+const TestComponentWithID1 = ({ closeModal }) => (
+  <div style={{ ...testComponentWithIDStyle, top: '5rem' }}>
+    <p>Test Modal with ID "{TEST_ID_1}"</p>
+    <Button onClick={closeModal}>Close</Button>
+  </div>
+);
+
+const TEST_ID_2 = 'TEST_ID_2';
+const TestComponentWithID2 = ({ closeModal, ...rest }) => (
+  <div style={{ ...testComponentWithIDStyle, bottom: '5rem' }}>
+    <p>
+      Test Modal with ID "{TEST_ID_2}" and testProp "{rest.testProp}"
+    </p>
+    <Button onClick={closeModal}>Close</Button>
+  </div>
+);
+
 const LoadingComponent: React.FC = () => {
   const { t } = useTranslation('plugin__console-demo-plugin');
 
@@ -127,6 +154,16 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
     launchModal(AsyncTestComponent, {});
   }, [launchModal]);
 
+  const onClickWithID1 = React.useCallback(
+    () => launchModal(TestComponentWithID1, {}, TEST_ID_1),
+    [launchModal],
+  );
+
+  const onClickWithID2 = React.useCallback(
+    () => launchModal(TestComponentWithID2, { testProp: 'abc' }, TEST_ID_2),
+    [launchModal],
+  );
+
   const onClickOverlayBasic = React.useCallback(() => {
     launchOverlay(TestOverlayComponent, {});
   }, [launchOverlay]);
@@ -153,6 +190,12 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       <DocumentTitle>{t('Modal Launchers')}</DocumentTitle>
       <Button onClick={onClick}>{t('Launch Modal')}</Button>
       <Button onClick={onAsyncClick}>{t('Launch Modal Asynchronously')}</Button>
+      <Button onClick={onClickWithID1}>
+        {t('plugin__console-demo-plugin~Launch Modal with ID 1')}
+      </Button>
+      <Button onClick={onClickWithID2}>
+        {t('plugin__console-demo-plugin~Launch Modal with ID 2')}
+      </Button>
       <Button onClick={onClickOverlayBasic}>
         {t('plugin__console-demo-plugin~Launch overlay')}
       </Button>
