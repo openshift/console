@@ -27,7 +27,7 @@ module.exports = {
     extraFileExtensions: ['.json'],
     tsconfigRootDir: './',
   },
-  plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql', 'eslint-plugin-tsdoc'],
+  plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql', 'eslint-plugin-tsdoc', "enzyme-deprecation"],
   rules: {
     camelcase: [
       'error',
@@ -88,6 +88,8 @@ module.exports = {
       },
     ],
     'tsdoc/syntax': 'warn',
+    "enzyme-deprecation/no-shallow": 2,
+    "enzyme-deprecation/no-mount": 2,
   },
   settings: {
     'import/extensions': ['.js', '.jsx'],
