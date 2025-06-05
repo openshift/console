@@ -137,7 +137,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       if (!chartIndexEntry) {
         setFieldValue(
           'chartIndexEntry',
-          getChartIndexEntry(json?.entries, chartName, chartEntries[0].repoName),
+          getChartIndexEntry(json?.entries, chartName, chartEntries[0]?.repoName),
         );
       }
       setHelmChartRepos(json?.entries);
