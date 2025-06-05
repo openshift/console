@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,9 +21,8 @@ import (
 	"github.com/openshift/console/pkg/auth/sessions"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
-	authv1 "k8s.io/api/authentication/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	authenticationv1 "k8s.io/client-go/kubernetes/typed/authentication/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 )
@@ -95,6 +93,7 @@ type loginMethod interface {
 	Authenticate(http.ResponseWriter, *http.Request) (*auth.User, error)
 	oauth2Config() *oauth2.Config
 	GetSpecialURLs() auth.SpecialAuthURLs
+	ReviewToken(*http.Request, authenticationv1.TokenReviewInterface) error
 }
 
 // AuthSource allows callers to switch between Tectonic and OpenShift login support.
@@ -305,39 +304,7 @@ func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) 
 }
 
 func (a *OAuth2Authenticator) ReviewToken(r *http.Request) error {
-	token, err := sessions.GetSessionTokenFromCookie(r)
-	if err != nil {
-		return err
-	}
-
-	tokenReview := &authv1.TokenReview{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "authentication.k8s.io/v1",
-			Kind:       "TokenReview",
-		},
-		Spec: authv1.TokenReviewSpec{
-			Token: token,
-		},
-	}
-
-	completedTokenReview, err := a.
-		internalK8sClientset.
-		AuthenticationV1().
-		TokenReviews().
-		Create(r.Context(), tokenReview, metav1.CreateOptions{})
-
-	if err != nil {
-		return fmt.Errorf("failed to create TokenReview, %v", err)
-	}
-
-	// Check if the token is authenticated
-	if !completedTokenReview.Status.Authenticated {
-		if completedTokenReview.Status.Error != "" {
-			return errors.New(completedTokenReview.Status.Error)
-		}
-		return errors.New("failed to authenticate the token, unknownd error")
-	}
-	return nil
+	return a.loginMethod.ReviewToken(r, a.internalK8sClientset.AuthenticationV1().TokenReviews())
 }
 
 // LogoutFunc cleans up session cookies.
