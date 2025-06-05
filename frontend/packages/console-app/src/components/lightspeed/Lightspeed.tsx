@@ -150,7 +150,7 @@ const Lightspeed: React.FC = () => {
           )}
           <StackItem className="pf-v6-u-text-align-center">
             <Button variant="link" onClick={onDismissClick}>
-              {t("console-app~Don't show again")}
+              {t('console-app~Edit user preferences to not show again')}
             </Button>
           </StackItem>
         </Stack>
