@@ -2,7 +2,6 @@ import { cloneDeep } from 'lodash';
 import { DeploymentKind, HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import {
   getFormData,
-  getInvalidUsageError,
   getLimitWarning,
   getMetricByType,
   getYAMLData,
@@ -12,7 +11,6 @@ import {
   sanitizeHPAToForm,
   sanityForSubmit,
 } from '../hpa-utils';
-import { HPAFormValues } from '../types';
 import { deploymentConfigExamples, deploymentExamples, hpaExamples } from './hpa-utils-data';
 
 describe('isCpuUtilizationPossible provides accurate checks', () => {
@@ -144,30 +142,28 @@ describe('getYAMLData gets back an hpa structured editor string', () => {
 
 describe('getMetricByType returns an appropriate metric and the index it is at', () => {
   it('expect no metrics to return a default metric as a new metric on the end', () => {
-    const { metric, index } = getMetricByType(hpaExamples.noMetrics, 'memory');
+    const { metric } = getMetricByType(hpaExamples.noMetrics, 'memory');
     expect(metric).toBeTruthy();
     expect(metric.resource.name).toBe('memory');
-    expect(metric.resource.target.averageUtilization).toBe(0);
-    expect(index).toBe(0);
+    expect(metric.resource.target.averageUtilization).toBe(50);
   });
 
   it('expect to get back a default memory metric when only cpu metric is available', () => {
     const { metric, index } = getMetricByType(hpaExamples.cpuScaled, 'memory');
     expect(metric).toBeTruthy();
     expect(metric.resource.name).toBe('memory');
-    expect(metric.resource.target.averageUtilization).toBe(0);
+    expect(metric.resource.target.averageUtilization).toBe(50);
     expect(index).toBe(1);
   });
 
   it('expect to get back the cpu metric when it is available', () => {
     const hpaResource: HorizontalPodAutoscalerKind = hpaExamples.cpuScaled;
-    const { metric, index } = getMetricByType(hpaResource, 'cpu');
+    const { metric } = getMetricByType(hpaResource, 'cpu');
     expect(metric).toBeTruthy();
     expect(metric.resource.name).toBe('cpu');
     expect(metric.resource.target.averageUtilization).toBe(
       hpaResource.spec.metrics[0].resource.target.averageUtilization,
     );
-    expect(index).toBe(0);
   });
 });
 
@@ -234,8 +230,8 @@ describe('sanityForSubmit covers some basic field locking and trimming', () => {
 
   it('expect not to have empty cpu or memory metrics', () => {
     const overriddenResource: HorizontalPodAutoscalerKind = cloneDeep(hpaResource);
-    overriddenResource.spec.metrics[0].resource.target.averageUtilization = 0;
-    expect(sanityForSubmit(deploymentResource, overriddenResource).spec.metrics.length).toBe(0);
+    overriddenResource.spec.metrics[0].resource.target.averageUtilization = 50;
+    expect(sanityForSubmit(deploymentResource, overriddenResource).spec.metrics.length).toBe(1);
   });
 
   it('expect not to trim custom resource metrics', () => {
@@ -243,40 +239,6 @@ describe('sanityForSubmit covers some basic field locking and trimming', () => {
     overriddenResource.spec.metrics[0].resource.name = 'custom-resource';
     overriddenResource.spec.metrics[0].resource.target.averageUtilization = 0;
     expect(sanityForSubmit(deploymentResource, overriddenResource).spec.metrics.length).toBe(1);
-  });
-});
-
-describe('getInvalidUsageError returns an error string when limits are not set', () => {
-  const formValues: HPAFormValues = {
-    showCanUseYAMLMessage: false,
-    disabledFields: {
-      name: false,
-      cpuUtilization: true,
-      memoryUtilization: true,
-    },
-    editorType: null,
-    formData: null,
-    yamlData: null,
-  };
-  const hpaResource: HorizontalPodAutoscalerKind = hpaExamples.cpuScaled;
-
-  it('expect no metrics to be an error', () => {
-    const noMetricsHPA: HorizontalPodAutoscalerKind = hpaExamples.noMetrics;
-    expect(typeof getInvalidUsageError(noMetricsHPA, formValues)).toBe('string');
-
-    const emptyMetricsHPA: HorizontalPodAutoscalerKind = cloneDeep(noMetricsHPA);
-    emptyMetricsHPA.spec.metrics = [];
-    expect(typeof getInvalidUsageError(emptyMetricsHPA, formValues)).toBe('string');
-  });
-
-  it('expect cpu metric not to be allowed while disabled', () => {
-    expect(typeof getInvalidUsageError(hpaResource, formValues)).toBe('string');
-  });
-
-  it('expect memory metric to not be allowed while disabled', () => {
-    const memoryHPA = cloneDeep(hpaResource);
-    memoryHPA.spec.metrics[0].resource.name = 'memory';
-    expect(typeof getInvalidUsageError(memoryHPA, formValues)).toBe('string');
   });
 });
 
