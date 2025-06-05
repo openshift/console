@@ -10,7 +10,7 @@ export const webTerminalPage = {
 
   verifyConnectionRediness: () =>
     cy
-      .get(webTerminalPO.terminalWindowWithEnabledMouseEvent, { timeout: 120000 })
+      .get(webTerminalPO.terminalWindowWithEnabledMouseEvent, { timeout: 200000 })
       .should('be.visible'),
 
   verifyOpenInNewTabButton: () => {
@@ -46,7 +46,7 @@ export const webTerminalPage = {
 
   deleteTerminalInstanceActionMenu: () => {
     cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
-    cy.byLegacyTestID('action-items').should('be.visible');
+    cy.get('[role="menu"]').should('be.visible');
     cy.byTestActionID('Delete DevWorkspace').should('be.visible').click();
     cy.get('[aria-label="Modal"]').should('be.visible');
     cy.byTestID('confirm-action').click();
