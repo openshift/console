@@ -31,7 +31,6 @@ import (
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
-	"github.com/openshift/console/pkg/metrics"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
@@ -208,6 +207,7 @@ type Server struct {
 	ThanosPublicURL                     *url.URL
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
+	TokenReviewer                       *auth.TokenReviewer
 	UserSettingsLocation                string
 }
 
@@ -298,13 +298,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
 
-	tokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return authHandler(withTokenReview(authenticator, h))
+	// For requests where Authorization header with valid Bearer token is expected
+	bearerTokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
+		return withBearerTokenReview(s.TokenReviewer, h)
 	}
 	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
-	handle(copyLoginEndpoint, tokenReviewHandler(s.handleCopyLogin))
+	handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
 
 	handleFunc("/api/", notFoundHandler)
 
@@ -474,7 +475,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}),
 	))
 
-	handle("/api/console/monitoring-dashboard-config", tokenReviewHandler(s.handleMonitoringDashboardConfigmaps))
+	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	// Knative
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
 	knativeHandler := knative.NewKnativeHandler(
@@ -485,8 +486,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(knativeProxyEndpoint, authHandlerWithUser(knativeHandler.Handle))
 	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
-	handle("/api/console/knative-event-sources", tokenReviewHandler(s.handleKnativeEventSourceCRDs))
-	handle("/api/console/knative-channels", tokenReviewHandler(s.handleKnativeChannelCRDs))
+	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
+	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 
 	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
@@ -532,7 +533,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(pluginAssetsEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginAssetsEndpoint),
-		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+		authHandler(func(w http.ResponseWriter, r *http.Request) {
 			pluginsHandler.HandlePluginAssets(w, r)
 		}),
 	))
@@ -568,7 +569,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}
 	}
 
-	handle(updatesEndpoint, tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+	handleFunc(updatesEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			w.Header().Set("Allow", "GET")
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
@@ -585,7 +586,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			Capabilities:          s.Capabilities,
 			ContentSecurityPolicy: s.ContentSecurityPolicy.String(),
 		})
-	}))
+	})
 
 	// Metrics
 	config := &serverconfig.Config{
@@ -609,12 +610,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
 
-	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
-		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
-			promhttp.Handler().ServeHTTP(w, r)
-		}),
-	))
-	handleFunc("/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+	handle("/metrics", bearerTokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+	}))
+	handleFunc("/metrics/usage", authHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
 	}))
 
@@ -661,11 +660,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			tokenReviewHandler(gitopsProxy.ServeHTTP)),
+			authHandler(gitopsProxy.ServeHTTP)),
 		)
 	}
 
-	handle("/api/console/version", tokenReviewHandler(s.versionHandler))
+	handle("/api/console/version", authHandler(s.versionHandler))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
