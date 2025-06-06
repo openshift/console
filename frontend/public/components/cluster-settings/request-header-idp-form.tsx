@@ -147,6 +147,7 @@ export const AddRequestHeaderPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
+                aria-label={t('public~Challenge URL')}
                 onChange={(e) => setChallengeURL(e.currentTarget.value)}
                 value={challengeURL}
                 id="challenge-url"
@@ -164,6 +165,7 @@ export const AddRequestHeaderPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
+                aria-label={t('public~Login URL')}
                 onChange={(e) => setLoginURL(e.currentTarget.value)}
                 value={loginURL}
                 id="login-url"
@@ -181,6 +183,7 @@ export const AddRequestHeaderPage = () => {
             {t('public~More options')}
           </Title>
           <IDPCAFileInput
+            id="ca-file-input"
             value={caFileContent}
             onChange={(c: string) => setCaFileContent(c)}
             isRequired

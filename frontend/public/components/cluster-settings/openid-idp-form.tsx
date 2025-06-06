@@ -174,6 +174,7 @@ export const AddOpenIDIDPPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
+                aria-label={t('public~Client ID')}
                 onChange={(e) => setClientID(e.currentTarget.value)}
                 value={clientID}
                 id="client-id"
@@ -188,6 +189,7 @@ export const AddOpenIDIDPPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
+                aria-label={t('public~Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -202,6 +204,7 @@ export const AddOpenIDIDPPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
+                aria-label={t('public~Issuer URL')}
                 onChange={(e) => setIssuer(e.currentTarget.value)}
                 value={issuer}
                 id="issuer"
@@ -216,46 +219,54 @@ export const AddOpenIDIDPPage = () => {
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-            {t('public~Claims')}
-          </Title>
-          <p>
-            {t(
-              'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
-            )}
-          </p>
-          <ListInput
-            label={t('public~Preferred username')}
-            initialValues={claimPreferredUsernames}
-            onChange={(c: string[]) => setClaimPreferredUsernames(c)}
-            helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
-          />
-          <ListInput
-            label={t('public~Name')}
-            initialValues={claimNames}
-            onChange={(c: string[]) => setClaimNames(c)}
-            helpText={t(
-              'public~The list of claims whose values should be used as the display name.',
-            )}
-          />
-          <ListInput
-            label={t('public~Email')}
-            initialValues={claimEmails}
-            onChange={(c: string[]) => setClaimEmails(c)}
-            helpText={t(
-              'public~The list of claims whose values should be used as the email address.',
-            )}
-          />
+          <div data-testid="openid-claims-list-input">
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~Claims')}
+            </Title>
+            <p>
+              {t(
+                'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
+              )}
+            </p>
+            <ListInput
+              label={t('public~Preferred username')}
+              initialValues={claimPreferredUsernames}
+              onChange={(c: string[]) => setClaimPreferredUsernames(c)}
+              helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
+            />
+            <ListInput
+              label={t('public~Name')}
+              initialValues={claimNames}
+              onChange={(c: string[]) => setClaimNames(c)}
+              helpText={t(
+                'public~The list of claims whose values should be used as the display name.',
+              )}
+            />
+            <ListInput
+              label={t('public~Email')}
+              initialValues={claimEmails}
+              onChange={(c: string[]) => setClaimEmails(c)}
+              helpText={t(
+                'public~The list of claims whose values should be used as the email address.',
+              )}
+            />
+          </div>
           <div className="co-form-section__separator" />
-          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-            {t('public~More options')}
-          </Title>
-          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
-          <ListInput
-            label={t('public~Extra scopes')}
-            onChange={(c: string[]) => setExtraScopes(c)}
-            helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
-          />
+          <div data-testid="openid-more-options-list-input">
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~More options')}
+            </Title>
+            <IDPCAFileInput
+              id="ca-file-input"
+              value={caFileContent}
+              onChange={(c: string) => setCaFileContent(c)}
+            />
+            <ListInput
+              label={t('public~Extra scopes')}
+              onChange={(c: string[]) => setExtraScopes(c)}
+              helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
+            />
+          </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">
