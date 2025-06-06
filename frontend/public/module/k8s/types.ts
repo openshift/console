@@ -198,7 +198,7 @@ export type ContainerSpec = {
   lifecycle?: ContainerLifecycle;
   resources?: {
     limits?: ResourceList;
-    requested?: ResourceList;
+    requests?: ResourceList;
   };
   ports?: ContainerPort[];
   imagePullPolicy?: ImagePullPolicy;
