@@ -176,6 +176,8 @@ $masthead-logo-max-height: 60px;
 // Drawer
 .pf-v6-c-drawer__body {
   height: 100%;
+  // (OCPBUGS-56628): A PF6 regression caused modals to not move when a drawer is open
+  position: relative;
 }
 
 .pf-v6-c-masthead {
