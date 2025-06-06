@@ -213,7 +213,11 @@ export const AddKeystonePage = () => {
               {t('public~The remote URL to connect to.')}
             </p>
           </div>
-          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
+          <IDPCAFileInput
+            id="ca-file-input"
+            value={caFileContent}
+            onChange={(c: string) => setCaFileContent(c)}
+          />
           <div className="form-group">
             <DroppableFileInput
               onChange={(c: string) => setCertFileContent(c)}
