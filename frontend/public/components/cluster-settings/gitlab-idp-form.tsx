@@ -194,6 +194,7 @@ export const AddGitLabPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
+                aria-label={t('public~Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -201,7 +202,11 @@ export const AddGitLabPage = () => {
               />
             </span>
           </div>
-          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
+          <IDPCAFileInput
+            id="ca-file-input"
+            value={caFileContent}
+            onChange={(c: string) => setCaFileContent(c)}
+          />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">

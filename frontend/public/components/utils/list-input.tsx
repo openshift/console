@@ -46,13 +46,15 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
   }
 
   render() {
-    const { label, required, helpText, t } = this.props;
+    const { id, label, required, helpText, t } = this.props;
     const { values } = this.state;
     const missingValues = required && (_.isEmpty(values) || _.every(values, (v) => !v));
     const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
       <div className="form-group">
-        <label className={css({ 'co-required': required })}>{label}</label>
+        <label htmlFor={id} className={css({ 'co-required': required })}>
+          {label}
+        </label>
         {_.map(values, (v: string, i: number) => (
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
@@ -108,6 +110,7 @@ type ListInputState = {
 type ChangeCallback = (values: string[]) => void;
 
 type ListInputProps = WithTranslation & {
+  id?: string;
   label: string;
   initialValues?: string[];
   onChange: ChangeCallback;

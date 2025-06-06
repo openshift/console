@@ -1,54 +1,103 @@
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
-import store from '@console/internal/redux';
+import '@testing-library/jest-dom';
+import { screen } from '@testing-library/react';
+//import userEvent from '@testing-library/user-event'; // TODO: Update to the wrapper for user-event package
+import { AddBasicAuthPage } from '../../../public/components/cluster-settings/basicauth-idp-form';
+import { renderWithProviders } from '@console/shared/src/utils/__tests__/testUtils';
+import { verifyFormField, controlButtonTest, verifyPageTitleAndSubtitle } from './testUtils';
 
-import { ButtonBar } from '../../../public/components/utils';
-import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
-import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
-import {
-  AddBasicAuthPage,
-  DroppableFileInput as BasicDroppableInput,
-} from '../../../public/components/cluster-settings/basicauth-idp-form';
-
-export const controlButtonTest = (wrapper) => {
-  expect(wrapper.find(ButtonBar).exists()).toBe(true);
-  expect(wrapper.find('Button[type="submit"]').at(0).text()).toEqual('Add');
-  expect(wrapper.find('Button[variant="secondary"]').at(0).text()).toEqual('Cancel');
-};
-
-describe('Add Identity Provider: BasicAuthentication', () => {
-  let wrapper;
+describe('Add Identity Provider: Basic Authentication', () => {
   beforeEach(() => {
-    wrapper = mount(
-      <Provider store={store}>
-        <BrowserRouter>
-          <AddBasicAuthPage />
-        </BrowserRouter>
-      </Provider>,
-    );
+    renderWithProviders(<AddBasicAuthPage />);
   });
 
-  it('should render AddBasicAuthPage component', () => {
-    expect(wrapper.exists()).toBe(true);
+  it('should render page title and sub title', () => {
+    verifyPageTitleAndSubtitle({
+      title: 'Add Identity Provider: Basic Authentication',
+      subtitle:
+        'Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.',
+    });
   });
 
-  it('should render correct Basic Authentication IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: Basic Authentication')).toBeTruthy();
+  it('should render the Name label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Name',
+      inputRole: 'textbox',
+      inputName: 'Name',
+      inputValue: 'basic-auth',
+      inputId: 'idp-name',
+      helpText: 'Unique name of the new identity provider. This cannot be changed later.',
+    });
   });
 
-  it('should render the form elements of AddBasicAuthPage component', () => {
-    expect(wrapper.find(IDPNameInput).exists()).toBe(true);
-    expect(wrapper.find(IDPCAFileInput).exists()).toBe(true);
-    expect(wrapper.find(BasicDroppableInput).length).toEqual(2);
-    expect(wrapper.find('input[id="url"]').exists()).toBe(true);
+  it('should render the URL label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'URL',
+      inputRole: 'textbox',
+      inputName: 'URL',
+      inputValue: '',
+      inputId: 'url',
+      helpText: 'The remote URL to connect to.',
+    });
   });
 
-  it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+  it('should render the CA file label and fields', () => {
+    verifyFormField({
+      labelText: 'CA file',
+      inputRole: 'textbox',
+      inputName: 'CA file',
+      inputValue: '',
+      inputId: 'ca-file-input',
+      helpText: '',
+    });
+
+    // Verify the Browse button is rendered
+    const browseLabel = screen.getAllByText('Browse...'); // Fix the issue with getByLabelText
+    expect(browseLabel[0]).toBeVisible();
+    expect(browseLabel[0]).toHaveAttribute('for', 'ca-file-input');
+
+    // Verify the textarea is rendered with the correct attribute
+    expect(screen.getByLabelText('CA file')).toBeVisible();
   });
 
-  it('should prefill basic-auth in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual('basic-auth');
+  //TODO: Update the userEvent package to the wrapper for user-event package
+  it('should render the certificate label and fields', () => {
+    verifyFormField({
+      labelText: 'Certificate',
+      inputRole: 'textbox',
+      inputName: 'Certificate',
+      inputValue: '',
+      inputId: 'cert-file-input',
+      helpText: 'PEM-encoded TLS client certificate to present when connecting to the server.',
+    });
+
+    // Verify the Browse button is rendered
+    const browseButton = screen.getAllByText('Browse...');
+    expect(browseButton[1]).toBeVisible();
+
+    // Verify the textarea is rendered with the correct attribute
+    expect(screen.getByLabelText('Certificate')).toBeVisible();
+  });
+
+  it('should render the key label and fields', () => {
+    verifyFormField({
+      labelText: 'Key',
+      inputRole: 'textbox',
+      inputName: 'Key',
+      inputValue: '',
+      inputId: 'key-file-input',
+      helpText:
+        'PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+    });
+
+    // Verify the Browse button is rendered
+    const browseButton = screen.getAllByText('Browse...');
+    expect(browseButton[2]).toBeVisible();
+
+    // Verify the textarea is rendered with the correct attribute
+    expect(screen.getByLabelText('Key')).toBeVisible();
+  });
+
+  it("should render 'Add' and 'Cancel' buttons in a button bar", () => {
+    controlButtonTest();
   });
 });

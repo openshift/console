@@ -1,49 +1,109 @@
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
-import store from '@console/internal/redux';
+import { screen } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/utils/__tests__/testUtils';
+import { verifyFormField, controlButtonTest, verifyPageTitleAndSubtitle } from './testUtils';
+import { AddKeystonePage } from '../../../public/components/cluster-settings/keystone-idp-form';
 
-import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
-import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
-import {
-  AddKeystonePage,
-  DroppableFileInput as KeystoneFileInput,
-} from '../../../public/components/cluster-settings/keystone-idp-form';
-import { controlButtonTest } from './basicauth-idp-form.spec';
-
-describe('Add Identity Provider: Keystone', () => {
-  let wrapper;
+describe('Add Identity Provider: Keystone Authentication', () => {
   beforeEach(() => {
-    wrapper = mount(
-      <Provider store={store}>
-        <BrowserRouter>
-          <AddKeystonePage />
-        </BrowserRouter>
-      </Provider>,
-    );
+    renderWithProviders(<AddKeystonePage />);
   });
 
-  it('should render AddKeystonePage component', () => {
-    expect(wrapper.exists()).toBe(true);
+  it('should render page title and sub title', () => {
+    verifyPageTitleAndSubtitle({
+      title: 'Add Identity Provider: Keystone Authentication',
+      subtitle:
+        'Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
+    });
   });
 
-  it('should render correct Keystone IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: Keystone Authentication')).toBeTruthy();
+  it('should render the Name label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Name',
+      inputRole: 'textbox',
+      inputName: 'Name',
+      inputValue: 'keystone',
+      inputId: 'idp-name',
+      helpText: 'Unique name of the new identity provider. This cannot be changed later.',
+    });
   });
 
-  it('should render the form elements of AddKeystonePage component', () => {
-    expect(wrapper.find(IDPNameInput).exists()).toBe(true);
-    expect(wrapper.find(IDPCAFileInput).exists()).toBe(true);
-    expect(wrapper.find(KeystoneFileInput).length).toEqual(2);
-    expect(wrapper.find('input[id="url"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="domain-name"]').exists()).toBe(true);
+  it('should render the Domain name label and input field', () => {
+    verifyFormField({
+      labelText: 'Domain name',
+      inputRole: 'textbox',
+      inputName: 'Domain name',
+      inputValue: '',
+      inputId: 'domain-name',
+      helpText: '',
+    });
   });
 
-  it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+  it('should render the URL label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'URL',
+      inputRole: 'textbox',
+      inputName: 'URL',
+      inputValue: '',
+      inputId: 'url',
+      helpText: 'The remote URL to connect to.',
+    });
   });
 
-  it('should prefill keystone in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual('keystone');
+  it('should render the CA file label and fields', () => {
+    verifyFormField({
+      labelText: 'CA file',
+      inputRole: 'textbox',
+      inputName: 'CA file',
+      inputValue: '',
+      inputId: 'ca-file-input',
+      helpText: '',
+    });
+
+    // Verify the Browse button is rendered
+    const browseButton = screen.getAllByText('Browse...');
+    expect(browseButton[0]).toBeVisible();
+
+    // Verify the textarea is rendered with the correct attribute
+    expect(screen.getByLabelText('CA file')).toBeVisible();
+  });
+  it('should render the certificate label and fields', () => {
+    verifyFormField({
+      labelText: 'Certificate',
+      inputRole: 'textbox',
+      inputName: 'Certificate',
+      inputValue: '',
+      inputId: 'cert-file-input',
+      helpText: 'PEM-encoded TLS client certificate to present when connecting to the server.',
+    });
+
+    // Verify the Browse button is rendered
+    const browseButton = screen.getAllByText('Browse...');
+    expect(browseButton[1]).toBeVisible();
+
+    // Verify the textarea is rendered with the correct attribute
+    expect(screen.getByLabelText('Certificate')).toBeVisible();
+  });
+
+  it('should render the key label and fields', () => {
+    verifyFormField({
+      labelText: 'Key',
+      inputRole: 'textbox',
+      inputName: 'Key',
+      inputValue: '',
+      inputId: 'key-file-input',
+      helpText:
+        'PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+    });
+
+    // Verify the Browse button is rendered
+    const browseButton = screen.getAllByText('Browse...');
+    expect(browseButton[2]).toBeVisible();
+
+    // Verify the textarea is rendered with the correct attribute
+    expect(screen.getByLabelText('Key')).toBeVisible();
+  });
+
+  it("should render 'Add' and 'Cancel' buttons in a button bar", () => {
+    controlButtonTest();
   });
 });
