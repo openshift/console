@@ -192,7 +192,7 @@ const hasSimpleReceiver = (
     return true;
   } else if (receiverIntegrationTypes.length === 1) {
     const receiverConfig = receiverIntegrationTypes[0]; // ex: 'pagerduty_configs'
-    const numConfigs = _.get(receiver, receiverConfig).length; // 'pagerduty_configs' is array and may have multiple sets of properties
+    const numConfigs = _.get(receiver, receiverConfig)?.length; // 'pagerduty_configs' is array and may have multiple sets of properties
     return _.hasIn(receiverTypes, receiverConfig) && numConfigs <= 1; // known receiver type and a single set of props
   }
   return false;
