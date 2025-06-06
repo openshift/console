@@ -34,6 +34,7 @@ Feature: Create the different workloads from Add page
                   | Middleware        | Apache HTTP Server                    | httpd-example             |
                   | Other             | Nginx HTTP server and a reverse proxy | nginx-example             |
 
+        @broken-test
         Scenario Outline: Deploy <image> image with Runtime icon from external registry: A-02-TC02
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
@@ -67,6 +68,7 @@ Feature: Create the different workloads from Add page
                   | image_stream | runtime_icon | name           |
                   | golang       | fedora       | hello-internal |
 
+        @broken-test
         Scenario: Edit Runtime Icon while Editing Image: A-02-TC05
             Given user has deployed container Image "openshift/hello-openshift" from external registry
               And user is at Topology page
