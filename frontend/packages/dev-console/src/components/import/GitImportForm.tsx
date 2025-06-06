@@ -13,6 +13,7 @@ import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
 import { BuildOptions, GitImportFormData, GitImportFormProps, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
+import NamespaceSection from './NamespaceSection';
 import SecureRoute from './route/SecureRoute';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
@@ -41,7 +42,6 @@ const GitImportForm: React.FC<
     git: { validated, type: gitType },
     build: { option: buildOption },
   } = values;
-
   const showFullForm =
     importType === ImportTypes.devfile ||
     (validated !== ValidatedOptions.default && gitType !== GitProvider.INVALID);
@@ -73,6 +73,7 @@ const GitImportForm: React.FC<
               formType={formType}
               importType={importType}
             />
+            <NamespaceSection />
             {showFullForm && (
               <>
                 {importType === ImportTypes.devfile ? (
