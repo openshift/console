@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertActionCloseButton, Flex } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, Flex, Grid, GridItem } from '@patternfly/react-core';
 import { useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
@@ -65,8 +65,8 @@ const HPADetailsForm: React.FC = () => {
           variant="info"
         />
       )}
-      <div className="row">
-        <div className="col-lg-8">
+      <Grid hasGutter>
+        <GridItem lg={8}>
           <Flex direction={{ default: 'column' }}>
             <InputField
               isDisabled={nameDisabled}
@@ -96,8 +96,8 @@ const HPADetailsForm: React.FC = () => {
               type="memory"
             />
           </Flex>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </>
   );
 };

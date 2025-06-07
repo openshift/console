@@ -50,8 +50,10 @@ describe('RevisionsOverviewListItem', () => {
   });
 
   it('should show traffic percent', () => {
-    expect(wrapper.find('span')).toHaveLength(1);
-    expect(wrapper.find('span').at(0).props().children).toEqual('100%');
+    expect(wrapper.find('[data-test="revision-traffic-percent"]')).toHaveLength(1);
+    expect(wrapper.find('[data-test="revision-traffic-percent"]').at(0).props().children).toEqual(
+      '100%',
+    );
   });
 
   it('should not show deployments if not present', () => {
@@ -72,7 +74,7 @@ describe('RevisionsOverviewListItem', () => {
     };
     wrapper.setProps({ service: mockServiceData });
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(wrapper.find('span.pf-v6-u-text-align-right').text()).toBe('100%');
+    expect(wrapper.find('[data-test="revision-traffic-percent"]').at(0).dive().text()).toBe('100%');
   });
 
   describe('RevisionsOverviewListItem: deployments', () => {

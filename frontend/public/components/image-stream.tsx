@@ -10,6 +10,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
   Popover,
 } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
@@ -245,8 +247,8 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
           />
         )}
         <SectionHeading text={t('public~ImageStream details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={imageStream}>
               {imageRepository && (
                 <DescriptionListGroup>
@@ -268,8 +270,8 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
               </DescriptionListGroup>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Tags')} />

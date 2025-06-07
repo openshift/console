@@ -5,6 +5,8 @@ import {
   AlertActionCloseButton,
   Button,
   Checkbox,
+  Grid,
+  GridItem,
   TextInput,
   Title,
 } from '@patternfly/react-core';
@@ -95,7 +97,7 @@ export const CloudServiceTokenWarningAlert = ({
       variant="warning"
       title={title}
       actionClose={<AlertActionCloseButton onClose={() => onClose(false)} />}
-      className="pf-u-mb-lg"
+      className="pf-v6-u-mb-lg"
     >
       <p>{message}</p>
     </Alert>
@@ -894,8 +896,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             onClose={() => setShowCSTokenWarn(false)}
           />
         )}
-        <div className="row">
-          <div className="col-xs-6">
+        <Grid hasGutter>
+          <GridItem span={6}>
             <>
               {tokenizedAuth === 'AWS' && (
                 <div className="form-group">
@@ -1158,8 +1160,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>
-          </div>
-          <div className="col-xs-6">
+          </GridItem>
+          <GridItem span={6}>
             <ClusterServiceVersionLogo
               displayName={
                 currentCSVDesc?.displayName || channels?.[0]?.currentCSVDesc?.displayName
@@ -1188,8 +1190,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 ))
               )}
             </div>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
     </>
   );

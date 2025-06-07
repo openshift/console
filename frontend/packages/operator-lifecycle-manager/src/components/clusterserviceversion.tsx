@@ -1036,8 +1036,8 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
       <ScrollToTopOnMount />
 
       <PaneBody>
-        <div className="row">
-          <div className="col-sm-9">
+        <Grid hasGutter>
+          <GridItem sm={9}>
             {status && status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && (
               <Alert
                 isInline
@@ -1083,8 +1083,8 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
             <CRDCardRow csv={props.obj} providedAPIs={providedAPIs} />
             <SectionHeading text={t('olm~Description')} />
             <MarkdownView content={spec.description || t('olm~Not available')} />
-          </div>
-          <div className="col-sm-3">
+          </GridItem>
+          <GridItem sm={3}>
             <DescriptionList className="co-clusterserviceversion-details__field">
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('olm~Provider')}</DescriptionListTerm>
@@ -1157,8 +1157,8 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 )}
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~ClusterServiceVersion details')} />

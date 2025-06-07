@@ -86,12 +86,6 @@ $co-affinity-row-margin: 15px;
   margin-bottom: 20px;
 }
 
-.co-operand-details__section--info dd {
-  margin-bottom: 20px !important;
-  min-width: 0; // enable word-break
-  overflow-wrap: break-word;
-}
-
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
   border: var(--pf-t--global--border--width--regular) solid
     var(--pf-t--global--border--color--default);
@@ -199,35 +193,6 @@ $co-affinity-row-margin: 15px;
 .catalog-source__table-row--disabled {
   background-color: var(--pf-t--global--background--color--disabled--default);
   color: var(--pf-t--global--text--color--disabled);
-}
-
-.key-operator-value__action {
-  padding: 0;
-  width: 28px;
-}
-@media (max-width: $screen-sm-max) {
-  .key-operator-value__action--stacked,
-  .key-operator-value__value-field--stacked {
-    padding-top: 10px;
-  }
-}
-
-.key-operator-value__delete-button {
-  padding-left: 0 !important;
-}
-
-.key-operator-value__heading-button {
-  height: 23px; // for vertical alignment with input field; equals --pf-t--global--font--line-height--heading
-}
-
-.key-operator-value__name-field,
-.key-operator-value__operator-field,
-.key-operator-value__value-field {
-  padding-right: 0 !important;
-}
-
-.key-operator-value__row {
-  padding-bottom: 15px;
 }
 
 .olm-descriptors__invalid-pod-descriptor {

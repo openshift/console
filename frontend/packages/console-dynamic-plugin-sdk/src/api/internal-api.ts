@@ -57,7 +57,6 @@ export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@con
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
-export const ServicesList = require('@console/internal/components/service').ServicesList;
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
   .useDashboardResources;
 // useUserSettings is deprecated and is now exposed in dynamic plugin SDK.

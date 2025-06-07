@@ -970,8 +970,8 @@ export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({
   attach = false,
 }) => (
   <PaneBody>
-    <div className="row">
-      <div className="col-xs-12">
+    <Grid>
+      <GridItem>
         <div className="panel-body">
           <AsyncComponent
             loader={() => import('./pod-connect').then((c) => c.PodConnect)}
@@ -982,8 +982,8 @@ export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({
             attach={attach}
           />
         </div>
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   </PaneBody>
 );
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {

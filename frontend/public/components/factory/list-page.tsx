@@ -4,7 +4,7 @@ import { css } from '@patternfly/react-styles';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
+import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
@@ -161,11 +161,11 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
   return (
     <div>
       {!_.isEmpty(data) && Filter}
-      <div className="row">
-        <div className="col-xs-12">
+      <Grid>
+        <GridItem>
           <ListComponent {...props} data={data} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </div>
   );
 };

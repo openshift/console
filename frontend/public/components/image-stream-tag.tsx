@@ -19,6 +19,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -155,8 +157,8 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   return (
     <PaneBody>
       <PaneBodyGroup>
-        <div className="row">
-          <div className="col-md-6 col-sm-12">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <SectionHeading text={t('public~ImageStreamTag details')} />
             <ResourceSummary resource={imageStreamTag}>
               {labels.name && (
@@ -179,8 +181,8 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
               )}
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} tag={tagName} />
-          </div>
-          <div className="col-md-6 col-sm-12">
+          </GridItem>
+          <GridItem md={6}>
             <SectionHeading text={t('public~Configuration')} />
             <DescriptionList>
               {entrypoint && (
@@ -228,8 +230,8 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
                 </DescriptionListGroup>
               )}
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBodyGroup>
       <PaneBodyGroup>
         <SectionHeading text={t('public~Image labels')} />

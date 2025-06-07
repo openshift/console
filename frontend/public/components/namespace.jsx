@@ -957,16 +957,16 @@ export const PullSecret = (props) => {
 export const NamespaceLineCharts = ({ ns }) => {
   const { t } = useTranslation();
   return (
-    <div className="row">
-      <div className="col-md-6 col-sm-12">
+    <Grid hasGutter>
+      <GridItem md={6}>
         <Area
           title={t('public~CPU usage')}
           humanize={humanizeCpuCores}
           namespace={ns.metadata.name}
           query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
         />
-      </div>
-      <div className="col-md-6 col-sm-12">
+      </GridItem>
+      <GridItem md={6}>
         <Area
           title={t('public~Memory usage')}
           humanize={humanizeBinaryBytes}
@@ -974,8 +974,8 @@ export const NamespaceLineCharts = ({ ns }) => {
           namespace={ns.metadata.name}
           query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`}
         />
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   );
 };
 

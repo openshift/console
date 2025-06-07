@@ -14,6 +14,8 @@ import {
   Flex,
   Popover,
   Content,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -56,11 +58,11 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
     <>
       <PaneBody>
         <SectionHeading text={t('public~MachineConfig details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <MachineConfigSummary obj={obj} t={t} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       {files && (
         <PaneBody>

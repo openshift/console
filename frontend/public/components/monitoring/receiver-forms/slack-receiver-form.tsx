@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { TextArea } from '@patternfly/react-core';
+import { Grid, GridItem, TextArea } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
 import { ExpandCollapse } from '../../utils';
@@ -30,8 +30,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         <label data-test-id="api-url-label" className="co-required" htmlFor="slack-api-url">
           {t('public~Slack API URL')}
         </label>
-        <div className="row">
-          <div className="col-sm-7">
+        <Grid hasGutter>
+          <GridItem span={7}>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -47,8 +47,9 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 }
               />
             </span>
-          </div>
-          <div className="col-sm-5">
+          </GridItem>
+          <GridItem span={1} /> {/* fixes an overlapping control issue */}
+          <GridItem span={4}>
             <SaveAsDefaultCheckbox
               formField="slackSaveAsDefault"
               disabled={formValues.slack_api_url === globals?.slack_api_url}
@@ -59,8 +60,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 'public~Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
               )}
             />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
         <div className="help-block" id="slack-api-url-help">
           {t('public~The URL of the Slack webhook.')}
         </div>

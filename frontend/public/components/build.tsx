@@ -275,14 +275,12 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
       <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
         <SectionHeading text={t('public~Build details')} />
-        {hasPipeline && (
-          <div className="row">
-            <div className="col-xs-12">
-              <BuildPipeline obj={build} />
-            </div>
-          </div>
-        )}
         <Grid hasGutter>
+          {hasPipeline && (
+            <GridItem>
+              <BuildPipeline obj={build} />
+            </GridItem>
+          )}
           <GridItem sm={6}>
             <ResourceSummary resource={build}>
               <DetailsItem

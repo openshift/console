@@ -5,6 +5,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
@@ -51,8 +53,8 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
   return (
     <PaneBody>
       <SectionHeading text={t('console-app~Node details')} />
-      <div className="row">
-        <div className="col-md-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Node name')}</DescriptionListTerm>
@@ -171,8 +173,8 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-        <div className="col-md-6 col-xs-12">
+        </GridItem>
+        <GridItem md={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Operating system')}</DescriptionListTerm>
@@ -223,8 +225,8 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

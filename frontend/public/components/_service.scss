@@ -1,20 +1,3 @@
-.service-ips {
-  .co-ip-header {
-    padding: 10px 0 5px 20px;
-  }
-
-  .co-ip-row {
-    // Collapse borders when multiple consecutive rows.
-    margin-top: -1px;
-    padding: 20px 0 5px 20px;
-    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
-
-    .ip-name {
-      margin-bottom: 5px;
-    }
-  }
-}
-
 .port-list {
   padding-left: 0;
   list-style: none;
