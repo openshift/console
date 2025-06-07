@@ -1,44 +1,66 @@
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
-import store from '@console/internal/redux';
-
-import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
+import '@testing-library/jest-dom';
+import { renderWithProviders } from '@console/shared/src/utils/__tests__/testUtils';
+import {
+  verifyFormField,
+  controlButtonTest,
+  verifyPageTitleAndSubtitle,
+  verifyInputPasswordField,
+} from './testUtils';
 import { AddGooglePage } from '../../../public/components/cluster-settings/google-idp-form';
-import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: Google', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = mount(
-      <Provider store={store}>
-        <BrowserRouter>
-          <AddGooglePage />
-        </BrowserRouter>
-      </Provider>,
-    );
+    renderWithProviders(<AddGooglePage />);
   });
 
-  it('should render AddGooglePage component', () => {
-    expect(wrapper.exists()).toBe(true);
+  it('should render page title and sub title', () => {
+    verifyPageTitleAndSubtitle({
+      title: 'Add Identity Provider: Google',
+      subtitle: 'You can use Google integration for users authenticating with Google credentials.',
+    });
   });
 
-  it('should render correct Google IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: Google')).toBeTruthy();
+  it('should render the Name label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Name',
+      inputRole: 'textbox',
+      inputName: 'Name',
+      inputValue: 'google',
+      inputId: 'idp-name',
+      helpText: 'Unique name of the new identity provider. This cannot be changed later.',
+    });
   });
 
-  it('should render the form elements of AddGooglePage component', () => {
-    expect(wrapper.find(IDPNameInput).exists()).toBe(true);
-    expect(wrapper.find('input[id="hosted-domain"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="client-id"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="client-secret"]').exists()).toBe(true);
+  it('should render the Client ID label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Client ID',
+      inputRole: 'textbox',
+      inputName: 'Client ID',
+      inputValue: '',
+      inputId: 'client-id',
+      helpText: '',
+    });
+  });
+
+  it('should render the Client Secret label and input password field', () => {
+    verifyInputPasswordField({
+      labelText: 'Client secret',
+      inputForId: 'client-secret',
+    });
+  });
+
+  it('should render the Hosted Domain label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Hosted domain',
+      inputRole: 'textbox',
+      inputName: 'Hosted domain',
+      inputValue: '',
+      inputId: 'hosted-domain',
+      helpText: 'Restrict users to a Google App domain.',
+    });
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
-  });
-
-  it('should prefill google in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual('google');
+    controlButtonTest();
   });
 });

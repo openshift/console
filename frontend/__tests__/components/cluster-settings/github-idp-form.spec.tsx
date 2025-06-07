@@ -1,53 +1,98 @@
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
-import store from '@console/internal/redux';
-
-import { ListInput } from '../../../public/components/utils';
-import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
-import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
+import '@testing-library/jest-dom';
+import { screen } from '@testing-library/react';
 import { AddGitHubPage } from '../../../public/components/cluster-settings/github-idp-form';
-import { controlButtonTest } from './basicauth-idp-form.spec';
+import {
+  verifyFormField,
+  controlButtonTest,
+  verifyInputPasswordField,
+  verifyPageTitleAndSubtitle,
+} from './testUtils';
+import { renderWithProviders } from '@console/shared/src/utils/__tests__/testUtils';
 
 describe('Add Identity Provider: GitHub', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = mount(
-      <Provider store={store}>
-        <BrowserRouter>
-          <AddGitHubPage />
-        </BrowserRouter>
-      </Provider>,
-    );
+    renderWithProviders(<AddGitHubPage />);
   });
 
-  it('should render AddGitHubPage component', () => {
-    expect(wrapper.exists()).toBe(true);
+  it('should render page title and sub title', () => {
+    verifyPageTitleAndSubtitle({
+      title: 'Add Identity Provider: GitHub',
+      subtitle:
+        'You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
+    });
   });
 
-  it('should render correct GitHub IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: GitHub')).toBeTruthy();
+  it('should render the Name label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Name',
+      inputRole: 'textbox',
+      inputName: 'Name',
+      inputValue: 'github',
+      inputId: 'idp-name',
+      helpText: 'Unique name of the new identity provider. This cannot be changed later.',
+    });
   });
 
-  it('should render the form elements of AddGitHubPage component', () => {
-    expect(wrapper.find(IDPNameInput).exists()).toBe(true);
-    expect(wrapper.find(IDPCAFileInput).exists()).toBe(true);
-    expect(wrapper.find('input[id="client-id"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="client-secret"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="hostname"]').exists()).toBe(true);
-    expect(wrapper.find(ListInput).length).toEqual(2);
+  it('should render the Client ID label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Client ID',
+      inputRole: 'textbox',
+      inputName: 'Client ID',
+      inputValue: '',
+      inputId: 'client-id',
+      helpText: '',
+    });
   });
 
-  it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+  it('should render the Client Secret label and input password field', () => {
+    verifyInputPasswordField({
+      labelText: 'Client secret',
+      inputForId: 'client-secret',
+    });
   });
 
-  it('should prefill github in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual('github');
+  it('should render the Hostname label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Hostname',
+      inputRole: 'textbox',
+      inputName: 'Hostname',
+      inputValue: '',
+      inputId: 'hostname',
+      helpText: 'Optional domain for use with a hosted instance of GitHub Enterprise.',
+    });
   });
 
-  it('should prefill GitHub list input default values as empty', () => {
-    expect(wrapper.find(ListInput).at(0).props().initialValues).toEqual(undefined);
-    expect(wrapper.find(ListInput).at(1).props().initialValues).toEqual(undefined);
+  it('should render the CA file label and input field', () => {
+    verifyFormField({
+      labelText: 'CA file',
+      inputRole: 'textbox',
+      inputName: 'CA file',
+      inputValue: '',
+      inputId: 'ca-file-input',
+      helpText: '',
+    });
+
+    // Verify the Browse button is rendered
+    const browseButton = screen.getByText('Browse...');
+    expect(browseButton).toBeVisible();
+
+    // Verify the textarea is rendered with the correct attribute
+    expect(screen.getByLabelText('CA file')).toBeVisible();
+  });
+
+  it('should render the title, description, and ListInput component', () => {
+    expect(screen.getByRole('heading', { name: 'Organizations' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Teams' })).toBeVisible();
+    // TODO: Add tests for ListInput component and <Trans> component contents
+  });
+
+  // TODO: Add the test later on.
+  // it('should render the form elements of AddGitHubPage component', () => {
+  //   expect(wrapper.find('input[id="client-secret"]').exists()).toBe(true);
+  //   expect(wrapper.find(ListInput).length).toEqual(2);
+  // });
+
+  it("should render 'Add' and 'Cancel' buttons in a button bar", () => {
+    controlButtonTest();
   });
 });

@@ -7,7 +7,7 @@ import { ListInput } from '../../../public/components/utils';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
 import { AddRequestHeaderPage } from '../../../public/components/cluster-settings/request-header-idp-form';
-import { controlButtonTest } from './basicauth-idp-form.spec';
+import { controlButtonTest } from './testUtils';
 
 describe('Add Identity Provider: Request Header', () => {
   let wrapper;
@@ -38,7 +38,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+    controlButtonTest();
   });
 
   it('should prefill request-header in name field by default', () => {

@@ -67,8 +67,15 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
                 />
               </span>
               <span className="pf-v6-c-button pf-m-control co-btn-file">
-                <input id={id} type="file" onChange={this.onFileUpload} data-test="file-input" />
-                {t('public~Browse...')}
+                <label htmlFor={id}>Browse...</label>{' '}
+                {/* Fixe issue where button color become bolder and darker */}
+                <input
+                  id={id}
+                  type="file"
+                  aria-label={t('public~Browse...')}
+                  onChange={this.onFileUpload}
+                  data-test="file-input"
+                />
               </span>
             </div>
             {this.props.inputFieldHelpText ? (

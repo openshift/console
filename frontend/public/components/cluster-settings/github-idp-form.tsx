@@ -184,6 +184,7 @@ export const AddGitHubPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
+                aria-label={t('public~Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -206,7 +207,11 @@ export const AddGitHubPage = () => {
               {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
             </p>
           </div>
-          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
+          <IDPCAFileInput
+            id="ca-file-input"
+            value={caFileContent}
+            onChange={(c: string) => setCaFileContent(c)}
+          />
           <div className="co-form-section__separator" />
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Organizations')}

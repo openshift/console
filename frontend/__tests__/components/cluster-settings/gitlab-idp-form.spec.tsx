@@ -1,46 +1,83 @@
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
-import store from '@console/internal/redux';
-
-import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
-import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
+import '@testing-library/jest-dom';
+import { screen } from '@testing-library/react';
+import {
+  verifyFormField,
+  controlButtonTest,
+  verifyPageTitleAndSubtitle,
+  verifyInputPasswordField,
+} from './testUtils';
+import { renderWithProviders } from '@console/shared/src/utils/__tests__/testUtils';
 import { AddGitLabPage } from '../../../public/components/cluster-settings/gitlab-idp-form';
-import { controlButtonTest } from './basicauth-idp-form.spec';
 
 describe('Add Identity Provider: GitLab', () => {
-  let wrapper;
   beforeEach(() => {
-    wrapper = mount(
-      <Provider store={store}>
-        <BrowserRouter>
-          <AddGitLabPage />
-        </BrowserRouter>
-      </Provider>,
-    );
+    renderWithProviders(<AddGitLabPage />);
   });
 
-  it('should render AddGitLabPage component', () => {
-    expect(wrapper.exists()).toBe(true);
+  it('should render page title and sub title', () => {
+    verifyPageTitleAndSubtitle({
+      title: 'Add Identity Provider: GitLab',
+      subtitle: 'You can use GitLab integration for users authenticating with GitLab credentials.',
+    });
+  });
+  it('should render the Name label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Name',
+      inputRole: 'textbox',
+      inputName: 'Name',
+      inputValue: 'gitlab',
+      inputId: 'idp-name',
+      helpText: 'Unique name of the new identity provider. This cannot be changed later.',
+    });
   });
 
-  it('should render correct GitLab IDP page title', () => {
-    expect(wrapper.contains('Add Identity Provider: GitLab')).toBeTruthy();
+  it('should render the URL label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'URL',
+      inputRole: 'textbox',
+      inputName: 'URL',
+      inputValue: '',
+      inputId: 'url',
+      helpText: 'The OAuth server base URL.',
+    });
   });
 
-  it('should render the form elements of AddGitLabPage component', () => {
-    expect(wrapper.find(IDPNameInput).exists()).toBe(true);
-    expect(wrapper.find(IDPCAFileInput).exists()).toBe(true);
-    expect(wrapper.find('input[id="url"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="client-id"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="client-secret"]').exists()).toBe(true);
+  it('should render the Client ID label, input field, and help text', () => {
+    verifyFormField({
+      labelText: 'Client ID',
+      inputRole: 'textbox',
+      inputName: 'Client ID',
+      inputValue: '',
+      inputId: 'client-id',
+      helpText: '',
+    });
+  });
+
+  it('should render the Client Secret label and input password field', () => {
+    verifyInputPasswordField({
+      labelText: 'Client secret',
+      inputForId: 'client-secret',
+    });
+  });
+
+  it('should render the CA file label and fields', () => {
+    verifyFormField({
+      labelText: 'CA file',
+      inputRole: 'textbox',
+      inputName: 'CA file',
+      inputValue: '',
+      inputId: 'ca-file-input',
+      helpText: '',
+    });
+
+    // Verify the Browse button is rendered
+    expect(screen.getByText('Browse...')).toBeVisible();
+
+    // Verify the textarea is rendered with the correct aria-label
+    expect(screen.getByLabelText('CA file')).toBeVisible();
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
-  });
-
-  it('should prefill gitlab in name field by default', () => {
-    expect(wrapper.find(IDPNameInput).props().value).toEqual('gitlab');
+    controlButtonTest();
   });
 });

@@ -7,7 +7,7 @@ import { ListInput } from '../../../public/components/utils';
 import { IDPNameInput } from '../../../public/components/cluster-settings/idp-name-input';
 import { IDPCAFileInput } from '../../../public/components/cluster-settings/idp-cafile-input';
 import { AddOpenIDIDPPage } from '../../../public/components/cluster-settings/openid-idp-form';
-import { controlButtonTest } from './basicauth-idp-form.spec';
+import { controlButtonTest } from './testUtils';
 
 describe('Add Identity Provider: OpenID Connect', () => {
   let wrapper;
@@ -39,7 +39,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper);
+    controlButtonTest();
   });
 
   it('should prefill openid in name field by default', () => {
