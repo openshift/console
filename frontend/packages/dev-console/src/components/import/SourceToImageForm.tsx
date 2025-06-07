@@ -9,6 +9,7 @@ import AppSection from './app/AppSection';
 import BuilderSection from './builder/BuilderSection';
 import GitSection from './git/GitSection';
 import { BuildOptions, GitImportFormData, SourceToImageFormProps } from './import-types';
+import NamespaceSection from './NamespaceSection';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 
@@ -33,6 +34,7 @@ const SourceToImageForm: React.FC<
       <FormBody>
         <BuilderSection builderImages={builderImages} />
         <GitSection showSample builderImages={builderImages} imageStreamName={imageStreamName} />
+        <NamespaceSection />
         <AppSection
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
