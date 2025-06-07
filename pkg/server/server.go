@@ -31,7 +31,6 @@ import (
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
-	"github.com/openshift/console/pkg/metrics"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
@@ -299,8 +298,13 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 
 	tokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return authHandler(withTokenReview(authenticator, h))
+		return s.CSRFVerifier.WithCSRFVerification(withTokenReview(authenticator, h))
 	}
+
+	bearerTokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
+		return withBearerTokenReview(authenticator, h)
+	}
+
 	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
@@ -609,11 +613,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
 
-	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
-		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
-			promhttp.Handler().ServeHTTP(w, r)
-		}),
-	))
+	handle("/metrics", bearerTokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+	}))
+
 	handleFunc("/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
 	}))
