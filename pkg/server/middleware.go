@@ -44,11 +44,51 @@ func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrf
 }
 
 func withTokenReview(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, err := authenticator.Authenticate(w, r)
+		if err != nil {
+			klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, unable to authenticate, %v", r.Method, r.URL.Path, err)
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		err = authenticator.ReviewToken(r.Context(), user.Token)
+		if err != nil {
+			klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		klog.V(4).Infof("TOKEN_REVIEW: '%s %s' user token successfully validated", r.Method, r.URL.Path)
+		h(w, r)
+	}
+}
+
+func withBearerTokenReview(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := authenticator.ReviewToken(r)
+			authorizationHeader := r.Header.Get("Authorization")
+			if authorizationHeader == "" {
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, missing Authorization header", r.Method, r.URL.Path)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			if !strings.HasPrefix(authorizationHeader, "Bearer ") {
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, 'Bearer' type Authorization header required", r.Method, r.URL.Path)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			bearerToken := strings.TrimPrefix(authorizationHeader, "Bearer ")
+			if bearerToken == "" {
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, empty or missing Bearer token", r.Method, r.URL.Path)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			err := authenticator.ReviewToken(r.Context(), bearerToken)
 			if err != nil {
-				klog.Errorf("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
