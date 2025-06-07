@@ -304,12 +304,7 @@ func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) 
 	http.Redirect(w, r, a.oauth2Config().AuthCodeURL(state), http.StatusSeeOther)
 }
 
-func (a *OAuth2Authenticator) ReviewToken(r *http.Request) error {
-	token, err := sessions.GetSessionTokenFromCookie(r)
-	if err != nil {
-		return err
-	}
-
+func (a *OAuth2Authenticator) ReviewToken(ctx context.Context, token string) error {
 	tokenReview := &authv1.TokenReview{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "authentication.k8s.io/v1",
@@ -324,7 +319,7 @@ func (a *OAuth2Authenticator) ReviewToken(r *http.Request) error {
 		internalK8sClientset.
 		AuthenticationV1().
 		TokenReviews().
-		Create(r.Context(), tokenReview, metav1.CreateOptions{})
+		Create(ctx, tokenReview, metav1.CreateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to create TokenReview, %v", err)
