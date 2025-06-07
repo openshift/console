@@ -208,7 +208,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
               type={AffinityRuleType.Required}
             />
           ))}
-          <div className="row">
+          <div>
             <Button
               icon={<PlusCircleIcon className="co-icon-space-r" />}
               type="button"
@@ -243,7 +243,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
               type={AffinityRuleType.Preferred}
             />
           ))}
-          <div className="row">
+          <div>
             <Button
               icon={<PlusCircleIcon className="co-icon-space-r" />}
               type="button"
@@ -430,7 +430,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
               type={AffinityRuleType.Required}
             />
           ))}
-          <div className="row">
+          <div>
             <Button
               icon={<PlusCircleIcon className="co-icon-space-r" />}
               type="button"
@@ -468,7 +468,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, ui
             );
           })}
 
-          <div className="row">
+          <div>
             <Button
               icon={<PlusCircleIcon className="co-icon-space-r" />}
               type="button"
