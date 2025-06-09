@@ -1,8 +1,8 @@
 {
   "Web Terminal": "Web ターミナル",
   "Configure default timeout and image of web terminal operator.": "Web ターミナル Operator のデフォルトのタイムアウトおよびイメージを設定します。",
-  "DevWorkspaceTemplate": "DevWorkspaceTemplate",
-  "DevWorkspaceTemplates": "DevWorkspaceTemplates",
+  "DevWorkspaceTemplate": "開発ワークスペーステンプレート",
+  "DevWorkspaceTemplates": "DevWorkspace テンプレート",
   "Close terminal?": "ターミナルを閉じますか?",
   "This will close the terminal session. Content in the terminal will not be restored on next session.": "これでターミナルセッションが閉じます。ターミナルのコンテンツは、次のセッションでは復元されません。",
   "Yes": "Yes",

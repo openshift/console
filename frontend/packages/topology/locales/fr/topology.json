@@ -85,7 +85,7 @@
   "Prerequisites": "Prérequis",
   "Quick Starts": "Démarrages rapides",
   "Start": "Démarrer",
-  "View all developer catalog items ({{itemCount, number}})": "Afficher tous les éléments du catalogue Développeur ({{itemCount, number}})",
+  "View all software catalog items ({{itemCount, number}})": "Afficher tous les éléments du catalogue de logiciels ({{itemCount, number}} )",
   "View all quick starts ({{itemCount, number}})": "Afficher tous les démarrages rapides ({{itemCount, number}})",
   "View all samples ({{itemCount, number}})": "Afficher tous les exemples ({{itemCount, number}})",
   "Add to Project": "Ajouter au projet",
