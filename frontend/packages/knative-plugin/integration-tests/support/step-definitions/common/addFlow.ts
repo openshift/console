@@ -13,10 +13,12 @@ import {
   createGitWorkload,
   catalogPage,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 
@@ -41,8 +43,8 @@ Given('user has opened application {string} in topology page', (componentName: s
   topologyPage.verifyWorkloadInTopologyPage(componentName);
 });
 
-Given('user is at Developer Catalog page', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+Given('user is at Software Catalog page', () => {
+  addPage.selectCardFromOptions(addOptions.SoftwareCatalog);
 });
 
 When('user clicks Instantiate Template button on side bar', () => {
@@ -58,7 +60,7 @@ When('user clicks Create button on Add page', () => {
 });
 
 Then('user will be redirected to Add page', () => {
-  cy.get('.ocs-page-layout__title').should('contain.text', pageTitle.Add);
+  cy.get('[data-test="page-heading"] h1').should('contain.text', pageTitle.Add);
 });
 
 When('user clicks Cancel button on Add page', () => {

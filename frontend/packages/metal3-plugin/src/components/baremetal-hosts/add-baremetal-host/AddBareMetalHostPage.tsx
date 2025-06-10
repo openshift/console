@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import PrimaryHeading from '@console/shared/src/components/heading/PrimaryHeading';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import AddBareMetalHost from './AddBareMetalHost';
 
 const AddBareMetalHostPage: React.FunctionComponent = () => {
@@ -17,22 +18,16 @@ const AddBareMetalHostPage: React.FunctionComponent = () => {
     : t('metal3-plugin~Add Bare Metal Host');
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <div className="co-m-pane__body co-m-pane__form">
-        {/* TODO(jtomasek): Turn this to PageHeading alternative for create forms (e.g.
-        CreateResourceFormPageHeading) */}
-        <PrimaryHeading alignItemsBaseline>
-          <div className="co-m-pane__name">{title}</div>
-        </PrimaryHeading>
-        {!isEditing && (
-          <p className="co-m-pane__explanation">
-            {t('metal3-plugin~Expand the hardware inventory by registering a new Bare Metal Host.')}
-          </p>
+      <DocumentTitle>{title}</DocumentTitle>
+      <PageHeading
+        title={title}
+        helpText={t(
+          'metal3-plugin~Expand the hardware inventory by registering a new Bare Metal Host.',
         )}
+      />
+      <PaneBody className="co-m-pane__form">
         <AddBareMetalHost namespace={namespace} name={name} enablePowerMgmt={enablePowerMgmt} />
-      </div>
+      </PaneBody>
     </>
   );
 };

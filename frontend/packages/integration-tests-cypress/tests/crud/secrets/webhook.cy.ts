@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../../support';
 import { detailsPage } from '../../../views/details-page';
+import { guidedTour } from '../../../views/guided-tour';
 import { secrets } from '../../../views/secret';
 
 describe('Webhook secret', () => {
@@ -8,6 +9,7 @@ describe('Webhook secret', () => {
 
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 
@@ -26,7 +28,7 @@ describe('Webhook secret', () => {
 
   it(`Create, edit, and delete a webhook secret`, () => {
     cy.log('Create secret');
-    cy.get('.co-m-pane__heading').contains('Create webhook secret');
+    cy.get('[data-test="page-heading"] h1').contains('Create webhook secret');
     secrets.enterSecretName(webhookSecretName);
     cy.byTestID('secret-key').type(webhookSecretKey);
     secrets.save();

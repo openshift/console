@@ -22,10 +22,14 @@ const ConfigurationsOverviewListItem: React.FC<ConfigurationsOverviewListItemPro
         name={name}
         namespace={namespace}
       />
-      <span className="text-muted">{t('knative-plugin~Latest created Revision name:')} </span>
+      <span className="pf-v6-u-text-color-subtle">
+        {t('knative-plugin~Latest created Revision name:')}{' '}
+      </span>
       <span>{latestCreatedRevisionName}</span>
       <br />
-      <span className="text-muted">{t('knative-plugin~Latest ready Revision name:')} </span>
+      <span className="pf-v6-u-text-color-subtle">
+        {t('knative-plugin~Latest ready Revision name:')}{' '}
+      </span>
       <span>{latestReadyRevisionName}</span>
     </li>
   );

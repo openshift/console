@@ -1,12 +1,11 @@
 # Dockerfile to build console image from pre-built front end.
-
-FROM quay.io/coreos/tectonic-console-builder:v28 AS build
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.23-openshift-4.20 AS build
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
 RUN ./build-backend.sh
 
-FROM openshift/origin-base
+FROM registry.ci.openshift.org/ocp/4.20:base-rhel9
 COPY --from=build /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin/bridge
 COPY ./frontend/public/dist /opt/bridge/static
 COPY ./pkg/graphql/schema.graphql /pkg/graphql/schema.graphql

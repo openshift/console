@@ -9,7 +9,6 @@ import {
   AlertItemProps,
   HealthItemProps,
   ResourceInventoryItemProps,
-  DetailsBodyProps,
   UtilizationItemProps,
   UtilizationBodyProps,
   UtilizationDurationDropdownProps,
@@ -43,8 +42,6 @@ export const HealthBody: React.FC = require('@console/shared/src/components/dash
   .default;
 export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryItem')
   .ResourceInventoryItem;
-export const DetailsBody: React.FC<DetailsBodyProps> = require('@console/shared/src/components/dashboard/details-card/DetailsBody')
-  .default;
 export const UtilizationItem: React.FC<UtilizationItemProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationItem')
   .default;
 export const UtilizationBody: React.FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
@@ -60,7 +57,6 @@ export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@con
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
-export const ServicesList = require('@console/internal/components/service').ServicesList;
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
   .useDashboardResources;
 // useUserSettings is deprecated and is now exposed in dynamic plugin SDK.

@@ -8,8 +8,8 @@ import {
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { ExternalLink } from '@console/internal/components/utils';
 import { APIError } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
@@ -84,7 +84,9 @@ const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, an
       .catch((err) => {
         if (mounted) setLoadedError(err);
       });
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const normalizedDevfileSamples = React.useMemo(() => normalizeDevfile(devfileSamples || [], t), [

@@ -6,8 +6,9 @@ import { act } from 'react-dom/test-utils';
 import { setI18n } from 'react-i18next';
 import { Provider } from 'react-redux';
 import * as Router from 'react-router-dom-v5-compat';
-import { PageHeading, ButtonBar } from '@console/internal/components/utils/';
+import { ButtonBar } from '@console/internal/components/utils/';
 import store from '@console/internal/redux';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import NamespacedPage from '../../NamespacedPage';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
@@ -17,7 +18,7 @@ import ImageSearchSection from '../image-search/ImageSearchSection';
 import { DeploySection } from '../section/deploy-section/DeploySection';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

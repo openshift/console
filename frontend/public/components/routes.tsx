@@ -1,8 +1,17 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
-import { Button, Popover } from '@patternfly/react-core';
+import {
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+  Popover,
+} from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
 import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
@@ -12,6 +21,7 @@ import i18next from 'i18next';
 import { Status } from '@console/shared';
 import { FLAGS } from '@console/shared/src/constants';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
   CopyToClipboard,
@@ -163,9 +173,9 @@ const tableColumnClasses = [
   '',
   '',
   // Status is less important than Location, so hide it earlier, but maintain its position for consistency with other tables
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-u-w-16-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -177,16 +187,13 @@ const RouteTableRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj: route }) => 
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={route.metadata.name} namespace={route.metadata.namespace} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={route.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <RouteStatus obj={route} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         <RouteLocation obj={route} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
@@ -214,7 +221,7 @@ const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {
 
   const visibleKeyValue = showKey ? tls.key : <MaskedData />;
   return (
-    <dl>
+    <DescriptionList>
       <DetailsItem label={t('public~Termination type')} obj={route} path="spec.tls.termination" />
       <DetailsItem
         label={t('public~Insecure traffic')}
@@ -224,30 +231,34 @@ const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {
       <DetailsItem label={t('public~Certificate')} obj={route} path="spec.tls.certificate">
         {tls.certificate ? <CopyToClipboard value={tls.certificate} /> : '-'}
       </DetailsItem>
-      <dt className="co-m-route-tls-reveal__title">
-        {t('public~Key')}{' '}
-        {tls.key && (
-          <Button
-            className="pf-m-link--align-left"
-            type="button"
-            onClick={() => setShowKey(!showKey)}
-            variant="link"
-          >
-            {showKey ? (
-              <>
-                <EyeSlashIcon className="co-icon-space-r" />
-                {t('public~Hide')}
-              </>
-            ) : (
-              <>
-                <EyeIcon className="co-icon-space-r" />
-                {t('public~Reveal')}
-              </>
-            )}
-          </Button>
-        )}
-      </dt>
-      <dd>{tls.key ? <CopyToClipboard value={tls.key} visibleValue={visibleKeyValue} /> : '-'}</dd>
+      <DescriptionListGroup>
+        <DescriptionListTerm className="co-m-route-tls-reveal__title">
+          {t('public~Key')}{' '}
+          {tls.key && (
+            <Button
+              className="pf-m-link--align-left"
+              type="button"
+              onClick={() => setShowKey(!showKey)}
+              variant="link"
+            >
+              {showKey ? (
+                <>
+                  <EyeSlashIcon className="co-icon-space-r" />
+                  {t('public~Hide')}
+                </>
+              ) : (
+                <>
+                  <EyeIcon className="co-icon-space-r" />
+                  {t('public~Reveal')}
+                </>
+              )}
+            </Button>
+          )}
+        </DescriptionListTerm>
+        <DescriptionListDescription>
+          {tls.key ? <CopyToClipboard value={tls.key} visibleValue={visibleKeyValue} /> : '-'}
+        </DescriptionListDescription>
+      </DescriptionListGroup>
       <DetailsItem label={t('public~CA certificate')} obj={route} path="spec.tls.caCertificate">
         {tls.certificate ? <CopyToClipboard value={tls.caCertificate} /> : '-'}
       </DetailsItem>
@@ -264,7 +275,7 @@ const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {
           )}
         </DetailsItem>
       )}
-    </dl>
+    </DescriptionList>
   );
 };
 
@@ -368,7 +379,7 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
               routerName: ingress.routerName,
             })}`}
           />
-          <dl>
+          <DescriptionList>
             <DetailsItem label={t('public~Host')} obj={route} path="status.ingress.host">
               {ingress.host}
             </DetailsItem>
@@ -392,7 +403,7 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
                 />
               )}
             </DetailsItem>
-          </dl>
+          </DescriptionList>
           <TertiaryHeading altSpacing="pf-v6-u-my-xl">{t('public~Conditions')}</TertiaryHeading>
           <Conditions conditions={ingress.conditions} />
         </div>
@@ -409,10 +420,10 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   );
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Route details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={route}>
               <DetailsItem label={t('public~Service')} obj={route} path="spec.to.name">
                 <ResourceLink
@@ -428,17 +439,21 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                 path="spec.port.targetPort"
               />
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt>{t('public~Location')}</dt>
-              <dd>
-                <RouteLocation obj={route} />
-              </dd>
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                <RouteStatus obj={route} />
-              </dd>
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Location')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <RouteLocation obj={route} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <RouteStatus obj={route} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               <DetailsItem label={t('public~Host')} obj={route} path="spec.host" />
               <DetailsItem label={t('public~Path')} obj={route} path="spec.path" />
               {primaryIngressStatus && (
@@ -456,16 +471,16 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   )}
                 </DetailsItem>
               )}
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~TLS settings')} />
         <TLSSettings route={route} />
-      </div>
+      </PaneBody>
       {!_.isEmpty(route.spec.alternateBackends) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Traffic')} />
           <p className="co-m-pane__explanation">
             {t('public~This route splits traffic across multiple services.')}
@@ -487,14 +502,14 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
               </tbody>
             </table>
           </div>
-        </div>
+        </PaneBody>
       )}
       {_.isEmpty(route.status.ingress) ? (
         <ConsoleEmptyState>{t('public~No route status')}</ConsoleEmptyState>
       ) : (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <RouteIngressStatus route={route} />
-        </div>
+        </PaneBody>
       )}
     </>
   );

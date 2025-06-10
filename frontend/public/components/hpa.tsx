@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import { css } from '@patternfly/react-styles';
+import { sortable, Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -19,10 +20,11 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   navFactory,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 
@@ -30,11 +32,11 @@ const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel), ...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
-  <div className="row">
-    <div className="col-xs-6">{type}</div>
-    <div className="col-xs-3">{current || '-'}</div>
-    <div className="col-xs-3">{target || '-'}</div>
-  </div>
+  <Tr>
+    <Td width={50}>{type}</Td>
+    <Td width={25}>{current || '-'}</Td>
+    <Td width={25}>{target || '-'}</Td>
+  </Tr>
 );
 
 const externalRow = (metric, current, key) => {
@@ -71,7 +73,9 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
     const type = targetUtilization ? (
       <>
         {resourceLabel}&nbsp;
-        <span className="small text-muted">{t('public~(as a percentage of request)')}</span>
+        <span className="small pf-v6-u-text-color-subtle">
+          {t('public~(as a percentage of request)')}
+        </span>
       </>
     ) : (
       resourceLabel
@@ -116,13 +120,15 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
   return (
     <>
       <SectionHeading text={t('public~Metrics')} />
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-xs-6">{t('public~Type')}</div>
-          <div className="col-xs-3">{t('public~Current')}</div>
-          <div className="col-xs-3">{t('public~Target')}</div>
-        </div>
-        <div className="co-m-table-grid__body">
+      <PfTable gridBreakPoint="">
+        <Thead>
+          <Tr>
+            <Th width={50}>{t('public~Type')}</Th>
+            <Th width={25}>{t('public~Current')}</Th>
+            <Th width={25}>{t('public~Target')}</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {hpa.spec.metrics.map((metric, i) => {
             // https://github.com/kubernetes/api/blob/master/autoscaling/v2beta1/types.go
             const current = _.get(hpa, ['status', 'currentMetrics', i]);
@@ -143,17 +149,19 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
                 return resourceRow(metric, current, i);
               default:
                 return (
-                  <div key={i} className="row">
-                    <div className="col-xs-12">
+                  <Tr key={i}>
+                    <Td width={50}>
                       {metric.type}{' '}
-                      <span className="small text-muted">{t('public~(unrecognized type)')}</span>
-                    </div>
-                  </div>
+                      <span className="small pf-v6-u-text-color-subtle">
+                        {t('public~(unrecognized type)')}
+                      </span>
+                    </Td>
+                  </Tr>
                 );
             }
           })}
-        </div>
-      </div>
+        </Tbody>
+      </PfTable>
     </>
   );
 };
@@ -164,14 +172,14 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~HorizontalPodAutoscaler details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={hpa} />
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
               <DetailsItem label={t('public~Scale target')} obj={hpa} path="spec.scaleTargetRef">
                 <ResourceLink
                   kind={hpa.spec.scaleTargetRef.kind}
@@ -199,17 +207,17 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
                 obj={hpa}
                 path="status.desiredReplicas"
               />
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <MetricsTable obj={hpa} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={hpa.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -251,16 +259,13 @@ const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         <ResourceLink
           kind={obj.spec.scaleTargetRef.kind}
           name={obj.spec.scaleTargetRef.name}

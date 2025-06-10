@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { loader } from '@monaco-editor/react';
 import { CodeEditor } from '@patternfly/react-code-editor';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
 import { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
@@ -40,9 +40,10 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
         emptyStateLink={t('Start from scratch')}
         emptyStateTitle={t('Start editing')}
         {...props}
-        className={classNames('co-code-editor', props.className)}
+        className={css('co-code-editor', props.className)}
         editorProps={{
           ...props?.editorProps,
+          theme: `console-${theme}`,
           beforeMount: (monacoInstance) => {
             defineThemes(monacoInstance?.editor);
             window.monaco = monacoInstance; // for e2e tests
@@ -51,7 +52,7 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
         }}
         options={{
           ...props?.options,
-          theme: `console-${theme}`,
+          fontFamily: 'var(--pf-t--global--font--family--mono)',
         }}
       />
     </ErrorBoundaryInline>

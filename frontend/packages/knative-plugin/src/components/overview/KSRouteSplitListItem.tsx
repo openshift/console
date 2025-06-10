@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ExternalLink } from '@console/internal/components/utils';
+import { Grid, GridItem } from '@patternfly/react-core';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RoutesOverviewListItem } from '../../types';
 import './KSRouteSplitListItem.scss';
 
@@ -11,14 +12,14 @@ const KSRouteSplitListItem: React.FC<KSRouteSplitListItemProps> = ({ route: { pe
   url.length > 0 && percent.length > 0 ? (
     <li className="list-group-item">
       <div className="odc-ksroute-split-list-item">
-        <div className="row">
-          <div className="col-xs-10">
+        <Grid hasGutter>
+          <GridItem span={10}>
             <span>
               {`${percent} → `}
               <ExternalLink href={url} additionalClassName="co-external-link--block" text={url} />
             </span>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </div>
     </li>
   ) : null;

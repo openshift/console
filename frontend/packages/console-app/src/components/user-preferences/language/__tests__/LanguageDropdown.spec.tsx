@@ -6,7 +6,7 @@ import LanguageDropdown from '../LanguageDropdown';
 import { usePreferredLanguage } from '../usePreferredLanguage';
 
 jest.mock('react', () => {
-  const reactActual = require.requireActual('react');
+  const reactActual = jest.requireActual('react');
   return {
     ...reactActual,
     useContext: () => jest.fn(),
@@ -18,7 +18,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
 }));
 
 jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
+  const reactI18next = jest.requireActual('react-i18next');
   return {
     ...reactI18next,
     useTranslation: () => ({

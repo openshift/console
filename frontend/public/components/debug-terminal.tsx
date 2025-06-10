@@ -1,14 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { LoadingBox, PageHeading } from '@console/internal/components/utils';
+import { LoadingBox, ConnectedPageHeading } from '@console/internal/components/utils';
 import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
-import { PodExecLoader } from '@console/internal/components/pod';
+import { PodConnectLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { resourcePath } from './utils/resource-link';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
@@ -59,11 +60,11 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
 
 const DebugTerminalError: React.FC<DebugTerminalErrorProps> = ({ error, description }) => {
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <Alert variant="danger" isInline title={error}>
         <p>{description}</p>
       </Alert>
-    </div>
+    </PaneBody>
   );
 };
 
@@ -92,7 +93,7 @@ const DebugTerminalInner: React.FC<DebugTerminalInnerProps> = ({ debugPod, initi
       );
     case 'Running':
       return (
-        <PodExecLoader
+        <PodConnectLoader
           obj={debugPod}
           initialContainer={initialContainer}
           infoMessage={infoMessage}
@@ -192,11 +193,8 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
 
   return (
     <div>
-      <Helmet>
-        <title>{t('public~Debug {{name}}', { name })}</title>
-      </Helmet>
-      <PageHeading
-        detail
+      <DocumentTitle>{t('public~Debug {{name}}', { name })}</DocumentTitle>
+      <ConnectedPageHeading
         title={t('public~Debug {{name}}', { name })}
         kind="Pod"
         obj={{ data: podData }}

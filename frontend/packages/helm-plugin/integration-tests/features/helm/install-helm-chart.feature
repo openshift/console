@@ -15,7 +15,7 @@ Feature: Install the Helm Release
 
 
         @smoke @manual
-        Scenario: Developer Catalog Page when Helm Charts checkbox is selected: HR-06-TC02
+        Scenario: Software Catalog Page when Helm Charts checkbox is selected: HR-06-TC02
             Given user is at Add page
               And user has added multiple helm charts repositories
              When user selects "Helm Chart" card from add page
@@ -27,7 +27,7 @@ Feature: Install the Helm Release
 
         # This test is broken because the code to submit the modal in form doesn't work correctly.
         @regression @broken-test
-        Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-06-TC03
+        Scenario: Install Helm Chart from Software Catalog Page using YAML View: HR-06-TC03
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Quarkus" card from catalog page

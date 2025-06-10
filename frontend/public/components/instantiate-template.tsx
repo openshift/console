@@ -2,8 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
-import * as classNames from 'classnames';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { css } from '@patternfly/react-styles';
 import {
   ActionGroup,
   Button,
@@ -16,13 +16,16 @@ import {
   TextArea,
   InputGroup,
   InputGroupItem,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { CompressIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';
 
 import { ANNOTATIONS, withActivePerspective } from '@console/shared';
-
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
@@ -32,15 +35,8 @@ import {
   getTemplateIcon,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
-import {
-  ButtonBar,
-  ExternalLink,
-  Firehose,
-  LoadError,
-  LoadingBox,
-  NsDropdown,
-  PageHeading,
-} from './utils';
+import { ButtonBar, Firehose, LoadError, LoadingBox, NsDropdown } from './utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
   K8sResourceKind,
@@ -83,7 +79,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   const supportURL = annotations[ANNOTATIONS.supportURL];
 
   return (
-    <div className="co-catalog-item-info">
+    <div className="pf-v6-u-mb-md">
       <div className="co-catalog-item-details">
         <div className="co-catalog-item-icon">
           <span className="co-catalog-item-icon__bg">
@@ -96,7 +92,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
               />
             ) : (
               <span
-                className={classNames(
+                className={css(
                   'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
                   normalizeIconClass(iconClass),
                 )}
@@ -336,14 +332,14 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   const params = template.parameters || [];
 
   return (
-    <div className="row">
-      <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+    <Grid hasGutter>
+      <GridItem md={7} order={{ default: '0', md: '1' }}>
         <TemplateInfo template={template} />
-      </div>
-      <div className="col-md-5 col-md-pull-7">
+      </GridItem>
+      <GridItem md={5} order={{ default: '1', md: '0' }}>
         <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="namespace">
+            <label className="co-required" htmlFor="namespace">
               {t('public~Namespace')}
             </label>
             <NsDropdown selectedKey={namespace} onChange={(v) => setNamespace(v)} id="namespace" />
@@ -387,8 +383,8 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   );
 };
 
@@ -417,15 +413,13 @@ export const InstantiateTemplatePage: React.FC<{}> = (props) => {
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} />
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+      <PaneBody>
         <Firehose resources={resources}>
           <TemplateForm preselectedNamespace={preselectedNamespace} {...(props as any)} />
         </Firehose>
-      </div>
+      </PaneBody>
     </>
   );
 };

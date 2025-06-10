@@ -19,6 +19,7 @@ import {
   app,
   installKnativeOperatorUsingCLI,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { userLoginPage } from '../../pages/functions/common';
 
 Given('user has installed OpenShift Serverless Operator', () => {
@@ -31,6 +32,7 @@ Given('user has logged in as a basic user', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   cy.testA11y('Developer perspective with guide tour modal');
   guidedTour.close();

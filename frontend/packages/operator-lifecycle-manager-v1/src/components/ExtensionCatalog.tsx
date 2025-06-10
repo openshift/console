@@ -1,94 +1,42 @@
-import * as React from 'react';
-import { Page, PageSection } from '@patternfly/react-core';
-import Helmet from 'react-helmet';
-import { useTranslation } from 'react-i18next';
-import {
-  ConsoleEmptyState,
-  PageHeading,
-  skeletonCatalog,
-  StatusBox,
-} from '@console/internal/components/utils';
-import {
-  InstalledState,
-  OperatorHubItem,
-} from '@console/operator-lifecycle-manager/src/components/operator-hub';
-import { OperatorHubTileView } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-items';
+import { Trans, useTranslation } from 'react-i18next';
+import { DOC_URL_RED_HAT_MARKETPLACE } from '@console/internal/components/utils';
+import { CatalogController, CatalogServiceProvider } from '@console/shared/src/components/catalog';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ExtensionCatalogItem } from '../database/types';
-import { useExtensionCatalogItems } from '../hooks/useExtensionCatalogItems';
-
-const mapExtensionItemsToLegacyOperatorHubItems = (packages: ExtensionCatalogItem[]) => {
-  return (packages ?? []).map<OperatorHubItem>(
-    ({
-      categories,
-      capabilities,
-      description,
-      displayName,
-      icon,
-      infrastructureFeatures,
-      keywords,
-      longDescription,
-      name,
-      provider,
-      source,
-      validSubscription,
-    }) => ({
-      authentication: null,
-      capabilityLevel: capabilities,
-      catalogSource: '',
-      catalogSourceNamespace: '',
-      categories,
-      cloudCredentials: null,
-      description: description || longDescription,
-      infraFeatures: infrastructureFeatures,
-      infrastructure: null,
-      installed: false,
-      installState: InstalledState.NotInstalled,
-      kind: null,
-      longDescription: longDescription || description,
-      name: displayName || name,
-      obj: null,
-      provider,
-      source,
-      tags: keywords,
-      uid: name,
-      validSubscription,
-      ...(icon ? { imgUrl: `data:${icon.mediatype};base64,${icon.base64data}` } : {}),
-    }),
-  );
-};
+import { useExtensionCatalogCategories } from '../hooks/useExtensionCatalogCategories';
 
 const ExtensionCatalog = () => {
   const { t } = useTranslation('olm-v1');
-  const [extensionCatalogItems, loading, error] = useExtensionCatalogItems();
   const [namespace] = useActiveNamespace();
-  const legacyOpertorHubItems = mapExtensionItemsToLegacyOperatorHubItems(extensionCatalogItems);
+  const [categories, loading, error] = useExtensionCatalogCategories();
 
   return (
-    <Page>
-      <PageSection hasBodyWrapper={false}>
-        <Helmet>
-          <title>{t('Extension Catalog')}</title>
-        </Helmet>
-        <PageHeading title={t('Extension Catalog')} />
-        <StatusBox
-          skeleton={skeletonCatalog}
-          data={legacyOpertorHubItems}
+    <CatalogServiceProvider
+      catalogType="ExtensionCatalogItem"
+      namespace={namespace}
+      catalogId="olm-extension-catalog"
+    >
+      {(service) => (
+        <CatalogController
+          {...service}
+          enableDetailsPanel
+          categories={categories}
+          title={t('Extension Catalog')}
+          type="ExtensionCatalogItem"
           loaded={!loading}
           loadError={error}
-          label={t('Extension Catalog items')}
-          EmptyMsg={() => (
-            <ConsoleEmptyState title={t('No Extension Catalog items found')}>
-              {t(
-                'Check that OLM v1 is configured and at least one valid ClusterCatalog has been created.',
-              )}
-            </ConsoleEmptyState>
-          )}
-        >
-          <OperatorHubTileView items={legacyOpertorHubItems} namespace={namespace} />
-        </StatusBox>
-      </PageSection>
-    </Page>
+          description={
+            <Trans ns="olm-v1">
+              Discover Operators from the Kubernetes community and Red Hat partners, curated by Red
+              Hat. You can purchase commercial software through{' '}
+              <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
+              You can install Operators on your clusters to provide optional add-ons and shared
+              services to your developers.
+            </Trans>
+          }
+        />
+      )}
+    </CatalogServiceProvider>
   );
 };
 

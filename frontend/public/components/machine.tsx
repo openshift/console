@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import {
   getMachineAddresses,
@@ -17,7 +17,8 @@ import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { useExactSearch } from '@console/app/src/components/user-preferences/search';
+import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage } from './factory';
 import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
@@ -39,6 +40,14 @@ import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 import { tableFilters } from './factory/table-filters';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
@@ -47,11 +56,11 @@ export const machineReference = referenceForModel(MachineModel);
 const tableColumnInfo = [
   { className: '', id: 'name' },
   { className: '', id: 'namespace' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'nodeRef' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'phase' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'provider' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'region' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'avail' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'nodeRef' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'phase' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'provider' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'region' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'avail' },
   { className: Kebab.columnClass, id: '' },
 ];
 
@@ -67,7 +76,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
     <>
       <TableData
         {...tableColumnInfo[0]}
-        className={classNames(tableColumnInfo[0].className, 'co-break-word')}
+        className={css(tableColumnInfo[0].className, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
       >
         <ResourceLink
@@ -78,7 +87,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
       </TableData>
       <TableData
         {...tableColumnInfo[1]}
-        className={classNames(tableColumnInfo[1].className, 'co-break-word')}
+        className={css(tableColumnInfo[1].className, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
       >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
@@ -115,70 +124,70 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Machine details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj} />
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
-                  <Status status={getMachinePhase(obj)} />
-                </DetailsItem>
-                <DetailsItem
-                  label={t('public~Provider state')}
-                  obj={obj}
-                  path="status.providerStatus.instanceState"
-                >
-                  {providerState}
-                </DetailsItem>
-                {nodeName && (
-                  <>
-                    <dt>{t('public~Node')}</dt>
-                    <dd>
-                      <NodeLink name={nodeName} />
-                    </dd>
-                  </>
-                )}
-                {machineRole && (
-                  <>
-                    <dt>{t('public~Machine role')}</dt>
-                    <dd>{machineRole}</dd>
-                  </>
-                )}
-                {instanceType && (
-                  <>
-                    <dt>{t('public~Instance type')}</dt>
-                    <dd>{instanceType}</dd>
-                  </>
-                )}
-                {region && (
-                  <>
-                    <dt>{t('public~Region')}</dt>
-                    <dd>{region}</dd>
-                  </>
-                )}
-                {zone && (
-                  <>
-                    <dt>{t('public~Availability zone')}</dt>
-                    <dd>{zone}</dd>
-                  </>
-                )}
-                <dt>{t('public~Machine addresses')}</dt>
-                <dd>
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <ResourceSummary resource={obj} />
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
+              <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
+                <Status status={getMachinePhase(obj)} />
+              </DetailsItem>
+              <DetailsItem
+                label={t('public~Provider state')}
+                obj={obj}
+                path="status.providerStatus.instanceState"
+              >
+                {providerState}
+              </DetailsItem>
+              {nodeName && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Node')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    <NodeLink name={nodeName} />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {machineRole && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Machine role')}</DescriptionListTerm>
+                  <DescriptionListDescription>{machineRole}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {instanceType && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Instance type')}</DescriptionListTerm>
+                  <DescriptionListDescription>{instanceType}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {region && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Region')}</DescriptionListTerm>
+                  <DescriptionListDescription>{region}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {zone && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Availability zone')}</DescriptionListTerm>
+                  <DescriptionListDescription>{zone}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Machine addresses')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <NodeIPList ips={getMachineAddresses(obj)} expand />
-                </dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={obj.status?.providerStatus?.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

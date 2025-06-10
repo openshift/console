@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import {
   BlueArrowCircleUpIcon,
@@ -20,7 +20,6 @@ import {
   CustomOverviewDetailItem as CustomOverviewDetailItemType,
   OverviewDetailItem as OverviewDetailItemType,
 } from '@console/dynamic-plugin-sdk';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
@@ -44,8 +43,9 @@ import {
   ClusterUpdateStatus,
   getOCMLink,
 } from '../../../../module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { flagPending } from '../../../../reducers/features';
-import { ExternalLink, LoadingInline } from '../../../utils';
+import { LoadingInline } from '../../../utils';
 import { Link } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
@@ -88,7 +88,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       return lastVersion ? (
         <span className="co-select-to-copy">{lastVersion}</span>
       ) : (
-        <span className="text-secondary">{t('public~Not available')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('public~Not available')}</span>
       );
   }
 };
@@ -165,7 +165,7 @@ export const DetailsCard = withDashboardResources(
           {flagPending(openshiftFlag) ? (
             <LoadingInline />
           ) : (
-            <DetailsBody>
+            <DescriptionList>
               {openshiftFlag ? (
                 <>
                   <OverviewDetailItem
@@ -301,7 +301,7 @@ export const DetailsCard = withDashboardResources(
                   {k8sGitVersion}
                 </OverviewDetailItem>
               )}
-            </DetailsBody>
+            </DescriptionList>
           )}
         </CardBody>
       </Card>

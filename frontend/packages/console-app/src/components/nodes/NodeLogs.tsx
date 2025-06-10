@@ -15,12 +15,11 @@ import {
   Switch,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
-import classnames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
-  ExternalLink,
   getQueryArgument,
   LoadingBox,
   LoadingInline,
@@ -29,6 +28,8 @@ import {
 } from '@console/internal/components/utils';
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
 import { useUserSettings } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
@@ -39,7 +40,7 @@ type NodeLogsProps = {
 
 type LogControlsProps = {
   onTogglePath: () => void;
-  onChangePath: (event: React.ChangeEvent<HTMLInputElement>, newAPI: string) => void;
+  onChangePath: (event: React.MouseEvent<Element, MouseEvent>, newAPI: string) => void;
   path: string;
   isPathOpen: boolean;
   setPathOpen: (value: boolean) => void;
@@ -50,7 +51,7 @@ type LogControlsProps = {
   isLoadingFilenames: boolean;
   logFilenamesExist: boolean;
   onToggleFilename: () => void;
-  onChangeFilename: (event: React.ChangeEvent<HTMLInputElement>, newFilename: string) => void;
+  onChangeFilename: (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => void;
   setFilenameOpen: (value: boolean) => void;
   logFilename: string;
   isFilenameOpen: boolean;
@@ -88,7 +89,7 @@ const LogControls: React.FC<LogControlsProps> = ({
         <SelectOption
           key={value}
           value={value}
-          className={classnames({ 'co-node-logs__log-select-option': value.length > 50 })}
+          className={css({ 'co-node-logs__log-select-option': value.length > 50 })}
         >
           {value}
         </SelectOption>
@@ -175,7 +176,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   const pathItems = ['journal'];
   isWindows
     ? pathItems.push('containers', 'hybrid-overlay', 'kube-proxy', 'kubelet', 'containerd', 'wicd')
-    : labels['node-role.kubernetes.io/master'] === '' &&
+    : labels?.['node-role.kubernetes.io/master'] === '' &&
       pathItems.push('openshift-apiserver', 'kube-apiserver', 'oauth-apiserver');
   const pathQueryArgument = 'path';
   const unitQueryArgument = 'unit';
@@ -287,7 +288,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     trimmedContent = content.substr(index + 1);
   }
 
-  const onChangePath = (event: React.ChangeEvent<HTMLInputElement>, newAPI: string) => {
+  const onChangePath = (event: React.MouseEvent<Element, MouseEvent>, newAPI: string) => {
     event.preventDefault();
     setPathOpen(false);
     setPath(newAPI);
@@ -308,7 +309,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       ? removeQueryArgument(unitQueryArgument)
       : setQueryArgument(unitQueryArgument, value);
   };
-  const onChangeFilename = (event: React.ChangeEvent<HTMLInputElement>, newFilename: string) => {
+  const onChangeFilename = (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => {
     event.preventDefault();
     setFilenameOpen(false);
     setLogFilename(newFilename);
@@ -348,7 +349,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   );
 
   return (
-    <div className="co-m-pane__body co-m-pane__body--full-height">
+    <PaneBody fullHeight>
       <div className="log-window-wrapper">
         {(isLoadingLog || errorExists) && logControls}
         {trimmedContent?.length > 0 && !isLoadingLog && (
@@ -403,7 +404,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
           />
         )}
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

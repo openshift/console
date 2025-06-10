@@ -8,10 +8,10 @@ import {
 } from '@patternfly/react-charts/victory';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import Measure from 'react-measure';
 import { CursorVoronoiContainer } from '@console/internal/components/graphs';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
+import MeasureBounds from '@console/pipelines-plugin/src/utils/measure';
 import { PipelineTask } from '../../../types';
 import { DEFAULT_CHART_HEIGHT, DEFAULT_LEGEND_CHART_HEIGHT } from '../const';
 import { usePipelineRunTaskRunPoll } from '../hooks';
@@ -136,7 +136,7 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
       onLegendClick: handleLegendClick,
     });
   return (
-    <Measure bounds>
+    <MeasureBounds>
       {({ measureRef, contentRect }) => (
         <div ref={measureRef}>
           <LineChart
@@ -186,7 +186,7 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
           />
         </div>
       )}
-    </Measure>
+    </MeasureBounds>
   );
 };
 

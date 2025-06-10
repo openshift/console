@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import {
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -11,11 +19,12 @@ import {
   ResourceLink,
   cloudProviderNames,
   cloudProviderID,
-  Timestamp,
 } from '@console/internal/components/utils';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
 import {
   getNodeMachineNameAndNamespace,
@@ -42,130 +51,183 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('console-app~Node details')} />
-      <div className="row">
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>{t('console-app~Node name')}</dt>
-            <dd>{node.metadata.name || '-'}</dd>
-            <dt>{t('console-app~Status')}</dt>
-            <dd>
-              <NodeStatus node={node} />
-            </dd>
-            <dt>{t('console-app~External ID')}</dt>
-            <dd>{_.get(node, 'spec.externalID', '-')}</dd>
-            <dt>{t('console-app~Uptime')}</dt>
-            <dd>
-              <NodeUptime obj={node} />
-            </dd>
-            <dt>{t('console-app~Node addresses')}</dt>
-            <dd>
-              <NodeIPList ips={getNodeAddresses(node)} expand />
-            </dd>
+      <Grid hasGutter>
+        <GridItem md={6}>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Node name')}</DescriptionListTerm>
+              <DescriptionListDescription>{node.metadata.name || '-'}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <NodeStatus node={node} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~External ID')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'spec.externalID', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Uptime')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <NodeUptime obj={node} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Node addresses')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <NodeIPList ips={getNodeAddresses(node)} expand />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             <DetailsItem
               label={t('console-app~Labels')}
               obj={node}
               path="metadata.labels"
-              valueClassName="details-item__value--labels"
               onEdit={launchLabelsModal}
               canEdit={canUpdate}
               editAsGroup
             >
               <LabelList kind="Node" labels={node.metadata.labels} />
             </DetailsItem>
-            <dt>{t('console-app~Taints')}</dt>
-            <dd>
-              {canUpdate ? (
-                <Button
-                  icon={<PencilAltIcon />}
-                  iconPosition="end"
-                  variant="link"
-                  type="button"
-                  isInline
-                  onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
-                >
-                  {_.size(node.spec.taints)}{' '}
-                  {t('console-app~Taint', { count: _.size(node.spec.taints) })}
-                </Button>
-              ) : (
-                <span>
-                  {_.size(node.spec.taints)}{' '}
-                  {t('console-app~Taint', { count: _.size(node.spec.taints) })}
-                </span>
-              )}
-            </dd>
-            <dt>{t('console-app~Annotations')}</dt>
-            <dd>
-              {canUpdate ? (
-                <Button
-                  icon={<PencilAltIcon />}
-                  iconPosition="end"
-                  variant="link"
-                  type="button"
-                  isInline
-                  onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
-                >
-                  {_.size(node.metadata.annotations)}{' '}
-                  {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
-                </Button>
-              ) : (
-                <span>
-                  {_.size(node.metadata.annotations)}{' '}
-                  {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
-                </span>
-              )}
-            </dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Taints')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {canUpdate ? (
+                  <Button
+                    icon={<PencilAltIcon />}
+                    iconPosition="end"
+                    variant="link"
+                    type="button"
+                    isInline
+                    onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
+                  >
+                    {_.size(node.spec.taints)}{' '}
+                    {t('console-app~Taint', { count: _.size(node.spec.taints) })}
+                  </Button>
+                ) : (
+                  <span>
+                    {_.size(node.spec.taints)}{' '}
+                    {t('console-app~Taint', { count: _.size(node.spec.taints) })}
+                  </span>
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Annotations')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {canUpdate ? (
+                  <Button
+                    icon={<PencilAltIcon />}
+                    iconPosition="end"
+                    variant="link"
+                    type="button"
+                    isInline
+                    onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
+                  >
+                    {_.size(node.metadata.annotations)}{' '}
+                    {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
+                  </Button>
+                ) : (
+                  <span>
+                    {_.size(node.metadata.annotations)}{' '}
+                    {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
+                  </span>
+                )}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {machineName && (
-              <>
-                <dt>{t('console-app~Machine')}</dt>
-                <dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('console-app~Machine')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <ResourceLink
                     kind={referenceForModel(MachineModel)}
                     name={machineName}
                     namespace={machineNamespace}
                   />
-                </dd>
-              </>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('console-app~Provider ID')}</dt>
-            <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
-            {_.has(node, 'spec.unschedulable') && <dt>{t('console-app~Unschedulable')}</dt>}
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Provider ID')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {cloudProviderNames([cloudProviderID(node)])}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
             {_.has(node, 'spec.unschedulable') && (
-              <dd className="text-capitalize">
-                {_.get(node, 'spec.unschedulable', '-').toString()}
-              </dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('console-app~Unschedulable')}</DescriptionListTerm>
+                <DescriptionListDescription className="text-capitalize">
+                  {_.get(node, 'spec.unschedulable', '-').toString()}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('console-app~Created')}</dt>
-            <dd>
-              <Timestamp timestamp={node.metadata.creationTimestamp} />
-            </dd>
-          </dl>
-        </div>
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>{t('console-app~Operating system')}</dt>
-            <dd className="text-capitalize">
-              {_.get(node, 'status.nodeInfo.operatingSystem', '-')}
-            </dd>
-            <dt>{t('console-app~OS image')}</dt>
-            <dd>{_.get(node, 'status.nodeInfo.osImage', '-')}</dd>
-            <dt>{t('console-app~Architecture')}</dt>
-            <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
-            <dt>{t('console-app~Kernel version')}</dt>
-            <dd>{_.get(node, 'status.nodeInfo.kernelVersion', '-')}</dd>
-            <dt>{t('console-app~Boot ID')}</dt>
-            <dd>{_.get(node, 'status.nodeInfo.bootID', '-')}</dd>
-            <dt>{t('console-app~Container runtime')}</dt>
-            <dd>{_.get(node, 'status.nodeInfo.containerRuntimeVersion', '-')}</dd>
-            <dt>{t('console-app~Kubelet version')}</dt>
-            <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', '-')}</dd>
-            <dt>{t('console-app~Kube-Proxy version')}</dt>
-            <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}</dd>
-          </dl>
-        </div>
-      </div>
-    </div>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Created')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Timestamp timestamp={node.metadata.creationTimestamp} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
+        </GridItem>
+        <GridItem md={6}>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Operating system')}</DescriptionListTerm>
+              <DescriptionListDescription className="text-capitalize">
+                {_.get(node, 'status.nodeInfo.operatingSystem', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~OS image')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'status.nodeInfo.osImage', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Architecture')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'status.nodeInfo.architecture', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Kernel version')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'status.nodeInfo.kernelVersion', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Boot ID')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'status.nodeInfo.bootID', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Container runtime')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'status.nodeInfo.containerRuntimeVersion', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Kubelet version')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'status.nodeInfo.kubeletVersion', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Kube-Proxy version')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 

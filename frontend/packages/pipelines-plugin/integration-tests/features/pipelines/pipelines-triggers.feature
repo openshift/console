@@ -4,7 +4,7 @@ Feature: Triggers
 
         Background:
             Given user has created or selected namespace "aut-pipelines"
-              And user is at pipelines page
+              And user is at pipelines page in developer view
 
 
         @regression

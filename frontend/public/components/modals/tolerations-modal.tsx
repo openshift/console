@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classnames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Button, Tooltip } from '@patternfly/react-core';
+import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
@@ -105,123 +106,117 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
   const { errorMessage } = props;
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content toleration-modal">
+    <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{t('public~Edit tolerations')}</ModalTitle>
       <ModalBody>
         {_.isEmpty(tolerations) ? (
           <EmptyBox label={t('public~Tolerations')} />
         ) : (
-          <>
-            <div className="row toleration-modal__heading hidden-sm hidden-xs">
-              <div className="col-md-4 text-secondary text-uppercase">{t('public~Key')}</div>
-              <div className="col-md-2 text-secondary text-uppercase">{t('public~Operator')}</div>
-              <div className="col-md-3 text-secondary text-uppercase">{t('public~Value')}</div>
-              <div className="col-md-2 text-secondary text-uppercase">{t('public~Effect')}</div>
-              <div className="col-md-1" />
-            </div>
-            {_.map(tolerations, (toleration, i) => {
-              const { key, operator, value, effect = '' } = toleration;
-              const keyReadOnly = !isEditable(toleration);
-              const valueReadOnly = !isEditable(toleration) || operator === 'Exists';
-              return (
-                <div className="row toleration-modal__row" key={i}>
-                  <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('public~Key')}
-                    </div>
-                    <span
-                      className={classnames('pf-v6-c-form-control', {
-                        'pf-m-readonly': keyReadOnly,
-                      })}
-                    >
-                      <input
-                        type="text"
-                        value={key}
-                        onChange={(e) => change(e, i, 'key')}
-                        readOnly={keyReadOnly}
-                      />
-                    </span>
-                  </div>
-                  <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('public~Operator')}
-                    </div>
-                    {isEditable(toleration) ? (
-                      <Dropdown
-                        className="toleration-modal__dropdown"
-                        dropDownClassName="dropdown--full-width"
-                        items={operators}
-                        onChange={(op: TolerationOperator) => opChange(op, i)}
-                        selectedKey={operator}
-                        title={operators[operator]}
-                      />
-                    ) : (
-                      <span className="pf-v6-c-form-control pf-m-readonly">
-                        <input type="text" value={operator} readOnly />
-                      </span>
-                    )}
-                  </div>
-                  <div className="clearfix visible-sm visible-xs" />
-                  <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('public~Value')}
-                    </div>
-                    <span
-                      className={classnames('pf-v6-c-form-control', {
-                        'pf-m-readonly': valueReadOnly,
-                      })}
-                    >
-                      <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => change(e, i, 'value')}
-                        readOnly={valueReadOnly}
-                      />
-                    </span>
-                  </div>
-                  <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
-                    <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('public~Effect')}
-                    </div>
-                    {isEditable(toleration) ? (
-                      <Dropdown
-                        className="toleration-modal__dropdown"
-                        dropDownClassName="dropdown--full-width"
-                        items={effects}
-                        onChange={(e: string) => change(e, i, 'effect')}
-                        selectedKey={effect}
-                        title={effects[effect]}
-                      />
-                    ) : (
-                      <span className="pf-v6-c-form-control pf-m-readonly">
-                        <input type="text" value={effects[effect]} readOnly />
-                      </span>
-                    )}
-                  </div>
-                  <div className="col-md-1 col-sm-2 col-xs-2">
-                    {isEditable(toleration) && (
-                      <Tooltip content={t('public~Remove')}>
-                        <Button
-                          icon={
-                            <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                          }
-                          type="button"
-                          className="toleration-modal__delete-icon"
-                          onClick={() => remove(i)}
-                          aria-label={t('public~Remove')}
-                          variant="plain"
+          <Table
+            aria-label={t('public~Tolerations')}
+            variant="compact"
+            borders={false}
+            className="co-modal-table"
+          >
+            <Thead>
+              <Tr>
+                <Th>{t('public~Key')}</Th>
+                <Th>{t('public~Operator')}</Th>
+                <Th>{t('public~Value')}</Th>
+                <Th>{t('public~Effect')}</Th>
+              </Tr>
+            </Thead>
+
+            <Tbody>
+              {_.map(tolerations, (toleration, i) => {
+                const { key, operator, value, effect = '' } = toleration;
+                const keyReadOnly = !isEditable(toleration);
+                const valueReadOnly = !isEditable(toleration) || operator === 'Exists';
+                return (
+                  <Tr key={i}>
+                    <Td dataLabel={t('public~Key')}>
+                      <span
+                        className={css('pf-v6-c-form-control', {
+                          'pf-m-readonly': keyReadOnly,
+                        })}
+                      >
+                        <input
+                          type="text"
+                          value={key}
+                          onChange={(e) => change(e, i, 'key')}
+                          readOnly={keyReadOnly}
                         />
-                      </Tooltip>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </>
+                      </span>
+                    </Td>
+                    <Td dataLabel={t('public~Operator')}>
+                      {isEditable(toleration) ? (
+                        <Dropdown
+                          dropDownClassName="dropdown--full-width"
+                          items={operators}
+                          onChange={(op: TolerationOperator) => opChange(op, i)}
+                          selectedKey={operator}
+                          title={operators[operator]}
+                        />
+                      ) : (
+                        <span className="pf-v6-c-form-control pf-m-readonly">
+                          <input type="text" value={operator} readOnly />
+                        </span>
+                      )}
+                    </Td>
+                    <Td dataLabel={t('public~Value')}>
+                      <span
+                        className={css('pf-v6-c-form-control', {
+                          'pf-m-readonly': valueReadOnly,
+                        })}
+                      >
+                        <input
+                          type="text"
+                          value={value}
+                          onChange={(e) => change(e, i, 'value')}
+                          readOnly={valueReadOnly}
+                        />
+                      </span>
+                    </Td>
+                    <Td dataLabel={t('public~Effect')}>
+                      {isEditable(toleration) ? (
+                        <Dropdown
+                          dropDownClassName="dropdown--full-width"
+                          items={effects}
+                          onChange={(e: string) => change(e, i, 'effect')}
+                          selectedKey={effect}
+                          title={effects[effect]}
+                        />
+                      ) : (
+                        <span className="pf-v6-c-form-control pf-m-readonly">
+                          <input type="text" value={effects[effect]} readOnly />
+                        </span>
+                      )}
+                    </Td>
+                    <Td isActionCell>
+                      {isEditable(toleration) && (
+                        <Tooltip content={t('public~Remove')}>
+                          <Button
+                            icon={
+                              <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                            }
+                            type="button"
+                            onClick={() => remove(i)}
+                            aria-label={t('public~Remove')}
+                            variant="plain"
+                          />
+                        </Tooltip>
+                      )}
+                    </Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
         )}
         <Button
           icon={<PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />}
-          className="pf-m-link--align-left"
+          className="pf-v6-u-mt-md"
+          iconPosition="left"
           onClick={addRow}
           type="button"
           variant="link"

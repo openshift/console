@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Title } from '@patternfly/react-core';
+import { Grid, GridItem, Title } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
@@ -24,9 +24,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
   return (
     <div data-test-id="pagerduty-receiver-form">
       <div className="form-group">
-        <label className="control-label" htmlFor="integration-type-events">
-          {t('public~Integration type')}
-        </label>
+        <label htmlFor="integration-type-events">{t('public~Integration type')}</label>
         <div>
           <RadioInput
             title={t('public~Events API v2')}
@@ -60,11 +58,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         </div>
       </div>
       <div className="form-group">
-        <label
-          data-test-id="pagerduty-key-label"
-          className="control-label co-required"
-          htmlFor="integration-key"
-        >
+        <label data-test-id="pagerduty-key-label" className="co-required" htmlFor="integration-key">
           {formValues.pagerdutyIntegrationKeyType === 'events'
             ? t('public~Routing key')
             : t('public~Service key')}
@@ -89,15 +83,11 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
         </div>
       </div>
       <div className="form-group">
-        <label
-          data-test-id="pagerduty-url-label"
-          className="control-label co-required"
-          htmlFor="pagerduty-url"
-        >
+        <label data-test-id="pagerduty-url-label" className="co-required" htmlFor="pagerduty-url">
           {t('public~PagerDuty URL')}
         </label>
-        <div className="row">
-          <div className="col-sm-7">
+        <Grid hasGutter>
+          <GridItem span={7}>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -113,8 +103,9 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 }
               />
             </span>
-          </div>
-          <div className="col-sm-5">
+          </GridItem>
+          <GridItem span={1} /> {/* fixes an overlapping control issue */}
+          <GridItem span={4}>
             <SaveAsDefaultCheckbox
               formField="pagerdutySaveAsDefault"
               disabled={formValues.pagerduty_url === globals?.pagerduty_url}
@@ -125,8 +116,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 'public~Checking this box will write the URL to the global section of the configuration file where it will become the default URL for future PagerDuty receivers.',
               )}
             />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
         <div className="help-block" id="pagerduty-url-help">
           {t('public~The URL of your PagerDuty installation.')}
         </div>
@@ -147,9 +138,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {t('public~Client details')}
             </Title>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-client">
-                {t('public~Client')}
-              </label>
+              <label htmlFor="pagerduty-client">{t('public~Client')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -170,9 +159,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-client-url">
-                {t('public~Client URL')}
-              </label>
+              <label htmlFor="pagerduty-client-url">{t('public~Client URL')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -196,9 +183,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               {t('public~Incident details')}
             </Title>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-description">
-                {t('public~Description')}
-              </label>
+              <label htmlFor="pagerduty-description">{t('public~Description')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"
@@ -219,9 +204,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
             <div className="form-group">
-              <label className="control-label" htmlFor="pagerduty-severity">
-                {t('public~Severity')}
-              </label>
+              <label htmlFor="pagerduty-severity">{t('public~Severity')}</label>
               <span className="pf-v6-c-form-control">
                 <input
                   type="text"

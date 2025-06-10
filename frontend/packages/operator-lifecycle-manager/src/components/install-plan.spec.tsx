@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, Hint } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
@@ -44,7 +43,7 @@ import Spy = jasmine.Spy;
 const i18nNS = 'public';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 

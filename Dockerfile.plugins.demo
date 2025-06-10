@@ -3,7 +3,7 @@
 # See dynamic-demo-plugin/README.md for details.
 
 # Stage 0: build the demo plugin
-FROM quay.io/coreos/tectonic-console-builder:v28 AS build
+FROM quay.io/coreos/tectonic-console-builder:v29 AS build
 
 RUN mkdir -p /src/console
 COPY . /src/console
@@ -16,7 +16,7 @@ RUN yarn install && \
     yarn build
 
 # Stage 1: build the target image
-FROM node:10
+FROM node:22
 
 COPY --from=build /src/console/dynamic-demo-plugin/dist /opt/console-plugin-demo/static
 COPY --from=build /src/console/dynamic-demo-plugin/node_modules /opt/console-plugin-demo/node_modules

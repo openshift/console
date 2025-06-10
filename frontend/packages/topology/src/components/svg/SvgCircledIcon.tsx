@@ -16,57 +16,56 @@ interface SvgTypedIconProps {
 
 const FILTER_ID = 'SvgTypedIconDropShadowFilterId';
 
-const CircledIcon: React.FC<SvgTypedIconProps> = (
-  { className, x, y, width, height, iconClass, icon, padding = 4 },
-  circleRef,
-) => {
-  const [typedIconSize, typedIconRef] = useSize([]);
+const CircledIcon = React.forwardRef<SVGCircleElement, SvgTypedIconProps>(
+  ({ className, x, y, width, height, iconClass, icon, padding = 4 }, circleRef) => {
+    const [typedIconSize, typedIconRef] = useSize([]);
 
-  let iconWidth = 0;
-  let iconHeight = 0;
+    let iconWidth = 0;
+    let iconHeight = 0;
 
-  if (typedIconSize) {
-    ({ width: iconWidth, height: iconHeight } = typedIconSize);
-  }
+    if (typedIconSize) {
+      ({ width: iconWidth, height: iconHeight } = typedIconSize);
+    }
 
-  return (
-    <g className={className}>
-      <SvgDropShadowFilter id={FILTER_ID} />
-      <circle
-        key={`circle-${FILTER_ID}`}
-        ref={circleRef}
-        filter={createSvgIdUrl(FILTER_ID)}
-        cx={x - iconWidth / 2}
-        cy={y + iconHeight / 2}
-        r={iconWidth / 2 + padding}
-      />
-      {icon ? (
-        <g ref={typedIconRef}>
-          <foreignObject
-            key={`image-${FILTER_ID}`}
-            x={x - iconWidth + 4}
-            y={y}
-            width={width}
-            height={height}
-          >
-            {icon}
-          </foreignObject>
-        </g>
-      ) : (
-        <g ref={typedIconRef}>
-          <image
-            key={`image-${FILTER_ID}`}
-            x={x - iconWidth}
-            y={y}
-            width={width}
-            height={height}
-            xlinkHref={getImageForIconClass(iconClass) || iconClass}
-            filter={createSvgIdUrl(FILTER_ID)}
-          />
-        </g>
-      )}
-    </g>
-  );
-};
+    return (
+      <g className={className}>
+        <SvgDropShadowFilter id={FILTER_ID} />
+        <circle
+          key={`circle-${FILTER_ID}`}
+          ref={circleRef}
+          filter={createSvgIdUrl(FILTER_ID)}
+          cx={x - iconWidth / 2}
+          cy={y + iconHeight / 2}
+          r={iconWidth / 2 + padding}
+        />
+        {icon ? (
+          <g ref={typedIconRef}>
+            <foreignObject
+              key={`image-${FILTER_ID}`}
+              x={x - iconWidth + 4}
+              y={y}
+              width={width}
+              height={height}
+            >
+              {icon}
+            </foreignObject>
+          </g>
+        ) : (
+          <g ref={typedIconRef}>
+            <image
+              key={`image-${FILTER_ID}`}
+              x={x - iconWidth}
+              y={y}
+              width={width}
+              height={height}
+              xlinkHref={getImageForIconClass(iconClass) || iconClass}
+              filter={createSvgIdUrl(FILTER_ID)}
+            />
+          </g>
+        )}
+      </g>
+    );
+  },
+);
 
-export default React.forwardRef(CircledIcon);
+export default CircledIcon;

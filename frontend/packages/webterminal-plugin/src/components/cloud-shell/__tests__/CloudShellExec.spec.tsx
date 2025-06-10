@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { FLAGS } from '@console/shared';
 import { WorkspaceModel } from '../../../../models';
@@ -6,7 +5,7 @@ import { InternalCloudShellExec, CloudShellExecProps } from '../CloudShellExec';
 import TerminalLoadingBox from '../TerminalLoadingBox';
 
 jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+  const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
     useTelemetry: () => {},

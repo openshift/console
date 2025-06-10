@@ -1,12 +1,10 @@
+@use './vars';
+
 // Use this file to override styles from 3rd party dependencies
 
 $masthead-logo-max-height: 60px;
 
-form.pf-v6-c-form {
-  --pf-v6-c-form__helper-text--Color: var(--pf-t--global--text--color--subtle);
-}
-
-// Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
+// TODO: Remove when upgrading to PF 6.3.0: https://github.com/patternfly/patternfly/pull/7420
 .catalog-tile-pf-title {
   @include co-break-word;
 }
@@ -51,6 +49,14 @@ form.pf-v6-c-form {
   }
 }
 
+// Workaround for https://github.com/patternfly/patternfly/issues/7376
+// to align pf-v6-c-tabs--inset with PageSection
+.co-horizontal-nav {
+  --pf-v6-c-tabs--inset: #{$pf-v6-global-gutter-x};
+  --pf-v6-c-tabs--m-vertical--inset: #{$pf-v6-global-gutter-x};
+  --pf-v6-c-tabs--m-vertical--m-box--inset: #{$pf-v6-global-gutter-x};
+}
+
 .odc-catalog-tile {
   // Get rid of weird stretching of catalog grid items
   .pf-v6-c-card__header-main {
@@ -63,13 +69,6 @@ form.pf-v6-c-form {
 
 .catalog-item-header-pf-icon {
   @include catalog-logo-background(var(--pf-t--global--spacer--sm));
-}
-
-// Override to remove accordion left border and prevent overlap https://bugzilla.redhat.com/show_bug.cgi?id=1942193
-.co-create-operand__form--toggle-no-border {
-  .pf-v6-c-accordion__toggle.pf-m-expanded {
-    --pf-v6-c-accordion__toggle--before--BackgroundColor: transparent;
-  }
 }
 
 .co-datalist-control label {
@@ -85,10 +84,7 @@ form.pf-v6-c-form {
   --co-button-icon-size: var(--pf-t--global--icon--size--xl);
 
   // the height+padding of a PatternFly standard button.
-  --co-desired-button-size: calc(
-    var(--pf-t--global--font--size--body--default) * var(--pf-t--global--font--line-height--body) +
-    var(--pf-t--global--spacer--control--vertical--default) * 2
-  );
+  --co-desired-button-size: #{vars.$co-button-height};
 
   padding: calc((var(--co-desired-button-size) - var(--co-button-icon-size)) / 2);
 
@@ -173,6 +169,8 @@ form.pf-v6-c-form {
 // Drawer
 .pf-v6-c-drawer__body {
   height: 100%;
+  // (OCPBUGS-56628): A PF6 regression caused modals to not move when a drawer is open
+  position: relative;
 }
 
 .pf-v6-c-masthead {
@@ -182,14 +180,6 @@ form.pf-v6-c-form {
 .pf-v6-c-masthead__logo {
   --pf-v6-c-masthead__logo--MaxHeight: #{$masthead-logo-max-height}; // Restore the max-height from PageHeader to maintain backwards compatibility
   --pf-v6-c-masthead__logo--Width: auto; // Do not set a width to maintain backwards compatibility
-}
-
-// TODO: remove the following two menu overrides when upstream fix is merged (see https://github.com/patternfly/patternfly/issues/7256)
-.pf-v6-c-menu.pf-m-scrollable .pf-v6-c-menu__content {
-  overflow: auto;
-}
-.pf-v6-c-menu.pf-m-drilldown:not(.pf-m-scrollable) {
-  overflow: hidden;
 }
 
 // PF components that calculate their correct height based on --pf-t--global--font--size--md: 1rem
@@ -230,14 +220,6 @@ form.pf-v6-c-form {
   .pf-v6-c-form-control.pf-m-success,
   .pf-v6-c-form-control[aria-invalid='true'] {
     --pf-t--global--font--size--md: #{$font-size-base};
-  }
-}
-
-.pf-v6-c-page__main-breadcrumb {
-  // so breadcrumb padding matches .co-m-nav-title
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-inline-start: $pf-v6-global-gutter--md;
-    padding-inline-end: $pf-v6-global-gutter--md;
   }
 }
 
@@ -288,10 +270,6 @@ button.pf-v6-c-dropdown__menu-item.pf-m-disabled {
   position: absolute !important;
 }
 
-.form-group--doubled-bottom-margin {
-  margin-bottom: ($form-group-margin-bottom * 2);
-}
-
 // Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-v6-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
 ul {
   list-style: disc;
@@ -307,22 +285,11 @@ ul {
   font-size: $font-size-base !important;
 }
 
-// TODO Remove this override when skip to content CSS is figured out.
-.pf-v6-c-skip-to-content {
-  position: absolute !important;
-}
-
 .properties-side-panel-pf-property-value {
   .pf-v6-c-alert__title,
   .pf-v6-c-menu__item-text,
   .pf-v6-c-menu-toggle {
     font-size: $font-size-base;
-  }
-}
-
-.odc-topology {
-  .pf-topology-content {
-    background-color: var(--pf-v6-c-page__main-section--BackgroundColor);
   }
 }
 

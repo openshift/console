@@ -1,9 +1,15 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, CardTitle, Button } from '@patternfly/react-core';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Button,
+  DescriptionList,
+} from '@patternfly/react-core';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
 import { LabelList, resourcePathFromModel } from '../../utils';
@@ -38,12 +44,14 @@ export const DetailsCard: React.FC = () => {
         <CardTitle>{t('public~Details')}</CardTitle>
       </CardHeader>
       <CardBody>
-        <DetailsBody>
+        <DescriptionList>
           <OverviewDetailItem isLoading={!obj} title={t('public~Name')}>
             {getName(obj)}
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('public~Requester')}>
-            {getRequester(obj) || <span className="text-muted">{t('public~No requester')}</span>}
+            {getRequester(obj) || (
+              <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>
+            )}
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('public~Labels')}>
             <div className="co-project-dashboard__details-labels">
@@ -57,8 +65,8 @@ export const DetailsCard: React.FC = () => {
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('public~Description')}>
             <span
-              className={cx({
-                'text-muted': !description,
+              className={css({
+                'pf-v6-u-text-color-subtle': !description,
                 'co-project-dashboard-details-card__description': description,
               })}
             >
@@ -70,7 +78,7 @@ export const DetailsCard: React.FC = () => {
               <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
             </OverviewDetailItem>
           )}
-        </DetailsBody>
+        </DescriptionList>
       </CardBody>
     </Card>
   );

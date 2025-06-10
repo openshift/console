@@ -1,8 +1,7 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useParams } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';
 import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-empty-icon';
 import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
@@ -13,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { DetailsPage, MultiListPage, Table, TableData } from './factory';
@@ -28,9 +28,9 @@ import {
   useAccessReview,
   LabelList,
   Selector,
-  Timestamp,
   DetailsItem,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending } from '../reducers/features';
 import { LoadingBox } from './utils/status-box';
@@ -41,6 +41,14 @@ import {
   ClusterResourceQuotaModel,
 } from '../models';
 import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -193,28 +201,28 @@ export const ResourceUsageRow = ({ quota, resourceType, namespace = undefined })
   if (isACRQ) {
     const { used, totalUsed, max, percent } = getACRQResourceUsage(quota, resourceType, namespace);
     return (
-      <div className="row co-m-row">
-        <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
-        <div className="col-sm-2 hidden-xs co-resource-quota-icon">
+      <Tr>
+        <Td modifier="breakWord">{resourceType}</Td>
+        <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
           <UsageIcon percent={percent.namespace} />
-        </div>
-        <div className="col-sm-2 col-xs-2">{used.namespace}</div>
-        <div className="col-sm-2 col-xs-2">{totalUsed}</div>
-        <div className="col-sm-2 col-xs-2">{max}</div>
-      </div>
+        </Td>
+        <Td>{used.namespace}</Td>
+        <Td>{totalUsed}</Td>
+        <Td>{max}</Td>
+      </Tr>
     );
   }
 
   const { used, max, percent } = getResourceUsage(quota, resourceType);
   return (
-    <div className="row co-m-row">
-      <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
-      <div className="col-sm-2 hidden-xs co-resource-quota-icon">
+    <Tr>
+      <Td modifier="breakWord">{resourceType}</Td>
+      <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
         <UsageIcon percent={percent} />
-      </div>
-      <div className="col-sm-3 col-xs-3">{used}</div>
-      <div className="col-sm-3 col-xs-3">{max}</div>
-    </div>
+      </Td>
+      <Td>{used}</Td>
+      <Td>{max}</Td>
+    </Tr>
   );
 };
 
@@ -222,7 +230,7 @@ export const QuotaScopesInline = ({ scopes }) => {
   return <span>({scopes.join(', ')})</span>;
 };
 
-export const QuotaScopesList = ({ scopes }) => {
+const QuotaScopesList = ({ scopes }) => {
   const { t } = useTranslation();
   const quotaScopes = {
     Terminating: {
@@ -249,14 +257,14 @@ export const QuotaScopesList = ({ scopes }) => {
   return scopes.map((scope) => {
     const scopeObj = _.get(quotaScopes, scope);
     return scopeObj ? (
-      <dd key={scope}>
+      <DescriptionListDescription key={scope}>
         <div className="co-resource-quota-scope__label">{scope}</div>
         <div className="co-resource-quota-scope__description">{scopeObj.description}</div>
-      </dd>
+      </DescriptionListDescription>
     ) : (
-      <dd key={scope} className="co-resource-quota-scope__label">
+      <DescriptionListDescription key={scope} className="co-resource-quota-scope__label">
         {scope}
-      </dd>
+      </DescriptionListDescription>
     );
   });
 };
@@ -306,11 +314,11 @@ const Details = ({ obj: rq }) => {
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={text} />
         {charts}
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={rq}>
               {canListCRQ && (
                 <DetailsItem
@@ -339,18 +347,20 @@ const Details = ({ obj: rq }) => {
                 <Selector selector={rq.spec?.selector?.annotations} namespace={namespace} />
               </DetailsItem>
             </ResourceSummary>
-          </div>
+          </GridItem>
           {scopes && (
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Scopes')}</dt>
-                <QuotaScopesList scopes={scopes} />
-              </dl>
-            </div>
+            <GridItem sm={6}>
+              <DescriptionList>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Scopes')}</DescriptionListTerm>
+                  <QuotaScopesList scopes={scopes} />
+                </DescriptionListGroup>
+              </DescriptionList>
+            </GridItem>
           )}
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={text} style={{ display: 'block', marginBottom: '20px' }}>
           <FieldLevelHelp>
             <p>
@@ -370,35 +380,23 @@ const Details = ({ obj: rq }) => {
             </p>
           </FieldLevelHelp>
         </SectionHeading>
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-4 col-xs-6">{t('public~Resource type')}</div>
-            <div className="col-sm-2 hidden-xs">{t('public~Capacity')}</div>
-            <div
-              className={classNames(
-                { 'col-sm-2 col-xs-2': isACRQ },
-                { 'col-sm-3 col-xs-3': !isACRQ },
-              )}
-            >
-              {t('public~Used')}
-            </div>
-            {isACRQ && <div className="col-sm-2 col-xs-2">{t('public~Total used')}</div>}
-            <div
-              className={classNames(
-                { 'col-sm-2 col-xs-2': isACRQ },
-                { 'col-sm-3 col-xs-3': !isACRQ },
-              )}
-            >
-              {t('public~Max')}
-            </div>
-          </div>
-          <div className="co-m-table-grid__body">
+        <PfTable gridBreakPoint="">
+          <Thead>
+            <Tr>
+              <Th>{t('public~Resource type')}</Th>
+              <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Capacity')}</Th>
+              <Th>{t('public~Used')}</Th>
+              {isACRQ && <Th>{t('public~Total used')}</Th>}
+              <Th>{t('public~Max')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {resourceTypes.map((type) => (
               <ResourceUsageRow key={type} quota={rq} resourceType={type} namespace={namespace} />
             ))}
-          </div>
-        </div>
-      </div>
+          </Tbody>
+        </PfTable>
+      </PaneBody>
     </>
   );
 };
@@ -440,26 +438,23 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
           dataTest="resource-quota-link"
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         {rq.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={rq.metadata.namespace} />
         ) : (
           t('public~None')
         )}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         <LabelList
           kind={appliedClusterQuotaReference}
           labels={rq.spec?.selector?.labels?.matchLabels}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[4], 'co-break-word')}>
         {resourcesAtQuota > 0 ? (
           <>
             <YellowExclamationTriangleIcon />{' '}
@@ -505,16 +500,16 @@ const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
           className="co-resource-item__resource-name"
         />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(acrqTableColumnClasses[1], 'co-break-word')}>
         <LabelList
           kind={appliedClusterQuotaReference}
           labels={rq.spec?.selector?.labels?.matchLabels}
         />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(acrqTableColumnClasses[2], 'co-break-word')}>
         <Selector selector={rq.spec?.selector?.annotations} namespace={customData.namespace} />
       </TableData>
-      <TableData className={classNames(acrqTableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(acrqTableColumnClasses[3], 'co-break-word')}>
         {resourcesAtQuota > 0 ? (
           <>
             <YellowExclamationTriangleIcon />{' '}

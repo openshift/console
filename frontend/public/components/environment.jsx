@@ -1,10 +1,16 @@
 /* eslint-disable tsdoc/syntax */
-import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Alert, Button, ActionGroup, AlertActionCloseButton } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
+import {
+  Alert,
+  Button,
+  ActionGroup,
+  AlertActionCloseButton,
+  Flex,
+  FlexItem,
+} from '@patternfly/react-core';
 import { Trans, withTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
@@ -532,59 +538,50 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     const containerVars = (
       <>
         {readOnly && !_.isEmpty(owners) && (
-          <div className="co-toolbar__group co-toolbar__group--left">
-            <Alert
-              isInline
-              className="co-alert col-md-11 col-xs-10"
-              variant="info"
-              title={t('public~Environment variables set from parent')}
-            >
-              {t('public~View environment for resource')}{' '}
-              {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
-            </Alert>
-          </div>
+          <Alert isInline variant="info" title={t('public~Environment variables set from parent')}>
+            {t('public~View environment for resource')}{' '}
+            {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
+          </Alert>
         )}
         {currentEnvVars.isContainerArray && (
-          <div className="co-toolbar__group co-toolbar__group--left">
-            <div className="co-toolbar__item">
+          <Flex>
+            <FlexItem>
               {containerType === 'containers'
                 ? t('public~Container:')
                 : t('public~Init container:')}
-            </div>
-            <div className="co-toolbar__item">{containerDropdown}</div>
-          </div>
+            </FlexItem>
+            <FlexItem>{containerDropdown}</FlexItem>
+          </Flex>
         )}
-        <div className={classNames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
-          {!currentEnvVars.isCreate && (
-            <TertiaryHeading>
-              {t('public~Single values (env)')}
-              {!readOnly && (
-                <FieldLevelHelp>
-                  <Trans t={t} ns="public">
-                    Define environment variables as key-value pairs to store configuration settings.
-                    You can enter text or add values from a ConfigMap or Secret. Drag and drop
-                    environment variables to change the order in which they are run. A variable can
-                    reference any other variables that come before it in the list, for example{' '}
-                    <code className="co-code">FULLDOMAIN = $(SUBDOMAIN).example.com</code>.
-                  </Trans>
-                </FieldLevelHelp>
-              )}
-            </TertiaryHeading>
-          )}
-          <NameValueEditorComponent
-            nameValueId={containerIndex}
-            nameValuePairs={envVar[EnvType.ENV]}
-            updateParentData={this.updateEnvVars}
-            nameString={t('public~Name')}
-            readOnly={readOnly}
-            allowSorting={true}
-            configMaps={configMaps}
-            secrets={secrets}
-            addConfigMapSecret={addConfigMapSecret}
-          />
-        </div>
+        {!currentEnvVars.isCreate && (
+          <TertiaryHeading>
+            {t('public~Single values (env)')}
+            {!readOnly && (
+              <FieldLevelHelp>
+                <Trans t={t} ns="public">
+                  Define environment variables as key-value pairs to store configuration settings.
+                  You can enter text or add values from a ConfigMap or Secret. Drag and drop
+                  environment variables to change the order in which they are run. A variable can
+                  reference any other variables that come before it in the list, for example{' '}
+                  <code className="co-code">FULLDOMAIN = $(SUBDOMAIN).example.com</code>.
+                </Trans>
+              </FieldLevelHelp>
+            )}
+          </TertiaryHeading>
+        )}
+        <NameValueEditorComponent
+          nameValueId={containerIndex}
+          nameValuePairs={envVar[EnvType.ENV]}
+          updateParentData={this.updateEnvVars}
+          nameString={t('public~Name')}
+          readOnly={readOnly}
+          allowSorting={true}
+          configMaps={configMaps}
+          secrets={secrets}
+          addConfigMapSecret={addConfigMapSecret}
+        />
         {currentEnvVars.isContainerArray && (
-          <div className="co-m-pane__body-group environment-buttons">
+          <div className="environment-buttons">
             <TertiaryHeading>
               {t('public~All values from existing ConfigMaps or Secrets (envFrom)')}
               {!readOnly && (
@@ -616,55 +613,53 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     );
 
     return (
-      <div className={classNames({ 'co-m-pane__body': !currentEnvVars.isCreate })}>
+      <div className={css({ 'pf-v6-c-page__main-section': !currentEnvVars.isCreate })}>
         {containerVars}
         {!currentEnvVars.isCreate && (
-          <div className="co-m-pane__body-group">
-            <div className="pf-v6-c-form environment-buttons">
-              {errorMessage && (
-                <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
-              )}
-              {stale && (
-                <Alert
-                  isInline
-                  className="co-alert"
-                  variant="info"
-                  title={t('public~The information on this page is no longer current.')}
+          <div className="pf-v6-c-form environment-buttons">
+            {errorMessage && (
+              <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
+            )}
+            {stale && (
+              <Alert
+                isInline
+                className="co-alert"
+                variant="info"
+                title={t('public~The information on this page is no longer current.')}
+              >
+                {t('public~Click Reload to update and lose edits, or Save Changes to overwrite.')}
+              </Alert>
+            )}
+            {success && (
+              <Alert
+                isInline
+                className="co-alert"
+                variant="success"
+                title={success}
+                actionClose={<AlertActionCloseButton onClose={this.dismissSuccess} />}
+              />
+            )}
+            {!readOnly && (
+              <ActionGroup>
+                <Button
+                  isDisabled={inProgress}
+                  type="submit"
+                  variant="primary"
+                  onClick={this.saveChanges}
+                  data-test="environment-save"
                 >
-                  {t('public~Click Reload to update and lose edits, or Save Changes to overwrite.')}
-                </Alert>
-              )}
-              {success && (
-                <Alert
-                  isInline
-                  className="co-alert"
-                  variant="success"
-                  title={success}
-                  actionClose={<AlertActionCloseButton onClose={this.dismissSuccess} />}
-                />
-              )}
-              {!readOnly && (
-                <ActionGroup>
-                  <Button
-                    isDisabled={inProgress}
-                    type="submit"
-                    variant="primary"
-                    onClick={this.saveChanges}
-                    data-test="environment-save"
-                  >
-                    {t('public~Save')}
-                  </Button>
-                  <Button
-                    isDisabled={inProgress}
-                    type="button"
-                    variant="secondary"
-                    onClick={this.reload}
-                  >
-                    {t('public~Reload')}
-                  </Button>
-                </ActionGroup>
-              )}
-            </div>
+                  {t('public~Save')}
+                </Button>
+                <Button
+                  isDisabled={inProgress}
+                  type="button"
+                  variant="secondary"
+                  onClick={this.reload}
+                >
+                  {t('public~Reload')}
+                </Button>
+              </ActionGroup>
+            )}
           </div>
         )}
       </div>

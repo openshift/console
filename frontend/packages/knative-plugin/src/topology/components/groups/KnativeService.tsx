@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   Node,
   observer,
@@ -7,10 +8,9 @@ import {
   WithDndDropProps,
   useDragNode,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
+import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { nodeDragSourceSpec, GroupNode } from '@console/topology/src/components/graph-view';
 import { getKindStringAndAbbreviation } from '@console/topology/src/components/graph-view/components/nodes/nodeUtils';
 import { getResource } from '@console/topology/src/utils';
@@ -43,7 +43,7 @@ const KnativeService: React.FC<KnativeServiceProps> = ({ children, ...props }) =
     namespace: resourceObj.metadata.namespace,
   });
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(data.kind);
-  const badgeClassName = classNames('odc-resource-icon', {
+  const badgeClassName = css('odc-resource-icon', {
     [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
   });
   const dragSpec = React.useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [

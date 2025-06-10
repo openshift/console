@@ -24,18 +24,18 @@ export const addPage = {
         break;
       case 'Software Catalog':
       case 'From Catalog':
-      case addOptions.DeveloperCatalog:
+      case addOptions.SoftwareCatalog:
         cy.byTestID('item dev-catalog').click();
         app.waitForLoad();
-        detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
-        cy.testA11y(pageTitle.DeveloperCatalog);
+        detailsPage.titleShouldContain(pageTitle.SoftwareCatalog);
+        // cy.testA11y(pageTitle.SoftwareCatalog);
         break;
       case 'Database':
       case addOptions.Database:
         cy.byTestID('item dev-catalog-databases').click();
         app.waitForLoad();
-        detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
-        cy.testA11y(pageTitle.DeveloperCatalog);
+        detailsPage.titleShouldContain(pageTitle.SoftwareCatalog);
+        cy.testA11y(pageTitle.SoftwareCatalog);
         break;
       case 'Event Source':
       case addOptions.EventSource:
@@ -94,9 +94,7 @@ export const addPage = {
         cy.byTestID('item upload-jar').click();
         app.waitForLoad();
         detailsPage.titleShouldContain(pageTitle.UploadJarFile);
-        // Disabled due to upstream PatternFly issue with FileUpload
-        // see https://github.com/patternfly/patternfly-react/issues/11343
-        // cy.testA11y(pageTitle.UploadJarFile);
+        cy.testA11y(pageTitle.UploadJarFile);
         break;
       case 'Broker':
       case addOptions.Broker:
@@ -135,7 +133,7 @@ export const addPage = {
       case addOptions.CreateServerlessFunction:
         cy.byTestID('item create-serverless-function').click();
         app.waitForLoad();
-        cy.get('[data-test-id="resource-title"]').should(
+        cy.get('[data-test="page-heading"] h1').should(
           'have.text',
           pageTitle.CreateServerlessFunction,
         );

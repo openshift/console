@@ -14,7 +14,6 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import {
   getFormData,
-  getInvalidUsageError,
   getYAMLData,
   hasCustomMetrics,
   isCpuUtilizationPossible,
@@ -49,12 +48,6 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
       targetResource,
       values.editorType === EditorType.YAML ? safeYAMLToJS(values.yamlData) : values.formData,
     );
-
-    const invalidUsageError = getInvalidUsageError(hpa, values);
-    if (invalidUsageError) {
-      helpers.setStatus({ submitError: invalidUsageError });
-      return Promise.resolve();
-    }
 
     const method: (
       kind: K8sKind,

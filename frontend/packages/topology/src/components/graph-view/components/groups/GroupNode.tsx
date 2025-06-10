@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import {
   Node,
   useSize,
@@ -13,7 +14,6 @@ import {
   WithContextMenuProps,
   useAnchor,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import {
   truncateMiddle,
   shouldTruncate,
@@ -83,7 +83,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({
 
   const getCustomShape = () => () => (
     <rect
-      className={classNames('odc-group-node__bg', bgClassName)}
+      className={css('odc-group-node__bg', bgClassName)}
       x={0}
       y={0}
       width={width}
@@ -96,7 +96,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({
   return (
     <DefaultNode
       element={element}
-      className={classNames('odc-group-node', { 'is-filtered': filtered })}
+      className={css('odc-group-node', { 'is-filtered': filtered })}
       badge={badge}
       badgeColor={badgeColor}
       badgeClassName={badgeClassName}

@@ -11,29 +11,12 @@ body,
 #content-scrollable {
   overflow: auto;
 }
-.co-m-page__body {
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: column;
-}
-
-.co-m-app__content {
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: column;
-  height: 100%; // doesn't work on safari without height
-}
-
-.co-m-app__content > .pf-v6-c-page {
-  height: 0;
-  flex: 1;
-}
 
 .co-p-has-sidebar {
-  position: relative;
   display: flex;
   flex: 1;
   height: 100%;
+  position: relative;
 
   &__body {
     flex: 2;
@@ -44,12 +27,6 @@ body,
         max-width: 66%;
       }
     }
-  }
-
-  &__close-button {
-    font-size: 21px !important;
-    line-height: 1 !important;
-    padding: 0 !important;
   }
 
   &__sidebar {
@@ -78,11 +55,5 @@ body,
     &:focus {
       outline: 0;
     }
-  }
-
-  &__sidebar-heading {
-    @include co-break-word;
-    margin-bottom: 20px;
-    margin-top: 0;
   }
 }

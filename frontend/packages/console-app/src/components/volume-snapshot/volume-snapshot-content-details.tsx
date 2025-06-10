@@ -1,4 +1,12 @@
 import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
@@ -13,6 +21,7 @@ import {
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
@@ -26,60 +35,70 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   const sizeMetrics = size ? humanizeBinaryBytes(size).string : '-';
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('console-app~VolumeSnapshotContent details')} />
-      <div className="row">
-        <div className="col-md-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <ResourceSummary resource={obj}>
-            <dt>{t('console-app~Status')}</dt>
-            <dd>
-              <Status status={volumeSnapshotStatus(obj)} />
-            </dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <Status status={volumeSnapshotStatus(obj)} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
           </ResourceSummary>
-        </div>
-        <div className="col-md-6">
-          <dl className="co-m-pane__details">
+        </GridItem>
+        <GridItem md={6}>
+          <DescriptionList>
             {size && (
-              <>
-                <dt>{t('console-app~Size')}</dt>
-                <dd>{sizeMetrics}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('console-app~Size')}</DescriptionListTerm>
+                <DescriptionListDescription>{sizeMetrics}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-            <dt>{t('console-app~VolumeSnapshot')}</dt>
-            <dd>
-              <ResourceLink
-                kind={referenceForModel(VolumeSnapshotModel)}
-                name={snapshotName}
-                namespace={snapshotNamespace}
-              />
-            </dd>
-            <dt>{t('console-app~VolumeSnapshotClass')}</dt>
-            <dd>
-              <ResourceLink
-                kind={referenceForModel(VolumeSnapshotClassModel)}
-                name={obj?.spec?.volumeSnapshotClassName}
-              />
-            </dd>
-            <dt>{t('console-app~Deletion policy')}</dt>
-            <dd>{deletionPolicy}</dd>
-            <dt>{t('console-app~Driver')}</dt>
-            <dd>{driver}</dd>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~VolumeSnapshot')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <ResourceLink
+                  kind={referenceForModel(VolumeSnapshotModel)}
+                  name={snapshotName}
+                  namespace={snapshotNamespace}
+                />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~VolumeSnapshotClass')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <ResourceLink
+                  kind={referenceForModel(VolumeSnapshotClassModel)}
+                  name={obj?.spec?.volumeSnapshotClassName}
+                />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Deletion policy')}</DescriptionListTerm>
+              <DescriptionListDescription>{deletionPolicy}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('console-app~Driver')}</DescriptionListTerm>
+              <DescriptionListDescription>{driver}</DescriptionListDescription>
+            </DescriptionListGroup>
             {volumeHandle && (
-              <>
-                <dt>{t('console-app~Volume handle')}</dt>
-                <dd>{volumeHandle}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('console-app~Volume handle')}</DescriptionListTerm>
+                <DescriptionListDescription>{volumeHandle}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {snapshotHandle && (
-              <>
-                <dt>{t('console-app~Snapshot handle')}</dt>
-                <dd>{snapshotHandle}</dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('console-app~Snapshot handle')}</DescriptionListTerm>
+                <DescriptionListDescription>{snapshotHandle}</DescriptionListDescription>
+              </DescriptionListGroup>
             )}
-          </dl>
-        </div>
-      </div>
-    </div>
+          </DescriptionList>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 

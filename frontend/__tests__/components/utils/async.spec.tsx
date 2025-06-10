@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 
 import { AsyncComponent } from '../../../public/components/utils/async';
@@ -89,7 +88,7 @@ describe('AsyncComponent', () => {
   });
 
   it('passes given props to rendered component', (done) => {
-    const className = 'col-md-1';
+    const className = 'arbitrary-class-name';
     const loader = () =>
       new Promise<typeof Foo>((resolve) => {
         resolve(Foo);

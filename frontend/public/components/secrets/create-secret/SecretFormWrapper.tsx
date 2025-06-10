@@ -1,17 +1,18 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
 import { ButtonBar } from '../../utils/button-bar';
-import { PageHeading } from '../../utils/headings';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { resourceObjPath } from '../../utils/resource-link';
 import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../factory/modal';
 import { SecretModel } from '../../../models';
-import { SecretTypeAbstraction } from './types';
+import { SecretFormType } from './types';
 import {
   toDefaultSecretType,
   determineSecretType,
@@ -22,13 +23,13 @@ import { SecretSubForm } from './SecretSubForm';
 import { isBinary } from 'istextorbinary';
 
 export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
-  const { isCreate, modal, onCancel, secretTypeAbstraction } = props;
+  const { formType, isCreate, modal, onCancel } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams();
 
   const existingSecret = _.pick(props.obj, ['metadata', 'type']);
-  const defaultSecretType = toDefaultSecretType(secretTypeAbstraction);
+  const defaultSecretType = toDefaultSecretType(formType);
   const initialSecret = _.defaultsDeep({}, props.fixed, existingSecret, {
     apiVersion: 'v1',
     data: {},
@@ -43,17 +44,18 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState();
   const [stringData, setStringData] = React.useState(
-    _.mapValues(_.get(props.obj, 'data'), (value) => {
+    Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
       if (isBinary(null, Buffer.from(value, 'base64'))) {
         return null;
       }
-      return value ? Base64.decode(value) : '';
-    }),
+      acc[key] = value ? Base64.decode(value) : '';
+      return acc;
+    }, {}),
   );
   const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
-  const title = useSecretTitle(isCreate, secretTypeAbstraction);
-  const helptext = useSecretDescription(secretTypeAbstraction);
+  const title = useSecretTitle(isCreate, formType);
+  const helptext = useSecretDescription(formType);
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
 
   const onDataChanged = (secretsData) => {
@@ -120,7 +122,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       <>
         <fieldset disabled={!isCreate}>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="secret-name">
+            <label className="co-required" htmlFor="secret-name">
               {t('public~Secret name')}
             </label>
             <div>
@@ -142,7 +144,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           </div>
         </fieldset>
         <SecretSubForm
-          typeAbstraction={props.secretTypeAbstraction}
+          formType={formType}
           onChange={onDataChanged}
           onError={onError}
           onFormDisable={(disable) => setDisableForm(disable)}
@@ -168,12 +170,10 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     </form>
   ) : (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} helpText={helptext} />
-      <div className="co-m-pane__body">
-        <form className="co-m-pane__body-group co-create-secret-form" onSubmit={save}>
+      <PaneBody>
+        <form className="co-create-secret-form" onSubmit={save}>
           {renderBody()}
           <ButtonBar errorMessage={error} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
@@ -192,7 +192,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };
@@ -203,7 +203,7 @@ type BaseEditSecretProps_ = {
   kind?: string;
   isCreate?: boolean;
   modal?: boolean;
-  secretTypeAbstraction?: SecretTypeAbstraction;
+  formType?: SecretFormType;
   saveButtonText?: string;
   onCancel?: () => void;
   onSave?: (name: string) => void;

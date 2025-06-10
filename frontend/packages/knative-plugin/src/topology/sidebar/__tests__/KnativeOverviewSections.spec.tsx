@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { ResourceSummary } from '@console/internal/components/utils';
@@ -17,7 +16,7 @@ import {
 } from '../KnativeOverviewSections';
 
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = jest.requireActual('@console/shared');
   return {
     ...ActualShared,
     usePodScalingAccessStatus: jest.fn(),

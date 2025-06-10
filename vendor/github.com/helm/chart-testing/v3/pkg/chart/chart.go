@@ -259,11 +259,12 @@ type TestResult struct {
 // NewTesting creates a new Testing struct with the given config.
 func NewTesting(config config.Configuration, extraSetArgs string) (Testing, error) {
 	procExec := exec.NewProcessExecutor(config.Debug)
-	extraArgs := strings.Fields(config.HelmExtraArgs)
+	helmExtraArgs := strings.Fields(config.HelmExtraArgs)
+	helmLintExtraArgs := strings.Fields(config.HelmLintExtraArgs)
 
 	testing := Testing{
 		config:           config,
-		helm:             tool.NewHelm(procExec, extraArgs, strings.Fields(extraSetArgs)),
+		helm:             tool.NewHelm(procExec, helmExtraArgs, helmLintExtraArgs, strings.Fields(extraSetArgs)),
 		git:              tool.NewGit(procExec),
 		kubectl:          tool.NewKubectl(procExec, config.KubectlTimeout),
 		linter:           tool.NewLinter(procExec),
@@ -722,11 +723,12 @@ func (t *Testing) computeMergeBase() (string, error) {
 		return "", errors.New("must be in a git repository")
 	}
 
-	if !t.git.BranchExists(t.config.TargetBranch) {
-		return "", fmt.Errorf("targetBranch '%s' does not exist", t.config.TargetBranch)
+	branch := fmt.Sprintf("%s/%s", t.config.Remote, t.config.TargetBranch)
+	if !t.git.BranchExists(branch) {
+		return "", fmt.Errorf("targetBranch '%s' does not exist", branch)
 	}
 
-	return t.git.MergeBase(fmt.Sprintf("%s/%s", t.config.Remote, t.config.TargetBranch), t.config.Since)
+	return t.git.MergeBase(branch, t.config.Since)
 }
 
 // ComputeChangedChartDirectories takes the merge base of HEAD and the configured remote and target branch and computes a

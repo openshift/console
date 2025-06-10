@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
 import {
@@ -12,7 +12,6 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
   detailsPage,
   navFactory,
   resourceObjPath,
@@ -20,6 +19,8 @@ import {
 import { SecretType } from './secrets/create-secret/types';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;
@@ -74,15 +75,10 @@ const SecretTableRow = ({ obj: secret }) => {
           namespace={secret.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={secret.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-        {secret.type}
-      </TableData>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
       <TableData className={tableColumnClasses[3]}>{data}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={secret.metadata.creationTimestamp} />
@@ -99,24 +95,24 @@ const SecretDetails = ({ obj: secret }) => {
   const { data, type } = secret;
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Secret details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={secret} />
-          </div>
+          </GridItem>
           {type && (
-            <div className="col-md-6">
-              <dl data-test-id="resource-type" className="co-m-pane__details">
+            <GridItem md={6}>
+              <DescriptionList data-test-id="resource-type">
                 <DetailsItem label={t('public~Type')} obj={secret} path="type" />
-              </dl>
-            </div>
+              </DescriptionList>
+            </GridItem>
           )}
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SecretData data={data} type={type} />
-      </div>
+      </PaneBody>
     </>
   );
 };

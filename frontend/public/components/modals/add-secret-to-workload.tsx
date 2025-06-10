@@ -175,10 +175,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
           </Trans>
         </p>
         <div className="form-group">
-          <label
-            className="control-label co-required"
-            htmlFor="co-add-secret-to-workload__workload"
-          >
+          <label className="co-required" htmlFor="co-add-secret-to-workload__workload">
             {t('public~Add this secret to workload')}
           </label>
           <Dropdown

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import {
   Node,
   AnchorEnd,
@@ -16,10 +17,10 @@ import {
   useCombineRefs,
   NodeLabel,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { WithCreateConnectorProps, useHover } from '@console/topology/src/behavior';
+import { useHover } from '@console/topology/src/behavior';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
@@ -150,7 +151,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
           ref={hoverRef}
           onClick={onSelect}
           onContextMenu={onContextMenu}
-          className={classNames('odc-knative-service', {
+          className={css('odc-knative-service', {
             'pf-m-dragging': dragging || labelDragging,
             'pf-m-highlight': canDrop || edgeDragging,
             'is-filtered': filtered,
@@ -164,7 +165,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
           >
             <g
               ref={nodeRefs}
-              className={classNames('odc-knative-service', {
+              className={css('odc-knative-service', {
                 'pf-m-selected': selected,
                 'pf-m-dragging': dragging || labelDragging,
                 'pf-m-highlight': canDrop || edgeDragging,

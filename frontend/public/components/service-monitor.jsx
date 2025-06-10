@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { ListPage, Table, TableData } from './factory';
 import { Kebab, ResourceKebab, ResourceLink, Selector } from './utils';
@@ -19,7 +18,7 @@ const namespaceSelectorLinks = ({ spec }) => {
       </span>
     ));
   }
-  return <span className="text-muted">--</span>;
+  return <span className="pf-v6-u-text-color-subtle">--</span>;
 };
 
 const serviceSelectorLinks = ({ spec }) => {

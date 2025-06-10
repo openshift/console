@@ -12,6 +12,8 @@ import {
   DropdownGroup,
   DropdownItem,
   DropdownList,
+  Flex,
+  FlexItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -29,7 +31,7 @@ import {
   OutlinedWindowRestoreIcon,
   OutlinedPlayCircleIcon,
 } from '@patternfly/react-icons';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import {
   FLAGS,
   LOG_WRAP_LINES_USERSETTINGS_KEY,
@@ -37,7 +39,8 @@ import {
 } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import { LoadingInline, TogglePlay, ExternalLink } from './';
+import { LoadingInline, TogglePlay } from './';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import * as screenfull from 'screenfull';
@@ -367,16 +370,17 @@ export const LogControls: React.FC<LogControlsProps> = ({
   );
 
   return (
-    <div className="co-toolbar">
-      <div
-        className={classNames('co-toolbar__group co-toolbar__group--left', {
-          'co-toolbar__group--alongside-kebab': isMobile,
-        })}
-      >
-        <div className="co-toolbar__item">{showStatus()}</div>
-        {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
-        <div className="co-toolbar__item">{logTypeSelect()}</div>
-        <div className="co-toolbar__item">
+    <Flex
+      className="resource-log__toolbar"
+      flexWrap={{ default: 'nowrap', md: 'wrap' }}
+      justifyContent={{ default: 'justifyContentFlexStart', md: 'justifyContentSpaceBetween' }}
+    >
+      <Flex>
+        {/* orphaned `co-toolbar__item used in https://github.com/openshift/verification-tests */}
+        <FlexItem className="co-toolbar__item">{showStatus()}</FlexItem>
+        {dropdown && <FlexItem>{dropdown}</FlexItem>}
+        <FlexItem>{logTypeSelect()}</FlexItem>
+        <FlexItem>
           <LogViewerSearch
             onFocus={() => {
               if (status === STREAM_ACTIVE) {
@@ -386,7 +390,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             placeholder="Search"
             minSearchChars={0}
           />
-        </div>
+        </FlexItem>
         {showDebugAction(resource, containerName) && !isWindowsPod(resource) && (
           <Link
             to={`${resourcePath(
@@ -405,17 +409,11 @@ export const LogControls: React.FC<LogControlsProps> = ({
               'public~Debug in terminal is not currently available for windows containers.',
             )}
           >
-            <span className="text-muted">{label}</span>
+            <span className="pf-v6-u-text-color-subtle">{label}</span>
           </Tooltip>
         )}
-      </div>
-      <div
-        className={classNames(
-          'co-toolbar__group',
-          isMobile ? 'co-toolbar__group--kebab' : 'co-toolbar__group--right',
-        )}
-        data-test="log-links"
-      >
+      </Flex>
+      <Flex data-test="log-links">
         {isMobile ? (
           <Dropdown
             isOpen={isDropdownOpen}
@@ -474,7 +472,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             </DropdownGroup>
           </Dropdown>
         ) : (
-          <div className="pf-v6-l-flex">
+          <Flex>
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
             <div>{fullLog}</div>
             <Divider
@@ -511,10 +509,10 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 </Button>
               </>
             )}
-          </div>
+          </Flex>
         )}
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -786,9 +784,9 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     <>
       <div
         ref={resourceLogRef}
-        className={classNames('resource-log', { 'resource-log--fullscreen': isFullscreen })}
+        className={css('resource-log', { 'resource-log--fullscreen': isFullscreen })}
       >
-        <div className={classNames('resource-log__alert-wrapper')}>
+        <div className={css('resource-log__alert-wrapper')}>
           {error && (
             <Alert
               isInline
@@ -835,7 +833,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             </Alert>
           )}
         </div>
-        <div className={classNames('resource-log__log-viewer-wrapper')}>
+        <div className={css('resource-log__log-viewer-wrapper')}>
           <LogViewer
             header={
               <div className="log-window__header" data-test="no-log-lines">
@@ -850,7 +848,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             toolbar={logControls}
             footer={
               <FooterButton
-                className={classNames('log-window__footer', {
+                className={css('log-window__footer', {
                   'log-window__footer--hidden': status !== STREAM_PAUSED,
                 })}
                 setStatus={setStatus}

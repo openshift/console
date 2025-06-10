@@ -37,7 +37,9 @@ const BuildRunItem: React.FC<BuildRunItemProps> = ({ buildRun }) => {
             {lastUpdated && (
               <>
                 {' '}
-                <span className="so-build-run-item__time text-muted">({fromNow(lastUpdated)})</span>
+                <span className="so-build-run-item__time pf-v6-u-text-color-subtle">
+                  ({fromNow(lastUpdated)})
+                </span>
               </>
             )}
           </div>
@@ -45,7 +47,7 @@ const BuildRunItem: React.FC<BuildRunItemProps> = ({ buildRun }) => {
         <GridItem span={3}>
           <BuildRunStatus buildRun={buildRun} />
         </GridItem>
-        <GridItem span={3} className="text-right">
+        <GridItem span={3}>
           <Link to={`${path}/logs`}>{t('shipwright-plugin~View logs')}</Link>
         </GridItem>
       </Grid>

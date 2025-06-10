@@ -1,10 +1,11 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { ClampedText, LazyActionMenu } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RevisionModel, ServiceModel } from '../../models';
 import { RevisionKind, ConditionTypes } from '../../types';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
@@ -29,10 +30,10 @@ const RevisionRow: React.FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {service && (
           <ResourceLink
             kind={serviceReference}

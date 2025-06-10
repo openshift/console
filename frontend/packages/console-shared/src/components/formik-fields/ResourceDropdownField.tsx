@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -57,7 +57,7 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
           id={fieldId}
           dataSelector={dataSelector}
           selectedKey={field.value}
-          dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
+          dropDownClassName={css({ 'dropdown--full-width': fullWidth })}
           onLoad={onLoad}
           resourceFilter={resourceFilter}
           onChange={(value: string, name: string | object, resource: K8sResourceKind) => {

@@ -171,7 +171,7 @@ const SecureRouteFields: React.FC = () => {
 
   return (
     <div className="pf-v6-c-form">
-      <span className="co-help-text">
+      <span>
         {t(
           'devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.',
         )}

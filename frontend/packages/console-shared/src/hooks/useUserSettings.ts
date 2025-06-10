@@ -35,7 +35,11 @@ const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => vo
 export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = false) => {
   // Mount status for safety state updates
   const mounted = React.useRef(true);
-  React.useEffect(() => () => (mounted.current = false), []);
+  React.useEffect(() => {
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   // Keys and values
   const keyRef = React.useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));

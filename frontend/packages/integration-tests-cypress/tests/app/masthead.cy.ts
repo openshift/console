@@ -1,5 +1,6 @@
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
+import { guidedTour } from '../../views/guided-tour';
 import { masthead } from '../../views/masthead';
 
 describe('Masthead', () => {
@@ -7,6 +8,7 @@ describe('Masthead', () => {
     // clear any existing sessions
     Cypress.session.clearAllSavedSessions();
     cy.login();
+    guidedTour.close();
   });
 
   afterEach(() => {
@@ -30,19 +32,19 @@ describe('Masthead', () => {
       masthead.quickCreateDropdown().click();
       cy.byTestID('qc-import-yaml').should('be.visible');
       cy.get('[data-test="qc-import-yaml"] a').click({ force: true });
-      cy.get('[data-test-id="resource-title"]').should('include.text', 'Import YAML');
+      cy.get('[data-test="page-heading"] h1').should('include.text', 'Import YAML');
     });
     it('should open Import from Git', () => {
       masthead.quickCreateDropdown().click();
       cy.byTestID('qc-import-from-git').should('be.visible');
       cy.get('[data-test="qc-import-from-git"] a').click({ force: true });
-      cy.get('[data-test-id="resource-title"]').should('include.text', 'Import from Git');
+      cy.get('[data-test="page-heading"] h1').should('include.text', 'Import from Git');
     });
     it('should open Deploy Image', () => {
       masthead.quickCreateDropdown().click();
       cy.byTestID('qc-container-images').should('be.visible');
       cy.get('[data-test="qc-container-images"] a').click({ force: true });
-      cy.get('[data-test-id="resource-title"]').should('include.text', 'Deploy Image');
+      cy.get('[data-test="page-heading"] h1').should('include.text', 'Deploy Image');
     });
   });
 

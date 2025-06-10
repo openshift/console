@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { EventListenerKind } from '../resource-types';
 import EventListenerTriggers from './EventListenerTriggers';
 import EventListenerURL from './EventListenerURL';
@@ -16,13 +18,13 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
       (trigger) => trigger.template?.ref || trigger.template?.name,
     ) || [];
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('pipelines-plugin~EventListener details')} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={eventListener} />
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <EventListenerURL
             eventListener={eventListener}
             namespace={eventListener.metadata.namespace}
@@ -33,9 +35,9 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
               triggers={triggers}
             />
           )}
-        </div>
-      </div>
-    </div>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 

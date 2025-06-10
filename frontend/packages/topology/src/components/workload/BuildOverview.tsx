@@ -17,6 +17,7 @@ import { BuildConfigModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { BuildPhase, startBuild } from '@console/internal/module/k8s/builds';
 import { LogSnippet, Status, BuildConfigOverviewItem } from '@console/shared';
+import './BuildOverview.scss';
 
 const MAX_VISIBLE = 3;
 
@@ -104,7 +105,7 @@ const BuildOverviewItem: React.FC<BuildOverviewListItemProps> = ({ build }) => {
             {lastUpdated && (
               <>
                 {' '}
-                <span className="build-overview__item-time text-muted">
+                <span className="build-overview__item-time pf-v6-u-text-color-subtle">
                   ({fromNow(lastUpdated)})
                 </span>
               </>
@@ -171,7 +172,9 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
       </li>
       {!(builds?.length > 0) ? (
         <li className="list-group-item">
-          <span className="text-muted">{t('topology~No Builds found for this Build Config.')}</span>
+          <span className="pf-v6-u-text-color-subtle">
+            {t('topology~No Builds found for this Build Config.')}
+          </span>
         </li>
       ) : (
         builds

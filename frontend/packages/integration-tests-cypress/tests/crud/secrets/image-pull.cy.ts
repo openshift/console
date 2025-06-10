@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../../support';
 import { detailsPage } from '../../../views/details-page';
+import { guidedTour } from '../../../views/guided-tour';
 import { secrets } from '../../../views/secret';
 
 const heading = 'Create image pull secret';
@@ -7,6 +8,7 @@ const heading = 'Create image pull secret';
 describe('Image pull secrets', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 
@@ -72,7 +74,7 @@ describe('Image pull secrets', () => {
     };
 
     cy.log('Create secret');
-    cy.get('.co-m-pane__heading').contains(heading);
+    cy.get('[data-test="page-heading"] h1').contains(heading);
     secrets.enterSecretName(credentialsImageSecretName);
     secrets.clickAddCredentialsButton();
     cy.get('[data-test-id="create-image-secret-form"]').each(($el, index) => {
@@ -124,7 +126,7 @@ describe('Image pull secrets', () => {
     };
 
     cy.log('Create secret');
-    cy.get('.co-m-pane__heading').contains(heading);
+    cy.get('[data-test="page-heading"] h1').contains(heading);
     secrets.enterSecretName(uploadConfigFileImageSecretName);
     cy.byLegacyTestID('dropdown-button').click();
     cy.byTestDropDownMenu('config-file').click();

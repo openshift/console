@@ -4,6 +4,7 @@ Feature: Create a workload of 'knative Service' type resource
 
         Background:
             Given user has created or selected namespace "aut-knative-workload"
+              And user is at Add page
 
 
         @regression
@@ -80,8 +81,8 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: Create a workload from DevCatalog BuilderImages card on Add page: KN-05-TC07
-            Given user is at Developer Catalog page
+        Scenario: Create a workload from Software Catalog BuilderImages card on Add page: KN-05-TC07
+            Given user is at Software Catalog page
               And user creates the application with the selected builder image
               And user enters S2I Git Repo url as "https://github.com/sclorg/nodejs-ex.git"
               And user enters workload name as "knative-dev-catalog"

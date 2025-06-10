@@ -2,9 +2,10 @@ import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import { DetailsItem, ResourceSummary, Timestamp } from '@console/internal/components/utils';
+import { DetailsItem, ResourceSummary } from '@console/internal/components/utils';
 import { CronJobModel } from '@console/internal/models';
 import { CronJobKind } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { getResource } from '../../utils';
 

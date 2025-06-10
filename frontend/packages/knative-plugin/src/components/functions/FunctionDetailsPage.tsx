@@ -9,7 +9,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { ServiceModel } from '../../models';
 import { ServiceTypeValue } from '../../types';
-import { ServiceDetailsPage } from '../services';
+import ServiceDetailsPage from '../services/ServiceDetailsPage';
 import { KnativeServiceTypeContext } from './ServiceTypeContext';
 
 const FunctionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = () => {

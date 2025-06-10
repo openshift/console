@@ -3,13 +3,12 @@ Feature: Perform actions on knative service and revision
               As a user, I want to perform edit or delete operations on knative revision in topology page
 
         Background:
-              And user is at Topology page
+              And user is at Topology page in the admin view
 
         @pre-condition
         Scenario Outline: Create knative workload from From Git card on Add page: KN-05-TC04
             Given user has created or selected namespace "knative-ci"
-              And user is at Add page
-              And user is at Import from Git page
+              And user selects Import from Git from quick create
              When user enters Git Repo url as "<git_url>"
               And user enters Name as "<workload_name>"
               And user selects resource type as "Serverless Deployment"

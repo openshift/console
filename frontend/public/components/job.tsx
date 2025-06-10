@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,6 +10,7 @@ import {
   LazyActionMenu,
   ActionMenuVariant,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getJobTypeAndCompletions,
   K8sKind,
@@ -31,12 +32,20 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   navFactory,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
   // t('public~Edit parallelism')
@@ -82,10 +91,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={job.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -114,9 +120,9 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-md-6">
+      <PaneBody>
+        <Grid hasGutter>
+          <GridItem md={6}>
             <SectionHeading text={t('public~Job details')} />
             <ResourceSummary resource={job} showPodSelector>
               <DetailsItem
@@ -135,16 +141,20 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
                   : t('public~Not configured')}
               </DetailsItem>
             </ResourceSummary>
-          </div>
-          <div className="col-md-6">
+          </GridItem>
+          <GridItem md={6}>
             <SectionHeading text={t('public~Job status')} />
-            <dl className="co-m-pane__details">
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                <Status
-                  status={job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null}
-                />
-              </dd>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Status
+                    status={
+                      job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null
+                    }
+                  />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
               <DetailsItem label={t('public~Start time')} obj={job} path="status.startTime">
                 <Timestamp timestamp={job.status.startTime} />
               </DetailsItem>
@@ -174,18 +184,18 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
                 defaultValue="0"
               />
               <PodDisruptionBudgetField obj={job} />
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={job.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

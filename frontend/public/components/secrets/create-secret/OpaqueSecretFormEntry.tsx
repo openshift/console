@@ -33,7 +33,7 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
   return (
     <div className="co-create-generic-secret__form">
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${index}-key`}>
+        <label className="co-required" htmlFor={`${index}-key`}>
           {t('public~Key')}
         </label>
         <div>
@@ -53,7 +53,7 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
       <div className="form-group">
         <DroppableFileInput
           onChange={handleValueChange}
-          inputFileData={entry.value}
+          inputFileData={Base64.decode(entry.value)}
           id={`${index}-value`}
           label={t('public~Value')}
           inputFieldHelpText={t(

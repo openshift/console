@@ -2,9 +2,18 @@ import * as React from 'react';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
-import { Button } from '@patternfly/react-core';
+import {
+  Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ListPage, DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
@@ -23,32 +32,40 @@ const Details: React.SFC<DetailsProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <div>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('public~Alertmanager details')} />
-        <div className="row">
-          <div className="col-sm-6 col-xs-12">
-            <dl className="co-m-pane__details">
-              <dt>Name</dt>
-              <dd>{metadata.name}</dd>
-              <dt>Labels</dt>
-              <dd>
+    <PaneBody>
+      <SectionHeading text={t('public~Alertmanager details')} />
+      <Grid hasGutter>
+        <GridItem sm={6}>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>Name</DescriptionListTerm>
+              <DescriptionListDescription>{metadata.name}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>Labels</DescriptionListTerm>
+              <DescriptionListDescription>
                 <LabelList kind="Alertmanager" labels={metadata.labels} />
-              </dd>
-              {spec.nodeSelector && <dt>{t('public~Alertmanager node selector')}</dt>}
-              {spec.nodeSelector && (
-                <dd>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            {spec.nodeSelector && (
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Alertmanager node selector')}</DescriptionListTerm>{' '}
+                <DescriptionListDescription>
                   <Selector selector={spec.nodeSelector} kind="Node" />
-                </dd>
-              )}
-            </dl>
-          </div>
-          <div className="col-sm-6 col-xs-12">
-            <dl className="co-m-pane__details">
-              <dt>Version</dt>
-              <dd>{spec.version}</dd>
-              <dt>Replicas</dt>
-              <dd>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            )}
+          </DescriptionList>
+        </GridItem>
+        <GridItem sm={6}>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>Version</DescriptionListTerm>
+              <DescriptionListDescription>{spec.version}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>Replicas</DescriptionListTerm>
+              <DescriptionListDescription>
                 <Button
                   icon={<PencilAltIcon />}
                   iconPosition="end"
@@ -59,12 +76,12 @@ const Details: React.SFC<DetailsProps> = (props) => {
                 >
                   {pluralize(spec.replicas, 'pod')}
                 </Button>
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 

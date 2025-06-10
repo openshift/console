@@ -1,11 +1,10 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ALL_NAMESPACES_KEY, useActiveNamespace, useFlag } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
 jest.mock('@console/shared/src', () => ({
-  ...require.requireActual('@console/shared/src'),
+  ...jest.requireActual('@console/shared/src'),
   useActiveNamespace: jest.fn(),
   useOpenShiftVersion: () => '4.8.0',
   useFlag: jest.fn<boolean>(),

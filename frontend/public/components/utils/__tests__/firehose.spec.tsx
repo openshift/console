@@ -19,7 +19,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
   k8sGet: jest.fn(),
 }));
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
-  ...require.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s'),
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s'),
   k8sWatch: jest.fn(),
 }));
 const k8sListMock = k8sList as jest.Mock;
@@ -215,7 +215,9 @@ describe('Firehose', () => {
 
   afterEach(async () => {
     // Ensure that there is no timer left which triggers a rerendering
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     cleanup();
 
@@ -301,7 +303,9 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Expect updated child-props
     const podsLoaded = {
@@ -389,7 +393,9 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Expect updated child-props
     const podLoaded = {
@@ -483,7 +489,9 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Expect updated child-props
     const podsLoaded = {
@@ -565,7 +573,9 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[0][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Expect updated child-props
     const podLoaded = {
@@ -673,7 +683,9 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(notLoadedYetProps);
 
     // Finish API call
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Expect updated child-props
     const podsLoaded = {
@@ -820,7 +832,9 @@ describe('Firehose', () => {
     expect(resourceUpdate.mock.calls[1][0]).toEqual(podsNotLoadedYetProps);
 
     // Finish API call
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Expect updated child-props
     const podsLoaded = {
@@ -947,7 +961,9 @@ describe('Firehose together with useK8sWatchResources', () => {
 
   afterEach(async () => {
     // Ensure that there is no timer left which triggers a rerendering
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     cleanup();
 
@@ -1000,7 +1016,9 @@ describe('Firehose together with useK8sWatchResources', () => {
     );
 
     // Finish API calls
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert that API calls are just triggered once
     expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -1088,7 +1106,9 @@ describe('Firehose together with useK8sWatchResources', () => {
     );
 
     // Finish API calls
-    await act(async () => jest.runAllTimers());
+    await act(async () => {
+      jest.runAllTimers();
+    });
 
     // Assert that API calls are just triggered once
     expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -1171,7 +1191,9 @@ describe('Firehose together with useK8sWatchResources', () => {
       );
 
       // Finish API calls
-      await act(async () => jest.runAllTimers());
+      await act(async () => {
+        jest.runAllTimers();
+      });
 
       // Assert that API calls are just triggered once
       expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -1267,7 +1289,9 @@ describe('Firehose together with useK8sWatchResources', () => {
       );
 
       // Finish API calls
-      await act(async () => jest.runAllTimers());
+      await act(async () => {
+        jest.runAllTimers();
+      });
 
       // Assert that API calls are just triggered once
       expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -1364,7 +1388,9 @@ describe('Firehose together with useK8sWatchResources', () => {
       );
 
       // Finish API calls
-      await act(async () => jest.runAllTimers());
+      await act(async () => {
+        jest.runAllTimers();
+      });
 
       // Assert that API calls are just triggered once
       expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -1478,7 +1504,9 @@ describe('Firehose together with useK8sWatchResources', () => {
       );
 
       // Finish API calls
-      await act(async () => jest.runAllTimers());
+      await act(async () => {
+        jest.runAllTimers();
+      });
 
       expect(k8sGetMock).toHaveBeenCalledTimes(1);
       expect(k8sGetMock.mock.calls[0]).toEqual([

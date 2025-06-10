@@ -117,21 +117,18 @@ $skeleton-tile-desc-line-bone: linear-gradient(
   flex: 1;
   height: 100%;
   position: relative;
-  margin: 0 $pf-v6-global-gutter $pf-v6-global-gutter;
-  padding: $pf-v6-global-gutter 0;
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    margin-bottom: $pf-v6-global-gutter--md;
-    margin-left: $pf-v6-global-gutter--md;
-    margin-right: $pf-v6-global-gutter--md;
-  }
+  padding: $pf-v6-global-gutter-y 0;
 }
 
 .skeleton-catalog--grid {
   align-content: flex-start;
   display: flex;
   flex-wrap: wrap;
-  margin: 117px 6px 6px 0;
-  padding: 30px 0 0 45px;
+  margin: 75px 0 0 0;
+  padding: 30px 0 0 25px;
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    padding-left: 45px;
+  }
   &::before {
     content: '';
     background: $skeleton-color;
@@ -144,26 +141,31 @@ $skeleton-tile-desc-line-bone: linear-gradient(
 }
 
 .skeleton-catalog--list {
-  flex: 0 0 235px;
+  display: none;
+  flex: 0 0 230px;
+
+  @media (min-width: $pf-v6-global--breakpoint--md) {
+    display: block;
+  }
 }
 
 .skeleton-catalog--list {
   &::after {
-    background-image: linear-gradient($skeleton-color 45%, transparent 0);
-    background-size: 100% 40px;
+    background-image: linear-gradient($skeleton-color 18px, transparent 0);
+    background-size: 100% 30px;
     content: '';
     display: block;
-    height: 400px;
+    height: 390px;
     left: 15px;
     position: absolute;
     top: 20px;
-    width: 205px;
+    width: 220px;
   }
 }
 
 .skeleton-catalog--tile {
   height: $skeleton-tile-height;
-  margin: 0 24px 24px 0;
+  margin: 0 25px 25px 0;
   width: $co-m-catalog-tile-width;
   &:empty::after {
     animation: $skeleton-animation;
@@ -194,7 +196,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(
 }
 
 .skeleton-detail-view {
-  padding: $pf-v6-global-gutter--md;
+  padding: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
   height: 100%;
   width: 100%;
 }
@@ -325,7 +327,10 @@ $skeleton-tile-desc-line-bone: linear-gradient(
   }
   // table rows
   &::after {
-    background-image: linear-gradient(var(--pf-t--global--border--color--default) 1px, transparent 0px),
+    background-image: linear-gradient(
+        var(--pf-t--global--border--color--default) 1px,
+        transparent 0px
+      ),
       linear-gradient($skeleton-color 26px, transparent 26px);
     background-size: 100% 46px, 50% 46px;
     background-position: 50px 0%, 0px 10px;

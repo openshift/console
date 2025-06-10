@@ -529,7 +529,7 @@
   "Create {{label}}": "{{label}} 만들기",
   "Edit {{label}}": "{{label}} 편집",
   "{helpText}": "{helpText}",
-  "Create PodDiscruptionBudget": "PodDiscruptionBudget 만들기",
+  "Create PodDisruptionBudget": "PodDisruptionBudget 만들기",
   "Disruption not allowed": "중단이 허용되지 않음",
   "PodDisruptionBudget": "PodDisruptionBudget",
   "No PodDisruptionBudget": "PodDisruptionBudget 없음",

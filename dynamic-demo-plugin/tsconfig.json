@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "target": "es2021",
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2021",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "allowJs": true,
     "experimentalDecorators": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
-    "lib": ["dom", "es7", "es2017.string"]
+    "lib": ["es2021", "dom"]
   },
   "include": ["src"],
   "ts-node": {

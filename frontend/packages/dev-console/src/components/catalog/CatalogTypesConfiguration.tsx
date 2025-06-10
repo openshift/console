@@ -22,7 +22,7 @@ type Types = {
   disabled?: string[];
 };
 
-type DeveloperCatalogTypesConsoleConfig = K8sResourceKind & {
+type SoftwareCatalogTypesConsoleConfig = K8sResourceKind & {
   spec: {
     customization?: {
       developerCatalog?: {
@@ -62,7 +62,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
 
   // Current configuration
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    DeveloperCatalogTypesConsoleConfig
+    SoftwareCatalogTypesConsoleConfig
   >();
   const [types, setTypes] = React.useState<Types>();
   React.useEffect(() => {
@@ -165,7 +165,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
   const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
-      customize: 'Developer Catalog types',
+      customize: 'Software Catalog types',
       state: types?.state,
       types:
         types?.state === 'Enabled'
@@ -176,7 +176,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
     });
     setSaveStatus({ status: 'in-progress' });
 
-    const patch: DeveloperCatalogTypesConsoleConfig = {
+    const patch: SoftwareCatalogTypesConsoleConfig = {
       spec: {
         customization: {
           developerCatalog: {
@@ -240,10 +240,10 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
   };
 
   return (
-    <FormSection title={t('devconsole~Developer catalog')} data-test="catalog-types form-section">
+    <FormSection title={t('devconsole~Software Catalog')} data-test="catalog-types form-section">
       <FormHelperText>
         {t(
-          'devconsole~Another option to customize and standardize your development process. As an admin, you can disable the complete Developer Catalog, or individual sub-catalogs (available as Types in the Developer Catalog). Also here the "Search" and "Topology" will still show such resources.',
+          'devconsole~Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
       <DualListSelector

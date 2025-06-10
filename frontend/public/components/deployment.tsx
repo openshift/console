@@ -9,23 +9,14 @@ import {
   usePrometheusGate,
 } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
-import {
-  AddHorizontalPodAutoScaler,
-  DeleteHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  hideActionForHPAs,
-} from '@console/app/src/actions/modify-hpa';
+
 import { DeploymentModel } from '../models';
 import {
   DeploymentKind,
-  K8sKind,
   K8sResourceKindReference,
   referenceFor,
   referenceForModel,
 } from '../module/k8s';
-import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
@@ -33,13 +24,10 @@ import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
-  Kebab,
-  KebabAction,
   ContainerTable,
   navFactory,
   ResourceSummary,
   SectionHeading,
-  togglePaused,
   WorkloadPausedAlert,
   RuntimeClass,
 } from './utils';
@@ -47,56 +35,22 @@ import { ReplicaSetsPage } from './replicaset';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
-const { ModifyCount, AddStorage, common } = Kebab.factory;
-
-const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) => ({
-  // t('public~Edit update strategy')
-  labelKey: 'public~Edit update strategy',
-  callback: () => configureUpdateStrategyModal({ deployment }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: deployment.metadata.name,
-    namespace: deployment.metadata.namespace,
-    verb: 'patch',
-  },
-});
-
-const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => ({
-  // t('public~Resume rollouts')
-  // t('public~Pause rollouts')
-  labelKey: obj.spec.paused ? 'public~Resume rollouts' : 'public~Pause rollouts',
-  callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'patch',
-  },
-});
-
-export const menuActions = [
-  hideActionForHPAs(ModifyCount),
-  PauseAction,
-  AddHealthChecks,
-  AddHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  AddStorage,
-  UpdateStrategy,
-  DeleteHorizontalPodAutoScaler,
-  EditResourceLimits,
-  ...Kebab.getExtensionsActionsForKind(DeploymentModel),
-  EditHealthChecks,
-  ...common,
-];
 
 export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ deployment }) => {
   const { t } = useTranslation();
   return (
-    <dl className="co-m-pane__details">
+    <DescriptionList>
       <DetailsItem label={t('public~Update strategy')} obj={deployment} path="spec.strategy.type" />
       {deployment.spec.strategy.type === 'RollingUpdate' && (
         <>
@@ -143,7 +97,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
       <RuntimeClass obj={deployment} />
       <PodDisruptionBudgetField obj={deployment} />
       <VerticalPodAutoscalerRecommendations obj={deployment} />
-    </dl>
+    </DescriptionList>
   );
 };
 DeploymentDetailsList.displayName = 'DeploymentDetailsList';
@@ -153,47 +107,42 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingSet key={deployment.metadata.uid} obj={deployment} path="/spec/replicas" />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary
-                resource={deployment}
-                showPodSelector
-                showNodeSelector
-                showTolerations
-              >
-                <dt>{t('public~Status')}</dt>
-                <dd>
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   {deployment.status.availableReplicas === deployment.status.updatedReplicas &&
                   deployment.spec.replicas === deployment.status.availableReplicas ? (
                     <Status status="Up to date" />
                   ) : (
                     <Status status="Updating" />
                   )}
-                </dd>
-              </ResourceSummary>
-            </div>
-            <div className="col-sm-6">
-              <DeploymentDetailsList deployment={deployment} />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </ResourceSummary>
+          </GridItem>
+          <GridItem sm={6}>
+            <DeploymentDetailsList deployment={deployment} />
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={deployment.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={deployment} heading={t('public~Volumes')} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={deployment.status.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

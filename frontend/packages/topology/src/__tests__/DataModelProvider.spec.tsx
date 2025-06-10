@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import * as utils from '@console/internal/components/utils/url-poll-hook';
@@ -12,7 +11,7 @@ jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
 }));
 jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+  const ActualShared = jest.requireActual('@console/shared');
   return {
     ...ActualShared,
     useQueryParams: () => new Map(),

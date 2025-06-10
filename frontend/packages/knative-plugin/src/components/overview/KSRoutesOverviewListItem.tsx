@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
@@ -22,12 +23,12 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
 
   return (
     <li className="list-group-item">
-      <div className="row">
-        <div className="col-xs-12">
+      <Grid hasGutter>
+        <GridItem>
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
           {status?.url?.length > 0 && (
             <>
-              <span className="text-muted">{t('knative-plugin~Location:')} </span>
+              <span className="pf-v6-u-text-color-subtle">{t('knative-plugin~Location:')} </span>
               {isPrivateKSVC ? (
                 <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied">
                   {status.url}
@@ -41,8 +42,8 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
               )}
             </>
           )}
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </li>
   );
 };

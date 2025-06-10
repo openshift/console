@@ -26,10 +26,9 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
   const debouncedUpdateResources = useDebounceCallback(setResources, 250);
 
   const updatedResources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
-  React.useEffect(() => debouncedUpdateResources(updatedResources), [
-    debouncedUpdateResources,
-    updatedResources,
-  ]);
+  React.useEffect(() => {
+    debouncedUpdateResources(updatedResources);
+  }, [debouncedUpdateResources, updatedResources]);
 
   // Wipe the current model on a namespace change
   React.useEffect(() => {

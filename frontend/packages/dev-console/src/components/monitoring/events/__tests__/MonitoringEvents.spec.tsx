@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { EventsList } from '@console/internal/components/events';
 import MonitoringEvents from '../MonitoringEvents';

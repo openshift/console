@@ -1,14 +1,22 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Banner, Flex } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared';
-import { connectToFlags } from '../reducers/connectToFlags';
-import { ExternalLink, Firehose, FirehoseResult } from './utils';
+import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
+import { Firehose, FirehoseResult } from './utils';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
 
-const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => {
+type ConsoleNotifierProps = {
+  location: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';
+};
+
+type PrivateConsoleNotifierProps = ConsoleNotifierProps & {
+  obj: FirehoseResult;
+};
+
+const ConsoleNotifier_: React.FC<PrivateConsoleNotifierProps> = ({ obj, location }) => {
   if (_.isEmpty(obj)) {
     return null;
   }
@@ -50,7 +58,9 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({ obj, location }) => 
 };
 ConsoleNotifier_.displayName = 'ConsoleNotifier_';
 
-export const ConsoleNotifier = connectToFlags(FLAGS.CONSOLE_NOTIFICATION)(({ flags, ...props }) => {
+export const ConsoleNotifier = connectToFlags<ConsoleNotifierProps & WithFlagsProps>(
+  FLAGS.CONSOLE_NOTIFICATION,
+)(({ flags, ...props }) => {
   const resources = flags[FLAGS.CONSOLE_NOTIFICATION]
     ? [
         {
@@ -62,13 +72,8 @@ export const ConsoleNotifier = connectToFlags(FLAGS.CONSOLE_NOTIFICATION)(({ fla
     : [];
   return (
     <Firehose resources={resources}>
-      <ConsoleNotifier_ {...(props as ConsoleNotifierProps)} />
+      <ConsoleNotifier_ {...(props as PrivateConsoleNotifierProps)} />
     </Firehose>
   );
 });
 ConsoleNotifier.displayName = 'ConsoleNotifier';
-
-type ConsoleNotifierProps = {
-  obj: FirehoseResult;
-  location: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';
-};

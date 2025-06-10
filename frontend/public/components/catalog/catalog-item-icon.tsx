@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 import { TemplateKind, PartialObjectMetadata } from '../../module/k8s';
 import aerogearImg from '../../imgs/logos/aerogear.svg';
@@ -76,6 +76,7 @@ import postgresqlImg from '../../imgs/logos/postgresql.svg';
 import processserverImg from '../../imgs/logos/processserver.svg';
 import pythonImg from '../../imgs/logos/python.svg';
 import quarkusImg from '../../imgs/logos/quarkus.svg';
+import rImg from '../../imgs/logos/r.svg';
 import rabbitmqImg from '../../imgs/logos/rabbitmq.svg';
 import railsImg from '../../imgs/logos/rails.svg';
 import reactImg from '../../imgs/logos/react.svg';
@@ -89,6 +90,7 @@ import rustImg from '../../imgs/logos/rust.svg';
 import scalaImg from '../../imgs/logos/scala.svg';
 import serverlessFuncImage from '../../imgs/logos/serverlessfx.svg';
 import shadowmanImg from '../../imgs/logos/shadowman.svg';
+import shinyImg from '../../imgs/logos/shiny.svg';
 import springBootImg from '../../imgs/logos/spring-boot.svg';
 import springImg from '../../imgs/logos/spring.svg';
 import ssoImg from '../../imgs/logos/sso.svg';
@@ -182,6 +184,7 @@ const logos = new Map<string, any>()
   .set('icon-processserver', processserverImg)
   .set('icon-python', pythonImg)
   .set('icon-quarkus', quarkusImg)
+  .set('icon-r', rImg)
   .set('icon-rabbitmq', rabbitmqImg)
   .set('icon-rails', railsImg)
   .set('icon-react', reactImg)
@@ -196,6 +199,7 @@ const logos = new Map<string, any>()
   .set('icon-scala', scalaImg)
   .set('icon-serverless-function', serverlessFuncImage)
   .set('icon-shadowman', shadowmanImg)
+  .set('icon-shiny', shinyImg)
   .set('icon-spring-boot', springBootImg)
   .set('icon-spring', springImg)
   .set('icon-sso', ssoImg)
@@ -253,7 +257,7 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
       <span className="co-catalog-item-icon__bg" aria-hidden>
         {iconClassImg ? (
           <img
-            className={classNames(
+            className={css(
               'co-catalog-item-icon__img',
               iconSize && `co-catalog-item-icon__img--${iconSize}`,
             )}
@@ -262,7 +266,7 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
           />
         ) : (
           <span
-            className={classNames(
+            className={css(
               'co-catalog-item-icon__icon',
               iconSize && `co-catalog-item-icon__icon--${iconSize}`,
               normalizeIconClass(iconClass),

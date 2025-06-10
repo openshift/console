@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
@@ -8,6 +8,7 @@ import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
 import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
 import { referenceFor, K8sResourceKind, modelFor } from '../module/k8s';
@@ -19,8 +20,9 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -50,28 +52,30 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading
           text={t('public~{{kind}} details', {
             kind: model?.labelKey ? t(model.labelKey) : model?.label,
           })}
         />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false}>
               {leftDetailsItems}
             </ResourceSummary>
-          </div>
+          </GridItem>
           {rightDetailsItems.length > 0 && (
-            <dl className="co-m-pane__details col-md-6">{rightDetailsItems}</dl>
+            <GridItem md={6}>
+              <DescriptionList>{rightDetailsItems}</DescriptionList>
+            </GridItem>
           )}
-        </div>
-      </div>
+        </Grid>
+      </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Conditions')} />
           <Conditions conditions={obj.status.conditions} />
-        </div>
+        </PaneBody>
       )}
     </>
   );
@@ -90,7 +94,7 @@ const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, cust
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {obj.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         ) : (

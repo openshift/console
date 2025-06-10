@@ -166,13 +166,13 @@ Given('user created pipeline run using yaml {string}', (yamlFile: string) => {
 
 When('user is at PipelineRun Details Page of {string}', (pipelineRunName: string) => {
   cy.contains('PipelineRun details').should('be.visible');
-  cy.byLegacyTestID('resource-title').should('include.text', pipelineRunName);
+  cy.get('[data-test="page-heading"] h1').should('include.text', pipelineRunName);
 });
 
 When(
   'user selects "rerun" option from action menu for pipeline run {string}',
   (pipelineRunName: string) => {
-    cy.byLegacyTestID('resource-title').should('include.text', pipelineRunName);
+    cy.get('[data-test="page-heading"] h1').should('include.text', pipelineRunName);
     cy.byLegacyTestID('actions-menu-button').click();
     cy.get('[data-test-action="Rerun"]').click();
   },

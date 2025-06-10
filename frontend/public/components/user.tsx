@@ -2,10 +2,17 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-import { Button, Content } from '@patternfly/react-core';
+import {
+  Button,
+  Content,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
@@ -196,19 +203,23 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
 const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~User details')} />
       <ResourceSummary resource={obj}>
-        <dt>{t('public~Full name')}</dt>
-        <dd>{obj.fullName || '-'}</dd>
-        <dt>{t('public~Identities')}</dt>
-        <dd>
-          {_.map(obj.identities, (identity: string) => (
-            <div key={identity}>{identity}</div>
-          ))}
-        </dd>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('public~Full name')}</DescriptionListTerm>
+          <DescriptionListDescription>{obj.fullName || '-'}</DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('public~Identities')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            {_.map(obj.identities, (identity: string) => (
+              <div key={identity}>{identity}</div>
+            ))}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       </ResourceSummary>
-    </div>
+    </PaneBody>
   );
 };
 

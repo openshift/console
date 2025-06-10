@@ -21,6 +21,7 @@ import {
   projectNameSpace,
   yamlEditor,
 } from '@console/dev-console/integration-tests/support/pages/app';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { chartAreaPO } from '../../page-objects/chart-area-po';
 import { topologyPO, typeOfWorkload } from '../../page-objects/topology-po';
 import {
@@ -195,6 +196,7 @@ Given('user has installed Service Binding operator', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
@@ -441,7 +443,7 @@ When('user clicks on Create button in import YAML', () => {
 
 When('user sees {string} Title on Service binding details page', (title: string) => {
   app.waitForLoad();
-  cy.get('[data-test-id="resource-title"]').should('have.text', title);
+  cy.get('[data-test="page-heading"] h1').should('have.text', title);
 });
 
 Then(

@@ -2,14 +2,11 @@ import * as React from 'react';
 import { Edge } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  ResourceLink,
-  SidebarSectionHeading,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel, SecretModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import { getNamespaceDashboardKialiLink, getResource } from '../../utils/topology-utils';
 
@@ -47,7 +44,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
           const sinkUri = spec?.sinkUri;
 
           return (
-            <li className="list-group-item  container-fluid" key={uid}>
+            <li className="list-group-item" key={uid}>
               {!sinkUri ? (
                 <ResourceLink
                   kind={referenceFor(resource)}
@@ -71,7 +68,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
         <>
           <SidebarSectionHeading text={t('topology~Secret')} />
           <ul className="list-group">
-            <li className="list-group-item  container-fluid" key={data.sbr.status.secret}>
+            <li className="list-group-item" key={data.sbr.status.secret}>
               <ResourceLink
                 kind={referenceForModel(SecretModel)}
                 name={data.sbr.status.secret}

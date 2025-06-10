@@ -1,9 +1,15 @@
-import * as React from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PipelineRunModel } from '../../models';
 import { TaskRunKind } from '../../types';
 import {
@@ -24,53 +30,53 @@ const TaskRunDetailsStatus = ({ taskRun }) => {
   const { t } = useTranslation();
 
   return (
-    <>
-      <dl>
-        <dt>{t('pipelines-plugin~Status')}</dt>
-        <dd>
+    <DescriptionList>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Status')}</DescriptionListTerm>
+        <DescriptionListDescription>
           <Status
             status={taskRunFilterReducer(taskRun)}
             title={taskRunFilterTitleReducer(taskRun)}
           />
-        </dd>
-      </dl>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
       {taskRun.metadata?.labels?.[TektonResourceLabel.pipelinerun] && (
-        <dl data-test="pipelineRun">
-          <dt>{t('pipelines-plugin~PipelineRun')}</dt>
-          <dd>
+        <DescriptionListGroup data-test="pipelineRun">
+          <DescriptionListTerm>{t('pipelines-plugin~PipelineRun')}</DescriptionListTerm>
+          <DescriptionListDescription>
             <ResourceLink
               kind={referenceForModel(PipelineRunModel)}
               name={taskRun.metadata.labels[TektonResourceLabel.pipelinerun]}
               namespace={taskRun.metadata.namespace}
             />
-          </dd>
-        </dl>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
-      <dl>
-        <dt>{t('pipelines-plugin~Started')}</dt>
-        <dd>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Started')}</DescriptionListTerm>
+        <DescriptionListDescription>
           <Timestamp timestamp={taskRun?.status?.startTime} />
-        </dd>
-      </dl>
-      <dl>
-        <dt>{t('pipelines-plugin~Duration')}</dt>
-        <dd>{pipelineRunDuration(taskRun)}</dd>
-      </dl>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('pipelines-plugin~Duration')}</DescriptionListTerm>
+        <DescriptionListDescription>{pipelineRunDuration(taskRun)}</DescriptionListDescription>
+      </DescriptionListGroup>
       <RunDetailsErrorLog
         logDetails={getTRLogSnippet(taskRun)}
         namespace={taskRun.metadata?.namespace}
       />
       {taskRun?.status?.podName && (
-        <dl data-test="pod">
-          <dt>{t('pipelines-plugin~Pod')}</dt>
-          <dd>
+        <DescriptionListGroup data-test="pod">
+          <DescriptionListTerm>{t('pipelines-plugin~Pod')}</DescriptionListTerm>
+          <DescriptionListDescription>
             <ResourceLink
               kind={PodModel.kind}
               name={taskRun.status.podName}
               namespace={taskRun.metadata.namespace}
             />
-          </dd>
-        </dl>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
       <WorkspaceResourceLinkList
         workspaces={taskRun.spec.workspaces}
@@ -78,7 +84,7 @@ const TaskRunDetailsStatus = ({ taskRun }) => {
         ownerResourceName={taskRun.metadata.name}
         ownerResourceKind={taskRun.kind}
       />
-    </>
+    </DescriptionList>
   );
 };
 

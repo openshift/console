@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { SignOutAltIcon } from '@patternfly/react-icons/dist/esm/icons/sign-out-alt-icon';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
@@ -290,13 +289,13 @@ const actionWithUnavailableGroupId: AddActionExtension = {
 
 // AddActionGroup extensions
 
-const developerCatalog: AddActionGroupExtension = {
+const softwareCatalog: AddActionGroupExtension = {
   flags: { required: [], disallowed: [] },
   pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     id: 'developer-catalog',
-    name: 'Developer Catalog',
+    name: 'Software Catalog',
     insertBefore: 'git-repository',
   },
   type: 'dev-console.add/action-group',
@@ -395,7 +394,7 @@ export const addActionsWithoutValidGroupId: AddActionExtension[] = [
 
 export const addActionGroup: AddActionGroup['properties'][] = [
   containerImagesActionGroup.properties,
-  developerCatalog.properties,
+  softwareCatalog.properties,
   pipelinesActionGroup.properties,
   eventing.properties,
   gitRepository.properties,
@@ -404,7 +403,7 @@ export const addActionGroup: AddActionGroup['properties'][] = [
 
 export const addActionGroupExtensions: AddActionGroupExtension[] = [
   containerImagesActionGroup,
-  developerCatalog,
+  softwareCatalog,
   pipelinesActionGroup,
   eventing,
   gitRepository,

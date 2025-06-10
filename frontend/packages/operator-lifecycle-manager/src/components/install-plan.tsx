@@ -1,7 +1,20 @@
 import * as React from 'react';
-import { Alert, Button, Hint, HintTitle, HintBody, HintFooter } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Hint,
+  HintTitle,
+  HintBody,
+  HintFooter,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +54,7 @@ import {
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { FLAGS, GreenCheckCircleIcon, Status, useFlag } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -56,17 +70,17 @@ import { InstallPlanReview, referenceForStepResource } from './index';
 const tableColumnClasses = [
   'pf-v6-c-table__td',
   'pf-v6-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
   Kebab.columnClass,
 ];
 
 const componentsTableColumnClasses = [
   'pf-v6-c-table__td',
   'pf-v6-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
 export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, footer }) => {
@@ -141,7 +155,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
                 />
               </li>
             </ul>
-          )) || <span className="text-muted">{t('olm~None')}</span>}
+          )) || <span className="pf-v6-u-text-color-subtle">{t('olm~None')}</span>}
       </TableData>
 
       {/* Kebab */}
@@ -310,7 +324,7 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
   return (
     <>
       {needsApproval && canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <InstallPlanHint
             title={t('olm~Review manual InstallPlan')}
             body={t(
@@ -326,29 +340,31 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
               </Link>
             }
           />
-        </div>
+        </PaneBody>
       )}
       {needsApproval && !canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <NeedInstallPlanPermissions installPlan={obj} />
-        </div>
+        </PaneBody>
       )}
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('olm~InstallPlan details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj} showAnnotations={false} />
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('olm~Status')}</dt>
-                <dd>
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <ResourceSummary resource={obj} showAnnotations={false} />
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
                   <Status status={obj.status?.phase ?? t('olm~Unknown')} />
-                </dd>
-                <dt>{t('olm~Components')}</dt>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~Components')}</DescriptionListTerm>
                 {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
-                  <dd key={csvName}>
+                  <DescriptionListDescription key={csvName}>
                     {obj.status.phase === 'Complete' ? (
                       <ResourceLink
                         kind={referenceForModel(ClusterServiceVersionModel)}
@@ -362,28 +378,30 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
                         {csvName}
                       </>
                     )}
-                  </dd>
+                  </DescriptionListDescription>
                 ))}
-                <dt>{t('olm~CatalogSources')}</dt>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~CatalogSources')}</DescriptionListTerm>
                 {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
-                  <dd key={`${sourceNamespace}-${sourceName}`}>
+                  <DescriptionListDescription key={`${sourceNamespace}-${sourceName}`}>
                     <ResourceLink
                       kind={referenceForModel(CatalogSourceModel)}
                       name={sourceName}
                       namespace={sourceNamespace}
                       title={sourceName}
                     />
-                  </dd>
+                  </DescriptionListDescription>
                 ))}
-              </dl>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+              </DescriptionListGroup>
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />
         <Conditions conditions={obj.status?.conditions} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -431,12 +449,12 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   return plan.length > 0 ? (
     <>
       {needsApproval && !hideApprovalBlock && !canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <NeedInstallPlanPermissions installPlan={obj} />
-        </div>
+        </PaneBody>
       )}
       {needsApproval && !hideApprovalBlock && canPatchInstallPlans && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <InstallPlanHint
             title={t('olm~Review manual InstallPlan')}
             body={<InstallPlanReview installPlan={obj} />}
@@ -463,7 +481,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
               </div>
             }
           />
-        </div>
+        </PaneBody>
       )}
       {stepsByCSV.map((steps) => (
         <div key={steps[0].resolving} className="co-m-pane__body">
@@ -519,11 +537,11 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
       ))}
     </>
   ) : (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <ConsoleEmptyState title={t('olm~No components resolved')}>
         {t('olm~This InstallPlan has not been fully resolved yet.')}
       </ConsoleEmptyState>
-    </div>
+    </PaneBody>
   );
 };
 

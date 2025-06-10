@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
-import Measure from 'react-measure';
+import { css } from '@patternfly/react-styles';
 import './MasonryLayout.scss';
 
 type MasonryProps = {
@@ -21,11 +20,24 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
 
   let added = false;
   let allRendered = true;
-  React.Children.forEach(children, (item, itemIndex) => {
+  React.Children.forEach(children, (item: React.ReactElement, itemIndex) => {
+    const MeasuredItem = () => {
+      const measureRef = React.useRef<HTMLDivElement>(null);
+      React.useEffect(() => {
+        const newHeight = measureRef.current.getBoundingClientRect().height;
+        if (heights[item.key as string] !== newHeight) {
+          setHeight(item.key as string, newHeight);
+        }
+      }, []);
+      return <div ref={measureRef}>{item}</div>;
+    };
+
+    const measuredItem = <MeasuredItem key={item.key ?? itemIndex} />;
+
     // Fill first row directly
     if (itemIndex < columns) {
       groupedColumns[itemIndex].height += heights[item.key as string] || 0;
-      groupedColumns[itemIndex].items.push(item);
+      groupedColumns[itemIndex].items.push(measuredItem);
       return;
     }
 
@@ -38,13 +50,13 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
     // Add column which height is already known
     if (item.key && heights[item.key]) {
       column.height += heights[item.key];
-      column.items.push(item);
+      column.items.push(measuredItem);
       return;
     }
 
     // Add one more item which height is not known yet.
     if (!added) {
-      column.items.push(item);
+      column.items.push(measuredItem);
       added = true;
     } else {
       allRendered = false;
@@ -52,18 +64,10 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
   });
 
   return (
-    <div className={cx('odc-masonry-layout', { 'odc-masonry-layout__allRendered': allRendered })}>
+    <div className={css('odc-masonry-layout', { 'odc-masonry-layout__allRendered': allRendered })}>
       {groupedColumns.map((groupedColumn, columnIndex) => (
         <div key={columnIndex.toString()} className="odc-masonry-layout__column">
-          {groupedColumn.items.map((item) => (
-            <Measure
-              key={item.key}
-              bounds
-              onResize={(contentRect) => setHeight(item.key as string, contentRect.bounds?.height)}
-            >
-              {({ measureRef }) => <div ref={measureRef}>{item}</div>}
-            </Measure>
-          ))}
+          {groupedColumn.items}
         </div>
       ))}
     </div>

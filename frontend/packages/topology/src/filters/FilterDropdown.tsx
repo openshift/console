@@ -38,7 +38,6 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const [isOpen, setIsOpen] = React.useState(opened);
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
 
-  const onToggle = (_event, open: boolean): void => setIsOpen(open);
   const onSelect = (e: React.MouseEvent, key: string) => {
     const index = filters.findIndex((f) => f.id === key);
     const filter = { ...filters[index], value: (e.target as HTMLInputElement).checked };
@@ -96,7 +95,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
               onChange={onGroupsExpandedChange}
             />
           </span>
-          <SelectGroup className="odc-topology-filter-dropdown__expand-groups-label" label={<></>}>
+          <SelectGroup className="odc-topology-filter-dropdown__expand-groups-label">
             {expandFilters.map((filter) => (
               <SelectOption
                 key={filter.id}
@@ -141,11 +140,8 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <Select
       toggle={toggle}
       className="odc-topology-filter-dropdown__select"
-      onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}
-      isGrouped
-      isCheckboxSelectionBadgeHidden
       onOpenChange={(open) => setIsOpen(open)}
     >
       <SelectList>{selectContent}</SelectList>

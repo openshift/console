@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -12,8 +13,9 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common];
@@ -132,7 +134,7 @@ const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({ limit })
 export const LimitRangeDetailsList = (resource) => {
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('public~Limits')} />
       <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
         <thead className="pf-v6-c-table__thead">
@@ -152,7 +154,7 @@ export const LimitRangeDetailsList = (resource) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </PaneBody>
   );
 };
 
@@ -160,14 +162,14 @@ export const LimitRangeDetailsPage = (props) => {
   const { t } = useTranslation();
   const Details = ({ obj: rq }) => (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~LimitRange details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={rq} />
-          </div>
-        </div>
-      </div>
+          </GridItem>
+        </Grid>
+      </PaneBody>
       <LimitRangeDetailsList resource={rq} />
     </>
   );

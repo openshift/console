@@ -1,6 +1,5 @@
-import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
@@ -11,6 +10,7 @@ import {
   ActionMenu,
   ActionMenuVariant,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
@@ -24,13 +24,21 @@ import {
   ResourceLink,
   resourcePath,
   OwnerReferences,
-  Timestamp,
   PodsComponent,
   RuntimeClass,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { referenceFor, referenceForModel } from '../module/k8s';
 import { VolumesTable } from './volumes-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const EnvironmentPage = (props) => (
   <AsyncComponent
@@ -68,10 +76,10 @@ export const ReplicationControllersDetailsPage = (props) => {
     ]);
     return (
       <>
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~ReplicationController details')} />
-          <div className="row">
-            <div className="col-md-6">
+          <Grid hasGutter>
+            <GridItem md={6}>
               <ResourceSummary
                 resource={replicationController}
                 showPodSelector
@@ -79,37 +87,37 @@ export const ReplicationControllersDetailsPage = (props) => {
                 showTolerations
               >
                 {revision && (
-                  <>
-                    <dt>{t('public~Deployment revision')}</dt>
-                    <dd>{revision}</dd>
-                  </>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~Deployment revision')}</DescriptionListTerm>
+                    <DescriptionListDescription>{revision}</DescriptionListDescription>
+                  </DescriptionListGroup>
                 )}
               </ResourceSummary>
-            </div>
-            <div className="col-md-6">
-              <dl className="co-m-pane__details">
+            </GridItem>
+            <GridItem md={6}>
+              <DescriptionList>
                 {phase && (
-                  <>
-                    <dt>{t('public~Phase')}</dt>
-                    <dd>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~Phase')}</DescriptionListTerm>
+                    <DescriptionListDescription>
                       <Status status={phase} />
-                    </dd>
-                  </>
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
                 )}
                 <ResourcePodCount resource={replicationController} />
                 <RuntimeClass obj={replicationController} />
                 <PodDisruptionBudgetField obj={replicationController} />
-              </dl>
-            </div>
-          </div>
-        </div>
-        <div className="co-m-pane__body">
+              </DescriptionList>
+            </GridItem>
+          </Grid>
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Containers')} />
           <ContainerTable containers={replicationController.spec.template.spec.containers} />
-        </div>
-        <div className="co-m-pane__body">
+        </PaneBody>
+        <PaneBody>
           <VolumesTable resource={replicationController} heading={t('public~Volumes')} />
-        </div>
+        </PaneBody>
       </>
     );
   };
@@ -169,10 +177,7 @@ const ReplicationControllerTableRow = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

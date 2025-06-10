@@ -21,9 +21,9 @@ import {
   ModalTitle,
   createModalLauncher,
 } from '../factory/modal';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   documentationURLs,
-  ExternalLink,
   getDocumentationURL,
   HandlePromiseProps,
   isManaged,

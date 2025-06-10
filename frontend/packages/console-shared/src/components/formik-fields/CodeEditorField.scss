@@ -2,36 +2,18 @@
 @import '../../../../../public/style/vars';
 
 .osc-yaml-editor {
-  margin-right: -$pf-v6-global-gutter;
-  margin-top: -$pf-v6-global-gutter--md;
-
-  @media (max-width: $pf-v6-global--breakpoint--md) {
-    margin-left: -$pf-v6-global-gutter;
-  }
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    margin-right: -$pf-v6-global-gutter--md;
-  }
-
-  .co-p-has-sidebar__body {
-    flex-direction: column;
-    display: flex;
-  }
+  margin-right: calc($pf-v6-global-gutter-x * -1);
 
   &__editor {
-    position: relative;
     display: flex;
-    height: 100%;
-    flex-grow: 1;
     flex-direction: column;
-    padding-top: $pf-v6-global-gutter;
+    flex-grow: 1;
+    height: 100%;
+    padding-right: $pf-v6-global-gutter-x;
+    position: relative;
     width: 100%;
-    max-width: calc(100% - $pf-v6-global-gutter--md);
-
-    @media (max-width: $pf-v6-global--breakpoint--md) {
-      max-width: 100%;
-    }
   }
-  &__sidebar {
-    margin-top: -$pf-v6-global-gutter--md;
+  .co-p-has-sidebar__sidebar {
+    margin-top: calc(var(--pf-v6-c-page__main-section--RowGap) * -1);
   }
 }

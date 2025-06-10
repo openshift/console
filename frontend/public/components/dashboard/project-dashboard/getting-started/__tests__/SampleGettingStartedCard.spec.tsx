@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useActiveNamespace, CatalogServiceProvider } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';

@@ -1,13 +1,22 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
-import { Alert } from '@patternfly/react-core';
+import {
+  Alert,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ClusterOperatorModel } from '../../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from '../factory';
 import { Conditions } from '../conditions';
@@ -91,12 +100,7 @@ const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ o
       </TableData>
       <TableData className={tableColumnClasses[2]}>{operatorVersion || '-'}</TableData>
       <TableData
-        className={classNames(
-          tableColumnClasses[3],
-          'co-break-word',
-          'co-line-clamp',
-          'co-pre-line',
-        )}
+        className={css(tableColumnClasses[3], 'co-break-word', 'co-line-clamp', 'co-pre-line')}
       >
         <LinkifyExternal>{message || '-'}</LinkifyExternal>
       </TableData>
@@ -152,7 +156,7 @@ const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => 
   return (
     <>
       {updateCondition && (
-        <div className="co-m-pane__body co-m-pane__body--section-heading">
+        <PaneBody sectionHeading>
           <Alert
             isInline
             className="co-alert"
@@ -161,7 +165,7 @@ const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => 
           >
             <ClusterVersionConditionsLink cv={cv} />
           </Alert>
-        </div>
+        </PaneBody>
       )}
     </>
   );
@@ -235,40 +239,44 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~ClusterOperator details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj} />
-          </div>
-          <div className="col-sm-6">
-            <dl>
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
               {operatorVersion && (
-                <>
-                  <dt>{t('public~Version')}</dt>
-                  <dd>{operatorVersion}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Version')}</DescriptionListTerm>
+                  <DescriptionListDescription>{operatorVersion}</DescriptionListDescription>
+                </DescriptionListGroup>
               )}
-              <dt>{t('public~Status')}</dt>
-              <dd>
-                <OperatorStatusIconAndLabel status={status} />
-              </dd>
-              <dt>{t('public~Message')}</dt>
-              <dd className="co-pre-line">
-                <LinkifyExternal>{message || '-'}</LinkifyExternal>
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <OperatorStatusIconAndLabel status={status} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Message')}</DescriptionListTerm>
+                <DescriptionListDescription className="co-pre-line">
+                  <LinkifyExternal>{message || '-'}</LinkifyExternal>
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Operand versions')} />
         <OperandVersions versions={versions} />
-      </div>
+      </PaneBody>
     </>
   );
 };

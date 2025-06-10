@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
@@ -21,6 +21,7 @@ import {
   useTelemetry,
   useUserSettingsCompatibility,
 } from '@console/shared';
+import PageBody from '@console/shared/src/components/layout/PageBody';
 
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
@@ -31,7 +32,8 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
-import { checkAccess, Firehose, Loading, LoadingBox, PageHeading, resourceObjPath } from './utils';
+import { checkAccess, Firehose, Loading, LoadingBox, resourceObjPath } from './utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   referenceForModel,
   k8sCreate,
@@ -715,7 +717,7 @@ const EditYAMLInner = (props) => {
     return <Loading />;
   }
 
-  const klass = classNames('co-file-dropzone-container', {
+  const klass = css('co-file-dropzone-container', {
     'co-file-dropzone--drop-over': isOver,
   });
 
@@ -786,18 +788,17 @@ const EditYAMLInner = (props) => {
               )
             )
           }
-          detail
         />
       )}
 
-      <div className="pf-v6-c-form co-m-page__body">
+      <PageBody className="pf-v6-c-form">
         <div className="co-p-has-sidebar">
           <div
-            className={classNames('co-p-has-sidebar__body', {
+            className={css('co-p-has-sidebar__body', {
               'co-p-has-sidebar__body--sidebar-open': showSidebar && hasSidebarContent,
             })}
           >
-            <div className={classNames('yaml-editor', customClass)} ref={editor}>
+            <div className={css('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
                 ref={monacoRef}
@@ -908,7 +909,7 @@ const EditYAMLInner = (props) => {
             />
           )}
         </div>
-      </div>
+      </PageBody>
     </div>
   );
 

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
@@ -12,7 +11,6 @@ import {
 import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import {
-  Timestamp,
   LabelList,
   FirehoseResourcesResult,
   ResourceLink,
@@ -22,6 +20,7 @@ import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import store from '@console/internal/redux';
 import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
 import { LazyActionMenu } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
   testCRD,
   testResourceInstance,
@@ -50,7 +49,7 @@ import {
 } from '.';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -111,12 +110,12 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => {
 });
 
 jest.mock('react-redux', () => ({
-  ...(jest as any).requireActual('react-redux'),
+  ...jest.requireActual('react-redux'),
   useDispatch: () => jest.fn(),
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -605,7 +604,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   it('check if ListPageBody component renders the correct children', () => {
-    expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
+    expect(wrapper.find(ListPageBody).children().length).toBe(1);
   });
 });
 
@@ -650,7 +649,7 @@ describe(ProvidedAPIPage.displayName, () => {
   });
 
   it('check if ListPageBody component renders the correct children', () => {
-    expect(wrapper.find(ListPageBody).children().children().length).toBe(2);
+    expect(wrapper.find(ListPageBody).children().length).toBe(1);
   });
 });
 

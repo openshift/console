@@ -1,5 +1,9 @@
-import { OverviewDetailsResourcesTabProps } from '@console/internal/components/overview/resource-overview-page';
+import { OverviewItem } from '@console/shared/src/types/resource';
 import { Extension, LazyLoader } from './base';
+
+export type OverviewDetailsResourcesTabProps = {
+  item: OverviewItem;
+};
 
 namespace ExtensionProperties {
   export interface OverviewResourceTab {

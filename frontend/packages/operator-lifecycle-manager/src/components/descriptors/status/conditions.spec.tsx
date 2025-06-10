@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
@@ -28,21 +27,25 @@ describe('Conditions descriptor', () => {
     );
 
     expect(wrapper.find(SectionHeading).text()).toEqual('Test Conditions');
-    expect(wrapper.find('[data-test="condition[0].type"]').text()).toEqual('FooType');
-    expect(wrapper.find('[data-test="condition[0].lastTransitionTime"]').text()).toEqual(
+    expect(wrapper.find('[data-test="condition[0].type"]').first().text()).toEqual('FooType');
+    expect(wrapper.find('[data-test="condition[0].lastTransitionTime"]').first().text()).toEqual(
       'Oct 16, 2017, 12:00 PM',
     );
-    expect(wrapper.find('[data-test="condition[0].message"]').text()).toEqual('Foo message');
-    expect(wrapper.find('[data-test="condition[0].reason"]').text()).toEqual('FooReason');
-    expect(wrapper.find('[data-test="condition[0].status"]').text()).toEqual('True');
-    expect(wrapper.find('[data-test="condition[0].type"]').text()).toEqual('FooType');
-    expect(wrapper.find('[data-test="condition[1].type"]').text()).toEqual('BarType');
-    expect(wrapper.find('[data-test="condition[1].lastTransitionTime"]').text()).toEqual(
+    expect(wrapper.find('[data-test="condition[0].message"]').first().text()).toEqual(
+      'Foo message',
+    );
+    expect(wrapper.find('[data-test="condition[0].reason"]').first().text()).toEqual('FooReason');
+    expect(wrapper.find('[data-test="condition[0].status"]').first().text()).toEqual('True');
+    expect(wrapper.find('[data-test="condition[0].type"]').first().text()).toEqual('FooType');
+    expect(wrapper.find('[data-test="condition[1].type"]').first().text()).toEqual('BarType');
+    expect(wrapper.find('[data-test="condition[1].lastTransitionTime"]').first().text()).toEqual(
       'Oct 16, 2017, 12:01 PM',
     );
-    expect(wrapper.find('[data-test="condition[1].message"]').text()).toEqual('Bar message');
-    expect(wrapper.find('[data-test="condition[1].reason"]').text()).toEqual('BarReason');
-    expect(wrapper.find('[data-test="condition[1].status"]').text()).toEqual('True');
-    expect(wrapper.find('[data-test="condition[1].type"]').text()).toEqual('BarType');
+    expect(wrapper.find('[data-test="condition[1].message"]').first().text()).toEqual(
+      'Bar message',
+    );
+    expect(wrapper.find('[data-test="condition[1].reason"]').first().text()).toEqual('BarReason');
+    expect(wrapper.find('[data-test="condition[1].status"]').first().text()).toEqual('True');
+    expect(wrapper.find('[data-test="condition[1].type"]').first().text()).toEqual('BarType');
   });
 });

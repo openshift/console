@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Alert, Flex, Title } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PageHeading, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 type HPAPageHeaderProps = {
   kind: string;
@@ -22,10 +23,10 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <PageHeading>
-      <Flex direction={{ default: 'column' }}>
-        <Title headingLevel="h1">{title}</Title>
-        {validSupportedType ? (
+    <PageHeading
+      title={title}
+      helpAlert={
+        validSupportedType ? (
           <>
             <div>
               {t('devconsole~Resource')}{' '}
@@ -49,9 +50,9 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
             variant="danger"
             title={t('devconsole~This is not a supported in-context type')}
           />
-        )}
-      </Flex>
-    </PageHeading>
+        )
+      }
+    />
   );
 };
 

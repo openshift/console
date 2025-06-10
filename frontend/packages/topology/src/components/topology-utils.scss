@@ -1,10 +1,10 @@
-$filtered-stroke-color: var(--pf-t--color--orange--40);
+$filtered-stroke-color: var(--pf-t--global--background--color--highlight--default);
 
 $selected-fill-color: #a5c4e2;
-$selected-stroke-color: var(--pf-t--color--blue--50);
+$selected-stroke-color: var(--pf-t--global--border--color--brand--default);
 
 $interactive-fill-color: #a5c4e2;
-$interactive-stroke-color: var(--pf-t--color--blue--30);
+$interactive-stroke-color: var(--pf-topology__group--m-hover--topology__group__background--Stroke);
 
 $group-node-stroke-color: var(--pf-t--color--gray--50);
 $group-node-fill-color: var(--pf-t--color--gray--30);

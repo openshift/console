@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
-import { ExternalLink } from '@console/internal/components/utils';
-import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import {
+  RedExclamationCircleIcon,
+  BlueInfoCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '../../status/icons';
 import {
   getAlertSeverity,
   getAlertMessage,
@@ -19,12 +23,24 @@ import {
   getAlertName,
 } from './alert-utils';
 
-const CriticalIcon = () => <RedExclamationCircleIcon title="Critical" />;
-const WarningIcon = () => <YellowExclamationTriangleIcon title="Warning" />;
+const CriticalIcon = () => {
+  const { t } = useTranslation();
+  return <RedExclamationCircleIcon title={t('public~Critical')} />;
+};
+const InfoIcon = () => {
+  const { t } = useTranslation();
+  return <BlueInfoCircleIcon title={t('public~Info')} />;
+};
+const WarningIcon = () => {
+  const { t } = useTranslation();
+  return <YellowExclamationTriangleIcon title={t('public~Warning')} />;
+};
 const getSeverityIcon = (severity: string) => {
   switch (severity) {
     case 'critical':
       return CriticalIcon;
+    case 'info':
+      return InfoIcon;
     case 'warning':
     default:
       return WarningIcon;
@@ -50,7 +66,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
           {name && <span className="co-status-card__alert-item-header">{name}</span>}
           {timestamp && (
             <div
-              className="co-health-card__alert-item-timestamp co-status-card__health-item-text text-secondary"
+              className="co-health-card__alert-item-timestamp co-status-card__health-item-text pf-v6-u-text-color-subtle"
               data-test="timestamp"
             >
               <Timestamp simple timestamp={timestamp} />
@@ -81,8 +97,9 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
       [alert],
     ),
   );
+  const navigate = useNavigate();
   const alertName = getAlertName(alert);
-  const actionObj = getAlertActions(actionExtensions).get(alert.rule.name);
+  const actionObj = getAlertActions(actionExtensions, navigate).get(alert.rule.name);
   const { text, action } = actionObj || {};
   return (
     <StatusItem

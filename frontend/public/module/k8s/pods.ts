@@ -200,17 +200,21 @@ export const podRestarts = (pod: PodKind): number => {
 };
 
 export const podReadiness = (pod: PodKind): { readyCount: number; totalContainers: number } => {
-  // Don't include init containers in readiness count. This is consistent with the CLI.
+  // Include init containers in readiness count if ready and started is true. This is consistent with the CLI.
   const containerStatuses = pod?.status?.containerStatuses || [];
-  return containerStatuses.reduce(
-    (acc, { ready }: ContainerStatus) => {
-      if (ready) {
-        acc.readyCount = acc.readyCount + 1;
-      }
-      return acc;
-    },
-    { readyCount: 0, totalContainers: containerStatuses.length },
-  );
+  const initContainerStatuses = pod?.status?.initContainerStatuses || [];
+
+  const totalContainers =
+    containerStatuses.length + initContainerStatuses.filter(({ started }) => started).length;
+
+  const readyCount =
+    containerStatuses.reduce((acc, { ready }: ContainerStatus) => (ready ? acc + 1 : acc), 0) +
+    initContainerStatuses.reduce(
+      (acc, { started, ready }: ContainerStatus) => (started && ready ? acc + 1 : acc),
+      0,
+    );
+
+  return { readyCount, totalContainers };
 };
 
 // This logic is replicated from k8s (at this writing, Kubernetes 1.17)

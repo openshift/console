@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import {
@@ -12,9 +12,10 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ConfigMapModel } from '../models';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Kebab.factory.common];
 
@@ -32,10 +33,7 @@ const ConfigMapTableRow = ({ obj: configMap }) => {
           namespace={configMap.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={configMap.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -110,22 +108,22 @@ const ConfigMapsDetailsPage = (props) => {
   const ConfigMapDetails = ({ obj: configMap }) => {
     return (
       <>
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~ConfigMap details')} />
-          <div className="row">
-            <div className="col-md-6">
+          <Grid hasGutter>
+            <GridItem md={6}>
               <ResourceSummary resource={configMap} />
-            </div>
-          </div>
-        </div>
-        <div className="co-m-pane__body">
+            </GridItem>
+          </Grid>
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Data')} />
           <ConfigMapData data={configMap.data} label={t('public~Data')} />
-        </div>
-        <div className="co-m-pane__body">
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Binary data')} />
           <ConfigMapBinaryData data={configMap.binaryData} />
-        </div>
+        </PaneBody>
       </>
     );
   };

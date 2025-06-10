@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button } from '@patternfly/react-core';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar, AsyncComponent, PageHeading } from '../utils';
+import { ButtonBar, AsyncComponent } from '../utils';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -169,20 +171,18 @@ export const AddKeystonePage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         helpText={t(
           'public~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
         )}
       />
-      <div className="co-m-pane__body">
-        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+      <PaneBody>
+        <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="domain-name">
+            <label className="co-required" htmlFor="domain-name">
               {t('public~Domain name')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -196,7 +196,7 @@ export const AddKeystonePage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="url">
+            <label className="co-required" htmlFor="url">
               {t('public~URL')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -249,7 +249,7 @@ export const AddKeystonePage = () => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

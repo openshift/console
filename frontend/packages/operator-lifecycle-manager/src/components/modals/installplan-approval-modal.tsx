@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -55,11 +56,12 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle className="modal-header">{t('olm~Change update approval strategy')}</ModalTitle>
       <ModalBody>
-        <div className="co-m-form-row">
-          <p>{t('olm~What strategy is used for approving updates?')}</p>
-        </div>
-        <div className="co-m-form-row row">
-          <div className="col-sm-12">
+        <Grid hasGutter>
+          <GridItem>
+            <p>{t('olm~What strategy is used for approving updates?')}</p>
+          </GridItem>
+
+          <GridItem>
             <RadioInput
               onChange={(e) => setSelectedApprovalStrategy(e.target.value)}
               value={InstallPlanApproval.Automatic}
@@ -68,13 +70,13 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
               subTitle={`(${t('public~default')})`}
             >
               <div className="co-m-radio-desc">
-                <p className="text-muted">
+                <p className="pf-v6-u-text-color-subtle">
                   {t('olm~New updates will be installed as soon as they become available.')}
                 </p>
               </div>
             </RadioInput>
-          </div>
-          <div className="col-sm-12">
+          </GridItem>
+          <GridItem>
             <RadioInput
               onChange={(e) => setSelectedApprovalStrategy(e.target.value)}
               value={InstallPlanApproval.Manual}
@@ -82,13 +84,13 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
               title={t(`olm~Manual`)}
             >
               <div className="co-m-radio-desc">
-                <p className="text-muted">
+                <p className="pf-v6-u-text-color-subtle">
                   {t('olm~New updates need to be manually approved before installation begins.')}
                 </p>
               </div>
             </RadioInput>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </ModalBody>
       <ModalSubmitFooter
         inProgress={inProgress}

@@ -16,6 +16,7 @@ import {
 } from '../factory/modal';
 import { ResourceIcon, SelectorInput } from '../utils';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
@@ -87,18 +88,16 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
           : t('public~Edit labels')}
       </ModalTitle>
       <ModalBody>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
+        <Grid hasGutter>
+          <GridItem>
             {messageKey
               ? t(messageKey, messageVariables)
               : t(
                   'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
                 )}
-          </div>
-        </div>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            <label htmlFor="tags-input" className="control-label">
+          </GridItem>
+          <GridItem>
+            <label htmlFor="tags-input">
               {descriptionKey
                 ? t('{{description}} for', { description: t(descriptionKey) })
                 : t('public~Labels for')}{' '}
@@ -111,8 +110,8 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
               labelClassName={labelClassName || `co-m-${kind.id}`}
               autoFocus
             />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}

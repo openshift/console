@@ -1,13 +1,13 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as Router from 'react-router-dom-v5-compat';
-import { PageHeading, HorizontalNav } from '@console/internal/components/utils';
+import { HorizontalNav } from '@console/internal/components/utils';
 import * as rbacModule from '@console/internal/components/utils/rbac';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
 import { PageContents } from '../MonitoringPage';
 
 jest.mock('react-router-dom-v5-compat', () => ({
-  ...require.requireActual('react-router-dom-v5-compat'),
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
 }));
 

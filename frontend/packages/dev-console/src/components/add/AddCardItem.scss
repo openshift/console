@@ -6,7 +6,7 @@
   }
 
   margin-top: var(--pf-t--global--spacer--lg);
-  margin-left: calc(var(--pf-t--global--spacer--lg) - var(--pf-t--global--spacer--sm));
+  margin-left: var(--odc-add-card-item-margin-horizontal);
 
   &__icon {
     height: var(--pf-t--global--font--size--lg);

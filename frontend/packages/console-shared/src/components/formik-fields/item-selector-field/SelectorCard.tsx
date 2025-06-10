@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import './SelectorCard.scss';
 
 interface SelectorCardProps {
@@ -21,7 +21,7 @@ const SelectorCard: React.FC<SelectorCardProps> = ({
   recommended = false,
   onChange,
 }) => {
-  const classes = classNames('odc-selector-card', { 'is-selected': selected });
+  const classes = css('odc-selector-card', { 'is-selected': selected });
   return (
     <Card
       component="button"

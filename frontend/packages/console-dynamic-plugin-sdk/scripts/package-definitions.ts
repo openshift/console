@@ -3,7 +3,11 @@ import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
-import { sharedPluginModules, getSharedModuleMetadata } from '../src/shared-modules';
+import * as semver from 'semver';
+import {
+  sharedPluginModules,
+  getSharedModuleMetadata,
+} from '../src/shared-modules/shared-modules-meta';
 import { resolvePath } from './utils/path';
 
 type GeneratedPackage = {
@@ -95,6 +99,15 @@ const parseSharedModuleDeps = (
     missingDepCallback,
   );
 
+const getMinDepVersion = (
+  pkg: readPkg.PackageJson,
+  depName: string,
+  missingDepCallback: MissingDependencyCallback,
+) => {
+  const versionOrRange = parseDeps(pkg, [depName], missingDepCallback)[depName];
+  return semver.minVersion(versionOrRange).version;
+};
+
 export const getCorePackage: GetPackageDefinition = (
   sdkPackage,
   rootPackage,
@@ -109,11 +122,7 @@ export const getCorePackage: GetPackageDefinition = (
     ...commonManifestFields,
     dependencies: {
       ...parseSharedModuleDeps(rootPackage, missingDepCallback),
-      ...parseDeps(
-        rootPackage,
-        ['classnames', 'immutable', 'reselect', 'typesafe-actions', 'whatwg-fetch'],
-        missingDepCallback,
-      ),
+      ...parseDeps(rootPackage, ['immutable', 'reselect', 'typesafe-actions'], missingDepCallback),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
   },
@@ -169,7 +178,7 @@ export const getWebpackPackage: GetPackageDefinition = (
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
-      typescript: '>=4.5.5',
+      typescript: `>=${getMinDepVersion(rootPackage, 'typescript', missingDepCallback)}`,
     },
   },
   filesToCopy: {

@@ -39,7 +39,7 @@ var (
 	stderrFileName string
 )
 
-const outputDirectory string = "chartverifier"
+const OutputDirectory string = "chartverifier"
 
 func InitLog(cobraCmd *cobra.Command, stdFilename string, suppressErrorLog bool) {
 	cmd = cobraCmd
@@ -123,7 +123,7 @@ func writeToFile(output string, fileName string) bool {
 		LogError(fmt.Sprintf("error getting current working directory : %s", err))
 		return false
 	}
-	outputDir := path.Join(currentDir, outputDirectory)
+	outputDir := path.Join(currentDir, OutputDirectory)
 	outputFile := path.Join(outputDir, fileName)
 	if _, err := os.Stat(outputDir); err != nil {
 		// #nosec G301
@@ -200,7 +200,7 @@ func pruneLogFiles() {
 		LogError(fmt.Sprintf("error getting current working directory : %s", err))
 		return
 	}
-	logFilesPath := path.Join(currentDir, outputDirectory)
+	logFilesPath := path.Join(currentDir, OutputDirectory)
 
 	if _, err := os.Stat(logFilesPath); err != nil {
 		return

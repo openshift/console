@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { AsyncComponent } from './utils';
 import { useTranslation } from 'react-i18next';
 import { useQueryParams } from '@console/shared';
@@ -13,9 +12,7 @@ export const ImportYamlPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <AsyncComponent
         loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
         allowMultiple

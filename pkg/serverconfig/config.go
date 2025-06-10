@@ -15,11 +15,33 @@ import (
 	"k8s.io/klog/v2"
 
 	consolev1 "github.com/openshift/api/console/v1"
+	operatorv1 "github.com/openshift/api/operator/v1"
 )
 
 // MultiKeyValue is used for setting multiple key-value entries of a specific flag, eg.:
-// ... --plugins plugin-name=plugin-endpoint plugin-name2=plugin-endpoint2
+// ... --plugins plugin-name=plugin-endpoint, plugin-name2=plugin-endpoint2
 type MultiKeyValue map[string]string
+
+func parseKeyValuePairs[T comparable](value string, parseKey func(string) (T, error)) (map[T]string, error) {
+	result := make(map[T]string)
+	keyValuePairs := strings.Split(value, ",")
+	for _, keyValuePair := range keyValuePairs {
+		keyValuePair = strings.TrimSpace(keyValuePair)
+		if len(keyValuePair) == 0 {
+			continue
+		}
+		splitted := strings.SplitN(keyValuePair, "=", 2)
+		if len(splitted) != 2 {
+			return nil, fmt.Errorf("invalid key-value pair syntax: %q, expected format: key=value", keyValuePair)
+		}
+		parsedKey, err := parseKey(splitted[0])
+		if err != nil {
+			return nil, err
+		}
+		result[parsedKey] = splitted[1]
+	}
+	return result, nil
+}
 
 func (mkv *MultiKeyValue) String() string {
 	keyValuePairs := []string{}
@@ -31,19 +53,49 @@ func (mkv *MultiKeyValue) String() string {
 }
 
 func (mkv *MultiKeyValue) Set(value string) error {
-	keyValuePairs := strings.Split(value, ",")
-	for _, keyValuePair := range keyValuePairs {
-		keyValuePair = strings.TrimSpace(keyValuePair)
-		if len(keyValuePair) == 0 {
-			continue
-		}
-		splitted := strings.SplitN(keyValuePair, "=", 2)
-		if len(splitted) != 2 {
-			return fmt.Errorf("invalid key value pair %s", keyValuePair)
-		}
-		(*mkv)[splitted[0]] = splitted[1]
+	parsedMap, err := parseKeyValuePairs(value, func(key string) (string, error) {
+		return key, nil
+	})
+	if err != nil {
+		return err
+	}
+	// merge new pairs to older ones
+	for k, v := range parsedMap {
+		(*mkv)[k] = v
 	}
 	return nil
+}
+
+// LogosKeyValue is used for configuring entries of custom logos, where keys are
+// themes (Light | Dark) and values are paths to the image files eg.:
+// ... --custom-logo-files Dark=/path/to/dark-logo.svg, Light=/path/to/light-logo.svg
+type LogosKeyValue map[operatorv1.ThemeMode]string
+
+func (lkv *LogosKeyValue) String() string {
+	keyValuePairs := []string{}
+	for k, v := range *lkv {
+		keyValuePairs = append(keyValuePairs, fmt.Sprintf("%s=%s", k, v))
+	}
+	sort.Strings(keyValuePairs)
+	return strings.Join(keyValuePairs, ", ")
+}
+
+func (lkv *LogosKeyValue) Set(value string) error {
+	parsedMap, err := parseKeyValuePairs(value, func(key string) (operatorv1.ThemeMode, error) {
+		return ParseCustomLogoTheme(key)
+	})
+	if err != nil {
+		return err
+	}
+	// merge new pairs to older ones
+	for k, v := range parsedMap {
+		(*lkv)[k] = v
+	}
+	return nil
+}
+
+func (lkv *LogosKeyValue) IsEmpty() bool {
+	return len(*lkv) == 0
 }
 
 // Parse configuration from
@@ -119,11 +171,13 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
+	addPluginsOrder(fs, config.PluginsOrder)
 	addI18nNamespaces(fs, config.I18nNamespaces)
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
 		return err
 	}
+
 	addContentSecurityPolicyEnabled(fs, &config.ContentSecurityPolicyEnabled)
 	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
 	addTelemetry(fs, config.Telemetry)
@@ -276,10 +330,6 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		fs.Set("custom-product-name", customization.CustomProductName)
 	}
 
-	if customization.CustomLogoFile != "" {
-		fs.Set("custom-logo-file", customization.CustomLogoFile)
-	}
-
 	if customization.DeveloperCatalog.Categories != nil {
 		categories, err := json.Marshal(customization.DeveloperCatalog.Categories)
 		if err == nil {
@@ -323,6 +373,24 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		}
 	}
 
+	if len(customization.Logos) > 0 {
+		faviconFlag := fs.Lookup("custom-favicon-files")
+		logoFlag := fs.Lookup("custom-logo-files")
+
+		faviconFlags, _ := faviconFlag.Value.(*LogosKeyValue)
+		logoFlags, _ := logoFlag.Value.(*LogosKeyValue)
+		for _, logo := range customization.Logos {
+			for _, theme := range logo.Themes {
+				if logo.Type == operatorv1.LogoTypeFavicon {
+					(*faviconFlags)[theme.Mode] = fmt.Sprintf("/var/logo/%s/%s", theme.Source.ConfigMap.Name, theme.Source.ConfigMap.Key)
+				}
+				if logo.Type == operatorv1.LogoTypeMasthead {
+					(*logoFlags)[theme.Mode] = fmt.Sprintf("/var/logo/%s/%s", theme.Source.ConfigMap.Name, theme.Source.ConfigMap.Key)
+				}
+			}
+		}
+	}
+
 	if customization.Perspectives != nil {
 		perspectives, err := json.Marshal(customization.Perspectives)
 		if err != nil {
@@ -352,10 +420,51 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 	return alreadySet
 }
 
+func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
+	var directives []string
+	for cspDirectiveName, cspDirectiveValue := range csp {
+		directiveName := getDirectiveName(string(cspDirectiveName))
+		if directiveName == "" {
+			klog.Fatalf("invalid CSP directive: %s", cspDirectiveName)
+		}
+
+		directives = append(directives, fmt.Sprintf("%s=%s", directiveName, strings.Join(cspDirectiveValue, " ")))
+	}
+
+	if len(directives) > 0 {
+		fs.Set("content-security-policy", strings.Join(directives, ", "))
+	}
+	return nil
+}
+
+func getDirectiveName(directive string) string {
+	switch directive {
+	case string(consolev1.DefaultSrc):
+		return "default-src"
+	case string(consolev1.ImgSrc):
+		return "img-src"
+	case string(consolev1.FontSrc):
+		return "font-src"
+	case string(consolev1.ScriptSrc):
+		return "script-src"
+	case string(consolev1.StyleSrc):
+		return "style-src"
+	case string(consolev1.ConnectSrc):
+		return "connect-src"
+	default:
+		klog.Infof("ignored invalid CSP directive: %s", directive)
+		return ""
+	}
+}
+
 func addPlugins(fs *flag.FlagSet, plugins MultiKeyValue) {
 	for pluginName, pluginEndpoint := range plugins {
 		fs.Set("plugins", fmt.Sprintf("%s=%s", pluginName, pluginEndpoint))
 	}
+}
+
+func addPluginsOrder(fs *flag.FlagSet, pluginsOrder []string) {
+	fs.Set("plugins-order", strings.Join(pluginsOrder, ","))
 }
 
 func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
@@ -366,18 +475,6 @@ func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
 
 func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
-}
-
-func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
-	if csp != nil {
-		marshaledCSP, err := json.Marshal(csp)
-		if err != nil {
-			klog.Fatalf("Could not marshal ConsoleConfig 'content-security-policy' field: %v", err)
-			return err
-		}
-		fs.Set("content-security-policy", string(marshaledCSP))
-	}
-	return nil
 }
 
 func addContentSecurityPolicyEnabled(fs *flag.FlagSet, enabled *bool) {

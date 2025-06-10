@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import { ConsoleEmptyState, LinkifyExternal, Timestamp } from './utils';
+import { ConsoleEmptyState, LinkifyExternal } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 /**
  * Since ClusterServiceVersionCondition type is different from K8sResourceCondition, but InstallPlanCondition and SubscriptionCondition are identical, we will use the following enum to render the proper conditions table based on type.
@@ -31,64 +33,61 @@ export const Conditions: React.FC<ConditionsProps> = ({
 
   const rows = (conditions as Array<K8sResourceCondition | ClusterServiceVersionCondition>)?.map?.(
     (condition: K8sResourceCondition & ClusterServiceVersionCondition, i: number) => (
-      <div
-        className="row"
+      <Tr
         data-test={type === ConditionTypes.ClusterServiceVersion ? condition.phase : condition.type}
         key={i}
       >
         {type === ConditionTypes.ClusterServiceVersion ? (
-          <div className="col-xs-4 col-sm-2 col-md-2" data-test={`condition[${i}].phase`}>
+          <Td data-test={`condition[${i}].phase`}>
             <CamelCaseWrap value={condition.phase} />
-          </div>
+          </Td>
         ) : (
           <>
-            <div className="col-xs-4 col-sm-2 col-md-2" data-test={`condition[${i}].type`}>
+            <Td data-test={`condition[${i}].type`}>
               <CamelCaseWrap value={condition.type} />
-            </div>
-            <div className="col-xs-4 col-sm-2 col-md-2" data-test={`condition[${i}].status`}>
-              {getStatusLabel(condition.status)}
-            </div>
+            </Td>
+            <Td data-test={`condition[${i}].status`}>{getStatusLabel(condition.status)}</Td>
           </>
         )}
-        <div
-          className="hidden-xs hidden-sm col-md-2"
-          data-test={`condition[${i}].lastTransitionTime`}
-        >
+        <Td data-test={`condition[${i}].lastTransitionTime`} visibility={['hidden', 'visibleOnLg']}>
           <Timestamp timestamp={condition.lastTransitionTime} />
-        </div>
-        <div className="col-xs-4 col-sm-3 col-md-2" data-test={`condition[${i}].reason`}>
+        </Td>
+        <Td data-test={`condition[${i}].reason`}>
           <CamelCaseWrap value={condition.reason} />
-        </div>
+        </Td>
         {/* remove initial newline which appears in route messages */}
-        <div
-          className="hidden-xs col-sm-5 col-md-4 co-break-word co-pre-line co-conditions__message"
+        <Td
+          className="co-break-word co-pre-line co-conditions__message"
           data-test={`condition[${i}].message`}
+          visibility={['hidden', 'visibleOnSm']}
         >
           <LinkifyExternal>{condition.message?.trim() || '-'}</LinkifyExternal>
-        </div>
-      </div>
+        </Td>
+      </Tr>
     ),
   );
 
   return (
     <>
       {conditions?.length ? (
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            {type === ConditionTypes.ClusterServiceVersion ? (
-              <div className="col-xs-4 col-sm-2 col-md-2">{t('public~Phase')}</div>
-            ) : (
-              <>
-                <div className="col-xs-4 col-sm-2 col-md-2">{t('public~Type')}</div>
-                <div className="col-xs-4 col-sm-2 col-md-2">{t('public~Status')}</div>
-              </>
-            )}
-            <div className="hidden-xs hidden-sm col-md-2">{t('public~Updated')}</div>
-            <div className="col-xs-4 col-sm-3 col-md-2">{t('public~Reason')}</div>
-            <div className="hidden-xs col-sm-5 col-md-4">{t('public~Message')}</div>
-          </div>
-          <div className="co-m-table-grid__body">{rows}</div>
-        </div>
+        <Table gridBreakPoint="">
+          <Thead>
+            <Tr>
+              {type === ConditionTypes.ClusterServiceVersion ? (
+                <Th>{t('public~Phase')}</Th>
+              ) : (
+                <>
+                  <Th>{t('public~Type')}</Th>
+                  <Th>{t('public~Status')}</Th>
+                </>
+              )}
+              <Th visibility={['hidden', 'visibleOnLg']}>{t('public~Updated')}</Th>
+              <Th>{t('public~Reason')}</Th>
+              <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Message')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>{rows}</Tbody>
+        </Table>
       ) : (
         <ConsoleEmptyState>{t('public~No conditions found')}</ConsoleEmptyState>
       )}

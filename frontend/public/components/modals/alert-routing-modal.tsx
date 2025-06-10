@@ -6,6 +6,7 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { K8sResourceKind } from '../../module/k8s';
 import { AlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-config';
 import { patchAlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-utils';
+import { Form, FormGroup, TextInput } from '@patternfly/react-core';
 
 const updateAlertRoutingProperty = (
   config: any,
@@ -59,101 +60,54 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
+    <Form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle className="modal-header">{t('public~Edit routing configuration')}</ModalTitle>
       <ModalBody>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            <label htmlFor="group-by" className="control-label">
-              {t('public~Group by')}
-            </label>
-          </div>
-          <div className="co-m-form-col col-sm-12">
-            <div className="form-inline">
-              <div className="pf-v6-c-input-group">
-                <span className="pf-v6-c-form-control">
-                  <input
-                    placeholder="cluster, alertname"
-                    type="text"
-                    id="input-group-by"
-                    data-test-id="input-group-by"
-                    defaultValue={_.get(config, ['route', 'group_by'])}
-                    aria-describedby="input-group-by-help"
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            <label htmlFor="group-wait" className="control-label">
-              {t('public~Group wait')}
-            </label>
-          </div>
-          <div className="co-m-form-col col-sm-12">
-            <div className="form-inline">
-              <div className="pf-v6-c-input-group">
-                <span className="pf-v6-c-form-control">
-                  <input
-                    placeholder="30s"
-                    type="text"
-                    id="input-group-wait"
-                    data-test-id="input-group-wait"
-                    defaultValue={_.get(config, ['route', 'group_wait'])}
-                    aria-describedby="input-group-wait-help"
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            <label htmlFor="group-interval" className="control-label">
-              {t('public~Group interval')}
-            </label>
-          </div>
-          <div className="co-m-form-col col-sm-12">
-            <div className="form-inline">
-              <div className="pf-v6-c-input-group">
-                <span className="pf-v6-c-form-control">
-                  <input
-                    placeholder="5m"
-                    type="text"
-                    id="input-group-interval"
-                    data-test-id="input-group-interval"
-                    defaultValue={_.get(config, ['route', 'group_interval'])}
-                    aria-describedby="input-group-interval-help"
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">
-            <label htmlFor="repeat-interval" className="control-label">
-              {t('public~Repeat interval')}
-            </label>
-          </div>
-          <div className="co-m-form-col col-sm-12">
-            <div className="form-inline">
-              <div className="pf-v6-c-input-group">
-                <span className="pf-v6-c-form-control">
-                  {' '}
-                  <input
-                    placeholder="3h"
-                    type="text"
-                    id="input-repeat-interval"
-                    data-test-id="input-repeat-interval"
-                    defaultValue={_.get(config, ['route', 'repeat_interval'])}
-                    aria-describedby="input-repeat-interval-help"
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
+        <div className="pf-v6-c-form">
+          <FormGroup label={t('public~Group by')} fieldId="group-by">
+            <TextInput
+              id="group-by"
+              name="input-group-by"
+              type="text"
+              defaultValue={_.get(config, ['route', 'group_by'], []).join(', ')}
+              placeholder="cluster, alertname"
+              aria-describedby="input-group-by-help"
+              data-test-id="input-group-by"
+            />
+          </FormGroup>
+          <FormGroup label={t('public~Group wait')} fieldId="group-wait">
+            <TextInput
+              id="group-wait"
+              name="input-group-wait"
+              type="text"
+              defaultValue={_.get(config, ['route', 'group_wait'], '')}
+              placeholder="30s"
+              aria-describedby="input-group-wait-help"
+              data-test-id="input-group-wait"
+            />
+          </FormGroup>
+          <FormGroup label={t('public~Group interval')} fieldId="group-interval">
+            <TextInput
+              id="group-interval"
+              name="input-group-interval"
+              type="text"
+              defaultValue={_.get(config, ['route', 'group_interval'], '')}
+              placeholder="5m"
+              aria-describedby="input-group-interval-help"
+              data-test-id="input-group-interval"
+            />
+          </FormGroup>
+          <FormGroup label={t('public~Repeat interval')} fieldId="repeat-interval">
+            <TextInput
+              id="repeat-interval"
+              name="input-repeat-interval"
+              type="text"
+              defaultValue={_.get(config, ['route', 'repeat_interval'], '')}
+              placeholder="3h"
+              aria-describedby="input-repeat-interval-help"
+              data-test-id="input-repeat-interval"
+            />
+          </FormGroup>
         </div>
       </ModalBody>
       <ModalSubmitFooter
@@ -163,7 +117,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         submitText={t('public~Save')}
         cancelText={t('public~Cancel')}
       />
-    </form>
+    </Form>
   );
 };
 

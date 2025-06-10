@@ -85,10 +85,8 @@ const PreferrredPerspectiveSelect: React.FC = () => {
     <Select
       data-test="select console.preferredPerspective"
       isOpen={isOpen}
-      maxHeight={300}
       onSelect={onSelect}
       onOpenChange={setIsOpen}
-      placeholderText={t('console-app~Select a perspective')}
       toggle={menuToggle}
     >
       <SelectOption name={lastViewed} value={lastViewed}>

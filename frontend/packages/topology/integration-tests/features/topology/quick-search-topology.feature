@@ -61,7 +61,7 @@ Feature: Provide quick search from topology/list views to add to project
             Given user is at topology graph view
              When user clicks Add to project button
               And user enters "django" in Add to project search bar
-              And user clicks on View all developer catalog items link
+              And user clicks on View all software catalog items link
              Then user will see Catalog with "django" text filter
 
 

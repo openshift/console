@@ -41,6 +41,7 @@ import {
   isHostScheduledForRestart,
   hasPowerManagement,
   getPoweroffAnnotation,
+  isDetached,
 } from '../../selectors';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { findMachineSet } from '../../selectors/machine-set';
@@ -106,7 +107,8 @@ export const PowerOn = (
         getHostPowerStatus(host),
       ) ||
       !hasPowerManagement(host) ||
-      !bmoEnabled,
+      !bmoEnabled ||
+      isDetached(host),
     label: title,
     callback: () => {
       const patches: Patch[] = [{ op: 'replace', path: '/spec/online', value: true }];
@@ -137,7 +139,8 @@ export const Deprovision = (
       !machine ||
       !!getAnnotations(machine, {})[DELETE_MACHINE_ANNOTATION] ||
       (getMachineMachineSetOwner(machine) && !machineSet) ||
-      !bmoEnabled,
+      !bmoEnabled ||
+      isDetached(host),
     label: t('metal3-plugin~Deprovision'),
     callback: () =>
       confirmModal({
@@ -171,7 +174,8 @@ export const PowerOff = (
       getHostPowerStatus(host),
     ) ||
     !hasPowerManagement(host) ||
-    !bmoEnabled,
+    !bmoEnabled ||
+    isDetached(host),
   label: t('metal3-plugin~Power Off'),
   callback: () => powerOffHostModal({ host, nodeName, status }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
@@ -188,7 +192,8 @@ export const Restart = (
     ) ||
     isHostScheduledForRestart(host) ||
     !hasPowerManagement(host) ||
-    !bmoEnabled,
+    !bmoEnabled ||
+    isDetached(host),
   label: t('metal3-plugin~Restart'),
   callback: () => restartHostModal({ host }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),

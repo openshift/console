@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MachineAutoscalerModel } from '../models';
 import {
   groupVersionFor,
@@ -20,6 +21,13 @@ import {
   ResourceSummary,
   SectionHeading,
 } from './utils';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common];
@@ -59,13 +67,10 @@ const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         <MachineAutoscalerTargetLink obj={obj} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>{_.get(obj, 'spec.minReplicas', '-')}</TableData>
@@ -136,23 +141,33 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineAutoscaler details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj}>
-              <dt>{t('public~Scale target')}</dt>
-              <dd>
-                <MachineAutoscalerTargetLink obj={obj} />
-              </dd>
-              <dt>{t('public~Min replicas')}</dt>
-              <dd>{_.get(obj, 'spec.minReplicas', '-')}</dd>
-              <dt>{t('public~Max replicas')}</dt>
-              <dd>{_.get(obj, 'spec.maxReplicas') || '-'}</dd>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Scale target')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <MachineAutoscalerTargetLink obj={obj} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Min replicas')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {_.get(obj, 'spec.minReplicas', '-')}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Max replicas')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {_.get(obj, 'spec.maxReplicas') || '-'}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-        </div>
-      </div>
+          </GridItem>
+        </Grid>
+      </PaneBody>
     </>
   );
 };

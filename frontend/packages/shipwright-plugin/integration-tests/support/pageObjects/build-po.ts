@@ -32,7 +32,7 @@ export const createShipwrightBuildPO = {
   builderImageField: 'input[label="builder-image"]',
   outputImageField: 'input[label="Output image"]',
   submitButton: '[data-test-id="submit-button"]',
-  detailsPageTitle: '[data-test-id="resource-title"]',
+  detailsPageTitle: '[data-test="page-heading"] h1',
   detailsPageSourceURLItem: '[data-test-selector="details-item-value__Source URL"]',
   detailsPageBuilderImageItem: '[data-test-selector="details-item-value__Builder image"]',
 };

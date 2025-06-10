@@ -9,7 +9,6 @@
   "dependencies": {
     "@console/dynamic-plugin-sdk": "0.0.0-fixed",
     "formik": "^2.4.5",
-    "ini": "4.1.1",
     "yup": "^0.27.0"
   },
   "consolePlugin": {

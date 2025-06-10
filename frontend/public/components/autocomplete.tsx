@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useDocumentListener, getLabelsAsString } from '@console/shared';
 import { KeyEventModes } from '@console/shared/src/hooks';
 import { fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory';
+import { Label, SelectList } from '@patternfly/react-core';
 
 const MAX_SUGGESTIONS = 5;
 
@@ -19,6 +19,39 @@ const suggestionBoxKeyHandler = {
   Escape: KeyEventModes.HIDE,
 };
 
+type SuggestionLineProps = {
+  suggestion: string;
+  onClick: (param: string) => void;
+  color: React.ComponentProps<typeof Label>['color'];
+};
+
+const SuggestionLine: React.FC<SuggestionLineProps> = ({ suggestion, onClick, color }) => {
+  return (
+    <div>
+      <Label
+        variant="outline"
+        onClick={() => onClick(suggestion)}
+        data-test="suggestion-line"
+        color={color}
+      >
+        {suggestion}
+      </Label>
+    </div>
+  );
+};
+
+type AutocompleteInputProps = {
+  onSuggestionSelect: (selected: string) => void;
+  placeholder?: string;
+  suggestionCount?: number;
+  showSuggestions?: boolean;
+  textValue: string;
+  setTextValue: React.Dispatch<React.SetStateAction<String>>;
+  color?: SuggestionLineProps['color'];
+  data?: any;
+  labelPath?: string;
+};
+
 const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
   const [suggestions, setSuggestions] = React.useState<string[]>();
   const { visible, setVisible, ref } = useDocumentListener<HTMLDivElement>(suggestionBoxKeyHandler);
@@ -29,7 +62,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
     placeholder,
     showSuggestions,
     data,
-    className,
+    color,
     labelPath,
   } = props;
 
@@ -76,50 +109,19 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
         onFocus={activate}
       />
       {showSuggestions && (
-        <div
-          className={classNames('co-suggestion-box__suggestions', {
+        <SelectList
+          className={css('co-suggestion-box__suggestions', {
             'co-suggestion-box__suggestions--shadowed': visible && suggestions?.length > 0,
           })}
         >
           {visible &&
             suggestions?.map((elem) => (
-              <SuggestionLine
-                suggestion={elem}
-                key={elem}
-                onClick={onSelect}
-                className={className}
-              />
+              <SuggestionLine suggestion={elem} key={elem} onClick={onSelect} color={color} />
             ))}
-        </div>
+        </SelectList>
       )}
     </div>
   );
-};
-
-type AutocompleteInputProps = {
-  onSuggestionSelect: (selected: string) => void;
-  placeholder?: string;
-  suggestionCount?: number;
-  showSuggestions?: boolean;
-  textValue: string;
-  setTextValue: React.Dispatch<React.SetStateAction<String>>;
-  className?: string;
-  data?: any;
-  labelPath?: string;
-};
-
-const SuggestionLine: React.FC<SuggestionLineProps> = ({ suggestion, onClick, className }) => {
-  return (
-    <button className="co-suggestion-line" onClick={() => onClick(suggestion)}>
-      <span className={className}>{suggestion}</span>
-    </button>
-  );
-};
-
-type SuggestionLineProps = {
-  suggestion: string;
-  onClick: (param: string) => void;
-  className?: string;
 };
 
 export default AutocompleteInput;

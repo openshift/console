@@ -1,28 +1,24 @@
 import * as React from 'react';
-import { Divider } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import { ProjectsTable } from '@console/internal/components/namespace';
-import { PageHeading } from '@console/internal/components/utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import './ProjectListPage.scss';
 
 export type ProjectListPageProps = {
   title: string;
   listComponent?: React.ComponentType<any>;
-  children?: React.ReactNode;
   badge?: React.ReactNode;
+  helpText?: React.ReactNode;
 };
-const ProjectListPage: React.FC<ProjectListPageProps> = ({
+const ProjectListPage: React.FCC<ProjectListPageProps> = ({
   badge,
   title,
-  children,
   listComponent,
+  helpText,
   ...listPageProps
 }) => (
   <div className="odc-project-list-page">
-    <PageHeading title={title} badge={badge}>
-      {children}
-    </PageHeading>
-    <Divider className="co-divider" />
+    <PageHeading title={title} badge={badge} helpText={helpText} />
     <ListPage
       {...listPageProps}
       showTitle={false}

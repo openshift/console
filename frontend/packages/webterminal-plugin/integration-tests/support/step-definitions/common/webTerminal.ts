@@ -6,6 +6,7 @@ import {
   perspective,
   projectNameSpace,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { checkTerminalIcon } from '@console/dev-console/integration-tests/support/pages/functions/checkTerminalIcon';
 import { webTerminalPage } from '@console/webterminal-plugin/integration-tests/support/step-definitions/pages/web-terminal/webTerminal-page';
 
@@ -49,7 +50,7 @@ When('user clicks on the Web Terminal icon on the Masthead', () => {
 Then('user will see the terminal window', () => {
   cy.get('.co-cloudshell-terminal__container').should('be.visible');
   // cy.wait(15000);
-  // webTerminalPage.verifyConnectionRediness();
+  webTerminalPage.verifyConnectionRediness();
 });
 
 // check  existing of web terminal in the dedicated project. Create it for the correct checking if a webterminal instance is not existed.
@@ -81,6 +82,7 @@ And('user has logged in as basic user', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
 });
 

@@ -6,25 +6,40 @@ export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
 const THEME_DARK_CLASS = 'pf-v6-theme-dark';
 const THEME_DARK_CLASS_LEGACY = 'pf-v5-theme-dark'; // legacy class name needed to support PF5
-const THEME_DARK = 'dark';
-const THEME_LIGHT = 'light';
+export const THEME_DARK = 'dark';
+export const THEME_LIGHT = 'light';
+export const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
 
 type PROCESSED_THEME = typeof THEME_DARK | typeof THEME_LIGHT;
 
-export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
-  let systemTheme: string;
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    systemTheme = THEME_DARK;
+export const applyThemeBehaviour = (
+  theme: string,
+  onDarkBehaviour?: () => string,
+  onLightBehaviour?: () => string,
+) => {
+  if (darkThemeMq.matches && theme === THEME_SYSTEM_DEFAULT) {
+    theme = THEME_DARK;
   }
-  if (theme === THEME_DARK || (theme === THEME_SYSTEM_DEFAULT && systemTheme === THEME_DARK)) {
-    htmlTagElement.classList.add(THEME_DARK_CLASS);
-    htmlTagElement.classList.add(THEME_DARK_CLASS_LEGACY);
-    return THEME_DARK;
+  if (theme === THEME_DARK) {
+    return onDarkBehaviour();
   }
+  return onLightBehaviour();
+};
 
-  htmlTagElement.classList.remove(THEME_DARK_CLASS);
-  htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
-  return THEME_LIGHT;
+export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
+  return applyThemeBehaviour(
+    theme,
+    () => {
+      htmlTagElement.classList.add(THEME_DARK_CLASS);
+      htmlTagElement.classList.add(THEME_DARK_CLASS_LEGACY);
+      return THEME_DARK;
+    },
+    () => {
+      htmlTagElement.classList.remove(THEME_DARK_CLASS);
+      htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
+      return THEME_LIGHT;
+    },
+  ) as PROCESSED_THEME;
 };
 
 export const ThemeContext = React.createContext<string>('');
@@ -57,7 +72,6 @@ export const ThemeProvider: React.FC<{}> = ({ children }) => {
   );
 
   React.useEffect(() => {
-    const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
     if (theme === THEME_SYSTEM_DEFAULT) {
       darkThemeMq.addEventListener('change', mqListener);
     }

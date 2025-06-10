@@ -31,10 +31,10 @@ import { Button } from '@patternfly/react-core/dist/esm/components/Button';
 import { Button } from '@patternfly/react-core';
 ```
 
-## Console 4.15 & above
+## Console 4.15 to 4.18
 
-Plugins that only target OpenShift Console 4.15 and newer should upgrade to PatternFly 5.x or newer to take
-advantage of [PatternFly dynamic modules][console-pf-dynamic-modules].
+Plugins that only target OpenShift Console 4.15 and newer should upgrade to PatternFly 5.x or newer
+to take advantage of [PatternFly dynamic modules][console-pf-dynamic-modules].
 
 Any PatternFly related code should be imported via the corresponding package index:
 
@@ -44,6 +44,12 @@ import { MonitoringIcon } from '@patternfly/react-icons/dist/esm/icons/monitorin
 // Instead, do this:
 import { MonitoringIcon } from '@patternfly/react-icons';
 ```
+
+## Console 4.19 and newer
+
+OpenShift Console 4.19 and newer no longer provides PatternFly 4.x shared modules. Plugins that only
+target OpenShift Console 4.19 and newer should upgrade to PatternFly 6.x or newer due to the design
+changes made in PatternFly 6.
 
 ## PatternFly resources
 

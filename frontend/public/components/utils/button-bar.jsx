@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as PropTypes from 'prop-types';
 import { Alert, AlertGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +58,7 @@ export const ButtonBar = ({
   inProgress,
 }) => {
   return (
-    <div className={classNames(className, 'co-m-btn-bar')}>
+    <div className={css(className, 'co-m-btn-bar')}>
       <AlertGroup
         isLiveRegion
         aria-live="polite"

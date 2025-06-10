@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 
 import { t } from '../../__mocks__/i18next';

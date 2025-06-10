@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamTagModel } from '../models';
 import { DetailsPage, Table } from './factory';
@@ -12,6 +14,14 @@ import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { sortable } from '@patternfly/react-table';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -101,19 +111,17 @@ export const SupportedPlatformsTable = (props) => {
 
   return (
     <>
-      <div className="co-m-pane__body-group">
-        {props.heading && <SectionHeading text={props.heading} />}
-        <Table
-          {...tableProps}
-          aria-label={t('public~Supported Platforms')}
-          loaded={true}
-          label={props.heading}
-          data={submanifests}
-          Header={SupportedPlatformsTableHeader}
-          Rows={SupportedPlatformsTableRows}
-          virtualize={false}
-        />
-      </div>
+      {props.heading && <SectionHeading text={props.heading} />}
+      <Table
+        {...tableProps}
+        aria-label={t('public~Supported Platforms')}
+        loaded={true}
+        label={props.heading}
+        data={submanifests}
+        Header={SupportedPlatformsTableHeader}
+        Rows={SupportedPlatformsTableRows}
+        virtualize={false}
+      />
     </>
   );
 };
@@ -147,44 +155,88 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="co-m-pane__body">
-      <div className="co-m-pane__body-group">
-        <div className="row">
-          <div className="col-md-6 col-sm-12">
+    <PaneBody>
+      <PaneBodyGroup>
+        <Grid hasGutter>
+          <GridItem md={6}>
             <SectionHeading text={t('public~ImageStreamTag details')} />
             <ResourceSummary resource={imageStreamTag}>
-              {labels.name && <dt>{t('public~Image name')}</dt>}
-              {labels.name && <dd>{labels.name}</dd>}
-              {labels.summary && <dt>{t('public~Summary')}</dt>}
-              {labels.summary && <dd>{labels.summary}</dd>}
-              {humanizedSize && <dt>{t('public~Size')}</dt>}
-              {humanizedSize && <dd>{humanizedSize}</dd>}
+              {labels.name && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Image name')}</DescriptionListTerm>
+                  <DescriptionListDescription>{labels.name}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {labels.summary && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Summary')}</DescriptionListTerm>
+                  <DescriptionListDescription>{labels.summary}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {humanizedSize && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Size')}</DescriptionListTerm>
+                  <DescriptionListDescription>{humanizedSize}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} tag={tagName} />
-          </div>
-          <div className="col-md-6 col-sm-12">
+          </GridItem>
+          <GridItem md={6}>
             <SectionHeading text={t('public~Configuration')} />
-            <dl className="co-m-pane__details">
-              {entrypoint && <dt>{t('public~Entrypoint')}</dt>}
-              {entrypoint && <dd className="co-break-word">{entrypoint}</dd>}
-              {cmd && <dt>{t('public~Command')}</dt>}
-              {cmd && <dd className="co-break-word">{cmd}</dd>}
-              {config.WorkingDir && <dt>{t('public~Working dir')}</dt>}
-              {config.WorkingDir && <dd className="co-break-all">{config.WorkingDir}</dd>}
-              {exposedPorts && <dt>{t('public~Exposed ports')}</dt>}
-              {exposedPorts && <dd className="co-break-word">{exposedPorts}</dd>}
-              {config.User && <dt>{t('public~User')}</dt>}
-              {config.User && <dd>{config.User}</dd>}
-              {architecture && <dt>{t('public~Architecture')}</dt>}
-              {architecture && <dd>{architecture}</dd>}
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body-group">
+            <DescriptionList>
+              {entrypoint && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Entrypoint')}</DescriptionListTerm>
+                  <DescriptionListDescription className="co-break-word">
+                    {entrypoint}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {cmd && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Command')}</DescriptionListTerm>{' '}
+                  <DescriptionListDescription className="co-break-word">
+                    {cmd}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {config.WorkingDir && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Working dir')}</DescriptionListTerm>{' '}
+                  <DescriptionListDescription className="co-break-all">
+                    {config.WorkingDir}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {exposedPorts && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Exposed ports')}</DescriptionListTerm>
+                  <DescriptionListDescription className="co-break-word">
+                    {exposedPorts}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {config.User && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~User')}</DescriptionListTerm>ser &&{' '}
+                  <DescriptionListDescription>{config.User}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {architecture && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Architecture')}</DescriptionListTerm>
+                  <DescriptionListDescription>{architecture}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBodyGroup>
+      <PaneBodyGroup>
         <SectionHeading text={t('public~Image labels')} />
         {_.isEmpty(sortedLabels) ? (
-          <span className="text-muted">{t('public~No labels')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('public~No labels')}</span>
         ) : (
           <div className="co-table-container">
             <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
@@ -205,11 +257,11 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
             </table>
           </div>
         )}
-      </div>
-      <div className="co-m-pane__body-group">
+      </PaneBodyGroup>
+      <PaneBodyGroup>
         <SectionHeading text={t('public~Environment variables')} />
         {_.isEmpty(config.Env) ? (
-          <span className="text-muted">{t('public~No environment variables')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('public~No environment variables')}</span>
         ) : (
           <div className="co-table-container">
             <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
@@ -233,13 +285,13 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
             </table>
           </div>
         )}
-      </div>
+      </PaneBodyGroup>
       <SupportedPlatformsTable
         submanifests={sortedSubmanifests}
         policy={importPolicyPreserveOriginal}
         heading={t('public~Supported Platforms')}
       />
-    </div>
+    </PaneBody>
   );
 };
 

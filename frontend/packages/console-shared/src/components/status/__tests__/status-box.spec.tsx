@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { configure, render } from '@testing-library/react';
 import {
   IncompleteDataError,
@@ -8,10 +7,14 @@ import { StatusBox } from '..';
 
 configure({ testIdAttribute: 'data-test' });
 
+jest.mock('react-router-dom-v5-compat', () => ({
+  useNavigate: jest.fn(),
+}));
+
 describe('StatusBox', () => {
-  it('should render 404: Not Found if the loadError status is 404', () => {
+  it('should render 404: Page Not Found if the loadError status is 404', () => {
     const { getByText } = render(<StatusBox loadError={{ response: { status: 404 } }} />);
-    getByText('404: Not Found');
+    getByText('404: Page Not Found');
   });
 
   it('should render access denied info together with the error message', () => {

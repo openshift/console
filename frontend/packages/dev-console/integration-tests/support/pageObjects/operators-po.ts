@@ -37,8 +37,6 @@ export const operatorsPO = {
     redHatCodeReadyWorkspacesCard:
       '[data-test^="codeready-workspaces-redhat-operators-openshift-marketplace"]',
     gitopsPrimer: '[data-test="gitops-primer-community-operators-openshift-marketplace"]',
-    serviceBinding:
-      '[data-test="rh-service-binding-operator-redhat-operators-openshift-marketplace"]',
     CrunchyPostgresforKubernetes:
       '[data-test="crunchy-postgres-operator-certified-operators-openshift-marketplace"]',
     quayContainerSecurity:
@@ -54,7 +52,7 @@ export const operatorsPO = {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
   },
   installOperators: {
-    title: 'h1.co-m-pane__heading',
+    title: '[data-test="page-heading"] h1',
     operatorsNameRow: 'div[aria-label="Installed Operators"] td:nth-child(1) h1',
     noOperatorsFound: '[data-test="console-empty-state-title"]',
     noOperatorsDetails: '[data-test="console-empty-state-body"]',

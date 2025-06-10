@@ -4,7 +4,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { secretModalLauncher } from '@console/dev-console/src/components/import/CreateSecretModal';
-import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
+import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { getFieldId } from '@console/shared';
 import PushSecretDropdown from './PushSecretDropdown';
 
@@ -31,7 +31,7 @@ const PushSecretSelector: React.FC<{
       secretModalLauncher({
         namespace,
         save: handleSave,
-        secretType: SecretTypeAbstraction.image,
+        formType: SecretFormType.image,
       });
     } else if (key === CLEAR_PULL_SECRET) {
       setFieldValue(`${fieldPrefix}`, '');

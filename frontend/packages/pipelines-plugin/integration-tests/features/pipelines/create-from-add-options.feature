@@ -64,7 +64,7 @@ Feature: Create Pipeline from Add Options
         @smoke
         Scenario Outline: Search the created pipeline from Add options in pipelines page: P-01-TC05
             Given user created workload "<name>" from add page with pipeline
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user searches for pipeline "<name>" in pipelines page
              Then pipeline "<name>" is displayed in pipelines page
 
@@ -93,8 +93,8 @@ Feature: Create Pipeline from Add Options
 
         @regression
         Scenario Outline: Create a pipeline with s2i builder images: P-01-TC07
-            Given user is at Developer Catalog form with builder images
-             When user searches builder image "node" in developer catalog
+            Given user is at Software Catalog form with builder images
+             When user searches builder image "node" in software catalog
               And user creates the application with the selected builder image
               And user enters Git Repo url in builder image as "<git_url>"
               And user selects Pipelines option in Build Option
@@ -212,4 +212,3 @@ Feature: Create Pipeline from Add Options
         Examples:
                   | git_url                                | workload_name      |
                   | https://github.com/Lucifergene/oc-pipe | openshift-pac-repo |
-

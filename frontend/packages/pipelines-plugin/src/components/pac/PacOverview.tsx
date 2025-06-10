@@ -8,11 +8,15 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
-import { ExternalLink, ResourceLink, PageHeading } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PageBody from '@console/shared/src/components/layout/PageBody';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 type PacOverviewProps = {
   namespace: string;
@@ -34,11 +38,7 @@ const PacOverview: React.FC<PacOverviewProps> = ({
     setAlertVisible(showSuccessAlert);
   }, [showSuccessAlert]);
 
-  const pageTitle = (
-    <Helmet>
-      <title>{t('pipelines-plugin~GitHub App Details')}</title>
-    </Helmet>
-  );
+  const pageTitle = <DocumentTitle>{t('pipelines-plugin~GitHub App Details')}</DocumentTitle>;
   const pageHeading = (
     <PageHeading
       title={t('pipelines-plugin~GitHub App Details')}
@@ -56,13 +56,13 @@ const PacOverview: React.FC<PacOverviewProps> = ({
       <>
         {pageTitle}
         {pageHeading}
-        <div className="co-m-page__body">
-          <div className="co-m-pane__body no-margin">
+        <PageBody>
+          <PaneBody>
             <Alert variant="danger" title={t('pipelines-plugin~Something unexpected happened!!')}>
               {loadError?.message && <p>{loadError.message}</p>}
             </Alert>
-          </div>
-        </div>
+          </PaneBody>
+        </PageBody>
       </>
     );
   }
@@ -75,8 +75,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
     <>
       {pageTitle}
       {pageHeading}
-      <div className="co-m-page__body">
-        <div className="co-m-pane__body no-margin">
+      <PageBody>
+        <PaneBody>
           {alertVisible && (
             <Alert
               variant="success"
@@ -86,11 +86,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
               {annotations?.appUrl && (
                 <Trans t={t} ns="pipelines-plugin">
                   <p>
-                    Use the{' '}
-                    <a href={annotations.appUrl} target="_blank" rel="noopener noreferrer">
-                      link
-                    </a>{' '}
-                    to install the newly created GitHub application to your repositories in your
+                    Use the <ExternalLink href={annotations.appUrl}>link</ExternalLink> to install
+                    the newly created GitHub application to your repositories in your
                     organization/account
                   </p>
                 </Trans>
@@ -101,12 +98,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
             <Hint>
               <HintBody>
                 <Trans t={t} ns="pipelines-plugin">
-                  Use this{' '}
-                  <a href={annotations.appUrl} target="_blank" rel="noopener noreferrer">
-                    link
-                  </a>{' '}
-                  to install the GitHub Application to your repositories in your
-                  organization/account.
+                  Use this <ExternalLink href={annotations.appUrl}>link</ExternalLink> to install
+                  the GitHub Application to your repositories in your organization/account.
                 </Trans>
               </HintBody>
             </Hint>
@@ -130,8 +123,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
             </FormGroup>
             <br />
           </FormGroup>
-        </div>
-      </div>
+        </PaneBody>
+      </PageBody>
     </>
   );
 };

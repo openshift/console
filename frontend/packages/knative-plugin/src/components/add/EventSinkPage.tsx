@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
-import { LoadingBox, PageHeading } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useEventSinkStatus } from '../../hooks/useEventSinkStatus';
 import EventSink from './EventSink';
 import EventSinkAlert from './EventSinkAlert';
@@ -33,14 +34,13 @@ const EventSinkPage: React.FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{t('knative-plugin~Event Sink')}</title>
-      </Helmet>
-      <PageHeading title={t('knative-plugin~Create Event Sink')}>
-        {t(
+      <DocumentTitle>{t('knative-plugin~Event Sink')}</DocumentTitle>
+      <PageHeading
+        title={t('knative-plugin~Create Event Sink')}
+        helpText={t(
           'knative-plugin~Create an Event sink to receive incoming events from a particular source. Configure using YAML and form views.',
         )}
-      </PageHeading>
+      />
       {loaded && isValidSink && !createSinkAccessLoading && createSinkAccess ? (
         <EventSink
           namespace={namespace}

@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { ClipboardCopy } from '@patternfly/react-core';
+import { ClipboardCopy, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   SectionHeading,
   ResourceSummary,
-  ExternalLink,
   ResourceLink,
   DetailsItem,
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { usePacInfo } from './hooks/pac-hook';
 import { getGitProviderIcon } from './repository-utils';
 import { RepositoryKind } from './types';
@@ -23,14 +24,14 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
   const [pac, loaded] = usePacInfo();
 
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('pipelines-plugin~Repository details')} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={repository} />
-        </div>
-        <div className="col-sm-6">
-          <dl>
+        </GridItem>
+        <GridItem sm={6}>
+          <DescriptionList>
             {spec?.url && (
               <DetailsItem
                 label={t('pipelines-plugin~Repository')}
@@ -92,10 +93,10 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
                 />
               </DetailsItem>
             )}
-          </dl>
-        </div>
-      </div>
-    </div>
+          </DescriptionList>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 

@@ -2,41 +2,29 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { Link } from 'react-router-dom-v5-compat';
-import {
-  NotificationDrawer as PFNotificationDrawer,
-  NotificationEntry,
-  NotificationCategory,
-  NotificationTypes,
-} from '@console/patternfly';
+import { useDispatch } from 'react-redux';
+import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
 import {
   isNotLoadedDynamicPluginInfo,
   useDynamicPluginInfo,
   DynamicPluginInfo,
 } from '@console/plugin-sdk';
-import {
-  alertingErrored,
-  alertingLoaded,
-  alertingLoading,
-  setAlertCount,
-} from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
-import { RootState } from '@console/internal/redux';
-import { history, resourcePath } from '@console/internal/components/utils';
+import { resourcePath } from '@console/internal/components/utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
-import { getClusterID } from '../module/k8s/cluster-settings';
+import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
 
 import {
   ServiceLevelNotification,
   useShowServiceLevelNotifications,
 } from '@console/internal/components/utils/service-level';
+import { alertURL } from '@console/internal/components/monitoring/utils';
 import {
-  alertURL,
-  getAlertsAndRules,
-  silenceMatcherEqualitySymbol,
-} from '@console/internal/components/monitoring/utils';
-import { NotificationAlerts } from '@console/internal/reducers/observe';
-import { RedExclamationCircleIcon, useCanClusterUpgrade } from '@console/shared';
+  BlueArrowCircleUpIcon,
+  RedExclamationCircleIcon,
+  useCanClusterUpgrade,
+} from '@console/shared';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -45,14 +33,23 @@ import {
   getAlertTime,
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import {
+  Button,
   EmptyState,
-  EmptyStateBody,
-  EmptyStateVariant,
   EmptyStateActions,
+  EmptyStateBody,
   EmptyStateFooter,
+  EmptyStateVariant,
+  NotificationDrawer as PfNotificationDrawer,
+  NotificationDrawerBody,
+  NotificationDrawerGroup,
+  NotificationDrawerGroupList,
+  NotificationDrawerHeader,
+  NotificationDrawerList,
+  NotificationDrawerListItem,
+  NotificationDrawerListItemBody,
+  NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
-import { usePrevious } from '@console/shared/src/hooks/previous';
 import {
   Alert,
   AlertAction,
@@ -61,7 +58,6 @@ import {
   useResolvedExtensions,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import { coFetchJSON } from '../co-fetch';
 import { ConsolePluginModel } from '../models';
 import {
   ClusterVersionKind,
@@ -73,11 +69,16 @@ import {
   VersionUpdate,
 } from '../module/k8s';
 import { LinkifyExternal } from './utils';
-import { PrometheusEndpoint } from './graphs/helpers';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
-import { useModal, PrometheusRulesResponse } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
+
+export enum NotificationTypes {
+  info = 'info',
+  warning = 'warning',
+  critical = 'danger',
+  success = 'success',
+}
 
 const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
@@ -123,13 +124,16 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
 // FIXME (jon): AlertmanagerReceiversNotConfigured action should be defined as an extension in the
 // console-app package. Also, rather than build a map on every call of this function, we might want
 // to hook this into redux.
-export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction>[]) => {
+export const getAlertActions = (
+  actionsExtensions: ResolvedExtension<AlertAction>[],
+  navigate: NavigateFunction,
+) => {
   const alertActions = new Map<
     string,
     Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
   >().set('AlertmanagerReceiversNotConfigured', {
     text: i18next.t('public~Configure'),
-    action: () => history.push('/monitoring/alertmanagerconfig'),
+    action: () => navigate('/monitoring/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
     alertActions.set(properties.alert, {
@@ -144,7 +148,7 @@ const getUpdateNotificationEntries = (
   canUpgrade: boolean,
   cv: ClusterVersionKind,
   pluginInfoEntries: DynamicPluginInfo[],
-  toggleNotificationDrawer: () => void,
+  itemOnClick: (location: string) => void,
 ): React.ReactNode[] => {
   if (!cv || !canUpgrade) {
     return [];
@@ -163,156 +167,85 @@ const getUpdateNotificationEntries = (
 
   if (!_.isEmpty(updateData)) {
     entries.push(
-      <NotificationEntry
-        actionPath="/settings/cluster?showVersions"
-        actionText={i18next.t('public~Update cluster')}
+      <NotificationDrawerListItem
+        variant={NotificationTypes.info}
         key="cluster-update"
-        description={updateData[0].version || i18next.t('public~Unknown')}
-        type={NotificationTypes.update}
-        title={i18next.t('public~Cluster update available')}
-        toggleNotificationDrawer={toggleNotificationDrawer}
-        targetPath="/settings/cluster?showVersions"
-      />,
+        onClick={() => {
+          itemOnClick('/settings/cluster?showVersions');
+        }}
+      >
+        <NotificationDrawerListItemHeader
+          variant={NotificationTypes.info}
+          title={i18next.t('public~Cluster update available')}
+          icon={<BlueArrowCircleUpIcon />}
+        />
+        <NotificationDrawerListItemBody>
+          {updateData[0].version || i18next.t('public~Unknown')}
+        </NotificationDrawerListItemBody>
+      </NotificationDrawerListItem>,
     );
   }
   if (newerChannel) {
     entries.push(
-      <NotificationEntry
-        actionPath="/settings/cluster?showChannels"
-        actionText={i18next.t('public~Update channel')}
+      <NotificationDrawerListItem
+        variant={NotificationTypes.info}
         key="channel-update"
-        description={i18next.t(
-          'public~The {{newerChannel}} channel is available. If you are interested in updating this cluster to {{newerChannelVersion}} in the future, change the update channel to {{newerChannel}} to receive recommended updates.',
-          { newerChannel, newerChannelVersion },
-        )}
-        type={NotificationTypes.update}
-        title={i18next.t('public~{{newerChannel}} channel available', {
-          newerChannel,
-        })}
-        toggleNotificationDrawer={toggleNotificationDrawer}
-        targetPath="/settings/cluster?showChannels"
-      />,
+        onClick={() => {
+          itemOnClick('/settings/cluster?showChannels');
+        }}
+      >
+        <NotificationDrawerListItemHeader
+          variant={NotificationTypes.info}
+          title={i18next.t('public~{{newerChannel}} channel available', {
+            newerChannel,
+          })}
+          icon={<BlueArrowCircleUpIcon />}
+        />
+        <NotificationDrawerListItemBody>
+          {i18next.t(
+            'public~The {{newerChannel}} channel is available. If you are interested in updating this cluster to {{newerChannelVersion}} in the future, change the update channel to {{newerChannel}} to receive recommended updates.',
+            { newerChannel, newerChannelVersion },
+          )}
+        </NotificationDrawerListItemBody>
+      </NotificationDrawerListItem>,
     );
   }
   if (failedPlugins.length > 0) {
     entries.push(
-      ...failedPlugins.map((plugin) => {
-        const link = resourcePath(referenceForModel(ConsolePluginModel), plugin.pluginName);
-        return (
-          <NotificationEntry
-            actionPath={link}
-            actionText={i18next.t('public~View plugin')}
-            key={`${plugin.pluginName}-dynamic-plugin-fail`}
-            description={i18next.t('public~Something went wrong with the {{pluginName}} plugin.', {
+      ...failedPlugins.map((plugin) => (
+        <NotificationDrawerListItem
+          variant={NotificationTypes.warning}
+          key={`${plugin.pluginName}-dynamic-plugin-fail`}
+          onClick={() => {
+            itemOnClick(resourcePath(referenceForModel(ConsolePluginModel), plugin.pluginName));
+          }}
+        >
+          <NotificationDrawerListItemHeader
+            variant={NotificationTypes.warning}
+            title={i18next.t('public~Dynamic plugin error')}
+          />
+          <NotificationDrawerListItemBody>
+            {i18next.t('public~Something went wrong with the {{pluginName}} plugin.', {
               pluginName: plugin.pluginName,
             })}
-            type={NotificationTypes.warning}
-            title={i18next.t('public~Dynamic plugin error')}
-            toggleNotificationDrawer={toggleNotificationDrawer}
-            targetPath={link}
-          />
-        );
-      }),
+          </NotificationDrawerListItemBody>
+        </NotificationDrawerListItem>
+      )),
     );
   }
   return entries;
 };
 
-const pollerTimeouts = {};
-const pollers = {};
-
-export const refreshNotificationPollers = () => {
-  _.each(pollerTimeouts, clearTimeout);
-  _.invoke(pollers, 'silences');
-  _.invoke(pollers, 'notificationAlerts');
-};
-
 export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
-  isDesktop,
+  isDrawerExpanded,
   onDrawerChange,
-  children,
+  drawerRef,
 }) => {
   const { t } = useTranslation();
-  const isDrawerExpanded = useSelector<RootState, boolean>(
-    ({ UI }) => !!UI.getIn(['notifications', 'isExpanded']),
-  );
-  const dispatch = useDispatch();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const [pluginInfoEntries] = useDynamicPluginInfo();
-  const toggleNotificationDrawer = () => dispatch(UIActions.notificationDrawerToggleExpanded());
-
-  React.useEffect(() => {
-    const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
-      dispatch(alertingLoading(key));
-      const notificationPoller = (): void => {
-        coFetchJSON(url)
-          .then((response) => dataHandler(response))
-          .then((data) => {
-            dispatch(alertingLoaded(key, data));
-            pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000);
-          })
-          .catch((e) => {
-            dispatch(alertingErrored(key, e));
-
-            // If the API returned an error, poll less frequently to avoid excessive calls. For
-            // example, if the user doesn't have permission to access the API, polling will probably
-            // continue to fail, but it is possible that permissions will be granted so we don't
-            // stop completely.
-            pollerTimeouts[key] = setTimeout(notificationPoller, 60 * 1000);
-          });
-      };
-      pollers[key] = notificationPoller;
-      notificationPoller();
-    };
-
-    const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
-
-    if (prometheusBaseURL) {
-      poll(
-        `${prometheusBaseURL}/${PrometheusEndpoint.RULES}`,
-        'notificationAlerts',
-        (alertsResults: PrometheusRulesResponse): Alert[] =>
-          alertsResults
-            ? getAlertsAndRules(alertsResults.data)
-                .alerts.filter(
-                  (a) =>
-                    a.state === 'firing' &&
-                    getAlertName(a) !== 'Watchdog' &&
-                    getAlertName(a) !== 'UpdateAvailable',
-                )
-                .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
-            : [],
-      );
-    } else {
-      dispatch(
-        alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
-      );
-    }
-
-    if (alertManagerBaseURL) {
-      poll(`${alertManagerBaseURL}/api/v2/silences`, 'silences', (silences) => {
-        // Set a name field on the Silence to make things easier
-        _.each(silences, (s) => {
-          s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
-          if (!s.name) {
-            // No alertname, so fall back to displaying the other matchers
-            s.name = s.matchers
-              .map(
-                (m) => `${m.name}${silenceMatcherEqualitySymbol(m.isEqual, m.isRegex)}${m.value}`,
-              )
-              .join(', ');
-          }
-        });
-        return silences;
-      });
-    } else {
-      dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
-    }
-
-    return () => _.each(pollerTimeouts, clearTimeout);
-  }, [dispatch, t]);
-
+  const dispatch = useDispatch();
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();
@@ -324,16 +257,26 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     ),
   );
 
-  const alertActionExtensionsMap = React.useMemo(() => getAlertActions(alertActionExtensions), [
-    alertActionExtensions,
-  ]);
+  const toggleNotificationDrawer = () => {
+    dispatch(UIActions.notificationDrawerToggleExpanded());
+  };
+  const navigate = useNavigate();
+  const itemOnClick = (location: string) => {
+    toggleNotificationDrawer();
+    navigate(location);
+  };
+
+  const alertActionExtensionsMap = React.useMemo(
+    () => getAlertActions(alertActionExtensions, navigate),
+    [alertActionExtensions, navigate],
+  );
 
   const canUpgrade = useCanClusterUpgrade();
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
     canUpgrade,
     clusterVersion,
     pluginInfoEntries,
-    toggleNotificationDrawer,
+    itemOnClick,
   );
 
   const [criticalAlerts, nonCriticalAlerts] = React.useMemo(() => {
@@ -350,35 +293,21 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 
   const hasCriticalAlerts = criticalAlerts.length > 0;
   const hasNonCriticalAlerts = nonCriticalAlerts.length > 0;
-  const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(hasCriticalAlerts);
-  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState<boolean>(
-    true,
-  );
-  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(true);
-  const prevDrawerToggleState = usePrevious(isDrawerExpanded);
+  const [isAlertExpanded, toggleAlertExpanded] = React.useState(hasCriticalAlerts);
+  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState(true);
+  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState(true);
   React.useEffect(() => {
-    if (hasCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
+    if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
     }
-    if (hasNonCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
+    if (hasNonCriticalAlerts && isDrawerExpanded) {
       toggleNonCriticalAlertExpanded(true);
     }
-  }, [
-    hasCriticalAlerts,
-    hasNonCriticalAlerts,
-    isAlertExpanded,
-    isDrawerExpanded,
-    prevDrawerToggleState,
-  ]);
+  }, [hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded]);
+
   React.useEffect(() => {
     onDrawerChange();
   }, [isDrawerExpanded, onDrawerChange]);
-
-  // Update alert count.
-  const alertCount = alerts?.length ?? 0;
-  React.useEffect(() => {
-    dispatch(setAlertCount(alertCount));
-  }, [alertCount, dispatch]);
 
   const emptyState = loadError ? (
     <AlertErrorState errorText={loadError.toString()} />
@@ -386,124 +315,158 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     <AlertEmptyState drawerToggle={toggleNotificationDrawer} />
   );
 
+  const ItemActionButton: React.FC<ItemActionButtonProps> = ({ alert }) => {
+    const action = alertActionExtensionsMap.get(alert.rule.name);
+    if (!action?.action && !action?.text) {
+      return null;
+    }
+
+    return (
+      <Button
+        variant="link"
+        onClick={(_event: React.MouseEvent<Element, MouseEvent> | undefined) => {
+          _event.stopPropagation();
+          toggleNotificationDrawer();
+          action.action?.(alert, launchModal);
+        }}
+      >
+        {action.text}
+      </Button>
+    );
+  };
+
   const criticalAlertCategory: React.ReactElement = (
-    <NotificationCategory
+    <NotificationDrawerGroup
       key="critical-alerts"
       isExpanded={isAlertExpanded}
-      label={t('public~Critical Alerts')}
+      title={t('public~Critical Alerts')}
       count={criticalAlerts.length}
-      onExpandContents={toggleAlertExpanded}
+      onExpand={() => {
+        toggleAlertExpanded(!isAlertExpanded);
+      }}
     >
-      {criticalAlerts.length > 0
-        ? criticalAlerts.map((alert, i) => {
-            const action = alertActionExtensionsMap.get(alert.rule.name);
-            return (
-              <NotificationEntry
-                key={`${i}_${alert.activeAt}`}
-                description={
-                  <LinkifyExternal>
-                    {getAlertDescription(alert) || getAlertMessage(alert)}
-                  </LinkifyExternal>
-                }
-                timestamp={getAlertTime(alert)}
-                type={NotificationTypes[getAlertSeverity(alert)]}
-                title={getAlertName(alert)}
-                toggleNotificationDrawer={toggleNotificationDrawer}
-                targetPath={alertURL(alert, alert.rule.id)}
-                actionText={action?.text}
-                alertAction={() => action?.action?.(alert, launchModal)}
-              />
-            );
-          })
-        : emptyState}
-    </NotificationCategory>
+      <NotificationDrawerList
+        isHidden={!isAlertExpanded}
+        aria-label={t('public~Notifications in the critical alerts group')}
+      >
+        {criticalAlerts.length > 0
+          ? criticalAlerts.map((alert, i) => {
+              const alertVariant = NotificationTypes[getAlertSeverity(alert)];
+              const alertTime = getAlertTime(alert);
+              return (
+                <NotificationDrawerListItem
+                  variant={alertVariant}
+                  key={`${i}_${alert.activeAt}`}
+                  onClick={() => {
+                    itemOnClick(alertURL(alert, alert.rule.id));
+                  }}
+                >
+                  <NotificationDrawerListItemHeader
+                    variant={alertVariant}
+                    title={getAlertName(alert)}
+                  >
+                    <ItemActionButton alert={alert} />
+                  </NotificationDrawerListItemHeader>
+                  <NotificationDrawerListItemBody
+                    timestamp={alertTime && <Timestamp simple timestamp={alertTime} />}
+                  >
+                    <LinkifyExternal>
+                      {getAlertDescription(alert) || getAlertMessage(alert)}
+                    </LinkifyExternal>
+                  </NotificationDrawerListItemBody>
+                </NotificationDrawerListItem>
+              );
+            })
+          : emptyState}
+      </NotificationDrawerList>
+    </NotificationDrawerGroup>
   );
   const nonCriticalAlertCategory: React.ReactElement =
     nonCriticalAlerts.length > 0 ? (
-      <NotificationCategory
+      <NotificationDrawerGroup
         key="other-alerts"
         isExpanded={isNonCriticalAlertExpanded}
-        label={t('public~Other Alerts')}
+        title={t('public~Other Alerts')}
         count={nonCriticalAlerts.length}
-        onExpandContents={toggleNonCriticalAlertExpanded}
+        onExpand={() => {
+          toggleNonCriticalAlertExpanded(!isNonCriticalAlertExpanded);
+        }}
       >
-        {nonCriticalAlerts.map((alert, i) => {
-          const action = alertActionExtensionsMap.get(alert.rule.name);
-          return (
-            <NotificationEntry
-              key={`${i}_${alert.activeAt}`}
-              description={
-                <LinkifyExternal>
-                  {getAlertDescription(alert) || getAlertMessage(alert)}
-                </LinkifyExternal>
-              }
-              timestamp={getAlertTime(alert)}
-              type={NotificationTypes[getAlertSeverity(alert)]}
-              title={getAlertName(alert)}
-              toggleNotificationDrawer={toggleNotificationDrawer}
-              targetPath={alertURL(alert, alert.rule.id)}
-              actionText={action?.text}
-              alertAction={() => action?.action?.(alert, launchModal)}
-            />
-          );
-        })}
-      </NotificationCategory>
+        <NotificationDrawerList
+          isHidden={!isNonCriticalAlertExpanded}
+          aria-label={t('public~Notifications in the other alerts group')}
+        >
+          {nonCriticalAlerts.map((alert, i) => {
+            const alertVariant = NotificationTypes[getAlertSeverity(alert)];
+            const alertTime = getAlertTime(alert);
+            return (
+              <NotificationDrawerListItem
+                variant={alertVariant}
+                key={`${i}_${alert.activeAt}`}
+                onClick={() => {
+                  itemOnClick(alertURL(alert, alert.rule.id));
+                }}
+              >
+                <NotificationDrawerListItemHeader
+                  variant={alertVariant}
+                  title={getAlertName(alert)}
+                >
+                  <ItemActionButton alert={alert} />
+                </NotificationDrawerListItemHeader>
+                <NotificationDrawerListItemBody
+                  timestamp={alertTime && <Timestamp simple timestamp={alertTime} />}
+                >
+                  <LinkifyExternal>
+                    {getAlertDescription(alert) || getAlertMessage(alert)}
+                  </LinkifyExternal>
+                </NotificationDrawerListItemBody>
+              </NotificationDrawerListItem>
+            );
+          })}
+        </NotificationDrawerList>
+      </NotificationDrawerGroup>
     ) : null;
 
   if (showServiceLevelNotification) {
     updateList.push(
-      <ServiceLevelNotification
-        key="service-level-notification"
-        clusterID={clusterID}
-        toggleNotificationDrawer={toggleNotificationDrawer}
-      />,
+      <ServiceLevelNotification key="service-level-notification" clusterID={clusterID} />,
     );
   }
   const recommendationsCategory: React.ReactElement = !_.isEmpty(updateList) ? (
-    <NotificationCategory
+    <NotificationDrawerGroup
       key="recommendations"
       isExpanded={isClusterUpdateExpanded}
-      label={t('public~Recommendations')}
+      title={t('public~Recommendations')}
       count={updateList.length}
-      onExpandContents={toggleClusterUpdateExpanded}
+      onExpand={() => {
+        toggleClusterUpdateExpanded(!isClusterUpdateExpanded);
+      }}
     >
-      {updateList}
-    </NotificationCategory>
+      <NotificationDrawerList
+        isHidden={!isClusterUpdateExpanded}
+        aria-label={t('public~Notifications in the recommendations group')}
+      >
+        {updateList}
+      </NotificationDrawerList>
+    </NotificationDrawerGroup>
   ) : null;
 
   return (
-    <PFNotificationDrawer
-      className="co-notification-drawer"
-      isInline={isDesktop}
-      isExpanded={isDrawerExpanded}
-      notificationEntries={[
-        criticalAlertCategory,
-        nonCriticalAlertCategory,
-        recommendationsCategory,
-      ]}
-      onClose={toggleNotificationDrawer}
-    >
-      {children}
-    </PFNotificationDrawer>
+    <PfNotificationDrawer ref={drawerRef}>
+      <NotificationDrawerHeader onClose={toggleNotificationDrawer} />
+      <NotificationDrawerBody>
+        <NotificationDrawerGroupList>
+          {[criticalAlertCategory, nonCriticalAlertCategory, recommendationsCategory]}
+        </NotificationDrawerGroupList>
+      </NotificationDrawerBody>
+    </PfNotificationDrawer>
   );
 };
 
-type NotificationPoll = (
-  url: string,
-  key: 'notificationAlerts' | 'silences',
-  dataHandler: (data) => any,
-) => void;
-
-export type WithNotificationsProps = {
-  isDrawerExpanded: boolean;
-  alerts?: NotificationAlerts;
-  silences?: any;
-};
-
 export type NotificationDrawerProps = {
-  isDesktop: boolean;
+  isDrawerExpanded: boolean;
   onDrawerChange: () => void;
-  alerts: NotificationAlerts;
+  drawerRef: React.Ref<HTMLElement>;
 };
 
 type AlertErrorProps = {
@@ -515,3 +478,7 @@ type AlertEmptyProps = {
 };
 
 type AlertAccumulator = [Alert[], Alert[]];
+
+type ItemActionButtonProps = {
+  alert: Alert;
+};

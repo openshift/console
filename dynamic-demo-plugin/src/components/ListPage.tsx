@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  DocumentTitle,
   ListPageHeader,
   ListPageBody,
   ListPageCreate,
@@ -25,15 +26,15 @@ type PodsTableProps = {
 };
 
 const PodsTable: React.FC<PodsTableProps> = ({ data, unfilteredData, loaded, loadError }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__console-demo-plugin');
 
   const columns: TableColumn<K8sResourceCommon>[] = [
     {
-      title: t('plugin__console-demo-plugin~Name'),
+      title: t('Name'),
       id: 'name',
     },
     {
-      title: t('plugin__console-demo-plugin~Namespace'),
+      title: t('Namespace'),
       id: 'namespace',
     },
   ];
@@ -95,7 +96,7 @@ const ListPage = () => {
     isList: true,
     namespaced: true,
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__console-demo-plugin');
 
   const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {
     name: { selected: ['openshift'] },
@@ -103,8 +104,9 @@ const ListPage = () => {
 
   return (
     <>
-      <ListPageHeader title={t('plugin__console-demo-plugin~OpenShift Pods List Page')}>
-        <ListPageCreate groupVersionKind="Pod">{t('plugin__console-demo-plugin~Create Pod')}</ListPageCreate>
+      <DocumentTitle>{t('List Page')}</DocumentTitle>
+      <ListPageHeader title={t('OpenShift Pods List Page')}>
+        <ListPageCreate groupVersionKind="Pod">{t('Create Pod')}</ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
         <ListPageFilter
@@ -121,8 +123,10 @@ const ListPage = () => {
         />
       </ListPageBody>
       <ListPageBody>
-        <p>{t('plugin__console-demo-plugin~Sample ResourceIcon')}</p>
-        <ResourceIcon kind="Pod" />
+        <p>{t('Sample ResourceIcon')}</p>
+        <p>
+          <ResourceIcon kind="Pod" />
+        </p>
       </ListPageBody>
     </>
   );

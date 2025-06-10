@@ -135,7 +135,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
             </Trans>
           </p>
           <div className="checkbox">
-            <label className="control-label">
+            <label>
               <input
                 type="checkbox"
                 onChange={() => setChangeScaleSettings(!changeScaleSettings)}
@@ -145,7 +145,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
             </label>
           </div>
           <div className="checkbox">
-            <label className="control-label">
+            <label>
               <input
                 type="checkbox"
                 onChange={() => setChangeStrategy(!changeStrategy)}
@@ -155,7 +155,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
             </label>
           </div>
           <div className="checkbox">
-            <label className="control-label">
+            <label>
               <input
                 type="checkbox"
                 onChange={() => setChangeTriggers(!changeTriggers)}

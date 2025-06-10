@@ -29,7 +29,11 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { Firehose } from '../utils/firehose';
 import { HorizontalNav, Page, PageComponentProps } from '../utils/horizontal-nav';
-import { PageHeading, KebabOptionsCreator } from '../utils/headings';
+import {
+  ConnectedPageHeading,
+  ConnectedPageHeadingProps,
+  KebabOptionsCreator,
+} from '../utils/headings';
 import { FirehoseResource } from '../utils/types';
 import { AsyncComponent } from '../utils/async';
 import { KebabAction } from '../utils/kebab';
@@ -155,15 +159,15 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
       <Firehose
         resources={[...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])]}
       >
-        <PageHeading
+        <ConnectedPageHeading
           obj={props.obj}
-          detail={true}
           title={props.title || props.name}
           titleFunc={props.titleFunc}
           menuActions={props.menuActions}
           buttonActions={props.buttonActions}
           customActionMenu={props.customActionMenu}
           kind={props.customKind || props.kind}
+          icon={props.icon}
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
             props.breadcrumbsFor ??
@@ -173,10 +177,10 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           getResourceStatus={props.getResourceStatus}
           customData={props.customData}
           badge={props.badge || getBadgeFromType(kindObj?.badge)}
-          icon={props.icon}
-        >
-          {props.children}
-        </PageHeading>
+          OverrideTitle={props.OverrideTitle}
+          helpText={props.helpText}
+          helpAlert={props.helpAlert}
+        />
         <HorizontalNav
           obj={props.obj}
           pages={allPages}
@@ -199,9 +203,8 @@ export type DetailsPageProps = {
   menuActions?: KebabAction[] | KebabOptionsCreator;
   buttonActions?: any[];
   createRedirect?: boolean;
-  customActionMenu?:
-    | React.ReactNode
-    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
+  customActionMenu?: ConnectedPageHeadingProps['customActionMenu'];
+  icon?: ConnectedPageHeadingProps['icon'];
   pages?: Page[];
   pagesFor?: (obj: K8sResourceKind) => Page[];
   kind: K8sResourceKindReference;
@@ -215,10 +218,11 @@ export type DetailsPageProps = {
   ) => ({ name: string; path: string } | { name: string; path: Location })[];
   customData?: any;
   badge?: React.ReactNode;
-  icon?: React.ComponentType<{ obj: K8sResourceKind }>;
+  OverrideTitle?: ConnectedPageHeadingProps['OverrideTitle'];
   getResourceStatus?: (resource: K8sResourceKind) => string;
-  children?: React.ReactNode;
   customKind?: string;
+  helpText?: ConnectedPageHeadingProps['helpText'];
+  helpAlert?: ConnectedPageHeadingProps['helpAlert'];
 };
 
 DetailsPage.displayName = 'DetailsPage';

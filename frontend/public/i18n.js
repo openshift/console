@@ -75,7 +75,6 @@ export const init = () => {
         'pipelines-plugin',
         'shipwright-plugin',
         'public',
-        'service-binding-plugin',
         'topology',
         'vsphere-plugin',
         'webterminal-plugin',

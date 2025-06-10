@@ -5,7 +5,7 @@ Feature: Serving page at Administrator perspective
 
         Background:
             Given user has created or selected namespace "aut-serving-page"
-              And user has created knative service "hello-openshift"
+              And user has created knative service "hello-openshift" in admin
               And user is at administrator perspective
 
 

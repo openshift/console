@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { mount } from 'enzyme';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { useUserSettings } from '@console/shared';

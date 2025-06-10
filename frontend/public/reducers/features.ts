@@ -42,6 +42,8 @@ export const defaults = _.mapValues(FLAGS, (flag) => {
       return (
         !!window.SERVER_FLAGS.prometheusBaseURL && !!window.SERVER_FLAGS.prometheusTenancyBaseURL
       );
+    case FLAGS.DEVCONSOLE_PROXY:
+      return true;
     default:
       return undefined;
   }

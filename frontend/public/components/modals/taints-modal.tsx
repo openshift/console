@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
+import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,7 @@ import {
 const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
   const [taints, setTaints] = React.useState(props.resource.spec.taints || []);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const submit = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -66,89 +67,87 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
   const { errorMessage } = props;
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content taint-modal">
-      <ModalTitle>{t('public~Edit taints')}</ModalTitle>
+    <form onSubmit={submit} name="form" className="modal-content">
+      <ModalTitle>{t('Edit taints')}</ModalTitle>
       <ModalBody>
         {_.isEmpty(taints) ? (
-          <EmptyBox label={t('public~Taints')} />
+          <EmptyBox label={t('Taints')} />
         ) : (
-          <>
-            <div className="row taint-modal__heading hidden-sm hidden-xs">
-              <div className="col-sm-4 text-secondary text-uppercase">{t('public~Key')}</div>
-              <div className="col-sm-3 text-secondary text-uppercase">{t('public~Value')}</div>
-              <div className="col-sm-4 text-secondary text-uppercase">{t('public~Effect')}</div>
-              <div className="col-sm-1 co-empty__header" />
-            </div>
-            {_.map(taints, (c, i) => (
-              <div className="row taint-modal__row" key={i}>
-                <div className="col-md-4 col-xs-5 taint-modal__field">
-                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                    {t('public~Key')}
-                  </div>
-                  <span className="pf-v6-c-form-control">
-                    <input
-                      type="text"
-                      className="taint-modal__input"
-                      value={c.key}
-                      onChange={(e) => change(e, i, 'key')}
-                      required
+          <Table
+            aria-label={t('Taints')}
+            variant="compact"
+            borders={false}
+            className="co-modal-table"
+          >
+            <Thead>
+              <Tr>
+                <Th>{t('Key')}</Th>
+                <Th>{t('Value')}</Th>
+                <Th>{t('Effect')}</Th>
+              </Tr>
+            </Thead>
+
+            <Tbody>
+              {_.map(taints, (c, i) => (
+                <Tr key={i}>
+                  <Td dataLabel={t('Key')}>
+                    <span className="pf-v6-c-form-control">
+                      <input
+                        type="text"
+                        value={c.key}
+                        onChange={(e) => change(e, i, 'key')}
+                        required
+                      />
+                    </span>
+                  </Td>
+                  <Td dataLabel={t('Value')}>
+                    <span className="pf-v6-c-form-control">
+                      <input type="text" value={c.value} onChange={(e) => change(e, i, 'value')} />
+                    </span>
+                  </Td>
+                  <Td dataLabel={t('Effect')}>
+                    <Dropdown
+                      dropDownClassName="dropdown--full-width"
+                      items={effects}
+                      onChange={(e) => change(e, i, 'effect')}
+                      selectedKey={c.effect}
+                      title={effects[c.effect]}
                     />
-                  </span>
-                </div>
-                <div className="col-md-3 col-xs-5 taint-modal__field">
-                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                    {t('public~Value')}
-                  </div>
-                  <span className="pf-v6-c-form-control">
-                    <input type="text" value={c.value} onChange={(e) => change(e, i, 'value')} />
-                  </span>
-                </div>
-                <div className="clearfix visible-sm visible-xs" />
-                <div className="col-md-4 col-xs-5 taint-modal__field">
-                  <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                    {t('public~Effect')}
-                  </div>
-                  <Dropdown
-                    className="taint-modal__dropdown"
-                    dropDownClassName="dropdown--full-width"
-                    items={effects}
-                    onChange={(e) => change(e, i, 'effect')}
-                    selectedKey={c.effect}
-                    title={effects[c.effect]}
-                  />
-                </div>
-                <div className="col-md-1 col-md-offset-0 col-sm-offset-10 col-xs-offset-10">
-                  <Tooltip content="Remove">
-                    <Button
-                      icon={
-                        <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                      }
-                      type="button"
-                      className="taint-modal__delete-icon"
-                      onClick={() => remove(i)}
-                      aria-label={t('public~Remove')}
-                      variant="plain"
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-            ))}
-          </>
+                  </Td>
+                  <Td isActionCell>
+                    <Tooltip content="Remove">
+                      <Button
+                        icon={
+                          <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                        }
+                        className="pf-v6-u-mt-md pf-v6-u-mt-0-on-md"
+                        type="button"
+                        onClick={() => remove(i)}
+                        aria-label={t('Remove')}
+                        variant="plain"
+                      />
+                    </Tooltip>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
         )}
         <Button
           icon={<PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />}
-          className="pf-m-link--align-left"
+          className="pf-v6-u-mt-md"
+          iconPosition="left"
           onClick={addRow}
           type="button"
           variant="link"
         >
-          {t('public~Add more')}
+          {t('Add more')}
         </Button>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={false}
-        submitText={t('public~Save')}
+        submitText={t('Save')}
         cancel={cancel}
       />
     </form>

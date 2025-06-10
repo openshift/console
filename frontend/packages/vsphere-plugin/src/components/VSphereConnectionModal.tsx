@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { Formik, useFormikContext } from 'formik';
+import { isEqual } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { HealthState, SubsystemHealth } from '@console/dynamic-plugin-sdk';
@@ -27,21 +28,17 @@ import './VSphereConnectionModal.css';
 
 type VSphereConnectionModalFooterProps = {
   onClose: VoidFunction;
-  mustPatch: boolean;
 };
 
-const VSphereConnectionModalFooter: React.FC<VSphereConnectionModalFooterProps> = ({
-  onClose,
-  mustPatch,
-}) => {
+const VSphereConnectionModalFooter: React.FC<VSphereConnectionModalFooterProps> = ({ onClose }) => {
   const { t } = useTranslation('vsphere-plugin');
-  const { isSubmitting, isValid, dirty, submitForm } = useFormikContext();
+  const { isSubmitting, isValid, submitForm, initialValues, values } = useFormikContext();
   return (
     <Split hasGutter>
       <SplitItem>
         <Button
           variant="primary"
-          isDisabled={isSubmitting || !isValid || (mustPatch ? false : !dirty)}
+          isDisabled={isSubmitting || !isValid || isEqual(initialValues, values)}
           onClick={submitForm}
           isLoading={isSubmitting}
         >
@@ -149,9 +146,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = ({
 
   const models = useConnectionModels();
 
-  const { initValues, isLoaded, mustPatch, error: loadError } = useConnectionForm(
-    cloudProviderConfig,
-  );
+  const { initValues, isLoaded, error: loadError } = useConnectionForm();
 
   const onClose = () => {
     setModalOpen(false);
@@ -162,7 +157,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = ({
     setError(undefined);
 
     try {
-      await persist(t, models, values, cloudProviderConfig);
+      await persist(t, models, values, initValues, cloudProviderConfig);
       onClose();
     } catch (e) {
       if (e instanceof PersistError) {
@@ -199,7 +194,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = ({
             <VSphereConnectionModalAlert error={error} health={health} />
           </StackItem>
           <StackItem>
-            <VSphereConnectionModalFooter onClose={onClose} mustPatch={mustPatch || !!error} />
+            <VSphereConnectionModalFooter onClose={onClose} />
           </StackItem>
         </Stack>
       </Formik>

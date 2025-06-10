@@ -1,28 +1,44 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
+import {
+  ActionMenu,
+  ActionMenuVariant,
+  ActionServiceProvider,
+  LazyActionMenu,
+} from '@console/shared';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
   Kebab,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
   detailsPage,
   navFactory,
 } from './utils';
-import { StorageClassResourceKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { StorageClassModel } from '../models';
+import {
+  StorageClassResourceKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  referenceFor,
+  referenceForModel,
+} from '../module/k8s';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(StorageClassModel), ...common];
-
-const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
+export const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
 const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
 export const isDefaultClass = (storageClass: K8sResourceKind) => {
   const annotations = _.get(storageClass, 'metadata.annotations') || {};
@@ -42,52 +58,56 @@ const tableColumnClasses = [
 const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('public~StorageClass details')} />
-        <div className="row">
-          <div className="col-sm-6">
-            <ResourceSummary resource={obj}>
-              <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
-            </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
-              <dt>{t('public~Default class')}</dt>
-              <dd>{isDefaultClass(obj) ? t('public~True') : t('public~False')}</dd>
-              <DetailsItem
-                label={t('public~Volume binding mode')}
-                obj={obj}
-                path="volumeBindingMode"
-              />
-            </dl>
-          </div>
-        </div>
-      </div>
-    </>
+    <PaneBody>
+      <SectionHeading text={t('public~StorageClass details')} />
+      <Grid hasGutter>
+        <GridItem sm={6}>
+          <ResourceSummary resource={obj}>
+            <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
+          </ResourceSummary>
+        </GridItem>
+        <GridItem sm={6}>
+          <DescriptionList>
+            <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('public~Default class')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {isDefaultClass(obj) ? t('public~True') : t('public~False')}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DetailsItem
+              label={t('public~Volume binding mode')}
+              obj={obj}
+              path="volumeBindingMode"
+            />
+          </DescriptionList>
+        </GridItem>
+      </Grid>
+    </PaneBody>
   );
 };
 
 const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> = ({ obj }) => {
   const { t } = useTranslation();
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
   return (
     <>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
           {isDefaultClass(obj) && (
-            <span className="small text-muted co-resource-item__help-text">
+            <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; {t('public~Default')}
             </span>
           )}
         </ResourceLink>
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {obj.provisioner}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
@@ -153,8 +173,26 @@ export const StorageClassPage: React.FC<StorageClassPageProps> = (props) => {
 };
 export const StorageClassDetailsPage: React.FC = (props) => {
   const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
   return (
-    <DetailsPage {...props} kind={StorageClassReference} menuActions={menuActions} pages={pages} />
+    <DetailsPage
+      {...props}
+      kind={StorageClassReference}
+      customActionMenu={customActionMenu}
+      pages={pages}
+    />
   );
 };
 StorageClassDetailsPage.displayName = 'StorageClassDetailsPage';

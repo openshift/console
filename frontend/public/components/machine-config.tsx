@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -14,8 +14,11 @@ import {
   Flex,
   Popover,
   Content,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
@@ -28,8 +31,8 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
@@ -40,8 +43,10 @@ const machineConfigMenuActions = [
 
 const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
-    <dt>{t('public~OS image URL')}</dt>
-    <dd>{obj.spec.osImageURL || '-'}</dd>
+    <DescriptionListGroup>
+      <DescriptionListTerm>{t('public~OS image URL')}</DescriptionListTerm>
+      <DescriptionListDescription>{obj.spec.osImageURL || '-'}</DescriptionListDescription>
+    </DescriptionListGroup>
   </ResourceSummary>
 );
 
@@ -51,16 +56,16 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~MachineConfig details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <MachineConfigSummary obj={obj} t={t} />
-          </div>
-        </div>
-      </div>
+          </GridItem>
+        </Grid>
+      </PaneBody>
       {files && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Configuration files')} />
           {files.map((file, i) => (
             <div className="pf-v6-u-mb-xl" key={file.path}>
@@ -75,22 +80,20 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
                     headerContent={t('public~Properties')}
                     bodyContent={
                       <DescriptionList isHorizontal isFluid>
-                        <DescriptionListGroup>
-                          {file.mode && (
-                            <>
-                              <DescriptionListTerm>{t('public~Mode')}</DescriptionListTerm>
-                              <DescriptionListDescription>{file.mode}</DescriptionListDescription>
-                            </>
-                          )}
-                          {file.overwrite && (
-                            <>
-                              <DescriptionListTerm>{t('public~Overwrite')}</DescriptionListTerm>
-                              <DescriptionListDescription>
-                                {file.overwrite.toString()}
-                              </DescriptionListDescription>
-                            </>
-                          )}
-                        </DescriptionListGroup>
+                        {file.mode && (
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>{t('public~Mode')}</DescriptionListTerm>
+                            <DescriptionListDescription>{file.mode}</DescriptionListDescription>
+                          </DescriptionListGroup>
+                        )}
+                        {file.overwrite && (
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>{t('public~Overwrite')}</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {file.overwrite.toString()}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        )}
                       </DescriptionList>
                     }
                   >
@@ -110,7 +113,7 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
               )}
             </div>
           ))}
-        </div>
+        </PaneBody>
       )}
     </>
   );
@@ -148,7 +151,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineConfigReference} name={obj.metadata.name} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {_.get(
           obj,
           [
@@ -162,7 +165,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[2]}>
         {_.get(obj, 'spec.config.ignition.version') || '-'}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         {_.get(obj, 'spec.osImageURL') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

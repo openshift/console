@@ -9,7 +9,7 @@ const HelmChartRepositoryList: React.FC<TableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('helm-plugin~Helm Chart Repositories')}
+      aria-label={t('helm-plugin~HelmChartRepositories')}
       Header={RepositoriesHeader(t)}
       Row={HelmChartRepositoryRow}
       virtualize

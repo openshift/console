@@ -2,25 +2,35 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
-import * as classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
-import { AlertVariant, Button, Popover } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import { sortable, Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import {
+  AlertVariant,
+  Button,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+  Popover,
+} from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
-import { ExternalLink } from './utils/link';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from './utils/timestamp';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
@@ -95,8 +105,8 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
   ]);
   const { t } = useTranslation();
   return (
-    <div className="row">
-      <div className="col-md-2 col-sm-4 col-xs-4 co-break-word">
+    <Tr>
+      <Td modifier="breakWord">
         <ResourceLink
           kind={ImageStreamTagsReference}
           name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)}
@@ -104,8 +114,8 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
           title={statusTag.tag}
           linkTo={!!image}
         />
-      </div>
-      <span className="col-md-3 col-sm-4 col-xs-8 co-break-all">
+      </Td>
+      <Td modifier="breakWord">
         {from && referencesTag && (
           <ResourceLink
             kind={ImageStreamTagsReference}
@@ -115,9 +125,9 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
           />
         )}
         {from && !referencesTag && <>{from.name}</>}
-        {!from && <span className="text-muted">{t('public~pushed image')}</span>}
-      </span>
-      <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
+        {!from && <span className="pf-v6-u-text-color-subtle">{t('public~pushed image')}</span>}
+      </Td>
+      <Td modifier="breakWord" visibility={['hidden', 'visibleOnSm']}>
         {!imageStreamStatus && dockerRepositoryCheck && (
           <>
             <YellowExclamationTriangleIcon />
@@ -134,12 +144,12 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
             &nbsp;{t('public~There is no image associated with this tag')}
           </>
         )}
-      </span>
-      <div className="col-md-3 hidden-sm hidden-xs">
+      </Td>
+      <Td visibility={['hidden', 'visibleOnMd']}>
         {created && <Timestamp timestamp={created} />}
         {!created && '-'}
-      </div>
-    </div>
+      </Td>
+    </Tr>
   );
 };
 
@@ -227,7 +237,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
 
   return (
     <div>
-      <div className="co-m-pane__body">
+      <PaneBody>
         {!_.isEmpty(importErrors) && (
           <ExpandableAlert
             variant={AlertVariant.warning}
@@ -237,47 +247,59 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
           />
         )}
         <SectionHeading text={t('public~ImageStream details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={imageStream}>
-              {imageRepository && <dt>{t('public~Image repository')}</dt>}
-              {imageRepository && <dd>{imageRepository}</dd>}
-              {publicImageRepository && <dt>{t('public~Public image repository')}</dt>}
-              {publicImageRepository && <dd>{publicImageRepository}</dd>}
-              <dt>{t('public~Image count')}</dt>
-              <dd>{imageCount ? imageCount : 0}</dd>
+              {imageRepository && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Image repository')}</DescriptionListTerm>
+                  <DescriptionListDescription>{imageRepository}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {publicImageRepository && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Public image repository')}</DescriptionListTerm>
+                  <DescriptionListDescription>{publicImageRepository}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~Image count')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {imageCount ? imageCount : 0}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Tags')} />
         {_.isEmpty(imageStream.status.tags) ? (
-          <span className="text-muted">{t('public~No tags')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('public~No tags')}</span>
         ) : (
-          <div className="row">
-            <div className="co-m-table-grid co-m-table-grid--bordered">
-              <div className="row co-m-table-grid__head">
-                <div className="col-md-2 col-sm-4 col-xs-4">{t('public~Name')}</div>
-                <div className="col-md-3 col-sm-4 col-xs-8">{t('public~From')}</div>
-                <div className="col-md-4 col-sm-4 hidden-xs">{t('public~Identifier')}</div>
-                <div className="col-md-3 hidden-sm hidden-xs">{t('public~Last updated')}</div>
-              </div>
-              <div className="co-m-table-grid__body">
-                {_.map(imageStream.status.tags, (statusTag) => (
-                  <ImageStreamTagsRow
-                    key={statusTag.tag}
-                    imageStream={imageStream}
-                    specTag={specTagByName[statusTag.tag]}
-                    statusTag={statusTag}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <PfTable gridBreakPoint="">
+            <Thead>
+              <Tr>
+                <Th>{t('public~Name')}</Th>
+                <Th>{t('public~From')}</Th>
+                <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Identifier')}</Th>
+                <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Last updated')}</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {_.map(imageStream.status.tags, (statusTag) => (
+                <ImageStreamTagsRow
+                  key={statusTag.tag}
+                  imageStream={imageStream}
+                  specTag={specTagByName[statusTag.tag]}
+                  statusTag={statusTag}
+                />
+              ))}
+            </Tbody>
+          </PfTable>
         )}
-      </div>
+      </PaneBody>
     </div>
   );
 };
@@ -322,10 +344,7 @@ const ImageStreamsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj 
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

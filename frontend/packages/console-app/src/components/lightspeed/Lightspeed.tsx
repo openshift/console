@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useHideLightspeed } from '@console/app/src/components/user-preferences/lightspeed';
+import { useHideLightspeed } from '@console/app/src/components/user-preferences/lightspeed/useHideLightspeed';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { ConsolePluginModel } from '@console/internal/models';
@@ -150,7 +150,7 @@ const Lightspeed: React.FC = () => {
           )}
           <StackItem className="pf-v6-u-text-align-center">
             <Button variant="link" onClick={onDismissClick}>
-              {t("console-app~Don't show again")}
+              {t('console-app~Edit user preferences to not show again')}
             </Button>
           </StackItem>
         </Stack>

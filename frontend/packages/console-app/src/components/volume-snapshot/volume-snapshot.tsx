@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -19,7 +19,6 @@ import { useActiveColumns } from '@console/internal/components/factory/Table/act
 import {
   ResourceLink,
   ResourceKebab,
-  Timestamp,
   Kebab,
   convertToBaseValue,
   humanizeBinaryBytes,
@@ -40,6 +39,7 @@ import {
   Selector,
 } from '@console/internal/module/k8s';
 import { Status, getName, getNamespace, snapshotSource, FLAGS } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
@@ -49,12 +49,12 @@ const menuActions = [RestorePVC, ...common];
 const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'status' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'size' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'source' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotContent' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotClass' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'createdAt' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'status' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'size' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'source' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotContent' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotClass' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'createdAt' },
   { className: Kebab.columnClass, id: '' },
 ];
 

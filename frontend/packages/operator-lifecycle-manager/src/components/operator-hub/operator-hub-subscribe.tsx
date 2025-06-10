@@ -5,17 +5,17 @@ import {
   AlertActionCloseButton,
   Button,
   Checkbox,
+  Grid,
+  GridItem,
   TextInput,
   Title,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation, Link } from 'react-router-dom-v5-compat';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   documentationURLs,
-  ExternalLink,
   FieldLevelHelp,
   Firehose,
   getDocumentationURL,
@@ -24,7 +24,6 @@ import {
   isManaged,
   ConsoleEmptyState,
   NsDropdown,
-  PageHeading,
   ResourceIcon,
   resourcePathFromModel,
   StatusBox,
@@ -51,6 +50,10 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import {
@@ -94,7 +97,7 @@ export const CloudServiceTokenWarningAlert = ({
       variant="warning"
       title={title}
       actionClose={<AlertActionCloseButton onClose={() => onClose(false)} />}
-      className="pf-u-mb-lg"
+      className="pf-v6-u-mb-lg"
     >
       <p>{message}</p>
     </Alert>
@@ -114,7 +117,7 @@ const InputField: React.FC<InputFieldProps> = ({
       <fieldset>
         <label className="co-required">{label}</label>
         <FieldLevelHelp>{helpText}</FieldLevelHelp>
-        <div className="co-toolbar__item">
+        <div>
           <TextInput
             autoFocus
             placeholder={placeholder}
@@ -854,9 +857,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   return (
     <>
-      <Helmet>
-        <title>Operator Installation</title>
-      </Helmet>
+      <DocumentTitle>Operator Installation</DocumentTitle>
       <PageHeading
         title={t('olm~Install Operator')}
         breadcrumbs={[
@@ -867,7 +868,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           'olm~Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.',
         )}
       />
-      <div className="co-m-pane__body">
+      <PaneBody>
         {tokenizedAuth === 'AWS' && showCSTokenWarn && (
           <CloudServiceTokenWarningAlert
             title={t('olm~Cluster in STS Mode')}
@@ -895,8 +896,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             onClose={() => setShowCSTokenWarn(false)}
           />
         )}
-        <div className="row">
-          <div className="col-xs-6">
+        <Grid hasGutter>
+          <GridItem span={6}>
             <>
               {tokenizedAuth === 'AWS' && (
                 <div className="form-group">
@@ -1005,7 +1006,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   />
                 </fieldset>
               </div>
-              <div className="form-group form-group--doubled-bottom-margin">
+              <div className="form-group pf-v6-u-mb-xl">
                 <fieldset>
                   <label className="co-required">{t('olm~Version')}</label>
                   <OperatorVersionSelect
@@ -1033,7 +1034,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     subTitle={t('olm~(default)')}
                   >
                     <div className="co-m-radio-desc">
-                      <p className="text-muted">
+                      <p className="pf-v6-u-text-color-subtle">
                         {descFor(InstallModeType.InstallModeTypeAllNamespaces)}
                       </p>
                     </div>
@@ -1052,14 +1053,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     title={t('olm~A specific namespace on the cluster')}
                   >
                     <div className="co-m-radio-desc">
-                      <p className="text-muted">
+                      <p className="pf-v6-u-text-color-subtle">
                         {descFor(InstallModeType.InstallModeTypeOwnNamespace)}
                       </p>
                     </div>
                   </RadioInput>
                 </fieldset>
               </div>
-              <div className="form-group form-group--doubled-bottom-margin">
+              <div className="form-group pf-v6-u-mb-xl">
                 <label className="co-required" htmlFor="dropdown-selectbox">
                   {t('olm~Installed Namespace')}
                 </label>
@@ -1159,8 +1160,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>
-          </div>
-          <div className="col-xs-6">
+          </GridItem>
+          <GridItem span={6}>
             <ClusterServiceVersionLogo
               displayName={
                 currentCSVDesc?.displayName || channels?.[0]?.currentCSVDesc?.displayName
@@ -1174,7 +1175,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             </Title>
             <div className="co-crd-card-row">
               {!providedAPIs.length ? (
-                <span className="text-muted">
+                <span className="pf-v6-u-text-color-subtle">
                   {t('olm~No Kubernetes APIs are provided by this Operator.')}
                 </span>
               ) : (
@@ -1189,9 +1190,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 ))
               )}
             </div>
-          </div>
-        </div>
-      </div>
+          </GridItem>
+        </Grid>
+      </PaneBody>
     </>
   );
 };

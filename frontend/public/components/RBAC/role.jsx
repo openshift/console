@@ -3,10 +3,11 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { BindingName, BindingsList, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
 import { DetailsPage, MultiListPage, TextFilter, Table, TableData } from '../factory';
@@ -17,12 +18,20 @@ import {
   navFactory,
   ResourceKebab,
   ResourceLink,
-  Timestamp,
   resourceListPathFromModel,
 } from '../utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 
@@ -64,7 +73,7 @@ const RolesTableRow = ({ obj: role }) => {
           namespace={role.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(roleColumnClasses[1], 'co-break-word')}>
         {role.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={role.metadata.namespace} />
         ) : (
@@ -102,39 +111,43 @@ class Details extends React.Component {
 
     return (
       <div>
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('public~Role details')} />
-          <div className="row">
-            <div className="col-xs-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Role name')}</dt>
-                <dd>{name}</dd>
+          <Grid hasGutter>
+            <GridItem span={6}>
+              <DescriptionList>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Role name')}</DescriptionListTerm>
+                  <DescriptionListDescription>{name}</DescriptionListDescription>
+                </DescriptionListGroup>
                 {namespace && (
-                  <div>
-                    <dt>{t('public~Namespace')}</dt>
-                    <dd>
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~Namespace')}</DescriptionListTerm>
+                    <DescriptionListDescription>
                       <ResourceLink kind="Namespace" name={namespace} />
-                    </dd>
-                  </div>
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
                 )}
-              </dl>
-            </div>
-            <div className="col-xs-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Created at')}</dt>
-                <dd>
-                  <Timestamp timestamp={creationTimestamp} />
-                </dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-        <div className="co-m-pane__body">
+              </DescriptionList>
+            </GridItem>
+            <GridItem span={6}>
+              <DescriptionList>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~Created at')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    <Timestamp timestamp={creationTimestamp} />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              </DescriptionList>
+            </GridItem>
+          </Grid>
+        </PaneBody>
+        <PaneBody>
           <SectionHeading text={t('public~Rules')} />
-          <div className="co-m-pane__filter-row">
+          <div>
             {/* This page is temporarily disabled until we update the safe resources list.
-            <div className="co-m-pane__filter-bar-group">
-              <Link to={addHref(name, namespace)} className="co-m-primary-action">
+            <div>
+              <Link to={addHref(name, namespace)}>
                 <Button variant="primary">{t('public~Add Rule')}</Button>
               </Link>
             </div>
@@ -145,7 +158,7 @@ class Details extends React.Component {
             />
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />
-        </div>
+        </PaneBody>
       </div>
     );
   }
@@ -392,6 +405,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
         },
       ]}
       title={t('public~Roles')}
+      mock={mock}
     />
   );
 };

@@ -1,7 +1,9 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-
-import './OverviewDetailItem.scss';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 
 export type OverviewDetailItemProps = {
   /** Details card title */
@@ -9,12 +11,16 @@ export type OverviewDetailItemProps = {
   children: React.ReactNode;
   /** Trigger skeleton loading component during the loading phase. */
   isLoading?: boolean;
-  /** Value for a className */
+  /** Optional class name for the value */
   valueClassName?: string;
-
+  /** Error message to display */
   error?: string;
 };
 
+/**
+ * A wrapper around PatternFly's description group. This component's parent must
+ * be a PatternFly DescriptionList.
+ */
 export const OverviewDetailItem: React.FC<OverviewDetailItemProps> = ({
   title,
   isLoading = false,
@@ -25,23 +31,18 @@ export const OverviewDetailItem: React.FC<OverviewDetailItemProps> = ({
   let status: React.ReactNode;
 
   if (error) {
-    status = <span className="text-secondary">{error}</span>;
+    status = <span className="pf-v6-u-text-color-subtle">{error}</span>;
   } else if (isLoading) {
     status = <div className="skeleton-text" />;
   } else {
     status = children;
   }
   return (
-    <>
-      <dt className="co-overview-details-card__item-title" data-test="detail-item-title">
-        {title}
-      </dt>
-      <dd
-        className={classNames('co-overview-details-card__item-value', valueClassName)}
-        data-test="detail-item-value"
-      >
+    <DescriptionListGroup>
+      <DescriptionListTerm data-test="detail-item-title">{title}</DescriptionListTerm>
+      <DescriptionListDescription className={valueClassName} data-test="detail-item-value">
         {status}
-      </dd>
-    </>
+      </DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };

@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, units } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 type NodeDetailsImagesProps = {
   node: NodeKind;
@@ -12,7 +13,7 @@ const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
   const images = _.filter(node.status.images, 'names');
   const { t } = useTranslation();
   return (
-    <div className="co-m-pane__body">
+    <PaneBody>
       <SectionHeading text={t('console-app~Images')} />
       <div className="co-table-container">
         <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
@@ -38,7 +39,7 @@ const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </PaneBody>
   );
 };
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 
@@ -25,10 +26,10 @@ const TopologyGroupResourceItem: React.FC<TopologyGroupResourceItemProps> = ({
     <ResourceLink kind={kind} name={name} namespace={resourceNamespace} />
   );
   return (
-    <li className="list-group-item container-fluid">
-      <div className="row">
-        <span className="col-xs-12">{link}</span>
-      </div>
+    <li className="list-group-item">
+      <Grid>
+        <GridItem>{link}</GridItem>
+      </Grid>
     </li>
   );
 };

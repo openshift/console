@@ -1,4 +1,4 @@
-import { EdgeModel, Model } from '@patternfly/react-topology/dist/esm/types';
+import { Model } from '@patternfly/react-topology/dist/esm/types';
 import * as _ from 'lodash';
 import {
   K8sResourceKind,
@@ -12,7 +12,6 @@ import {
   isOperatorBackedService,
   getOperatorBackedServiceKindMap,
 } from '@console/shared/src/utils/operator-utils';
-import { TYPE_SERVICE_BINDING } from '../const';
 import { getTopologyEdgeItems } from '../data-transforms/transform-utils';
 import { TopologyDataResources } from '../topology-types';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
@@ -44,42 +43,6 @@ export const edgesFromServiceBinding = (
     edgeExists && sourceBindings.push(sbr);
   });
   return sourceBindings;
-};
-
-export const getServiceBindingEdges = (
-  dc: K8sResourceKind,
-  obsGroups: K8sResourceKind[],
-  sbrs: K8sResourceKind[],
-  installedOperators: K8sResourceKind[],
-): EdgeModel[] => {
-  const edges = [];
-  if (!sbrs?.length || !installedOperators?.length) {
-    return edges;
-  }
-
-  _.forEach(edgesFromServiceBinding(dc, sbrs), (sbr) => {
-    _.forEach(sbr.spec.services, (bss) => {
-      if (bss) {
-        const targetGroup = obsGroups.find(
-          (group) => group.kind === bss.kind && group.metadata.name === bss.name,
-        );
-        const target = targetGroup?.metadata.uid;
-        const source = dc.metadata.uid;
-        if (source && target) {
-          edges.push({
-            id: `${source}_${target}`,
-            type: TYPE_SERVICE_BINDING,
-            source,
-            target,
-            resource: sbr,
-            data: { sbr },
-          });
-        }
-      }
-    });
-  });
-
-  return edges;
 };
 
 export const getOperatorGroupResource = (
@@ -148,16 +111,10 @@ export const getOperatorTopologyDataModel = (
     edges: [],
   };
   const obsGroups = getOperatorGroupResources(resources);
-  const serviceBindingRequests = resources?.serviceBindingRequests?.data;
   const installedOperators = resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[];
   if (installedOperators?.length) {
     workloads.forEach((dc) => {
-      operatorsDataModel.edges.push(
-        ...[
-          ...getServiceBindingEdges(dc, obsGroups, serviceBindingRequests, installedOperators),
-          ...getTopologyEdgeItems(dc, obsGroups),
-        ],
-      );
+      operatorsDataModel.edges.push(...[...getTopologyEdgeItems(dc, obsGroups)]);
     });
   }
 

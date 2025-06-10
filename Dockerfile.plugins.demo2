@@ -11,7 +11,7 @@
 # yarn build
 
 # Stage 1: build the target image
-FROM node:10
+FROM node:22
 
 COPY ./dynamic-demo-plugin/dist /opt/console-demo-plugin/static
 COPY ./dynamic-demo-plugin/node_modules /opt/console-demo-plugin/node_modules

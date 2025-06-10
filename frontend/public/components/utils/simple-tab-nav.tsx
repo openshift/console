@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classnames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Tabs, Tab as PfTab, TabTitleText } from '@patternfly/react-core';
 
 export type Tab = {
@@ -37,7 +37,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
     <div>
       <Tabs
         onSelect={handleTabClick}
-        className={classnames({ 'pf-v6-u-mb-md': withinSidebar }, additionalClassNames)}
+        className={css({ 'pf-v6-u-mb-md': withinSidebar }, additionalClassNames)}
         defaultActiveKey={selectedTab || tabs[0]?.name}
         inset={!noInset && { default: 'insetSm' }}
         unmountOnExit

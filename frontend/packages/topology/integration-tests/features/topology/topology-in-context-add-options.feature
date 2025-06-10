@@ -1,5 +1,5 @@
 @topology
-Feature: Add in context from the Developer Catalog
+Feature: Add in context from the Software Catalog
               As a user, I want to add things in the context in topology
 
 

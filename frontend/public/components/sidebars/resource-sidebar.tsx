@@ -13,7 +13,8 @@ import {
 import { ExploreType } from './explore-type-sidebar';
 import { SimpleTabNav, Tab } from '../utils';
 import { Sample } from '@console/shared';
-import { Title } from '@patternfly/react-core';
+import { Flex, FlexItem, Title } from '@patternfly/react-core';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
@@ -31,17 +32,17 @@ const ResourceSidebarWrapper: React.FC<{
       className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs"
       data-test="resource-sidebar"
     >
-      <div className="co-m-pane__body co-p-has-sidebar__sidebar-body">
-        <CloseButton
-          additionalClassName="co-p-has-sidebar__close-button"
-          ariaLabel={t('public~Close')}
-          onClick={toggleSidebar}
-        />
-        <Title headingLevel="h2" className="co-p-has-sidebar__sidebar-heading text-capitalize">
-          {label}
-        </Title>
+      <PaneBody className="co-p-has-sidebar__sidebar-body">
+        <Flex flexWrap={{ default: 'nowrap' }}>
+          <FlexItem grow={{ default: 'grow' }}>
+            <Title headingLevel="h2" className="pf-v6-u-text-break-word">
+              {label}
+            </Title>
+          </FlexItem>
+          <CloseButton ariaLabel={t('public~Close')} onClick={toggleSidebar} />
+        </Flex>
         {children}
-      </div>
+      </PaneBody>
     </div>
   );
 };

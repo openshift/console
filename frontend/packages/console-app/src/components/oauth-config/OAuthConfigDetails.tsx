@@ -2,9 +2,14 @@ import * as React from 'react';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Alert,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
   Dropdown,
   DropdownItem,
   DropdownList,
+  Grid,
+  GridItem,
   MenuToggle,
   MenuToggleElement,
 } from '@patternfly/react-core';
@@ -18,6 +23,7 @@ import {
 } from '@console/internal/components/utils';
 import { ClusterOperatorModel } from '@console/internal/models';
 import { OAuthKind } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { IDP_TYPES } from '@console/shared/src/constants/auth';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { IdentityProviders } from './IdentityProviders';
@@ -77,22 +83,24 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('console-app~OAuth details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj}>
               {tokenConfig && (
-                <>
-                  <dt>{t('console-app~Access token max age')}</dt>
-                  <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
-                </>
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('console-app~Access token max age')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
               )}
             </ResourceSummary>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('console-app~Identity providers')} />
         <p className="co-m-pane__explanation co-m-pane__explanation--alt">
           {t('console-app~Identity providers determine how users log into the cluster.')}
@@ -114,29 +122,32 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
             </>
           </Alert>
         )}
-        <Dropdown
-          isOpen={isIDPOpen}
-          onSelect={() => setIDPOpen(false)}
-          onOpenChange={(isOpen: boolean) => setIDPOpen(isOpen)}
-          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle
-              id="idp-dropdown"
-              data-test-id="dropdown-button"
-              ref={toggleRef}
-              onClick={() => setIDPOpen(!isIDPOpen)}
-              isExpanded={isIDPOpen}
-            >
-              {t('console-app~Add')}
-            </MenuToggle>
-          )}
-          shouldFocusToggleOnSelect
-          id="idp"
-        >
-          <DropdownList>{IDPDropdownItems}</DropdownList>
-        </Dropdown>
+        <div>
+          <Dropdown
+            isOpen={isIDPOpen}
+            onSelect={() => setIDPOpen(false)}
+            onOpenChange={(isOpen: boolean) => setIDPOpen(isOpen)}
+            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+              <MenuToggle
+                id="idp-dropdown"
+                data-test-id="dropdown-button"
+                ref={toggleRef}
+                onClick={() => setIDPOpen(!isIDPOpen)}
+                isExpanded={isIDPOpen}
+              >
+                {t('console-app~Add')}
+              </MenuToggle>
+            )}
+            shouldFocusToggleOnSelect
+            id="idp"
+            popperProps={{}}
+          >
+            <DropdownList>{IDPDropdownItems}</DropdownList>
+          </Dropdown>
+        </div>
 
-        <IdentityProviders identityProviders={identityProviders} />
-      </div>
+        <IdentityProviders obj={obj} identityProviders={identityProviders} />
+      </PaneBody>
     </>
   );
 };

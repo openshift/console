@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput, PageHeading } from '../utils';
+import { ButtonBar, ListInput } from '../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
@@ -151,20 +153,18 @@ export const AddGitHubPage = () => {
 
   return (
     <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         helpText={t(
           'public~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
         )}
       />
-      <div className="co-m-pane__body">
-        <form onSubmit={submit} name="form" className="co-m-pane__body-group">
+      <PaneBody>
+        <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-id">
+            <label className="co-required" htmlFor="client-id">
               {t('public~Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -178,7 +178,7 @@ export const AddGitHubPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="client-secret">
+            <label className="co-required" htmlFor="client-secret">
               {t('public~Client secret')}
             </label>
             <span className="pf-v6-c-form-control">
@@ -192,9 +192,7 @@ export const AddGitHubPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="hostname">
-              {t('public~Hostname')}
-            </label>
+            <label htmlFor="hostname">{t('public~Hostname')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -213,7 +211,7 @@ export const AddGitHubPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Organizations')}
           </Title>
-          <p className="co-help-text">
+          <p>
             <Trans
               t={t}
               ns="public"
@@ -233,7 +231,7 @@ export const AddGitHubPage = () => {
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Teams')}
           </Title>
-          <p className="co-help-text">
+          <p>
             <Trans
               t={t}
               ns="public"
@@ -262,7 +260,7 @@ export const AddGitHubPage = () => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
+      </PaneBody>
     </div>
   );
 };

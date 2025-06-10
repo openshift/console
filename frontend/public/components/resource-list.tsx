@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
@@ -53,7 +52,7 @@ const ResourceListPage_ = connectToPlural(
         : `"${plural}"`;
       return (
         <ErrorPage404
-          message={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`}
+          bodyText={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`}
         />
       );
     }
@@ -65,9 +64,7 @@ const ResourceListPage_ = connectToPlural(
 
     return (
       <div className="co-m-list">
-        <Helmet>
-          <title>{kindObj.labelPlural}</title>
-        </Helmet>
+        <DocumentTitle>{kindObj.labelPlural}</DocumentTitle>
         <AsyncComponent
           autoFocus={!noProjectsAvailable}
           kind={modelRef}

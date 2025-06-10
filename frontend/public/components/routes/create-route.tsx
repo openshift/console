@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import classnames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Alert, Button, Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -305,9 +305,7 @@ class CreateRouteWithTranslation extends React.Component<
           <label className="co-required" htmlFor="name">
             {t('public~Name')}
           </label>
-          <span
-            className={classnames('pf-v6-c-form-control', { 'pf-m-disabled': !!existingRoute })}
-          >
+          <span className={css('pf-v6-c-form-control', { 'pf-m-disabled': !!existingRoute })}>
             <input
               type="text"
               onChange={this.handleChange}
@@ -451,7 +449,7 @@ class CreateRouteWithTranslation extends React.Component<
           </div>
         </div>
         <div className="form-group co-create-route__security">
-          <label className="control-label">{t('public~Security')}</label>
+          <label>{t('public~Security')}</label>
           <div className="checkbox">
             <label>
               <input

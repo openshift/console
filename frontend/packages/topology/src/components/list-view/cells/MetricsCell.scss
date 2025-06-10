@@ -23,7 +23,7 @@
     font-size: 18px;
   }
   &__metric-unit {
-    color: $color-text-muted;
+    color: var(--pf-t--global--icon--color--subtle);
     font-size: ($font-size-base - 1);
     margin-left: 1px;
   }

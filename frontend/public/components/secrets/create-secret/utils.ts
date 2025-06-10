@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { WebHookSecretKey } from './const';
 import {
-  SecretTypeAbstraction,
+  SecretFormType,
   SecretType,
   PullSecretCredential,
   Base64StringData,
@@ -12,31 +12,31 @@ import {
 import { isBinary } from 'istextorbinary';
 import { Base64 } from 'js-base64';
 
-export const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
-  switch (typeAbstraction) {
-    case SecretTypeAbstraction.source:
+export const toDefaultSecretType = (formType: SecretFormType): SecretType => {
+  switch (formType) {
+    case SecretFormType.source:
       return SecretType.basicAuth;
-    case SecretTypeAbstraction.image:
+    case SecretFormType.image:
       return SecretType.dockerconfigjson;
     default:
       return SecretType.opaque;
   }
 };
 
-export const toTypeAbstraction = (secret): SecretTypeAbstraction => {
+export const toSecretFormType = (secret): SecretFormType => {
   const { data, type } = secret;
   switch (type) {
     case SecretType.basicAuth:
     case SecretType.sshAuth:
-      return SecretTypeAbstraction.source;
+      return SecretFormType.source;
     case SecretType.dockerconfigjson:
     case SecretType.dockercfg:
-      return SecretTypeAbstraction.image;
+      return SecretFormType.image;
     default:
       if (data?.[WebHookSecretKey] && _.size(data) === 1) {
-        return SecretTypeAbstraction.webhook;
+        return SecretFormType.webhook;
       }
-      return SecretTypeAbstraction.generic;
+      return SecretFormType.generic;
   }
 };
 
@@ -69,35 +69,32 @@ export const getPullSecretFileName = (secretType: SecretType): string => {
   }
 };
 
-export const useSecretTitle = (
-  isCreate: boolean,
-  typeAbstraction: SecretTypeAbstraction,
-): string => {
+export const useSecretTitle = (isCreate: boolean, formType: SecretFormType): string => {
   const { t } = useTranslation();
-  switch (typeAbstraction) {
-    case SecretTypeAbstraction.generic:
+  switch (formType) {
+    case SecretFormType.generic:
       return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
-    case SecretTypeAbstraction.image:
+    case SecretFormType.image:
       return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
     default:
       return isCreate
-        ? t('public~Create {{secretType}} secret', { secretType: typeAbstraction })
-        : t('public~Edit {{secretType}} secret', { secretType: typeAbstraction });
+        ? t('public~Create {{formType}} secret', { formType })
+        : t('public~Edit {{formType}} secret', { formType });
   }
 };
 
-export const useSecretDescription = (typeAbstraction: SecretTypeAbstraction): string => {
+export const useSecretDescription = (formType: SecretFormType): string => {
   const { t } = useTranslation();
-  switch (typeAbstraction) {
-    case SecretTypeAbstraction.generic:
+  switch (formType) {
+    case SecretFormType.generic:
       return t(
         'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
       );
-    case SecretTypeAbstraction.source:
+    case SecretFormType.source:
       return t('public~Source secrets let you authenticate against a Git server.');
-    case SecretTypeAbstraction.image:
+    case SecretFormType.image:
       return t('public~Image pull secrets let you authenticate against a private image registry.');
-    case SecretTypeAbstraction.webhook:
+    case SecretFormType.webhook:
       return t('public~Webhook secrets let you authenticate a webhook trigger.');
     default:
       return null;

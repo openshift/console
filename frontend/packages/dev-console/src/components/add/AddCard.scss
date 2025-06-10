@@ -1,6 +1,8 @@
 .odc-add-card {
+  --odc-add-card-item-margin-horizontal: calc(var(--pf-t--global--spacer--lg) - var(--pf-t--global--spacer--sm));
+
   margin-bottom: var(--pf-t--global--spacer--lg);
-  padding: 0px var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--lg) 0px;
+  padding: 0px var(--odc-add-card-item-margin-horizontal) var(--pf-t--global--spacer--lg) 0px;
   max-width: 100%;
 
   &__title {

@@ -1,18 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { ResolvedExtension, CatalogItemType } from '@console/dynamic-plugin-sdk';
-import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk/src/extensions';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
-  PageHeading,
   skeletonCatalog,
   StatusBox,
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useQueryParams } from '../../hooks';
+import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
@@ -32,7 +33,7 @@ type CatalogControllerProps = CatalogService & {
   enableDetailsPanel?: boolean;
   hideSidebar?: boolean;
   title: string;
-  description: string;
+  description: string | React.ReactElement;
   categories?: CatalogCategory[];
 };
 
@@ -71,15 +72,12 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   };
 
   const filterGroups: string[] = React.useMemo(() => {
-    return (
-      typeExtension?.properties.filters?.map((filter: CatalogItemAttribute) => filter.attribute) ??
-      []
-    );
+    return typeExtension?.properties.filters?.map((filter) => filter.attribute) ?? [];
   }, [typeExtension]);
 
   const filterGroupMap: CatalogFilterGroupMap = React.useMemo(() => {
     return (
-      typeExtension?.properties.filters?.reduce((map, filter: CatalogItemAttribute) => {
+      typeExtension?.properties.filters?.reduce((map, filter) => {
         map[filter.attribute] = filter;
         return map;
       }, {}) ?? {}
@@ -88,7 +86,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   const groupings: CatalogStringMap = React.useMemo(() => {
     return (
-      typeExtension?.properties.groupings?.reduce((map, group: CatalogItemAttribute) => {
+      typeExtension?.properties.groupings?.reduce((map, group) => {
         map[group.attribute] = group.label;
         return map;
       }, {}) ?? {}
@@ -181,40 +179,35 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <div className="co-m-page__body">
-        <div className="co-catalog">
-          <PageHeading title={title} breadcrumbs={type ? breadcrumbs : null} />
-          <p data-test-id="catalog-page-description" className="co-catalog-page__description">
-            {getCatalogTypeDescription()}
-          </p>
-          <div className="co-catalog__body">
-            <StatusBox
-              skeleton={skeletonCatalog}
-              data={items}
-              loaded={loaded}
-              loadError={loadError}
-              label={t('console-shared~Catalog items')}
-            >
-              <CatalogView
-                catalogType={type}
-                catalogTypes={catalogTypes}
-                items={catalogItems}
-                categories={categories}
-                filters={availableFilters}
-                filterGroups={filterGroups}
-                filterGroupMap={filterGroupMap}
-                groupings={groupings}
-                renderTile={renderTile}
-                hideSidebar={hideSidebar}
-              />
-              <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
-            </StatusBox>
-          </div>
-        </div>
-      </div>
+      <DocumentTitle>{title}</DocumentTitle>
+      <PageBody>
+        <PageHeading
+          title={title}
+          breadcrumbs={type ? breadcrumbs : null}
+          helpText={getCatalogTypeDescription()}
+        />
+        <StatusBox
+          skeleton={skeletonCatalog}
+          data={items}
+          loaded={loaded}
+          loadError={loadError}
+          label={t('console-shared~Catalog items')}
+        >
+          <CatalogView
+            catalogType={type}
+            catalogTypes={catalogTypes}
+            items={catalogItems}
+            categories={categories}
+            filters={availableFilters}
+            filterGroups={filterGroups}
+            filterGroupMap={filterGroupMap}
+            groupings={groupings}
+            renderTile={renderTile}
+            hideSidebar={hideSidebar}
+          />
+          <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
+        </StatusBox>
+      </PageBody>
     </>
   );
 };

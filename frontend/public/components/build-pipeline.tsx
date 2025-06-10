@@ -6,7 +6,7 @@ import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { PendingIcon } from '@patternfly/react-icons/dist/esm/icons/pending-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
-import { ExternalLink } from './utils/link';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { resourcePath } from './utils/resource-link';
 import { fromNow } from './utils/datetime';
 import { K8sResourceKind } from '../module/k8s';
@@ -69,7 +69,7 @@ const StagesNotStarted: React.SFC = () => {
 };
 
 const BuildSummaryTimestamp: React.SFC<BuildSummaryTimestampProps> = ({ timestamp }) => (
-  <span className="build-pipeline__timestamp text-muted">{fromNow(timestamp)}</span>
+  <span className="build-pipeline__timestamp pf-v6-u-text-color-subtle">{fromNow(timestamp)}</span>
 );
 
 const BuildPipelineSummary: React.SFC<BuildPipelineSummaryProps> = ({ obj }) => {
@@ -114,14 +114,14 @@ const JenkinsInputUrl: React.SFC<JenkinsInputUrlProps> = ({ obj, stage }) => {
 
   const buildUrl = getJenkinsBuildURL(obj);
   return (
-    <div className="build-pipeline__stage-actions text-muted">
+    <div className="build-pipeline__stage-actions pf-v6-u-text-color-subtle">
       <ExternalLink href={buildUrl} text={t('public~Input required')} />
     </div>
   );
 };
 
 const BuildStageTimestamp: React.SFC<BuildStageTimestampProps> = ({ timestamp }) => (
-  <div className="build-pipeline__stage-time text-muted">{fromNow(timestamp)}</div>
+  <div className="build-pipeline__stage-time pf-v6-u-text-color-subtle">{fromNow(timestamp)}</div>
 );
 
 const BuildStageName: React.SFC<BuildStageNameProps> = ({ name }) => {

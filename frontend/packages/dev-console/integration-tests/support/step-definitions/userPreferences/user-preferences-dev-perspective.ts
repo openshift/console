@@ -173,13 +173,13 @@ When('user clicks on the checkbox to uncheck it', () => {
 });
 
 Then('user will see the language change to 日本語', () => {
-  cy.get('h1.ocs-page-layout__title')
+  cy.get('[data-test="page-heading"] h1')
     .invoke('attr', 'value')
     .then(($initialVal) => {
       if ($initialVal !== 'ユーザー設定') {
         cy.wait(5000);
       }
-      cy.get('h1.ocs-page-layout__title').should('contain.text', 'ユーザー設定');
+      cy.get('[data-test="page-heading"] h1').should('contain.text', 'ユーザー設定');
     });
   // After execution of all tests Language value is changed back to English
   cy.selectByDropDownText(getPreferenceDropdown('Language'), 'English');

@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import DynamicResourceLink from './DynamicResourceLink';
 
 interface SubscriptionDetails {
@@ -14,13 +16,13 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
   const { t } = useTranslation();
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('knative-plugin~Subscription details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={subscription} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             {subscription.spec?.channel?.kind && (
               <DynamicResourceLink
                 title={t('knative-plugin~Channel')}
@@ -37,14 +39,14 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
                 kind={referenceFor(subscription.spec.subscriber.ref)}
               />
             )}
-          </div>
-        </div>
-      </div>
+          </GridItem>
+        </Grid>
+      </PaneBody>
       {_.isArray(subscription?.status?.conditions) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('knative-plugin~Conditions')} />
           <Conditions conditions={subscription.status.conditions} />
-        </div>
+        </PaneBody>
       )}
     </>
   );

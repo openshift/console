@@ -2,14 +2,14 @@
   {
     "type": "console.flag",
     "properties": {
-      "handler": { "$codeRef": "telemetryFlags.detectTelemetry" }
+      "handler": { "$codeRef": "detectTelemetry.detectTelemetry" }
     }
   },
   {
     "type": "console.telemetry/listener",
     "properties": {
       "listener": {
-        "$codeRef": "telemetryListeners.debug"
+        "$codeRef": "telemetryDebugListener.eventListener"
       }
     },
     "flags": { "required": ["TELEMETRY_DEBUG"] }
@@ -18,7 +18,7 @@
     "type": "console.telemetry/listener",
     "properties": {
       "listener": {
-        "$codeRef": "telemetryListeners.usage"
+        "$codeRef": "telemetryUsageListener.eventListener"
       }
     },
     "flags": { "required": ["TELEMETRY"] }
@@ -27,7 +27,7 @@
     "type": "console.telemetry/listener",
     "properties": {
       "listener": {
-        "$codeRef": "telemetryListeners.segment"
+        "$codeRef": "telemetrySegmentListener.eventListener"
       }
     },
     "flags": { "required": ["TELEMETRY"] }
@@ -35,7 +35,7 @@
   {
     "type": "console.flag/hookProvider",
     "properties": {
-      "handler": { "$codeRef": "providers.useTelemetryProvider" }
+      "handler": { "$codeRef": "useTelemetryProvider.useTelemetryProvider" }
     }
   },
   {

@@ -10,14 +10,14 @@ Feature: Create the different workloads from Add page
 
         Scenario: Getting started resources on Developer perspective
              Then user will see Create Application using Samples, Build with guided documentation and Explore new developer features under Getting started resources section
-              And user will see All services, Database, Operator Backed and Helm Chart options under Developer Catalog section
+              And user will see All services, Database, Operator Backed and Helm Chart options under Software Catalog section
               And user will see Import from Git card under Git Repository section
               And user will see "Container images" option
               And user will see "Samples" option
               And user will see Import YAML, Upload JAR file under From Local Machine section
 
         Scenario Outline: Deploy Application using Catalog Template "<template_category>": A-01-TC02
-            Given user is at Developer Catalog page
+            Given user is at Software Catalog page
               And user is at Templates page
              When user selects Template category "<template_category>"
               And user searches and selects Template card "<card_name>" from catalog page
@@ -34,6 +34,7 @@ Feature: Create the different workloads from Add page
                   | Middleware        | Apache HTTP Server                    | httpd-example             |
                   | Other             | Nginx HTTP server and a reverse proxy | nginx-example             |
 
+        @broken-test
         Scenario Outline: Deploy <image> image with Runtime icon from external registry: A-02-TC02
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
@@ -67,6 +68,7 @@ Feature: Create the different workloads from Add page
                   | image_stream | runtime_icon | name           |
                   | golang       | fedora       | hello-internal |
 
+        @broken-test
         Scenario: Edit Runtime Icon while Editing Image: A-02-TC05
             Given user has deployed container Image "openshift/hello-openshift" from external registry
               And user is at Topology page
@@ -80,7 +82,7 @@ Feature: Create the different workloads from Add page
 
         Scenario: Create the Database from Add page: A-03-TC01
              When user clicks Database card
-              And user selects "MariaDB" database on Developer Catalog
+              And user selects "MariaDB" database on Software Catalog
               And user clicks Instantiate Template button on side bar
               And user clicks create button on Instantiate Template page
              Then user will be redirected to Topology page

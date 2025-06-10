@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "types": ["cypress"],
-    "jsx": "react"
+    "jsx": "react-jsx"
   },
   "include": ["../../node_modules/cypress", "**/*.ts"]
 }

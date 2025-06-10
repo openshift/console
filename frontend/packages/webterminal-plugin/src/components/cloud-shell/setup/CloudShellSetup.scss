@@ -1,0 +1,9 @@
+.wt-cloud-shell-setup {
+  &--title {
+    padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--md) 0;
+  }
+  .ocs-form-footer {
+    padding: var(--pf-t--global--spacer--md)
+      calc(var(--pf-t--global--spacer--lg) - var(--pf-t--global--spacer--xs));
+  }
+}

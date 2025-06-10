@@ -1,18 +1,6 @@
 @import '../../../../../public/style/vars';
 
 .odc-add-page-layout {
-  // Fix missing white background color above the header.
-  .ocs-page-layout__title {
-    margin-top: 0;
-    padding-top: var(--pf-t--global--spacer--lg);
-  }
-
-  // Drop padding below the hint to add this gap between hint and actions below.
-  .ocs-page-layout__hint {
-    padding-bottom: 0; /* override var(--pf-t--global--spacer--md) */
-    padding-right: 0;
-  }
-
   &__hint-block {
     display: flex;
     align-items: center;
@@ -47,10 +35,6 @@
         align-items: center;
       }
     }
-  }
-
-  &__additional-hint-block {
-    padding-bottom: var(--pf-t--global--spacer--md);
   }
 
   &__resource-quota-message-block {

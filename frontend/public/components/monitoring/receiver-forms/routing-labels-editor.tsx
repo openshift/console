@@ -1,11 +1,10 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { Button, Tooltip } from '@patternfly/react-core';
-
-import { ExternalLink, SectionHeading } from '../../utils';
+import { Button, Grid, GridItem, Tooltip } from '@patternfly/react-core';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { SectionHeading } from '../../utils';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 
@@ -51,7 +50,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
   return (
     <div data-test-id="receiver-routing-labels-editor" className="form-group">
       <SectionHeading text={t('public~Routing labels')} required={!isDefaultReceiver} />
-      <p className="co-help-text pf-u-mb-md">
+      <p className="pf-v6-u-mb-md">
         <Trans ns="public">
           Firing alerts with labels that match all of these{' '}
           <ExternalLink
@@ -62,8 +61,8 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
         </Trans>
       </p>
       {isDefaultReceiver && (
-        <div className="row form-group" key="default">
-          <div className="col-xs-10">
+        <Grid hasGutter className="form-group" key="default">
+          <GridItem span={10}>
             <div className="form-group">
               <span className="pf-v6-c-form-control pf-m-disabled">
                 <input
@@ -75,13 +74,13 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                 />
               </span>
             </div>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       )}
       {_.map(formValues.routeLabels, (routeLabel, i: number) => {
         return (
-          <div className="row form-group" key={i}>
-            <div className="col-xs-10">
+          <Grid hasGutter className="form-group" key={i}>
+            <GridItem span={10}>
               <div className="form-group">
                 <span className="pf-v6-c-form-control">
                   <input
@@ -94,8 +93,8 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                   />
                 </span>
               </div>
-            </div>
-            <div className="col-xs-2">
+            </GridItem>
+            <GridItem span={2}>
               <Tooltip content={t('public~Remove')}>
                 <Button
                   icon={<MinusCircleIcon />}
@@ -107,8 +106,8 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                   data-test-id="remove-routing-label"
                 />
               </Tooltip>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         );
       })}
       {formValues.routeLabelDuplicateNamesError && (

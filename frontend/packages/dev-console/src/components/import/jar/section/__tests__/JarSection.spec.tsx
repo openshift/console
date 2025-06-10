@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { FileUpload } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import { InputField } from '@console/shared/src';

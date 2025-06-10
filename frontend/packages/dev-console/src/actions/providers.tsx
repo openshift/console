@@ -19,12 +19,11 @@ import {
   K8sResourceKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import {
   isCatalogTypeEnabled,
   useActiveNamespace,
   useFlag,
-  useIsDeveloperCatalogEnabled,
+  useIsSoftwareCatalogEnabled,
 } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
@@ -92,8 +91,8 @@ const resourceAttributes = (model: K8sModel, namespace: string): AccessReviewRes
   };
 };
 
-export const useDeveloperCatalogProvider = (setFeatureFlag: SetFeatureFlag) => {
-  setFeatureFlag(FLAG_DEVELOPER_CATALOG, useIsDeveloperCatalogEnabled());
+export const useSoftwareCatalogProvider = (setFeatureFlag: SetFeatureFlag) => {
+  setFeatureFlag(FLAG_DEVELOPER_CATALOG, useIsSoftwareCatalogEnabled());
   setFeatureFlag(
     FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE,
     isCatalogTypeEnabled(OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID),
@@ -118,7 +117,6 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   const secretAccess = useAccessReview(resourceAttributes(SecretModel, namespace));
   const routeAccess = useAccessReview(resourceAttributes(RouteModel, namespace));
   const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, namespace));
-  const serviceBindingAccess = useAccessReview(resourceAttributes(ServiceBindingModel, namespace));
   const isImportResourceAccess =
     buildConfigsAccess &&
     imageStreamAccess &&
@@ -127,7 +125,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     routeAccess &&
     serviceAccess;
   const isCatalogImageResourceAccess = isImportResourceAccess && imageStreamImportAccess;
-  const isDevCatalogEnabled = useIsDeveloperCatalogEnabled();
+  const isSoftwareCatalogEnabled = useIsSoftwareCatalogEnabled();
   const isOperatorBackedServiceEnabled = isCatalogTypeEnabled(
     OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
   );
@@ -156,14 +154,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     );
     if (isOperatorBackedServiceEnabled) {
       actionsWithSourceRef.push(
-        AddActions.OperatorBacked(
-          namespace,
-          undefined,
-          sourceReference,
-          '',
-          null,
-          serviceBindingAccess,
-        ),
+        AddActions.OperatorBacked(namespace, undefined, sourceReference, '', null),
       );
     }
     if (isJavaImageStreamEnabled) {
@@ -221,9 +212,9 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
         !isCatalogImageResourceAccess,
       ),
     );
-    if (isDevCatalogEnabled) {
+    if (isSoftwareCatalogEnabled) {
       actionsWithoutSourceRef.push(
-        AddActions.DevCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
+        AddActions.SoftwareCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
       );
       actionsWithoutSourceRef.push(
         AddActions.DatabaseCatalog(namespace, undefined, undefined, ADD_TO_PROJECT, undefined),
@@ -288,9 +279,8 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     isServerlessEnabled,
     isJavaImageStreamEnabled,
     isSampleTypeEnabled,
-    isDevCatalogEnabled,
+    isSoftwareCatalogEnabled,
     element,
-    serviceBindingAccess,
   ]);
 };
 

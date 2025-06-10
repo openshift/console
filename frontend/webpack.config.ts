@@ -6,7 +6,7 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 
-import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules';
+import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules/shared-modules-meta';
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
@@ -62,7 +62,7 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 const config: Configuration = {
   entry: {
     main: [
-      './public/components/app.jsx',
+      './public/components/app.tsx',
       '/node_modules/@patternfly-5/patternfly/patternfly.scss',
       '/node_modules/@patternfly-5/patternfly/patternfly-addons.scss',
       '/node_modules/@patternfly-5/patternfly/patternfly-charts.scss',
@@ -285,10 +285,6 @@ const config: Configuration = {
         { from: path.resolve(__dirname, './packages/knative-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/container-security/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/pipelines-plugin/locales'), to: 'locales' },
-        {
-          from: path.resolve(__dirname, './packages/service-binding-plugin/locales'),
-          to: 'locales',
-        },
         { from: path.resolve(__dirname, './packages/shipwright-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/webterminal-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/topology/locales'), to: 'locales' },
@@ -297,12 +293,7 @@ const config: Configuration = {
         { from: path.resolve(__dirname, './packages/gitops-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/metal3-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/vsphere-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/patternfly/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/insights-plugin/locales'), to: 'locales' },
-        {
-          from: path.resolve(__dirname, './packages/local-storage-operator-plugin/locales'),
-          to: 'locales',
-        },
         {
           from: path.resolve(__dirname, './packages/console-telemetry-plugin/locales'),
           to: 'locales',

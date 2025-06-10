@@ -6,13 +6,12 @@
 }
 
 .resource-log--fullscreen {
-  .co-toolbar {
-    background-color: var(--pf-t--global--background--color--primary--default);
-    padding-left: 10px;
-    padding-right: 10px;
-  }
   .resource-log__log-viewer-wrapper {
     overflow: auto;
+  }
+  .resource-log__toolbar {
+    background-color: var(--pf-t--global--background--color--primary--default);
+    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--sm);
   }
 }
 

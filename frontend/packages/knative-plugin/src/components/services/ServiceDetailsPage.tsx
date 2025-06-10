@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -9,7 +10,6 @@ import { PodsPage } from '@console/internal/components/pod';
 import {
   ContainerTable,
   DetailsItem,
-  ExternalLink,
   ResourceSummary,
   SectionHeading,
   navFactory,
@@ -22,14 +22,16 @@ import {
   ActionServiceProvider,
   useTabbedTableBreadcrumbsFor,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RevisionModel, RouteModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { RevisionKind, ServiceKind, ServiceTypeValue } from '../../types';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 import { KnativeServiceTypeContext } from '../functions/ServiceTypeContext';
 import RevisionsOverviewList from '../overview/RevisionsOverviewList';
-import { RevisionsPage } from '../revisions';
-import { RoutesPage } from '../routes';
+import RevisionsPage from '../revisions/RevisionsPage';
+import RoutesPage from '../routes/RoutesPage';
 
 type FunctionsPodsProps = {
   obj: K8sResourceKind;
@@ -46,18 +48,18 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('knative-plugin~Details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary
               resource={obj}
               podSelector="spec.podSelector"
               showNodeSelector={false}
             />
-          </div>
-          <div className="col-md-6">
-            <dl>
+          </GridItem>
+          <GridItem md={6}>
+            <DescriptionList>
               {isServerlessFunction(obj) && (
                 <DetailsItem label={t('knative-plugin~Type')} obj={obj}>
                   {t('knative-plugin~Function')}
@@ -77,19 +79,19 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
                   <RevisionsOverviewList revisions={revisions} service={obj} hideSectionHeading />
                 </DetailsItem>
               )}
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+            </DescriptionList>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('knative-plugin~Containers')} />
         <ContainerTable containers={obj.spec.template.spec.containers} />
-      </div>
+      </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
-        <div className="co-m-pane__body">
+        <PaneBody>
           <SectionHeading text={t('knative-plugin~Conditions')} />
           <Conditions conditions={obj.status.conditions} />
-        </div>
+        </PaneBody>
       )}
     </>
   );

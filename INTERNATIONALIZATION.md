@@ -99,9 +99,9 @@ i18n.init({
 
 #### Translations
 
-OpenShift is currently translated into three languages: Chinese, Korean, and Japanese.
+OpenShift is currently translated into five languages: Chinese (Simplified), French, Japanese, Korean, and Spanish.
 
-Translation work is done by the Red Hat Globalization team. We send them updated files from the public and packages folders on a weekly or biweekly basis for the entire console and regularly import new translations.
+Translations in the Console are done in collaboration with the Red Hat Globalization team. The workflow involves exporting console strings from the public and packages folders to the Phrase TMS portal for translations. The completed translations are integrated into the console codebase when they are ready.
 
 #### Adding support for a new language
 

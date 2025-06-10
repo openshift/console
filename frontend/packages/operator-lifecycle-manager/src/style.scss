@@ -28,19 +28,17 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-clusterserviceversion-link {
-  &:focus,
-  &:hover {
-    text-decoration: none;
+  text-decoration: none;
 
-    .co-clusterserviceversion-logo__name__clusterserviceversion {
+  .co-clusterserviceversion-logo__name__clusterserviceversion {
       text-decoration: underline;
-    }
   }
 }
 
 .co-clusterserviceversion-logo {
   align-items: flex-start;
   display: flex;
+  gap: var(--pf-t--global--spacer--md);
 }
 
 .co-clusterserviceversion-logo__icon {
@@ -49,7 +47,7 @@ $co-affinity-row-margin: 15px;
   display: flex;
   flex: 0 0 auto;
   justify-content: center;
-  margin: 0 15px 5px 0;
+  margin-bottom: var(--pf-t--global--spacer--xs);
 }
 
 .co-clusterserviceversion-logo__name {
@@ -64,6 +62,10 @@ $co-affinity-row-margin: 15px;
 }
 .co-m-pane__heading--logo .co-clusterserviceversion-logo__name__provider {
   font-size: var(--pf-t--global--font--size--sm);
+}
+
+.co-page-heading .co-clusterserviceversion-logo__name {
+  margin: var(--pf-t--global--spacer--sm) 0;
 }
 
 .co-crd-card-row {
@@ -82,12 +84,6 @@ $co-affinity-row-margin: 15px;
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
-}
-
-.co-operand-details__section--info dd {
-  margin-bottom: 20px !important;
-  min-width: 0; // enable word-break
-  overflow-wrap: break-word;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
@@ -134,11 +130,7 @@ $co-affinity-row-margin: 15px;
 .co-create-operand__header {
   border-bottom: var(--pf-t--global--border--width--divider--default) solid
     var(--pf-t--global--border--color--default);
-  padding: 0 $pf-v6-global-gutter var(--pf-t--global--spacer--lg);
-  @media (min-width: $pf-v6-global--breakpoint--xl) {
-    padding-left: $pf-v6-global-gutter--md;
-    padding-right: $pf-v6-global-gutter--md;
-  }
+  padding: 0 $pf-v6-global-gutter-x var(--pf-t--global--spacer--lg);
 }
 
 // only used in packages and will be orphaned when packages move out
@@ -199,37 +191,8 @@ $co-affinity-row-margin: 15px;
 }
 
 .catalog-source__table-row--disabled {
-  background-color: var(--pf-t--color--gray--10);
-  color: var(--pf-t--color--gray--50);
-}
-
-.key-operator-value__action {
-  padding: 0;
-  width: 28px;
-}
-@media (max-width: $screen-sm-max) {
-  .key-operator-value__action--stacked,
-  .key-operator-value__value-field--stacked {
-    padding-top: 10px;
-  }
-}
-
-.key-operator-value__delete-button {
-  padding-left: 0 !important;
-}
-
-.key-operator-value__heading-button {
-  height: 23px; // for vertical alignment with input field; equals --pf-t--global--font--line-height--heading
-}
-
-.key-operator-value__name-field,
-.key-operator-value__operator-field,
-.key-operator-value__value-field {
-  padding-right: 0 !important;
-}
-
-.key-operator-value__row {
-  padding-bottom: 15px;
+  background-color: var(--pf-t--global--background--color--disabled--default);
+  color: var(--pf-t--global--text--color--disabled);
 }
 
 .olm-descriptors__invalid-pod-descriptor {
@@ -247,9 +210,9 @@ $co-affinity-row-margin: 15px;
 }
 
 #operator-install-page {
-  margin: 0 $pf-v6-global-gutter;
+  margin: 0 $pf-v6-global-gutter-x;
   @media (min-width: $screen-sm-min) {
-    margin: $pf-v6-global-gutter--md;
+    margin: $pf-v6-global-gutter-y $pf-v6-global-gutter-x;
     max-width: 600px;
     min-width: 375px;
     width: 100%;

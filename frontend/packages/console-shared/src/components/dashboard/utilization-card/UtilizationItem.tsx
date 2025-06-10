@@ -63,7 +63,9 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       getCurrentData(queries[index].desc, datum, dataUnits && dataUnits[index]),
     );
     const maxDate = getMaxDate(data);
-    React.useEffect(() => updateEndDate(maxDate), [maxDate, updateEndDate]);
+    React.useEffect(() => {
+      updateEndDate(maxDate);
+    }, [maxDate, updateEndDate]);
 
     const mapTranslatedData = (originalData: DataPoint[][]) => {
       if (!originalData || originalData.length === 0 || originalData[0].length === 0)
@@ -124,7 +126,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
               {title}
             </Title>
             {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
-              <div className="text-secondary">{t('console-shared~Not available')}</div>
+              <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
             ) : (
               <div className="co-utilization-card__item-description">{currentValue}</div>
             )}
@@ -171,7 +173,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     );
     const [utilizationData, limitData, requestedData] = data;
     const maxDate = getMaxDate([utilizationData]);
-    React.useEffect(() => updateEndDate(maxDate), [updateEndDate, maxDate]);
+    React.useEffect(() => {
+      updateEndDate(maxDate);
+    }, [updateEndDate, maxDate]);
     const current = utilizationData?.length ? utilizationData[utilizationData.length - 1].y : null;
 
     let humanMax: string;
@@ -261,7 +265,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             </FlexItem>
             <FlexItem>
               {error || (!isLoading && !utilizationData?.length) ? (
-                <div className="text-secondary">{t('console-shared~Not available')}</div>
+                <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
               ) : (
                 <div>
                   {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}

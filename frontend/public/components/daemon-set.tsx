@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
@@ -13,6 +13,7 @@ import {
   ActionMenuVariant,
   usePrometheusGate,
 } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, referenceFor, referenceForModel, DaemonSetKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
@@ -35,6 +36,7 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
@@ -49,16 +51,16 @@ const kind = 'DaemonSet';
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
 export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }) => {
   const { t } = useTranslation();
   return (
-    <dl className="co-m-pane__details">
+    <DescriptionList>
       <DetailsItem
         label={t('public~Current count')}
         obj={ds}
@@ -70,7 +72,7 @@ export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }
         path="status.desiredNumberScheduled"
       />
       <PodDisruptionBudgetField obj={ds} />
-    </dl>
+    </DescriptionList>
   );
 };
 
@@ -79,7 +81,7 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
   const { podData, loaded } = usePodsWatcher(daemonset);
   return (
     <>
-      <div className="co-m-pane__body">
+      <PaneBody>
         <SectionHeading text={t('public~DaemonSet details')} />
         {loaded ? (
           <PodRing
@@ -92,27 +94,27 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
         ) : (
           <LoadingInline />
         )}
-        <div className="row">
-          <div className="col-lg-6">
+        <Grid hasGutter>
+          <GridItem lg={6}>
             <ResourceSummary
               resource={daemonset}
               showPodSelector
               showNodeSelector
               showTolerations
             />
-          </div>
-          <div className="col-lg-6">
+          </GridItem>
+          <GridItem lg={6}>
             <DaemonSetDetailsList ds={daemonset} />
-          </div>
-        </div>
-      </div>
-      <div className="co-m-pane__body">
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
         <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={daemonset.spec.template.spec.containers} />
-      </div>
-      <div className="co-m-pane__body">
+      </PaneBody>
+      <PaneBody>
         <VolumesTable resource={daemonset} heading={t('public~Volumes')} />
-      </div>
+      </PaneBody>
     </>
   );
 };
@@ -147,10 +149,7 @@ const DaemonSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: da
           namespace={daemonset.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

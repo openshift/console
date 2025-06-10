@@ -4,6 +4,7 @@ import { ActionServiceProviderProps } from '../extensions/actions';
 import {
   CodeEditorProps,
   CodeEditorRef,
+  DocumentTitleProps,
   ErrorBoundaryFallbackProps,
   HorizontalNavProps,
   InventoryItemBodyProps,
@@ -26,21 +27,22 @@ import {
   TableDataProps,
   TimestampProps,
   UseActiveColumns,
+  UseActiveNamespace,
   UseAnnotationsModal,
   UseDeleteModal,
   UseLabelsModal,
   UseListPageFilter,
   UsePrometheusPoll,
-  UseResolvedExtensions,
-  VirtualizedTableFC,
-  UseActiveNamespace,
-  UseUserSettings,
   UseQuickStartContext,
+  UseResolvedExtensions,
+  UseUserSettings,
+  VirtualizedTableFC,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
 
 export * from '../app/components';
 export * from './common-types';
+export * from './utils';
 
 /**
  * React hook for consuming Console extensions with resolved `CodeRef` properties.
@@ -82,6 +84,7 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/int
   .HorizontalNavFacade;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
  * A component for making virtualized tables
  * @param {D} data - data for table
  * @param {boolean} loaded - flag indicating data is loaded
@@ -168,9 +171,12 @@ export const useActiveColumns: UseActiveColumns = require('@console/internal/com
 
 /**
  * Component for generating a page header
- * @param {string} title - heading title
- * @param {ReactNode} [helpText] -  (optional) help section as react node
- * @param {ReactNode} [badge] -  (optional) badge icon as react node
+ * @param {string} title - The heading title. If no title is set, only the `children`, `badge`, and `helpAlert` props will be rendered.
+ * @param {ReactNode} [badge] -  (optional) A badge that is displayed next to the title of the heading
+ * @param {ReactNode} [helpAlert] -  (optional) An alert placed below the heading in the same PageSection.
+ * @param {ReactNode} [helpText] -  (optional) A subtitle placed below the title.
+ * @param {boolean} [hideFavoriteButton] - (optional) The "Add to favourites" button is shown by default while in the admin perspective. This prop allows you to hide the button. It should be hidden when `ListPageHeader` is not the primary page header to avoid having multiple favourites buttons.
+ * @param {ReactNode} [children] -  (optional) A primary action that is always rendered.
  * @example
  * ```ts
  * const exampleList: React.FC = () => {
@@ -272,6 +278,7 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = req
   .ListPageCreateDropdown;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
  * Component that generates filter for list page.
  * @param {D} data - An array of data points
  * @param {boolean} loaded - indicates that data has loaded
@@ -312,6 +319,7 @@ export const ListPageFilter: React.FC<ListPageFilterProps> = require('@console/i
   .default;
 
 /**
+ * @deprecated Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) instead.
  * A hook that manages filter state for the ListPageFilter component.
  * @param data - An array of data points
  * @param rowFilters - (optional) An array of RowFilter elements that define the available filter options
@@ -417,7 +425,7 @@ export {
  *     firstColumn={
  *       <>
  *         <span>{title}</span>
- *         <span className="text-secondary">
+ *         <span className="pf-v6-u-text-color-subtle">
  *           My Example Item
  *         </span>
  *       </>
@@ -667,6 +675,19 @@ export const ResourceEventStream: React.FC<ResourceEventStreamProps> = require('
   .WrappedResourceEventStream;
 
 /**
+ * A component to change the document title of the page.
+ * @example
+ * ```tsx
+ * <DocumentTitle>My Page Title</DocumentTitle>
+ * ```
+ * This will change the title to "My Page Title · [Product Name]"
+ *
+ * @param {DocumentTitleProps['string']} children - The title to display
+ */
+export const DocumentTitle: React.FC<DocumentTitleProps> = require('@console/shared/src/components/document-title/DocumentTitle')
+  .DocumentTitle;
+
+/**
  * Sets up a poll to Prometheus for a single query.
  * @param {PrometheusEndpoint} endpoint - one of the PrometheusEndpoint (label, query, range, rules, targets)
  * @param {string} [query] - (optional) Prometheus query string. If empty or undefined, polling is not started.
@@ -696,10 +717,14 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
  * @param {TimestampProps['omitSuffix']} omitSuffix - formats the date ommiting the suffix.
  * @param {TimestampProps['className']} className - additional class name for the component.
  */
-export const Timestamp: React.FC<TimestampProps> = require('@console/internal/components/utils/timestamp')
-  .Timestamp;
+export const Timestamp: React.FC<TimestampProps> = require('@console/shared/src/components/datetime/Timestamp')
+  .default;
 
 export { useModal } from '../app/modal-support/useModal';
+export { ModalComponent } from '../app/modal-support/ModalProvider';
+
+export { useOverlay } from '../app/modal-support/useOverlay';
+export { OverlayComponent } from '../app/modal-support/OverlayProvider';
 
 /**
  * Component that allows to receive contributions from other plugins for the `console.action/provider` extension type.
@@ -747,7 +772,7 @@ export const NamespaceBar: React.FC<NamespaceBarProps> = require('@console/inter
   .NamespaceBar;
 
 /**
- * Creates a full page ErrorBoundaryFallbackPage component to display the "Oh no! Something went wrong." message along with the stack trace and other helpful debugging information.
+ * Creates a full page ErrorBoundaryFallbackPage component to display the "Something wrong happened" message along with the stack trace and other helpful debugging information.
  * This is to be used in conjunction with an `ErrorBoundary` component.
  *
  * @param {string} errorMessage - text description of the error message

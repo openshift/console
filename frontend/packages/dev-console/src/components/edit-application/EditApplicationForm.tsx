@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { PageHeading } from '@console/internal/components/utils';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormFooter, FlexForm, FormBody } from '@console/shared';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import AdvancedSection from '../import/advanced/AdvancedSection';
 import AppSection from '../import/app/AppSection';
@@ -49,7 +49,7 @@ const EditApplicationForm: React.FC<
         <FormBody flexLayout>
           {flowType === ApplicationFlowType.Git && <GitSection builderImages={builderImages} />}
           {flowType === ApplicationFlowType.Dockerfile && (
-            <GitSection builderImages={builderImages} />
+            <GitSection builderImages={builderImages} flowType={flowType} />
           )}
           {flowType === ApplicationFlowType.Git && (
             <BuilderSection

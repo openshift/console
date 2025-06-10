@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavGroup, NavList } from '@patternfly/react-core';
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import {
   useActivePerspective,
@@ -53,7 +53,7 @@ const PerspectiveNav: React.FC<{}> = () => {
     <NavGroup
       title=""
       aria-label={t('console-app~Pinned resources')}
-      className={classNames('no-title', { 'oc-perspective-nav--dragging': isDragged })}
+      className={css('no-title', { 'oc-perspective-nav--dragging': isDragged })}
     >
       {getPinnedItems()}
     </NavGroup>

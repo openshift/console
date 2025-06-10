@@ -11,6 +11,7 @@ import {
   topologyPage,
   topologySidePane,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { hpaPO } from '../../../page-objects/hpa-po';
 import { checkPodsCount } from '../../../pages/functions/add-secret';
 
@@ -34,6 +35,7 @@ Given('user is at administrator perspective', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   cy.testA11y('Developer perspective with guider tour modal');
 });

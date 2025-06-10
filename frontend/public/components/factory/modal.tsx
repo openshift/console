@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as Modal from 'react-modal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -40,7 +40,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   const parentSelector = React.useCallback(() => document.querySelector('#modal-container'), []);
   return (
     <Modal
-      className={classNames('modal-dialog', className)}
+      className={css('modal-dialog', className)}
       contentLabel={t('public~Modal')}
       isOpen
       onRequestClose={onClose}
@@ -204,7 +204,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
       className={className}
     >
       <ActionGroup
-        className={classNames(
+        className={css(
           { 'pf-v6-c-form__actions--right': buttonAlignment === 'right' },
           'pf-v6-c-form  pf-v6-c-form__group--no-top-margin',
         )}

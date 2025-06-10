@@ -1,21 +1,18 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
-import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { isObjectSC } from '@console/shared/src/utils';
 import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
-import {
-  AsyncComponent,
-  ButtonBar,
-  RequestSizeInput,
-  resourceObjPath,
-  PageHeading,
-} from '../utils';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { AsyncComponent, ButtonBar, RequestSizeInput, resourceObjPath } from '../utils';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';
@@ -153,7 +150,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           filter={onlyPvcSCs}
         />
       </div>
-      <label className="control-label co-required" htmlFor="pvc-name">
+      <label className="co-required" htmlFor="pvc-name">
         {t('public~PersistentVolumeClaim name')}
       </label>
       <div className="form-group">
@@ -184,7 +181,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           ignoreReadOnly
         />
       </div>
-      <label className="control-label co-required" htmlFor="request-size-input">
+      <label className="co-required" htmlFor="request-size-input">
         {t('public~Size')}
       </label>
       <RequestSizeInput
@@ -263,39 +260,35 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
   };
 
   return (
-    <div className="co-m-pane__form">
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
+    <>
+      <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
-        link={
-          <Link
-            to={`/k8s/ns/${namespace}/persistentvolumeclaims/~new`}
-            id="yaml-link"
-            data-test="yaml-link"
-            replace
-          >
-            {t('public~Edit YAML')}
-          </Link>
-        }
+        linkProps={{
+          component: LinkTo(`/k8s/ns/${namespace}/persistentvolumeclaims/~new`, { replace: true }),
+          id: 'yaml-link',
+          'data-test': 'yaml-link',
+          label: t('public~Edit YAML'),
+        }}
       />
-      <div className="co-m-pane__body co-m-pane__body--no-top-margin">
-        <form className="co-m-pane__body-group" onSubmit={save}>
-          <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
-          <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v6-c-form">
-              <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
-                {t('public~Create')}
-              </Button>
-              <Button onClick={() => navigate(-1)} type="button" variant="secondary">
-                {t('public~Cancel')}
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
-      </div>
-    </div>
+      <PaneBody>
+        <div className="co-m-pane__form">
+          <form onSubmit={save}>
+            <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
+            <ButtonBar errorMessage={error} inProgress={inProgress}>
+              <ActionGroup className="pf-v6-c-form">
+                <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
+                  {t('public~Create')}
+                </Button>
+                <Button onClick={() => navigate(-1)} type="button" variant="secondary">
+                  {t('public~Cancel')}
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
+      </PaneBody>
+    </>
   );
 };
 

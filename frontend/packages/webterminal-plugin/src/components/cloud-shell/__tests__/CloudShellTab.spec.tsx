@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Navigate } from 'react-router-dom-v5-compat';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';

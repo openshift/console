@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
 
 const DevPerspectiveTourText: React.FC = () => {

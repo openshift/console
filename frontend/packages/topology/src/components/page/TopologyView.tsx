@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import {
   GraphElement,
   isGraph,
@@ -7,7 +8,6 @@ import {
   TopologyQuadrant,
   Visualization,
 } from '@patternfly/react-topology';
-import * as classNames from 'classnames';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -115,7 +115,6 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const [viewContainer, setViewContainer] = React.useState<HTMLElement>(null);
   const { setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
   const [filteredModel, setFilteredModel] = React.useState<Model>();
   const [selectedEntity, setSelectedEntity] = React.useState<GraphElement>(null);
@@ -383,13 +382,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
                 }
               >
                 <DrawerContentBody>
-                  <div
-                    ref={setViewContainer}
-                    className="pf-topology-content ocs-quick-search-modal__no-backdrop"
-                  >
+                  <div className="pf-topology-content ocs-quick-search-modal__no-backdrop">
                     {canDrop && isOver && (
                       <div
-                        className={classNames(
+                        className={css(
                           'co-file-dropzone-container',
                           'co-file-dropzone--drop-over',
                           'odc-topology__dropzone',
@@ -418,7 +414,6 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
         </StackItem>
         <TopologyQuickSearch
           namespace={namespace}
-          viewContainer={viewContainer}
           isOpen={isQuickSearchOpen}
           setIsOpen={setIsQuickSearchOpenAndFireEvent}
         />

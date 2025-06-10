@@ -3,14 +3,16 @@ import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../../../catalog/utils/const';
@@ -37,6 +39,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const location = useLocation();
   const params = useParams();
   const searchParams = new URLSearchParams(location.search);
+  const [activePerspective] = useActivePerspective();
 
   const namespace = params.ns || searchParams.get('preselected-ns');
   const initialChartURL = searchParams.get('chartURL');
@@ -206,6 +209,14 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
       });
   };
 
+  const handleNamespaceChange = (ns: string) => {
+    if (ns === ALL_NAMESPACES_KEY) {
+      history.push(`/helm-releases/all-namespaces`);
+    } else if (ns !== namespace) {
+      history.push(`/helm-releases/ns/${ns}`);
+    }
+  };
+
   if (!chartData && !chartError) {
     return <LoadingBox />;
   }
@@ -215,10 +226,13 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const chartMetaDescription = <HelmChartMetaDescription chart={chartData} />;
 
   return (
-    <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <Helmet>
-        <title>{config.title}</title>
-      </Helmet>
+    <NamespacedPage
+      variant={NamespacedPageVariants.light}
+      disabled={activePerspective === 'dev'}
+      onNamespaceChange={handleNamespaceChange}
+      hideApplications
+    >
+      <DocumentTitle>{config.title}</DocumentTitle>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
