@@ -171,6 +171,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
+	addPluginsOrder(fs, config.PluginsOrder)
 	addI18nNamespaces(fs, config.I18nNamespaces)
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
@@ -460,6 +461,10 @@ func addPlugins(fs *flag.FlagSet, plugins MultiKeyValue) {
 	for pluginName, pluginEndpoint := range plugins {
 		fs.Set("plugins", fmt.Sprintf("%s=%s", pluginName, pluginEndpoint))
 	}
+}
+
+func addPluginsOrder(fs *flag.FlagSet, pluginsOrder []string) {
+	fs.Set("plugins-order", strings.Join(pluginsOrder, ","))
 }
 
 func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {

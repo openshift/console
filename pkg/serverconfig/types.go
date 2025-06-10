@@ -29,6 +29,7 @@ type Config struct {
 	ContentSecurityPolicyEnabled bool                                 `yaml:"contentSecurityPolicyEnabled,omitempty"`
 	ContentSecurityPolicy        map[consolev1.DirectiveType][]string `yaml:"contentSecurityPolicy,omitempty"`
 	Telemetry                    MultiKeyValue                        `yaml:"telemetry,omitempty"`
+	PluginsOrder                 []string                             `yaml:"pluginsOrder,omitempty"`
 }
 
 type Proxy struct {
