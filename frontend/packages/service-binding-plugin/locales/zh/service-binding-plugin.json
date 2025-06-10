@@ -1,0 +1,21 @@
+{
+  "ServiceBinding": "服务绑定",
+  "ServiceBindings": "ServiceBindings",
+  "ServiceBinding details": "服务绑定详情",
+  "Conditions": "条件",
+  "Status": "状态",
+  "Label Selector": "标签选择器",
+  "Application": "应用程序",
+  "Services": "服务",
+  "Connected": "连接的",
+  "Error": "错误",
+  "Name": "名称",
+  "Namespace": "命名空间",
+  "Created": "创建",
+  "Service Bindings is deprecated with OpenShift 4.15 and will be removed from a future release, currently planned as {{productName}} 4.18.": "服务绑定功能在 OpenShift 4.15 中已弃用，并将在以后的版本中（目前计划为 {{productName}} 4.18）删除，。",
+  "Service Bindings are deprecated": "服务绑定已弃用",
+  "Service Bindings is deprecated with {{productName}} 4.15": "服务绑定在 {{productName}} 4.15 中已弃用",
+  "Feature development of Service Binding Operator is deprecated in {{productName}} 4.15.": "对服务绑定 Operator 的功能开发在 {{productName}} 4.15 中已弃用。",
+  "Service Bindings can still be created and shown in the OpenShift web console, but will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "服务绑定仍可在 OpenShift Web 控制台中创建，并显示在 OpenShift Web 控制台中，但将在以后的版本中删除（当前计划为 {{productName}} 4.18）。请在可能的情况下迁移它。",
+  "Web console support will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "Web 控制台支持将在以后的版本中删除，目前计划作为 {{productName}} 4.18。请在可能的情况下迁移它。"
+}

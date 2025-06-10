@@ -1,0 +1,21 @@
+{
+  "ServiceBinding": "Liaison de service",
+  "ServiceBindings": "Liaisons de service",
+  "ServiceBinding details": "Détails de la liaison de service",
+  "Conditions": "Conditions",
+  "Status": "Statut",
+  "Label Selector": "Sélecteur d’étiquette",
+  "Application": "Application",
+  "Services": "Services",
+  "Connected": "Connecté",
+  "Error": "Erreur",
+  "Name": "Nom",
+  "Namespace": "Espace de noms",
+  "Created": "Créé",
+  "Service Bindings is deprecated with OpenShift 4.15 and will be removed from a future release, currently planned as {{productName}} 4.18.": "Les liaisons de service sont obsolètes avec OpenShift 4.15 et seront supprimées d'une future version, actuellement prévue comme{{productName}} 4.18.",
+  "Service Bindings are deprecated": "Les liaisons de service sont obsolètes",
+  "Service Bindings is deprecated with {{productName}} 4.15": "Les liaisons de service sont obsolètes avec{{productName}} 4.15",
+  "Feature development of Service Binding Operator is deprecated in {{productName}} 4.15.": "Le développement des fonctionnalités de Service Binding Operator est obsolète dans{{productName}} 4.15.",
+  "Service Bindings can still be created and shown in the OpenShift web console, but will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "Les liaisons de service peuvent toujours être créées et affichées dans la console Web OpenShift, mais seront supprimées d'une future version, actuellement prévue comme{{productName}} 4.18. Vous devez migrer partout où cela est possible.",
+  "Web console support will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "La prise en charge de la console Web sera supprimée d'une future version, actuellement prévue comme{{productName}} 4.18. Vous devez migrer partout où cela est possible."
+}

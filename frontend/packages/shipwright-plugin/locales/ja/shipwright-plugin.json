@@ -92,7 +92,7 @@
   "{{sec}}s": "{{sec}}s",
   "Started": "開始済み",
   "BuildStrategy": "BuildStrategy",
-  "ClusterBuildStrategy": "ClusterBuildStrategy",
+  "ClusterBuildStrategy": "クラスタービルド戦略",
   "ClusterBuildStrategies": "ClusterBuildStrategies",
   "BuildStrategies": "BuildStrategies",
   "Buildah": "Buildah",

@@ -1,0 +1,21 @@
+{
+  "ServiceBinding": "서비스 바인딩",
+  "ServiceBindings": "서비스 바인딩",
+  "ServiceBinding details": "서비스 바인딩 세부 정보",
+  "Conditions": "상태",
+  "Status": "상태",
+  "Label Selector": "레이블 선택기",
+  "Application": "애플리케이션",
+  "Services": "서비스",
+  "Connected": "연결됨",
+  "Error": "오류",
+  "Name": "이름",
+  "Namespace": "네임 스페이스",
+  "Created": "작성",
+  "Service Bindings is deprecated with OpenShift 4.15 and will be removed from a future release, currently planned as {{productName}} 4.18.": "서비스 바인딩은 OpenShift 4.15에서 더 이상 사용되지 않으며 현재 {{productName}} 4.18로 예정된 향후 릴리스에서 제거될 예정입니다.",
+  "Service Bindings are deprecated": "서비스 바인딩이 더 이상 사용되지 않음",
+  "Service Bindings is deprecated with {{productName}} 4.15": "{{productName}} 4.15에서 서비스 바인딩이 더 이상 사용되지 않음",
+  "Feature development of Service Binding Operator is deprecated in {{productName}} 4.15.": "Service Binding Operator의 기능 개발은 {{productName}} 4.15에서 더 이상 사용되지 않습니다.",
+  "Service Bindings can still be created and shown in the OpenShift web console, but will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "서비스 바인딩은 OpenShift 웹 콘솔에 계속 생성되고 표시할 수 있지만 현재 {{productName}} 4.18로 계획되어 있는 향후 릴리스에서는 제거될 예정입니다. 가능한 모든 위치로 마이그레이션해야 합니다.",
+  "Web console support will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "웹 콘솔 지원은 현재 {{productName}} 4.18로 계획되어 향후 릴리스에서 제거될 예정입니다. 가능한 모든 위치로 마이그레이션해야 합니다."
+}

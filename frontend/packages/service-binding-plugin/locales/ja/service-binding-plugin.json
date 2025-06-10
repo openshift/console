@@ -1,0 +1,21 @@
+{
+  "ServiceBinding": "ServiceBinding",
+  "ServiceBindings": "ServiceBinding",
+  "ServiceBinding details": "ServiceBinding の詳細",
+  "Conditions": "条件",
+  "Status": "ステータス",
+  "Label Selector": "ラベルセレクター",
+  "Application": "アプリケーション",
+  "Services": "Services",
+  "Connected": "接続済み",
+  "Error": "エラー",
+  "Name": "名前",
+  "Namespace": "Namespace",
+  "Created": "作成済み",
+  "Service Bindings is deprecated with OpenShift 4.15 and will be removed from a future release, currently planned as {{productName}} 4.18.": "サービスバインディングは、OpenShift 4.15 で非推奨になり、今後のリリース (現時点では {{productName}} 4.18) で削除される予定です。",
+  "Service Bindings are deprecated": "サービスバインディングは非推奨です",
+  "Service Bindings is deprecated with {{productName}} 4.15": "サービスバインディングは {{productName}} 4.15 で非推奨になりました",
+  "Feature development of Service Binding Operator is deprecated in {{productName}} 4.15.": "Service Binding Operator の機能開発は、{{productName}} 4.15 で非推奨になりました。",
+  "Service Bindings can still be created and shown in the OpenShift web console, but will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "サービスバインディングは、現在も OpenShift Web コンソールで作成および表示できますが、今後のリリース (現時点では {{productName}} 4.18) で削除される予定です。可能な限り移行してください。",
+  "Web console support will be removed from a future release, currently planned as {{productName}} 4.18. You should migrate wherever it is possible.": "Web コンソールのサポートは、今後のリリース (現時点では {{productName}} 4.18) で削除される予定です。可能な限り移行してください。"
+}
