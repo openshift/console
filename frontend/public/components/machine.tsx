@@ -299,7 +299,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
           createAccessReview={createAccessReview}
           groupVersionKind={referenceForModel(MachineModel)}
         >
-          {t('public~Create machine')}
+          {t('public~Create Machine')}
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
