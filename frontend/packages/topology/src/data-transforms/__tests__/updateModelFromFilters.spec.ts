@@ -12,15 +12,13 @@ import { baseDataModelGetter } from '../data-transformer';
 import { getWorkloadResources } from '../transform-utils';
 import { updateModelFromFilters } from '../updateModelFromFilters';
 
-const namespace = 'test-project';
-
 const filterers = [];
 
 function getTransformedTopologyData() {
   const model = { nodes: [], edges: [] };
   const workloadResources = getWorkloadResources(MockResources, TEST_KINDS_MAP, WORKLOAD_TYPES);
 
-  return baseDataModelGetter(model, namespace, MockResources, workloadResources, []);
+  return baseDataModelGetter(model, MockResources, workloadResources, []);
 }
 
 describe('topology model ', () => {

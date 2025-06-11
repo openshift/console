@@ -39,7 +39,7 @@ const filterers = [applyOperatorDisplayOptions];
 const getTransformedTopologyData = (mockData: TopologyDataResources) => {
   const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, WORKLOAD_TYPES);
   return getOperatorTopologyDataModel('test-project', mockData, workloadResources).then((model) => {
-    const fullModel = baseDataModelGetter(model, 'test-project', mockData, workloadResources, []);
+    const fullModel = baseDataModelGetter(model, mockData, workloadResources, []);
     operatorsDataModelReconciler(fullModel, mockData);
     return fullModel;
   });

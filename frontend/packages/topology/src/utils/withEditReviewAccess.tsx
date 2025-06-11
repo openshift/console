@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { Node } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
+import {
+  WithEditReviewAccess,
+  WithEditReviewAccessComponentProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
-import { modelFor, referenceFor, K8sVerb } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResource } from './topology-utils';
 
-type ComponentProps = {
-  element: Node;
-};
-
-export const withEditReviewAccess = (verb: K8sVerb) => (WrappedComponent: React.ComponentType) => {
-  const Component: React.FC<ComponentProps> = (props) => {
+export const withEditReviewAccess: WithEditReviewAccess = (verb) => (WrappedComponent) => {
+  const Component: React.FC<WithEditReviewAccessComponentProps> = (props) => {
     const resourceObj = getResource(props.element);
     const resourceModel = modelFor(referenceFor(resourceObj));
     const editAccess = useAccessReview({
