@@ -82,6 +82,7 @@ export enum OLMAnnotation {
   HealthIndex = 'healthIndex',
   InfrastructureFeatures = 'operators.openshift.io/infrastructure-features',
   InitializationResource = 'operatorframework.io/initialization-resource',
+  InitializationLink = 'operatorframework.io/initialization-link',
   InternalObjects = 'operators.operatorframework.io/internal-objects',
   OperatorPlugins = 'console.openshift.io/plugins',
   OperatorType = 'operators.operatorframework.io/operator-type',
