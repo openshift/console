@@ -744,7 +744,7 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
   const { t } = useTranslation();
 
   const data = React.useMemo(() => {
-    const csrBundle = getNodeClientCSRs(csrs)?.filter(
+    const csrBundle = getNodeClientCSRs(csrs).filter(
       (csr) => !nodes.some((n) => n.metadata.name === csr.metadata.name),
     );
     return [...csrBundle, ...nodes];
