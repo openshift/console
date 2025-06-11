@@ -125,7 +125,7 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
 // to hook this into redux.
 export const getAlertActions = (
   actionsExtensions: ResolvedExtension<AlertAction>[],
-  navigate?: NavigateFunction,
+  navigate: NavigateFunction,
 ) => {
   const alertActions = new Map<
     string,
