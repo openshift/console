@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
@@ -74,6 +73,7 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   text,
   additionalClassName,
   dataTestID,
+  isInline = true,
 }) => {
   const [copied, setCopied] = React.useState(false);
   const { t } = useTranslation();
@@ -97,22 +97,10 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   const displayText = text || link;
 
   return (
-    <div className={css(additionalClassName)}>
-      <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
-        id={textId}
-        data-test-id={dataTestID}
-      >
+    <div className={additionalClassName}>
+      <ExternalLink href={link} dataTestID={dataTestID} isInline={isInline}>
         {displayText}
-        <span className="co-icon-nowrap">
-          &nbsp;
-          <span className="co-external-link-with-copy__icon co-external-link-with-copy__externallinkicon">
-            <ExternalLinkAltIcon />
-          </span>
-        </span>
-      </a>
+      </ExternalLink>
       <span className="co-icon-nowrap">
         <ClipboardCopyButton
           id={_.uniqueId('clipboard-copy-button-')}
@@ -123,7 +111,7 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
           variant="plain"
           maxWidth="120px"
           onTooltipHidden={() => setCopied(false)}
-          className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
+          className="co-external-link-with-copy__icon"
         >
           {tooltipContent}
         </ClipboardCopyButton>
@@ -141,6 +129,7 @@ LinkifyExternal.displayName = 'LinkifyExternal';
 type ExternalLinkWithCopyProps = {
   link: string;
   text?: string;
-  dataTestID?: string;
+  dataTestID?: React.ComponentProps<typeof ExternalLink>['dataTestID'];
   additionalClassName?: string;
+  isInline?: React.ComponentProps<typeof ExternalLink>['isInline'];
 };

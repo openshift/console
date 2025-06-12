@@ -8,7 +8,6 @@ import {
   Skeleton,
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { WrenchIcon } from '@patternfly/react-icons/dist/esm/icons/wrench-icon';
 import { useTranslation } from 'react-i18next';
 import { QuickStartModel } from '@console/app/src/models';
@@ -18,6 +17,7 @@ import {
   documentationURLs,
   getDocumentationURL,
 } from '@console/internal/components/utils/documentation';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 
 export const QuickStartEmptyState = () => {
@@ -60,17 +60,12 @@ export const QuickStartEmptyState = () => {
                 >
                   {t('Create {{kind}}', { kind: QuickStartModel.kind })}
                 </Button>
-                <Button
+                <ExternalLinkButton
                   variant="link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  component="a"
                   href={getDocumentationURL(documentationURLs.creatingQuickStartsTutorial)}
-                  iconPosition="right"
-                  icon={<ExternalLinkAltIcon />}
                 >
                   {t('Learn more about quick starts')}
-                </Button>
+                </ExternalLinkButton>
               </EmptyStateActions>
             </EmptyStateFooter>
           )}

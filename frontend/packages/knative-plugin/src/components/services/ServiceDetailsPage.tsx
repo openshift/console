@@ -23,7 +23,7 @@ import {
   useTabbedTableBreadcrumbsFor,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { RevisionModel, RouteModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { RevisionKind, ServiceKind, ServiceTypeValue } from '../../types';
@@ -67,11 +67,9 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
               )}
               {obj?.status?.url && (
                 <DetailsItem label={t('knative-plugin~URL')} obj={obj} path="status.url">
-                  <ExternalLink
-                    href={obj.status.url}
-                    additionalClassName="co-external-link--block"
-                    text={obj.status.url}
-                  />
+                  <ExternalLinkButton variant="link" href={obj.status.url}>
+                    {obj.status.url}
+                  </ExternalLinkButton>
                 </DetailsItem>
               )}
               {revisions && revisionLoaded && !revisionErrorLoad && (

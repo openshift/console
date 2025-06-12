@@ -1,7 +1,17 @@
 import * as React from 'react';
+import type { ButtonProps } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
-export const ExternalLink: React.FC<ExternalLinkProps> = ({
+type ExternalLinkProps = ButtonProps & {
+  href: string;
+  text?: React.ReactNode;
+  additionalClassName?: string;
+  dataTestID?: string;
+  stopPropagation?: boolean;
+};
+
+export const ExternalLink = ({
   children,
   href,
   text,
@@ -9,24 +19,16 @@ export const ExternalLink: React.FC<ExternalLinkProps> = ({
   dataTestID,
   stopPropagation,
   ...props
-}) => (
-  <a
-    {...props}
-    className={css('co-external-link', additionalClassName, props?.className)}
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
+}: ExternalLinkProps) => (
+  <ExternalLinkButton
+    className={css(additionalClassName, props?.className)}
     data-test-id={dataTestID}
+    href={href}
+    isInline
+    variant="link"
+    {...props}
     {...(stopPropagation ? { onClick: (e) => e.stopPropagation() } : {})}
   >
     {children || text}
-  </a>
+  </ExternalLinkButton>
 );
-
-type ExternalLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  href: string;
-  text?: React.ReactNode;
-  additionalClassName?: string;
-  dataTestID?: string;
-  stopPropagation?: boolean;
-};

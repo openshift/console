@@ -7,7 +7,7 @@ import {
   referenceForGroupVersionKind,
   groupVersionFor,
 } from '@console/internal/module/k8s';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import EventSourceOwnedList from './EventSourceOwnedList';
 
 type EventSourceTargetProps = {
@@ -53,11 +53,9 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
                 <span className="pf-v6-u-text-color-subtle">
                   {t('knative-plugin~Target URI:')}{' '}
                 </span>
-                <ExternalLink
-                  href={sinkUri}
-                  additionalClassName="co-external-link--block"
-                  text={sinkUri}
-                />
+                <ExternalLinkButton href={sinkUri} variant="link">
+                  {sinkUri}
+                </ExternalLinkButton>
               </>
             )}
           </li>

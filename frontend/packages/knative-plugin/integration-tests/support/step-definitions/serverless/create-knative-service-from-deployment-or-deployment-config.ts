@@ -107,7 +107,7 @@ Then(
   (nodeName: string) => {
     topologyPage.knativeNode(nodeName).click({ force: true });
     cy.get('.sidebar__section-heading').contains('Routes');
-    cy.get('[class="co-external-link co-external-link--block"]').should('be.visible');
+    cy.get('[data-test-id="knative-plugin-route-url"]').should('be.visible');
   },
 );
 

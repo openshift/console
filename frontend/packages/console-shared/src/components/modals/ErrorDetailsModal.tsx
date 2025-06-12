@@ -7,12 +7,12 @@ import {
   ModalFooter,
   ModalVariant,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
 import { getReportBugLink } from '@console/internal/module/k8s/cluster-settings';
 import { ClusterVersionKind } from '@console/internal/module/k8s/types';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
 
 export const ErrorDetailsBlock: React.FC<ErrorBoundaryFallbackProps> = (props) => {
@@ -66,17 +66,9 @@ export const ErrorDetailsModal: React.FC<ErrorDetailsModalProps> = ({ buttonProp
             {t('Close')}
           </Button>
           {label && href && (
-            <Button
-              variant="link"
-              component="a"
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              icon={<ExternalLinkAltIcon />}
-              iconPosition="end"
-            >
+            <ExternalLinkButton variant="link" href={href}>
               {label}
-            </Button>
+            </ExternalLinkButton>
           )}
         </ModalFooter>
       </Modal>
