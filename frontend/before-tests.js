@@ -22,6 +22,7 @@ if (!Element.prototype.closest) {
 if (!Element.prototype.getRootNode) {
   Object.defineProperty(Element.prototype, 'getRootNode', {
     value: function () {
+      // eslint-disable-next-line consistent-this
       let rootNode = this;
       while (rootNode.parentNode) {
         rootNode = rootNode.parentNode;
