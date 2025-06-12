@@ -46,24 +46,6 @@ export const hpaValidationSchema = (t: TFunction) =>
               },
             )
             .required(t('devconsole~Max Pods must be defined.')),
-          metrics: yup.array(
-            yup.object({
-              resource: yup.object({
-                target: yup.object({
-                  averageUtilization: yup
-                    .mixed()
-                    .test(
-                      'test-for-valid-utilization',
-                      t('devconsole~Average utilization must be a positive number.'),
-                      function (avgUtilization) {
-                        if (!avgUtilization) return true;
-                        return /^\d+$/.test(String(avgUtilization));
-                      },
-                    ),
-                }),
-              }),
-            }),
-          ),
         }),
       }),
     }),
