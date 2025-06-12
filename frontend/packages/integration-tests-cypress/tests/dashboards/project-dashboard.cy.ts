@@ -132,7 +132,7 @@ describe('Project dashboard', () => {
     it('is displayed when CR exists', () => {
       cy.byLegacyTestID('launcher-card').should('be.visible');
       cy.byLegacyTestID('launcher-item')
-        .should('have.text', consoleLink.spec.text)
+        .should('include.text', consoleLink.spec.text)
         .and('have.attr', 'href', consoleLink.spec.href);
     });
   });

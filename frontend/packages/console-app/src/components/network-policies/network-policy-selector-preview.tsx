@@ -267,7 +267,6 @@ export const PodsPreview: React.FunctionComponent<PodsPreviewProps> = (props) =>
                   target="_blank"
                   rel="noopener noreferrer"
                   href={`${resourceListPathFromModel(PodModel, namespace)}${podsFilterQuery}`}
-                  data-test="pods-preview-footer-link"
                 >
                   {t('public~View all {{total}} results', {
                     total: preview.total,

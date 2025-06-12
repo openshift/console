@@ -41,7 +41,7 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
                 </span>
                 <ExternalLink
                   href={sinkUri}
-                  additionalClassName="co-external-link--block"
+                  additionalClassName="pf-v6-u-display-block"
                   text={sinkUri}
                 />
               </>

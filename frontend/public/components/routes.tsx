@@ -122,6 +122,7 @@ export const getRouteLabel = (route: RouteKind): string => {
 export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({
   route,
   additionalClassName,
+  isInline,
 }) => {
   const link = getRouteWebURL(route);
   return (
@@ -130,6 +131,7 @@ export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({
       link={link}
       text={link}
       dataTestID="route-link"
+      isInline={isInline}
     />
   );
 };
@@ -137,11 +139,7 @@ export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({
 // Renders LinkAndCopy for non subdomains
 export const RouteLocation: React.FC<RouteHostnameProps> = ({ obj }) => (
   <div className="co-break-word">
-    {isWebRoute(obj) ? (
-      <RouteLinkAndCopy route={obj} additionalClassName="co-external-link--block" />
-    ) : (
-      getRouteLabel(obj)
-    )}
+    {isWebRoute(obj) ? <RouteLinkAndCopy route={obj} isInline={false} /> : getRouteLabel(obj)}
   </div>
 );
 RouteLocation.displayName = 'RouteLocation';
@@ -652,7 +650,8 @@ export type RouteIngressStatusProps = {
 
 export type RouteLinkAndCopyProps = {
   route: RouteKind;
-  additionalClassName?: string;
+  additionalClassName?: React.ComponentProps<typeof ExternalLinkWithCopy>['additionalClassName'];
+  isInline?: React.ComponentProps<typeof ExternalLinkWithCopy>['isInline'];
 };
 
 export type CustomRouteHelpProps = {

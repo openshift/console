@@ -33,7 +33,8 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
           <ExternalLinkWithCopy
             link={obj.status.url}
             text={obj.status.url}
-            additionalClassName="co-external-link--block"
+            isInline={false}
+            dataTestID="knative-plugin-route-url"
           />
         )) ||
           '-'}

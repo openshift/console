@@ -35,11 +35,9 @@ const ServiceRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
       </TableData>
       <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {(obj.status && obj.status.url && (
-          <ExternalLink
-            href={obj.status.url}
-            additionalClassName="co-external-link--block"
-            text={obj.status.url}
-          />
+          <ExternalLink href={obj.status.url} variant="link">
+            {obj.status.url}
+          </ExternalLink>
         )) ||
           '-'}
       </TableData>
