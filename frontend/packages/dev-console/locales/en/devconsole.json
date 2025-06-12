@@ -496,6 +496,7 @@
   "JAR file uploading": "JAR file uploading",
   "JAR file is uploading to {{namespace}}. You can view the upload progress in the build logs. This may take a few minutes. If you exit the browser while upload is in progress it may fail.": "JAR file is uploading to {{namespace}}. You can view the upload progress in the build logs. This may take a few minutes. If you exit the browser while upload is in progress it may fail.",
   "View build logs": "View build logs",
+  "Select project": "Select project",
   "Edit source code": "Edit source code",
   "Hide advanced Routing options": "Hide advanced Routing options",
   "Show advanced Routing options": "Show advanced Routing options",
