@@ -53,7 +53,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   <ExternalLinkWithCopy
                     link={route?.status?.url}
                     text={route?.status?.url}
-                    additionalClassName="co-external-link--block"
+                    isInline={false}
                   />
                 )}
               </DetailsItem>

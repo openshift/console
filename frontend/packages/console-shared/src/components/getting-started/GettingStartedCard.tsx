@@ -16,7 +16,7 @@ import { ArrowRightIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-
+import { ExternalLink } from '../links/ExternalLink';
 import './GettingStartedCard.scss';
 
 export interface GettingStartedLink {
@@ -143,16 +143,13 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
               {moreLink.title}
             </Button>
           ) : moreLink.external ? (
-            <a
+            <ExternalLink
               onClick={telemetryCallback}
               href={moreLink.href}
-              target="_blank"
-              className="co-external-link"
-              rel="noopener noreferrer"
               data-test={`item ${moreLink.id}`}
             >
               {moreLink.title}
-            </a>
+            </ExternalLink>
           ) : (
             <Link to={moreLink.href} data-test={`item ${moreLink.id}`} onClick={telemetryCallback}>
               {moreLink.title}

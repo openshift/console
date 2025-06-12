@@ -36,7 +36,7 @@ const TriggerResourceLinks: React.FC<TriggerResourceLinksProps> = ({
                   key={routeURL}
                   link={routeURL}
                   text={routeURL}
-                  additionalClassName="co-external-link--block"
+                  additionalClassName="pf-v6-u-display-block"
                 />
               </div>
             )}

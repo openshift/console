@@ -6,7 +6,7 @@ import { RowFunctionArgs, TableData } from '@console/internal/components/factory
 import { ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { ProjectHelmChartRepositoryModel } from '../../models';
 
 const tableColumnClasses = [
@@ -48,11 +48,9 @@ const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         {obj.spec?.connectionConfig?.url ? (
-          <ExternalLink
-            href={obj.spec.connectionConfig.url}
-            text={obj.spec.connectionConfig.url}
-            additionalClassName="co-external-link--block"
-          />
+          <ExternalLinkButton variant="link" href={obj.spec.connectionConfig.url}>
+            {obj.spec.connectionConfig.url}
+          </ExternalLinkButton>
         ) : (
           '-'
         )}

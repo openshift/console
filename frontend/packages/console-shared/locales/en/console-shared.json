@@ -178,6 +178,7 @@
   "Are you sure you want to remove the {{hpaLabel}}": "Are you sure you want to remove the {{hpaLabel}}",
   "from": "from",
   "The resources that are attached to the {{hpaLabel}} will be deleted.": "The resources that are attached to the {{hpaLabel}} will be deleted.",
+  "(Opens in new tab)": "(Opens in new tab)",
   "Try again": "Try again",
   "Error loading {{label}}": "Error loading {{label}}",
   "Copy to clipboard": "Copy to clipboard",
