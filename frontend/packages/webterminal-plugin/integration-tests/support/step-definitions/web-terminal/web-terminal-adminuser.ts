@@ -128,3 +128,9 @@ Then('user will see the terminal instance for namespace {string}', (nameSpace: s
   // Disabling following line due to terminal loading issue from backend at the first load
   // devWorkspacePage.verifyDevWsResourceStatus(devWorkspaceStatuses.running);
 });
+
+Given('user has created or selected namespace {string}', (projectName: string) => {
+  Cypress.env('NAMESPACE', projectName);
+  projectNameSpace.selectOrCreateProject(`${projectName}`);
+  // cy.get(devNavigationMenuPO.project).click();
+});
