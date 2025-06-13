@@ -28,9 +28,6 @@ import {
   labelsModalLauncher,
   podSelectorModal,
   deleteModal,
-  expandPVCModal,
-  clonePVCModal,
-  restorePVCModal,
 } from '../modals';
 import { asAccessReview, checkAccess, useAccessReview } from './rbac';
 import { resourceObjPath } from './resource-link';
@@ -41,7 +38,6 @@ import {
   K8sResourceKindReference,
   referenceFor,
   referenceForModel,
-  VolumeSnapshotKind,
 } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 import {
@@ -50,7 +46,6 @@ import {
   DeploymentConfigModel,
   DeploymentModel,
   RouteModel,
-  VolumeSnapshotModel,
 } from '../../models';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
 
@@ -300,48 +295,6 @@ const kebabFactory: KebabFactory = {
     labelKey: 'public~Add storage',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
     accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ExpandPVC: (kind, obj) => ({
-    // t('public~Expand PVC')
-    labelKey: 'public~Expand PVC',
-    callback: () =>
-      expandPVCModal({
-        kind,
-        resource: obj,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  PVCSnapshot: (kind, obj) => ({
-    // t('public~Create snapshot')
-    labelKey: 'public~Create snapshot',
-    isDisabled: obj?.status?.phase !== 'Bound',
-    tooltip: obj?.status?.phase !== 'Bound' ? i18next.t('public~PVC is not Bound') : '',
-    href: `/k8s/ns/${obj.metadata.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata.name}`,
-    accessReview: asAccessReview(kind, obj, 'create'),
-  }),
-  ClonePVC: (kind, obj) => ({
-    // t('public~Clone PVC')
-    labelKey: 'public~Clone PVC',
-    isDisabled: obj?.status?.phase !== 'Bound',
-    tooltip: obj?.status?.phase !== 'Bound' ? i18next.t('public~PVC is not Bound') : '',
-    callback: () =>
-      clonePVCModal({
-        kind,
-        resource: obj,
-      }),
-    accessReview: asAccessReview(kind, obj, 'create'),
-  }),
-  RestorePVC: (kind, obj: VolumeSnapshotKind) => ({
-    // t('public~Restore as new PVC')
-    labelKey: 'public~Restore as new PVC',
-    isDisabled: !obj?.status?.readyToUse,
-    tooltip: !obj?.status?.readyToUse ? i18next.t('public~Volume Snapshot is not Ready') : '',
-    callback: () =>
-      restorePVCModal({
-        kind,
-        resource: obj,
-      }),
-    accessReview: asAccessReview(kind, obj, 'create'),
   }),
 };
 
