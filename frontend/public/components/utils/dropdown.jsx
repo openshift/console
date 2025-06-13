@@ -527,7 +527,7 @@ class Dropdown_ extends DropdownMixin {
               popperRef={this.dropdownMenuRef}
               isVisible={active}
               zIndex={9999}
-              appendTo="inline"
+              appendTo={() => document.body}
             />
           </div>
         </div>
@@ -585,7 +585,7 @@ class Dropdown_ extends DropdownMixin {
             preventOverflow={menuClassName === 'prevent-overflow' ? true : false}
             isVisible={active}
             zIndex={9999}
-            appendTo="inline"
+            appendTo={() => document.body}
           />
         </div>
       </div>
