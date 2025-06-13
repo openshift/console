@@ -1,7 +1,7 @@
 .co-suggestion-box {
-  background-color: var(--pf-t--global--background--color--primary--default);
-  z-index: var(--pf-t--global--z-index--sm);
+  position: relative;
   width: 100%;
+  z-index: var(--pf-t--global--z-index--sm);
   @media (max-width: $screen-xs-min) {
     max-width: calc(100% - 95px);
   }
@@ -11,12 +11,12 @@
 }
 
 .co-suggestion-box__suggestions {
-  background-color: var(--pf-t--global--background--color--primary--default);
-  /* To make the suggestion box hover on top of the table */
-  margin-bottom: -19em;
+  background-color: var(--pf-t--global--background--color--floating--default);
   display: flex;
   flex-direction: column;
   gap: var(--pf-t--global--spacer--gap--group--vertical);
+  position: absolute;
+  width: 100%;
   @media (min-width: $screen-xs-min) and (max-width: $screen-sm-min) {
     max-width: 200px;
   }
