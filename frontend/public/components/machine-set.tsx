@@ -438,6 +438,10 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
     selector,
     namespace,
   });
+  const createAccessReview = {
+    groupVersionKind: referenceForModel(MachineSetModel),
+    namespace: namespace || 'default',
+  };
 
   const [data, filteredData, onFilterChange] = useListPageFilter(machineSets);
 
@@ -445,7 +449,10 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
   return (
     <>
       <ListPageHeader title={showTitle ? t('public~MachineSets') : undefined}>
-        <ListPageCreate groupVersionKind={referenceForModel(MachineSetModel)}>
+        <ListPageCreate
+          createAccessReview={createAccessReview}
+          groupVersionKind={referenceForModel(MachineSetModel)}
+        >
           {t('public~Create MachineSet')}
         </ListPageCreate>
       </ListPageHeader>
