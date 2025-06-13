@@ -152,7 +152,11 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
   };
 
   return (
-    <FormSection title={t('console-app~Quick starts')} data-test="quickstarts form-section">
+    <FormSection
+      title={t('console-app~Quick starts')}
+      data-test="quickstarts form-section"
+      id="quick-starts-configuration"
+    >
       <DualListSelector
         availableOptionsTitle={t('console-app~Enabled')}
         chosenOptionsTitle={t('console-app~Disabled')}
