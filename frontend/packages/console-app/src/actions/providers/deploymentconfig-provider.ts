@@ -6,7 +6,7 @@ import { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { errorModal } from '@console/internal/components/modals';
 import { DeploymentConfigKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { CommonActionFactory } from '../creators/common-factory';
+import { useCommonActionFactory } from '../creators/common-factory';
 import { DeploymentActionFactory, retryRollout } from '../creators/deployment-factory';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
 import { useHPAActions } from '../creators/hpa-factory';
@@ -73,27 +73,28 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
   const [hpaActions, relatedHPAs] = useHPAActions(kindObj, resource);
   const [pdbActions] = usePDBActions(kindObj, resource);
   const retryRolloutAction = useRetryRolloutAction(resource);
+  const actionFactory = useCommonActionFactory();
 
   const deploymentConfigActions = React.useMemo(() => {
     const actions = [
-      ...(relatedHPAs?.length === 0 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
+      ...(relatedHPAs?.length === 0 ? [actionFactory.ModifyCount(kindObj, resource)] : []),
       ...hpaActions,
       ...pdbActions,
       getHealthChecksAction(kindObj, resource),
       DeploymentActionFactory.StartDCRollout(kindObj, resource),
       retryRolloutAction,
       DeploymentActionFactory.PauseRollout(kindObj, resource),
-      CommonActionFactory.AddStorage(kindObj, resource),
+      actionFactory.AddStorage(kindObj, resource),
       DeploymentActionFactory.EditResourceLimits(kindObj, resource),
-      CommonActionFactory.ModifyLabels(kindObj, resource),
-      CommonActionFactory.ModifyAnnotations(kindObj, resource),
+      actionFactory.ModifyLabels(kindObj, resource),
+      actionFactory.ModifyAnnotations(kindObj, resource),
       DeploymentActionFactory.EditDeployment(kindObj, resource),
       ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
         ? [DeleteResourceAction(kindObj, resource)]
-        : [CommonActionFactory.Delete(kindObj, resource)]),
+        : [actionFactory.Delete(kindObj, resource)]),
     ];
     return actions;
-  }, [resource, kindObj, hpaActions, pdbActions, relatedHPAs, retryRolloutAction]);
+  }, [resource, kindObj, hpaActions, pdbActions, relatedHPAs, retryRolloutAction, actionFactory]);
 
   return [deploymentConfigActions, !inFlight, undefined];
 };
