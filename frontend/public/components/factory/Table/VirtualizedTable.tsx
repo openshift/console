@@ -119,14 +119,14 @@ const VirtualizedTable: VirtualizedTableFC = ({
 
   data = React.useMemo(() => {
     const sortColumn = columns[sortBy.index - columnShift];
-    if (!sortColumn.sort) {
+    if (!sortColumn?.sort) {
       return data;
     } else if (typeof sortColumn.sort === 'string') {
       return data.sort(
-        sortResourceByValue(sortBy.direction, (obj) => _.get(obj, sortColumn.sort as string, '')),
+        sortResourceByValue(sortBy.direction, (obj) => _.get(obj, sortColumn?.sort as string, '')),
       );
     }
-    return sortColumn.sort(data, sortBy.direction);
+    return sortColumn?.sort(data, sortBy.direction);
   }, [columnShift, columns, data, sortBy.direction, sortBy.index]);
 
   React.useEffect(() => {
