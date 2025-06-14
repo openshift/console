@@ -3,6 +3,8 @@ package utils
 import (
 	"reflect"
 	"testing"
+
+	"github.com/openshift/console/pkg/serverconfig"
 )
 
 const (
@@ -12,54 +14,25 @@ const (
 	onClusterFontSrc        = "font-src 'self'"
 	onClusterScriptSrc      = "script-src 'self' console.redhat.com"
 	onClusterStyleSrc       = "style-src 'self'"
+	onClusterObjectSrc      = "object-src 'self'"
+	onClusterConnectSrc     = "connect-src 'self' console.redhat.com"
 	offClusterBaseUri       = "base-uri 'self' http://localhost:8080 ws://localhost:8080"
 	offClusterDefaultSrc    = "default-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
 	offClusterImgSrc        = "img-src 'self' http://localhost:8080"
 	offClusterFontSrc       = "font-src 'self' http://localhost:8080"
 	offClusterScriptSrc     = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
 	offClusterStyleSrc      = "style-src 'self' http://localhost:8080"
+	offClusterObjectSrc     = "object-src 'self' http://localhost:8080"
+	offClusterConnectSrc    = "connect-src 'self' console.redhat.com http://localhost:8080"
 	frameSrcDirective       = "frame-src 'none'"
 	frameAncestorsDirective = "frame-ancestors 'none'"
-	objectSrcDirective      = "object-src 'none'"
 )
-
-func TestParseContentSecurityPolicyConfig(t *testing.T) {
-	tests := []struct {
-		name    string
-		csp     string
-		wantErr bool
-	}{
-		{
-			name:    "empty string",
-			csp:     `{}`,
-			wantErr: false,
-		},
-		{
-			name:    "valid CSP",
-			csp:     `{"DefaultSrc": ["foo.bar.default"], "ScriptSrc": ["foo.bar.script"]}`,
-			wantErr: false,
-		},
-		{
-			name:    "invalid CSP",
-			csp:     `{"InvalidSrc": ["foo.bar"]}`,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := ParseContentSecurityPolicyConfig(tt.csp)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParseContentSecurityPolicyConfig() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
 
 func TestBuildCSPDirectives(t *testing.T) {
 	tests := []struct {
 		name                  string
 		k8sMode               string
-		contentSecurityPolicy string
+		contentSecurityPolicy serverconfig.MultiKeyValue
 		indexPageScriptNonce  string
 		cspReportingEndpoint  string
 		want                  []string
@@ -67,7 +40,7 @@ func TestBuildCSPDirectives(t *testing.T) {
 		{
 			name:                  "on-cluster",
 			k8sMode:               "on-cluster",
-			contentSecurityPolicy: "",
+			contentSecurityPolicy: serverconfig.MultiKeyValue{},
 			indexPageScriptNonce:  "foobar",
 			cspReportingEndpoint:  "",
 			want: []string{
@@ -77,15 +50,16 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterFontSrc + " data:",
 				onClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " 'unsafe-inline'",
+				onClusterConnectSrc,
+				onClusterObjectSrc,
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 		{
 			name:                  "off-cluster",
 			k8sMode:               "off-cluster",
-			contentSecurityPolicy: "",
+			contentSecurityPolicy: serverconfig.MultiKeyValue{},
 			indexPageScriptNonce:  "foobar",
 			cspReportingEndpoint:  "",
 			want: []string{
@@ -95,9 +69,10 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterFontSrc + " data:",
 				offClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " 'unsafe-inline'",
+				offClusterConnectSrc,
+				offClusterObjectSrc,
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 		{
@@ -105,15 +80,14 @@ func TestBuildCSPDirectives(t *testing.T) {
 			k8sMode:              "on-cluster",
 			indexPageScriptNonce: "foobar",
 			cspReportingEndpoint: "",
-			contentSecurityPolicy: `
-				{
-					"DefaultSrc": ["foo.bar"],
-					"ImgSrc": ["foo.bar.baz"],
-					"FontSrc": ["foo.bar.baz"],
-					"ScriptSrc": ["foo.bar", "foo.bar.baz"],
-					"StyleSrc": ["foo.bar", "foo.bar.baz"]
-				}
-			`,
+			contentSecurityPolicy: serverconfig.MultiKeyValue{
+				"default-src": "foo.bar",
+				"img-src":     "foo.bar.baz",
+				"font-src":    "foo.bar.baz",
+				"script-src":  "foo.bar foo.bar.baz",
+				"style-src":   "foo.bar foo.bar.baz",
+				"connect-src": "foo.bar.baz",
+			},
 			want: []string{
 				onClusterBaseUri,
 				onClusterDefaultSrc + " foo.bar",
@@ -121,15 +95,16 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterFontSrc + " foo.bar.baz data:",
 				onClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
+				onClusterConnectSrc + " foo.bar.baz",
+				onClusterObjectSrc,
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 		{
 			name:                  "on-cluster with CSP reporting enabled",
 			k8sMode:               "on-cluster",
-			contentSecurityPolicy: "",
+			contentSecurityPolicy: nil,
 			indexPageScriptNonce:  "foobar",
 			cspReportingEndpoint:  "http://localhost:7777/csp-test-endpoint",
 			want: []string{
@@ -139,9 +114,10 @@ func TestBuildCSPDirectives(t *testing.T) {
 				onClusterFontSrc + " data:",
 				onClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				onClusterStyleSrc + " 'unsafe-inline'",
+				onClusterConnectSrc,
+				onClusterObjectSrc,
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 				"report-uri http://localhost:7777/csp-test-endpoint",
 			},
 		},
@@ -150,15 +126,14 @@ func TestBuildCSPDirectives(t *testing.T) {
 			k8sMode:              "off-cluster",
 			indexPageScriptNonce: "foobar",
 			cspReportingEndpoint: "",
-			contentSecurityPolicy: `
-				{
-					"DefaultSrc": ["foo.bar"],
-					"ImgSrc": ["foo.bar.baz"],
-					"FontSrc": ["foo.bar.baz"],
-					"ScriptSrc": ["foo.bar", "foo.bar.baz"],
-					"StyleSrc": ["foo.bar", "foo.bar.baz"]
-				}
-			`,
+			contentSecurityPolicy: serverconfig.MultiKeyValue{
+				"default-src": "foo.bar",
+				"img-src":     "foo.bar.baz",
+				"font-src":    "foo.bar.baz",
+				"script-src":  "foo.bar foo.bar.baz",
+				"style-src":   "foo.bar foo.bar.baz",
+				"connect-src": "foo.bar.baz",
+			},
 			want: []string{
 				offClusterBaseUri,
 				offClusterDefaultSrc + " foo.bar",
@@ -166,15 +141,16 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterFontSrc + " foo.bar.baz data:",
 				offClusterScriptSrc + " foo.bar foo.bar.baz 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " foo.bar foo.bar.baz 'unsafe-inline'",
+				offClusterConnectSrc + " foo.bar.baz",
+				offClusterObjectSrc,
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 			},
 		},
 		{
 			name:                  "off-cluster with CSP reporting enabled",
 			k8sMode:               "off-cluster",
-			contentSecurityPolicy: "",
+			contentSecurityPolicy: nil,
 			indexPageScriptNonce:  "foobar",
 			cspReportingEndpoint:  "http://localhost:7777/csp-test-endpoint",
 			want: []string{
@@ -184,9 +160,10 @@ func TestBuildCSPDirectives(t *testing.T) {
 				offClusterFontSrc + " data:",
 				offClusterScriptSrc + " 'unsafe-eval' 'nonce-foobar'",
 				offClusterStyleSrc + " 'unsafe-inline'",
+				offClusterConnectSrc,
+				offClusterObjectSrc,
 				frameSrcDirective,
 				frameAncestorsDirective,
-				objectSrcDirective,
 				"report-uri http://localhost:7777/csp-test-endpoint",
 			},
 		},
