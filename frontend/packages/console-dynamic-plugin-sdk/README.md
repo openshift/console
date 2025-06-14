@@ -211,9 +211,9 @@ This section documents notable changes in Console provided shared modules and ot
 > [!WARNING]
 > Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
 > as a courtesy for plugins which use these unsupported CSS classes.
-
 - Removed support for the Bootstrap Grid system (`.row`, `.col-*`, etc.). Use
   [PatternFly Grid](https://www.patternfly.org/layouts/grid) instead.
+- Removed `co-external-link` styling. Use PatternFly Buttons with `variant="link"` instead.
 
 ### PatternFly 5+ dynamic modules
 

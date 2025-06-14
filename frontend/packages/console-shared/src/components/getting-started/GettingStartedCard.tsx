@@ -84,7 +84,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
           <SimpleList isControlled={false} className="ocs-getting-started-card__list">
             {links.map((link) =>
               link.loading ? (
-                <li key={link.id}>
+                <li key={link.id} data-test="getting-started-skeleton">
                   <Skeleton fontSize="sm" />
                 </li>
               ) : (

@@ -40,11 +40,11 @@ export const FinishTourText: React.FC = () => {
     <Trans t={t} ns="console-app">
       Stay up-to-date with everything OpenShift on our{' '}
       <ExternalLink href={openshiftBlogLink} data-test="openshift-blog-link">
-        {t('console-app~blog')}
+        blog
       </ExternalLink>{' '}
       or continue to learn more in our{' '}
       <ExternalLink href={openshiftHelpBase} data-test="openshift-help-link">
-        {t('console-app~documentation')}
+        documentation
       </ExternalLink>
       .
     </Trans>
