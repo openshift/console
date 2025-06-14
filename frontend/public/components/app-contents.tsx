@@ -381,48 +381,6 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <Route
-        path="/k8s/ns/:ns/networkpolicies/~new/form"
-        element={
-          <AsyncComponent
-            kind="NetworkPolicy"
-            loader={() =>
-              import(
-                '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
-              ).then((m) => m.CreateNetworkPolicy)
-            }
-          />
-        }
-      />
-
-      <Route
-        path="/k8s/ns/:ns/networking.k8s.io~v1~NetworkPolicy/~new/form"
-        element={
-          <AsyncComponent
-            kind="NetworkPolicy"
-            loader={() =>
-              import(
-                '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
-              ).then((m) => m.CreateNetworkPolicy)
-            }
-          />
-        }
-      />
-
-      <Route
-        path="/k8s/ns/:ns/k8s.cni.cncf.io~v1beta1~MultiNetworkPolicy/~new/form"
-        element={
-          <AsyncComponent
-            kind="NetworkPolicy"
-            loader={() =>
-              import(
-                '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
-              ).then((m) => m.CreateNetworkPolicy)
-            }
-          />
-        }
-      />
-
-      <Route
         path="/k8s/ns/:ns/routes/~new/form"
         element={
           <AsyncComponent
