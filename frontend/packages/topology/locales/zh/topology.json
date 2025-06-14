@@ -85,7 +85,7 @@
   "Prerequisites": "先决条件",
   "Quick Starts": "快速开始",
   "Start": "开始",
-  "View all developer catalog items ({{itemCount, number}})": "查看所有开发者目录项（{{itemCount, number}}）",
+  "View all software catalog items ({{itemCount, number}})": "查看所有软件目录项 ({{itemCount, number}})",
   "View all quick starts ({{itemCount, number}})": "查看所有快速开始（{{itemCount, number}}）",
   "View all samples ({{itemCount, number}})": "查看所有示例（{{itemCount, number}}）",
   "Add to Project": "添加至项目",

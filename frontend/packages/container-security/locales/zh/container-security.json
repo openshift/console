@@ -1,7 +1,7 @@
 {
   "Vulnerabilities": "安全漏洞",
   "Image Manifest Vulnerabilities details": "镜像清单安全漏洞",
-  "Registry": "容器镜像仓库（Registry）",
+  "Registry": "Registry",
   "Manifest": "清单",
   "Affected Pods": "受影响的 Pod",
   "Image name": "镜像名称",
