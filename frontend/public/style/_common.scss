@@ -115,21 +115,6 @@
   word-break: break-all;
 }
 
-.co-external-link-with-copy {
-  &__icon {
-    color: var(--pf-t--global--text--color--link--default) !important;
-    margin-left: var(--pf-t--global--spacer--md);
-    padding: 0 !important;
-    cursor: pointer;
-    &:hover {
-      color: var(--pf-t--global--text--color--link--hover);
-    }
-  }
-  &__externallinkicon {
-    padding-left: var(--pf-t--global--spacer--xs);
-  }
-}
-
 // Prevent inline appended icons from wrapping separately without its associated text
 .co-icon-nowrap {
   display: inline;

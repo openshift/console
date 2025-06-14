@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { css } from '@patternfly/react-styles';
 
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
@@ -72,6 +73,7 @@ export const ExternalLinkWithCopy = ({
   href,
   text,
   className,
+  displayBlock,
   ...props
 }: ExternalLinkWithCopyProps) => {
   const [copied, setCopied] = React.useState(false);
@@ -96,24 +98,35 @@ export const ExternalLinkWithCopy = ({
   const displayText = text || href;
 
   return (
-    <div className={className}>
-      <ExternalLink href={href} {...props}>
-        {displayText}
-      </ExternalLink>
-      <span className="co-icon-nowrap">
-        <ClipboardCopyButton
-          id={_.uniqueId('clipboard-copy-button-')}
-          textId={textId}
-          aria-label={copyToClipboardText}
-          onClick={(e) => onClick(e, displayText)}
-          exitDelay={copied ? 1250 : 600}
-          variant="plain"
-          maxWidth="120px"
-          onTooltipHidden={() => setCopied(false)}
-          className="co-external-link-with-copy__icon"
-        >
-          {tooltipContent}
-        </ClipboardCopyButton>
+    <div
+      className={css(
+        'pf-v6-c-clipboard-copy',
+        'pf-m-inline',
+        { 'pf-m-block': displayBlock },
+        className,
+      )}
+    >
+      <span className="pf-v6-c-clipboard-copy__text">
+        <ExternalLink href={href} {...props}>
+          {displayText}
+        </ExternalLink>
+      </span>
+      <span className="pf-v6-c-clipboard-copy__actions">
+        <span className="pf-v6-c-clipboard-copy__actions-item">
+          <ClipboardCopyButton
+            id={_.uniqueId('clipboard-copy-button-')}
+            textId={textId}
+            aria-label={copyToClipboardText}
+            onClick={(e) => onClick(e, displayText)}
+            exitDelay={copied ? 1250 : 600}
+            variant="plain"
+            hasNoPadding
+            maxWidth="120px"
+            onTooltipHidden={() => setCopied(false)}
+          >
+            {tooltipContent}
+          </ClipboardCopyButton>
+        </span>
       </span>
     </div>
   );

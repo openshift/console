@@ -75,7 +75,7 @@ Given('user clicks on {string} to verify that build is completed', (nodeName) =>
   topologyPage.clickOnNode(nodeName);
   topologySidePane.selectTab('Resources');
   checkBuildComplete();
-  cy.byLegacyTestID('sidebar-close-button').click();
+  cy.byTestID('sidebar-close-button').click();
 });
 
 Given('user selects option {string} from context options', (option) => {
@@ -117,7 +117,7 @@ Given(
     topologyPage.clickOnNode(nodeName);
     topologySidePane.selectTab('Resources');
     checkBuildComplete();
-    cy.byLegacyTestID('sidebar-close-button').click();
+    cy.byTestID('sidebar-close-button').click();
     topologyPage.clickOnNode(nodeName);
     cy.byLegacyTestID('actions-menu-button').click();
     topologyActions.selectAction('Make Serverless');
@@ -200,7 +200,7 @@ When('user clicks on {string} to check pod is running', (nodeName: string) => {
   topologyPage.clickOnNode(nodeName);
   topologySidePane.selectTab('Resources');
   checkPodRunning();
-  cy.byLegacyTestID('sidebar-close-button').click();
+  cy.byTestID('sidebar-close-button').click();
   cy.reload();
 });
 
