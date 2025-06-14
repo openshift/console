@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { CloseButton } from '@patternfly/react-component-groups';
 import { Stack, StackItem, Title } from '@patternfly/react-core';
 import { FormikErrors, useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
-import CloseButton from '@console/shared/src/components/close-button';
 import {
   PipelineTask,
   PipelineTaskParam,
@@ -75,7 +75,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
         <CloseButton
           onClick={onClose}
           dataTestID="sidebar-close-button"
-          additionalClassName="co-sidebar-dismiss__close-button"
+          className="co-sidebar-dismiss__close-button"
         />
       </StackItem>
       <StackItem className="opp-task-sidebar__header">

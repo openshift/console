@@ -74,10 +74,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
           )}
           <span className="co-status-card__health-item-text co-break-word">{message}</span>
           {documentationLink && (
-            <ExternalLink
-              additionalClassName="co-status-card__alert-item-doc-link"
-              href={documentationLink}
-            >
+            <ExternalLink className="co-status-card__alert-item-doc-link" href={documentationLink}>
               {t('console-shared~Go to documentation')}
             </ExternalLink>
           )}

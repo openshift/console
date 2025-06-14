@@ -185,7 +185,7 @@ const AddServerlessFunctionForm: React.FC<
                     </Trans>
                   </p>
                   <ExternalLink
-                    additionalClassName="odc-func-form-link"
+                    className="odc-func-form-link"
                     href={DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED}
                     text={t('devconsole~Learn more')}
                   />

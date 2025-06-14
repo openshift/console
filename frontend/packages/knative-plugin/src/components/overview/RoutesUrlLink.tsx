@@ -17,7 +17,7 @@ const RoutesUrlLink: React.FC<RoutesUrlLinkProps> = ({ urls = [], title }) =>
             {url}
           </ClipboardCopy>
         ) : (
-          <ExternalLinkWithCopy key={url} link={url} text={url} isInline={false} />
+          <ExternalLinkWithCopy key={url} href={url} text={url} displayBlock />
         ),
       )}
     </>

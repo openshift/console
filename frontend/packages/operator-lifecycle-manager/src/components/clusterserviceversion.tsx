@@ -1127,7 +1127,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                       <ExternalLink
                         href={link.url}
                         text={link.url || '-'}
-                        additionalClassName="co-break-all"
+                        className="co-break-all"
                       />
                     </DescriptionListDescription>
                   ))

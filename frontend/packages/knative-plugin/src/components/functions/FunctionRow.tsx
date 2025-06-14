@@ -6,7 +6,7 @@ import { ResourceLink, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu, ClampedText } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ServiceModel } from '../../models';
 import { ServiceKind, ConditionTypes } from '../../types';
 import { getCondition } from '../../utils/condition-utils';
@@ -38,9 +38,7 @@ const FunctionRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
       </TableData>
       <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {(obj.status && obj.status.url && (
-          <ExternalLinkButton variant="link" href={obj.status.url}>
-            {obj.status.url}
-          </ExternalLinkButton>
+          <ExternalLink href={obj.status.url} displayBlock text={obj.status.url} />
         )) ||
           '-'}
       </TableData>
