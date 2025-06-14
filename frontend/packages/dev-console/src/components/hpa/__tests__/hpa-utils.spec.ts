@@ -2,96 +2,37 @@ import { cloneDeep } from 'lodash';
 import { DeploymentKind, HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import {
   getFormData,
-  getLimitWarning,
+  getRequestsWarning,
   getMetricByType,
   getYAMLData,
   hasCustomMetrics,
-  isCpuUtilizationPossible,
-  isMemoryUtilizationPossible,
   sanitizeHPAToForm,
   sanityForSubmit,
 } from '../hpa-utils';
 import { deploymentConfigExamples, deploymentExamples, hpaExamples } from './hpa-utils-data';
 
-describe('isCpuUtilizationPossible provides accurate checks', () => {
-  it('expect an invalid resource to return no', () => {
-    expect(isCpuUtilizationPossible(null)).toBe(false);
-    expect(isCpuUtilizationPossible({})).toBe(false);
-  });
-
-  it('expect a resource with no limits to be not possible', () => {
-    expect(isCpuUtilizationPossible(deploymentExamples.hasNoLimits)).toBe(false);
-    expect(isCpuUtilizationPossible(deploymentConfigExamples.hasNoLimits)).toBe(false);
-  });
-
-  it('expect a resource with other limits but not CPU limits to be not possible', () => {
-    expect(isCpuUtilizationPossible(deploymentExamples.hasMemoryOnlyLimits)).toBe(false);
-    expect(isCpuUtilizationPossible(deploymentConfigExamples.hasMemoryOnlyLimits)).toBe(false);
-  });
-
-  it('expect a resource with CPU limits to be possible', () => {
-    expect(isCpuUtilizationPossible(deploymentExamples.hasCpuOnlyLimits)).toBe(true);
-    expect(isCpuUtilizationPossible(deploymentConfigExamples.hasCpuOnlyLimits)).toBe(true);
-  });
-
-  it('expect a resource with both CPU And Memory limits to be possible', () => {
-    expect(isCpuUtilizationPossible(deploymentExamples.hasCpuAndMemoryLimits)).toBe(true);
-    expect(isCpuUtilizationPossible(deploymentConfigExamples.hasCpuAndMemoryLimits)).toBe(true);
-  });
-});
-
-describe('isMemoryUtilizationPossible provides accurate checks', () => {
-  it('expect an invalid resource to return no', () => {
-    expect(isMemoryUtilizationPossible(null)).toBe(false);
-    expect(isMemoryUtilizationPossible({})).toBe(false);
-  });
-
-  it('expect a resource with no limits to be not possible', () => {
-    expect(isMemoryUtilizationPossible(deploymentExamples.hasNoLimits)).toBe(false);
-    expect(isMemoryUtilizationPossible(deploymentConfigExamples.hasNoLimits)).toBe(false);
-  });
-
-  it('expect a resource with other limits but not CPU limits to be not possible', () => {
-    expect(isMemoryUtilizationPossible(deploymentExamples.hasCpuOnlyLimits)).toBe(false);
-    expect(isMemoryUtilizationPossible(deploymentConfigExamples.hasCpuOnlyLimits)).toBe(false);
-  });
-
-  it('expect a resource with CPU limits to be possible', () => {
-    expect(isMemoryUtilizationPossible(deploymentExamples.hasMemoryOnlyLimits)).toBe(true);
-    expect(isMemoryUtilizationPossible(deploymentConfigExamples.hasMemoryOnlyLimits)).toBe(true);
-  });
-
-  it('expect a resource with both CPU And Memory limits to be possible', () => {
-    expect(isMemoryUtilizationPossible(deploymentExamples.hasCpuAndMemoryLimits)).toBe(true);
-    expect(isMemoryUtilizationPossible(deploymentConfigExamples.hasCpuAndMemoryLimits)).toBe(true);
-  });
-});
-
-describe('getLimitWarning provides a string when limits are lacking', () => {
+describe('getRequestsWarning provides a string when requests are lacking', () => {
   /** Intentionally avoid checking the string value as we don't want to couple our tests to text */
   const hasWarning = (value: any) => typeof value === 'string';
 
   it('expect invalid resource to return a value', () => {
-    expect(hasWarning(getLimitWarning(null))).toBe(true);
-    expect(hasWarning(getLimitWarning({}))).toBe(true);
+    expect(hasWarning(getRequestsWarning(null))).toBe(true);
+    expect(hasWarning(getRequestsWarning({}))).toBe(true);
   });
 
   it('expect no limit resources to return a value', () => {
-    expect(hasWarning(getLimitWarning(deploymentExamples.hasNoLimits))).toBe(true);
-    expect(hasWarning(getLimitWarning(deploymentConfigExamples.hasNoLimits))).toBe(true);
+    expect(hasWarning(getRequestsWarning(deploymentExamples.hasNoLimits))).toBe(true);
+    expect(hasWarning(getRequestsWarning(deploymentConfigExamples.hasNoLimits))).toBe(true);
   });
 
   it('expect partial limit resources to return a value', () => {
-    expect(hasWarning(getLimitWarning(deploymentExamples.hasCpuOnlyLimits))).toBe(true);
-    expect(hasWarning(getLimitWarning(deploymentExamples.hasMemoryOnlyLimits))).toBe(true);
+    expect(hasWarning(getRequestsWarning(deploymentExamples.hasCpuOnlyReuests))).toBe(true);
+    expect(hasWarning(getRequestsWarning(deploymentExamples.hasMemoryOnlyLimits))).toBe(true);
 
-    expect(hasWarning(getLimitWarning(deploymentConfigExamples.hasCpuOnlyLimits))).toBe(true);
-    expect(hasWarning(getLimitWarning(deploymentConfigExamples.hasMemoryOnlyLimits))).toBe(true);
-  });
-
-  it('expect full limits to not return a value', () => {
-    expect(hasWarning(getLimitWarning(deploymentExamples.hasCpuAndMemoryLimits))).toBe(false);
-    expect(hasWarning(getLimitWarning(deploymentConfigExamples.hasCpuAndMemoryLimits))).toBe(false);
+    expect(hasWarning(getRequestsWarning(deploymentConfigExamples.hasCpuOnlyRequests))).toBe(true);
+    expect(hasWarning(getRequestsWarning(deploymentConfigExamples.hasMemoryOnlyRequests))).toBe(
+      true,
+    );
   });
 });
 
@@ -182,7 +123,7 @@ describe('sanitizeHPAToForm always returns valid HPA', () => {
     const hpaResource: HorizontalPodAutoscalerKind = hpaExamples.cpuScaled;
     const formData: HorizontalPodAutoscalerKind = sanitizeHPAToForm(
       hpaResource,
-      deploymentExamples.hasCpuOnlyLimits,
+      deploymentExamples.hasCpuOnlyRequests,
     );
     expect(formData).toBeTruthy();
     expect(formData.spec.maxReplicas).toBe(hpaResource.spec.maxReplicas);
