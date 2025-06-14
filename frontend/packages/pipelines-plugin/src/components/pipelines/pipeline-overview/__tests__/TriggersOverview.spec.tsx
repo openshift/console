@@ -45,6 +45,6 @@ describe('Pipeline sidebar overview', () => {
     expect(wrapper.find('[data-test="triggers-heading"]')).toHaveLength(1);
     expect(wrapper.find('[data-test="triggers-list-item"]')).toHaveLength(1);
     expect(wrapper.find(ResourceLink).props().title).toBe('trigger-template-nodejs-ex-jvb0f9');
-    expect(wrapper.find(ExternalLinkWithCopy).props().link).toBe('http://devcluster.openshift.com');
+    expect(wrapper.find(ExternalLinkWithCopy).props().href).toBe('http://devcluster.openshift.com');
   });
 });

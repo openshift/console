@@ -558,7 +558,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               <div className="co-catalog-page__overlay-actions">
                 {remoteWorkflowUrl && (
                   <ExternalLink
-                    additionalClassName="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action"
+                    className="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action"
                     href={remoteWorkflowUrl}
                     text={
                       <div className="co-catalog-page__overlay-action-label">

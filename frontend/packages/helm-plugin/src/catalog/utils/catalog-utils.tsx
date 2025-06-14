@@ -85,7 +85,7 @@ export const normalizeHelmCharts = (
         );
 
         const homePage = chart.home && (
-          <ExternalLink href={chart.home} additionalClassName="co-break-all" text={chart.home} />
+          <ExternalLink href={chart.home} className="co-break-all" text={chart.home} />
         );
 
         const detailsProperties: CatalogItemDetailsProperty[] = [

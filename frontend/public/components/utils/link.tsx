@@ -68,13 +68,12 @@ export const getURLSearchParams = () => {
 
 // Opens link with copy-to-clipboard
 
-export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
-  link,
+export const ExternalLinkWithCopy = ({
+  href,
   text,
-  additionalClassName,
-  dataTestID,
-  isInline = true,
-}) => {
+  className,
+  ...props
+}: ExternalLinkWithCopyProps) => {
   const [copied, setCopied] = React.useState(false);
   const { t } = useTranslation();
 
@@ -94,11 +93,11 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
     </span>,
   ];
   const textId = _.uniqueId('link-content-');
-  const displayText = text || link;
+  const displayText = text || href;
 
   return (
-    <div className={additionalClassName}>
-      <ExternalLink href={link} dataTestID={dataTestID} isInline={isInline}>
+    <div className={className}>
+      <ExternalLink href={href} {...props}>
         {displayText}
       </ExternalLink>
       <span className="co-icon-nowrap">
@@ -126,10 +125,7 @@ export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ child
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
-type ExternalLinkWithCopyProps = {
-  link: string;
+type ExternalLinkWithCopyProps = React.ComponentProps<typeof ExternalLink> & {
+  href: string;
   text?: string;
-  dataTestID?: React.ComponentProps<typeof ExternalLink>['dataTestID'];
-  additionalClassName?: string;
-  isInline?: React.ComponentProps<typeof ExternalLink>['isInline'];
 };

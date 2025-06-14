@@ -6,22 +6,23 @@ import { ExternalLinkButton } from '@console/shared/src/components/links/Externa
 type ExternalLinkProps = ButtonProps & {
   href: string;
   text?: React.ReactNode;
-  additionalClassName?: string;
   dataTestID?: string;
   stopPropagation?: boolean;
+  displayBlock?: boolean;
 };
 
 export const ExternalLink = ({
   children,
   href,
   text,
-  additionalClassName = '',
   dataTestID,
   stopPropagation,
+  displayBlock = false,
+  className,
   ...props
 }: ExternalLinkProps) => (
   <ExternalLinkButton
-    className={css(additionalClassName, props?.className)}
+    className={css({ 'pf-v6-u-display-block': displayBlock }, className)}
     data-test-id={dataTestID}
     href={href}
     isInline

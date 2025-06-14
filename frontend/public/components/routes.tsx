@@ -121,14 +121,14 @@ export const getRouteLabel = (route: RouteKind): string => {
 
 export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({
   route,
-  additionalClassName,
+  className,
   isInline,
 }) => {
   const link = getRouteWebURL(route);
   return (
     <ExternalLinkWithCopy
-      additionalClassName={additionalClassName}
-      link={link}
+      className={className}
+      href={link}
       text={link}
       dataTestID="route-link"
       isInline={isInline}
@@ -650,7 +650,7 @@ export type RouteIngressStatusProps = {
 
 export type RouteLinkAndCopyProps = {
   route: RouteKind;
-  additionalClassName?: React.ComponentProps<typeof ExternalLinkWithCopy>['additionalClassName'];
+  className?: React.ComponentProps<typeof ExternalLinkWithCopy>['className'];
   isInline?: React.ComponentProps<typeof ExternalLinkWithCopy>['isInline'];
 };
 
