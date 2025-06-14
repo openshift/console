@@ -204,6 +204,17 @@ This section documents notable changes in Console provided shared modules and ot
 - Removed `co-m-pane__details` and `details-item` styling. Use
   [PatternFly DescriptionList](https://www.patternfly.org/components/description-list) instead.
 
+#### Console 4.20.x
+
+##### CSS styling
+
+> [!WARNING]
+> Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
+> as a courtesy for plugins which use these unsupported CSS classes.
+
+- Removed support for the Bootstrap Grid system (`.row`, `.col-*`, etc.). Use
+  [PatternFly Grid](https://www.patternfly.org/layouts/grid) instead.
+
 ### PatternFly 5+ dynamic modules
 
 Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic
