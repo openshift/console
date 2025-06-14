@@ -2,7 +2,6 @@ import { safeLoadAll } from 'js-yaml';
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { refreshWebConsoleLink } from '../../views/form';
 import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
@@ -54,10 +53,9 @@ const enableDemoPlugin = (enable: boolean) => {
       cy.byTestID('edit-console-plugin').contains(enable ? 'Enabled' : 'Disabled');
     });
   cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
-  cy.byTestID(refreshWebConsoleLink, { timeout: CHECK_UPDATE_WAIT })
-    .should('exist')
+  cy.byTestID('admin-demo-section', { timeout: CHECK_UPDATE_WAIT })
+    .should(enable ? 'exist' : 'not.exist')
     .then(() => {
-      cy.reload();
       if (!enable) {
         cy.byLegacyTestID(PLUGIN_NAME).click();
         detailsPage.titleShouldContain(PLUGIN_NAME);

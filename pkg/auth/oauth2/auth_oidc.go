@@ -9,7 +9,6 @@ import (
 
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
-	"k8s.io/client-go/rest"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -39,7 +38,6 @@ type oidcConfig struct {
 	cookiePath             string
 	secureCookies          bool
 	constructOAuth2Config  oauth2ConfigConstructor
-	internalK8sConfig      *rest.Config
 }
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig, metrics *auth.Metrics) (*oidcAuth, error) {
@@ -120,12 +118,12 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 	return provider.Verifier(&oidc.Config{ClientID: o.clientID}).Verify(ctx, rawIDToken)
 }
 
-func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
+func (o *oidcAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	o.sessions.DeleteSession(w, r)
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
-	o.DeleteCookie(w, r)
+	o.DeleteSession(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
