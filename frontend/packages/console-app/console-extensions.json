@@ -641,6 +641,16 @@
   {
     "type": "console.navigation/section",
     "properties": {
+      "id": "ecosystem",
+      "perspective": "admin",
+      "section": "ecosystem",
+      "name": "%console-app~Ecosystem%",
+      "insertBefore": "operators"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
       "perspective": "admin",
       "id": "operators",
       "name": "%console-app~Operators%",
