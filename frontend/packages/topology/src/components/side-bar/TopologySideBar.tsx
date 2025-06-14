@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { CloseButton } from '@patternfly/react-component-groups';
 import { DrawerPanelContent } from '@patternfly/react-core';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { useUserSettings } from '@console/shared';
-import CloseButton from '@console/shared/src/components/close-button';
 import { TOPOLOGY_SIDE_BAR_WIDTH_STORAGE_KEY } from '../../const';
 import './TopologySideBarTabSection.scss';
 
@@ -41,7 +41,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ children, onClose }) 
             <CloseButton
               onClick={onClose}
               dataTestID="sidebar-close-button"
-              additionalClassName="co-sidebar-dismiss__close-button"
+              className="co-sidebar-dismiss__close-button"
             />
           </div>
           {children}

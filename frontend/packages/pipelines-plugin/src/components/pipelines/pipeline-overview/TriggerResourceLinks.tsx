@@ -32,12 +32,7 @@ const TriggerResourceLinks: React.FC<TriggerResourceLinksProps> = ({
             />
             {routeURL && (
               <div className="opp-trigger-template-link">
-                <ExternalLinkWithCopy
-                  key={routeURL}
-                  link={routeURL}
-                  text={routeURL}
-                  additionalClassName="pf-v6-u-display-block"
-                />
+                <ExternalLinkWithCopy key={routeURL} href={routeURL} text={routeURL} displayBlock />
               </div>
             )}
           </DescriptionListDescription>

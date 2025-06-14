@@ -6,7 +6,7 @@ import { RowFunctionArgs, TableData } from '@console/internal/components/factory
 import { ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { HelmChartRepositoryModel } from '../../models';
 
 const revisionReference = referenceForModel(HelmChartRepositoryModel);
@@ -41,9 +41,11 @@ const HelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         {obj.spec?.connectionConfig?.url ? (
-          <ExternalLinkButton variant="link" href={obj.spec.connectionConfig.url}>
-            {obj.spec.connectionConfig.url}
-          </ExternalLinkButton>
+          <ExternalLink
+            href={obj.spec.connectionConfig.url}
+            text={obj.spec.connectionConfig.url}
+            displayBlock
+          />
         ) : (
           '-'
         )}

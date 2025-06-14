@@ -16,7 +16,7 @@ const KSRouteSplitListItem: React.FC<KSRouteSplitListItemProps> = ({ route: { pe
           <GridItem span={10}>
             <span>
               {`${percent} → `}
-              <ExternalLink href={url} additionalClassName="pf-v6-u-display-block" text={url} />
+              <ExternalLink href={url} displayBlock text={url} />
             </span>
           </GridItem>
         </Grid>

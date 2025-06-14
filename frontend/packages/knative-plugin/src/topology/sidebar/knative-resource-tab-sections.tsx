@@ -39,11 +39,7 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
                 <span data-test="event-sink-target-uri" className="pf-v6-u-text-color-subtle">
                   {t('knative-plugin~Target URI:')}{' '}
                 </span>
-                <ExternalLink
-                  href={sinkUri}
-                  additionalClassName="pf-v6-u-display-block"
-                  text={sinkUri}
-                />
+                <ExternalLink href={sinkUri} displayBlock text={sinkUri} />
               </>
             )}
           </li>

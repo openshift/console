@@ -28,7 +28,7 @@ const BuildOutput: React.FC<BuildOutputProps> = ({ buildSpec }) => {
   }
   if (outputImage?.startsWith(BUILD_OUTPUT_QUAY_URL)) {
     const outputImageName = outputImage?.split('/')?.slice(1)?.join('/');
-    return <ExternalLinkWithCopy link={`https://${outputImage}`} text={outputImageName} />;
+    return <ExternalLinkWithCopy href={`https://${outputImage}`} text={outputImageName} />;
   }
   return <>{outputImage}</>;
 };

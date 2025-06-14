@@ -31,11 +31,7 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
       detailsProperties.push({
         label: t('devconsole~Sample repository'),
         value: (
-          <ExternalLink
-            text={gitRepositoryUrl}
-            href={gitRepositoryUrl}
-            additionalClassName="co-break-all"
-          />
+          <ExternalLink text={gitRepositoryUrl} href={gitRepositoryUrl} className="co-break-all" />
         ),
       });
     }

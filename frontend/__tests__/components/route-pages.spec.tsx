@@ -43,7 +43,7 @@ describe(RouteLocation.displayName, () => {
     const wrapper = shallow(<RouteLocation obj={route} />);
     const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
     expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain('https:');
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain('https:');
   });
 
   it('renders a http link when no TLS Settings', () => {
@@ -81,7 +81,7 @@ describe(RouteLocation.displayName, () => {
     const wrapper = shallow(<RouteLocation obj={route} />);
     const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
     expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain('http:');
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain('http:');
   });
 
   it('renders oldest admitted ingress', () => {
@@ -130,7 +130,7 @@ describe(RouteLocation.displayName, () => {
     const wrapper = shallow(<RouteLocation obj={route} />);
     const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
     expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain(
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain(
       'http://www.example.com',
     );
   });
@@ -171,7 +171,7 @@ describe(RouteLocation.displayName, () => {
     const wrapper = shallow(<RouteLocation obj={route} />);
     const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
     expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().link).toContain('\\mypath');
+    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain('\\mypath');
   });
 
   it('renders Subdomain', () => {

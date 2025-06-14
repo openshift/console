@@ -30,12 +30,7 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {(obj.status && obj.status.url && (
-          <ExternalLinkWithCopy
-            link={obj.status.url}
-            text={obj.status.url}
-            isInline={false}
-            dataTestID="knative-plugin-route-url"
-          />
+          <ExternalLinkWithCopy href={obj.status.url} text={obj.status.url} displayBlock />
         )) ||
           '-'}
       </TableData>
