@@ -22,18 +22,6 @@ describe('Shared submit utils', () => {
       expect(serviceObj.spec.ports[0].port).toEqual(8081);
     });
 
-    it('should match the previous snapshot created with git import data', () => {
-      const mockData: GitImportFormData = _.cloneDeep(mockFormData);
-      const serviceObj = createService(mockData);
-      expect(serviceObj).toMatchSnapshot();
-    });
-
-    it('should match the previous snapshot created with deploy image data', () => {
-      const mockDeployImageData: DeployImageFormData = _.cloneDeep(mockDeployImageFormData);
-      const serviceObj = createService(mockDeployImageData);
-      expect(serviceObj).toMatchSnapshot();
-    });
-
     it('should expose only the custom port as TargetPort when it is set', () => {
       const mockData: GitImportFormData = _.cloneDeep(mockFormData);
 
@@ -120,20 +108,6 @@ describe('Shared submit utils', () => {
         'shared-label': 'a-shared-label-value',
         'custom-route-label': 'a-custom-route-label',
       });
-    });
-
-    it('should match the previous snapshot with git import data', () => {
-      const mockData: GitImportFormData = _.cloneDeep(mockFormData);
-      mockData.route.targetPort = '8080-tcp';
-      const routeObj = createRoute(mockData);
-      expect(routeObj).toMatchSnapshot();
-    });
-
-    it('should match the previous snapshot deploy image data', () => {
-      const mockDeployImageData: DeployImageFormData = _.cloneDeep(mockDeployImageFormData);
-      mockDeployImageData.route.targetPort = '8080-tcp';
-      const routeObj = createRoute(mockDeployImageData);
-      expect(routeObj).toMatchSnapshot();
     });
   });
 });

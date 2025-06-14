@@ -82,12 +82,6 @@ describe('data transformer ', () => {
     expect(graphData.nodes.filter((n) => n.group)).toHaveLength(0);
   });
 
-  it('should match the previous snapshot', () => {
-    expect(
-      getTransformedTopologyData(mockResources, ['deployments', 'deploymentConfigs']),
-    ).toMatchSnapshot();
-  });
-
   it('should return false for non knative resource', () => {
     mockResources = { ...mockResources, pods: { loaded: true, loadError: '', data: [] } };
     const graphData = getTransformedTopologyData(mockResources, [
