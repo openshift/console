@@ -240,6 +240,6 @@ Given(
     topologyPage.knativeNode(nodeName).click({ force: true });
     topologySidePane.selectTab('Resources');
     checkBuildComplete();
-    cy.byLegacyTestID('sidebar-close-button').click();
+    cy.byTestID('sidebar-close-button').click();
   },
 );
