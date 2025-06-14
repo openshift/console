@@ -55,6 +55,8 @@ export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/s
 export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
   .default;
 
+export const ServicesList = require('@console/internal/components/service').ServicesList;
+
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
