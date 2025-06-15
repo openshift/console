@@ -598,7 +598,7 @@
   "Successfully copied to clipboard!": "クリップボードに正常にコピーされました!",
   "No {{label}} found": "{{label}} が見つかりません",
   "Not found": "見つかりません",
-  "No quota": "クォータなし",
+  "No quota": "クォータがありません",
   "Zone and zones parameters must not be used at the same time": "Zone と zones のパラメーターは同時に使用することはできません",
   "Zone cannot be specified when replication type regional-pd is chosen. Use zones instead.": "レプリケーションタイプが regional-pd の場合、Zone を指定することはできません。代わりに zones を使用してください。",
   "GID min must be number": "GID 分は数字である必要があります",
