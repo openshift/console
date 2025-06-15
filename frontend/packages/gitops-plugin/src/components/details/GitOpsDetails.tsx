@@ -94,7 +94,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestUR
                       <StackItem className="co-truncate co-nowrap">
                         {env.cluster ? (
                           <ExternalLink
-                            additionalClassName="gop-gitops-details__env-section__cluster-url"
+                            className="gop-gitops-details__env-section__cluster-url"
                             href={env.cluster}
                           >
                             {env.cluster}

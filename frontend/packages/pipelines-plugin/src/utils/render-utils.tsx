@@ -16,7 +16,7 @@ export const handleURLs = (value: string): React.ReactNode => {
     return (
       <>
         {handleURLs(prefix)}
-        <ExternalLink additionalClassName="opp-render-utils-external-url" href={link}>
+        <ExternalLink className="opp-render-utils-external-url" href={link}>
           {link}
         </ExternalLink>
         {handleURLs(suffix)}

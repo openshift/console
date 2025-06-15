@@ -51,11 +51,7 @@ export const BuildPipelineLogLink: React.SFC<BuildPipelineLogLinkProps> = ({ obj
   const { t } = useTranslation();
   const link = getJenkinsLogURL(obj);
   return link ? (
-    <ExternalLink
-      href={link}
-      text={t('public~View logs')}
-      additionalClassName="build-pipeline__log-link"
-    />
+    <ExternalLink href={link} text={t('public~View logs')} className="build-pipeline__log-link" />
   ) : null;
 };
 

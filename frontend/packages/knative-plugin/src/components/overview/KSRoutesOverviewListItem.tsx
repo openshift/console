@@ -34,11 +34,7 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
                   {status.url}
                 </ClipboardCopy>
               ) : (
-                <ExternalLinkWithCopy
-                  link={status.url}
-                  text={status.url}
-                  additionalClassName="co-external-link--block"
-                />
+                <ExternalLinkWithCopy href={status.url} text={status.url} displayBlock />
               )}
             </>
           )}

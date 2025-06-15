@@ -1,36 +1,39 @@
-import { shallow } from 'enzyme';
-import { useUserSettings } from '@console/shared';
-import CloseButton from '@console/shared/src/components/close-button';
+import { render, screen, fireEvent, configure } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import TopologySideBar from '../components/side-bar/TopologySideBar';
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+  useUserSettings: jest.fn(() => [500, jest.fn(), true]),
 }));
 
-const mockUserSettings = useUserSettings as jest.Mock;
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
+  DrawerPanelContent: ({ children }) => children,
+}));
 
-describe('TopologySideBar:', () => {
-  const props = {
-    show: true,
-    onClose: () => '',
-  };
-
-  it('renders a SideBar', () => {
-    mockUserSettings.mockReturnValue([100, () => {}, true]);
-    const wrapper = shallow(<TopologySideBar {...props} />);
-    expect(wrapper.exists()).toBeTruthy();
+describe('TopologySideBar', () => {
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
   });
 
-  it('clicking on close button should call the onClose callback function', () => {
-    mockUserSettings.mockReturnValue([100, () => {}, true]);
-    const onClose = jest.fn();
-    const wrapper = shallow(<TopologySideBar onClose={onClose} />);
-    wrapper
-      .find(CloseButton)
-      .dive()
-      .shallow()
-      .find('[data-test-id="sidebar-close-button"]')
-      .simulate('click');
-    expect(onClose).toHaveBeenCalled();
+  it('renders children and close button', () => {
+    const handleClose = jest.fn();
+    render(<TopologySideBar onClose={handleClose} />);
+
+    expect(screen.getByTestId('topology-sidepane')).toBeInTheDocument();
+    expect(screen.getByTestId('sidebar-close-button')).toBeInTheDocument();
+    expect(screen.getByLabelText('Close')).toBeInTheDocument();
+  });
+
+  it('calls onClose when close button is clicked', () => {
+    const handleClose = jest.fn();
+    render(
+      <TopologySideBar onClose={handleClose}>
+        <div>Sidebar Content</div>
+      </TopologySideBar>,
+    );
+
+    fireEvent.click(screen.getByTestId('sidebar-close-button'));
+    expect(handleClose).toHaveBeenCalled();
   });
 });

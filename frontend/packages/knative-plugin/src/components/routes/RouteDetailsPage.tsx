@@ -51,9 +51,9 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   </ClipboardCopy>
                 ) : (
                   <ExternalLinkWithCopy
-                    link={route?.status?.url}
+                    href={route?.status?.url}
                     text={route?.status?.url}
-                    additionalClassName="co-external-link--block"
+                    displayBlock
                   />
                 )}
               </DetailsItem>

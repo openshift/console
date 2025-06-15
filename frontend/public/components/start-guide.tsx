@@ -13,7 +13,8 @@ import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { RootState } from '../redux';
 import { useFlag } from '@console/shared/src';
-import { ClusterIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ClusterIcon } from '@patternfly/react-icons/dist/esm/icons/cluster-icon';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
 export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = () => {
   const { t } = useTranslation();
@@ -51,18 +52,9 @@ export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = 
     >
       {t('public~Download command-line tools')}
     </Button>,
-    <Button
-      key="visit-docs"
-      variant={ButtonVariant.link}
-      component="a"
-      href={openshiftHelpBase}
-      target="_blank"
-      rel="noopener noreferrer"
-      icon={<ExternalLinkAltIcon />}
-      iconPosition="end"
-    >
+    <ExternalLinkButton key="visit-docs" variant={ButtonVariant.link} href={openshiftHelpBase}>
       {t('public~View documentation')}
-    </Button>,
+    </ExternalLinkButton>,
   ];
   return (
     <ConsoleEmptyState

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { css } from '@patternfly/react-styles';
 
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
@@ -69,12 +69,13 @@ export const getURLSearchParams = () => {
 
 // Opens link with copy-to-clipboard
 
-export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
-  link,
+export const ExternalLinkWithCopy = ({
+  href,
   text,
-  additionalClassName,
-  dataTestID,
-}) => {
+  className,
+  displayBlock,
+  ...props
+}: ExternalLinkWithCopyProps) => {
   const [copied, setCopied] = React.useState(false);
   const { t } = useTranslation();
 
@@ -94,39 +95,38 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
     </span>,
   ];
   const textId = _.uniqueId('link-content-');
-  const displayText = text || link;
+  const displayText = text || href;
 
   return (
-    <div className={css(additionalClassName)}>
-      <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
-        id={textId}
-        data-test-id={dataTestID}
-      >
-        {displayText}
-        <span className="co-icon-nowrap">
-          &nbsp;
-          <span className="co-external-link-with-copy__icon co-external-link-with-copy__externallinkicon">
-            <ExternalLinkAltIcon />
-          </span>
+    <div
+      className={css(
+        'pf-v6-c-clipboard-copy',
+        'pf-m-inline',
+        { 'pf-m-block': displayBlock },
+        className,
+      )}
+    >
+      <span className="pf-v6-c-clipboard-copy__text">
+        <ExternalLink href={href} {...props}>
+          {displayText}
+        </ExternalLink>
+      </span>
+      <span className="pf-v6-c-clipboard-copy__actions">
+        <span className="pf-v6-c-clipboard-copy__actions-item">
+          <ClipboardCopyButton
+            id={_.uniqueId('clipboard-copy-button-')}
+            textId={textId}
+            aria-label={copyToClipboardText}
+            onClick={(e) => onClick(e, displayText)}
+            exitDelay={copied ? 1250 : 600}
+            variant="plain"
+            hasNoPadding
+            maxWidth="120px"
+            onTooltipHidden={() => setCopied(false)}
+          >
+            {tooltipContent}
+          </ClipboardCopyButton>
         </span>
-      </a>
-      <span className="co-icon-nowrap">
-        <ClipboardCopyButton
-          id={_.uniqueId('clipboard-copy-button-')}
-          textId={textId}
-          aria-label={copyToClipboardText}
-          onClick={(e) => onClick(e, displayText)}
-          exitDelay={copied ? 1250 : 600}
-          variant="plain"
-          maxWidth="120px"
-          onTooltipHidden={() => setCopied(false)}
-          className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
-        >
-          {tooltipContent}
-        </ClipboardCopyButton>
       </span>
     </div>
   );
@@ -138,9 +138,7 @@ export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ child
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
-type ExternalLinkWithCopyProps = {
-  link: string;
+type ExternalLinkWithCopyProps = React.ComponentProps<typeof ExternalLink> & {
+  href: string;
   text?: string;
-  dataTestID?: string;
-  additionalClassName?: string;
 };

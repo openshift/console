@@ -30,11 +30,7 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {(obj.status && obj.status.url && (
-          <ExternalLinkWithCopy
-            link={obj.status.url}
-            text={obj.status.url}
-            additionalClassName="co-external-link--block"
-          />
+          <ExternalLinkWithCopy href={obj.status.url} text={obj.status.url} displayBlock />
         )) ||
           '-'}
       </TableData>
