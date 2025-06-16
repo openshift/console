@@ -1,5 +1,4 @@
 import { quickStartSidebarPO } from '../pageObjects/quickStarts-po';
-import { checkDeveloperPerspective } from '../pages/functions/checkDeveloperPerspective';
 
 //  To ignore the resizeObserverLoopErrors on CI, adding below code
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
@@ -19,7 +18,7 @@ before(() => {
   const bridgePasswordPassword: string = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
   cy.login(bridgePasswordIDP, bridgePasswordUsername, bridgePasswordPassword);
   cy.document().its('readyState').should('eq', 'complete');
-  checkDeveloperPerspective();
+  // checkDeveloperPerspective();
 });
 
 after(() => {
@@ -28,7 +27,7 @@ after(() => {
 });
 
 beforeEach(() => {
-  cy.initDeveloper();
+  cy.initAdmin();
 });
 
 afterEach(() => {
