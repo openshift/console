@@ -91,9 +91,7 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({
       {terminalTabs.map((terminalNumber) => (
         <Tab
           className="co-multi-tabbed-terminal__tab"
-          closeButtonAriaLabel={
-            terminalTabs.length > 1 ? t('Close terminal tab') : t('Close terminal')
-          }
+          closeButtonAriaLabel={t('Close terminal tab')}
           data-test="multi-tab-terminal-tab"
           eventKey={terminalNumber}
           key={terminalNumber}

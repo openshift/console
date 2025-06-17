@@ -106,7 +106,7 @@ export const catalogPage = {
     cy.get(catalogPO.installHelmChart.releaseName).clear().type(releaseName),
   selectCardInCatalog: (card: catalogCards | string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
-    cy.byLegacyTestID('perspective-switcher-toggle').click();
+    cy.byLegacyTestID('perspective-switcher-toggle').click({ force: true });
     switch (card) {
       case catalogCards.mariaDB || 'MariaDB': {
         cy.get(catalogPO.cards.mariaDBTemplate).first().click();
