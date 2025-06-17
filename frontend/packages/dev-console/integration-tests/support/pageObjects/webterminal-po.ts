@@ -1,7 +1,7 @@
 export const webTerminalPO = {
   webTerminalIcon: '[data-tour-id="tour-cloud-shell-button"]',
   addTerminalIcon: '[data-test="multi-tab-terminal"] [aria-label="Add new tab"]',
-  closeTerminalIcon: '[aria-label="Close terminal"], [aria-label="Close terminal tab"]',
+  closeTerminalIcon: '[aria-label="Close terminal tab"]',
   tabsList: '[data-test="multi-tab-terminal"] ul',
   openCommandLine: 'button[data-tour-id="tour-cloud-shell-button"]',
   terminalWindow: 'canvas.xterm-cursor-layer',
