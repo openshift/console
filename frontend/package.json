@@ -210,7 +210,6 @@
     "redux-thunk": "2.4.0",
     "reselect": "4.x",
     "sanitize-html": "^2.3.2",
-    "screenfull": "4.x",
     "semver": "6.x",
     "showdown": "1.8.6",
     "subscriptions-transport-ws": "^0.9.16",
