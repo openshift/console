@@ -130,8 +130,8 @@ func main() {
 	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
 	fThanosPublicURL := fs.String("thanos-public-url", "", "Public URL of the cluster's Thanos server.")
 
-	consolePluginsFlags := serverconfig.MultiKeyValue{}
-	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
+	enabledPlugins := serverconfig.MultiKeyValue{}
+	fs.Var(&enabledPlugins, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
 	fPluginsOrder := fs.String("plugins-order", "", "List of plugin names which determines the order in which plugin extensions will be resolved.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
 	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
@@ -218,13 +218,6 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("branding", "value must be one of okd, openshift, ocp, online, dedicated, azure, or rosa"))
 	}
 
-	if len(consolePluginsFlags) > 0 {
-		klog.Infoln("The following console plugins are enabled:")
-		for pluginName := range consolePluginsFlags {
-			klog.Infof(" - %s\n", pluginName)
-		}
-	}
-
 	i18nNamespaces := []string{}
 	if *fI18NamespacesFlags != "" {
 		for _, str := range strings.Split(*fI18NamespacesFlags, ",") {
@@ -236,17 +229,28 @@ func main() {
 		}
 	}
 
-	pluginsOrder := []string{}
+	enabledPluginsOrder := []string{}
 	if *fPluginsOrder != "" {
 		for _, str := range strings.Split(*fPluginsOrder, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must contain names of plugins separated by comma"))
 			}
-			if consolePluginsFlags[str] == "" {
+			if enabledPlugins[str] == "" {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must only contain currently enabled plugins"))
 			}
-			pluginsOrder = append(pluginsOrder, str)
+			enabledPluginsOrder = append(enabledPluginsOrder, str)
+		}
+	} else if len(enabledPlugins) > 0 {
+		for plugin := range enabledPlugins {
+			enabledPluginsOrder = append(enabledPluginsOrder, plugin)
+		}
+	}
+
+	if len(enabledPluginsOrder) > 0 {
+		klog.Infoln("Console plugins are enabled in following order:")
+		for _, pluginName := range enabledPluginsOrder {
+			klog.Infof(" - %s", pluginName)
 		}
 	}
 
@@ -300,7 +304,8 @@ func main() {
 		DevCatalogCategories:         *fDevCatalogCategories,
 		DevCatalogTypes:              *fDevCatalogTypes,
 		UserSettingsLocation:         *fUserSettingsLocation,
-		EnabledConsolePlugins:        consolePluginsFlags,
+		EnabledPlugins:               enabledPlugins,
+		EnabledPluginsOrder:          enabledPluginsOrder,
 		I18nNamespaces:               i18nNamespaces,
 		PluginProxy:                  *fPluginProxy,
 		ContentSecurityPolicyEnabled: *fContentSecurityPolicyEnabled,
@@ -316,7 +321,6 @@ func main() {
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 		Capabilities:                 capabilities,
-		PluginsOrder:                 pluginsOrder,
 	}
 
 	completedAuthnOptions, err := authOptions.Complete()
