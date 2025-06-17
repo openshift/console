@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
+import { PodConnectLoader } from '@console/internal/components/pod';
 import {
   Firehose,
   FirehoseResource,
   FirehoseResult,
   LoadingBox,
 } from '@console/internal/components/utils';
-import { NodeKind, PodKind } from '@console/internal/module/k8s';
-import { PodExecLoader } from '../../../../../public/components/pod';
-import { ImageStreamTagModel, NamespaceModel, PodModel } from '../../../../../public/models';
-import { k8sCreate, k8sGet, k8sKillByName } from '../../../../../public/module/k8s';
+import { ImageStreamTagModel, NamespaceModel, PodModel } from '@console/internal/models';
+import { NodeKind, PodKind, k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
 
 type NodeTerminalErrorProps = {
   error: React.ReactNode;
@@ -33,9 +32,15 @@ const getDebugImage = async (): Promise<string> => {
   }
 };
 
-const getDebugPod = async (name: string, namespace: string, nodeName: string): Promise<PodKind> => {
+const getDebugPod = async (
+  name: string,
+  namespace: string,
+  nodeName: string,
+  isWindows: boolean,
+): Promise<PodKind> => {
   const image = await getDebugImage();
-  return {
+  // configuration as specified in https://github.com/openshift/oc/blob/master/pkg/cli/debug/debug.go#L1024-L1114
+  const template: PodKind = {
     kind: 'Pod',
     apiVersion: 'v1',
     metadata: {
@@ -48,7 +53,44 @@ const getDebugPod = async (name: string, namespace: string, nodeName: string): P
       },
     },
     spec: {
-      activeDeadlineSeconds: 21600,
+      containers: [
+        {
+          command: ['/bin/sh'],
+          env: [
+            {
+              // Set the Shell variable to auto-logout after 15m idle timeout
+              name: 'TMOUT',
+              value: '900',
+            },
+            {
+              // this env requires to be set in order to collect more sos reports
+              name: 'HOST',
+              value: '/host',
+            },
+          ],
+          image,
+          name: 'container-00',
+          resources: {},
+          securityContext: {
+            privileged: true,
+            runAsUser: 0,
+          },
+          stdin: true,
+          stdinOnce: true,
+          tty: true,
+          volumeMounts: [
+            {
+              name: 'host',
+              mountPath: '/host',
+            },
+          ],
+        },
+      ],
+      hostIPC: true,
+      hostPID: true,
+      hostNetwork: true,
+      nodeName,
+      restartPolicy: 'Never',
       volumes: [
         {
           name: 'host',
@@ -58,33 +100,21 @@ const getDebugPod = async (name: string, namespace: string, nodeName: string): P
           },
         },
       ],
-      containers: [
-        {
-          name: 'container-00',
-          image,
-          command: ['/bin/sh'],
-          resources: {},
-          volumeMounts: [
-            {
-              name: 'host',
-              mountPath: '/host',
-            },
-          ],
-          securityContext: {
-            privileged: true,
-            runAsUser: 0,
-          },
-          stdin: true,
-          stdinOnce: true,
-          tty: true,
-        },
-      ],
-      restartPolicy: 'Never',
-      nodeName,
-      hostNetwork: true,
-      hostPID: true,
     },
   };
+
+  if (isWindows) {
+    template.spec.OS = 'windows';
+    template.spec.hostPID = false;
+    template.spec.hostIPC = false;
+    const containerUser = 'ContainerUser';
+    template.spec.containers[0].securityContext = {
+      windowsOptions: {
+        runAsUserName: containerUser,
+      },
+    };
+  }
+  return template;
 };
 
 const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
@@ -118,7 +148,7 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
         />
       );
     case 'Running':
-      return <PodExecLoader obj={obj.data} message={message} />;
+      return <PodConnectLoader obj={obj.data} message={message} attach />;
     default:
       return <LoadingBox />;
   }
@@ -128,6 +158,8 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
   const [resources, setResources] = React.useState<FirehoseResource[]>([]);
   const [errorMessage, setErrorMessage] = React.useState('');
   const nodeName = node.metadata.name;
+  const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
+
   React.useEffect(() => {
     let namespace;
     const name = `${nodeName}-debug`;
@@ -160,7 +192,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
             },
           },
         });
-        const podToCreate = await getDebugPod(name, namespace.metadata.name, nodeName);
+        const podToCreate = await getDebugPod(name, namespace.metadata.name, nodeName, isWindows);
         // wait for the namespace to be ready
         await new Promise((resolve) => setTimeout(resolve, 1000));
         const debugPod = await k8sCreate(PodModel, podToCreate);
@@ -188,7 +220,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
       deleteNamespace(namespace.metadata.name);
       window.removeEventListener('beforeunload', closeTab);
     };
-  }, [nodeName]);
+  }, [nodeName, isWindows]);
 
   return errorMessage ? (
     <NodeTerminalError error={errorMessage} />
