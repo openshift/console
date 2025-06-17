@@ -69,7 +69,12 @@ export const resolvePluginDependencies = (
   }
 
   // Ensure compatibility with other dynamic plugins
-  const requiredPluginNames = _.difference(Object.keys(dependencies), [pluginAPIDepName]);
+  const requiredPluginNames = _.difference(
+    Object.keys(dependencies),
+    [pluginAPIDepName],
+    manifest.customProperties?.console?.optionalDependencies ?? [],
+  );
+
   const unavailablePluginNames = _.difference(requiredPluginNames, allowedPluginNames);
 
   if (requiredPluginNames.length === 0) {
