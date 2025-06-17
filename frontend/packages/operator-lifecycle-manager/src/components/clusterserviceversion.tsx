@@ -1119,16 +1119,15 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 <DescriptionListTerm>{t('olm~Links')}</DescriptionListTerm>
                 {spec.links && spec.links.length > 0 ? (
                   spec.links.map((link) => (
-                    <DescriptionListDescription
-                      key={link.url}
-                      style={{ display: 'flex', flexDirection: 'column' }}
-                    >
-                      {link.name}{' '}
-                      <ExternalLink
-                        href={link.url}
-                        text={link.url || '-'}
-                        className="co-break-all"
-                      />
+                    <DescriptionListDescription key={link.url}>
+                      <div className="pf-v6-u-display-flex pf-v6-u-flex-direction-column">
+                        {link.name}
+                        <ExternalLink
+                          href={link.url}
+                          text={link.url || '-'}
+                          className="co-break-all"
+                        />
+                      </div>
                     </DescriptionListDescription>
                   ))
                 ) : (
