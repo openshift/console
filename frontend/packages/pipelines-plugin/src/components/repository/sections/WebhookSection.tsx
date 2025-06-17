@@ -91,15 +91,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
             Use your GitHub Personal token. Use this{' '}
-            <a
-              href={AccessTokenDocLinks[GitProvider.GITHUB]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              link
-            </a>{' '}
-            to create a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and
-            give your token an expiration, i.e 30d.
+            <ExternalLink href={AccessTokenDocLinks[GitProvider.GITHUB]}>link</ExternalLink> to
+            create a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and give
+            your token an expiration, i.e 30d.
           </Trans>
         );
         break;
@@ -108,15 +102,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
             Use your Gitlab Personal access token. Use this{' '}
-            <a
-              href={AccessTokenDocLinks[GitProvider.GITLAB]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              link
-            </a>{' '}
-            to create a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>.
-            Give your token an expiration i.e 30d.
+            <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to
+            create a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give
+            your token an expiration i.e 30d.
           </Trans>
         );
         break;
@@ -125,14 +113,8 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
             Use your Bitbucket App password. Use this{' '}
-            <a
-              href={AccessTokenDocLinks[GitProvider.BITBUCKET]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              link
-            </a>{' '}
-            to create a token with <b>Read and Write </b>scopes in{' '}
+            <ExternalLink href={AccessTokenDocLinks[GitProvider.BITBUCKET]}>link</ExternalLink> to
+            create a token with <b>Read and Write </b>scopes in{' '}
             <b>Account, Workspace membership, Projects, Issues, Pull requests and Webhooks</b>.
           </Trans>
         );

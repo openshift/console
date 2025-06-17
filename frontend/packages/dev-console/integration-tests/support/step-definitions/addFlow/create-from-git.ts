@@ -235,7 +235,6 @@ Then(
     topologyPage.verifyOrOpenSidebar(nodeName);
     topologySidePane.selectTab('Resources');
     topologySidePane.verifySection('Routes');
-    // cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
     cy.byLegacyTestID('route-link').should('contain.text', routeName);
   },
 );

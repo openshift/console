@@ -67,11 +67,7 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
               )}
               {obj?.status?.url && (
                 <DetailsItem label={t('knative-plugin~URL')} obj={obj} path="status.url">
-                  <ExternalLink
-                    href={obj.status.url}
-                    additionalClassName="co-external-link--block"
-                    text={obj.status.url}
-                  />
+                  <ExternalLink href={obj.status.url} displayBlock text={obj.status.url} />
                 </DetailsItem>
               )}
               {revisions && revisionLoaded && !revisionErrorLoad && (

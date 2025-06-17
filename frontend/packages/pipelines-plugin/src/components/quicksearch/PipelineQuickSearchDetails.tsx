@@ -208,7 +208,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
         {selectedItem.description}
         {hubLink && (
           <ExternalLink
-            additionalClassName="opp-quick-search-details__hublink"
+            className="opp-quick-search-details__hublink"
             dataTestID="task-hub-link"
             href={hubLink}
             text={t('pipelines-plugin~Read more')}

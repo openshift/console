@@ -79,7 +79,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           obj={obj}
           path={isV1Alpha1Resource(obj) ? `${path}.source.url` : `${path}.source.git.url`}
         >
-          <ExternalLinkWithCopy text={url} link={url} />
+          <ExternalLinkWithCopy text={url} href={url} />
         </DetailsItem>
       ) : null}
 
@@ -116,7 +116,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           {buildSpec.sources?.map((source) => (
             <React.Fragment key={source.name}>
               {source.name}:<br />
-              <ExternalLinkWithCopy link={source.url} text={source.url} />
+              <ExternalLinkWithCopy href={source.url} text={source.url} />
               <br />
             </React.Fragment>
           ))}

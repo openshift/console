@@ -20,7 +20,7 @@ describe('RouteRow', () => {
     const serviceDataTable = wrapper.find(TableData).at(2);
     expect(wrapper.find(TableData)).toHaveLength(7);
     expect(serviceDataTable.find(ExternalLinkWithCopy)).toHaveLength(1);
-    expect(serviceDataTable.find(ExternalLinkWithCopy).props().link).toEqual(
+    expect(serviceDataTable.find(ExternalLinkWithCopy).props().href).toEqual(
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     );
     expect(serviceDataTable.find(ExternalLinkWithCopy).props().text).toEqual(

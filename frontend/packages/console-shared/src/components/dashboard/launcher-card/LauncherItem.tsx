@@ -4,7 +4,7 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 
 const LauncherItem: React.FC<LauncherItemProps> = ({ consoleLink }) => (
   <ExternalLink
-    additionalClassName="co-launcher-card__item"
+    className="co-launcher-card__item"
     href={consoleLink.spec.href}
     text={consoleLink.spec.text}
     dataTestID="launcher-item"
