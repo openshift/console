@@ -22,18 +22,6 @@
     }
   },
   {
-    "type": "console.navigation/section",
-    "properties": {
-      "id": "ecosystem",
-      "perspective": "admin",
-      "name": "%olm-v1~Ecosystem%",
-      "insertAfter": "usermanagement"
-    },
-    "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
-    }
-  },
-  {
     "type": "console.navigation/href",
     "properties": {
       "id": "extension-catalog",
