@@ -9,6 +9,7 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 const CSP_VIOLATION_EXPIRATION = ONE_DAY;
 const LOCAL_STORAGE_CSP_VIOLATIONS_KEY = 'console/csp_violations';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const pluginAssetBaseURL = `${document.baseURI}api/plugins/`;
 
@@ -17,9 +18,25 @@ const getPluginNameFromResourceURL = (url: string): string =>
     ? url.substring(pluginAssetBaseURL.length).split('/')[0]
     : null;
 
-const isRecordExpired = ({ timestamp }: CSPViolationRecord): boolean => {
-  return timestamp && Date.now() - timestamp > CSP_VIOLATION_EXPIRATION;
+const isRecordExpired = ({ timestamp }: CSPViolationRecord): boolean =>
+  timestamp && Date.now() - timestamp > CSP_VIOLATION_EXPIRATION;
+
+const sameHostname = (a: string, b: string): boolean => {
+  const urlA = new URL(a);
+  const urlB = new URL(b);
+  return urlA.hostname === urlB.hostname;
 };
+
+// CSP violiation records are considered equal if the following properties match:
+// - pluginName
+// - effectiveDirective
+// - sourceFile
+// - blockedURI hostname
+const cspViolationRecordsAreEqual = (a: CSPViolationRecord, b: CSPViolationRecord): boolean =>
+  a.pluginName === b.pluginName &&
+  a.effectiveDirective === b.effectiveDirective &&
+  a.sourceFile === b.sourceFile &&
+  sameHostname(a.blockedURI, b.blockedURI);
 
 // Export for testing
 export const newCSPViolationReport = (
@@ -43,60 +60,50 @@ export const newCSPViolationReport = (
   pluginName: pluginName || '',
 });
 
-export const useCSPViolationDetector = () => {
-  const { t } = useTranslation();
-  const toastContext = useToast();
-  const pluginStore = usePluginStore();
+const useCSPViolationQueue = (): ((record: CSPViolationRecord) => void) => {
   const fireTelemetryEvent = useTelemetry();
-  const getRecords = React.useCallback((): CSPViolationRecord[] => {
-    const serializedRecords = window.localStorage.getItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY) || '';
+  const [records, setRecords] = React.useState<CSPViolationRecord[]>(() => {
     try {
-      const records = serializedRecords ? JSON.parse(serializedRecords) : [];
+      const serializedRecords = window.localStorage.getItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY) || '';
+      const newRecords = serializedRecords ? JSON.parse(serializedRecords) : [];
       // Violations should expire when they haven't been reported for a while
-      return records.reduce((acc, v) => (isRecordExpired(v) ? acc : [...acc, v]), []);
+      return newRecords.filter((v) => !isRecordExpired(v));
     } catch (e) {
       // eslint-disable-next-line no-console
       console.warn('Error parsing CSP violation reports from local storage. Value will be reset.');
       return [];
     }
-  }, []);
+  });
 
-  const updateRecords = React.useCallback(
-    (
-      existingRecords: CSPViolationRecord[],
-      newRecord: CSPViolationRecord,
-    ): CSPViolationRecord[] => {
-      if (!existingRecords.length) {
-        return [newRecord];
-      }
+  React.useEffect(() => {
+    const existingRecords = window.localStorage.getItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY);
+    const newRecords = JSON.stringify(records);
+    if (newRecords !== existingRecords) {
+      window.localStorage.setItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY, newRecords);
+    }
+  }, [records]);
 
-      // Update the existing records. If a matching report is already recorded in local storage,
-      // update the timestamp. Otherwise, append the new record.
-      const [updatedRecords] = existingRecords.reduce(
-        ([acc, hasBeenRecorded], existingRecord, i, all) => {
-          // Exclude originalPolicy and timestamp from equality comparison.
-          const { timestamp, originalPolicy, ...existingReport } = existingRecord;
-          const { timestamp: _t, originalPolicy: _o, ...newReport } = newRecord;
-
-          // Replace matching report with a newly timestamped record
-          if (_.isEqual(newReport, existingReport)) {
-            return [[...acc, newRecord], true];
-          }
-
-          // If this is the last record and the new report has not been recorded yet, append it
-          if (i === all.length - 1 && !hasBeenRecorded) {
-            return [[...acc, existingRecord, newRecord], true];
-          }
-
-          // Append all existing records that don't match to the accumulator
-          return [[...acc, existingRecord], hasBeenRecorded];
-        },
-        [[], false],
-      );
-      return updatedRecords;
+  return React.useCallback(
+    (newRecord: CSPViolationRecord) => {
+      setRecords((currentRecords) => {
+        if (currentRecords.some((record) => cspViolationRecordsAreEqual(record, newRecord))) {
+          return currentRecords;
+        }
+        if (IS_PRODUCTION) {
+          fireTelemetryEvent('CSPViolation', newRecord);
+        }
+        return [...(currentRecords || []), newRecord];
+      });
     },
-    [],
+    [fireTelemetryEvent],
   );
+};
+
+export const useCSPViolationDetector = () => {
+  const { t } = useTranslation();
+  const toastContext = useToast();
+  const pluginStore = usePluginStore();
+  const addRecordToQueue = useCSPViolationQueue();
 
   const reportViolation = React.useCallback(
     (event) => {
@@ -108,20 +115,10 @@ export const useCSPViolationDetector = () => {
         getPluginNameFromResourceURL(event.blockedURI) ||
         getPluginNameFromResourceURL(event.sourceFile);
 
-      const existingRecords = getRecords();
-      const newRecord = {
+      addRecordToQueue({
         ...newCSPViolationReport(pluginName, event),
         timestamp: Date.now(),
-      };
-      const updatedRecords = updateRecords(existingRecords, newRecord);
-      const isNewOccurrence = updatedRecords.length > existingRecords.length;
-      const isProduction = process.env.NODE_ENV === 'production';
-
-      window.localStorage.setItem(LOCAL_STORAGE_CSP_VIOLATIONS_KEY, JSON.stringify(updatedRecords));
-
-      if (isNewOccurrence && isProduction) {
-        fireTelemetryEvent('CSPViolation', newRecord);
-      }
+      });
 
       if (pluginName) {
         const pluginInfo = pluginStore.findDynamicPluginInfo(pluginName);
@@ -139,7 +136,7 @@ export const useCSPViolationDetector = () => {
           pluginStore.setCustomDynamicPluginInfo(pluginName, { hasCSPViolations: true });
         }
 
-        if (pluginIsLoaded && !isProduction && !pluginInfo.hasCSPViolations) {
+        if (pluginIsLoaded && !IS_PRODUCTION && !pluginInfo.hasCSPViolations) {
           toastContext.addToast({
             variant: AlertVariant.warning,
             title: t('public~Content Security Policy violation in Console plugin'),
@@ -155,7 +152,7 @@ export const useCSPViolationDetector = () => {
         }
       }
     },
-    [fireTelemetryEvent, getRecords, t, toastContext, updateRecords, pluginStore],
+    [addRecordToQueue, pluginStore, toastContext, t],
   );
 
   React.useEffect(() => {

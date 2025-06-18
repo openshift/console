@@ -78,7 +78,7 @@ const testRecord = {
 };
 const existingRecord = {
   ...testReport,
-  timestamp: now - ONE_DAY,
+  timestamp: now - 1000,
 };
 const expiredRecord = {
   ...testReport,
@@ -121,30 +121,28 @@ describe('useCSPViolationDetector', () => {
     expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', testRecord);
   });
 
-  it('updates existing events with new timestamp', () => {
+  it('does not update store when matching event exists', () => {
+    mockGetItem.mockReturnValue(JSON.stringify([existingRecord]));
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-
-    mockGetItem.mockReturnValueOnce(JSON.stringify([existingRecord]));
 
     act(() => {
       fireEvent(document, testEvent);
     });
 
-    expect(mockSetItem).toBeCalledWith('console/csp_violations', JSON.stringify([testRecord]));
+    expect(mockSetItem).not.toBeCalled();
     expect(mockFireTelemetry).not.toBeCalled();
   });
   it('fires a telemetry event when a matching CSP expires', () => {
+    mockGetItem.mockReturnValue(JSON.stringify([expiredRecord]));
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-
-    mockGetItem.mockReturnValueOnce(JSON.stringify([expiredRecord]));
 
     const origNodeEnv = process.env.NODE_ENV;
     act(() => {
