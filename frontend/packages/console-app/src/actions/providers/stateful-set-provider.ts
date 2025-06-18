@@ -1,23 +1,25 @@
 import * as React from 'react';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { CommonActionFactory, getCommonResourceActions } from '../creators/common-factory';
+import { useCommonActionFactory, useCommonResourceActions } from '../creators/common-factory';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
 import { usePDBActions } from '../creators/pdb-factory';
 
 export const useStatefulSetActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [pdbActions] = usePDBActions(kindObj, resource);
+  const actionFactory = useCommonActionFactory();
+  const commonActions = useCommonResourceActions(kindObj, resource);
 
   const actions = React.useMemo(
     () => [
-      CommonActionFactory.ModifyCount(kindObj, resource),
+      actionFactory.ModifyCount(kindObj, resource),
       ...pdbActions,
       getHealthChecksAction(kindObj, resource),
-      CommonActionFactory.AddStorage(kindObj, resource),
-      ...getCommonResourceActions(kindObj, resource),
+      actionFactory.AddStorage(kindObj, resource),
+      ...commonActions,
     ],
-    [kindObj, resource, pdbActions],
+    [kindObj, resource, pdbActions, actionFactory, commonActions],
   );
 
   return [actions, !inFlight, undefined];
