@@ -14,6 +14,7 @@ export type Infrastructure = K8sResourceCommon & {
           region?: string;
           server?: string;
           topology?: {
+            folder?: string;
             computeCluster?: string;
             datacenter?: string;
             datastore?: string;
