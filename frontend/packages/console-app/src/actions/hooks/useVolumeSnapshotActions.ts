@@ -1,57 +1,63 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { restorePVCModal } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
-import { VolumeSnapshotKind, K8sModel } from '@console/internal/module/k8s';
+import { VolumeSnapshotModel } from '@console/internal/models';
+import { VolumeSnapshotKind } from '@console/internal/module/k8s';
 import { VolumeSnapshotActionCreator } from './types';
 
 /**
  * A React hook for retrieving actions related to VolumeSnapshots(VS).
  *
- * @param {K8sModel} kind - The K8s model for the VS.
- * @param {VolumeSnapshotKind} obj - The specific VS resource instance for which to generate actions.
+ * @param {VolumeSnapshotKind} resource - The specific VS resource instance for which to generate actions.
  * @param {VolumeSnapshotActionCreator[]} [filterActions] - Optional. If provided, the returned `actions` array will contain only
  * the specified actions. If omitted, it will contain all VS actions. In case of unknown `actionCreators` returns empty array.
+ *
+ * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
+ * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
  * @returns {Action[]} An array containing the generated action(s).
  *
  * @example
  * // Getting all actions for VS resources
- * const MyVolumeSnapshotComponent = ({ kind, obj }) => {
- * const actions = useVolumeSnapshotActions(kind, obj);
- * return <Kebab actions={actions} />;
+ * const MyVolumeSnapshotComponent = ({ resource }) => {
+ *   const actions = useVolumeSnapshotActions(resource);
+ *   return <Kebab actions={actions} />;
  * };
  */
 export const useVolumeSnapshotActions = (
-  kind: K8sModel,
-  obj: VolumeSnapshotKind,
+  resource: VolumeSnapshotKind,
   filterActions?: VolumeSnapshotActionCreator[],
 ): Action[] => {
   const { t } = useTranslation();
+
+  const memoizedFilterActions = useDeepCompareMemoize(filterActions);
+
   const factory = React.useMemo(
     () => ({
-      RestorePVC: () => ({
+      [VolumeSnapshotActionCreator.RestorePVC]: () => ({
         id: 'clone-pvc',
         label: t('console-app~Restore as new PVC'),
-        disabled: !obj?.status?.readyToUse,
-        tooltip: !obj?.status?.readyToUse ? t('console-app~Volume Snapshot is not Ready') : '',
+        disabled: !resource?.status?.readyToUse,
+        tooltip: !resource?.status?.readyToUse ? t('console-app~Volume Snapshot is not Ready') : '',
         cta: () =>
           restorePVCModal({
-            kind,
-            obj,
+            kind: VolumeSnapshotModel,
+            resource,
           }),
-        accessReview: asAccessReview(kind, obj, 'create'),
+        accessReview: asAccessReview(VolumeSnapshotModel, resource, 'create'),
       }),
     }),
-    [t, kind, obj],
+    [t, resource],
   );
 
   const actions = React.useMemo<Action[]>(() => {
-    if (filterActions) {
-      return filterActions.map((creator) => factory[creator]?.()).filter(Boolean);
+    if (memoizedFilterActions) {
+      return memoizedFilterActions.map((creator) => factory[creator]());
     }
     return [factory.RestorePVC()];
-  }, [factory, filterActions]);
+  }, [factory, memoizedFilterActions]);
   return actions;
 };

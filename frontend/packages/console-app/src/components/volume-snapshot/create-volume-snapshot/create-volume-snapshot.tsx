@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
+import { PVCStatusComponent } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeOptions,
   snapshotPVCStorageClassAnnotation,
@@ -125,7 +125,7 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
         <DescriptionListGroup>
           <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <PVCStatus pvc={persistentVolumeClaim} />
+            <PVCStatusComponent pvc={persistentVolumeClaim} />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
