@@ -2,12 +2,11 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
-import { Base64 } from 'js-base64';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import * as ITOB from 'istextorbinary/edition-es2017';
-import { KeyValueEntryFormState, SecretStringData } from './types';
+import { isBinary } from 'istextorbinary/edition-es2017';
+import { KeyValueEntryFormState, SecretStringData, Base64StringData } from './types';
 import { KeyValueEntryForm } from './KeyValueEntryForm';
 
 class GenericSecretFormWithTranslation extends React.Component<
@@ -17,7 +16,7 @@ class GenericSecretFormWithTranslation extends React.Component<
   constructor(props) {
     super(props);
     this.state = {
-      secretEntriesArray: this.genericSecretObjectToArray(this.props.stringData),
+      secretEntriesArray: this.genericSecretObjectToArray(this.props.base64StringData),
     };
     this.onDataChanged = this.onDataChanged.bind(this);
   }
@@ -30,30 +29,29 @@ class GenericSecretFormWithTranslation extends React.Component<
       uid: _.uniqueId(),
     };
   }
-  genericSecretObjectToArray(genericSecretObject) {
-    if (_.isEmpty(genericSecretObject)) {
+  genericSecretObjectToArray(base64StringData) {
+    if (_.isEmpty(base64StringData)) {
       return [this.newGenericSecretEntry()];
     }
-    return _.map(genericSecretObject, (value, key) => {
-      const isBinary = ITOB.isBinary(null, value);
-      return {
-        uid: _.uniqueId(),
-        entry: {
-          key,
-          value: isBinary ? Base64.encode(value) : value,
-          isBase64: isBinary,
-          isBinary,
-        },
-      };
-    });
+    if (base64StringData) {
+      return _.map(base64StringData, (value, key) => {
+        return {
+          uid: _.uniqueId(),
+          entry: {
+            key,
+            value,
+            isBinary_: isBinary(null, Buffer.from(value || '', 'base64')),
+          },
+        };
+      });
+    }
   }
   genericSecretArrayToObject(genericSecretArray) {
     return _.reduce(
       genericSecretArray,
       (acc, k) =>
         _.assign(acc, {
-          [k.entry.key]:
-            k.entry?.isBase64 || k.entry?.isBinary ? k.entry.value : Base64.encode(k.entry.value),
+          [k.entry.key]: k.entry.value,
         }),
       {},
     );
@@ -144,6 +142,7 @@ export const GenericSecretForm = withTranslation()(GenericSecretFormWithTranslat
 type GenericSecretFormProps = {
   onChange: Function;
   stringData: SecretStringData;
+  base64StringData: Base64StringData;
   isCreate: boolean;
 };
 
