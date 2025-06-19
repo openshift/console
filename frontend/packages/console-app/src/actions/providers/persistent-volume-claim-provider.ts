@@ -9,7 +9,7 @@ export const usePVCActionsProvider = (
   resource: PersistentVolumeClaimKind,
 ): [Action[], boolean, boolean] => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
-  const actionsPVC = usePVCActions(kindObj, resource);
+  const actionsPVC = usePVCActions(resource);
 
   const actions = React.useMemo(
     () => [

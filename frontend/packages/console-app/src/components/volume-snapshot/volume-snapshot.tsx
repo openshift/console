@@ -188,7 +188,7 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
       <TableData {...tableColumnInfo[7]}>
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
-      <TableData className={Kebab.columnClass} id="">
+      <TableData className={Kebab.columnClass}>
         <LazyActionMenu context={context} />
       </TableData>
     </>

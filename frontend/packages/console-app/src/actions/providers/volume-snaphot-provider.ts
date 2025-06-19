@@ -6,7 +6,7 @@ import { getCommonResourceActions } from '../creators/common-factory';
 
 export const useVolumeSnapshotActionsProvider = (resource: VolumeSnapshotKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
-  const volumeSnapshotActions = useVolumeSnapshotActions(kindObj, resource);
+  const volumeSnapshotActions = useVolumeSnapshotActions(resource);
   const actions = React.useMemo(() => {
     return [...volumeSnapshotActions, ...getCommonResourceActions(kindObj, resource)];
   }, [kindObj, volumeSnapshotActions, resource]);

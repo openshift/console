@@ -10,7 +10,7 @@ import {
   isPVCAlert,
   isPVCCreateProp,
   isPVCStatus,
-  PVCStatus as PVCStatusType,
+  PVCStatus,
   PVCAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
@@ -56,9 +56,9 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-export const PVCStatus: React.FC<PVCStatusProps> = ({ pvc }) => {
+export const PVCStatusComponent: React.FC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
-  const [pvcStatusExtensions, resolved] = useResolvedExtensions<PVCStatusType>(isPVCStatus);
+  const [pvcStatusExtensions, resolved] = useResolvedExtensions<PVCStatus>(isPVCStatus);
   if (resolved && pvcStatusExtensions.length > 0) {
     const sortedByPriority = pvcStatusExtensions.sort(
       (a, b) => b.properties.priority - a.properties.priority,
@@ -113,7 +113,7 @@ const PVCTableRow: React.FC<PVCTableRowProps> = ({ obj }) => {
         <ResourceLink kind="Namespace" name={namespace} title={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <PVCStatus pvc={obj} />
+        <PVCStatusComponent pvc={obj} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {_.get(obj, 'spec.volumeName') ? (
@@ -242,7 +242,7 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
                 <DescriptionListDescription data-test-id="pvc-status">
-                  <PVCStatus pvc={pvc} />
+                  <PVCStatusComponent pvc={pvc} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
