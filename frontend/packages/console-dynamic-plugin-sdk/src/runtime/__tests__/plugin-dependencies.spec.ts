@@ -101,6 +101,22 @@ describe('resolvePluginDependencies', () => {
     expect.assertions(3);
   });
 
+  it('skips required but not available plugins when listed in optionalDependencies', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    manifest.dependencies = { Foo: '*', Bar: '*' };
+    manifest.customProperties.console.optionalDependencies = ['Bar'];
+
+    try {
+      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
+    } catch (e) {
+      expect(e.message).toEqual('Dependent plugins are not available: Foo');
+      expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
+      expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
+    }
+
+    expect.assertions(3);
+  });
+
   it('subscribes to changes in dynamic plugin information', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     manifest.dependencies = { Foo: '*', Bar: '*' };
