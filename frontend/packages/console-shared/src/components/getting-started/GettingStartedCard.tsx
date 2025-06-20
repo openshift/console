@@ -15,8 +15,8 @@ import {
 import { ArrowRightIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { ExternalLink } from '../links/ExternalLink';
 import './GettingStartedCard.scss';
 
 export interface GettingStartedLink {

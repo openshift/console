@@ -133,8 +133,8 @@ export const ExternalLinkWithCopy = ({
 };
 
 // Open links in a new window and set noopener/noreferrer.
-export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>{children}</Linkify>
+export const LinkifyExternal = ({ children }: { children: React.ReactNode }) => (
+  <Linkify component={ExternalLink}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
