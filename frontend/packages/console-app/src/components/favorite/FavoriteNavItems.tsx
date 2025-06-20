@@ -62,7 +62,7 @@ export const FavoriteNavItems: React.FC = () => {
           'data-test': 'favorite-resource-item',
         }}
         className={css('co-favorite-resource')}
-        to={favorite.url}
+        to={`${favorite.url}?from=favorites`}
         isActive={activeItem === `favorites-item-${favorite.url}`}
       >
         <Flex
