@@ -182,7 +182,7 @@
   "Add item": "項目の追加",
   "Config Map": "設定マップ",
   "Empty Directory doesn't support shared data between tasks.": "Task 間の共有データは、空のディレクトリーではサポートされません。",
-  "No workspace": "ワークプレースなし",
+  "No workspace": "ワークスペースがありません",
   "Empty Directory": "空のディレクトリー",
   "PersistentVolumeClaim": "PersistentVolumeClaim",
   "VolumeClaimTemplate": "VolumeClaimTemplate",
