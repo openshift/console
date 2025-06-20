@@ -6,7 +6,7 @@ import { getServicesForResource } from '../utils';
 export const useServicesWatcher = (
   resource: K8sResourceKind,
 ): { loaded: boolean; loadError: string; services: K8sResourceKind[] } => {
-  const { namespace } = resource.metadata;
+  const namespace = resource?.metadata?.namespace || '';
   const [allServices, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: 'Service',
