@@ -62,7 +62,7 @@ export const QuickStartEmptyState = () => {
                 </Button>
                 <ExternalLinkButton
                   variant="link"
-                  href={getDocumentationURL(documentationURLs.creatingQuickStartsTutorial)}
+                  href={getDocumentationURL(documentationURLs.creatingQuickStartsTutorials)}
                 >
                   {t('Learn more about quick starts')}
                 </ExternalLinkButton>
