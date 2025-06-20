@@ -1,5 +1,15 @@
-import { ResourceStatus } from '@console/dynamic-plugin-sdk';
-import { Status, YellowExclamationTriangleIcon } from '@console/shared';
+import {
+  isResourceActionProvider,
+  ResourceActionProvider,
+  ResourceStatus,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import {
+  ActionMenuVariant,
+  LazyActionMenu,
+  Status,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -10,7 +20,13 @@ import { useTranslation } from 'react-i18next';
 import { PageHeading, PageHeadingProps } from '@console/shared/src/components/heading/PageHeading';
 import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
 import { connectToModel } from '../../kinds';
-import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
+import {
+  ExtensionK8sGroupModel,
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  referenceForExtensionModel,
+} from '../../module/k8s';
 import { FirehoseResult, KebabOption, ResourceIcon } from './index';
 import { ManagedByOperatorLink } from './managed-by';
 
@@ -73,13 +89,29 @@ export const ConnectedPageHeading = connectToModel(
     titleFunc,
     ...props
   }: ConnectedPageHeadingProps) => {
+    const { t } = useTranslation();
+
     const data = _.get(obj, 'data');
     const hasData = !_.isEmpty(data);
+
+    const resourceProviderGuard = React.useCallback(
+      (e): e is ResourceActionProvider =>
+        isResourceActionProvider(e) &&
+        referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kind,
+      [kind],
+    );
+
+    const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
+      ResourceActionProvider
+    >(resourceProviderGuard);
+
+    const hasExtensionActions =
+      resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
 
     const hasButtonActions = !_.isEmpty(buttonActions);
     const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
     const showActions =
-      (hasButtonActions || hasMenuActions || customActionMenu) &&
+      (hasButtonActions || hasMenuActions || customActionMenu || hasExtensionActions) &&
       hasData &&
       !_.get(data, 'metadata.deletionTimestamp');
 
@@ -89,6 +121,34 @@ export const ConnectedPageHeading = connectToModel(
       props.resourceKeys,
       (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
       {},
+    );
+
+    const actions = hasExtensionActions ? (
+      <LazyActionMenu
+        context={{ [kind]: data }}
+        variant={ActionMenuVariant.DROPDOWN}
+        label={t('public~Actions')}
+      />
+    ) : (
+      <>
+        {hasButtonActions && hasData && (
+          <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+        )}
+
+        {hasMenuActions && hasData && (
+          <ActionListItem>
+            <ActionsMenu
+              actions={
+                _.isFunction(menuActions)
+                  ? menuActions(kindObj, data, extraResources, customData)
+                  : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+              }
+            />
+          </ActionListItem>
+        )}
+
+        {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
+      </>
     );
 
     return (
@@ -124,29 +184,7 @@ export const ConnectedPageHeading = connectToModel(
             )
           )
         }
-        primaryAction={
-          showActions && (
-            <>
-              {hasButtonActions && (
-                <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-              )}
-
-              {hasMenuActions && (
-                <ActionListItem>
-                  <ActionsMenu
-                    actions={
-                      _.isFunction(menuActions)
-                        ? menuActions(kindObj, data, extraResources, customData)
-                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                    }
-                  />
-                </ActionListItem>
-              )}
-
-              {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
-            </>
-          )
-        }
+        primaryAction={showActions ? actions : undefined}
       />
     );
   },
