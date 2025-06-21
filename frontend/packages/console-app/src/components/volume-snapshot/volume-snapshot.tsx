@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import i18next from 'i18next';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import {
@@ -18,7 +18,6 @@ import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import {
   ResourceLink,
-  ResourceKebab,
   Kebab,
   convertToBaseValue,
   humanizeBinaryBytes,
@@ -37,14 +36,19 @@ import {
   referenceForModel,
   VolumeSnapshotKind,
   Selector,
+  referenceFor,
 } from '@console/internal/module/k8s';
-import { Status, getName, getNamespace, snapshotSource, FLAGS } from '@console/shared';
+import {
+  LazyActionMenu,
+  Status,
+  getName,
+  getNamespace,
+  snapshotSource,
+  FLAGS,
+} from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
-
-const { common, RestorePVC } = Kebab.factory;
-const menuActions = [RestorePVC, ...common];
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -58,57 +62,57 @@ const tableColumnInfo = [
   { className: Kebab.columnClass, id: '' },
 ];
 
-const getTableColumns = (disableItems = {}): TableColumn<VolumeSnapshotKind>[] =>
+const getTableColumns = (t: TFunction, disableItems = {}): TableColumn<VolumeSnapshotKind>[] =>
   [
     {
-      title: i18next.t('console-app~Name'),
+      title: t('console-app~Name'),
       sort: 'metadata.name',
       transforms: [sortable],
       id: tableColumnInfo[0].id,
     },
     {
-      title: i18next.t('console-app~Namespace'),
+      title: t('console-app~Namespace'),
       sort: 'metadata.namespace',
       transforms: [sortable],
       id: tableColumnInfo[1].id,
     },
     {
-      title: i18next.t('console-app~Status'),
+      title: t('console-app~Status'),
       sort: 'snapshotStatus',
       transforms: [sortable],
       props: { className: tableColumnInfo[2].className },
       id: tableColumnInfo[2].id,
     },
     {
-      title: i18next.t('console-app~Size'),
+      title: t('console-app~Size'),
       sort: 'volumeSnapshotSize',
       transforms: [sortable],
       props: { className: tableColumnInfo[3].className },
       id: tableColumnInfo[3].id,
     },
     {
-      title: i18next.t('console-app~Source'),
+      title: t('console-app~Source'),
       sort: 'volumeSnapshotSource',
       transforms: [sortable],
       props: { className: tableColumnInfo[4].className },
       id: tableColumnInfo[4].id,
     },
     {
-      title: i18next.t('console-app~Snapshot content'),
+      title: t('console-app~Snapshot content'),
       sort: 'status.boundVolumeSnapshotContentName',
       transforms: [sortable],
       props: { className: tableColumnInfo[5].className },
       id: tableColumnInfo[5].id,
     },
     {
-      title: i18next.t('console-app~VolumeSnapshotClass'),
+      title: t('console-app~VolumeSnapshotClass'),
       sort: 'spec.volumeSnapshotClassName',
       transforms: [sortable],
       props: { className: tableColumnInfo[6].className },
       id: tableColumnInfo[6].id,
     },
     {
-      title: i18next.t('console-app~Created at'),
+      title: t('console-app~Created at'),
       sort: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnInfo[7].className },
@@ -135,7 +139,8 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
   const sourceName = snapshotSource(obj);
   const snapshotContent = obj?.status?.boundVolumeSnapshotContentName;
   const snapshotClass = obj?.spec?.volumeSnapshotClassName;
-
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData {...tableColumnInfo[0]}>
@@ -183,12 +188,8 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
       <TableData {...tableColumnInfo[7]}>
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
-      <TableData {...tableColumnInfo[8]}>
-        <ResourceKebab
-          kind={referenceForModel(VolumeSnapshotModel)}
-          resource={obj}
-          actions={menuActions}
-        />
+      <TableData className={Kebab.columnClass}>
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
@@ -196,9 +197,10 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
 
 const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => {
   const { t } = useTranslation();
-  const [columns] = useActiveColumns({
-    columns: getTableColumns(props.rowData.customData.disableItems),
-  });
+
+  const columns = getTableColumns(t, props.rowData.customData.disableItems);
+
+  const [activeColumns] = useActiveColumns({ columns });
 
   return (
     <VirtualizedTable<VolumeSnapshotKind>
@@ -206,7 +208,7 @@ const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => {
       data={props.data}
       aria-label={t('console-app~VolumeSnapshots')}
       label={t('console-app~VolumeSnapshots')}
-      columns={columns}
+      columns={activeColumns}
       Row={Row}
     />
   );
@@ -277,9 +279,9 @@ const checkPVCSnapshot: CheckPVCSnapshot = (volumeSnapshots, pvc) =>
 const FilteredSnapshotTable: React.FC<FilteredSnapshotTable> = (props) => {
   const { t } = useTranslation();
   const { data, rowData } = props;
-
-  const [columns] = useActiveColumns({
-    columns: getTableColumns(rowData.customData?.disableItems),
+  const columns = getTableColumns(t, props.rowData.customData.disableItems);
+  const [activeColumns] = useActiveColumns({
+    columns,
   });
   return (
     <VirtualizedTable<VolumeSnapshotKind>
@@ -287,7 +289,7 @@ const FilteredSnapshotTable: React.FC<FilteredSnapshotTable> = (props) => {
       data={checkPVCSnapshot(data, rowData.customData.pvc)}
       aria-label={t('console-app~VolumeSnapshots')}
       label={t('console-app~VolumeSnapshots')}
-      columns={columns}
+      columns={activeColumns}
       Row={Row}
     />
   );

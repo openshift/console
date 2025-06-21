@@ -16,7 +16,7 @@ import {
 } from '@console/operator-lifecycle-manager';
 import { deleteHPAModal, isHelmResource, isOperatorBackedService } from '@console/shared';
 import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 const hpaRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kind: K8sKind) =>
   `/workload-hpa/ns/${namespace}/${referenceForModel(kind)}/${name}`;
