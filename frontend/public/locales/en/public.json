@@ -628,7 +628,7 @@
   "Users": "Users",
   "Groups": "Groups",
   "Group details": "Group details",
-  "resource {{name}}": "resource {{name}}",
+  "{{type}} {{name}}": "{{type}} {{name}}",
   "(as a percentage of request)": "(as a percentage of request)",
   "{{name}} on pods": "{{name}} on pods",
   "{{name}} on<2></2>": "{{name}} on<2></2>",
