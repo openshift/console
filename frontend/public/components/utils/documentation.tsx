@@ -29,7 +29,13 @@ export const DOC_URL_STORAGE_CLASSES_SCALEIO = `${KUBE_DOCS}/concepts/storage/st
 export const DOC_URL_STORAGE_CLASSES_STORAGEOS = `${KUBE_DOCS}/concepts/storage/storage-classes/#storageos`;
 export const DOC_URL_STORAGE_CLASSES_VSPHERE = `${KUBE_DOCS}/concepts/storage/storage-classes/#vsphere`;
 
-export const documentationURLs: documentationURLsType = {
+type docURLs = {
+  downstream: string;
+  kube?: string;
+  upstream: string;
+};
+
+export const documentationURLs = {
   applicationHealth: {
     downstream: 'html/building_applications/application-health',
     upstream: 'applications/application-health.html',
@@ -115,14 +121,4 @@ export const getNetworkPolicyDocURL = (openshiftFlag: boolean): string => {
   const networkLink = getDocumentationURL(documentationURLs.networkPolicy);
 
   return openshiftFlag ? networkLink : documentationURLs.networkPolicy.kube;
-};
-
-type documentationURLsType = {
-  [key: string]: docURLs;
-};
-
-type docURLs = {
-  downstream: string;
-  kube?: string;
-  upstream: string;
 };
