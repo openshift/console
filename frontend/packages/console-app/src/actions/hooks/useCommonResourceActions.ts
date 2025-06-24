@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator } from './types';
@@ -19,5 +20,5 @@ export const useCommonResourceActions = (
     ] as const,
     message,
   );
-  return Object.values(actions);
+  return React.useMemo(() => Object.values(actions), [actions]);
 };

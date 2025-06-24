@@ -47,12 +47,15 @@ export const denyCSR = (csr: CertificateSigningRequestKind) => updateCSR(csr, 'D
 export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(obj));
   const { t } = useTranslation();
-  const deleteMessage = (
-    <p>
-      {t(
-        'console-app~This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
-      )}
-    </p>
+  const deleteMessage = React.useMemo(
+    () => (
+      <p>
+        {t(
+          'console-app~This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
+        )}
+      </p>
+    ),
+    [t],
   );
   const commonActions = useCommonResourceActions(kindObj, obj, deleteMessage);
   const nodeActions = React.useMemo<Action[]>(() => {
