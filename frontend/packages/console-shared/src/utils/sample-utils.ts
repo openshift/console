@@ -12,19 +12,11 @@ import {
   Perspective,
 } from '@console/dynamic-plugin-sdk';
 import { FirehoseResult } from '@console/internal/components/utils';
-import denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
-import limitCertainAppImg from '@console/internal/imgs/network-policy-samples/2-limit-certain-apps.svg';
-import allowIngressImg from '@console/internal/imgs/network-policy-samples/3-allow-ingress.svg';
-import defaultDenyAllImg from '@console/internal/imgs/network-policy-samples/4-default-deny-all.svg';
-import webAllowExternalImg from '@console/internal/imgs/network-policy-samples/5-web-allow-external.svg';
-import webDbAllowAllNsImg from '@console/internal/imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
-import webAllowProductionImg from '@console/internal/imgs/network-policy-samples/7-web-allow-production.svg';
 import {
   BuildConfigModel,
   ClusterRoleModel,
   ConsoleLinkModel,
   ConsoleOperatorConfigModel,
-  NetworkPolicyModel,
   ResourceQuotaModel,
   RoleModel,
 } from '@console/internal/models';
@@ -115,81 +107,6 @@ const defaultSamples = (t: TFunction) =>
           ),
           id: 's2i-build',
           targetResource: getTargetResource(BuildConfigModel),
-        },
-      ],
-    )
-    .setIn(
-      [referenceForModel(NetworkPolicyModel)],
-      [
-        {
-          highlightText: t('console-shared~Limit'),
-          title: t('console-shared~access to the current namespace'),
-          img: denyOtherNamespacesImg,
-          description: t(
-            'console-shared~Deny traffic from other namespaces while allowing all traffic from the namespaces the Pod is living in.',
-          ),
-          id: 'deny-other-namespaces',
-          targetResource: getTargetResource(NetworkPolicyModel),
-        },
-        {
-          highlightText: t('console-shared~Limit'),
-          title: t('console-shared~traffic to an application within the same namespace'),
-          img: limitCertainAppImg,
-          description: t(
-            'console-shared~Allow inbound traffic from only certain Pods. One typical use case is to restrict the connections to a database only to the specific applications.',
-          ),
-          id: 'db-or-api-allow-app',
-          targetResource: getTargetResource(NetworkPolicyModel),
-        },
-        {
-          highlightText: t('console-shared~Allow'),
-          title: t('console-shared~http and https ingress within the same namespace'),
-          img: allowIngressImg,
-          description: t(
-            'console-shared~Define ingress rules for specific port numbers of an application. The rule applies to all port numbers if not specified.',
-          ),
-          id: 'api-allow-http-and-https',
-          targetResource: getTargetResource(NetworkPolicyModel),
-        },
-        {
-          highlightText: t('console-shared~Deny'),
-          title: t('console-shared~all non-whitelisted traffic in the current namespace'),
-          img: defaultDenyAllImg,
-          description: t(
-            'console-shared~A fundamental policy by blocking all cross-pod traffics expect whitelisted ones through the other Network Policies being deployed.',
-          ),
-          id: 'default-deny-all',
-          targetResource: getTargetResource(NetworkPolicyModel),
-        },
-        {
-          highlightText: t('console-shared~Allow'),
-          title: t('console-shared~traffic from external clients'),
-          img: webAllowExternalImg,
-          description: t(
-            'console-shared~Allow external service from public Internet directly or through a Load Balancer to access the Pod.',
-          ),
-          id: 'web-allow-external',
-          targetResource: getTargetResource(NetworkPolicyModel),
-        },
-        {
-          highlightText: t('console-shared~Allow'),
-          title: t('console-shared~traffic to an application from all namespaces'),
-          img: webDbAllowAllNsImg,
-          description: t(
-            'console-shared~One typical use case is for a common database which is used by deployments in different namespaces.',
-          ),
-          id: 'web-db-allow-all-ns',
-          targetResource: getTargetResource(NetworkPolicyModel),
-        },
-        {
-          highlightText: t('console-shared~Allow'),
-          title: t('console-shared~traffic from all Pods in a particular namespace'),
-          img: webAllowProductionImg,
-          description: t(
-            'console-shared~Typical use case should be "only allow deployments in production namespaces to access the database" or "allow monitoring tools (in another namespace) to scrape metrics from current namespace."',
-          ),
-          id: 'web-allow-production',
-          targetResource: getTargetResource(NetworkPolicyModel),
         },
       ],
     )
