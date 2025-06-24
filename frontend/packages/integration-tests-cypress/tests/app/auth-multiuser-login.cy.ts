@@ -45,8 +45,8 @@ describe('Auth test', () => {
       nav.sidenav.shouldNotHaveNavSection(['Administration', 'Namespaces']);
       nav.sidenav.shouldNotHaveNavSection(['Administration', 'Custom Resource Definitions']);
 
-      cy.log('does not show admin nav items in Operators to test user');
-      nav.sidenav.shouldNotHaveNavSection(['Operators', 'OperatorHub']);
+      cy.log('does not show admin nav items in Ecosystem to test user');
+      nav.sidenav.shouldNotHaveNavSection(['Ecosystem', 'OperatorHub']);
 
       cy.log('does not show admin nav items in Storage to test user');
       nav.sidenav.shouldNotHaveNavSection(['Storage', 'Persistent Volumes']);

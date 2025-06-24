@@ -50,7 +50,7 @@ describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
     cy.log(
       `Operator "${testOperator.name}" should not be installed in "${GlobalInstalledNamespace}"`,
     );
-    nav.sidenav.clickNavLink(['Operators', 'Installed Operators']);
+    nav.sidenav.clickNavLink(['Ecosystem', 'Installed Operators']);
     projectDropdown.selectProject(GlobalInstalledNamespace);
     projectDropdown.shouldContain(GlobalInstalledNamespace);
     cy.get('.loading-skeleton--table').should('not.exist');
