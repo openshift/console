@@ -70,6 +70,10 @@ describe('Visiting other routes', () => {
             waitFor: () => listPage.rows.shouldBeLoaded(),
           },
           {
+            path: '/k8s/cluster/machine.openshift.io~v1~ControlPlaneMachineSet',
+            waitFor: () => listPage.rows.shouldBeLoaded(),
+          },
+          {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet',
             waitFor: () => listPage.rows.shouldBeLoaded(),
           },
