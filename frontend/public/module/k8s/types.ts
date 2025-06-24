@@ -720,6 +720,27 @@ export type MachineSetKind = {
   };
 } & K8sResourceCommon;
 
+export type ControlPlaneMachineSetKind = {
+  spec: {
+    replicas: number;
+    selector: Selector;
+    state?: string;
+    strategy?: {
+      type?: string;
+    };
+    template: {
+      machineType: string;
+    };
+  };
+  status: {
+    replicas?: number;
+    readyReplicas?: number;
+    updatedReplicas?: number;
+    unavailableReplicas?: number;
+    conditions?: K8sResourceCondition[];
+  };
+} & K8sResourceCommon;
+
 export type Patch = {
   op: string;
   path: string;
