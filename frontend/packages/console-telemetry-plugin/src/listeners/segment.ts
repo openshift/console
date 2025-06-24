@@ -1,4 +1,5 @@
-import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
+import { TelemetryEventListener, UserInfo } from '@console/dynamic-plugin-sdk/src';
+import type { ClusterProperties } from '@console/shared/src/hooks/useTelemetry';
 import { TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
 
 // Sample 20% of sessions
@@ -110,6 +111,20 @@ const anonymousIP = {
   },
 };
 
+/**
+ * Uses SHA1 hash algorithm to anonymize the user ID.
+ */
+const anonymizeId = async (anonymousIdInput: string) => {
+  const anonymousIdBuffer = await window.crypto.subtle.digest(
+    'SHA-1',
+    new TextEncoder().encode(anonymousIdInput),
+  );
+  const anonymousIdArray = Array.from(new Uint8Array(anonymousIdBuffer));
+  return anonymousIdArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+};
+
+type EventProperties = { user?: UserInfo } & ClusterProperties & any;
+
 export const eventListener: TelemetryEventListener = async (
   eventType: string,
   properties?: any,
@@ -139,39 +154,40 @@ export const eventListener: TelemetryEventListener = async (
   switch (eventType) {
     case 'identify':
       {
-        const { user, ...otherProperties } = properties;
+        const { user, ...otherProperties }: EventProperties = properties;
         const clusterId = otherProperties?.clusterId;
         const organizationId = otherProperties?.organizationId;
         const username = user?.username;
         if (username) {
-          let anonymousIdInput: string;
+          let userId: string;
           if (organizationId) {
             if (username === 'kubeadmin' || username === 'kube:admin') {
-              anonymousIdInput = `${organizationId}@${clusterId}`;
+              userId = `${organizationId}@${clusterId}`;
             } else {
-              anonymousIdInput = `${username}@${clusterId}`;
+              userId = `${username}@${clusterId}`;
             }
           } else {
-            anonymousIdInput = username;
+            userId = username;
           }
 
-          // Use SHA1 hash algorithm to anonymize the user
-          const anonymousIdBuffer = await crypto.subtle.digest(
-            'SHA-1',
-            new TextEncoder().encode(anonymousIdInput),
-          );
-          const anonymousIdArray = Array.from(new Uint8Array(anonymousIdBuffer));
-          const anonymousId = anonymousIdArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+          let processedUserId: string;
+
+          // anonymize user ID if cluster is not a DEVSANDBOX cluster
+          if (window.SERVER_FLAGS?.telemetry?.DEVSANDBOX === 'true') {
+            processedUserId = user?.uid ?? userId;
+          } else {
+            processedUserId = await anonymizeId(userId);
+          }
 
           if (TELEMETRY_DEBUG) {
             // eslint-disable-next-line no-console
             console.debug(
               `console-telemetry-plugin: use anonymized user identifier to group events`,
-              { username, clusterId, organizationId, anonymousIdInput, anonymousId },
+              { username, clusterId, organizationId, userId, processedUserId },
             );
           }
 
-          (window as any).analytics.identify(anonymousId, otherProperties, anonymousIP);
+          (window as any).analytics.identify(processedUserId, otherProperties, anonymousIP);
         } else {
           // eslint-disable-next-line no-console
           console.error(
