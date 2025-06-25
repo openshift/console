@@ -1,27 +1,24 @@
 import * as React from 'react';
+import { Checkbox as PFCheckbox } from '@patternfly/react-core';
 
-export const Checkbox: React.SFC<CheckboxProps> = ({ name, label, checked, onChange }) => (
+export const Checkbox = ({ name, label, checked, onChange }: CheckboxProps) => (
   <div className="form-group">
-    <div className="checkbox">
-      <label>
-        <input
-          data-test={`${label}__checkbox`}
-          className="form-checkbox"
-          name={name}
-          onChange={onChange}
-          checked={checked}
-          data-checked-state={checked}
-          type="checkbox"
-        />
-        {label}
-      </label>
-    </div>
+    <PFCheckbox
+      data-test={`${label}__checkbox`}
+      name={name}
+      onChange={onChange}
+      isChecked={checked}
+      data-checked-state={checked}
+      id={`${label}__checkbox`}
+      label={label}
+      className="pf-v6-u-my-sm"
+    />
   </div>
 );
 
 export type CheckboxProps = {
   name: string;
   label: string;
-  onChange: React.ReactEventHandler<HTMLInputElement>;
   checked: boolean;
+  onChange: React.ReactEventHandler<HTMLInputElement>;
 };
