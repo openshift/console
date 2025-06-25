@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UseDeleteModal } from '@console/dynamic-plugin-sdk/src';
-import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import type { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
