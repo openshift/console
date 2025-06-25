@@ -11,7 +11,7 @@ import {
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
-import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator } from './types';
 
 // Type to create an object with action creators as keys and Actions as values
@@ -23,7 +23,7 @@ type ActionObject<T extends readonly CommonActionCreator[]> = {
  * A React hook for retrieving common actions related to Kubernetes resources.
  *
  * @param {K8sModel} kind - The K8s model for the resource.
- * @param {K8sResourceKind} obj - The specific resource instance for which to generate actions.
+ * @param {K8sResourceKind} resource - The specific resource instance for which to generate actions.
  * @param {CommonActionCreator[]} [filterActions] - Optional. If provided, the returned object will contain
  * only the specified actions. If omitted, it will contain all common actions.
  * @param {JSX.Element} [message] - Optional message to display in the delete modal.
@@ -36,8 +36,8 @@ type ActionObject<T extends readonly CommonActionCreator[]> = {
  *
  * @example
  * // Getting Delete and Edit actions for a resource
- * const MyResourceComponent = ({ kind, obj }) => {
- *   const actions = useCommonActions(kind, obj, [CommonActionCreator.Delete, CommonActionCreator.Edit]);
+ * const MyResourceComponent = ({ kind, resource }) => {
+ *   const actions = useCommonActions(kind, resource, [CommonActionCreator.Delete, CommonActionCreator.Edit]);
  *   const deleteAction = actions.Delete;
  *   const editAction = actions.Edit;
  *   return <Kebab actions={Object.values(actions)} />;
@@ -45,7 +45,7 @@ type ActionObject<T extends readonly CommonActionCreator[]> = {
  */
 export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   kind: K8sModel,
-  obj: K8sResourceKind,
+  resource: K8sResourceKind,
   filterActions?: T,
   message?: JSX.Element,
 ): ActionObject<T> => {
@@ -61,19 +61,19 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         cta: () =>
           deleteModal({
             kind,
-            resource: obj,
+            resource,
             message,
           }),
-        accessReview: asAccessReview(kind, obj, 'delete'),
+        accessReview: asAccessReview(kind, resource, 'delete'),
       }),
       [CommonActionCreator.Edit]: (): Action => ({
         id: `edit-resource`,
         label: t('console-app~Edit {{kind}}', { kind: kind.kind }),
         cta: {
-          href: `${resourceObjPath(obj, kind.crd ? referenceFor(kind) : kind.kind)}/yaml`,
+          href: `${resourceObjPath(resource, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
         },
         // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-        accessReview: asAccessReview(kind, obj, 'update'),
+        accessReview: asAccessReview(kind, resource, 'update'),
       }),
       [CommonActionCreator.ModifyLabels]: (): Action => ({
         id: 'edit-labels',
@@ -81,10 +81,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         cta: () =>
           labelsModalLauncher({
             kind,
-            resource: obj,
+            resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, obj, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.ModifyAnnotations]: (): Action => ({
         id: 'edit-annotations',
@@ -92,10 +92,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         cta: () =>
           annotationsModalLauncher({
             kind,
-            resource: obj,
+            resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, obj, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.ModifyCount]: (): Action => ({
         id: 'edit-pod-count',
@@ -103,9 +103,9 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         cta: () =>
           configureReplicaCountModal({
             resourceKind: kind,
-            resource: obj,
+            resource,
           }),
-        accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
+        accessReview: asAccessReview(kind, resource, 'patch', 'scale'),
       }),
       [CommonActionCreator.ModifyPodSelector]: (): Action => ({
         id: 'edit-pod-selector',
@@ -113,10 +113,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         cta: () =>
           podSelectorModal({
             kind,
-            resource: obj,
+            resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, obj, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.ModifyTolerations]: (): Action => ({
         id: 'edit-toleration',
@@ -124,21 +124,24 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         cta: () =>
           tolerationsModal({
             resourceKind: kind,
-            resource: obj,
+            resource,
             modalClassName: 'modal-lg',
           }),
-        accessReview: asAccessReview(kind, obj, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.AddStorage]: (): Action => ({
         id: 'add-storage',
         label: t('console-app~Add storage'),
         cta: {
-          href: `${resourceObjPath(obj, kind.crd ? referenceFor(kind) : kind.kind)}/attach-storage`,
+          href: `${resourceObjPath(
+            resource,
+            kind.crd ? referenceForModel(kind) : kind.kind,
+          )}/attach-storage`,
         },
-        accessReview: asAccessReview(kind, obj, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
     }),
-    [kind, obj, t, message],
+    [kind, resource, t, message],
   );
 
   return React.useMemo(() => {

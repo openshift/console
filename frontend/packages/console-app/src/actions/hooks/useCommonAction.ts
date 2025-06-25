@@ -8,7 +8,7 @@ import { useCommonActions } from './useCommonActions';
  * This is a convenience wrapper around useCommonActions for when you only need one action.
  *
  * @param {K8sModel} kind - The K8s model for the resource.
- * @param {K8sResourceKind} obj - The specific resource instance for which to generate the action.
+ * @param {K8sResourceKind} resource - The specific resource instance for which to generate the action.
  * @param {CommonActionCreator} actionCreator - The single action creator to use.
  * @param {JSX.Element} [message] - Optional message to display in the delete modal.
  *
@@ -17,18 +17,18 @@ import { useCommonActions } from './useCommonActions';
  * @returns {Action} The generated action.
  *
  * @example
- * // Getting a ModifyCount action
- * const MyResourceComponent = ({ kind, obj }) => {
- *   const modifyCountAction = useCommonAction(kind, obj, CommonActionCreator.ModifyCount);
+ * // Getting ModifyCount action
+ * const MyResourceComponent = ({ kind, resource }) => {
+ *   const modifyCountAction = useCommonAction(kind, resource, CommonActionCreator.ModifyCount);
  *   return <ActionButton action={modifyCountAction} />;
  * };
  */
 export const useCommonAction = (
   kind: K8sModel,
-  obj: K8sResourceKind,
+  resource: K8sResourceKind,
   actionCreator: CommonActionCreator,
   message?: JSX.Element,
 ): Action => {
-  const actions = useCommonActions(kind, obj, [actionCreator] as const, message);
+  const actions = useCommonActions(kind, resource, [actionCreator] as const, message);
   return actions[actionCreator];
 };

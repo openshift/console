@@ -6,12 +6,12 @@ import { useCommonActions } from './useCommonActions';
 
 export const useCommonResourceActions = (
   kind: K8sModel,
-  obj: K8sResourceKind,
+  resource: K8sResourceKind,
   message?: JSX.Element,
 ): Action[] => {
   const actions = useCommonActions(
     kind,
-    obj,
+    resource,
     [
       CommonActionCreator.ModifyLabels,
       CommonActionCreator.ModifyAnnotations,
