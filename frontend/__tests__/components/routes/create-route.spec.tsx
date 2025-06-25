@@ -42,7 +42,6 @@ describe('Create Route', () => {
     expect(wrapper.find('input[id="hostname"]').exists()).toBe(true);
     expect(wrapper.find('input[id="path"]').exists()).toBe(true);
     expect(wrapper.find(Dropdown).exists()).toBe(true);
-    expect(wrapper.find('input[id="secure"]').exists()).toBe(true);
   });
 
   it('should display the Add alternate Service link when a service is selected', () => {

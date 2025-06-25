@@ -7,7 +7,7 @@ import { LoadingInline, withHandlePromise } from '../utils';
 import { DeploymentConfigModel, DeploymentModel, ReplicationControllerModel } from '../../models';
 import { k8sCreate, k8sPatch, k8sUpdate } from '../../module/k8s';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Checkbox } from '@patternfly/react-core';
 
 const ANNOTATIONS_TO_SKIP = [
   'kubectl.kubernetes.io/last-applied-configuration',
@@ -134,36 +134,27 @@ const BaseRollbackModal = withHandlePromise((props) => {
               when rolling back:
             </Trans>
           </p>
-          <div className="checkbox">
-            <label>
-              <input
-                type="checkbox"
-                onChange={() => setChangeScaleSettings(!changeScaleSettings)}
-                checked={changeScaleSettings}
-              />
-              {t('public~Replica count and selector')}
-            </label>
-          </div>
-          <div className="checkbox">
-            <label>
-              <input
-                type="checkbox"
-                onChange={() => setChangeStrategy(!changeStrategy)}
-                checked={changeStrategy}
-              />
-              {t('public~Deployment strategy')}
-            </label>
-          </div>
-          <div className="checkbox">
-            <label>
-              <input
-                type="checkbox"
-                onChange={() => setChangeTriggers(!changeTriggers)}
-                checked={changeTriggers}
-              />
-              {t('public~Deployment trigger')}
-            </label>
-          </div>
+          <Checkbox
+            label={t('public~Replica count and selector')}
+            onChange={(_event, checked) => setChangeScaleSettings(checked)}
+            isChecked={changeScaleSettings}
+            name="changeScaleSettings"
+            id="changeScaleSettings"
+          />
+          <Checkbox
+            label={t('public~Deployment strategy')}
+            onChange={(_event, checked) => setChangeStrategy(checked)}
+            isChecked={changeStrategy}
+            name="changeStrategy"
+            id="changeStrategy"
+          />
+          <Checkbox
+            label={t('public~Deployment trigger')}
+            onChange={(_event, checked) => setChangeTriggers(checked)}
+            isChecked={changeTriggers}
+            name="changeTriggers"
+            id="changeTriggers"
+          />
         </>
       );
     }
