@@ -177,6 +177,12 @@ $masthead-logo-max-height: 60px;
   gap: 0;
 }
 
+// Fixes a very strange web-terminal e2e bug where the masthead disappears
+#co-cloud-shell-drawer > .pf-v6-c-drawer__main > .pf-v6-c-drawer__content {
+  position: sticky;
+  top: 0;
+}
+
 .pf-v6-c-masthead {
   --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit
 }

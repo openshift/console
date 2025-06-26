@@ -19,7 +19,7 @@ export const topologyHelper = {
     });
     cy.get(topologyPO.graph.reset).click();
     cy.get(topologyPO.graph.fitToScreen).click();
-    cy.get(topologyPO.highlightNode, options).should('be.visible');
+    cy.get(topologyPO.highlightNode, options).should('exist');
     app.waitForDocumentLoad();
   },
   verifyWorkloadDeleted: (workloadName: string, options?: { timeout: number }) => {

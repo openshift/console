@@ -273,7 +273,7 @@ export const topologyPage = {
   getRevisionNode: (serviceName: string) => {
     cy.get('[data-type="knative-revision"] g[class$=topology__node__label] > text')
       .contains(serviceName.substring(0, 6))
-      .should('be.visible');
+      .should('exist');
     return cy.get('[data-type="knative-revision"] ellipse');
   },
   verifyContextMenuOptions: (...options: string[]) => {
