@@ -3,7 +3,8 @@ import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { CommonActionFactory } from '@console/app/src/actions/creators/common-factory';
-import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
+import { DeploymentActionCreator } from '@console/app/src/actions/hooks/types';
+import { useDeploymentActions } from '@console/app/src/actions/hooks/useDeploymentActions';
 import { Action, DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';
 import {
   DaemonSetModel,
@@ -89,6 +90,9 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const resource = getResource(element);
+  const deploymentActions = useDeploymentActions(DeploymentModel, resource, [
+    DeploymentActionCreator.EditResourceLimits,
+  ] as const);
   const name = resource?.metadata?.name;
   const namespace = resource?.metadata?.namespace;
 
@@ -109,7 +113,7 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
 
   let alertAction: Action;
   if (resourceQuotaRequested.includes('limits')) {
-    alertAction = DeploymentActionFactory.EditResourceLimits(DeploymentModel, resource);
+    alertAction = deploymentActions.EditResourceLimits;
   } else if (resourceQuotaRequested.includes('pods')) {
     alertAction = CommonActionFactory.ModifyCount(DeploymentModel, resource);
   }
