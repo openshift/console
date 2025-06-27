@@ -33,17 +33,17 @@ type StateProps = {
   user: UserInfo;
 };
 
-type Props = {
+export type CloudShellTerminalProps = {
   onCancel?: () => void;
   terminalNumber?: number;
   setWorkspaceName?: (name: string, terminalNumber: number) => void;
   setWorkspaceNamespace?: (namespace: string, terminalNumber: number) => void;
 };
 
-type CloudShellTerminalProps = StateProps & Props;
+type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
 
 const CloudShellTerminal: React.FC<
-  CloudShellTerminalProps & WithUserSettingsCompatibilityProps<string>
+  CloudShellTerminalInternalProps & WithUserSettingsCompatibilityProps<string>
 > = ({
   user,
   onCancel,
@@ -261,7 +261,7 @@ const stateToProps = (state: RootState): StateProps => ({
   user: getUser(state),
 });
 
-export default connect<StateProps, null, Props>(stateToProps)(
+export default connect<StateProps, null, CloudShellTerminalProps>(stateToProps)(
   withUserSettingsCompatibility<
     CloudShellTerminalProps & WithUserSettingsCompatibilityProps<string>,
     string

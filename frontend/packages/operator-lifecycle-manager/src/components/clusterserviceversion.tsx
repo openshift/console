@@ -1124,7 +1124,8 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                       key={link.url}
                       style={{ display: 'flex', flexDirection: 'column' }}
                     >
-                      {link.name}{' '}
+                      {link.name}
+                      <br />
                       <ExternalLink
                         href={link.url}
                         text={link.url || '-'}

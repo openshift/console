@@ -2,7 +2,7 @@ import { shallow } from 'enzyme';
 import { Navigate } from 'react-router-dom-v5-compat';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import CloudShellTab from '../CloudShellTab';
-import MultiTabTerminal from '../MultiTabbedTerminal';
+import { MultiTabbedTerminal } from '../MultiTabbedTerminal';
 
 describe('CloudShellTab', () => {
   it('should not render redirect component if flag check is pending', () => {
@@ -20,6 +20,6 @@ describe('CloudShellTab', () => {
   it('should render CloudShellTerminal when Devworkspaceflag is true and not MultiCluster', () => {
     spyOn(flagsModule, 'useFlag').and.returnValue(true);
     const cloudShellTabWrapper = shallow(<CloudShellTab />);
-    expect(cloudShellTabWrapper.find(MultiTabTerminal).exists()).toBe(true);
+    expect(cloudShellTabWrapper.find(MultiTabbedTerminal).exists()).toBe(true);
   });
 });

@@ -39,7 +39,7 @@ export const nav = {
                   .contains(newPerspective);
               } else {
                 cy.byLegacyTestID('perspective-switcher-toggle')
-                  .click()
+                  .click({ force: true })
                   .byLegacyTestID('perspective-switcher-menu-option')
                   .contains(newPerspective)
                   .click({ force: true });
@@ -61,7 +61,7 @@ export const nav = {
                 } else {
                   checkDeveloperPerspective();
                   cy.byLegacyTestID('perspective-switcher-toggle')
-                    .click()
+                    .click({ force: true })
                     .byLegacyTestID('perspective-switcher-menu-option')
                     .contains(newPerspective)
                     .click({ force: true });
@@ -70,7 +70,7 @@ export const nav = {
             break;
           default:
             cy.byLegacyTestID('perspective-switcher-toggle')
-              .click()
+              .click({ force: true })
               .byLegacyTestID('perspective-switcher-menu-option')
               .contains(newPerspective)
               .click({ force: true });
