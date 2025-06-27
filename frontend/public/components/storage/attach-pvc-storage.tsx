@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import {
@@ -13,7 +13,6 @@ import {
 } from '../../module/k8s';
 import { ButtonBar, LoadingBox, resourceObjPath } from '../utils';
 import { Checkbox } from '../checkbox';
-import { RadioInput } from '../radio';
 import { CreatePVCForm } from './create-pvc';
 import { PersistentVolumeClaimModel } from '../../models';
 import { ContainerSelector } from '../container-selector';
@@ -271,13 +270,13 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     <form className="co-m-pane__body-group co-m-pane__form" onSubmit={save}>
       <label className="co-required">{t('public~PersistentVolumeClaim')}</label>
       <div className="form-group">
-        <RadioInput
-          title={t('public~Use existing claim')}
-          value="existing"
-          key="existing"
-          onChange={handleShowCreatePVCChange}
-          checked={showCreatePVC === 'existing'}
+        <Radio
+          label={t('public~Use existing claim')}
           name="showCreatePVC"
+          id="existing"
+          value="existing"
+          onChange={handleShowCreatePVCChange}
+          isChecked={showCreatePVC === 'existing'}
         />
       </div>
 
@@ -293,13 +292,14 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
         </div>
       )}
       <div className="form-group">
-        <RadioInput
-          title={t('public~Create new claim')}
+        <Radio
+          label={t('public~Create new claim')}
           value="new"
-          key="new"
+          id="new"
           onChange={handleShowCreatePVCChange}
-          checked={showCreatePVC === 'new'}
+          isChecked={showCreatePVC === 'new'}
           name="showCreatePVC"
+          data-test="Create new claim-radio-input"
         />
       </div>
 

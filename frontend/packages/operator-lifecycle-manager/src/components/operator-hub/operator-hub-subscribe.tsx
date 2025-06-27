@@ -7,13 +7,14 @@ import {
   Checkbox,
   Grid,
   GridItem,
+  Radio,
   TextInput,
   Title,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation, Link } from 'react-router-dom-v5-compat';
-import { RadioGroup, RadioInput } from '@console/internal/components/radio';
+import { RadioGroup } from '@console/internal/components/radio';
 import {
   documentationURLs,
   FieldLevelHelp,
@@ -776,27 +777,32 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const installedNamespaceOptions = (
     <div className="form-group">
-      <RadioInput
+      <Radio
         onChange={() => {
           setUseSuggestedNSForSingleInstallMode(true);
           setTargetNamespace(operatorSuggestedNamespace);
         }}
+        id="operator-namespace-recommended"
         value={operatorSuggestedNamespace}
-        checked={useSuggestedNSForSingleInstallMode}
-        title={t('olm~Operator recommended Namespace:')}
-      >
-        {' '}
-        <ResourceIcon kind="Project" />
-        <b>{operatorSuggestedNamespace}</b>
-      </RadioInput>
-      <RadioInput
+        isChecked={useSuggestedNSForSingleInstallMode}
+        label={
+          <>
+            {t('olm~Operator recommended Namespace:')} <ResourceIcon kind="Project" />
+            <b>{operatorSuggestedNamespace}</b>
+          </>
+        }
+        name="operator-namespace"
+      />
+      <Radio
         onChange={() => {
           setUseSuggestedNSForSingleInstallMode(false);
           setTargetNamespace(null);
         }}
+        id="operator-namespace-select"
         value={operatorSuggestedNamespace}
-        checked={!useSuggestedNSForSingleInstallMode}
-        title={t('olm~Select a Namespace')}
+        isChecked={!useSuggestedNSForSingleInstallMode}
+        label={t('olm~Select a Namespace')}
+        name="operator-namespace"
       />
       {!useSuggestedNSForSingleInstallMode && (
         <>
@@ -1021,43 +1027,38 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               <div className="form-group">
                 <fieldset>
                   <label className="co-required">{t('olm~Installation mode')}</label>
-                  <RadioInput
+                  <Radio
                     onChange={(e) => {
-                      setInstallMode(e.target.value);
+                      setInstallMode((e.target as HTMLInputElement).value);
                       setTargetNamespace(null);
                       setCannotResolve(false);
                     }}
                     value={InstallModeType.InstallModeTypeAllNamespaces}
-                    checked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
-                    disabled={!supportsGlobal}
-                    title={t('olm~All namespaces on the cluster')}
-                    subTitle={t('olm~(default)')}
-                  >
-                    <div className="co-m-radio-desc">
-                      <p className="pf-v6-u-text-color-subtle">
-                        {descFor(InstallModeType.InstallModeTypeAllNamespaces)}
-                      </p>
-                    </div>
-                  </RadioInput>
-                  <RadioInput
+                    id="operator-install-mode-all-namespaces"
+                    isChecked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
+                    isDisabled={!supportsGlobal}
+                    label={`${t('olm~All namespaces on the cluster')} ${t('olm~(default)')}`}
+                    description={descFor(InstallModeType.InstallModeTypeAllNamespaces)}
+                    name="operator-install-mode"
+                    data-test="All namespaces on the cluster-radio-input"
+                  />
+                  <Radio
                     onChange={(e) => {
-                      setInstallMode(e.target.value);
+                      setInstallMode((e.target as HTMLInputElement).value);
                       setTargetNamespace(
                         useSuggestedNSForSingleInstallMode ? operatorSuggestedNamespace : null,
                       );
                       setCannotResolve(false);
                     }}
                     value={InstallModeType.InstallModeTypeOwnNamespace}
-                    checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
-                    disabled={!supportsSingle}
-                    title={t('olm~A specific namespace on the cluster')}
-                  >
-                    <div className="co-m-radio-desc">
-                      <p className="pf-v6-u-text-color-subtle">
-                        {descFor(InstallModeType.InstallModeTypeOwnNamespace)}
-                      </p>
-                    </div>
-                  </RadioInput>
+                    id="operator-install-mode-own-namespace"
+                    isChecked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
+                    isDisabled={!supportsSingle}
+                    label={t('olm~A specific namespace on the cluster')}
+                    description={descFor(InstallModeType.InstallModeTypeOwnNamespace)}
+                    name="operator-install-mode"
+                    data-test="A specific namespace on the cluster-radio-input"
+                  />
                 </fieldset>
               </div>
               <div className="form-group pf-v6-u-mb-xl">
@@ -1080,12 +1081,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     items={[
                       {
                         value: InstallPlanApproval.Automatic,
-                        title: t('olm~Automatic'),
+                        label: t('olm~Automatic'),
+                        name: 'operator-approval-strategy',
                         disabled: isApprovalItemDisabled,
                       },
                       {
                         value: InstallPlanApproval.Manual,
-                        title: t('olm~Manual'),
+                        label: t('olm~Manual'),
+                        name: 'operator-approval-strategy',
                       },
                     ]}
                     onChange={(e) => {

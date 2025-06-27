@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { RadioInput } from '@console/internal/components/radio';
 
 const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> = ({
   autofocus,
@@ -13,21 +13,25 @@ const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> = ({
     setEnabled(e.currentTarget.value === 'enabled');
   return (
     <>
-      <RadioInput
+      <Radio
+        id={`${name}-enabled`}
         name={name}
         onChange={onChange}
         value="enabled"
-        checked={enabled}
-        title={t('console-shared~Enable')}
+        isChecked={enabled}
+        label={t('console-shared~Enable')}
         autoFocus={autofocus && enabled}
+        data-test="Enable-radio-input"
       />
-      <RadioInput
+      <Radio
+        id={`${name}-disabled`}
         name={name}
         onChange={onChange}
         value="disabled"
-        checked={!enabled}
-        title={t('console-shared~Disable')}
+        isChecked={!enabled}
+        label={t('console-shared~Disable')}
         autoFocus={autofocus && !enabled}
+        data-test="Disable-radio-input"
       />
     </>
   );
