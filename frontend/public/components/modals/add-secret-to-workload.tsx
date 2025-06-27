@@ -2,12 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { useNavigate } from 'react-router-dom-v5-compat';
+import { Radio } from '@patternfly/react-core';
 
 import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { Dropdown, ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
-import { RadioInput } from '../radio';
 /* eslint-disable import/named */
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -191,13 +191,14 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
         </div>
         <fieldset>
           <legend className="co-legend co-required">{t('public~Add secret as')}</legend>
-          <RadioInput
-            title={t('public~Environment variables')}
+          <Radio
+            label={t('public~Environment variables')}
             name="co-add-secret-to-workload__add-as"
             id="co-add-secret-to-workload__envvars"
             value="environment"
             onChange={onAddAsChange}
-            checked={addAsEnvironment}
+            isChecked={addAsEnvironment}
+            data-test="Environment variables-radio-input"
           />
           {addAsEnvironment && (
             <div className="co-m-radio-desc">
@@ -216,13 +217,14 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
               </div>
             </div>
           )}
-          <RadioInput
-            title={t('public~Volume')}
+          <Radio
+            label={t('public~Volume')}
             name="co-add-secret-to-workload__add-as"
             id="co-add-secret-to-workload__volume"
             value="volume"
             onChange={onAddAsChange}
-            checked={addAsVolume}
+            isChecked={addAsVolume}
+            data-test="Volume-radio-input"
           />
           {addAsVolume && (
             <div className="co-m-radio-desc">

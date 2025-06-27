@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -7,7 +7,6 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { RadioInput } from '@console/internal/components/radio';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -58,22 +57,26 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
 
           {pkg?.status?.channels?.map?.((channel) => (
             <GridItem key={channel.name}>
-              <RadioInput
-                onChange={(e) => setSelectedChannel(e.target.value)}
+              <Radio
+                name="channel"
+                id={`channel-${channel.name}`}
+                onChange={(e) => setSelectedChannel((e.target as HTMLInputElement).value)}
                 value={channel.name}
-                checked={selectedChannel === channel.name}
-                title={channel.name}
-                subTitle={
-                  <ResourceLink
-                    linkTo={false}
-                    name={channel.currentCSV}
-                    title={channel.currentCSV}
-                    kind={referenceForModel(ClusterServiceVersionModel)}
-                  >
-                    {channel?.deprecation ? (
-                      <DeprecatedOperatorWarningIcon deprecation={channel?.deprecation} />
-                    ) : null}
-                  </ResourceLink>
+                isChecked={selectedChannel === channel.name}
+                label={
+                  <>
+                    {channel.name}
+                    <ResourceLink
+                      linkTo={false}
+                      name={channel.currentCSV}
+                      title={channel.currentCSV}
+                      kind={referenceForModel(ClusterServiceVersionModel)}
+                    >
+                      {channel?.deprecation ? (
+                        <DeprecatedOperatorWarningIcon deprecation={channel?.deprecation} />
+                      ) : null}
+                    </ResourceLink>
+                  </>
                 }
               />
             </GridItem>

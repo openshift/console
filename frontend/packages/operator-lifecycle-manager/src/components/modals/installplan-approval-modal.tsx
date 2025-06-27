@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Radio } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,7 +8,6 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { RadioInput } from '@console/internal/components/radio';
 import {
   K8sKind,
   K8sResourceKind,
@@ -62,33 +61,36 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
           </GridItem>
 
           <GridItem>
-            <RadioInput
-              onChange={(e) => setSelectedApprovalStrategy(e.target.value)}
+            <Radio
+              id="approval-strategy-automatic"
+              name="approval-strategy"
+              onChange={(e) =>
+                setSelectedApprovalStrategy(
+                  (e.target as HTMLInputElement).value as InstallPlanApproval,
+                )
+              }
               value={InstallPlanApproval.Automatic}
-              checked={selectedApprovalStrategy === InstallPlanApproval.Automatic}
-              title={t(`olm~Automatic`)}
-              subTitle={`(${t('public~default')})`}
-            >
-              <div className="co-m-radio-desc">
-                <p className="pf-v6-u-text-color-subtle">
-                  {t('olm~New updates will be installed as soon as they become available.')}
-                </p>
-              </div>
-            </RadioInput>
+              isChecked={selectedApprovalStrategy === InstallPlanApproval.Automatic}
+              label={`${t(`olm~Automatic`)} (${t('public~default')})`}
+              description={t('olm~New updates will be installed as soon as they become available.')}
+            />
           </GridItem>
           <GridItem>
-            <RadioInput
-              onChange={(e) => setSelectedApprovalStrategy(e.target.value)}
+            <Radio
+              id="approval-strategy-manual"
+              name="approval-strategy"
+              onChange={(e) =>
+                setSelectedApprovalStrategy(
+                  (e.target as HTMLInputElement).value as InstallPlanApproval,
+                )
+              }
               value={InstallPlanApproval.Manual}
-              checked={selectedApprovalStrategy === InstallPlanApproval.Manual}
-              title={t(`olm~Manual`)}
-            >
-              <div className="co-m-radio-desc">
-                <p className="pf-v6-u-text-color-subtle">
-                  {t('olm~New updates need to be manually approved before installation begins.')}
-                </p>
-              </div>
-            </RadioInput>
+              isChecked={selectedApprovalStrategy === InstallPlanApproval.Manual}
+              label={`${t(`olm~Manual`)} (${t('public~default')})`}
+              description={t(
+                'olm~New updates need to be manually approved before installation begins.',
+              )}
+            />
           </GridItem>
         </Grid>
       </ModalBody>

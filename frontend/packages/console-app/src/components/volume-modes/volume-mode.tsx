@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, Radio } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { useTranslation, Trans } from 'react-i18next';
-import { RadioInput } from '@console/internal/components/radio';
 import {
   getVolumeModeRadios,
   getVolumeModeForProvisioner,
@@ -57,10 +57,12 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
 
   return (
     <FormGroup
+      role="radiogroup"
+      isInline
       fieldId="volume-mode"
-      className={className}
       label={t('console-app~Volume mode')}
       isRequired
+      className={css(className, 'pf-v6-c-form__group-control--no-row-gap')}
     >
       {allowedVolumeModes.length === 1 ? (
         <>
@@ -74,14 +76,14 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
         </>
       ) : (
         getVolumeModeRadios().map((radio) => (
-          <RadioInput
+          <Radio
             {...radio}
             key={radio.value}
             onChange={(event) => changeVolumeMode(event.currentTarget.value)}
-            inline
-            checked={radio.value === volumeMode}
+            isChecked={radio.value === volumeMode}
             name="volumeMode"
-            disabled={!allowedVolumeModes.includes(radio.value)}
+            isDisabled={!allowedVolumeModes.includes(radio.value)}
+            id={`volumeMode-${radio.value}`}
           />
         ))
       )}

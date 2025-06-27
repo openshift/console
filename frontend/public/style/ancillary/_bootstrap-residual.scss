@@ -49,59 +49,6 @@
   border: 1px solid var(--pf-t--global--border--color--default);
 }
 
-.radio {
-  position: relative;
-  display: block;
-  margin-top: var(--pf-t--global--spacer--sm);
-  margin-bottom: var(--pf-t--global--spacer--sm);
-
-  // These are used on elements with <label> descendants
-  &.disabled,
-  fieldset[disabled] & {
-    label {
-      cursor: not-allowed;
-    }
-  }
-
-  label {
-    min-height: $line-height-computed; // Ensure the input doesn't jump when there is no text
-    padding-left: 20px;
-    margin-bottom: 0;
-    font-weight: var(--pf-t--global--font--weight--body--default);
-    cursor: pointer;
-  }
-}
-.radio input[type='radio'],
-.radio-inline input[type='radio'] {
-  position: absolute;
-  margin-top: var(--pf-t--global--spacer--xs);
-  margin-left: -20px;
-}
-
-.radio + .radio {
-  margin-top: calc(
-    var(--pf-t--global--spacer--xs) * -1
-  ); // Move up sibling radios or checkboxes for tighter spacing
-}
-
-// Radios on same line
-.radio-inline {
-  position: relative;
-  display: inline-block;
-  padding-left: 20px;
-  margin-bottom: 0;
-  margin-right: 20px;
-  font-weight: var(--pf-t--global--font--weight--body--default);
-  vertical-align: middle;
-  cursor: pointer;
-
-  // These are used directly on <label>s
-  &.disabled,
-  fieldset[disabled] & {
-    cursor: not-allowed;
-  }
-}
-
 .small,
 small {
   font-size: var(--pf-t--global--font--size--xs) !important;
