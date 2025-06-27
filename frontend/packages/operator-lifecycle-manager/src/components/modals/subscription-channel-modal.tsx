@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Radio, Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -7,7 +7,6 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { RadioInput } from '@console/internal/components/radio';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -51,34 +50,39 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
         {t('olm~Change Subscription update channel')}
       </ModalTitle>
       <ModalBody>
-        <Grid>
-          <GridItem>
-            <p>{t('olm~Which channel is used to receive updates?')}</p>
-          </GridItem>
-
-          {pkg?.status?.channels?.map?.((channel) => (
-            <GridItem key={channel.name}>
-              <RadioInput
-                onChange={(e) => setSelectedChannel(e.target.value)}
-                value={channel.name}
-                checked={selectedChannel === channel.name}
-                title={channel.name}
-                subTitle={
-                  <ResourceLink
-                    linkTo={false}
-                    name={channel.currentCSV}
-                    title={channel.currentCSV}
-                    kind={referenceForModel(ClusterServiceVersionModel)}
-                  >
-                    {channel?.deprecation ? (
-                      <DeprecatedOperatorWarningIcon deprecation={channel?.deprecation} />
-                    ) : null}
-                  </ResourceLink>
-                }
-              />
-            </GridItem>
-          ))}
-        </Grid>
+        <Form>
+          <FormGroup label={t('olm~Which channel is used to receive updates?')} isStack>
+            {pkg?.status?.channels?.map?.((channel) => {
+              const checked = selectedChannel === channel.name;
+              return (
+                <Radio
+                  key={channel.name}
+                  id={`channel-${channel.name}`}
+                  name="channel"
+                  value={channel.name}
+                  label={
+                    <>
+                      {channel.name}
+                      <ResourceLink
+                        linkTo={false}
+                        name={channel.currentCSV}
+                        title={channel.currentCSV}
+                        kind={referenceForModel(ClusterServiceVersionModel)}
+                      >
+                        {channel?.deprecation ? (
+                          <DeprecatedOperatorWarningIcon deprecation={channel?.deprecation} />
+                        ) : null}
+                      </ResourceLink>
+                    </>
+                  }
+                  onChange={(e) => setSelectedChannel((e.target as HTMLInputElement).value)}
+                  isChecked={checked}
+                  data-checked-state={checked}
+                />
+              );
+            })}
+          </FormGroup>
+        </Form>
       </ModalBody>
       <ModalSubmitFooter
         inProgress={inProgress}

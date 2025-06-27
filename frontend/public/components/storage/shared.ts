@@ -145,11 +145,11 @@ export const getAccessModeOptions = () => [
 export const getVolumeModeRadios = () => [
   {
     value: 'Filesystem',
-    title: i18next.t('public~Filesystem'),
+    label: i18next.t('public~Filesystem'),
   },
   {
     value: 'Block',
-    title: i18next.t('public~Block'),
+    label: i18next.t('public~Block'),
   },
 ];
 

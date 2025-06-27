@@ -5,15 +5,17 @@ import {
   AlertActionCloseButton,
   Button,
   Checkbox,
+  FormGroup,
   Grid,
   GridItem,
+  Radio,
   TextInput,
   Title,
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation, Link } from 'react-router-dom-v5-compat';
-import { RadioGroup, RadioInput } from '@console/internal/components/radio';
+import { RadioGroup } from '@console/internal/components/radio';
 import {
   documentationURLs,
   FieldLevelHelp,
@@ -775,47 +777,55 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   );
 
   const installedNamespaceOptions = (
-    <div className="form-group">
-      <RadioInput
-        onChange={() => {
-          setUseSuggestedNSForSingleInstallMode(true);
-          setTargetNamespace(operatorSuggestedNamespace);
-        }}
-        value={operatorSuggestedNamespace}
-        checked={useSuggestedNSForSingleInstallMode}
-        title={t('olm~Operator recommended Namespace:')}
-      >
-        {' '}
-        <ResourceIcon kind="Project" />
-        <b>{operatorSuggestedNamespace}</b>
-      </RadioInput>
-      <RadioInput
-        onChange={() => {
-          setUseSuggestedNSForSingleInstallMode(false);
-          setTargetNamespace(null);
-        }}
-        value={operatorSuggestedNamespace}
-        checked={!useSuggestedNSForSingleInstallMode}
-        title={t('olm~Select a Namespace')}
-      />
-      {!useSuggestedNSForSingleInstallMode && (
-        <>
-          <NsDropdown
-            id="dropdown-selectbox"
-            selectedKey={selectedTargetNamespace}
-            onChange={(ns) => setTargetNamespace(ns)}
-            dataTest="dropdown-selectbox"
-          />
-          <Alert
-            isInline
-            className="co-alert pf-v6-c-alert--top-margin"
-            variant="warning"
-            title={t(
-              'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
-            )}
-          />
-        </>
-      )}
+    <div className="pf-v6-c-form">
+      <FormGroup role="radiogroup" fieldId="operator-namespace" isStack className="form-group">
+        <Radio
+          id="operator-namespace-recommended"
+          name="operator-namespace"
+          value={operatorSuggestedNamespace}
+          label={
+            <>
+              {t('olm~Operator recommended Namespace:')} <ResourceIcon kind="Project" />
+              <b>{operatorSuggestedNamespace}</b>
+            </>
+          }
+          onChange={() => {
+            setUseSuggestedNSForSingleInstallMode(true);
+            setTargetNamespace(operatorSuggestedNamespace);
+          }}
+          isChecked={useSuggestedNSForSingleInstallMode}
+          data-checked-state={useSuggestedNSForSingleInstallMode}
+        />
+        <Radio
+          id="operator-namespace-select"
+          name="operator-namespace"
+          value={operatorSuggestedNamespace}
+          label={t('olm~Select a Namespace')}
+          onChange={() => {
+            setUseSuggestedNSForSingleInstallMode(false);
+            setTargetNamespace(null);
+          }}
+          isChecked={!useSuggestedNSForSingleInstallMode}
+          data-checked-state={!useSuggestedNSForSingleInstallMode}
+        />
+        {!useSuggestedNSForSingleInstallMode && (
+          <>
+            <NsDropdown
+              id="dropdown-selectbox"
+              selectedKey={selectedTargetNamespace}
+              onChange={(ns) => setTargetNamespace(ns)}
+              dataTest="dropdown-selectbox"
+            />
+            <Alert
+              isInline
+              variant="warning"
+              title={t(
+                'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
+              )}
+            />
+          </>
+        )}
+      </FormGroup>
     </div>
   );
 
@@ -1006,7 +1016,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   />
                 </fieldset>
               </div>
-              <div className="form-group pf-v6-u-mb-xl">
+              <div className="form-group">
                 <fieldset>
                   <label className="co-required">{t('olm~Version')}</label>
                   <OperatorVersionSelect
@@ -1018,49 +1028,61 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   />
                 </fieldset>
               </div>
-              <div className="form-group">
+              <div className="pf-v6-c-form">
                 <fieldset>
                   <label className="co-required">{t('olm~Installation mode')}</label>
-                  <RadioInput
-                    onChange={(e) => {
-                      setInstallMode(e.target.value);
-                      setTargetNamespace(null);
-                      setCannotResolve(false);
-                    }}
-                    value={InstallModeType.InstallModeTypeAllNamespaces}
-                    checked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
-                    disabled={!supportsGlobal}
-                    title={t('olm~All namespaces on the cluster')}
-                    subTitle={t('olm~(default)')}
+                  <FormGroup
+                    role="radiogroup"
+                    fieldId="operator-install-mode"
+                    isStack
+                    className="form-group"
                   >
-                    <div className="co-m-radio-desc">
-                      <p className="pf-v6-u-text-color-subtle">
-                        {descFor(InstallModeType.InstallModeTypeAllNamespaces)}
-                      </p>
-                    </div>
-                  </RadioInput>
-                  <RadioInput
-                    onChange={(e) => {
-                      setInstallMode(e.target.value);
-                      setTargetNamespace(
-                        useSuggestedNSForSingleInstallMode ? operatorSuggestedNamespace : null,
-                      );
-                      setCannotResolve(false);
-                    }}
-                    value={InstallModeType.InstallModeTypeOwnNamespace}
-                    checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
-                    disabled={!supportsSingle}
-                    title={t('olm~A specific namespace on the cluster')}
-                  >
-                    <div className="co-m-radio-desc">
-                      <p className="pf-v6-u-text-color-subtle">
-                        {descFor(InstallModeType.InstallModeTypeOwnNamespace)}
-                      </p>
-                    </div>
-                  </RadioInput>
+                    <Radio
+                      id="operator-install-mode-all-namespaces"
+                      name="operator-install-mode"
+                      value={InstallModeType.InstallModeTypeAllNamespaces}
+                      label={`${t('olm~All namespaces on the cluster')} ${t('olm~(default)')}`}
+                      description={descFor(InstallModeType.InstallModeTypeAllNamespaces)}
+                      onChange={(e) => {
+                        setInstallMode((e.target as HTMLInputElement).value);
+                        setTargetNamespace(null);
+                        setCannotResolve(false);
+                      }}
+                      isChecked={
+                        selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+                      }
+                      data-checked-state={
+                        selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+                      }
+                      isDisabled={!supportsGlobal}
+                      data-test="All namespaces on the cluster-radio-input"
+                    />
+                    <Radio
+                      id="operator-install-mode-own-namespace"
+                      name="operator-install-mode"
+                      value={InstallModeType.InstallModeTypeOwnNamespace}
+                      label={t('olm~A specific namespace on the cluster')}
+                      description={descFor(InstallModeType.InstallModeTypeOwnNamespace)}
+                      onChange={(e) => {
+                        setInstallMode((e.target as HTMLInputElement).value);
+                        setTargetNamespace(
+                          useSuggestedNSForSingleInstallMode ? operatorSuggestedNamespace : null,
+                        );
+                        setCannotResolve(false);
+                      }}
+                      isChecked={
+                        selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace
+                      }
+                      data-checked-state={
+                        selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace
+                      }
+                      isDisabled={!supportsSingle}
+                      data-test="A specific namespace on the cluster-radio-input"
+                    />
+                  </FormGroup>
                 </fieldset>
               </div>
-              <div className="form-group pf-v6-u-mb-xl">
+              <div className="form-group">
                 <label className="co-required" htmlFor="dropdown-selectbox">
                   {t('olm~Installed Namespace')}
                 </label>
@@ -1069,7 +1091,12 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
                   singleNamespaceInstallMode}
               </div>
-              <div className="form-group">
+              <FormGroup
+                role="radiogroup"
+                fieldId="operator-approval"
+                isStack
+                className="form-group"
+              >
                 <fieldset>
                   <label className="co-required">{t('olm~Update approval')}</label>
                   <FieldLevelHelp>
@@ -1079,13 +1106,15 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     currentValue={approval}
                     items={[
                       {
+                        name: 'operator-approval-strategy',
                         value: InstallPlanApproval.Automatic,
-                        title: t('olm~Automatic'),
+                        label: t('olm~Automatic'),
                         disabled: isApprovalItemDisabled,
                       },
                       {
+                        name: 'operator-approval-strategy',
                         value: InstallPlanApproval.Manual,
-                        title: t('olm~Manual'),
+                        label: t('olm~Manual'),
                       },
                     ]}
                     onChange={(e) => {
@@ -1128,14 +1157,16 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     </Alert>
                   )}
                 </fieldset>
-              </div>
+              </FormGroup>
               {csvPlugins.length > 0 && consoleOperatorConfig && canPatchConsoleOperatorConfig && (
-                <ConsolePluginFormGroup
-                  catalogSource={catalogSource}
-                  csvPlugins={csvPlugins}
-                  enabledPlugins={enabledPlugins}
-                  setPluginEnabled={setPluginEnabled}
-                />
+                <div className="pf-v6-c-form">
+                  <ConsolePluginFormGroup
+                    catalogSource={catalogSource}
+                    csvPlugins={csvPlugins}
+                    enabledPlugins={enabledPlugins}
+                    setPluginEnabled={setPluginEnabled}
+                  />
+                </div>
               )}
             </>
             {deprecatedWarning && (

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Form } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -54,17 +55,19 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
                 'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
               )}
         </p>
-        <ConsolePluginRadioInputs
-          autofocus
-          name={pluginName}
-          enabled={enabled}
-          onChange={setEnabled}
-        />
-        <ConsolePluginWarning
-          previouslyEnabled={previouslyEnabled}
-          enabled={enabled}
-          trusted={trusted}
-        />
+        <Form>
+          <ConsolePluginRadioInputs
+            autofocus
+            name={pluginName}
+            enabled={enabled}
+            onChange={setEnabled}
+          />
+          <ConsolePluginWarning
+            previouslyEnabled={previouslyEnabled}
+            enabled={enabled}
+            trusted={trusted}
+          />
+        </Form>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}

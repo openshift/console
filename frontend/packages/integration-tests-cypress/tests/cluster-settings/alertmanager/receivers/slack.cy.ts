@@ -36,7 +36,7 @@ describe('Alertmanager: Slack Receiver Form', () => {
       .invoke('val')
       .should('eq', '{{ template "slack.default.iconurl" .}}');
     cy.byLegacyTestID('slack-icon-emoji').should('not.exist');
-    cy.byLegacyTestID('slack-icon-type-emoji').click();
+    cy.byTestID('Emoji-radio-input').click();
     cy.byLegacyTestID('slack-icon-url').should('not.exist');
     cy.byLegacyTestID('slack-icon-emoji')
       .invoke('val')

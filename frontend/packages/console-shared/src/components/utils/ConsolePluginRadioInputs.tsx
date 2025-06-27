@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { FormGroup, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { RadioInput } from '@console/internal/components/radio';
 
 const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> = ({
   autofocus,
@@ -12,24 +12,30 @@ const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> = ({
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEnabled(e.currentTarget.value === 'enabled');
   return (
-    <>
-      <RadioInput
+    <FormGroup isStack>
+      <Radio
+        id={`${name}-enabled`}
         name={name}
-        onChange={onChange}
         value="enabled"
-        checked={enabled}
-        title={t('console-shared~Enable')}
-        autoFocus={autofocus && enabled}
-      />
-      <RadioInput
-        name={name}
+        label={t('console-shared~Enable')}
         onChange={onChange}
-        value="disabled"
-        checked={!enabled}
-        title={t('console-shared~Disable')}
-        autoFocus={autofocus && !enabled}
+        isChecked={enabled}
+        data-checked-state={enabled}
+        autoFocus={autofocus && enabled}
+        data-test="Enable-radio-input"
       />
-    </>
+      <Radio
+        id={`${name}-disabled`}
+        name={name}
+        value="disabled"
+        label={t('console-shared~Disable')}
+        onChange={onChange}
+        isChecked={!enabled}
+        data-checked-state={!enabled}
+        autoFocus={autofocus && !enabled}
+        data-test="Disable-radio-input"
+      />
+    </FormGroup>
   );
 };
 
