@@ -14,7 +14,7 @@ import { useUserSettings } from './useUserSettings';
 
 let telemetryEvents: { eventType: string; event: Record<string, any> }[] = [];
 
-interface ClusterProperties {
+export interface ClusterProperties {
   clusterId?: string;
   clusterType?: string;
   consoleVersion?: string;
