@@ -909,6 +909,23 @@ export const MachineSetModel: K8sKind = {
   crd: true,
 };
 
+export const ControlPlaneMachineSetModel: K8sKind = {
+  label: 'ControlPlaneMachineSet',
+  // t('public~ControlPlaneMachineSet')
+  labelKey: 'public~ControlPlaneMachineSet',
+  labelPlural: 'ControlPlaneMachineSets',
+  // t('public~ControlPlaneMachineSets')
+  labelPluralKey: 'public~ControlPlaneMachineSets',
+  apiVersion: 'v1',
+  apiGroup: 'machine.openshift.io',
+  plural: 'controlplanemachinesets',
+  abbr: 'CPMS',
+  namespaced: true,
+  kind: 'ControlPlaneMachineSet',
+  id: 'controlplanemachineset',
+  crd: true,
+};
+
 export const MachineDeploymentModel: K8sKind = {
   label: 'MachineDeployment',
   // t('public~MachineDeployment')
