@@ -15,7 +15,6 @@ import {
   ResourceSummary,
   ResourceLink,
   navFactory,
-  Kebab,
   convertToBaseValue,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
@@ -24,15 +23,20 @@ import {
   VolumeSnapshotContentModel,
   VolumeSnapshotClassModel,
 } from '@console/internal/models';
-import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
-import { Status, snapshotSource, FLAGS } from '@console/shared';
+import { referenceFor, referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
+import {
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+  Status,
+  snapshotSource,
+  FLAGS,
+} from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
-const { common, RestorePVC } = Kebab.factory;
-const menuActions = [RestorePVC, ...common];
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -125,11 +129,24 @@ const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
     editYaml(),
     events(ResourceEventStream),
   ];
+  const customActionMenu = (_, obj: VolumeSnapshotKind) => {
+    const resourceKind = referenceFor(obj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
   return (
     <DetailsPage
       {...props}
+      customActionMenu={customActionMenu}
       getResourceStatus={volumeSnapshotStatus}
-      menuActions={menuActions}
       pages={pages}
     />
   );

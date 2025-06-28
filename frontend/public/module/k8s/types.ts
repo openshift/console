@@ -1099,16 +1099,21 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
     };
     storageClassName: string;
     volumeMode?: string;
+    volumeName?: string;
     /* Parameters in a cloned PVC */
     dataSource?: {
       name: string;
       kind: string;
       apiGroup: string;
     };
+    selector?: Selector;
     /**/
   };
   status?: {
+    accessModes?: string[];
+    capacity?: { storage: string };
     phase: string;
+    conditions?: K8sResourceCondition[];
   };
 };
 
