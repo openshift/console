@@ -11,14 +11,14 @@ import { defaultClassAnnotation } from '@console/internal/components/storage-cla
 import { asAccessReview } from '@console/internal/components/utils';
 import { K8sResourceCommon, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { getCommonResourceActions } from '../creators/common-factory';
+import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 
 export const useStorageClassActions = (
   storageClass: K8sResourceKind,
 ): [Action[], boolean, boolean] => {
   const { t } = useTranslation();
   const [storageClassModel, inFlight] = useK8sModel(referenceFor(storageClass));
-
+  const commonActions = useCommonResourceActions(storageClassModel, storageClass);
   const [storageClasses] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: getGroupVersionKindForModel(storageClassModel),
     isList: true,
@@ -84,9 +84,16 @@ export const useStorageClassActions = (
         label: t('console-app~Set as default'),
         insertBefore: 'delete-resource',
       } as Action,
-      ...getCommonResourceActions(storageClassModel, storageClass),
+      ...commonActions,
     ],
-    [storageClass, storageClassModel, t, existingDefaultStorageClass, isDefaultStorageClass],
+    [
+      storageClass,
+      storageClassModel,
+      t,
+      existingDefaultStorageClass,
+      isDefaultStorageClass,
+      commonActions,
+    ],
   );
 
   return [storageClassActions, !inFlight, undefined];
