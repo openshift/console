@@ -4,8 +4,9 @@ import {
   CommonActionFactory,
   getCommonResourceActions,
 } from '@console/app/src/actions/creators/common-factory';
-import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
+import { DeploymentActionCreator } from '@console/app/src/actions/hooks/types';
+import { useDeploymentActions } from '@console/app/src/actions/hooks/useDeploymentActions';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
@@ -91,12 +92,16 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
-  const actions = React.useMemo(() => {
+  const deploymentActions = useDeploymentActions(kindObj, resource, [
+    DeploymentActionCreator.EditResourceLimits,
+  ] as const);
+
+  const knativeServiceactions = React.useMemo(() => {
     return [
       setTrafficDistribution(kindObj, resource),
       getHealthChecksAction(kindObj, resource),
       editKnativeService(kindObj, resource),
-      DeploymentActionFactory.EditResourceLimits(kindObj, resource),
+      deploymentActions.EditResourceLimits,
       CommonActionFactory.ModifyLabels(kindObj, resource),
       CommonActionFactory.ModifyAnnotations(kindObj, resource),
       editKnativeServiceResource(kindObj, resource, serviceTypeValue),
@@ -107,9 +112,9 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
         ? [testServerlessFunction(kindObj, resource)]
         : []),
     ];
-  }, [kindObj, resource, serviceTypeValue]);
+  }, [kindObj, resource, deploymentActions, serviceTypeValue]);
 
-  return [actions, !inFlight, undefined];
+  return [knativeServiceactions, !inFlight, undefined];
 };
 
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
