@@ -1,4 +1,4 @@
-import { ModalComponent } from '../app/modal-support/ModalProvider';
+import type { ModalComponent } from '../app/modal-support/ModalProvider';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
