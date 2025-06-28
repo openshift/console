@@ -180,6 +180,7 @@ export const AddLDAPPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
+                aria-label={t('public~URL')}
                 onChange={(e) => setUrl(e.currentTarget.value)}
                 value={url}
                 id="url"
@@ -196,6 +197,7 @@ export const AddLDAPPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
+                aria-label={t('public~Bind DN')}
                 onChange={(e) => setBindDN(e.currentTarget.value)}
                 value={bindDN}
                 id="bind-dn"
@@ -211,6 +213,7 @@ export const AddLDAPPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
+                aria-label={t('public~Bind password')}
                 onChange={(e) => setBindPassword(e.currentTarget.value)}
                 value={bindPassword}
                 id="bind-password"
@@ -222,47 +225,57 @@ export const AddLDAPPage = () => {
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-            {t('public~Attributes')}
-          </Title>
-          <p>{t('public~Attributes map LDAP attributes to identities.')}</p>
-          <ListInput
-            label={t('public~ID')}
-            required
-            initialValues={attributesID}
-            onChange={(c: string[]) => setAttributesID(c)}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the user ID.',
-            )}
-          />
-          <ListInput
-            label={t('public~Preferred username')}
-            initialValues={attributesPreferredUsername}
-            onChange={(c: string[]) => setAttributesPreferredUsername(c)}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the preferred username.',
-            )}
-          />
-          <ListInput
-            label={t('public~Name')}
-            initialValues={attributesName}
-            onChange={(c: string[]) => setAttributesName(c)}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the display name.',
-            )}
-          />
-          <ListInput
-            label={t('public~Email')}
-            onChange={(c: string[]) => setAttributesEmail(c)}
-            helpText={t(
-              'public~The list of attributes whose values should be used as the email address.',
-            )}
-          />
-          <div className="co-form-section__separator" />
-          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-            {t('public~More options')}
-          </Title>
-          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
+          <div>
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~Attributes')}
+            </Title>
+            <p>{t('public~Attributes map LDAP attributes to identities.')}</p>
+            <ListInput
+              label={t('public~ID')}
+              id="ldap-attribute-id"
+              required
+              initialValues={attributesID}
+              onChange={(c: string[]) => setAttributesID(c)}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the user ID.',
+              )}
+            />
+            <ListInput
+              label={t('public~Preferred username')}
+              id="ldap-attribute-preferred-username"
+              initialValues={attributesPreferredUsername}
+              onChange={(c: string[]) => setAttributesPreferredUsername(c)}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the preferred username.',
+              )}
+            />
+            <ListInput
+              label={t('public~Name')}
+              id="ldap-attribute-name"
+              initialValues={attributesName}
+              onChange={(c: string[]) => setAttributesName(c)}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the display name.',
+              )}
+            />
+            <ListInput
+              label={t('public~Email')}
+              id="ldap-attribute-email"
+              onChange={(c: string[]) => setAttributesEmail(c)}
+              helpText={t(
+                'public~The list of attributes whose values should be used as the email address.',
+              )}
+            />
+            <div className="co-form-section__separator" />
+            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+              {t('public~More options')}
+            </Title>
+            <IDPCAFileInput
+              id="ca-file-input"
+              value={caFileContent}
+              onChange={(c: string) => setCaFileContent(c)}
+            />
+          </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">

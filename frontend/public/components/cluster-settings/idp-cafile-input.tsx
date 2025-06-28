@@ -10,6 +10,7 @@ const DroppableFileInput = (props: any) => (
 );
 
 export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({
+  id,
   value,
   onChange,
   isRequired = false,
@@ -20,7 +21,7 @@ export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({
       <DroppableFileInput
         onChange={onChange}
         inputFileData={value}
-        id="idp-file-input"
+        id={id}
         label={t('public~CA file')}
         isRequired={isRequired}
         hideContents
@@ -30,6 +31,7 @@ export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({
 };
 
 type IDPCAFileInputProps = {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   isRequired?: boolean;

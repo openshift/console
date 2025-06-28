@@ -170,6 +170,7 @@ export const AddGitHubPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
+                aria-label={t('public~Client ID')}
                 onChange={(e) => setClientID(e.currentTarget.value)}
                 value={clientID}
                 id="client-id"
@@ -184,6 +185,7 @@ export const AddGitHubPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
+                aria-label={t('public~Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -196,6 +198,7 @@ export const AddGitHubPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
+                aria-label={t('public~Hostname')}
                 onChange={(e) => setHostname(e.currentTarget.value)}
                 value={hostname}
                 id="hostname"
@@ -206,7 +209,11 @@ export const AddGitHubPage = () => {
               {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
             </p>
           </div>
-          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
+          <IDPCAFileInput
+            id="ca-file-input"
+            value={caFileContent}
+            onChange={(c: string) => setCaFileContent(c)}
+          />
           <div className="co-form-section__separator" />
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
             {t('public~Organizations')}
@@ -224,6 +231,7 @@ export const AddGitHubPage = () => {
           </p>
           <ListInput
             label={t('public~Organization')}
+            id="organization-list-input"
             onChange={(c: string[]) => setOrganizations(c)}
             helpText={t('public~Restricts which organizations are allowed to log in.')}
           />
@@ -244,6 +252,7 @@ export const AddGitHubPage = () => {
           </p>
           <ListInput
             label={t('public~Team')}
+            id="team-list-input"
             onChange={(c: string[]) => setTeams(c)}
             helpText={t(
               'public~Restricts which teams are allowed to log in. The format is <org>/<team>.',

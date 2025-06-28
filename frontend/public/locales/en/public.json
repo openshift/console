@@ -1494,7 +1494,7 @@
   "Remove favorite {{content}}": "Remove favorite {{content}}",
   "Add favorite {{content}}": "Add favorite {{content}}",
   "Help": "Help",
-  "Filename": "Filename",
+  "{{label}} filename": "{{label}} filename",
   "Browse...": "Browse...",
   "Non-printable file detected.": "Non-printable file detected.",
   "File contains non-printable characters. Preview is not available.": "File contains non-printable characters. Preview is not available.",
