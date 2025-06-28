@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Grid, GridItem, TextArea } from '@patternfly/react-core';
+import { Checkbox, Grid, GridItem, TextArea } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
 import { ExpandCollapse } from '../../utils';
@@ -210,24 +210,18 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </div>
             <div className="form-group">
-              <div className="checkbox">
-                <label htmlFor="slack-link-names">
-                  <input
-                    type="checkbox"
-                    id="slack-link-names"
-                    data-test-id="slack-link-names"
-                    aria-describedby="slack-link-names-help"
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { slack_link_names: e.target.checked },
-                      })
-                    }
-                    checked={formValues.slack_link_names}
-                  />
-                  {t('public~Link names')}
-                </label>
-              </div>
+              <Checkbox
+                label={t('public~Link names')}
+                onChange={(_event, checked) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { slack_link_names: checked },
+                  })
+                }
+                isChecked={formValues.slack_link_names}
+                id="slack-link-names"
+                data-test-id="slack-link-names"
+              />
               <div className="help-block" id="slack-link-names-help">
                 {t('public~Find and link channel names and usernames.')}
               </div>

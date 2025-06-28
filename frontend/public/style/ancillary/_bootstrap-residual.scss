@@ -49,8 +49,7 @@
   border: 1px solid var(--pf-t--global--border--color--default);
 }
 
-.radio,
-.checkbox {
+.radio {
   position: relative;
   display: block;
   margin-top: var(--pf-t--global--spacer--sm);
@@ -73,24 +72,20 @@
   }
 }
 .radio input[type='radio'],
-.radio-inline input[type='radio'],
-.checkbox input[type='checkbox'],
-.checkbox-inline input[type='checkbox'] {
+.radio-inline input[type='radio'] {
   position: absolute;
   margin-top: var(--pf-t--global--spacer--xs);
   margin-left: -20px;
 }
 
-.radio + .radio,
-.checkbox + .checkbox {
+.radio + .radio {
   margin-top: calc(
     var(--pf-t--global--spacer--xs) * -1
   ); // Move up sibling radios or checkboxes for tighter spacing
 }
 
-// Radios and checkboxes on same line
-.radio-inline,
-.checkbox-inline {
+// Radios on same line
+.radio-inline {
   position: relative;
   display: inline-block;
   padding-left: 20px;
