@@ -13,6 +13,9 @@ export type ConsoleSupportedCustomProperties = Partial<{
 
   /** Disable the given static plugins when this plugin gets loaded. */
   disableStaticPlugins: string[];
+
+  /** Dependencies listed here will be treated as optional. */
+  optionalDependencies: string[];
 }>;
 
 /**

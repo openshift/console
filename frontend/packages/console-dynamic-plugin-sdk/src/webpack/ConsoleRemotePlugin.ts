@@ -352,6 +352,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       displayName,
       description,
       disableStaticPlugins,
+      optionalDependencies,
     } = pluginMetadata;
 
     const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
@@ -393,7 +394,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
         version,
         dependencies,
         customProperties: _.merge({}, customProperties, {
-          console: { displayName, description, disableStaticPlugins },
+          console: { displayName, description, disableStaticPlugins, optionalDependencies },
         }),
         exposedModules,
       },
