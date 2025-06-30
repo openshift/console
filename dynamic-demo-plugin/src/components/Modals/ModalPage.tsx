@@ -32,6 +32,33 @@ export const TestModal: React.FC<{ closeModal: () => void }> = (props) => {
   );
 };
 
+const testComponentWithIDStyle: React.CSSProperties = {
+  backgroundColor: 'gray',
+  padding: '1rem 4rem',
+  position: 'absolute',
+  right: '5rem',
+  textAlign: 'center',
+  zIndex: 9999,
+};
+
+const TEST_ID_1 = 'TEST_ID_1';
+const TestComponentWithID1 = ({ closeModal }) => (
+  <div style={{ ...testComponentWithIDStyle, top: '5rem' }}>
+    <p>Test Modal with ID "{TEST_ID_1}"</p>
+    <Button onClick={closeModal}>Close</Button>
+  </div>
+);
+
+const TEST_ID_2 = 'TEST_ID_2';
+const TestComponentWithID2 = ({ closeModal, ...rest }) => (
+  <div style={{ ...testComponentWithIDStyle, bottom: '5rem' }}>
+    <p>
+      Test Modal with ID "{TEST_ID_2}" and testProp "{rest.testProp}"
+    </p>
+    <Button onClick={closeModal}>Close</Button>
+  </div>
+);
+
 const LoadingComponent: React.FC = () => {
   const { t } = useTranslation();
 
@@ -72,6 +99,16 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   const onClick = React.useCallback(() => launchModal(TestComponent, {}), [launchModal]);
   const onAsyncClick = React.useCallback(() => launchModal(AsyncTestComponent, {}), [launchModal]);
 
+  const onClickWithID1 = React.useCallback(
+    () => launchModal(TestComponentWithID1, {}, TEST_ID_1),
+    [launchModal],
+  );
+
+  const onClickWithID2 = React.useCallback(
+    () => launchModal(TestComponentWithID2, { testProp: 'abc' }, TEST_ID_2),
+    [launchModal],
+  );
+
   return (
     <Flex
       alignItems={{ default: 'alignItemsCenter' }}
@@ -83,6 +120,12 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       <Button onClick={onClick}>{t('plugin__console-demo-plugin~Launch Modal')}</Button>
       <Button onClick={onAsyncClick}>
         {t('plugin__console-demo-plugin~Launch Modal Asynchronously')}
+      </Button>
+      <Button onClick={onClickWithID1}>
+        {t('plugin__console-demo-plugin~Launch Modal with ID 1')}
+      </Button>
+      <Button onClick={onClickWithID2}>
+        {t('plugin__console-demo-plugin~Launch Modal with ID 2')}
       </Button>
     </Flex>
   );
