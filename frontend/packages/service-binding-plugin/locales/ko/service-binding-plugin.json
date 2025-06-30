@@ -1,7 +1,7 @@
 {
-  "ServiceBinding": "서비스 바인딩",
-  "ServiceBindings": "서비스 바인딩",
-  "ServiceBinding details": "서비스 바인딩 세부 정보",
+  "ServiceBinding": "ServiceBinding",
+  "ServiceBindings": "ServiceBindings",
+  "ServiceBinding details": "ServiceBinding 세부 정보",
   "Conditions": "상태",
   "Status": "상태",
   "Label Selector": "레이블 선택기",
