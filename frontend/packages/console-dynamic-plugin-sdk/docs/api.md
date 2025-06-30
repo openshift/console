@@ -2052,7 +2052,7 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 ### Summary 
 
-A hook to launch Modals.
+A hook to launch Modals.<br/><br/>Additional props can be passed to `useModal` and they will be passed through to the modal component.<br/>An optional ID can also be passed to `useModal`. If provided, this distinguishes the modal from<br/>other modals to allow multiple modals to be displayed at the same time.
 
 
 
@@ -2062,9 +2062,13 @@ A hook to launch Modals.
 ```tsx
 const AppPage: React.FC = () => {
  const launchModal = useModal();
- const onClick = () => launchModal(ModalComponent);
+ const onClick1 = () => launchModal(ModalComponent);
+ const onClick2 = () => launchModal(ModalComponent, { title: 'Test modal' }, 'TEST_MODAL_ID');
  return (
-   <Button onClick={onClick}>Launch a Modal</Button>
+   <>
+     <Button onClick={onClick1}>Launch basic modal</Button>
+     <Button onClick={onClick2}>Launch modal with props and an ID</Button>
+   </>
  )
 }
 ```
