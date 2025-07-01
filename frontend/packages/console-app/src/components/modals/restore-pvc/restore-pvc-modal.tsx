@@ -137,7 +137,11 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       );
     };
     return (
-      <form onSubmit={submit} name="form" className="modal-content">
+      <form
+        onSubmit={submit}
+        name="form"
+        className="modal-content pf-v6-c-form pf-v6-c-form--no-gap"
+      >
         <ModalTitle>{t('console-app~Restore as new PVC')}</ModalTitle>
         <ModalBody>
           <p>
