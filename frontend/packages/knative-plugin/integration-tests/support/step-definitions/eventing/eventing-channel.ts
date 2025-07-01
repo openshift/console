@@ -106,7 +106,8 @@ Then('user will see option {string}', (optionName: string) => {
 });
 
 When('user clicks on the {string}', (optionName: string) => {
-  cy.byTestActionID(optionName).should('be.visible').click();
+  cy.byTestActionID(optionName).should('be.visible');
+  cy.get(`[data-test-action="${optionName}"] button`).click();
 });
 
 When('user will click on the Application dropdown on the modal', () => {
