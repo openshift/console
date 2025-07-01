@@ -26,6 +26,7 @@ export enum nodeActions {
   MoveSink = 'Move sink',
   EditSinkBinding = 'Edit SinkBinding',
   DeleteSinkBinding = 'Delete SinkBinding',
+  DeletePingSource = 'Delete PingSource',
   DeleteService = 'Delete Service',
   EditService = 'Edit Service',
   EditHealthChecks = 'Edit Health Checks',

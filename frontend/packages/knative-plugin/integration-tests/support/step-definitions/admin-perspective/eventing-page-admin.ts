@@ -43,6 +43,10 @@ When('user selects Channel', () => {
   cy.get(eventingPO.channel.createChannel).click();
 });
 
+When('user selects Broker', () => {
+  cy.get(eventingPO.broker.createBroker).click();
+});
+
 When('user selects Default channels', () => {
   cy.get(eventingPO.channel.typeField).click();
   cy.get(eventingPO.channel.typeFieldMenu).contains('Default Channel').click();
