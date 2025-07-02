@@ -160,8 +160,9 @@ export type ConsoleRemotePluginOptions = Partial<{
    *   resource on the cluster.
    * - `version` must be semver compliant.
    * - `dependencies` values must be valid semver ranges or `*` representing any version.
+   * - `dependencies` and `optionalDependencies` keys must be mutually exclusive.
    *
-   * Additional runtime environment specific dependencies available to Console plugins:
+   * Additional runtime environment specific `dependencies` available to Console plugins:
    *
    * - `@console/pluginAPI` - Console web application. This dependency is matched against
    *   the Console release version, as provided by the Console operator.
@@ -311,6 +312,19 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       validateConsoleProvidedSharedModules(this.pkg).report();
     }
 
+    const overlapDependencyNames = _.intersection(
+      Object.keys(this.adaptedOptions.pluginMetadata.dependencies ?? {}),
+      Object.keys(this.adaptedOptions.pluginMetadata.optionalDependencies ?? {}),
+    );
+
+    if (overlapDependencyNames.length > 0) {
+      throw new Error(
+        `Detected overlap between dependencies and optionalDependencies: ${overlapDependencyNames.join(
+          ', ',
+        )}`,
+      );
+    }
+
     const resolvedModulePaths = this.adaptedOptions.sharedDynamicModuleSettings.modulePaths ?? [
       path.resolve(process.cwd(), 'node_modules'),
     ];
@@ -347,12 +361,12 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       name,
       version,
       dependencies,
+      optionalDependencies,
       customProperties,
       exposedModules,
       displayName,
       description,
       disableStaticPlugins,
-      optionalDependencies,
     } = pluginMetadata;
 
     const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
@@ -363,7 +377,6 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
     }
 
     compiler.options.output.publicPath = publicPath;
-
     compiler.options.resolve = compiler.options.resolve ?? {};
     compiler.options.resolve.alias = compiler.options.resolve.alias ?? {};
 
@@ -394,7 +407,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
         version,
         dependencies,
         customProperties: _.merge({}, customProperties, {
-          console: { displayName, description, disableStaticPlugins, optionalDependencies },
+          console: { displayName, description, disableStaticPlugins },
         }),
         exposedModules,
       },
@@ -408,6 +421,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
         process.env.NODE_ENV === 'production'
           ? 'plugin-entry.[fullhash].min.js'
           : 'plugin-entry.js',
+      transformPluginManifest: (manifest) => ({ ...manifest, optionalDependencies }),
     }).apply(compiler);
 
     validateConsoleBuildMetadata(pluginMetadata).report();

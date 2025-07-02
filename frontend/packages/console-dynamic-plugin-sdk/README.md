@@ -344,22 +344,25 @@ the Console operator.
 The `dependencies` object may also refer to other dynamic plugins that are required for this plugin to
 work correctly. Such other plugins will be loaded prior to loading this plugin.
 
-Plugin dependencies (all except `@console/pluginAPI`) can be marked as optional. This is typically used
-in cases where plugin A integrates with plugin B but we still want to load plugin A in case plugin B is
-not enabled on the cluster.
+Plugins may also use the `optionalDependencies` object to support use cases like plugin A integrating
+with plugin B while still allowing plugin A to be loaded when plugin B is not enabled on the cluster.
+This object has the same structure as `dependencies` object.
 
 ```jsonc
 {
   // ...
   "consolePlugin": {
-    // load this plugin after foo and bar plugins are successfully loaded,
-    // fail if foo or bar plugin versions don't match expected semver ranges
+    // ...
     "dependencies": {
+      // If foo-plugin is available, load it before loading this plugin.
+      // If foo-plugin is NOT available, this plugin will fail to load.
       "foo-plugin": "~1.1.0",
+    },
+    "optionalDependencies": {
+      // If bar-plugin is available, load it before loading this plugin.
+      // If bar-plugin is NOT available, load this plugin regardless.
       "bar-plugin": "^2.3.4"
     },
-    // treat bar plugin as an optional dependency when loading this plugin
-    "optionalDependencies": ["bar-plugin"],
   }
 }
 ```
