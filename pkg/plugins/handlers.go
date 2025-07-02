@@ -36,7 +36,10 @@ func NewPluginsProxyServiceHandler(consoleEndpoint string, serviceEndpoint *url.
 		ConsoleEndpoint: consoleEndpoint,
 		ProxyConfig: &proxy.Config{
 			TLSClientConfig: tlsClientConfig,
-			HeaderBlacklist: proxy.HeaderBlacklist,
+			// The Origin header can trigger CORS checks automatically for some HTTP servers,
+			// causing requests to fail. We already perform CSRF token checks in the console middleware
+			// before forwarding requests to the plugin, so there is no CSRF exposure.
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken", "Origin"},
 			Endpoint:        serviceEndpoint,
 		},
 		Authorize: authorize,
@@ -147,7 +150,7 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 	p.proxyPluginRequest(pluginServiceRequestURL, pluginName, w, r)
 }
 
-func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, orignalRequest *http.Request) {
+func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, originalRequest *http.Request) {
 	newRequest, err := http.NewRequest("GET", requestURL.String(), nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to create GET request for %q plugin: %v", pluginName, err)
@@ -156,7 +159,10 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 		return
 	}
 
-	proxy.CopyRequestHeaders(orignalRequest, newRequest)
+	newRequest.Header = originalRequest.Header.Clone()
+	for _, h := range []string{"Cookie", "X-CSRFToken"} {
+		newRequest.Header.Del(h)
+	}
 
 	resp, err := p.Client.Do(newRequest)
 	if err != nil {
