@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
+import { Grid, GridItem, ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
 import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
@@ -8,6 +8,7 @@ import StepContent from './steps/StepContent';
 import StepFooter from './steps/StepFooter';
 import StepHeader from './steps/StepHeader';
 import './TourStepComponent.scss';
+import TourVisual from './TourVisual';
 
 type TourStepComponentProps = {
   expandableSelector?: string;
@@ -56,6 +57,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
           onBack && onBack();
         },
       }}
+      step={step}
     >
       {showStepBadge ? <StepBadge stepNumber={step} totalSteps={totalSteps} /> : null}
     </StepFooter>
@@ -83,7 +85,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   ) : (
     <Modal
       className="co-tour-step-component"
-      variant={ModalVariant.small}
+      variant={ModalVariant.large}
       isOpen
       onClose={handleClose}
       id="guided-tour-modal"
@@ -91,9 +93,18 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       aria-label={t('console-app~guided tour {{step, number}}', { step })}
       isFullScreen
     >
-      <ModalHeader data-test="close-guided-tour">{header}</ModalHeader>
-      <ModalBody>{stepContent}</ModalBody>
-      <ModalFooter>{footer}</ModalFooter>
+      <ModalBody>
+        <Grid hasGutter>
+          <GridItem span={4}>
+            <TourVisual />
+          </GridItem>
+          <GridItem span={8}>
+            <ModalHeader>{header}</ModalHeader>
+            <ModalBody>{stepContent}</ModalBody>
+            <ModalFooter>{footer}</ModalFooter>
+          </GridItem>
+        </Grid>
+      </ModalBody>
     </Modal>
   );
 };
