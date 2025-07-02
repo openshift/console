@@ -1038,7 +1038,7 @@ This extension can be used to add a tab on the resource details page.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `model` | `ExtensionK8sKindVersionModel` | no | The model for which this provider show tab. |
-| `page` | `{ name: string; href: string; }` | no | The page to be show in horizontal tab. It takes tab name as name and href of the tab |
+| `page` | `{ name: string; href: string; }` | no | The page to be show in horizontal tab. It takes tab name as name and href of the tab.<br/>Note: any special characters in href are encoded, and href is treated as a single<br/>path element. |
 | `component` | `CodeRef<React.ComponentType<PageComponentProps<K8sResourceCommon>>>` | no | The component to be rendered when the route matches. |
 
 ---
