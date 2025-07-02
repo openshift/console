@@ -110,7 +110,6 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // Get the type to display for a property reference.
   const getTypeForRef = (ref: string): string =>
     _.get(allDefinitions, [ref, 'format']) || _.get(allDefinitions, [ref, 'type']);
-
   return (
     <>
       {!_.isEmpty(breadcrumbs) && (
@@ -118,7 +117,12 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
-              <BreadcrumbItem key={i} isActive={isLast} onClick={(e) => breadcrumbClicked(e, i)}>
+              <BreadcrumbItem
+                key={i}
+                isActive={isLast}
+                onClick={!isLast ? (e) => breadcrumbClicked(e, i) : undefined}
+                to={!isLast ? `/explore/${kindObj?.kind || 'schema'}/${i}` : undefined}
+              >
                 {crumb}
               </BreadcrumbItem>
             );
