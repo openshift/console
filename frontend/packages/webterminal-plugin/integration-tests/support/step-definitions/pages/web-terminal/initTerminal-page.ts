@@ -1,6 +1,13 @@
+import { switchPerspective } from '@console/dev-console/integration-tests/support/constants';
 import { formPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { webTerminalPO } from '@console/dev-console/integration-tests/support/pageObjects/webterminal-po';
-import { app } from '@console/dev-console/integration-tests/support/pages/app';
+import {
+  app,
+  perspective,
+  projectNameSpace,
+} from '@console/dev-console/integration-tests/support/pages/app';
+import { searchResource } from '@console/dev-console/integration-tests/support/pages/search-resources/search-page';
+import { webTerminalPage } from './webTerminal-page';
 
 export const initTerminalPage = {
   clickOnProjectDropDown: () => {
@@ -18,8 +25,26 @@ export const initTerminalPage = {
 
   clickStartButton: () => {
     cy.get(formPO.create).should('be.enabled').click({ force: true });
-    cy.get('[data-test="loading-box-body"]', { timeout: 5000 }).should('exist'); // wait for "loading..." appears
-    cy.get('[data-test="loading-box-body"]', { timeout: 180000 }).should('not.exist'); // wait for terminal loading
+    cy.get('body').then(($body) => {
+      cy.wait(5000);
+      // Due to initialization issue if multiple operators present OCPBUGS-44891
+      if ($body.find('[data-test="loading-box-body"]').length === 0) {
+        cy.log('loading did not go through');
+        cy.wait(10000);
+        cy.get(webTerminalPO.terminalCloseWindowBtn).click();
+        cy.reload();
+        app.waitForDocumentLoad();
+        perspective.switchTo(switchPerspective.Administrator);
+        cy.byLegacyTestID('topology-header').should('exist').click({ force: true });
+        projectNameSpace.selectProject('openshift-terminal');
+        webTerminalPage.clickOpenCloudShellBtn();
+        searchResource.searchResourceByNameAsAdmin('DevWorkspace');
+        searchResource.selectSearchedItem('terminal');
+        // cy.get('[data-test="loading-indicator"]').should('not.exist', { timeout: 210000 });
+      } else {
+        cy.wait(5000);
+      }
+    });
   },
 
   selectProject: (projectName: string) => {
