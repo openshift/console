@@ -303,6 +303,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     helpActions.push({
       isSection: true,
       actions: [
+        {
+          component: () => (
+            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
+          ),
+        },
         ...(quickstartFlag
           ? [
               {
@@ -331,11 +336,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               },
             ]
           : []),
-        {
-          component: () => (
-            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
-          ),
-        },
         ...(reportBugLink
           ? [
               {
@@ -347,10 +347,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               },
             ]
           : []),
-        {
-          label: t('public~About'),
-          callback: onAboutModal,
-        },
       ],
     });
 
@@ -360,7 +356,13 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         ...helpLink,
         label: t(`public~${helpLink.label}`),
       }))
-      .concat(additionalHelpActions.actions);
+      .concat(
+        {
+          label: t('public~About'),
+          callback: onAboutModal,
+        },
+        ...additionalHelpActions.actions,
+      );
 
     if (!_.isEmpty(additionalHelpActions.actions)) {
       helpActions.push(additionalHelpActions);
