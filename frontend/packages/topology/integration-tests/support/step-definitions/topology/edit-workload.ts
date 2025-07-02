@@ -44,7 +44,8 @@ When('user creates a new secret {string}', (secretName: string) => {
 });
 
 When('user clicks on {string} from context action menu', (actionItem: string) => {
-  cy.byTestActionID(actionItem).should('be.visible').click();
+  cy.byTestActionID(actionItem).should('be.visible');
+  cy.get(`[data-test-action="${actionItem}"] button`).click();
 });
 
 Then('user will see {string} in secret name dropdown under Pull secret', (secretName: string) => {
