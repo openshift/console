@@ -183,7 +183,7 @@ describe('useDetectHelmChartRepositories', () => {
     );
     testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     expect(fetchK8sSpy).toHaveBeenCalledTimes(2);
-    jest.runTimersToTime(20 * 1000);
+    jest.advanceTimersByTime(20 * 1000);
     expect(fetchK8sSpy).toHaveBeenCalledTimes(6);
   });
 
@@ -201,7 +201,7 @@ describe('useDetectHelmChartRepositories', () => {
       rerender();
     });
     expect(fetchK8sSpy).toHaveBeenCalledTimes(4);
-    jest.runTimersToTime(20 * 1000);
+    jest.advanceTimersByTime(20 * 1000);
     expect(fetchK8sSpy).toHaveBeenCalledTimes(4);
   });
 });
