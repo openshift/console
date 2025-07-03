@@ -14,7 +14,9 @@ export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
     if (!flags[FLAGS.CAN_GET_NS]) {
       return null;
     }
-    const namespaceRouteQuery = `{exported_namespace="${obj.metadata.namespace}",route="${obj.metadata.name}"}[5m]`;
+    const namespaceRouteQuery = `{exported_namespace="${obj.metadata?.namespace || ''}",route="${
+      obj.metadata?.name || ''
+    }"}[5m]`;
     return (
       <Dashboard className="resource-metrics-dashboard">
         <Grid hasGutter>

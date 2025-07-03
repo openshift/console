@@ -21,7 +21,7 @@ export const fetchOverviewMetrics = (
   namespace: string,
 ): Promise<{ [key: string]: MetricValuesByPod }> => {
   if (!PROMETHEUS_TENANCY_BASE_PATH) {
-    return Promise.resolve(null);
+    return Promise.resolve({});
   }
 
   const queries = {
@@ -52,7 +52,7 @@ export const fetchOverviewMetrics = (
 
 export const fetchMonitoringAlerts = (namespace: string): Promise<Alert[]> => {
   if (!PROMETHEUS_TENANCY_BASE_PATH) {
-    return Promise.resolve(null);
+    return Promise.resolve([]);
   }
   const url = getPrometheusURL({
     endpoint: PrometheusEndpoint.RULES,

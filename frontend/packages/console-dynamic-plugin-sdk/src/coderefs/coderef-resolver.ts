@@ -60,7 +60,7 @@ export const loadReferencedObject = async <TExport = any>(
   entryModule: RemoteEntryModule,
   pluginID: string,
   errorCallback: VoidFunction,
-): Promise<TExport> => {
+): Promise<TExport | null> => {
   const [moduleName, exportName] = parseEncodedCodeRefValue(ref.$codeRef);
   let requestedModule: {};
 

@@ -325,7 +325,7 @@ if (CHECK_CYCLES === 'true') {
 }
 
 if (ANALYZE_BUNDLE === 'true') {
-  config.plugins.push(
+  config!.plugins!.push(
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       reportFilename: 'report.html',
@@ -338,10 +338,10 @@ if (ANALYZE_BUNDLE === 'true') {
 /* Production settings */
 if (NODE_ENV === 'production') {
   config.devtool = 'source-map';
-  config.output.filename = '[name]-bundle-[chunkhash].min.js';
-  config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
+  config!.output!.filename = '[name]-bundle-[chunkhash].min.js';
+  config!.output!.chunkFilename = '[name]-chunk-[chunkhash].min.js';
   // Causes error in --mode=production due to scope hoisting
-  config.optimization.concatenateModules = false;
+  config!.optimization!.concatenateModules = false;
   config.stats = 'normal';
 }
 

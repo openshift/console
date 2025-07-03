@@ -18,7 +18,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common!];
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
@@ -30,15 +30,15 @@ export const LimitRangeTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={LimitRangeReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata!.name}
+          namespace={obj.metadata!.namespace}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata!.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata!.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />

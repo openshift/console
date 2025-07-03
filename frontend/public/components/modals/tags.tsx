@@ -80,7 +80,11 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
       <ModalSubmitFooter
         submitText={t('public~Save')}
         submitDisabled={stale}
-        cancel={props.cancel}
+        cancel={() => {
+          if (props.cancel) {
+            props.cancel();
+          }
+        }}
         errorMessage={props.errorMessage || errorMessage}
         message={
           stale

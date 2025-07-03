@@ -55,12 +55,12 @@ const TrialDaysLeft: React.FC<{
 
   let variant: 'warning' | 'danger' = 'warning';
 
-  let alertText = t('public~{{count}} day remaining', { count: trialDaysLeft });
+  let alertText = t('public~{{count}} day remaining', { count: trialDaysLeft || 0 });
   if (trialDaysLeft === 0) {
     alertText = t('public~< 1 day remaining');
   }
 
-  if (trialDaysLeft < 0 || level === 'None') {
+  if ((trialDaysLeft || 0) < 0 || level === 'None') {
     variant = 'danger';
     alertText = t('public~Trial expired');
   }
@@ -96,7 +96,15 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
     if (!showServiceLevel(clusterID)) {
       setLoadingSecret(false);
       setLoadingServiceLevel(false);
-      dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
+      dispatch(
+        UIActions.setServiceLevel(
+          null as any,
+          null as any,
+          clusterID,
+          null as any,
+          hasSecretAccess,
+        ),
+      );
       return;
     }
     setLoadingSecret(true);
@@ -131,21 +139,29 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
             const now = new Date();
             let daysLeft = trialEnd ? getDuration(trialEnd.getTime() - now.getTime()).days : null;
 
-            daysLeft = trialEnd.getTime() < now.getTime() ? -1 : daysLeft;
+            daysLeft = trialEnd && trialEnd.getTime() < now.getTime() ? -1 : daysLeft;
 
             const trialDateEnd = trialEnd ? dateFormatter.format(trialEnd) : null;
             dispatch(
               UIActions.setServiceLevel(
                 levelSetting,
-                daysLeft,
+                daysLeft || 0,
                 clusterID,
-                trialDateEnd,
+                trialDateEnd || undefined,
                 hasSecretAccess,
               ),
             );
           })
           .catch((err) => {
-            dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
+            dispatch(
+              UIActions.setServiceLevel(
+                null as any,
+                null as any,
+                clusterID,
+                null as any,
+                hasSecretAccess,
+              ),
+            );
             // eslint-disable-next-line no-console
             console.error('API call to get support level has failed', err);
           })
@@ -157,7 +173,15 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
       .catch(() => {
         // Error getting pull secret (this is expected if the user doesn't have access)
         setLoadingSecret(false);
-        dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
+        dispatch(
+          UIActions.setServiceLevel(
+            null as any,
+            null as any,
+            clusterID,
+            null as any,
+            hasSecretAccess,
+          ),
+        );
       });
   };
 
@@ -230,7 +254,7 @@ type ServiceLevelTextProps = {
 };
 export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, inline }) => {
   const { t } = useTranslation();
-  const { level, daysRemaining } = useGetServiceLevel(clusterID);
+  const { level, daysRemaining } = useGetServiceLevel(clusterID || '');
   const levelText = (
     <>
       {useServiceLevelText(level)}
@@ -263,7 +287,7 @@ export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, i
         <div>
           <ExternalLink
             text={t('public~Manage subscription settings')}
-            href={getOCMLink(clusterID)}
+            href={getOCMLink(clusterID || '')}
           />
         </div>
       ) : null}
@@ -277,29 +301,29 @@ export const useServiceLevelTitle = (): string => {
 
 export const useShowServiceLevelNotifications = (clusterID: string): boolean => {
   const { level } = useGetServiceLevel(clusterID);
-  return level && (level === 'Eval' || level === 'None');
+  return !!level && (level === 'Eval' || level === 'None');
 };
 
 export const ServiceLevelNotification: React.FC<{
   clusterID?: string;
 }> = ({ clusterID }) => {
   const { t } = useTranslation();
-  const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID);
-  const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
+  const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID || '');
+  const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID || '');
 
   if (!showServiceLevelNotification) {
     return null;
   }
   let notificationStart = '';
-  if (level === 'None' || (level === 'Eval' && daysRemaining < 0)) {
+  if (level === 'None' || (level === 'Eval' && (daysRemaining || 0) < 0)) {
     notificationStart = t('public~Your 60-day self-support trial expired.');
   }
 
   notificationStart =
-    daysRemaining === 0
+    (daysRemaining || 0) === 0
       ? t('public~Your 60-day self-support trial will end in < 1 day.')
       : t('public~Your 60-day self-support trial will end in {{count}} day on {{date}}.', {
-          count: daysRemaining,
+          count: daysRemaining || 0,
           date: trialDateEnd,
         });
 
@@ -314,7 +338,7 @@ export const ServiceLevelNotification: React.FC<{
           {`${notificationStart} ${t(
             'public~For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.',
           )}`}{' '}
-          <ExternalLink href={getOCMLink(clusterID)}>{t('public~Get support')}</ExternalLink>
+          <ExternalLink href={getOCMLink(clusterID || '')}>{t('public~Get support')}</ExternalLink>
         </>
       </NotificationDrawerListItemBody>
     </NotificationDrawerListItem>

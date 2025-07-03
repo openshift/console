@@ -21,10 +21,10 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
 
   const getRemoveVolumePatch = (resource: K8sResourceKind, rowVolumeData: RowVolumeData) => {
     const containers: ContainerSpec[] = _.get(resource, 'spec.template.spec.containers', []);
-    const patches = [];
+    const patches: { op: string; path: string }[] = [];
     let allowRemoveVolume = true;
     containers.forEach((container: ContainerSpec, i: number) => {
-      const mounts: VolumeMount[] = _.get(container, 'volumeMounts', []);
+      const mounts: VolumeMount[] = _.get(container, 'volumeMounts', []) as VolumeMount[];
       mounts.forEach((mount: VolumeMount, j: number) => {
         if (mount.name !== rowVolumeData.name) {
           return;
@@ -63,7 +63,9 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
     k8sPatch(kind, resource, getRemoveVolumePatch(resource, volume))
       .then(() => {
         setInProgress(false);
-        props.close();
+        if (props.close) {
+          props.close();
+        }
       })
       .catch(({ message: errMessage }) => {
         setErrorMessage(errMessage);
@@ -76,7 +78,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
   const volumeName = volume.name;
   const label = kind.label;
-  const resourceName = resource.metadata.name;
+  const resourceName = resource.metadata!.name;
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
@@ -103,7 +105,11 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         inProgress={inProgress}
         submitDanger
         submitText={t('public~Remove volume')}
-        cancel={props.cancel}
+        cancel={() => {
+          if (props.cancel) {
+            props.cancel();
+          }
+        }}
       />
     </form>
   );

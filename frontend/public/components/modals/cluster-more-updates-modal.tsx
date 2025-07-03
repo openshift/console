@@ -60,8 +60,8 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
                   </td>
                   {releaseNotes && (
                     <td className="pf-v6-c-table__td">
-                      {getReleaseNotesLink(update.version) ? (
-                        <ReleaseNotesLink version={update.version} />
+                      {getReleaseNotesLink(update.version!) ? (
+                        <ReleaseNotesLink version={update.version!} />
                       ) : (
                         '-'
                       )}

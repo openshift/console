@@ -13,7 +13,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   const dockerfile = _.get(resource, 'spec.source.dockerfile');
   const devfile = _.get(resource, 'spec.source.devfile');
   const jenkinsfile = _.get(resource, 'spec.strategy.jenkinsPipelineStrategy.jenkinsfile');
-  const strategyType = getStrategyType(resource.spec.strategy.type);
+  const strategyType = getStrategyType(resource.spec?.strategy?.type || '');
   const buildFromPath = ['spec', 'strategy', strategyType, 'from'];
   const buildFrom = _.get(resource, buildFromPath);
   const outputTo = _.get(resource, 'spec.output.to');
@@ -22,7 +22,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   const commitAuthorName = _.get(resource, 'spec.revision.git.author.name');
   const pushSecret = _.get(resource, 'spec.output.pushSecret');
   const resourceLimits = _.get(resource, 'spec.resources.limits');
-  const triggers = _.map(resource.spec.triggers, 'type').join(', ');
+  const triggers = _.map(resource.spec?.triggers, 'type').join(', ');
   const { t } = useTranslation();
 
   return (
@@ -96,15 +96,15 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
         <DetailsItem label={t('public~Build from')} obj={resource} path={buildFromPath}>
           <ResourceLink
             kind={ImageStreamTagsReference}
-            name={buildFrom.name}
-            namespace={buildFrom.namespace || resource.metadata.namespace}
-            title={buildFrom.name}
+            name={buildFrom.name || ''}
+            namespace={buildFrom.namespace || resource.metadata?.namespace || ''}
+            title={buildFrom.name || ''}
           />
         </DetailsItem>
       )}
       {buildFrom && buildFrom.kind === 'DockerImage' && (
         <DetailsItem label={t('public~Build from')} obj={resource} path={buildFromPath}>
-          {buildFrom.name}
+          {buildFrom.name || ''}
         </DetailsItem>
       )}
       {outputTo && outputTo.kind === 'ImageStreamTag' && (
@@ -112,7 +112,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
           <ResourceLink
             kind={ImageStreamTagsReference}
             name={outputTo.name}
-            namespace={outputTo.namespace || resource.metadata.namespace}
+            namespace={outputTo.namespace || resource.metadata?.namespace || ''}
             title={outputTo.name}
           />
         </DetailsItem>
@@ -127,7 +127,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
           <ResourceLink
             kind="Secret"
             name={pushSecret.name}
-            namespace={resource.metadata.namespace}
+            namespace={resource.metadata?.namespace || ''}
             title={pushSecret.name}
           />
         </DetailsItem>

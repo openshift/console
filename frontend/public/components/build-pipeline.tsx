@@ -73,19 +73,19 @@ const BuildSummaryTimestamp: React.SFC<BuildSummaryTimestampProps> = ({ timestam
 );
 
 const BuildPipelineSummary: React.SFC<BuildPipelineSummaryProps> = ({ obj }) => {
-  const { name, namespace } = obj.metadata;
+  const { name, namespace } = obj.metadata ?? {};
   const buildNumber = getBuildNumber(obj);
-  const path: string = resourcePath(obj.kind, name, namespace);
+  const path: string = resourcePath(obj.kind!, name!, namespace!) || '';
   const { t } = useTranslation();
   return (
     <div className="build-pipeline__summary">
       <div className="build-pipeline__phase">
-        <BuildSummaryStatusIcon status={obj.status.phase} />{' '}
+        <BuildSummaryStatusIcon status={obj.status?.phase} />{' '}
         <Link to={path} title={name}>
           {t('public~Build {{buildNumber}}', { buildNumber })}
         </Link>
       </div>
-      <BuildSummaryTimestamp timestamp={obj.metadata.creationTimestamp} />
+      <BuildSummaryTimestamp timestamp={obj.metadata?.creationTimestamp || ''} />
       <BuildPipelineLogLink obj={obj} />
     </div>
   );

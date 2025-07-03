@@ -52,7 +52,7 @@ export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = ({
 export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = ({ obj, className }) => {
   const { t } = useTranslation();
   const [data, setData] = useSafetyFirst<ClusterServiceVersionKind[] | undefined>(undefined);
-  const namespace = obj.metadata.namespace;
+  const namespace = obj.metadata?.namespace || '';
   React.useEffect(() => {
     if (!namespace) {
       return;
@@ -64,7 +64,7 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = ({ obj, clas
         console.error('Could not fetch CSVs', e);
       });
   }, [namespace, setData]);
-  const owner = findOwner(obj, data);
+  const owner = findOwner(obj, data || []);
   const csv = data && owner ? matchOwnerAndCSV(owner, data) : undefined;
 
   return owner && csv ? (
@@ -72,8 +72,8 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = ({ obj, clas
       {t('public~Managed by')}{' '}
       <ManagedByOperatorResourceLink
         className="co-resource-item"
-        namespace={namespace}
-        csvName={csv.metadata.name}
+        namespace={namespace || ''}
+        csvName={csv.metadata?.name || ''}
         owner={owner}
       />
     </div>

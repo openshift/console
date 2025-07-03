@@ -111,7 +111,7 @@ export const AddRequestHeaderPage = () => {
         .then(() => {
           return createCAConfigMap()
             .then((configMap: K8sResourceKind) =>
-              addRequestHeaderIDP(oauth, configMap.metadata.name),
+              addRequestHeaderIDP(oauth, configMap.metadata?.name || ''),
             )
             .then(() => {
               redirectToOAuthPage(navigate);
@@ -187,28 +187,28 @@ export const AddRequestHeaderPage = () => {
           />
           <ListInput
             label={t('public~Client common names')}
-            onChange={(c: string[]) => setClientCommonNames(c)}
+            onChange={(c: string[]) => setClientCommonNames(c as any)}
             helpText={t('public~The set of common names to require a match from.')}
           />
           <ListInput
             label={t('public~Headers')}
-            onChange={(c: string[]) => setHeaders(c)}
+            onChange={(c: string[]) => setHeaders(c as any)}
             helpText={t('public~The set of headers to check for identity information.')}
             required
           />
           <ListInput
             label={t('public~Preferred username headers')}
-            onChange={(c: string[]) => setPreferredUsernameHeaders(c)}
+            onChange={(c: string[]) => setPreferredUsernameHeaders(c as any)}
             helpText={t('public~The set of headers to check for the preferred username.')}
           />
           <ListInput
             label={t('public~Name headers')}
-            onChange={(c: string[]) => setNameHeaders(c)}
+            onChange={(c: string[]) => setNameHeaders(c as any)}
             helpText={t('public~The set of headers to check for the display name.')}
           />
           <ListInput
             label={t('public~Email headers')}
-            onChange={(c: string[]) => setEmailHeaders(c)}
+            onChange={(c: string[]) => setEmailHeaders(c as any)}
             helpText={t('public~The set of headers to check for the email address.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>

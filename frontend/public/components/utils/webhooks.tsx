@@ -51,8 +51,8 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
 export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
   const { t } = useTranslation();
   const { resource } = props;
-  const { name, namespace } = resource.metadata;
-  const { triggers } = resource.spec;
+  const { name, namespace } = resource.metadata || {};
+  const { triggers } = resource.spec || {};
   const canGetSecret = useAccessReview({
     group: SecretModel.apiGroup,
     resource: SecretModel.plural,
@@ -125,8 +125,8 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
     if (!secretName) {
       return <span className="pf-v6-u-text-color-subtle">No secret</span>;
     }
-    const webhookSecret: K8sResourceKind = webhookSecrets.find(
-      (secret: K8sResourceKind) => secret.metadata.name === secretName,
+    const webhookSecret: K8sResourceKind | undefined = webhookSecrets.find(
+      (secret: K8sResourceKind) => secret.metadata?.name === secretName,
     );
     if (!webhookSecret) {
       return secretName;
@@ -149,8 +149,8 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
     }
 
     const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
-    const webhookSecret: K8sResourceKind = webhookSecrets.find(
-      (secret: K8sResourceKind) => secret.metadata.name === secretName,
+    const webhookSecret: K8sResourceKind | undefined = webhookSecrets.find(
+      (secret: K8sResourceKind) => secret.metadata?.name === secretName,
     );
     if (!_.has(webhookSecret, 'data.WebHookSecretKey')) {
       errorModal({
@@ -161,7 +161,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
       });
       return;
     }
-    const webhookSecretValue = Base64.decode(webhookSecret.data.WebHookSecretKey);
+    const webhookSecretValue = Base64.decode(webhookSecret?.data?.WebHookSecretKey || '');
     const url = getWebhookURL(trigger, webhookSecretValue);
     navigator.clipboard.writeText(url);
   };
@@ -170,8 +170,8 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
     const triggerProperty = getTriggerProperty(trigger);
     const plainSecret = _.get(trigger, [triggerProperty, 'secret']);
     const secretReference = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
-    const webhookSecret: K8sResourceKind = webhookSecrets.find(
-      (secret: K8sResourceKind) => secret.metadata.name === secretReference,
+    const webhookSecret: K8sResourceKind | undefined = webhookSecrets.find(
+      (secret: K8sResourceKind) => secret.metadata?.name === secretReference,
     );
     return webhookSecret || plainSecret ? (
       <Button

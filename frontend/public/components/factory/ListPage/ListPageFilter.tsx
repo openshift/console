@@ -19,9 +19,8 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
   hideColumnManagement,
   nameFilter,
   rowSearchFilters,
-}) =>
-  loaded &&
-  !_.isEmpty(data) && (
+}) => {
+  return loaded && !_.isEmpty(data) ? (
     <FilterToolbar
       rowFilters={rowFilters}
       labelFilter={labelFilter}
@@ -38,6 +37,7 @@ const ListPageFilter: React.FC<ListPageFilterProps> = ({
       textFilter={nameFilter}
       rowSearchFilters={rowSearchFilters}
     />
-  );
+  ) : null;
+};
 
 export default ListPageFilter;

@@ -138,7 +138,10 @@ export const getConfigmapData = (values: FormikValues, existingConfigMap: Config
     binaryData: binaryDataMap ?? {},
   });
 };
-export const sanitizeToYaml = (formData: ConfigMapFormData, configMap?: ConfigMap): string => {
+export const sanitizeToYaml = (
+  formData: ConfigMapFormData,
+  configMap: ConfigMap = initialConfigmapData,
+): string => {
   const configmapObj = getConfigmapData({ formData }, configMap);
   return safeJSToYAML(configmapObj, 'yamlData', {
     skipInvalid: true,
@@ -149,7 +152,7 @@ export const sanitizeToForm = (
   formData: ConfigMapFormData,
   yamlData?: ConfigMap,
 ): ConfigMapFormData => {
-  const newFormData = getConfigmapFormData(formData, yamlData);
+  const newFormData = getConfigmapFormData(formData, yamlData || initialConfigmapData);
   return _.merge({}, initialFormData, newFormData);
 };
 
@@ -167,7 +170,7 @@ export const getConfigMapInitialValues = (
     formData: {
       ...initialConfigMapFormData,
     },
-    resourceVersion: configMap?.metadata?.resourceVersion ?? null,
+    resourceVersion: configMap?.metadata?.resourceVersion ?? '',
     formReloadCount: 0,
   };
 };

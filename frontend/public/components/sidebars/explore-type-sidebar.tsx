@@ -17,7 +17,7 @@ const getRef = (definition: SwaggerDefinition): string => {
   const ref = definition.$ref || _.get(definition, 'items.$ref');
   const re = /^#\/definitions\//;
   // Only follow JSON pointers, not external URI references.
-  return ref && re.test(ref) ? ref.replace(re, '') : null;
+  return ref && re.test(ref) ? ref.replace(re, '') : '';
 };
 
 export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
@@ -27,7 +27,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
   const { kindObj, schema } = props;
   const { t } = useTranslation();
-  const [allDefinitions, setAllDefinitions] = React.useState<SwaggerDefinitions>(null);
+  const [allDefinitions, setAllDefinitions] = React.useState<SwaggerDefinitions | undefined>();
 
   React.useEffect(() => {
     if (kindObj) {
@@ -54,7 +54,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const currentSelection = _.last(drilldownHistory);
   // Show the current selected property or the top-level definition for the kind.
   const currentPath = currentSelection
-    ? currentSelection.path
+    ? (currentSelection as any).path
     : [kindObj ? getDefinitionKey(kindObj, allDefinitions) : 'custom-schema'];
   const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath);
   const currentProperties =
@@ -64,7 +64,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 
   // Prefer the description saved in `currentSelection`. It won't always be defined in the definition itself.
   const description = currentSelection
-    ? currentSelection?.description
+    ? (currentSelection as any)?.description
     : currentDefinition?.description;
   const required = new Set(currentDefinition?.required || []);
   const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.kind;
@@ -79,7 +79,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     path: string[],
   ) => {
     e.preventDefault();
-    setDrilldownHistory([...drilldownHistory, { name, description: desc, path }]);
+    setDrilldownHistory([...drilldownHistory, { name, description: desc, path } as never]);
     if (props.scrollTop) {
       props.scrollTop();
     }
@@ -104,7 +104,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 
     // Only allow drilldown if the reference has additional properties to explore.
     const child = _.get(allDefinitions, path) as SwaggerDefinition;
-    return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : null;
+    return _.has(child, 'properties') || _.has(child, 'items.properties') ? path : [];
   };
 
   // Get the type to display for a property reference.
@@ -163,7 +163,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                   {path && (
                     <Button
                       type="button"
-                      onClick={(e) => drilldown(e, name, definition.description, path)}
+                      onClick={(e) => drilldown(e, name, definition.description || '', path)}
                       isInline
                       variant="link"
                     >

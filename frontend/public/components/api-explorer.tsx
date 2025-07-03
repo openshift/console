@@ -152,7 +152,7 @@ const APIResourceRows = ({ componentProps: { data } }) =>
     {
       title: (
         <span className="co-select-to-copy">
-          <Group value={model.apiGroup} />
+          <Group value={model.apiGroup || ''} />
         </span>
       ),
       props: { className: tableClasses[1] },
@@ -333,7 +333,7 @@ const APIResourcesList = compose(
                 onChange={onGroupSelected}
                 selectedKey={groupFilter}
                 spacerBefore={groupSpacer}
-                title={groupOptions[groupFilter]}
+                title={groupOptions[groupFilter || '']}
                 dropDownClassName="dropdown--full-width"
               />
             </ToolbarItem>
@@ -399,32 +399,18 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
   const description = getResourceDescription(kindObj);
   const { t } = useTranslation();
   return (
-    <PaneBody>
-      <DescriptionList>
-        <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Kind')}</DescriptionListTerm>
-          <DescriptionListDescription>{kind}</DescriptionListDescription>
-        </DescriptionListGroup>
-        <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~API group')}</DescriptionListTerm>
-          <DescriptionListDescription className="co-select-to-copy">
-            {apiGroup || '-'}
-          </DescriptionListDescription>
-        </DescriptionListGroup>
-        <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~API version')}</DescriptionListTerm>
-          <DescriptionListDescription>{apiVersion}</DescriptionListDescription>
-        </DescriptionListGroup>
-        <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Namespaced')}</DescriptionListTerm>
-          <DescriptionListDescription>
-            {namespaced ? t('public~true') : t('public~false')}
-          </DescriptionListDescription>
-        </DescriptionListGroup>
-        <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Verbs')}</DescriptionListTerm>
-          <DescriptionListDescription>{verbs.join(', ')}</DescriptionListDescription>
-        </DescriptionListGroup>
+    <div className="co-m-pane__body">
+      <dl className="co-m-pane__details">
+        <dt>{t('public~Kind')}</dt>
+        <dd>{kind}</dd>
+        <dt>{t('public~API group')}</dt>
+        <dd className="co-select-to-copy">{apiGroup || '-'}</dd>
+        <dt>{t('public~API version')}</dt>
+        <dd>{apiVersion}</dd>
+        <dt>{t('public~Namespaced')}</dt>
+        <dd>{namespaced ? t('public~true') : t('public~false')}</dd>
+        <dt>{t('public~Verbs')}</dt>
+        <dd>{verbs.join(', ')}</dd>
         {shortNames && (
           <DescriptionListGroup>
             <DescriptionListTermHelp
@@ -447,7 +433,7 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
   );
 };
 
-const scrollTop = () => (document.getElementById('content-scrollable').scrollTop = 0);
+const scrollTop = () => (document.getElementById('content-scrollable')!.scrollTop = 0);
 const APIResourceSchema: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   return (
     <PaneBody>
@@ -515,7 +501,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
 
   // perform the access review
   React.useEffect(() => {
-    setError(null);
+    setError(undefined);
     const accessReviewModel = namespace
       ? LocalResourceAccessReviewsModel
       : ResourceAccessReviewsModel;
@@ -524,7 +510,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
       kind: accessReviewModel.kind,
       namespace,
       resourceAPIVersion: apiVersion,
-      resourceAPIGroup: apiGroup,
+      resourceAPIGroup: apiGroup || '',
       resource: plural,
       verb,
     };
@@ -764,7 +750,7 @@ const APIResourcePage_ = (props) => {
     },
   ];
 
-  if (_.isEmpty(kindObj.verbs) || kindObj.verbs.includes('list')) {
+  if (_.isEmpty(kindObj.verbs) || kindObj.verbs?.includes('list')) {
     pages.push({
       href: 'instances',
       // t('public~Instances')

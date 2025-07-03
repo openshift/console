@@ -90,7 +90,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
 
   React.useEffect(() => {
     if (textValue && visible && showSuggestions) {
-      const processed = labelParser(data, labelPath);
+      const processed = labelParser(data, labelPath || '');
       // User input without whitespace
       const processedText = textValue.trim().replace(/\s*=\s*/, '=');
       const filtered = [...processed]
@@ -109,9 +109,9 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
         onFocus={activate}
       />
       {showSuggestions && (
-        <SelectList
-          className={css('co-suggestion-box__suggestions', {
-            'co-suggestion-box__suggestions--shadowed': visible && suggestions?.length > 0,
+        <div
+          className={classNames('co-suggestion-box__suggestions', {
+            'co-suggestion-box__suggestions--shadowed': visible && suggestions?.length! > 0,
           })}
         >
           {visible &&

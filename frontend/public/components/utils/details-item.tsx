@@ -78,9 +78,9 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
 }) => {
   const { t } = useTranslation();
   const [model] = useK8sModel(obj ? referenceFor(obj) : '');
-  const hide = hideEmpty && _.isEmpty(_.get(obj, path));
-  const popoverContent: string = description ?? getPropertyDescription(model, path);
-  const value: React.ReactNode = children || _.get(obj, path, defaultValue);
+  const hide = hideEmpty && _.isEmpty(_.get(obj, path || ''));
+  const popoverContent: string = description ?? getPropertyDescription(model, path || '');
+  const value: React.ReactNode = children || _.get(obj, path || '', defaultValue);
   const editable = onEdit && canEdit;
   return hide ? null : (
     <DescriptionListGroup>

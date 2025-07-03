@@ -49,22 +49,27 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
     stack,
     mainDataName,
     // destructure last
-    theme = getTheme(themeColor),
+    theme = getTheme(themeColor || 'default'),
     ...rest
   } = props;
   const pointerLength = theme?.tooltip
     ? Helpers.evaluateProp(theme.tooltip.pointerLength, props)
     : 10;
   const legendProps = getLegendTooltipDataProps(legendComponent.props);
-  const visibleLegendData = getLegendTooltipVisibleData({
-    activePoints,
-    colorScale: legendProps.colorScale,
-    legendData,
-    text,
-    theme,
-  });
+  const visibleLegendData = activePoints
+    ? getLegendTooltipVisibleData({
+        activePoints,
+        colorScale: legendProps.colorScale,
+        legendData,
+        text,
+        theme,
+      })
+    : [];
 
-  const hasMainData = mainDataName ? activePoints[0].childName === mainDataName : false;
+  const hasMainData =
+    mainDataName && activePoints && activePoints.length > 0
+      ? activePoints[0].childName === mainDataName
+      : false;
 
   if (stack) {
     visibleLegendData.reverse();
@@ -84,13 +89,13 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
       const x = (rest as any).x;
       return x ? x : undefined;
     }
-    const _flyoutWidth = Helpers.evaluateProp(flyoutWidth, props);
-    if (width > center.x + _flyoutWidth + pointerLength) {
+    const _flyoutWidth = Helpers.evaluateProp(flyoutWidth, props) || 0;
+    if (center && (width || 0) > center.x + _flyoutWidth + (pointerLength || 0)) {
       return center.x + ChartLegendTooltipStyles.flyout.padding / 2;
-    } else if (center.x < _flyoutWidth + pointerLength) {
-      return ChartLegendTooltipStyles.flyout.padding / 2 - pointerLength;
+    } else if (center && center.x < _flyoutWidth + (pointerLength || 0)) {
+      return ChartLegendTooltipStyles.flyout.padding / 2 - (pointerLength || 0);
     }
-    return center.x - _flyoutWidth;
+    return center ? center.x - _flyoutWidth : undefined;
   };
 
   // Returns y position
@@ -100,19 +105,19 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
       return y ? y : undefined;
     }
     const _flyoutHeight = Helpers.evaluateProp(flyoutHeight, props);
-    if (center.y < _flyoutHeight / 2) {
+    if (center!.y < _flyoutHeight! / 2) {
       return ChartLegendTooltipStyles.flyout.padding / 2;
-    } else if (center.y > height - _flyoutHeight / 2) {
-      return height - _flyoutHeight + ChartLegendTooltipStyles.flyout.padding / 2;
+    } else if (center!.y > height! - _flyoutHeight! / 2) {
+      return height! - _flyoutHeight! + ChartLegendTooltipStyles.flyout.padding / 2;
     }
-    return center.y - _flyoutHeight / 2 + ChartLegendTooltipStyles.flyout.padding / 2;
+    return center!.y - _flyoutHeight! / 2 + ChartLegendTooltipStyles.flyout.padding / 2;
   };
 
   // Min & max dimensions do not include flyout padding
   const maxLegendDimensions = getLegendTooltipSize({
     legendData: visibleLegendData,
     legendProps,
-    text: getLegendTooltipVisibleText({ activePoints, legendData, text }),
+    text: getLegendTooltipVisibleText({ activePoints, legendData, text: text || [] }),
     theme,
   });
   const minLegendDimensions = getLegendTooltipSize({
@@ -248,7 +253,7 @@ export const ChartLegendTooltip: React.FunctionComponent<
     getLabel,
 
     // destructure last
-    theme = getTheme(themeColor),
+    theme = getTheme(themeColor || 'default'),
     ...rest
   } = props;
   const title = (d) => {
@@ -256,7 +261,11 @@ export const ChartLegendTooltip: React.FunctionComponent<
       return formatDate(d);
     }
     const mainDatum = mainDataName ? d.find((uDatum) => uDatum.childName === mainDataName) : d[0];
-    return mainDatum ? getLabel({ datum: mainDatum }) : `No ${mainDataName || 'data'} available`;
+    return mainDatum
+      ? getLabel
+        ? getLabel({ datum: mainDatum })
+        : mainDatum.toString()
+      : `No ${mainDataName || 'data'} available`;
   };
   const pointerLength = theme?.tooltip
     ? Helpers.evaluateProp(theme.tooltip.pointerLength, props)
@@ -264,7 +273,7 @@ export const ChartLegendTooltip: React.FunctionComponent<
   const legendTooltipProps = {
     legendData: getLegendTooltipVisibleData({ activePoints, legendData, text, theme }),
     legendProps: getLegendTooltipDataProps(labelComponent.props.legendComponent),
-    text: getLegendTooltipVisibleText({ activePoints, legendData, text }),
+    text: getLegendTooltipVisibleText({ activePoints, legendData, text: text || [] }),
     theme,
   };
 
@@ -281,7 +290,7 @@ export const ChartLegendTooltip: React.FunctionComponent<
         };
     const _flyoutHeight =
       getLegendTooltipSize(sizeProps).height + ChartLegendTooltipStyles.flyout.padding;
-    return title ? _flyoutHeight + 4 : _flyoutHeight - 10;
+    return title(activePoints) ? _flyoutHeight + 4 : _flyoutHeight - 10;
   };
 
   // Returns flyout width based on legend size
@@ -318,7 +327,7 @@ export const ChartLegendTooltip: React.FunctionComponent<
       labelComponent: getTooltipContentComponent(),
       ...(flyoutWidth === undefined && {
         showPointer:
-          width > _flyoutWidth + center.x + pointerLength ||
+          (width ?? 0) > _flyoutWidth + center.x + pointerLength ||
           center.x > _flyoutWidth + pointerLength,
       }),
       text,

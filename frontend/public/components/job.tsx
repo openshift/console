@@ -66,7 +66,7 @@ const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
 export const menuActions: KebabAction[] = [
   ModifyJobParallelism,
   ...Kebab.getExtensionsActionsForKind(JobModel),
-  ...Kebab.factory.common,
+  ...Kebab.factory.common!,
 ];
 
 const kind = 'Job';
@@ -95,7 +95,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
         <ResourceLink kind="Namespace" name={job.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={kind} labels={job.metadata.labels} />
+        <LabelList kind={kind} labels={job.metadata.labels ?? {}} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Link to={`/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
@@ -107,7 +107,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
       </TableData>
       <TableData className={tableColumnClasses[4]}>{type}</TableData>
       <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={job.metadata.creationTimestamp} />
+        <Timestamp timestamp={job.metadata.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <LazyActionMenu context={context} />
@@ -144,26 +144,24 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
           </GridItem>
           <GridItem md={6}>
             <SectionHeading text={t('public~Job status')} />
-            <DescriptionList>
-              <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
-                <DescriptionListDescription>
-                  <Status
-                    status={
-                      job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null
-                    }
-                  />
-                </DescriptionListDescription>
-              </DescriptionListGroup>
+            <dl className="co-m-pane__details">
+              <dt>{t('public~Status')}</dt>
+              <dd>
+                <Status
+                  status={
+                    job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : 'Unknown'
+                  }
+                />
+              </dd>
               <DetailsItem label={t('public~Start time')} obj={job} path="status.startTime">
-                <Timestamp timestamp={job.status.startTime} />
+                <Timestamp timestamp={job.status.startTime!} />
               </DetailsItem>
               <DetailsItem
                 label={t('public~Completion time')}
                 obj={job}
                 path="status.completionTime"
               >
-                <Timestamp timestamp={job.status.completionTime} />
+                <Timestamp timestamp={job.status.completionTime!} />
               </DetailsItem>
               <DetailsItem
                 label={t('public~Succeeded pods')}
@@ -194,8 +192,8 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
-        <Conditions conditions={job.status.conditions} />
-      </PaneBody>
+        <Conditions conditions={job.status.conditions!} />
+      </div>
     </>
   );
 };
@@ -221,7 +219,7 @@ const JobsDetailsPage: React.FC = (props) => {
     <DetailsPage
       {...props}
       getResourceStatus={(job: JobKind) =>
-        job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null
+        job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : 'Unknown'
       }
       kind={kind}
       customActionMenu={customActionMenu}

@@ -56,7 +56,7 @@ const pauseAction: KebabAction = (kind, obj) => ({
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
-    name: obj.metadata.name,
+    name: obj.metadata!.name,
     verb: 'patch',
   },
 });
@@ -65,7 +65,7 @@ const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
 const machineConfigPoolMenuActions = [
   pauseAction,
   ...Kebab.getExtensionsActionsForKind(MachineConfigPoolModel),
-  ...Kebab.factory.common,
+  ...Kebab.factory!.common!,
 ];
 const getConditionStatus = (
   mcp: MachineConfigPoolKind,
@@ -343,15 +343,15 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   const MachineConfigPoolTableRow: React.FC<RowFunctionArgs<MachineConfigPoolKind>> = ({ obj }) => {
     return (
       <>
-        <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
-          <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} />
+        <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+          <ResourceLink kind={machineConfigPoolReference} name={obj.metadata!.name} />
         </TableData>
         <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
           {_.get(obj, 'status.configuration.name') ? (
             <ResourceLink
               kind={machineConfigReference}
-              name={obj.status.configuration.name}
-              title={obj.status.configuration.name}
+              name={obj.status!.configuration.name}
+              title={obj.status!.configuration.name}
             />
           ) : (
             '-'

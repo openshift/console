@@ -29,7 +29,10 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel), ...common];
+const menuActions = [
+  ...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel),
+  ...common!,
+];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>
@@ -139,7 +142,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
                 return objectRow(
                   metric,
                   current,
-                  hpa.metadata.namespace,
+                  hpa.metadata?.namespace,
                   i,
                   hpa.spec.scaleTargetRef,
                 );
@@ -184,7 +187,7 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
                 <ResourceLink
                   kind={hpa.spec.scaleTargetRef.kind}
                   name={hpa.spec.scaleTargetRef.name}
-                  namespace={hpa.metadata.namespace}
+                  namespace={hpa.metadata?.namespace}
                   title={hpa.spec.scaleTargetRef.name}
                 />
               </DetailsItem>
@@ -195,7 +198,7 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
                 obj={hpa}
                 path="status.lastScaleTime"
               >
-                <Timestamp timestamp={hpa.status.lastScaleTime} />
+                <Timestamp timestamp={hpa.status?.lastScaleTime || ''} />
               </DetailsItem>
               <DetailsItem
                 label={t('public~Current replicas')}
@@ -216,8 +219,8 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
-        <Conditions conditions={hpa.status.conditions} />
-      </PaneBody>
+        <Conditions conditions={hpa.status?.conditions || []} />
+      </div>
     </>
   );
 };
@@ -255,26 +258,29 @@ const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={HorizontalPodAutoscalersReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata?.name}
+          namespace={obj.metadata?.namespace}
         />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata?.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
+        <LabelList kind={kind} labels={obj.metadata?.labels || {}} />
       </TableData>
       <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         <ResourceLink
-          kind={obj.spec.scaleTargetRef.kind}
-          name={obj.spec.scaleTargetRef.name}
-          namespace={obj.metadata.namespace}
-          title={obj.spec.scaleTargetRef.name}
+          kind={obj.spec?.scaleTargetRef.kind}
+          name={obj.spec?.scaleTargetRef.name}
+          namespace={obj.metadata?.namespace}
+          title={obj.spec?.scaleTargetRef.name}
         />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{obj.spec.minReplicas}</TableData>
-      <TableData className={tableColumnClasses[5]}>{obj.spec.maxReplicas}</TableData>
+      <TableData className={tableColumnClasses[4]}>{obj.spec?.minReplicas}</TableData>
+      <TableData className={tableColumnClasses[5]}>{obj.spec?.maxReplicas}</TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab
           actions={menuActions}

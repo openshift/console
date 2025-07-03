@@ -41,7 +41,7 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
+      dispatch(UIActions.startImpersonate('User', obj.metadata!.name!));
       navigate(window.SERVER_FLAGS.basePath);
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
@@ -49,13 +49,13 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
     accessReview: {
       group: 'authorization.k8s.io',
       resource: 'users',
-      name: obj.metadata.name,
+      name: obj.metadata!.name,
       verb: 'impersonate',
     },
   });
   return (
     <ResourceKebab
-      actions={[impersonateAction, ...Kebab.factory.common]}
+      actions={[impersonateAction, ...Kebab.factory.common!]}
       kind={referenceForModel(UserModel)}
       resource={user}
     />
@@ -66,7 +66,7 @@ const UserTableRow: React.FC<RowFunctionArgs<UserKind>> = ({ obj }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={referenceForModel(UserModel)} name={obj.metadata.name} />
+        <ResourceLink kind={referenceForModel(UserModel)} name={obj.metadata!.name} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>{obj.fullName || '-'}</TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -99,7 +99,7 @@ const NoDataEmptyMsgDetail = () => {
   return (
     <Content>
       {canEditIdentityProviders && oauthLoaded ? (
-        oauth?.spec?.identityProviders?.length > 0 ? (
+        oauth?.spec?.identityProviders?.length! > 0 ? (
           <p>
             <UsersHelpText />
           </p>
@@ -194,8 +194,8 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
 const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
-    staticFilters={{ 'role-binding-user': obj.metadata.name }}
-    name={obj.metadata.name}
+    staticFilters={{ 'role-binding-user': obj.metadata!.name }}
+    name={obj.metadata!.name}
     kind={obj.kind}
   />
 );
@@ -234,7 +234,7 @@ export const UserDetailsPage: React.FC = (props) => {
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
+      dispatch(UIActions.startImpersonate('User', obj.metadata!.name!));
       navigate(window.SERVER_FLAGS.basePath);
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
@@ -242,7 +242,7 @@ export const UserDetailsPage: React.FC = (props) => {
     accessReview: {
       group: 'authorization.k8s.io',
       resource: 'users',
-      name: obj.metadata.name,
+      name: obj.metadata!.name,
       verb: 'impersonate',
     },
   });
@@ -250,7 +250,7 @@ export const UserDetailsPage: React.FC = (props) => {
     <DetailsPage
       {...props}
       kind={referenceForModel(UserModel)}
-      menuActions={[impersonateAction, ...Kebab.factory.common]}
+      menuActions={[impersonateAction, ...Kebab.factory.common!]}
       pages={[
         navFactory.details(UserDetails),
         navFactory.editYaml(),

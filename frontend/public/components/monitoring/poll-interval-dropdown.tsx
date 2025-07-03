@@ -28,7 +28,7 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
   const { t } = useTranslation();
 
   const onSelect = React.useCallback(
-    (v: string) => setInterval(v === OFF_KEY ? null : parsePrometheusDuration(v)),
+    (v: string) => setInterval((v === OFF_KEY ? null : parsePrometheusDuration(v))!),
     [setInterval],
   );
 

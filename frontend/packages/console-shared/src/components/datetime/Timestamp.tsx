@@ -20,7 +20,7 @@ export const Timestamp = (props: TimestampProps) => {
 
   const mdate = new Date(props.timestamp);
 
-  const timestamp = dateTime.timestampFor(mdate, new Date(now), props.omitSuffix, lang);
+  const timestamp = timestampFor(mdate, new Date(now), props.omitSuffix || false, lang);
 
   if (!dateTime.isValid(mdate)) {
     return <div className="co-timestamp">-</div>;

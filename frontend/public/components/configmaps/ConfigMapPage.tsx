@@ -23,12 +23,12 @@ const ConfigMapPage: React.FC = () => {
         },
   );
   const title = isCreateFlow ? t('public~Create ConfigMap') : t('public~Edit ConfigMap');
-  const configMap: ConfigMap = isCreateFlow ? null : watchedConfigMap;
+  const configMap: ConfigMap | null = isCreateFlow ? null : watchedConfigMap;
 
   const configMapForm = (
     <ConfigMapForm
-      name={name}
-      namespace={namespace}
+      name={name ? name : ''}
+      namespace={namespace ? namespace : ''}
       configMap={configMap}
       title={title}
       isCreateFlow={isCreateFlow}

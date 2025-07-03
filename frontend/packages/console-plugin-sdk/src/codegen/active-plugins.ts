@@ -33,7 +33,7 @@ const getExposedModuleFilePath = (
   moduleName: string,
   diagnostics: ActivePluginsModuleData['diagnostics'],
 ) => {
-  const modulePath = path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
+  const modulePath = path.resolve(pkg._path, pkg.consolePlugin.exposedModules?.[moduleName] || '');
   return guessModuleFilePath(modulePath, (msg) =>
     diagnostics.warnings.push(`[${pkg.name}] ${msg}`),
   );

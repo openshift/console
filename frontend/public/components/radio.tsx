@@ -42,7 +42,7 @@ export const RadioGroup: React.SFC<RadioGroupProps> = ({
       key={value}
       checked={value === currentValue}
       desc={desc}
-      onChange={onChange}
+      onChange={onChange || (() => {})}
       title={title}
       subTitle={subTitle}
       value={value}

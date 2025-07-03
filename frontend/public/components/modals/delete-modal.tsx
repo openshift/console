@@ -142,7 +142,7 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
                   inline
                   kind={referenceForOwnerRef(owner)}
                   name={owner.name}
-                  namespace={resource.metadata.namespace}
+                  namespace={resource.metadata!.namespace}
                   onClick={props.cancel}
                 />{' '}
                 and any modifications may be overwritten. Edit the managing resource to preserve
@@ -157,7 +157,11 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
         inProgress={false}
         submitDanger
         submitText={props.btnText || t('public~Delete')}
-        cancel={props.cancel}
+        cancel={() => {
+          if (props.cancel) {
+            props.cancel();
+          }
+        }}
       />
     </form>
   );

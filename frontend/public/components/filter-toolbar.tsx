@@ -93,7 +93,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   const { searchFiltersObject, searchFiltersState, changeSearchFiltersState } = useSearchFilters(
     rowSearchFilters,
-    uniqueFilterName,
+    uniqueFilterName ?? '',
   );
 
   const translateFilterType = (value: string) => {
@@ -212,7 +212,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   const dropdownItems = generatedRowFilters.map((rowFilter) => (
     <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
       {rowFilter.items?.map?.((item) =>
-        item.hideIfEmpty && (item.count === 0 || item.count === '0') ? (
+        item.hideIfEmpty && Number(item.count) === 0 ? (
           <React.Fragment key={item.id} />
         ) : (
           <SelectOption
@@ -362,9 +362,9 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
       clearFiltersButtonText={t('public~Clear all filters')}
     >
       <ToolbarContent>
-        {(rowFilters?.length > 0 || !hideNameLabelFilters) && (
+        {((rowFilters?.length ?? 0) > 0 || !hideNameLabelFilters) && (
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-            {rowFilters?.length > 0 && (
+            {(rowFilters?.length ?? 0) > 0 && (
               <ToolbarItem>
                 {_.reduce(
                   Object.keys(filters),

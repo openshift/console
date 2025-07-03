@@ -60,8 +60,8 @@ const getTextWidth = (text: string, font: string): number => {
     // @ts-expect-error: re-use canvas object for better performance
     getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
   const context = canvas.getContext('2d');
-  context.font = font;
-  const metrics = context.measureText(text);
+  context!.font = font;
+  const metrics = context!.measureText(text);
   return Math.ceil(metrics.width);
 };
 
@@ -88,7 +88,9 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     selectOptions,
     selectedKey,
   ]);
-  const [inputValue, setInputValue] = React.useState<string>(String(selectedValue?.children) || '');
+  const [inputValue, setInputValue] = React.useState<string>(
+    (selectedValue?.children as string) || '',
+  );
   const [filterValue, setFilterValue] = React.useState<string>('');
   const [filteredSelectOptions, setFilteredSelectOptions] = React.useState<SelectOptionProps[]>(
     items,
@@ -259,7 +261,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
           focusedItem.value !== NO_RESULTS &&
           !focusedItem.isAriaDisabled
         ) {
-          onSelect(null, focusedItem.value);
+          onSelect(null as any, focusedItem.value);
         }
 
         if (!isOpen) {

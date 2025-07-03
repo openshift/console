@@ -12,7 +12,7 @@ export const usePoll = (callback, delay, ...dependencies) => {
 
   // Set up the interval.
   useEffect(() => {
-    const tick = () => savedCallback.current();
+    const tick = () => savedCallback.current?.();
 
     tick(); // Run first tick immediately.
 

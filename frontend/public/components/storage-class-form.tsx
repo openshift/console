@@ -79,7 +79,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
   const [customParams, setCustomParams] = React.useState([['', '']]);
   const [validationSuccessful, setValidationSuccessful] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<Error | null>(null);
   const [fieldErrors, setFieldErrors] = React.useState<{ [k: string]: any }>({ parameters: {} });
 
   const [needValidate, setNeedValidate] = React.useState(false);
@@ -101,11 +101,17 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
 
   const getExtensions = (extensions) => {
     extensions.forEach((ext: ResolvedStorageClassProvisioner) => {
-      if (isCSIProvisionerExtension(ext)) {
-        CSIStorageTypes.current[ext.properties.CSI.provisioner] = { ...ext.properties.CSI };
-      } else {
-        defaultStorageTypes.current[ext.properties.OTHERS.provisioner] = {
-          ...ext.properties.OTHERS,
+      if (isCSIProvisionerExtension(ext) && ext.properties.CSI) {
+        const csi = ext.properties.CSI;
+        CSIStorageTypes.current[csi.provisioner] = {
+          ...csi,
+          title: csi.title || 'Unknown Provisioner',
+        };
+      } else if (ext.properties.OTHERS) {
+        const others = ext.properties.OTHERS;
+        defaultStorageTypes.current[others.provisioner] = {
+          ...others,
+          title: others.title || 'Unknown Provisioner',
         };
       }
     });
@@ -148,7 +154,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
   const validateName = () => {
     const updatedName = newStorageClass.name;
     const nameUpdated = updatedName !== previousName.current;
-    const returnVal = {
+    const returnVal: { error: string | null; nameIsValid: boolean } = {
       error: null,
       nameIsValid: true,
     };
@@ -244,7 +250,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
   const prevProps = React.useRef(props);
 
   React.useEffect(() => {
-    const [extensions, extensionsLoaded] = props.extensions;
+    const [extensions = [], extensionsLoaded = false] = props.extensions || [];
     if (extensionsLoaded && !_.isEqual(props.extensions, prevProps.current.extensions)) {
       getExtensions(extensions);
     }
@@ -272,7 +278,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
 
-  const updateNewStorage = (param: keyof Parameters, value, runValidation) => {
+  const updateNewStorage = (param: keyof typeof newStorageClass, value, runValidation: boolean) => {
     const newParams = {
       ...newStorageClass,
       [param]: value,
@@ -346,7 +352,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     // Display error if duplicate keys are found
     const keys = c.map((v) => v[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      setError(t('public~Duplicate keys found.'));
+      setError(new Error(t('public~Duplicate keys found.')));
       return;
     }
 
@@ -355,7 +361,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       c,
       (v) =>
         (v[NameValueEditorPair.Value] = _.isEmpty(v[NameValueEditorPair.Value])
-          ? null
+          ? ''
           : v[NameValueEditorPair.Value]),
     );
 
@@ -367,8 +373,9 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     const dataParameters = _.pickBy(
       _.mapValues(newStorageClassBeforeCreation.parameters, (value, key) => {
         let finalValue = value.value;
-        if (storageTypes.current[type]?.parameters[key]?.format) {
-          finalValue = storageTypes.current[type].parameters[key].format(value.value);
+        const formatFn = storageTypes.current[type]?.parameters?.[key]?.format;
+        if (typeof formatFn === 'function') {
+          finalValue = formatFn(value.value);
         }
         return finalValue;
       }),
@@ -388,7 +395,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
 
     const { name, description, type, reclaim, expansion, volumeBindingMode } = newStorage;
     const dataParameters = getFormParams(newStorage);
-    const annotations = description ? { description } : {};
+    const annotations = description ? { description } : undefined;
     let data: StorageClass = {
       metadata: {
         name,
@@ -421,7 +428,8 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     k8sCreate(StorageClassModel, data)
       .then((resource) => {
         setLoading(false);
-        navigate(resourceObjPath(resource, referenceFor(resource)));
+        const path = resourceObjPath(resource, referenceFor(resource)) || '/';
+        navigate(path);
       })
       .catch((err) => {
         setLoading(false);
@@ -467,7 +475,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             items={parameter.values}
             dropDownClassName="dropdown--full-width"
             selectedKey={_.get(newStorageClass, selectedKey)}
-            onChange={(event) => setParameterHandler(key, event, false)}
+            onChange={(event) => setParameterHandler(key as keyof Parameters, event, false)}
             id={paramId}
             dataTest={paramId}
           />
@@ -482,7 +490,9 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
                   <input
                     type="checkbox"
                     className="create-storage-class-form__checkbox"
-                    onChange={(event) => setParameterHandler(key, event, isCheckbox)}
+                    onChange={(event) =>
+                      setParameterHandler(key as keyof Parameters, event, isCheckbox)
+                    }
                     checked={_.get(newStorageClass, selectedKey, false)}
                     id={`provisioner-settings-${key}-checkbox`}
                     data-test={paramId}
@@ -505,7 +515,9 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
                 <input
                   type="text"
                   value={_.get(newStorageClass, selectedKey, '')}
-                  onChange={(event) => setParameterHandler(key, event, isCheckbox)}
+                  onChange={(event) =>
+                    setParameterHandler(key as keyof Parameters, event, isCheckbox)
+                  }
                   id={paramId}
                   data-test={paramId}
                 />
@@ -537,7 +549,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           <p>
             {t('public~Specific fields for the selected provisioner.')}
             &nbsp;
-            {documentationLink && (
+            {documentationLink && typeof documentationLink === 'function' && (
               <ExternalLink
                 href={documentationLink()}
                 text={t('public~What should I enter here?')}

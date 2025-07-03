@@ -82,7 +82,7 @@ export const GlobalConfigPage: React.FC = () => {
   ]);
 
   const [errors, setErrors] = React.useState([]);
-  const [items, setItems] = React.useState([]);
+  const [items, setItems] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [textFilter, setTextFilter] = React.useState('');
 
@@ -105,7 +105,7 @@ export const GlobalConfigPage: React.FC = () => {
         return k8sList(model)
           .catch(({ response: { status }, message = `Could not get resource ${model.kind}` }) => {
             if (status !== 403) {
-              setErrors((current) => [...current, message]);
+              setErrors((current: any) => [...current, message] as any);
             }
             return [];
           })
@@ -115,9 +115,9 @@ export const GlobalConfigPage: React.FC = () => {
       const flattenedResponses = _.flatten(responses);
       const winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
         model: item.model,
-        id: item.metadata.uid,
-        name: item.metadata.name,
-        namespace: item.metadata.namespace,
+        id: item.metadata?.uid || '',
+        name: item.metadata?.name || '',
+        namespace: item.metadata?.namespace || '',
       }));
       const usableConfigs: ConfigDataType[] = globalConfigs.map(({ properties }) => {
         const { group, version, kind } = properties.model;
@@ -167,7 +167,7 @@ export const GlobalConfigPage: React.FC = () => {
         ]);
       const sortedItems = _.sortBy(_.flatten(allItems), 'label', 'asc');
       if (isSubscribed) {
-        setItems(sortedItems);
+        setItems(sortedItems as any);
         setLoading(false);
       }
     });
@@ -226,7 +226,7 @@ export const GlobalConfigPage: React.FC = () => {
             </Thead>
             <Tbody>
               {_.map(visibleItems, (item) => (
-                <ItemRow item={item} key={item.id} showAPIGroup={showAPIGroup(item.label)} />
+                <ItemRow item={item as any} key={item.id} showAPIGroup={showAPIGroup(item.label)} />
               ))}
             </Tbody>
           </Table>

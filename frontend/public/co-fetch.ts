@@ -111,7 +111,7 @@ const initDefaults = {
 
 export const appInternalFetch = async (url: string, options: RequestInit): Promise<Response> => {
   let attempt = 0;
-  let response: Response;
+  let response: Response | null = null;
   let retry = true;
 
   const op1 = applyConsoleHeaders(url, options);
@@ -133,6 +133,9 @@ export const appInternalFetch = async (url: string, options: RequestInit): Promi
         throw e;
       }
     }
+  }
+  if (response === null) {
+    throw new Error('No response received from fetch');
   }
   return response;
 };

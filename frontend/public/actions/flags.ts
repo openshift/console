@@ -22,7 +22,7 @@ export const setFlag = (flag: FLAGS | string, value: boolean) =>
 export const handleError = (res, flag, dispatch, cb) => {
   const status = res?.response?.status;
   if (_.includes([403, 502], status)) {
-    dispatch(setFlag(flag, undefined));
+    dispatch(setFlag(flag, false));
   }
   if (!_.includes([401, 403, 500], status)) {
     retryFlagDetection(dispatch, cb);

@@ -74,7 +74,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
 
     // Filter role by role kind
     'role-kind': (filter, role) =>
-      filter.selected?.includes(roleType(role)) || filter.selected?.length === 0,
+      filter.selected?.includes(roleType(role) || '') || filter.selected?.length === 0,
 
     // Filter role bindings by text match
     'role-binding': (str, { metadata, roleRef, subject }) => {
@@ -174,7 +174,8 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     'project-name': (str, project: K8sResourceKind) => {
       const displayName = _.get(project, ['metadata', 'annotations', 'openshift.io/display-name']);
       return (
-        matchFn(str.selected?.[0], project.metadata.name) || matchFn(str.selected?.[0], displayName)
+        matchFn(str.selected?.[0], project.metadata!.name) ||
+        matchFn(str.selected?.[0], displayName)
       );
     },
 
@@ -208,7 +209,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     machine: (str, machine: MachineKind): boolean => {
       const node: string = _.get(machine, 'status.nodeRef.name');
       return (
-        matchFn(str.selected?.[0], machine.metadata.name) ||
+        matchFn(str.selected?.[0], machine.metadata!.name) ||
         (node && matchFn(str.selected?.[0], node))
       );
     },
@@ -235,7 +236,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     'custom-resource-definition-name': (str, crd: CustomResourceDefinitionKind) => {
       const displayName = _.get(crd, 'spec.names.kind');
       return (
-        matchFn(str.selected?.[0], crd.metadata.name) || matchFn(str.selected?.[0], displayName)
+        matchFn(str.selected?.[0], crd.metadata!.name) || matchFn(str.selected?.[0], displayName)
       );
     },
   };
@@ -250,7 +251,7 @@ export const getAllTableFilters = (
   rowFilters: AnyRowFilter[],
   isExactMatch?: boolean,
 ): FilterMap => ({
-  ...tableFilters(isExactMatch),
+  ...tableFilters(isExactMatch!),
   ...rowFiltersToFilterFuncs(rowFilters),
 });
 

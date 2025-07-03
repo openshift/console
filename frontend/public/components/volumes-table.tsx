@@ -45,7 +45,7 @@ const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData
 const menuActions = [removeVolume];
 
 const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
-  return resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
+  return resource.kind === 'Pod' ? (resource as PodKind) : resource.spec?.template;
 };
 
 const anyContainerWithVolumeMounts = (containers: ContainerSpec[]) => {
@@ -132,7 +132,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title: <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />,
+        title: <VolumeType volume={volumeDetail} namespace={resource.metadata!.namespace!} />,
         props: {
           className: volumeRowColumnClasses[3],
         },
@@ -253,7 +253,9 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
     <Kebab
       options={options}
       isDisabled={
-        isDisabled !== undefined ? isDisabled : resource?.metadata?.deletionTimestamp?.length > 0
+        isDisabled !== undefined
+          ? isDisabled
+          : (resource?.metadata?.deletionTimestamp?.length ?? 0) > 0
       }
     />
   );

@@ -24,7 +24,10 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];
+const menuActions = [
+  ...(Kebab.getExtensionsActionsForKind(MachineHealthCheckModel) || []),
+  ...common!,
+];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
@@ -35,15 +38,18 @@ const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = (
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={machineHealthCheckReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata!.name}
+          namespace={obj.metadata!.namespace}
         />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata!.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata!.creationTimestamp || ''} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={machineHealthCheckReference} resource={obj} />
@@ -95,7 +101,7 @@ const MachineHealthCheckList: React.FC = (props) => {
 
 const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   const { t } = useTranslation();
-  return _.isEmpty(obj.spec.unhealthyConditions) ? (
+  return _.isEmpty(obj.spec!.unhealthyConditions) ? (
     <EmptyBox label={t('public~Unhealthy conditions')} />
   ) : (
     <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
@@ -107,7 +113,7 @@ const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) =
         </tr>
       </thead>
       <tbody className="pf-v6-c-table__tbody">
-        {obj.spec.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
+        {obj.spec!.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
           <tr className="pf-v6-c-table__tr" key={i}>
             <td className="pf-v6-c-table__td">{type}</td>
             <td className="pf-v6-c-table__td">{status}</td>
@@ -125,36 +131,38 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
     <>
       <PaneBody>
         <SectionHeading text={t('public~MachineHealthCheck details')} />
-        <Grid hasGutter>
-          <GridItem sm={6}>
-            <ResourceSummary resource={obj}>
-              <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
-                <Selector
-                  kind={referenceForModel(MachineModel)}
-                  selector={_.get(obj, 'spec.selector')}
-                  namespace={obj.metadata.namespace}
+        <div className="co-m-pane__body-group">
+          <div className="row">
+            <div className="col-sm-6">
+              <ResourceSummary resource={obj}>
+                <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
+                  <Selector
+                    kind={referenceForModel(MachineModel)}
+                    selector={_.get(obj, 'spec.selector')}
+                    namespace={obj.metadata!.namespace}
+                  />
+                </DetailsItem>
+              </ResourceSummary>
+            </div>
+            <div className="col-sm-6">
+              <dl className="co-m-pane__details">
+                <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
+                <DetailsItem
+                  label={t('public~Expected machines')}
+                  obj={obj}
+                  path="status.expectedMachines"
                 />
-              </DetailsItem>
-            </ResourceSummary>
-          </GridItem>
-          <GridItem sm={6}>
-            <DescriptionList>
-              <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
-              <DetailsItem
-                label={t('public~Expected machines')}
-                obj={obj}
-                path="status.expectedMachines"
-              />
-              <DetailsItem
-                label={t('public~Current healthy')}
-                obj={obj}
-                path="status.currentHealthy"
-              />
-            </DescriptionList>
-          </GridItem>
-        </Grid>
-      </PaneBody>
-      <PaneBody>
+                <DetailsItem
+                  label={t('public~Current healthy')}
+                  obj={obj}
+                  path="status.currentHealthy"
+                />
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
         <SectionHeading text={t('public~Unhealthy conditions')} />
         <UnhealthyConditionsTable obj={obj} />
       </PaneBody>

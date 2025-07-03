@@ -36,27 +36,30 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
+        <ResourceLink kind={kind} name={obj.metadata!.name} namespace={obj.metadata!.namespace} />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata!.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+          to={`${resourcePath(kind, obj.metadata!.name, obj.metadata!.namespace)}/pods`}
           title="pods"
         >
           {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
-            statusReplicas: obj.status.replicas || 0,
-            specReplicas: obj.spec.replicas,
+            statusReplicas: obj.status!.replicas || 0,
+            specReplicas: obj.spec!.replicas,
           })}
         </Link>
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
+        <LabelList kind={kind} labels={obj.metadata!.labels || {}} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
+        <Selector selector={obj.spec!.selector} namespace={obj.metadata!.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         {customActionMenu || (

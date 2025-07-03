@@ -17,14 +17,16 @@ export const getRangeVectorStats: GetRangeStats = (
 ) => {
   const results = response?.data?.result;
   return results?.map((r, index) => {
-    return r?.values?.map(([x, y]) => {
-      return {
-        x: xMutator?.(x) ?? defaultXMutator(x),
-        y: yMutator?.(y) ?? defaultYMutator(y),
-        description: _.isFunction(description) ? description(r, index) : description,
-        symbol,
-      } as DataPoint<Date>;
-    });
+    return r?.values
+      ?.map(([x, y]) => {
+        return {
+          x: xMutator?.(x) ?? defaultXMutator(x),
+          y: yMutator?.(y) ?? defaultYMutator(y),
+          description: _.isFunction(description) ? description(r, index) : description,
+          symbol,
+        } as DataPoint<Date>;
+      })
+      .filter(Boolean) as DataPoint<Date>[];
   });
 };
 
@@ -34,7 +36,7 @@ export const getInstantVectorStats: GetInstantStats = (response, metric, humaniz
     const y = parseFloat(_.get(r, 'value[1]'));
     return {
       label: humanize ? humanize(y).string : null,
-      x: _.get(r, ['metric', metric], ''),
+      x: _.get(r, ['metric', metric ?? ''], ''),
       y,
       metric: r.metric,
     };
@@ -47,9 +49,9 @@ export const mapLimitsRequests = (
   requested: PrometheusResponse,
   xMutator?: XMutator,
 ): { data: DataPoint[][]; chartStyle: object[] } => {
-  const utilizationData = getRangeVectorStats(utilization, 'usage', null, xMutator);
+  const utilizationData = getRangeVectorStats(utilization, 'usage', undefined, xMutator);
   const data = utilizationData ? [...utilizationData] : [];
-  const chartStyle = [null];
+  const chartStyle = [{}];
   if (limit) {
     const limitData = getRangeVectorStats(
       limit,

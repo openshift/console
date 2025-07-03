@@ -156,7 +156,7 @@ const getRoutingLabelsByReceivers = (
   for (const obj of routes) {
     labels = _.merge({}, parentLabels, obj.match, obj.match_re);
     const matchers = [...parentMatchers, ...(obj.matchers ?? [])];
-    results.push({ receiver: obj.receiver, labels, matchers });
+    results.push({ receiver: obj.receiver ?? '', labels, matchers });
     if (obj.routes) {
       results = results.concat(getRoutingLabelsByReceivers(obj.routes, labels, matchers));
     }
@@ -359,7 +359,7 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
   const { t } = useTranslation();
 
   const routingLabelsByReceivers = React.useMemo(
-    () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes)),
+    () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes!)),
     [routes],
   );
 
@@ -391,10 +391,15 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
     ];
   };
 
-  const customData = React.useMemo(
+  const customData: {
+    routingLabelsByReceivers: RoutingLabelsByReceivers[];
+    defaultReceiverName: string;
+    config: any;
+    secret: any;
+  } = React.useMemo(
     () => ({
       routingLabelsByReceivers,
-      defaultReceiverName,
+      defaultReceiverName: defaultReceiverName || '',
       config,
       secret,
     }),
@@ -441,7 +446,7 @@ interface ReceiversProps {
 
 const Receivers = ({ secret, config }: ReceiversProps) => {
   const [receiverFilter, setReceiverFilter] = React.useState('');
-  let receivers = _.get(config, 'receivers', []);
+  let receivers = _.get(config, 'receivers', []) as AlertmanagerReceiver[];
   if (receiverFilter) {
     const filterStr = _.toLower(receiverFilter);
     receivers = receivers.filter((receiver) => fuzzy(filterStr, _.toLower(receiver.name)));
@@ -502,7 +507,7 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
 
 const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ obj: secret }) => {
   const { t } = useTranslation();
-  const { config, errorMessage } = getAlertmanagerConfig(secret);
+  const { config, errorMessage } = getAlertmanagerConfig(secret!);
 
   if (errorMessage) {
     return (
@@ -519,8 +524,8 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
 
   return (
     <>
-      <AlertRouting secret={secret} config={config} />
-      <Receivers secret={secret} config={config} />
+      <AlertRouting secret={secret!} config={config!} />
+      <Receivers secret={secret!} config={config!} />
     </>
   );
 };
@@ -532,7 +537,7 @@ const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = Reac
       <>
         <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
         <StatusBox {...obj}>
-          <AlertmanagerConfiguration {...props} obj={obj.data} />
+          <AlertmanagerConfiguration {...props} obj={obj?.data} />
         </StatusBox>
       </>
     );

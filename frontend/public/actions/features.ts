@@ -81,9 +81,9 @@ const detectUser = (dispatch: Dispatch) =>
     })
     .then(
       (res) => {
-        const userInfo = res.data.selfSubjectReview.status.userInfo;
+        const userInfo = res.data.selfSubjectReview?.status?.userInfo;
         const newUserInfo: UserInfo = {};
-        if (userInfo.extra) {
+        if (userInfo?.extra) {
           try {
             newUserInfo.extra = JSON.parse(userInfo.extra);
           } catch (error) {
@@ -91,9 +91,9 @@ const detectUser = (dispatch: Dispatch) =>
             console.error('Error parsing UserInfo JSON:', error);
           }
         }
-        newUserInfo.groups = userInfo.groups;
-        newUserInfo.uid = userInfo.uid;
-        newUserInfo.username = userInfo.username;
+        newUserInfo.groups = userInfo?.groups;
+        newUserInfo.uid = userInfo?.uid;
+        newUserInfo.username = userInfo?.username;
         dispatch(setUser(newUserInfo));
       },
       (err) => {
@@ -114,7 +114,7 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
       })
       .then(
         (res) => {
-          const allowed: boolean = res.data.selfSubjectAccessReview.status.allowed;
+          const allowed: boolean = res.data.selfSubjectAccessReview?.status?.allowed || false;
           dispatch(setFlag(flag, allowed));
           if (after) {
             after(dispatch, allowed);

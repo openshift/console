@@ -36,7 +36,9 @@ const getAvailableClusterUpdates = (cv: ClusterVersionKind): VersionUpdate[] =>
 export const getSortedAvailableUpdates = (cv: ClusterVersionKind): VersionUpdate[] => {
   const available = getAvailableClusterUpdates(cv);
   try {
-    return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));
+    return available.sort(({ version: left }, { version: right }) =>
+      semver.rcompare(left || '', right || ''),
+    );
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('error sorting available cluster updates', e);
@@ -58,7 +60,7 @@ const getConditionalClusterUpdates = (cv: ClusterVersionKind): ConditionalUpdate
 
 export const getNotRecommendedUpdateCondition = (
   conditions: K8sResourceCondition[],
-): K8sResourceCondition => {
+): K8sResourceCondition | undefined => {
   return conditions?.find(
     (condition) => condition.type === 'Recommended' && condition.status !== 'True',
   );
@@ -74,7 +76,7 @@ export const getSortedNotRecommendedUpdates = (cv: ClusterVersionKind): Conditio
   const notRecommended = getNotRecommendedUpdates(cv);
   try {
     return notRecommended.sort(({ release: { version: left } }, { release: { version: right } }) =>
-      semver.rcompare(left, right),
+      semver.rcompare(left || '', right || ''),
     );
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -93,8 +95,9 @@ export const getNewerMinorVersionUpdate = (currentVersion, availableUpdates) => 
     (update) => {
       const updateParsed = semver.parse(update.version);
       return semver.gt(
-        semver.coerce(`${updateParsed.major}.${updateParsed.minor}`),
-        semver.coerce(`${currentVersionParsed.major}.${currentVersionParsed.minor}`),
+        semver.coerce(`${updateParsed?.major || 0}.${updateParsed?.minor || 0}`) || '',
+        semver.coerce(`${currentVersionParsed?.major || 0}.${currentVersionParsed?.minor || 0}`) ||
+          '',
       );
     },
   );
@@ -104,8 +107,8 @@ export const isMinorVersionNewer = (currentVersion, otherVersion) => {
   const currentVersionParsed = semver.parse(currentVersion);
   const otherVersionParsed = semver.parse(otherVersion);
   return semver.gt(
-    semver.coerce(`${otherVersionParsed?.major}.${otherVersionParsed?.minor}`),
-    semver.coerce(`${currentVersionParsed?.major}.${currentVersionParsed?.minor}`),
+    semver.coerce(`${otherVersionParsed?.major || 0}.${otherVersionParsed?.minor || 0}`) || '',
+    semver.coerce(`${currentVersionParsed?.major || 0}.${currentVersionParsed?.minor || 0}`) || '',
   );
 };
 
@@ -133,26 +136,32 @@ export const getSimilarClusterVersionChannels = (cv, currentPrefix) => {
 export const getNewerClusterVersionChannel = (similarChannels, currentChannel) => {
   return similarChannels.find(
     // find the next minor version, which there should never be more than one
-    (channel) => semver.gt(semver.coerce(channel).version, semver.coerce(currentChannel).version),
+    (channel) =>
+      semver.gt(
+        semver.coerce(channel)?.version || '',
+        semver.coerce(currentChannel)?.version || '',
+      ),
   );
 };
 
 export const getLastCompletedUpdate = (cv: ClusterVersionKind): string => {
   const history: UpdateHistory[] = _.get(cv, 'status.history', []);
-  const lastCompleted: UpdateHistory = history.find((update) => update.state === 'Completed');
-  return lastCompleted && lastCompleted.version;
+  const lastCompleted: UpdateHistory | undefined = history.find(
+    (update) => update.state === 'Completed',
+  );
+  return lastCompleted?.version || '';
 };
 
 export const getClusterVersionCondition = (
   cv: ClusterVersionKind,
   type: ClusterVersionConditionType,
-  status: K8sResourceConditionStatus = undefined,
-): ClusterVersionCondition => {
+  status: K8sResourceConditionStatus | undefined = undefined,
+): ClusterVersionCondition | undefined => {
   const conditions: ClusterVersionCondition[] = _.get(cv, 'status.conditions');
   if (status) {
-    return _.find(conditions, { type, status });
+    return _.find(conditions, { type, status }) as ClusterVersionCondition;
   }
-  return _.find(conditions, { type });
+  return _.find(conditions, { type }) as ClusterVersionCondition;
 };
 
 export const isProgressing = (cv: ClusterVersionKind): boolean => {
@@ -247,9 +256,9 @@ export const getK8sGitVersion = (k8sVersionResponse): string =>
   _.get(k8sVersionResponse, 'gitVersion');
 
 export const getOpenShiftVersion = (cv: ClusterVersionKind): string => {
-  const lastUpdate: UpdateHistory = _.get(cv, 'status.history[0]');
+  const lastUpdate: UpdateHistory | undefined = _.get(cv, 'status.history[0]');
   if (!lastUpdate) {
-    return null;
+    return '';
   }
   return lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version;
 };
@@ -335,9 +344,9 @@ export const getReleaseNotesLink = (version: string): string => {
   return `https://access.redhat.com/documentation/en-us/openshift_container_platform/${major}.${minor}/html/release_notes/ocp-${major}-${minor}-release-notes#ocp-${major}-${minor}-${patch}_release-notes`;
 };
 
-export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;
+export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || '';
 
-export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID');
+export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID') || '';
 
 export const getOCMLink = (clusterID: string): string =>
   `https://console.redhat.com/openshift/details/${clusterID}`;
@@ -364,14 +373,14 @@ export enum NodeTypeNames {
   Worker = 'Worker',
 }
 
-export const isMCPMaster = (mcp: MachineConfigPoolKind) => mcp.metadata.name === NodeTypes.master;
+export const isMCPMaster = (mcp: MachineConfigPoolKind) => mcp.metadata?.name === NodeTypes.master;
 
-export const isMCPWorker = (mcp: MachineConfigPoolKind) => mcp.metadata.name === NodeTypes.worker;
+export const isMCPWorker = (mcp: MachineConfigPoolKind) => mcp.metadata?.name === NodeTypes.worker;
 
 export const isMCPPaused = (mcp: MachineConfigPoolKind) => mcp.spec?.paused;
 
 export const sortMCPsByCreationTimestamp = (a: MachineConfigPoolKind, b: MachineConfigPoolKind) =>
-  a.metadata.creationTimestamp.localeCompare(b.metadata.creationTimestamp);
+  a.metadata?.creationTimestamp?.localeCompare(b.metadata?.creationTimestamp || '') || 0;
 
 export const clusterIsUpToDateOrUpdateAvailable = (status: ClusterUpdateStatus) =>
   status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable;

@@ -36,11 +36,9 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
     };
 
     const createAutoscaler = (): Promise<K8sResourceKind> => {
-      const {
-        apiVersion,
-        kind,
-        metadata: { name, namespace },
-      } = props.machineSet;
+      const { apiVersion, kind, metadata } = props.machineSet;
+      const name = metadata!.name;
+      const namespace = metadata!.namespace;
 
       const machineAutoscaler = {
         apiVersion: 'autoscaling.openshift.io/v1beta1',
@@ -69,19 +67,17 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
       props.handlePromise(promise, (obj: K8sResourceKind) => {
         close();
         navigate(
-          resourcePathFromModel(MachineAutoscalerModel, obj.metadata.name, obj.metadata.namespace),
+          resourcePathFromModel(
+            MachineAutoscalerModel,
+            obj.metadata!.name,
+            obj.metadata!.namespace,
+          ),
         );
       });
     };
 
-    const {
-      machineSet: {
-        metadata: { name },
-      },
-      inProgress,
-      errorMessage,
-      cancel,
-    } = props;
+    const { machineSet, inProgress, errorMessage, cancel } = props;
+    const name = machineSet.metadata?.name;
     const { t } = useTranslation();
 
     return (

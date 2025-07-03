@@ -119,7 +119,7 @@ export const AddOpenIDIDPPage = () => {
     };
 
     if (caName) {
-      idp.openID.ca = {
+      idp.openID!.ca = {
         name: caName,
       };
     }
@@ -253,7 +253,7 @@ export const AddOpenIDIDPPage = () => {
           <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
           <ListInput
             label={t('public~Extra scopes')}
-            onChange={(c: string[]) => setExtraScopes(c)}
+            onChange={(c: string[]) => setExtraScopes(c as any)}
             helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>

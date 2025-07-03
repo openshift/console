@@ -29,10 +29,10 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
           },
         });
         setParseError(false);
-        onFormDisable(false);
+        onFormDisable?.(false);
       } catch (e) {
         setParseError(true);
-        onFormDisable(true);
+        onFormDisable?.(true);
       }
     },
     [onChange, onFormDisable],

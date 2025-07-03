@@ -69,8 +69,8 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
   const { t } = useTranslation();
   React.useEffect(() => {
     const initialMCPPausedValues = machineConfigPools
-      .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
-      .map((mcp) => mcp.metadata.name);
+      .filter((mcp) => mcp.metadata && !isMCPMaster(mcp) && isMCPPaused(mcp))
+      .map((mcp) => mcp.metadata!.name);
     setMachineConfigPoolsToPause(initialMCPPausedValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // only run the effect once so changes don't affect user input
@@ -97,7 +97,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
     release: { version: desiredVersion },
   });
   const desiredNotRecommendedUpdateConditions = getNotRecommendedUpdateCondition(
-    desiredNotRecommendedUpdate?.conditions,
+    desiredNotRecommendedUpdate?.conditions || [],
   );
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -120,7 +120,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
       MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
     } else {
       const MCPsToPause = pauseableMCPs.filter((mcp) =>
-        machineConfigPoolsToPause.find((m) => m === mcp.metadata.name),
+        machineConfigPoolsToPause.find((m) => m === mcp.metadata?.name),
       );
       const MCPsToResume = pauseableMCPs.filter((mcp) => !MCPsToPause.includes(mcp));
       MCPsToPausePromises = getMCPsToPausePromises(MCPsToPause, true);
@@ -310,7 +310,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
         inProgress={inProgress}
         submitText={t('public~Update')}
         cancelText={t('public~Cancel')}
-        cancel={cancel}
+        cancel={() => cancel && cancel()}
         submitDisabled={
           !desiredVersion ||
           (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)

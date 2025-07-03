@@ -37,7 +37,7 @@ const Row: React.FC<RowFunctionArgs> = ({ obj, customData: { findModel } }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceObjectName gsv={gsv} name={name} namespace={namespace} />
+        <ResourceObjectName gsv={gsv || ''} name={name || ''} namespace={namespace || ''} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         {resource}
@@ -108,7 +108,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
 };
 
 const RelatedObjectsPage: React.FC<RelatedObjectsPageProps> = (props) => {
-  const relatedObject: ClusterOperatorObjectReference[] = props.obj?.status?.relatedObjects;
+  const relatedObject: ClusterOperatorObjectReference[] = props.obj?.status?.relatedObjects || [];
   const data = relatedObject?.filter(({ resource }) => resource);
   return <RelatedObjects {...props} data={data} />;
 };

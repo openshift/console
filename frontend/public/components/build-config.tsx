@@ -58,7 +58,7 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   callback: () =>
     startBuild(buildConfig)
       .then((build) => {
-        return redirect(resourceObjPath(build, referenceFor(build)));
+        return redirect(resourceObjPath(build, referenceFor(build))!);
       })
       .catch((err) => {
         const error = err.message;
@@ -68,8 +68,8 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
     group: kind.apiGroup,
     resource: kind.plural,
     subresource: 'instantiate',
-    name: buildConfig.metadata.name,
-    namespace: buildConfig.metadata.namespace,
+    name: buildConfig?.metadata?.name,
+    namespace: buildConfig?.metadata?.namespace,
     verb: 'create',
   },
 });
@@ -81,7 +81,7 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig, lates
     callback: () =>
       cloneBuild(latestBuild)
         .then((clone) => {
-          return redirect(resourceObjPath(clone, referenceFor(clone)));
+          return redirect(resourceObjPath(clone, referenceFor(clone))!);
         })
         .catch((err) => {
           const error = err.message;
@@ -92,8 +92,8 @@ const startLastBuildAction: KebabAction = (kind, buildConfig: BuildConfig, lates
       group: kind.apiGroup,
       resource: kind.plural,
       subresource: 'instantiate',
-      name: buildConfig.metadata.name,
-      namespace: buildConfig.metadata.namespace,
+      name: buildConfig.metadata?.name,
+      namespace: buildConfig.metadata?.namespace,
       verb: 'create',
     },
   };
@@ -103,11 +103,11 @@ const getBuildConfigKebabActions = (latestBuild?: K8sResourceKind): KebabAction[
   startBuildAction,
   (model, resource) => startLastBuildAction(model, resource, latestBuild),
   ...Kebab.getExtensionsActionsForKind(BuildConfigModel),
-  ...Kebab.factory.common,
+  ...Kebab.factory.common!,
 ];
 
 export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
-  const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
+  const hasPipeline = buildConfig.spec?.strategy.type === BuildStrategyType.JenkinsPipeline;
   const { t } = useTranslation();
   return (
     <>
@@ -161,7 +161,7 @@ export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
     namespace: props.namespace,
     selector: {
       matchLabels: {
-        'openshift.io/build-config.name': props.name,
+        'openshift.io/build-config.name': props.name || '',
       },
     },
     isList: true,
@@ -199,12 +199,12 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) =
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={BuildConfigsReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata?.name}
+          namespace={obj.metadata?.namespace}
         />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata?.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {latestBuild ? (
@@ -221,7 +221,11 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) =
         {latestBuild ? <Status status={latestBuild.status?.phase} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {latestBuild ? <Timestamp timestamp={latestBuild.metadata?.creationTimestamp} /> : '-'}
+        {latestBuild ? (
+          <Timestamp timestamp={latestBuild.metadata?.creationTimestamp ?? ''} />
+        ) : (
+          '-'
+        )}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         {displayDurationInWords(
@@ -237,14 +241,14 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) =
 };
 
 const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind | undefined) => {
-  const prevCreationTime = new Date(prevBuild?.metadata?.creationTimestamp);
-  const newCreationTime = new Date(newBuild?.metadata?.creationTimestamp);
+  const prevCreationTime = new Date(prevBuild?.metadata?.creationTimestamp!);
+  const newCreationTime = new Date(newBuild?.metadata?.creationTimestamp!);
   const timeDifference = newCreationTime.getTime() - prevCreationTime.getTime();
   return timeDifference > 0;
 };
 
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
-  buildConfig.spec.strategy.type;
+  buildConfig.spec?.strategy.type;
 
 const getBuildStatus = (buildConfig: BuildConfig) => {
   return buildConfig?.latestBuild?.status?.phase || 'Unknown';
@@ -309,12 +313,12 @@ export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
     () => ({
       builds: {
         latestByBuildName: builds.reduce<Record<string, K8sResourceKind>>((acc, build) => {
-          const name = build.metadata.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
+          const name = build.metadata?.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
           if (
-            !acc[`${name}-${build.metadata.namespace}`] ||
-            isBuildNewerThen(build, acc[`${name}-${build.metadata.namespace}`])
+            !acc[`${name}-${build.metadata?.namespace}`] ||
+            isBuildNewerThen(build, acc[`${name}-${build.metadata?.namespace}`])
           ) {
-            acc[`${name}-${build.metadata.namespace}`] = build;
+            acc[`${name}-${build.metadata?.namespace}`] = build;
           }
           return acc;
         }, {}),

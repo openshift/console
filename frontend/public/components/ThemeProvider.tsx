@@ -27,19 +27,18 @@ export const applyThemeBehaviour = (
 };
 
 export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
-  return applyThemeBehaviour(
-    theme,
-    () => {
-      htmlTagElement.classList.add(THEME_DARK_CLASS);
-      htmlTagElement.classList.add(THEME_DARK_CLASS_LEGACY);
-      return THEME_DARK;
-    },
-    () => {
-      htmlTagElement.classList.remove(THEME_DARK_CLASS);
-      htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
-      return THEME_LIGHT;
-    },
-  ) as PROCESSED_THEME;
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? THEME_DARK
+    : THEME_LIGHT;
+  if (theme === THEME_DARK || (theme === THEME_SYSTEM_DEFAULT && systemTheme === THEME_DARK)) {
+    htmlTagElement.classList.add(THEME_DARK_CLASS);
+    htmlTagElement.classList.add(THEME_DARK_CLASS_LEGACY);
+    return THEME_DARK;
+  }
+
+  htmlTagElement.classList.remove(THEME_DARK_CLASS);
+  htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
+  return THEME_LIGHT;
 };
 
 export const ThemeContext = React.createContext<string>('');

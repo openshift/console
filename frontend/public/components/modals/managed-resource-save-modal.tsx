@@ -29,7 +29,7 @@ const ManagedResourceSaveModal: React.SFC<ManagedResourceSaveModalProps> = (prop
             inline
             kind={referenceForOwnerRef(owner)}
             name={owner.name}
-            namespace={resource.metadata.namespace}
+            namespace={resource.metadata!.namespace}
           />{' '}
           and any modifications may be overwritten. Edit the managing resource to preserve changes.
         </Trans>

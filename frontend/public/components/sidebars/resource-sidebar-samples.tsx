@@ -36,7 +36,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
             variant="link"
             data-test="load-sample"
             isInline
-            onClick={() => loadSampleYaml(id, yaml, reference)}
+            onClick={() => loadSampleYaml(id || '', yaml || '', reference || '')}
           >
             {t('public~Try it')}
           </Button>
@@ -48,7 +48,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
             variant="link"
             data-test="download-sample"
             isInline
-            onClick={() => downloadSampleYaml(id, yaml, reference)}
+            onClick={() => downloadSampleYaml(id || '', yaml || '', reference || '')}
           >
             {t('public~Download YAML')}
           </Button>
@@ -89,7 +89,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
 }) => {
   const { highlightText, title, id, yaml, lazyYaml, targetResource, description } = snippet;
 
-  const [yamlPreview, setYamlPreview] = React.useState<string>(yaml);
+  const [yamlPreview, setYamlPreview] = React.useState<string>(yaml || '');
   const [yamlPreviewOpen, setYamlPreviewOpen] = React.useState(false);
 
   const resolveYaml = async (callback: (resolvedYaml: string) => void) => {

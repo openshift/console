@@ -12,7 +12,7 @@ export const AuthSecretForm: React.FC<SecretSubFormProps> = ({
   secretType,
 }) => {
   const { t } = useTranslation();
-  const [authType, setAuthType] = React.useState<SecretType>(secretType);
+  const [authType, setAuthType] = React.useState<SecretType>(secretType || SecretType.basicAuth);
   const [data, setData] = React.useState<SecretStringData>(stringData);
 
   const authTypes = {

@@ -110,7 +110,7 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   return (
     <DefaultPageRedirect
       flags={flags}
-      firstVisit={firstVisit.current}
+      firstVisit={firstVisit.current ?? false}
       url={perspective?.properties?.landingPageURL}
     />
   );

@@ -107,7 +107,7 @@ export const AddGitLabPage = () => {
     };
 
     if (caName) {
-      idp.gitlab.ca = {
+      idp.gitlab!.ca = {
         name: caName,
       };
     }

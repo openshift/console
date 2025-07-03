@@ -39,7 +39,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     invalidateState(true, _.toInteger(value));
     handlePromise(
       k8sPatch(resourceKind, resource, patch, opts),
-      () => close(),
+      () => close && close(),
       (error) => {
         invalidateState(false);
         throw error;
@@ -72,7 +72,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
         errorMessage={props.errorMessage}
         inProgress={props.inProgress}
         submitText={buttonTextKey ? t(buttonTextKey, buttonTextVariables) : buttonText}
-        cancel={props.cancel}
+        cancel={() => props.cancel && props.cancel()}
       />
     </form>
   );

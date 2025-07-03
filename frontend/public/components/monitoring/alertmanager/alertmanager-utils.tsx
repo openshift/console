@@ -41,7 +41,7 @@ export const getAlertmanagerYAML = (
 
 export const getAlertmanagerConfig = (
   secret: K8sResourceKind,
-): { config: AlertmanagerConfig; errorMessage?: string } => {
+): { config: AlertmanagerConfig | null; errorMessage?: string } => {
   const parsedAlertmanagerYAML = getAlertmanagerYAML(secret);
   try {
     const config = safeLoad(parsedAlertmanagerYAML.yaml);

@@ -21,7 +21,7 @@ export const getFilteredRows = <D = any>(
   }
 
   const allTableFilters = {
-    ...tableFilters(exactSearch),
+    ...tableFilters(exactSearch ?? false),
     ...(rowFilters || [])
       .filter((f) => f.type && _.isFunction(f.filter))
       .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {}),

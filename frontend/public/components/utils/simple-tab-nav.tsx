@@ -39,7 +39,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
         onSelect={handleTabClick}
         className={css({ 'pf-v6-u-mb-md': withinSidebar }, additionalClassNames)}
         defaultActiveKey={selectedTab || tabs[0]?.name}
-        inset={!noInset && { default: 'insetSm' }}
+        inset={!noInset ? { default: 'insetSm' } : undefined}
         unmountOnExit
       >
         {tabs.map((tab) => {

@@ -5,8 +5,8 @@ export const useSafeFetch = () => {
   const controller = useRef<AbortController>();
   useEffect(() => {
     controller.current = new AbortController();
-    return () => controller.current.abort();
+    return () => controller.current?.abort();
   }, []);
 
-  return (url) => coFetchJSON(url, 'get', { signal: controller.current.signal as AbortSignal });
+  return (url) => coFetchJSON(url, 'get', { signal: controller.current?.signal as AbortSignal });
 };

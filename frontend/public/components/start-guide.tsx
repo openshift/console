@@ -64,7 +64,7 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
                 onSubmit:
                   perspective !== 'admin'
                     ? (project: K8sResourceKind) => {
-                        setActiveNamespace(project.metadata?.name);
+                        setActiveNamespace(project.metadata?.name!);
                       }
                     : undefined,
               })

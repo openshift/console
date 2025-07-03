@@ -126,10 +126,10 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
             <DropdownItem
               value={1}
               key="Import from Git"
-              to={getImportFromGitURL(namespace)}
+              to={getImportFromGitURL(namespace || '')}
               onClick={(ev: any) => {
                 ev.preventDefault();
-                history.push(getImportFromGitURL(namespace));
+                history.push(getImportFromGitURL(namespace || ''));
               }}
               tooltipProps={{
                 content: t('public~Import code from your Git repository to be built and deployed'),
@@ -142,10 +142,10 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
             <DropdownItem
               value={2}
               key="Container images"
-              to={getContainerImageURL(namespace)}
+              to={getContainerImageURL(namespace || '')}
               onClick={(ev: any) => {
                 ev.preventDefault();
-                history.push(getContainerImageURL(namespace));
+                history.push(getContainerImageURL(namespace || ''));
               }}
               tooltipProps={{
                 content: t(

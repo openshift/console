@@ -69,8 +69,8 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
     group: model.apiGroup,
     resource: model.plural,
     verb: 'patch',
-    name: metadata.name,
-    namespace: metadata.namespace,
+    name: metadata?.name || '',
+    namespace: metadata?.namespace || '',
   });
   const canUpdate = canUpdateAccess && canUpdateResource;
 
@@ -81,13 +81,13 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         obj={resource}
         path={customPathName || 'metadata.name'}
       />
-      {metadata.namespace && (
+      {metadata?.namespace && (
         <DetailsItem label={t('public~Namespace')} obj={resource} path="metadata.namespace">
           <ResourceLink
             kind="Namespace"
-            name={metadata.namespace}
-            title={metadata.uid}
-            namespace={null}
+            name={metadata?.namespace || ''}
+            title={metadata?.uid || ''}
+            namespace={metadata?.namespace || ''}
           />
         </DetailsItem>
       )}
@@ -99,7 +99,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         canEdit={showLabelEditor && canUpdate}
         editAsGroup
       >
-        <LabelList kind={reference} labels={metadata.labels} />
+        <LabelList kind={reference} labels={metadata?.labels || {}} />
       </DetailsItem>
       {showPodSelector && (
         <DetailsItem label={t('public~Pod selector')} obj={resource} path={podSelector}>
@@ -144,16 +144,16 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               onClick={annotationsModalLauncher}
               variant="link"
             >
-              {t('public~{{count}} annotation', { count: _.size(metadata.annotations) })}
+              {t('public~{{count}} annotation', { count: _.size(metadata?.annotations || {}) })}
             </Button>
           ) : (
-            t('public~{{count}} annotation', { count: _.size(metadata.annotations) })
+            t('public~{{count}} annotation', { count: _.size(metadata?.annotations || {}) })
           )}
         </DetailsItem>
       )}
       {children}
       <DetailsItem label={t('public~Created at')} obj={resource} path="metadata.creationTimestamp">
-        <Timestamp timestamp={metadata.creationTimestamp} />
+        <Timestamp timestamp={metadata?.creationTimestamp || ''} />
       </DetailsItem>
       <DetailsItem label={t('public~Owner')} obj={resource} path="metadata.ownerReferences">
         <OwnerReferences resource={resource} />

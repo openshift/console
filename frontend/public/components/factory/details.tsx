@@ -46,7 +46,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,
-): ResolvedExtension<DetailPageBreadCrumbs | DynamicDetailPageBreadCrumbs> => {
+): ResolvedExtension<DetailPageBreadCrumbs | DynamicDetailPageBreadCrumbs> | undefined => {
   const [breadCrumbsExtension, breadCrumbsResolved] = useResolvedExtensions<DetailPageBreadCrumbs>(
     isDetailPageBreadCrumbs,
   );
@@ -132,7 +132,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     setPluginBreadcrumbs(breadcrumbs || undefined);
   }, []);
   let allPages = [...pages, ...pluginPages];
-  allPages = allPages.length ? allPages : null;
+  allPages = allPages.length ? allPages : [];
   const objResource: FirehoseResource = {
     kind: props.kind,
     name: props.name,
@@ -142,7 +142,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   };
   const titleProviderValues = {
     telemetryPrefix: props?.kindObj?.kind,
-    titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind)}`,
+    titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind ?? '')}`,
   };
 
   return (
@@ -176,11 +176,11 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}
           customData={props.customData}
-          badge={props.badge || getBadgeFromType(kindObj?.badge)}
-          OverrideTitle={props.OverrideTitle}
-          helpText={props.helpText}
-          helpAlert={props.helpAlert}
-        />
+          badge={props.badge || (kindObj?.badge ? getBadgeFromType(kindObj.badge) : undefined)}
+          icon={props.icon}
+        >
+          {props.children}
+        </PageHeading>
         <HorizontalNav
           obj={props.obj}
           pages={allPages}

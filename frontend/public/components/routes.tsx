@@ -50,7 +50,7 @@ import { Conditions } from './conditions';
 import { RouteMetrics } from './routes/route-metrics';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
-const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.factory.common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.factory.common!];
 
 export type IngressStatusProps = {
   host: string;
@@ -63,22 +63,22 @@ export type IngressStatusProps = {
 const getRouteHost = (route: RouteKind, onlyAdmitted: boolean): string => {
   let oldestAdmittedIngress: RouteIngress;
   let oldestTransitionTime: string;
-  _.each(route.status.ingress, (ingress) => {
+  _.each(route.status?.ingress || [], (ingress) => {
     const admittedCondition = _.find(ingress.conditions, { type: 'Admitted', status: 'True' });
     if (
       admittedCondition &&
-      (!oldestTransitionTime || oldestTransitionTime > admittedCondition.lastTransitionTime)
+      (!oldestTransitionTime || oldestTransitionTime > admittedCondition.lastTransitionTime! || '')
     ) {
       oldestAdmittedIngress = ingress;
-      oldestTransitionTime = admittedCondition.lastTransitionTime;
+      oldestTransitionTime = admittedCondition.lastTransitionTime || '';
     }
   });
 
-  if (oldestAdmittedIngress) {
-    return oldestAdmittedIngress.host;
+  if (oldestAdmittedIngress!) {
+    return oldestAdmittedIngress.host || '';
   }
 
-  return onlyAdmitted ? null : route.spec.host;
+  return onlyAdmitted ? '' : route.spec.host || '';
 };
 
 const isWebRoute = (route: RouteKind): boolean => {
@@ -153,7 +153,7 @@ export const routeStatus = (route: RouteKind): string => {
     return 'Pending';
   }
 
-  _.each(route.status.ingress, (ingress) => {
+  _.each(route.status?.ingress || [], (ingress) => {
     const isAdmitted = _.some(ingress.conditions, { type: 'Admitted', status: 'True' });
     if (isAdmitted) {
       atLeastOneAdmitted = true;
@@ -185,10 +185,17 @@ const RouteTableRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj: route }) => 
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={route.metadata.name} namespace={route.metadata.namespace} />
+        <ResourceLink
+          kind={kind}
+          name={route.metadata?.name || ''}
+          namespace={route.metadata?.namespace || ''}
+        />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={route.metadata.namespace} />
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={route.metadata?.namespace || ''} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <RouteStatus obj={route} />
@@ -200,7 +207,7 @@ const RouteTableRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj: route }) => 
         <ResourceLink
           kind="Service"
           name={route.spec.to.name}
-          namespace={route.metadata.namespace}
+          namespace={route.metadata?.namespace || ''}
           title={route.spec.to.name}
         />
       </TableData>
@@ -260,7 +267,7 @@ const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {
         </DescriptionListDescription>
       </DescriptionListGroup>
       <DetailsItem label={t('public~CA certificate')} obj={route} path="spec.tls.caCertificate">
-        {tls.certificate ? <CopyToClipboard value={tls.caCertificate} /> : '-'}
+        {tls.caCertificate ? <CopyToClipboard value={tls.caCertificate || ''} /> : '-'}
       </DetailsItem>
       {tls.termination === 'reencrypt' && (
         <DetailsItem
@@ -306,7 +313,7 @@ const getIngressStatusForHost = (
 
 const showCustomRouteHelp = (
   ingress: RouteIngress,
-  annotations: RouteKind['metadata']['annotations'],
+  annotations: RouteKind['metadata']['annotations'] | undefined,
 ) => {
   if (!ingress || !_.some(ingress.conditions, { type: 'Admitted', status: 'True' })) {
     return false;
@@ -329,7 +336,7 @@ const RouteTargetRow: React.FC<RouteTargetRowProps> = ({ route, target }) => (
       <ResourceLink
         kind={target.kind}
         name={target.name}
-        namespace={route.metadata.namespace}
+        namespace={route.metadata?.namespace || ''}
         title={target.name}
       />
     </td>
@@ -372,7 +379,7 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
   const { t } = useTranslation();
   return (
     <>
-      {_.map(route.status.ingress, (ingress: RouteIngress) => (
+      {_.map(route.status?.ingress || [], (ingress: RouteIngress) => (
         <div key={ingress.routerName} className="co-m-route-ingress-status">
           <SectionHeading
             text={`${t('public~Router: {{routerName}}', {
@@ -396,10 +403,10 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
               path="status.ingress.routerCanonicalHostname"
             >
               <div>{ingress.routerCanonicalHostname || '-'}</div>
-              {showCustomRouteHelp(ingress, route.metadata.annotations) && (
+              {showCustomRouteHelp(ingress, route.metadata?.annotations) && (
                 <CustomRouteHelp
-                  host={ingress.host}
-                  routerCanonicalHostname={ingress.routerCanonicalHostname}
+                  host={ingress.host || ''}
+                  routerCanonicalHostname={ingress.routerCanonicalHostname || ''}
                 />
               )}
             </DetailsItem>
@@ -415,8 +422,8 @@ const RouteIngressStatus: React.FC<RouteIngressStatusProps> = ({ route }) => {
 const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   const { t } = useTranslation();
   const primaryIngressStatus: IngressStatusProps = getIngressStatusForHost(
-    route.spec.host,
-    route.status.ingress,
+    route.spec.host || '',
+    route.status?.ingress || [],
   );
   return (
     <>
@@ -429,7 +436,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                 <ResourceLink
                   kind={route.spec.to.kind}
                   name={route.spec.to.name}
-                  namespace={route.metadata.namespace}
+                  namespace={route.metadata?.namespace || ''}
                   title={route.spec.to.name}
                 />
               </DetailsItem>
@@ -463,7 +470,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
                   path="status.ingress.routerCanonicalHostname"
                 >
                   <div>{primaryIngressStatus.routerCanonicalHostname || '-'}</div>
-                  {showCustomRouteHelp(primaryIngressStatus, route.metadata.annotations) && (
+                  {showCustomRouteHelp(primaryIngressStatus, route.metadata?.annotations) && (
                     <CustomRouteHelp
                       host={primaryIngressStatus.host}
                       routerCanonicalHostname={primaryIngressStatus.routerCanonicalHostname}
@@ -504,7 +511,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
           </div>
         </PaneBody>
       )}
-      {_.isEmpty(route.status.ingress) ? (
+      {_.isEmpty(route.status?.ingress || []) ? (
         <ConsoleEmptyState>{t('public~No route status')}</ConsoleEmptyState>
       ) : (
         <PaneBody>

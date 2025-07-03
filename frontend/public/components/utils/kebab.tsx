@@ -61,7 +61,7 @@ export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] =>
   options.forEach((o) => {
     if (!o.hidden) {
       if (o.pathKey || o.path) {
-        const parts = o.pathKey ? o.pathKey.split('/') : o.path.split('/');
+        const parts = o.pathKey ? o.pathKey.split('/') : o.path?.split('/') || [];
         parts.forEach((p, i) => {
           let subMenu = subs[p];
           if (!subs[p]) {
@@ -98,7 +98,19 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   isAllowed,
 }) => {
   const { t } = useTranslation();
-  const isDisabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
+  const ref = React.useRef(null);
+  const disabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
+  React.useEffect(() => {
+    const parentNode = ref.current?.parentNode; // <li />
+    disabled
+      ? parentNode.classList.add('pf-m-disabled')
+      : parentNode.classList.remove('pf-m-disabled');
+  }, [disabled]);
+  const handleEscape = (e) => {
+    if (e.keyCode === KeyTypes.Escape) {
+      onEscape?.();
+    }
+  };
   return (
     <DropdownItem
       onClick={(e) => !isDisabled && onClick(e, option)}
@@ -115,13 +127,103 @@ export const KebabItemAccessReview_ = (
   props: KebabItemProps & { impersonate: ImpersonateKind },
 ) => {
   const { option, impersonate } = props;
-  const isAllowed = useAccessReview(option.accessReview, impersonate);
+  const isAllowed = useAccessReview(option.accessReview!, impersonate);
   return <KebabItem_ {...props} isAllowed={isAllowed} />;
 };
 
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
-export const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
+type KebabSubMenuProps = {
+  option: KebabSubMenu;
+  onClick: KebabItemProps['onClick'];
+};
+
+const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
+  const { t } = useTranslation();
+  const [open, setOpen] = React.useState(false);
+  const nodeRef = React.useRef(null);
+  const subMenuRef = React.useRef(null);
+  const referenceCb = React.useCallback(() => nodeRef.current, []);
+  // use a callback ref because FocusTrap is old and doesn't support non-function refs
+  const subMenuCbRef = React.useCallback((node) => (subMenuRef.current = node), []);
+
+  return (
+    <>
+      <button
+        ref={nodeRef}
+        className="oc-kebab__sub pf-v6-c-menu__item"
+        data-test-action={option.labelKey || option.label}
+        // mouse enter will open the sub menu
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={(e) => {
+          // if the mouse leaves this item, close the sub menu only if the mouse did not enter the sub menu itself
+          if (!subMenuRef.current || !subMenuRef.current?.contains(e.relatedTarget as Node)) {
+            setOpen(false);
+          }
+        }}
+        onKeyDown={(e) => {
+          // open the sub menu on enter or right arrow
+          if (e.keyCode === 39 || e.keyCode === 13) {
+            setOpen(true);
+            e.stopPropagation();
+          }
+        }}
+      >
+        {option.labelKey ? t(option.labelKey) : option.label}
+        <AngleRightIcon className="oc-kebab__arrow" />
+      </button>
+      <Popper
+        open={open}
+        placement="right-start"
+        closeOnEsc
+        closeOnOutsideClick
+        onRequestClose={(e) => {
+          // only close the sub menu if clicking anywhere outside the menu item that owns the sub menu
+          if (!e || !nodeRef.current || !nodeRef.current?.contains(e.target as Node)) {
+            setOpen(false);
+          }
+        }}
+        reference={referenceCb}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+            fallbackFocus: () => subMenuRef.current!, // fallback to popover content wrapper div if there are no tabbable elements
+          }}
+        >
+          <div
+            ref={subMenuCbRef}
+            role="presentation"
+            className="pf-v6-c-dropdown pf-m-expanded"
+            tabIndex={-1}
+            onMouseLeave={(e) => {
+              // only close the sub menu if the mouse does not enter the item
+              if (!nodeRef.current || !nodeRef.current.contains(e.relatedTarget as Node)) {
+                setOpen(false);
+              }
+            }}
+            onKeyDown={(e) => {
+              // close the sub menu on left arrow
+              if (e.keyCode === 37) {
+                setOpen(false);
+                e.stopPropagation();
+              }
+            }}
+          >
+            <KebabMenuItems
+              options={option.children}
+              onClick={onClick}
+              className="oc-kebab__popper-items"
+              focusItem={option.children[0]}
+            />
+          </div>
+        </FocusTrap>
+      </Popper>
+    </>
+  );
+};
+
+export const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenu => {
   // only a sub menu has children
   return Array.isArray((option as KebabSubMenuOption).children);
 };
@@ -208,13 +310,13 @@ const kebabFactory: KebabFactory = {
         href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`;
         break;
       case HelmChartRepositoryModel.kind:
-        href = `/k8s/cluster/helmchartrepositories/${obj.metadata.name}/form?kind=${referenceFor(
+        href = `/k8s/cluster/helmchartrepositories/${obj.metadata?.name}/form?kind=${referenceFor(
           obj,
         )}`;
         break;
       case ProjectHelmChartRepositoryModel.kind:
-        href = `/helm-repositories/ns/${obj.metadata.namespace}/${
-          obj.metadata.name
+        href = `/helm-repositories/ns/${obj.metadata?.namespace}/${
+          obj.metadata?.name
         }/form?kind=${referenceFor(obj)}`;
         break;
       default:
@@ -316,7 +418,7 @@ const kebabFactory: KebabFactory = {
     labelKey: 'public~Create snapshot',
     isDisabled: obj?.status?.phase !== 'Bound',
     tooltip: obj?.status?.phase !== 'Bound' ? i18next.t('public~PVC is not Bound') : '',
-    href: `/k8s/ns/${obj.metadata.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata.name}`,
+    href: `/k8s/ns/${obj.metadata?.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata?.name}`,
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
   ClonePVC: (kind, obj) => ({
@@ -461,7 +563,7 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   return (
     <Kebab
       options={options}
-      key={resource.metadata.uid}
+      key={resource.metadata?.uid || ''}
       isDisabled={isDisabled ?? _.has(resource.metadata, 'deletionTimestamp')}
       terminatingTooltip={
         _.has(resource.metadata, 'deletionTimestamp')
@@ -471,6 +573,123 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
     />
   );
 });
+
+export const Kebab: KebabComponent = (props) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { options, isDisabled, terminatingTooltip } = props;
+  const dropdownElement = React.useRef<HTMLButtonElement>();
+  const divElement = React.useRef<HTMLDivElement>();
+  const [active, setActive] = React.useState(false);
+
+  const onClick = (event, option: KebabOption) => {
+    event.preventDefault();
+    if (option.callback) {
+      option.callback();
+    }
+    hide();
+    if (option.href) {
+      navigate(option.href);
+    }
+  };
+
+  const hide = () => {
+    dropdownElement.current?.focus();
+    setActive(false);
+  };
+
+  const toggle = () => {
+    setActive((prev) => !prev);
+  };
+
+  const onHover = () => {
+    // Check access when hovering over a kebab to minimize flicker when opened.
+    // This depends on `checkAccess` being memoized.
+    _.each(options, (option: KebabOption) => {
+      if (option.accessReview) {
+        checkAccess(option.accessReview).catch((e) => {
+          // eslint-disable-next-line no-console
+          console.warn('Error while check action menu access review', e);
+        });
+      }
+    });
+  };
+
+  const handleRequestClose = (e?: MouseEvent) => {
+    if (!e || !dropdownElement.current || !dropdownElement.current?.contains(e.target as Node)) {
+      hide();
+    }
+  };
+
+  const getPopperReference = () => dropdownElement.current!;
+
+  const getDivReference = () => divElement.current!;
+
+  const menuOptions = kebabOptionsToMenu(options);
+
+  return (
+    <Tooltip
+      content={terminatingTooltip}
+      trigger={isDisabled && terminatingTooltip ? 'mouseenter' : 'manual'}
+    >
+      <div
+        className={classNames({
+          'pf-v6-c-dropdown': true,
+          'pf-m-expanded': active,
+        })}
+      >
+        <button
+          id={props.id}
+          ref={dropdownElement as React.LegacyRef<HTMLButtonElement>}
+          type="button"
+          aria-expanded={active}
+          aria-haspopup="true"
+          aria-label={t('public~Actions')}
+          className="pf-v6-c-menu-toggle pf-m-plain"
+          data-test-id="kebab-button"
+          disabled={isDisabled}
+          onClick={toggle}
+          onFocus={onHover}
+          onMouseEnter={onHover}
+        >
+          <EllipsisVIcon />
+        </button>
+        <Popper
+          open={!isDisabled && active}
+          placement="bottom-end"
+          closeOnEsc
+          closeOnOutsideClick
+          onRequestClose={handleRequestClose}
+          reference={getPopperReference}
+        >
+          <FocusTrap
+            focusTrapOptions={{
+              clickOutsideDeactivates: true,
+              returnFocusOnDeactivate: false,
+              fallbackFocus: getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
+            }}
+          >
+            <div
+              ref={divElement as React.LegacyRef<HTMLDivElement>}
+              className="pf-v6-c-menu pf-m-expanded"
+              tabIndex={-1}
+            >
+              <KebabMenuItems
+                options={menuOptions}
+                onClick={onClick}
+                className="oc-kebab__popper-items"
+                focusItem={menuOptions[0]}
+              />
+            </div>
+          </FocusTrap>
+        </Popper>
+      </div>
+    </Tooltip>
+  );
+};
+Kebab.factory = kebabFactory;
+Kebab.columnClass = 'dropdown-kebab-pf pf-v6-c-table__action';
+Kebab.getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
 export type KebabOption = {
   hidden?: boolean;

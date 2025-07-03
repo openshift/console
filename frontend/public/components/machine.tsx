@@ -50,7 +50,7 @@ import {
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common!];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [
@@ -81,8 +81,8 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
       >
         <ResourceLink
           kind={machineReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata!.name}
+          namespace={obj.metadata!.namespace}
         />
       </TableData>
       <TableData
@@ -90,7 +90,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
         className={css(tableColumnInfo[1].className, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
       >
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata!.namespace} />
       </TableData>
       <TableData {...tableColumnInfo[2]} activeColumnIDs={activeColumnIDs}>
         {nodeName ? <NodeLink name={nodeName} /> : '-'}
@@ -126,68 +126,68 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
     <>
       <PaneBody>
         <SectionHeading text={t('public~Machine details')} />
-        <Grid hasGutter>
-          <GridItem sm={6}>
-            <ResourceSummary resource={obj} />
-          </GridItem>
-          <GridItem sm={6}>
-            <DescriptionList>
-              <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
-                <Status status={getMachinePhase(obj)} />
-              </DetailsItem>
-              <DetailsItem
-                label={t('public~Provider state')}
-                obj={obj}
-                path="status.providerStatus.instanceState"
-              >
-                {providerState}
-              </DetailsItem>
-              {nodeName && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Node')}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    <NodeLink name={nodeName} />
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
-              {machineRole && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Machine role')}</DescriptionListTerm>
-                  <DescriptionListDescription>{machineRole}</DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
-              {instanceType && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Instance type')}</DescriptionListTerm>
-                  <DescriptionListDescription>{instanceType}</DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
-              {region && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Region')}</DescriptionListTerm>
-                  <DescriptionListDescription>{region}</DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
-              {zone && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Availability zone')}</DescriptionListTerm>
-                  <DescriptionListDescription>{zone}</DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
-              <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Machine addresses')}</DescriptionListTerm>
-                <DescriptionListDescription>
-                  <NodeIPList ips={getMachineAddresses(obj)} expand />
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-            </DescriptionList>
-          </GridItem>
-        </Grid>
-      </PaneBody>
-      <PaneBody>
+        <div className="co-m-pane__body-group">
+          <div className="row">
+            <div className="col-sm-6">
+              <ResourceSummary resource={obj} />
+            </div>
+            <div className="col-sm-6">
+              <dl className="co-m-pane__details">
+                <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
+                  <Status status={getMachinePhase(obj)} />
+                </DetailsItem>
+                <DetailsItem
+                  label={t('public~Provider state')}
+                  obj={obj}
+                  path="status.providerStatus.instanceState"
+                >
+                  {providerState}
+                </DetailsItem>
+                {nodeName && (
+                  <>
+                    <dt>{t('public~Node')}</dt>
+                    <dd>
+                      <NodeLink name={nodeName} />
+                    </dd>
+                  </>
+                )}
+                {machineRole && (
+                  <>
+                    <dt>{t('public~Machine role')}</dt>
+                    <dd>{machineRole}</dd>
+                  </>
+                )}
+                {instanceType && (
+                  <>
+                    <dt>{t('public~Instance type')}</dt>
+                    <dd>{instanceType}</dd>
+                  </>
+                )}
+                {region && (
+                  <>
+                    <dt>{t('public~Region')}</dt>
+                    <dd>{region}</dd>
+                  </>
+                )}
+                {zone && (
+                  <>
+                    <dt>{t('public~Availability zone')}</dt>
+                    <dd>{zone}</dd>
+                  </>
+                )}
+                <dt>{t('public~Machine addresses')}</dt>
+                <dd>
+                  <NodeIPList ips={getMachineAddresses(obj) || []} expand />
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
         <SectionHeading text={t('public~Conditions')} />
-        <Conditions conditions={obj.status?.providerStatus?.conditions} />
-      </PaneBody>
+        <Conditions conditions={obj.status?.providerStatus?.conditions ?? []} />
+      </div>
     </>
   );
 };
@@ -300,7 +300,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
 
   return (
     <>
-      <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
+      <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey!) : ''}>
         <ListPageCreate groupVersionKind={referenceForModel(MachineModel)}>
           {t('public~Create Machine')}
         </ListPageCreate>

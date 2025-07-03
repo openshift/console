@@ -7,11 +7,9 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 export const ReleaseNotesLink: React.FC<ReleaseNotesLinkProps> = ({ version }) => {
   const releaseNotesLink = getReleaseNotesLink(version);
   const { t } = useTranslation();
-  return (
-    releaseNotesLink && (
-      <ExternalLink text={t('public~View release notes')} href={releaseNotesLink} />
-    )
-  );
+  return releaseNotesLink ? (
+    <ExternalLink text={t('public~View release notes')} href={releaseNotesLink} />
+  ) : null;
 };
 
 type ReleaseNotesLinkProps = {

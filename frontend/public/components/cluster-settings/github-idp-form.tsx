@@ -111,7 +111,7 @@ export const AddGitHubPage = () => {
     };
 
     if (caName) {
-      idp.github.ca = {
+      idp.github!.ca = {
         name: caName,
       };
     }
@@ -224,7 +224,7 @@ export const AddGitHubPage = () => {
           </p>
           <ListInput
             label={t('public~Organization')}
-            onChange={(c: string[]) => setOrganizations(c)}
+            onChange={(c: string[]) => setOrganizations(c as any)}
             helpText={t('public~Restricts which organizations are allowed to log in.')}
           />
           <div className="co-form-section__separator" />
@@ -244,7 +244,7 @@ export const AddGitHubPage = () => {
           </p>
           <ListInput
             label={t('public~Team')}
-            onChange={(c: string[]) => setTeams(c)}
+            onChange={(c: string[]) => setTeams(c as any)}
             helpText={t(
               'public~Restricts which teams are allowed to log in. The format is <org>/<team>.',
             )}

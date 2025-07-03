@@ -104,9 +104,9 @@ const getResourceLogURL = (
   logType?: LogTypeStatus,
 ): string => {
   const previous = logType === LOG_TYPE_PREVIOUS;
-  return resourceURL(modelFor(resource.kind), {
-    name: resource.metadata.name,
-    ns: resource.metadata.namespace,
+  return resourceURL(modelFor(resource.kind!)!, {
+    name: resource.metadata?.name || '',
+    ns: resource.metadata?.namespace || '',
     path: 'log',
     queryParams: {
       container: containerName || '',
@@ -216,10 +216,10 @@ export const LogControls: React.FC<LogControlsProps> = ({
               &nbsp;
             </>
           )}
-          {[STREAM_ACTIVE, STREAM_PAUSED].includes(status) && (
+          {[STREAM_ACTIVE, STREAM_PAUSED].includes(status!) && (
             <TogglePlay active={status === STREAM_ACTIVE} onClick={toggleStreaming} />
           )}
-          {t(streamStatusMessages[status])}
+          {t(streamStatusMessages[status!])}
         </>
       );
     }
@@ -244,7 +244,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
               isExpanded={isLogTypeOpen}
               isDisabled={!hasPreviousLog}
             >
-              {logTypes.find((lt) => lt.type === logType).text}
+              {logTypes.find((lt) => lt.type === logType)?.text}
             </MenuToggle>
           )}
           onSelect={(event: React.MouseEvent | React.ChangeEvent, value: LogTypeStatus) => {
@@ -271,8 +271,8 @@ export const LogControls: React.FC<LogControlsProps> = ({
 
   const renderPodLogLinks = () =>
     _.map(_.sortBy(podLogLinks, 'metadata.name'), (link) => {
-      const namespace = resource.metadata.namespace;
-      const namespaceFilter = link.spec.namespaceFilter;
+      const namespace = resource.metadata?.namespace || '';
+      const namespaceFilter = link.spec?.namespaceFilter;
       if (namespaceFilter) {
         try {
           const namespaceRegExp = new RegExp(namespaceFilter, 'g');
@@ -295,12 +295,12 @@ export const LogControls: React.FC<LogControlsProps> = ({
       });
 
       return isMobile ? (
-        <DropdownItem to={url} isExternalLink key={link.metadata.uid}>
-          {link.spec.text}
+        <DropdownItem to={url} isExternalLink key={link.metadata?.uid || ''}>
+          {link.spec?.text}
         </DropdownItem>
       ) : (
-        <React.Fragment key={link.metadata.uid}>
-          <ExternalLink href={url} text={link.spec.text} dataTestID={link.metadata.name} />
+        <React.Fragment key={link.metadata?.uid || ''}>
+          <ExternalLink href={url} text={link.spec?.text} dataTestID={link.metadata?.name} />
           <Divider
             orientation={{
               default: 'vertical',
@@ -384,7 +384,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
           <LogViewerSearch
             onFocus={() => {
               if (status === STREAM_ACTIVE) {
-                toggleStreaming();
+                toggleStreaming?.();
               }
             }}
             placeholder="Search"
@@ -539,7 +539,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const externalLogLinkFlag = useFlag(FLAGS.CONSOLE_EXTERNAL_LOG_LINK);
   const [error, setError] = React.useState(false);
   const [hasTruncated, setHasTruncated] = React.useState(false);
-  const [lines, setLines] = React.useState([]);
+  const [lines, setLines] = React.useState<string[]>([]);
   const [linesBehind, setLinesBehind] = React.useState(0);
   const [totalLineCount, setTotalLineCount] = React.useState(0);
   const [stale, setStale] = React.useState(false);
@@ -554,8 +554,8 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   const previousResourceStatus = usePrevious(resourceStatus);
   const previousTotalLineCount = usePrevious(totalLineCount);
-  const linkURL = getResourceLogURL(resource, containerName, null, false, logType);
-  const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
+  const linkURL = getResourceLogURL(resource, containerName, undefined, false, logType);
+  const watchURL = getResourceLogURL(resource, containerName, undefined, true, logType);
   const imp = useSelector((state: RootState) => getImpersonate(state));
   const subprotocols = React.useMemo(() => ['base64.binary.k8s.io', ...(imp?.subprotocols ?? [])], [
     imp,
@@ -631,7 +631,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const startWebSocket = React.useCallback(() => {
     // Handler for websocket onopen event
     const onOpen = () => {
-      buffer.current.clear();
+      buffer.current?.clear();
       setStatus(STREAM_ACTIVE);
     };
     // Handler for websocket onclose event
@@ -645,19 +645,19 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     // Handler for websocket onmessage event
     const onMessage = (msg) => {
       if (msg) {
-        clearTimeout(timeoutIdRef.current);
+        clearTimeout(timeoutIdRef.current!);
         const text = Base64.decode(msg);
-        countRef.current += buffer.current.ingest(text);
+        countRef.current += buffer.current?.ingest(text) || 0;
         // Set a timeout here to render more logs together when initializing
         timeoutIdRef.current = setTimeout(() => {
-          setTotalLineCount((currentLineCount) => currentLineCount + countRef.current);
+          setTotalLineCount((currentLineCount) => currentLineCount + (countRef.current || 0));
           countRef.current = 0;
           setLines(
-            buffer.current.getTail() === ''
-              ? [...buffer.current.getLines()]
-              : [...buffer.current.getLines(), buffer.current.getTail()],
+            buffer.current?.getTail() === ''
+              ? [...(buffer.current?.getLines() || [])]
+              : [...(buffer.current?.getLines() || []), buffer.current?.getTail() || ''],
           );
-          setHasTruncated(buffer.current.getHasTruncated());
+          setHasTruncated(buffer.current?.getHasTruncated() || false);
         }, 10);
       }
     };

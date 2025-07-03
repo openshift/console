@@ -10,7 +10,7 @@ import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject 
 export const OpaqueSecretForm: React.FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
   const { t } = useTranslation();
   const [opaqueDataEntries, setOpaqueDataEntries] = React.useState(
-    opaqueSecretObjectToArray(base64StringData),
+    opaqueSecretObjectToArray(base64StringData || {}),
   );
 
   const onDataChanged = (newEntries: OpaqueDataEntry[]) => {

@@ -115,7 +115,7 @@ export const MarkdownView: React.FC<MarkdownProps> = ({
   }, [content, emptyMsg, extensions, options, truncateContent]);
 
   const innerProps: InnerSyncMarkdownProps = {
-    renderExtension: extensions?.length > 0 ? renderExtension : undefined,
+    renderExtension: extensions.length > 0 ? renderExtension : undefined,
     exactHeight,
     markup,
     isEmpty: !content,

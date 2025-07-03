@@ -49,11 +49,11 @@ export const getNamespace = (path: string): string => {
   } else if (split[1] === 'ns' && split[2]) {
     ns = split[2];
   } else {
-    return;
+    return '';
   }
 
   const match = ns.match(legalNamePattern);
-  return match && match.length > 0 && match[0];
+  return (match && match.length > 0 && match[0]) || '';
 };
 
 export const getURLSearchParams = () => {

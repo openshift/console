@@ -123,7 +123,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
         inProgress={false}
         submitText={t('public~Save')}
         submitDisabled={stale}
-        cancel={cancel}
+        cancel={() => (cancel ? cancel() : undefined)}
       />
     </form>
   );

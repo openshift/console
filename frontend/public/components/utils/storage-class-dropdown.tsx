@@ -18,7 +18,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
   readonly state: StorageClassDropdownInnerState = {
     items: {},
     name: this.props.name,
-    selectedKey: this.props.selectedKey,
+    selectedKey: this.props.selectedKey || '',
     title: <LoadingInline />,
     defaultClass: this.props.defaultClass,
   };
@@ -81,7 +81,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
     }
 
     // Determine if there is a default storage class
-    state.defaultClass = _.findKey(unorderedItems, 'default');
+    state.defaultClass = _.findKey(unorderedItems, 'default') || '';
     const { selectedKey } = this.state;
     if (!state.defaultClass) {
       // Add No Storage Class option if there is not a default storage class

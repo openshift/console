@@ -100,14 +100,14 @@ type ListOrder = (number | string)[];
 
 // Severity sort order is "critical" > "warning" > (anything else in A-Z order) > "none"
 export const alertSeverityOrder = (alert: Alert | Rule): ListOrder => {
-  const { severity } = alert.labels;
+  const severity: string = alert.labels.severity ?? AlertSeverity.None;
   const order: number =
     {
       [AlertSeverity.Critical]: 1,
       [AlertSeverity.Warning]: 2,
       [AlertSeverity.None]: 4,
     }[severity] ?? 3;
-  return [order, severity];
+  return [order, severity!];
 };
 
 export const alertingRuleStateOrder = (rule: Rule): ListOrder => {

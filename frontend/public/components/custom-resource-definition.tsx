@@ -73,7 +73,7 @@ const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
 const menuActions: KebabAction[] = [
   instances,
   ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
-  ...common,
+  ...common!,
 ];
 
 const tableColumnClasses = [
@@ -94,7 +94,7 @@ const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Na
 
 const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
   const { t } = useTranslation();
-  return crd.status && isEstablished(crd.status.conditions) ? (
+  return crd.status && isEstablished(crd.status.conditions!) ? (
     <span>
       <GreenCheckCircleIcon title={t('public~true')} />
     </span>
@@ -202,12 +202,12 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
-        <Conditions conditions={crd.status.conditions} />
+        <Conditions conditions={crd.status?.conditions ?? []} />
       </PaneBody>
-      <PaneBody>
+      <div className="co-m-pane__body">
         <SectionHeading text={t('public~Versions')} />
         <CRDVersionTable versions={crd.spec.versions} />
-      </PaneBody>
+      </div>
     </>
   );
 };
@@ -280,8 +280,8 @@ export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsLi
           <span className="co-resource-item">
             <ResourceLink
               kind="CustomResourceDefinition"
-              name={crd.metadata.name}
-              namespace={crd.metadata.namespace}
+              name={crd.metadata?.name}
+              namespace={crd.metadata?.namespace}
               displayName={_.get(crd, 'spec.names.kind')}
             />
           </span>

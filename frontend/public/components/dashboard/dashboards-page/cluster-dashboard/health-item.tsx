@@ -49,7 +49,7 @@ const OperatorRow: React.FC<
     <ResolvedComponent key={key} operatorStatus={operatorStatus} />
   ) : (
     <AsyncComponent
-      key={operatorStatus.operators[0].metadata.uid}
+      key={operatorStatus.operators[0]?.metadata?.uid}
       operatorStatus={operatorStatus}
       loader={Component}
       LoadingComponent={LoadingComponent}
@@ -73,9 +73,9 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
         <StackItem key={o.title}>
           <OperatorsSection
             resources={operatorResources}
-            getOperatorsWithStatuses={o.getOperatorsWithStatuses}
+            getOperatorsWithStatuses={o.getOperatorsWithStatuses ?? (() => [])}
             title={o.title}
-            linkTo={o.viewAllLink || resourcePath(o.resources[0].kind)}
+            linkTo={o.viewAllLink || resourcePath(o.resources[0].kind) || ''}
             Row={OperatorRow}
             Component={o.operatorRowLoader}
             isResolved={false}
@@ -94,7 +94,7 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
             resources={operatorResources}
             getOperatorsWithStatuses={o.getOperatorsWithStatuses}
             title={o.title}
-            linkTo={o.viewAllLink || resourcePath(o.resources[0].kind)}
+            linkTo={o.viewAllLink || resourcePath(o.resources[0].kind) || ''}
             Row={OperatorRow}
             Component={o.operatorRowLoader}
             isResolved

@@ -36,7 +36,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   const [showCreatePVC, setShowCreatePVC] = React.useState('existing');
   const [claimVolumeMode, setClaimVolumeMode] = React.useState('');
   const [newPVCObj, setNewPVCObj] = React.useState(null);
-  const [selectedPVC, setSelectedPVC] = React.useState<PersistentVolumeClaimKind>(null);
+  const [selectedPVC, setSelectedPVC] = React.useState<PersistentVolumeClaimKind | null>(null);
 
   const { kindObj, resourceName, namespace } = props;
 
@@ -72,8 +72,8 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     setVolumeName(newVolumeName);
     setVolumeAlreadyMounted(newVolumeAlreadyMounted);
     showCreatePVC === 'existing' && newClaimName.trim().length > 0
-      ? setClaimVolumeMode(selectedPVC.spec.volumeMode)
-      : setClaimVolumeMode(newPVCObj?.spec?.volumeMode);
+      ? setClaimVolumeMode(selectedPVC?.spec?.volumeMode || '')
+      : setClaimVolumeMode((newPVCObj as any)?.spec?.volumeMode || '');
   }, [newPVCObj, obj, claimName, showCreatePVC, claimVolumeMode, selectedPVC, namespace]);
 
   if (!kindObj || !_.includes(supportedKinds, kindObj.kind)) {
@@ -93,13 +93,13 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   const handleContainerSelectionChange = (event, checked) => {
     const checkedItems = [...selectedContainers];
     checked
-      ? checkedItems.push(event.currentTarget.id)
+      ? checkedItems.push(event.currentTarget?.id as never)
       : _.pull(checkedItems, event.currentTarget.id);
     setSelectedContainers(checkedItems);
   };
 
   const isContainerSelected = ({ name }) => {
-    return !useContainerSelector || selectedContainers.includes(name);
+    return !useContainerSelector || selectedContainers.includes(name as never);
   };
 
   const getMountPaths = (podTemplate: any): string[] => {
@@ -138,9 +138,11 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   };
 
   const validateDevicePath = (path: string) => {
-    const existingDevicePaths = getDevicePaths(obj.spec.template);
+    const existingDevicePaths = getDevicePaths(obj?.spec?.template || {});
     if (existingDevicePaths.includes(path)) {
       setError(t('public~Device path is already in use.'));
+    } else {
+      setError('');
     }
   };
 
@@ -158,7 +160,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     resource?: PersistentVolumeClaimKind,
   ) => {
     setClaimName(newClaimName);
-    setSelectedPVC(resource);
+    setSelectedPVC(resource || null);
   };
 
   const onMountAsReadOnlyChanged: React.ReactEventHandler<HTMLInputElement> = () => {
@@ -167,7 +169,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
 
   const createPVCIfNecessary = () => {
     return showCreatePVC === 'new'
-      ? k8sCreate(PersistentVolumeClaimModel, newPVCObj).then((claim) => claim.metadata.name)
+      ? k8sCreate(PersistentVolumeClaimModel, newPVCObj || {}).then((claim) => claim.metadata.name)
       : Promise.resolve(claimName);
   };
 
@@ -179,7 +181,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       readOnly: mountAsReadOnly,
     };
     const containers: ContainerSpec[] = _.get(obj, 'spec.template.spec.containers', []);
-    return containers.reduce((patch, container, i) => {
+    return containers.reduce((patch: Patch[], container, i) => {
       // Only add to selected containers
       if (isContainerSelected(container)) {
         if (_.isEmpty(container.volumeMounts)) {
@@ -206,7 +208,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       devicePath,
     };
     const containers: ContainerSpec[] = obj?.spec?.template?.spec?.containers;
-    return containers.reduce((patch, container, i) => {
+    return containers.reduce((patch: Patch[], container, i) => {
       // Only add to selected containers
       if (isContainerSelected(container)) {
         if (_.isEmpty(container.volumeMounts)) {
@@ -255,9 +257,9 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     setInProgress(true);
     createPVCIfNecessary().then(
       (pvcName: string) => {
-        return k8sPatch(kindObj, obj, getVolumePatches(pvcName)).then((resource) => {
+        return k8sPatch(kindObj, obj!, getVolumePatches(pvcName)).then((resource) => {
           setInProgress(false);
-          navigate(resourceObjPath(resource, referenceFor(resource)));
+          navigate(resourceObjPath(resource, referenceFor(resource)) || '');
         });
       },
       (err) => {
@@ -433,7 +435,13 @@ export const AttachStorage = ({ kindObj, kindsInFlight }) => {
   if (!kindObj && kindsInFlight) {
     return <LoadingBox />;
   }
-  return <AttachStorageForm namespace={params.ns} resourceName={params.name} kindObj={kindObj} />;
+  return (
+    <AttachStorageForm
+      namespace={params.ns || ''}
+      resourceName={params.name || ''}
+      kindObj={kindObj}
+    />
+  );
 };
 
 export type AttachStorageFormProps = {

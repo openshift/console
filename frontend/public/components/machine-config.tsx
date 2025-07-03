@@ -38,7 +38,7 @@ import { ResourceEventStream } from './events';
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 const machineConfigMenuActions = [
   ...Kebab.getExtensionsActionsForKind(MachineConfigModel),
-  ...Kebab.factory.common,
+  ...Kebab.factory!.common!,
 ];
 
 const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj, t }) => (
@@ -149,7 +149,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={machineConfigReference} name={obj.metadata.name} />
+        <ResourceLink kind={machineConfigReference} name={obj.metadata!.name} />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {_.get(
@@ -169,7 +169,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
         {_.get(obj, 'spec.osImageURL') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata!.creationTimestamp || ''} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab

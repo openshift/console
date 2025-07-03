@@ -1,4 +1,4 @@
-import { TFunction } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as yup from 'yup';
 import { RESOURCE_NAME_REGEX } from './regex';
 

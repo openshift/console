@@ -53,7 +53,7 @@ export const BarChart: React.FC<BarChartProps> = ({
             <React.Fragment key={index}>
               <div className="graph-bar__label">
                 {LabelComponent ? (
-                  <LabelComponent title={datum.x} metric={datum.metric} />
+                  <LabelComponent title={datum.x ?? ''} metric={datum.metric} />
                 ) : (
                   datum.x
                 )}
@@ -69,7 +69,7 @@ export const BarChart: React.FC<BarChartProps> = ({
                   theme={theme}
                   height={barWidth + padding.bottom}
                   width={width}
-                  domain={{ y: [0, data[0].y] }}
+                  domain={{ y: [0, data[0]?.y ?? 0] }}
                   padding={padding}
                 />
               </div>

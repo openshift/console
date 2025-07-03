@@ -79,12 +79,12 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
       // Add the selector only if specified.
       const selector = getSelector();
       if (selector) {
-        obj.spec.selector = selector;
+        obj.spec!.selector = selector;
       }
 
       if (storageClass) {
-        obj.spec.storageClassName = storageClass;
-        obj.spec.volumeMode = volumeMode;
+        obj.spec!.storageClassName = storageClass;
+        obj.spec!.volumeMode = volumeMode;
       }
 
       return obj;
@@ -247,10 +247,10 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
     setInProgress(true);
-    k8sCreate(PersistentVolumeClaimModel, pvcObj).then(
+    k8sCreate(PersistentVolumeClaimModel, pvcObj || {}).then(
       (resource) => {
         setInProgress(false);
-        navigate(resourceObjPath(resource, referenceFor(resource)));
+        navigate(resourceObjPath(resource, referenceFor(resource)) || '');
       },
       ({ message }: { message: string }) => {
         setError(message || 'Could not create persistent volume claim.');
@@ -294,7 +294,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
 
 export const CreatePVC = () => {
   const params = useParams();
-  return <CreatePVCPage namespace={params.ns} />;
+  return <CreatePVCPage namespace={params.ns || ''} />;
 };
 
 export type CreatePVCFormProps = {

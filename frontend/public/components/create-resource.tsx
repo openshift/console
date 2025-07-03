@@ -6,7 +6,7 @@ import { AsyncComponent } from './utils';
 
 const CreateResource: React.FC = () => {
   const params = useParams();
-  const createResourceExtension = useCreateResourceExtension(params.plural);
+  const createResourceExtension = useCreateResourceExtension(params.plural!);
 
   return createResourceExtension ? (
     <ErrorBoundaryPage>

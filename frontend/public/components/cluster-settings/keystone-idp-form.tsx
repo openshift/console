@@ -117,16 +117,16 @@ export const AddKeystonePage = () => {
     };
 
     if (caName) {
-      idp.keystone.ca = {
+      idp.keystone!.ca = {
         name: caName,
       };
     }
 
     if (secretName) {
-      idp.keystone.tlsClientCert = {
+      idp.keystone!.tlsClientCert = {
         name: secretName,
       };
-      idp.keystone.tlsClientKey = {
+      idp.keystone!.tlsClientKey = {
         name: secretName,
       };
     }

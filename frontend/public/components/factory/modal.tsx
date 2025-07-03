@@ -20,7 +20,9 @@ export const createModal: CreateModal = (getModalElement) => {
       if (e && e.stopPropagation) {
         e.stopPropagation();
       }
-      ReactDOM.unmountComponentAtNode(containerElement);
+      if (containerElement) {
+        ReactDOM.unmountComponentAtNode(containerElement);
+      }
       resolve();
     };
     Modal.setAppElement(document.getElementById('app-content'));
@@ -162,7 +164,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
 
   const onResetClick = (e) => {
     e.stopPropagation();
-    reset(e);
+    reset?.(e);
   };
 
   const cancelButton = (

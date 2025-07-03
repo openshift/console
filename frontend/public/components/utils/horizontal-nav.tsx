@@ -52,10 +52,7 @@ class PodsComponentWithTranslation extends React.PureComponent<
   PodsComponentProps & WithTranslation
 > {
   render() {
-    const {
-      metadata: { namespace },
-      spec: { selector },
-    } = this.props.obj;
+    const { metadata: { namespace } = {}, spec: { selector } = {} } = this.props.obj;
     const { showNodes, t } = this.props;
     if (_.isEmpty(selector)) {
       return <EmptyBox label={t('public~Pods')} />;
@@ -206,7 +203,7 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
           return (
             <Tab
               key={href}
-              eventKey={href}
+              eventKey={href || ''}
               href={to}
               onClick={(e) => {
                 e.preventDefault();
@@ -345,7 +342,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   }, [dynamicResourceNavTabExtensions, dynamicTabExtensions, objReference, contextId]);
 
   const pages: Page[] = [
-    ...(props.pages || props.pagesFor(props.obj?.data)),
+    ...(props.pages || props.pagesFor?.(props.obj?.data!)),
     ...pluginPages,
     ...dynamicPluginPages,
   ];
@@ -357,14 +354,14 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
         key={p.nameKey || p.name}
         element={
           <ErrorBoundaryPage>
-            <p.component
-              {...params}
-              {...componentProps}
-              {...extraResources}
-              {...p.pageData}
-              customData={props.customData}
-              params={params}
-            />
+            {React.createElement(p.component!, {
+              ...params,
+              ...componentProps,
+              ...extraResources,
+              ...p.pageData,
+              customData: props.customData,
+              params,
+            })}
           </ErrorBoundaryPage>
         }
       />
@@ -396,7 +393,7 @@ export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({
   customData,
   contextId,
 }) => {
-  const obj = { data: resource, loaded: true };
+  const obj = { data: resource!, loaded: true };
 
   return (
     <HorizontalNav

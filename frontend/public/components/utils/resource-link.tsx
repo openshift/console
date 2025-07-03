@@ -46,7 +46,7 @@ export const resourcePathFromModel = (model: K8sModel, name?: string, namespace?
 };
 
 export const resourceListPathFromModel = (model: K8sModel, namespace?: string) =>
-  resourcePathFromModel(model, null, namespace);
+  resourcePathFromModel(model, undefined, namespace);
 
 /**
  * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
@@ -89,7 +89,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
     return null;
   }
   const kindReference = groupVersionKind ? getReference(groupVersionKind) : kind;
-  const path = linkTo ? resourcePath(kindReference, name, namespace) : undefined;
+  const path = linkTo ? resourcePath(kindReference!, name, namespace) : undefined;
   const value = displayName ? displayName : name;
   const classes = css('co-resource-item', className, {
     'co-resource-item--inline': inline,

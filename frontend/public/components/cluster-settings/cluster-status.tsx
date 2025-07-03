@@ -32,7 +32,7 @@ export const ClusterVersionConditionsLink: React.FC<ClusterVersionConditionsLink
   return (
     <HashLink
       smooth
-      to={`${resourcePathFromModel(ClusterVersionModel, cv.metadata.name)}#conditions`}
+      to={`${resourcePathFromModel(ClusterVersionModel, cv.metadata?.name || '')}#conditions`}
     >
       {t('public~View conditions')}
     </HashLink>
@@ -82,7 +82,7 @@ const ReleaseNotAcceptedMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   return (
     <>
       <div data-test="cv-update-status-release-accepted-false">
-        <StatusMessagePopover bodyContent={releaseNotAcceptedCondition.message}>
+        <StatusMessagePopover bodyContent={releaseNotAcceptedCondition.message || ''}>
           <RedExclamationCircleIcon /> {t('public~Release not accepted')}
         </StatusMessagePopover>
       </div>
@@ -109,7 +109,7 @@ const FailingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
   const { t } = useTranslation();
   return (
     <div data-test="cv-update-status-failing">
-      <StatusMessagePopover bodyContent={failingCondition.message}>
+      <StatusMessagePopover bodyContent={failingCondition.message || ''}>
         <RedExclamationCircleIcon /> {t('public~Failing')}
       </StatusMessagePopover>
     </div>
@@ -149,7 +149,7 @@ const ErrorRetrievingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   ) : (
     <>
       <div data-test="cv-update-status-no-updates">
-        <StatusMessagePopover bodyContent={retrievedUpdatesCondition.message}>
+        <StatusMessagePopover bodyContent={retrievedUpdatesCondition.message || ''}>
           <RedExclamationCircleIcon /> {t('public~Not retrieving updates')}
         </StatusMessagePopover>
       </div>

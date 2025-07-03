@@ -25,7 +25,7 @@ const titleProductNameSuffix = ` · ${getBrandingDetails().productName}`;
 
 export const getTelemetryTitle = () => {
   const titleElement = document.querySelector('title');
-  let title = titleElement.getAttribute('data-telemetry') || document.title;
+  let title = titleElement?.getAttribute('data-telemetry') || document.title;
   if (title.endsWith(titleProductNameSuffix)) {
     title = title.substring(0, title.length - titleProductNameSuffix.length);
   }

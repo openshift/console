@@ -18,14 +18,14 @@ export const MachineConfigPoolsSelector: React.FC<MachineConfigPoolsSelectorProp
       </label>
       {machineConfigPools.map((mcp: MachineConfigPoolKind) => (
         <Checkbox
-          key={mcp.metadata.uid}
-          label={`${isMCPWorker(mcp) ? NodeTypeNames.Worker : mcp.metadata.name} ${
+          key={mcp.metadata!.uid}
+          label={`${isMCPWorker(mcp) ? NodeTypeNames.Worker : mcp.metadata!.name} ${
             NodeModel.labelPlural
           }`}
-          id={mcp.metadata.name}
-          isChecked={selected.includes(mcp.metadata.name)}
+          id={mcp.metadata!.name || ''}
+          isChecked={selected.includes(mcp.metadata!.name!)}
           onChange={onChange}
-          data-test={`pause-mcp-checkbox-${mcp.metadata.name}`}
+          data-test={`pause-mcp-checkbox-${mcp.metadata!.name}`}
         />
       ))}
     </div>

@@ -121,36 +121,56 @@ export const ConnectedPageHeading = connectToModel(
                   </ResourceStatus>
                 )}
               </div>
-            )
-          )
-        }
-        primaryAction={
-          showActions && (
-            <>
-              {hasButtonActions && (
-                <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-              )}
-
-              {hasMenuActions && (
-                <ActionListItem>
-                  <ActionsMenu
-                    actions={
-                      _.isFunction(menuActions)
-                        ? menuActions(kindObj, data, extraResources, customData)
-                        : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                    }
-                  />
-                </ActionListItem>
-              )}
-
-              {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
-            </>
-          )
-        }
-      />
-    );
-  },
-);
+            )}
+            {!breadcrumbsFor && !breadcrumbs && badge && (
+              <span className="co-m-pane__heading-badge">{badge}</span>
+            )}
+            {link && <div className="co-m-pane__heading-link">{link}</div>}
+            {(isAdminPrespective || showActions) && (
+              <div className="co-actions" data-test-id="details-actions">
+                {isAdminPrespective && <FavoriteButton />}
+                {showActions && (
+                  <>
+                    {hasButtonActions && (
+                      <ActionButtons
+                        actionButtons={buttonActions?.map((a) => a(kindObj!, data!)) ?? []}
+                      />
+                    )}
+                    {hasMenuActions && (
+                      <ActionsMenu
+                        actions={
+                          _.isFunction(menuActions)
+                            ? menuActions(kindObj!, data!, extraResources, customData)
+                            : menuActions?.map((a) =>
+                                a(kindObj!, data!, extraResources, customData),
+                              )
+                        }
+                      />
+                    )}
+                    {_.isFunction(customActionMenu)
+                      ? customActionMenu(kindObj!, data!)
+                      : customActionMenu}
+                  </>
+                )}
+              </div>
+            )}
+          </PrimaryHeading>
+        )}
+        {helpText && (
+          <Content>
+            <Content
+              component={ContentVariants.p}
+              className="help-block co-m-pane__heading-help-text"
+            >
+              {helpText}
+            </Content>
+          </Content>
+        )}
+        {props.children}
+      </div>
+    </>
+  );
+});
 
 export const SectionHeading: React.SFC<SectionHeadingProps> = ({
   text,
@@ -182,6 +202,50 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
     {children}
   </Title>
 );
+
+export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({
+  kindObj,
+  actions,
+  resources,
+}) => {
+  const { obj: resource, ...otherResources } = resources!;
+  const ns = useSelector((state: RootState) => getActiveNamespace(state));
+  const { csvData } = useCsvWatchResource(ns);
+  const isDeleting = !!resource?.metadata?.deletionTimestamp;
+  return (
+    <div className="overview__sidebar-pane-head resource-overview__heading">
+      <PrimaryHeading>
+        <div className="co-m-pane__name co-resource-item">
+          <ResourceIcon
+            className="co-m-resource-icon--lg"
+            kind={kindObj.crd ? referenceForModel(kindObj) : resource.kind ?? ''}
+          />
+          <Link
+            to={
+              resourcePath(
+                kindObj.crd ? referenceForModel(kindObj) : resource.kind ?? '',
+                resource.metadata?.name ?? '',
+                resource.metadata?.namespace ?? '',
+              ) || '#'
+            }
+            className="co-resource-item__resource-name"
+          >
+            {resource.metadata?.name}
+          </Link>
+          {isDeleting && <ResourceItemDeleting />}
+        </div>
+        {!isDeleting && (
+          <div className="co-actions">
+            <ActionsMenu
+              actions={actions.map((a) => a(kindObj, resource, otherResources, { csvs: csvData }))}
+            />
+          </div>
+        )}
+      </PrimaryHeading>
+      <HealthChecksAlert resource={resource} />
+    </div>
+  );
+};
 
 export type ActionButtonsProps = {
   actionButtons: any[];

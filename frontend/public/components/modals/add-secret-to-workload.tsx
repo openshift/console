@@ -49,7 +49,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
       const options = _.reduce(
         sortedItems,
         (list, item) => {
-          const { name, uid } = item.obj.metadata;
+          const { name = '', uid = '' } = item.obj.metadata || {};
           list[uid] = <ResourceName kind={item.model.kind} name={name} />;
           return list;
         },

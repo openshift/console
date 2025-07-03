@@ -48,8 +48,7 @@ import {
   ResourceLink,
   resourceObjPath,
   resourcePath,
-  ResourceSummary,
-  SectionHeading,
+  ResourceSummary
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
@@ -69,7 +68,7 @@ const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) =>
   callback: () =>
     cloneBuild(build)
       .then((clone) => {
-        redirect(resourceObjPath(clone, referenceFor(clone)));
+        redirect(resourceObjPath(clone, referenceFor(clone))!);
       })
       .catch((err) => {
         const error = err.message;
@@ -79,8 +78,8 @@ const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) =>
     group: kind.apiGroup,
     resource: kind.plural,
     subresource: 'clone',
-    name: build.metadata.name,
-    namespace: build.metadata.namespace,
+    name: build.metadata?.name,
+    namespace: build.metadata?.namespace,
     verb: 'create',
   },
 });
@@ -89,9 +88,9 @@ const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   // t('public~Cancel build')
   labelKey: 'public~Cancel build',
   hidden:
-    build.status.phase !== 'Running' &&
-    build.status.phase !== 'Pending' &&
-    build.status.phase !== 'New',
+    build.status?.phase !== 'Running' &&
+    build.status?.phase !== 'Pending' &&
+    build.status?.phase !== 'New',
   callback: () =>
     confirmModal({
       // t('public~Cancel build'),
@@ -108,8 +107,8 @@ const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
-    name: build.metadata.name,
-    namespace: build.metadata.namespace,
+    name: build.metadata?.name,
+    namespace: build.metadata?.namespace,
     verb: 'patch',
   },
 });
@@ -118,7 +117,7 @@ const menuActions = [
   CloneBuildAction,
   CancelAction,
   ...Kebab.getExtensionsActionsForKind(BuildModel),
-  ...Kebab.factory.common,
+  ...Kebab.factory.common!,
 ];
 
 export enum BuildStrategyType {
@@ -149,7 +148,7 @@ export const BuildNumberLink = ({ build }) => {
   const buildNumber = getBuildNumber(build);
   const title = _.isFinite(buildNumber) ? `#${buildNumber}` : name;
 
-  return <Link to={resourcePath('Build', name, namespace)}>{title}</Link>;
+  return <Link to={resourcePath('Build', name, namespace)!}>{title}</Link>;
 };
 
 // TODO update to use QueryBrowser for each graph
@@ -388,7 +387,7 @@ export const BuildEnvironmentComponent = (props) => {
     return (
       <EnvironmentPage
         obj={obj}
-        rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy.type)]}
+        rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy.type)!]}
         envPath={getEnvPath(props)}
         readOnly={readOnly}
       />
@@ -438,12 +437,12 @@ const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => 
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={BuildsReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata?.name}
+          namespace={obj.metadata?.namespace}
         />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata?.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Status status={obj.status?.phase} />

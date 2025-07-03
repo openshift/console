@@ -101,7 +101,7 @@ subscribeToExtensions<DynamicModelFeatureFlag>(
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {
   if (!state) {
-    return ImmutableMap(defaults);
+    return ImmutableMap(_.mapValues(defaults, (flag) => (flag === undefined ? false : flag)));
   }
 
   switch (action.type) {

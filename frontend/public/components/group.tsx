@@ -49,7 +49,7 @@ const removeUser = (group: GroupKind, user: string): KebabOption => {
   };
 };
 
-const menuActions = [addUsers, ...Kebab.factory.common];
+const menuActions = [addUsers, ...Kebab.factory?.common!];
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
@@ -59,7 +59,7 @@ const getImpersonateAction = (
 ): KebabAction => (kind: K8sKind, group: GroupKind) => ({
   label: i18next.t('public~Impersonate Group {{name}}', group.metadata),
   callback: () => {
-    startImpersonate('Group', group.metadata.name);
+    startImpersonate('Group', group.metadata?.name!);
     navigate(window.SERVER_FLAGS.basePath);
   },
   // Must use API group authorization.k8s.io, NOT user.openshift.io
@@ -67,7 +67,7 @@ const getImpersonateAction = (
   accessReview: {
     group: 'authorization.k8s.io',
     resource: 'groups',
-    name: group.metadata.name,
+    name: group.metadata?.name,
     verb: 'impersonate',
   },
 });
@@ -92,11 +92,11 @@ const GroupTableRow: React.FC<RowFunctionArgs<GroupKind>> = ({ obj }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={referenceForModel(GroupModel)} name={obj.metadata.name} />
+        <ResourceLink kind={referenceForModel(GroupModel)} name={obj.metadata?.name} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>{_.size(obj.users)}</TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp || ''} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <GroupKebab group={obj} />
@@ -215,8 +215,8 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
 const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
-    staticFilters={{ 'role-binding-group': obj.metadata.name }}
-    name={obj.metadata.name}
+    staticFilters={{ 'role-binding-group': obj.metadata?.name }}
+    name={obj.metadata?.name}
     kind={obj.kind}
   />
 );

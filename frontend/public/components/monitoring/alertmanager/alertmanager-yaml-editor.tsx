@@ -39,6 +39,11 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
       setSuccessMsg('');
       return;
     }
+    if (!secret) {
+      setErrorMsg('Alertmanager secret is missing.');
+      setSuccessMsg('');
+      return;
+    }
     patchAlertmanagerConfig(secret, yaml).then(
       (newSecret) => {
         setSuccessMsg(
@@ -53,7 +58,7 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
     );
   };
 
-  const { yaml: alertmanagerYAML, errorMessage: loadErrorMsg } = getAlertmanagerYAML(secret);
+  const { yaml: alertmanagerYAML, errorMessage: loadErrorMsg } = getAlertmanagerYAML(secret!);
 
   if (loadErrorMsg) {
     return (
@@ -109,7 +114,7 @@ const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps
       <>
         <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
         <StatusBox {...obj}>
-          <AlertmanagerYAMLEditor {...props} obj={obj.data} />
+          <AlertmanagerYAMLEditor {...props} obj={obj!.data} />
         </StatusBox>
       </>
     );
