@@ -144,7 +144,7 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
     return null;
   }, [selector]);
   return (
-    <div>
+    <>
       {!_.isUndefined(model) ? (
         <ListDropdown
           key={id}
@@ -168,7 +168,7 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
           })}
         </span>
       )}
-    </div>
+    </>
   );
 };
 
